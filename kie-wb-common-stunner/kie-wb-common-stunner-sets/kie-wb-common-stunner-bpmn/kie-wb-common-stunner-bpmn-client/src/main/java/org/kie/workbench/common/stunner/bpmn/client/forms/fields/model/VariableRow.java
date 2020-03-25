@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import com.google.gwt.core.client.GWT;
 import org.jboss.errai.databinding.client.api.Bindable;
 
 @Bindable
@@ -83,6 +84,7 @@ public class VariableRow {
         }
         this.customDataType = variable.getCustomDataType();
         this.tags = variable.getTags();
+        GWT.log("Value of Tags on Variable Row Constructor: " + this.tags);
     }
 
     public List<String> getTags() {
@@ -126,10 +128,12 @@ public class VariableRow {
     }
 
     public String getCustomDataType() {
+        GWT.log("Get Custom Data Type from Variable Row: " + customDataType);
         return customDataType;
     }
 
     public void setCustomDataType(final String customDataType) {
+        GWT.log("Set Custom Data Type from Variable Row: " + customDataType);
         this.customDataType = customDataType;
     }
 

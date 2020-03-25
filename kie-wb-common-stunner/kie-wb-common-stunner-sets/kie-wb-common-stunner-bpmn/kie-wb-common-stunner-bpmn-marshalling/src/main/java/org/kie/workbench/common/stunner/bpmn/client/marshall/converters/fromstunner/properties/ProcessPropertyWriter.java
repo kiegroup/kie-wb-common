@@ -28,6 +28,7 @@ import bpsim.BpsimPackage;
 import bpsim.ElementParameters;
 import bpsim.Scenario;
 import bpsim.ScenarioParameters;
+import com.google.gwt.core.client.GWT;
 import org.eclipse.bpmn2.ExtensionAttributeValue;
 import org.eclipse.bpmn2.LaneSet;
 import org.eclipse.bpmn2.Process;
@@ -195,11 +196,13 @@ public class ProcessPropertyWriter extends BasePropertyWriter implements Element
 
             final String tags = decl.getTags();
 
+            GWT.log("Value of Tags: " + tags);
             if (tags != null) {
-                if (tags.charAt(0) == '[' && tags.charAt(tags.length() - 1) == ']') {
+                if (!tags.isEmpty() && tags.charAt(0) == '[' && tags.charAt(tags.length() - 1) == ']') {
                     decl.setTags(tags.substring(1, tags.length() - 1));
                 }
             CustomElement.customTags.of(variable.getTypedIdentifier()).set(decl.getTags());
+                GWT.log("Value of Tags After: " + CustomElement.customTags.of(variable.getTypedIdentifier()).get());
             }
             properties.add(variable.getTypedIdentifier());
             this.itemDefinitions.add(variable.getTypeDeclaration());

@@ -197,7 +197,7 @@ public class ProcessPropertyWriter extends BasePropertyWriter implements Element
             final String tags = decl.getTags();
 
             if (tags != null) {
-                if (tags.charAt(0) == '[' && tags.charAt(tags.length() - 1) == ']') {
+                if (!tags.isEmpty() && tags.charAt(0) == '[' && tags.charAt(tags.length() - 1) == ']') {
                     decl.setTags(tags.substring(1, tags.length() - 1));
                 }
                 CustomElement.customTags.of(variable.getTypedIdentifier()).set(decl.getTags());

@@ -26,6 +26,7 @@ import java.util.Set;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
+import com.google.gwt.core.client.GWT;
 import org.kie.workbench.common.forms.adf.rendering.Renderer;
 import org.kie.workbench.common.forms.dynamic.client.rendering.FieldRenderer;
 import org.kie.workbench.common.forms.dynamic.client.rendering.formGroups.FormGroup;
@@ -57,6 +58,7 @@ public class VariablesEditorFieldRenderer extends FieldRenderer<VariablesEditorF
     Map<String, String> mapDataTypeNamesToDisplayNames = null;
     Map<String, String> mapDataTypeDisplayNamesToNames = null;
     ListBoxValues dataTypeListBoxValues;
+
     private VariablesEditorWidgetView view;
     private Variable.VariableType variableType = Variable.VariableType.PROCESS;
     private List<String> dataTypes = new ArrayList<>();
@@ -115,6 +117,7 @@ public class VariablesEditorFieldRenderer extends FieldRenderer<VariablesEditorF
 
     @Override
     public void addVariable() {
+        GWT.log("Adding Variable");
         List<VariableRow> as = view.getVariableRows();
         if (as.isEmpty()) {
             view.setTableDisplayStyle();
@@ -123,6 +126,8 @@ public class VariablesEditorFieldRenderer extends FieldRenderer<VariablesEditorF
         newVariable.setVariableType(variableType);
         as.add(newVariable);
         VariableListItemWidgetView widget = view.getVariableWidget(view.getVariableRowsCount() - 1);
+        GWT.log("Adding Variable Data Types: " + dataTypeListBoxValues);
+
         widget.setDataTypes(dataTypeListBoxValues);
         widget.setParentWidget(this);
         checkTagsNotEnabled();
@@ -131,6 +136,7 @@ public class VariablesEditorFieldRenderer extends FieldRenderer<VariablesEditorF
     @Override
     public void setDataTypes(final List<String> dataTypes,
                              final List<String> dataTypeDisplayNames) {
+        GWT.log("Rendering Data Types :" + dataTypes);
         this.dataTypes = dataTypes;
         this.mapDataTypeNamesToDisplayNames = createMapDataTypeNamesToDisplayNames(dataTypes,
                                                                                    dataTypeDisplayNames);
@@ -170,6 +176,7 @@ public class VariablesEditorFieldRenderer extends FieldRenderer<VariablesEditorF
 
     @Override
     public List<VariableRow> deserializeVariables(final String s) {
+        GWT.log("Deserializing Variables: " + s);
         List<VariableRow> variableRows = new ArrayList<>();
         if (s != null && !s.isEmpty()) {
             String[] vs = s.split(",");
@@ -178,6 +185,7 @@ public class VariablesEditorFieldRenderer extends FieldRenderer<VariablesEditorF
                     Variable var = Variable.deserialize(v,
                                                         Variable.VariableType.PROCESS,
                                                         dataTypes);
+                    GWT.log("variable After Deserialize: " + var);
                     if (var != null && var.getName() != null && !var.getName().isEmpty()) {
                         variableRows.add(new VariableRow(var,
                                                          mapDataTypeNamesToDisplayNames));
@@ -197,6 +205,10 @@ public class VariablesEditorFieldRenderer extends FieldRenderer<VariablesEditorF
                                            mapDataTypeDisplayNamesToNames));
             }
         }
+
+        GWT.log("Serializing Variables: " + variables);
+        GWT.log("String Serializing Variables: " + StringUtils.getStringForList(variables));
+
         return StringUtils.getStringForList(variables);
     }
 

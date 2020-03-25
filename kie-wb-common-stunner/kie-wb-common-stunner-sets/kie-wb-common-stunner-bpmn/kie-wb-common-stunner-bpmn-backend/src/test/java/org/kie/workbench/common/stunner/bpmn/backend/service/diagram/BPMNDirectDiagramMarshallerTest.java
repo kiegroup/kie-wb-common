@@ -3044,8 +3044,9 @@ public class BPMNDirectDiagramMarshallerTest {
                       1,
                       0);
 
+        // 2 from the file plus 2 from tags
         assertEquals("Unexpected number of extensionElements sections.",
-                     2, countOccurrences(result, "<bpmn2:extensionElements>"));
+                     4, countOccurrences(result, "<bpmn2:extensionElements>"));
         assertTrue(result.contains("<bpmn2:subProcess id=\"_2316CEC1-C1F7-41B1-8C91-3CE73ADE5571\""));
         assertTrue(result.contains("name=\"MultipleInstanceSubprocess\""));
         assertTrue(result.contains("<drools:onEntry-script scriptFormat=\"http://www.java.com/java\">"));

@@ -24,18 +24,16 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.event.Event;
-import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.TableCellElement;
 import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.FocusEvent;
-import com.google.gwt.event.dom.client.FocusHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.text.shared.Renderer;
 import elemental2.dom.CSSProperties;
@@ -152,7 +150,7 @@ public class VariableListItemWidgetViewImpl implements VariableListItemWidgetVie
 
     private String overlayTopPosition = null;
 
-    final String [] defaultTags = {"internal", "required", "readonly", "input", "output", "business_relevant"};
+    final String[] defaultTags = {"internal", "required", "readonly", "input", "output", "business_relevant"};
 
     final Set<String> defaultTagsSet = new HashSet<>(Arrays.asList(defaultTags));
 
@@ -215,22 +213,46 @@ public class VariableListItemWidgetViewImpl implements VariableListItemWidgetVie
     @Override
     public void setTextBoxModelValue(final TextBox textBox,
                                      final String value) {
-        setCustomDataType(value);
+        GWT.log("Setting Textbox Model Value Textbox: " + textBox);
+
+        GWT.log("Setting Textbox Model Value: " + value);
+        if (textBox == customDataType) {
+            setCustomDataType(value);
+            GWT.log("It is custom Data Type");
+        } else {
+            GWT.log("Not Custom Data Type");
+        }
     }
 
     @Override
     public void setListBoxModelValue(final ValueListBox<String> listBox,
                                      final String value) {
-        setDataTypeDisplayName(value);
+        GWT.log("Setting Listbox Model Value Listbox: " + listBox);
+
+        GWT.log("Setting Listbox Model Value: " + value);
+
+        if (listBox == dataType) {
+            GWT.log("Is Data Type Listbox");
+            setDataTypeDisplayName(value);
+        } else {
+            GWT.log("Is not Data Type Listbox");
+        }
     }
 
     @Override
     public String getModelValue(final ValueListBox<String> listBox) {
-        String value = getCustomDataType();
-        if (value == null || value.isEmpty()) {
-            value = getDataTypeDisplayName();
+
+        if (true || listBox == dataType) {
+            GWT.log("Not setting Model Value");
+            String value = getCustomDataType();
+            if (value == null || value.isEmpty()) {
+                value = getDataTypeDisplayName();
+            }
+            return value;
+        } else {
+            GWT.log("Not setting Model Value");
+            return "";
         }
-        return value;
     }
 
     @PostConstruct
@@ -253,6 +275,7 @@ public class VariableListItemWidgetViewImpl implements VariableListItemWidgetVie
             }
             notifyModelChanged();
         });
+        GWT.log("Value of Data Types: " + dataType);
         dataTypeComboBox.init(this,
                               true,
                               dataType,
@@ -271,81 +294,81 @@ public class VariableListItemWidgetViewImpl implements VariableListItemWidgetVie
             }
         });
 
+        GWT.log("On Init value of Model Tags: " + getModel().getTags());
         PopOver.$(variableTagsSettings).popovers();
 
         setTagTittle("Tags: ");
 
-                variableTagsSettings.onclick = e -> {
-                // This is needed when opened
+        variableTagsSettings.onclick = e -> {
+            // This is needed when opened
 
-                    if (isOpen) {
-                        isOpen = false;
-                        GWT.log("Pop Over is Open Must be closed");
-                        lastOverlayOpened = null;
-                        return null;
-                    } else {
-                        isOpen = true;
-                        GWT.log("Pop Over is Closed Must be Opened");
-                    }
+            if (isOpen) {
+                isOpen = false;
+                GWT.log("Pop Over is Open Must be closed");
+                lastOverlayOpened = null;
+                return null;
+            } else {
+                isOpen = true;
+                GWT.log("Pop Over is Closed Must be Opened");
+            }
 
-                GWT.log("Item has been clicked");
-                GWT.log("Last Overlay: " + lastOverlayOpened);
+            GWT.log("Item has been clicked");
+            GWT.log("Last Overlay: " + lastOverlayOpened);
 
-                final HTMLDivElement overlayDiv =  ((HTMLDivElement) variableTagsSettings.nextElementSibling);
-                GWT.log("Opening");
-                GWT.log("Next Sibling: " + overlayDiv.innerHTML);
+            final HTMLDivElement overlayDiv = ((HTMLDivElement) variableTagsSettings.nextElementSibling);
+            GWT.log("Opening");
+            GWT.log("Next Sibling: " + overlayDiv.innerHTML);
 
-                if (lastOverlayOpened != null && lastOverlayOpened != this.closeButton) {
-                    GWT.log("Closing Anchor Overlay");
-                    GWT.log("Closing");
-                    GWT.log("Performing Click");
-                    lastOverlayOpened.click();
-                 }
+            if (lastOverlayOpened != null && lastOverlayOpened != this.closeButton) {
+                GWT.log("Closing Anchor Overlay");
+                GWT.log("Closing");
+                GWT.log("Performing Click");
+                lastOverlayOpened.click();
+            }
 
-                overlayDiv.style.display = "block";
+            overlayDiv.style.display = "block";
 
-                GWT.log("Should Have opened: " + tagNamesComboBox.getValue());
-                overlayDiv.style.left = "130px";
-                GWT.log("Next Sibling Child Count: " + overlayDiv.childElementCount);
-                final Element lastNode = overlayDiv.lastElementChild;
-                GWT.log("Last Sibling Child Count: " + lastNode);
-                lastNode.innerHTML = "";
-                lastNode.appendChild(tagsDiv);
+            GWT.log("Should Have opened: " + tagNamesComboBox.getValue());
+            overlayDiv.style.left = "130px";
+            GWT.log("Next Sibling Child Count: " + overlayDiv.childElementCount);
+            final Element lastNode = overlayDiv.lastElementChild;
+            GWT.log("Last Sibling Child Count: " + lastNode);
+            lastNode.innerHTML = "";
+            lastNode.appendChild(tagsDiv);
 
-                GWT.log("Variable Tag Settings Left: " + variableTagsSettings.style.left);
-                GWT.log("Variable Tag Settings Top: " + variableTagsSettings.style.left);
+            GWT.log("Variable Tag Settings Left: " + variableTagsSettings.style.left);
+            GWT.log("Variable Tag Settings Top: " + variableTagsSettings.style.left);
 
-                GWT.log("Variable Tag Settings Client Left: " + variableTagsSettings.clientLeft);
-                GWT.log("Variable Tag Settings Client Top: " + variableTagsSettings.clientTop);
+            GWT.log("Variable Tag Settings Client Left: " + variableTagsSettings.clientLeft);
+            GWT.log("Variable Tag Settings Client Top: " + variableTagsSettings.clientTop);
 
-                GWT.log("Variable Tag Settings Bounding Rect Left: " + variableTagsSettings.getBoundingClientRect().left);
-                GWT.log("Variable Tag Settings Bounding Rect Top: " + variableTagsSettings.getBoundingClientRect().top);
+            GWT.log("Variable Tag Settings Bounding Rect Left: " + variableTagsSettings.getBoundingClientRect().left);
+            GWT.log("Variable Tag Settings Bounding Rect Top: " + variableTagsSettings.getBoundingClientRect().top);
 
-                GWT.log("Overlay Left: " + overlayDiv.style.left);
-                GWT.log("Overlay Top: " + overlayDiv.style.top);
+            GWT.log("Overlay Left: " + overlayDiv.style.left);
+            GWT.log("Overlay Top: " + overlayDiv.style.top);
 
-                if (overlayTopPosition == null) {
-                    overlayTopPosition = overlayDiv.style.top;
-                }
+            if (overlayTopPosition == null) {
+                overlayTopPosition = overlayDiv.style.top;
+            }
 
-                overlayDiv.style.top = overlayTopPosition;
+            overlayDiv.style.top = overlayTopPosition;
 
-                GWT.log("Inner Html: " + overlayDiv.lastElementChild.innerHTML);
-                GWT.log("Style: " + overlayDiv.lastElementChild.getAttribute("style"));
-                GWT.log("Style: " + overlayDiv.lastElementChild.getAttribute("class"));
+            GWT.log("Inner Html: " + overlayDiv.lastElementChild.innerHTML);
+            GWT.log("Style: " + overlayDiv.lastElementChild.getAttribute("style"));
+            GWT.log("Style: " + overlayDiv.lastElementChild.getAttribute("class"));
 
-                overlayDiv.style.maxWidth = CSSProperties.MaxWidthUnionType.of("280px");
-                overlayDiv.style.minHeight = CSSProperties.MinHeightUnionType.of("280px");
+            overlayDiv.style.maxWidth = CSSProperties.MaxWidthUnionType.of("280px");
+            overlayDiv.style.minHeight = CSSProperties.MinHeightUnionType.of("280px");
 
-                tagsDiv.style.display = "block";
-                overlayDiv.style.display = "block";
+            tagsDiv.style.display = "block";
+            overlayDiv.style.display = "block";
 
-                lastOverlayOpened = this.closeButton;
-                GWT.log("This Close Button: " + lastOverlayOpened);
+            lastOverlayOpened = this.closeButton;
+            GWT.log("This Close Button: " + lastOverlayOpened);
 
-                 return null;
-            };
-
+            return null;
+        };
 
         customTagName.addFocusHandler(focusEvent -> {
             previousCustomValue = customTagName.getValue();
@@ -372,7 +395,6 @@ public class VariableListItemWidgetViewImpl implements VariableListItemWidgetVie
     }
 
     private void setTagsListItems() {
-
         ListBoxValues classNameListBoxValues = new ListBoxValues(VariableListItemWidgetView.CUSTOM_PROMPT,
                                                                  "Edit" + " ",
                                                                  null);
@@ -384,7 +406,7 @@ public class VariableListItemWidgetViewImpl implements VariableListItemWidgetVie
         defaultTagNames.setValue("");
 
         tagNamesComboBox.init(this,
-                              true,
+                              false,
                               defaultTagNames,
                               customTagName,
                               false,
@@ -405,11 +427,11 @@ public class VariableListItemWidgetViewImpl implements VariableListItemWidgetVie
 
     @Override
     public void setModel(final VariableRow model) {
+        GWT.log("Setting Model: " + model);
         variableRow.setModel(model);
         initVariableControls();
         currentValue = getModel().toString();
         currentName = getModel().getName();
-
     }
 
     @Override
@@ -424,6 +446,7 @@ public class VariableListItemWidgetViewImpl implements VariableListItemWidgetVie
 
     @Override
     public void setDataTypeDisplayName(final String dataTypeDisplayName) {
+        GWT.log("Setting Data Display Name: " + dataTypeDisplayName);
         getModel().setDataTypeDisplayName(dataTypeDisplayName);
     }
 
@@ -434,14 +457,17 @@ public class VariableListItemWidgetViewImpl implements VariableListItemWidgetVie
 
     @Override
     public void setCustomDataType(final String customDataType) {
+        GWT.log("Setting Custom Data Type: " + customDataType);
         getModel().setCustomDataType(customDataType);
     }
 
     @Override
     public void setCustomTags(final List<String> tags) {
+        GWT.log("Setting Custom Tags: " + tags);
         getModel().setTags(tags);
         tagNamesList = tags;
-        setTagsListItems();
+        GWT.log("Value of TagNamesList: " + tagNamesList);
+        GWT.log("Value of Default tag List: " + defaultTagsSet);
     }
 
     @Override
@@ -451,6 +477,7 @@ public class VariableListItemWidgetViewImpl implements VariableListItemWidgetVie
 
     @Override
     public void setDataTypes(final ListBoxValues dataTypeListBoxValues) {
+        GWT.log("Setting Data Types: " + dataTypeListBoxValues);
         dataTypeComboBox.setCurrentTextValue("");
         dataTypeComboBox.setListBoxValues(dataTypeListBoxValues);
         dataTypeComboBox.setShowCustomValues(true);
@@ -459,6 +486,25 @@ public class VariableListItemWidgetViewImpl implements VariableListItemWidgetVie
             dataTypeComboBox.addCustomValueToListBoxValues(cdt,
                                                            "");
         }
+    }
+
+    @Override
+    public void setTagTypes(final List<String> tagTypes) {
+        GWT.log("Setting Tag Types: " + tagTypes);
+        tagNamesComboBox.setCurrentTextValue("");
+        tagNamesComboBox.setShowCustomValues(true);
+
+       for (final String tag : tagTypes) {
+           if (!defaultTagsSet.contains(tag)) {
+               GWT.log("Adding Custom Type: " + tag);
+               tagNamesComboBox.addCustomValueToListBoxValues(tag, "");
+           }
+       }
+       tagSet.clear();
+       tagSet.addAll(tagTypes);
+
+        renderTagElementsBadges(true);
+
     }
 
     @Override
@@ -488,6 +534,7 @@ public class VariableListItemWidgetViewImpl implements VariableListItemWidgetVie
 
     @EventHandler("acceptButton")
     public void handleAcceptButton(final ClickEvent e) {
+
         final String tagX = tagNamesComboBox.getValue();
 
         GWT.log("Custom Value: " + customTagName.getValue());
@@ -497,13 +544,16 @@ public class VariableListItemWidgetViewImpl implements VariableListItemWidgetVie
             for (final HTMLAnchorElement anchor : removeButtons.values()) {
                 anchor.click();
             }
-
             removeButtons.clear();
 
             GWT.log("Adding Message: " + tagX);
             GWT.log("Adding Buttons");
 
             tagSet.add(tagX);
+            GWT.log("Value of Tags before notifying: " + tagSet);
+            // Update Model
+            setCustomTags(new ArrayList<>(tagSet));
+            notifyModelChanged();
 
             GWT.log("Adding Tags : " + tagSet);
             GWT.log("Custom Value: " + customTagName.getValue());
@@ -514,37 +564,49 @@ public class VariableListItemWidgetViewImpl implements VariableListItemWidgetVie
                 tagSet.remove(previousCustomValue);
             }
 
-            for (final String tag : tagSet) {
+            renderTagElementsBadges(false);
+        }
+    }
 
-                final HTMLLabelElement tagLabel = (HTMLLabelElement) document.createElement("label");
-                tagLabel.textContent = tag;
-                tagLabel.className = "badge tagBadge  tagBadges";
-                tagLabel.htmlFor = "closeButton";
+    private void renderTagElementsBadges(final boolean updateSet) {
+        for (final String tag : tagSet) {
 
-                final HTMLAnchorElement closeButton = (HTMLAnchorElement) document.createElement("a");
-                closeButton.id = "closeButton";
-                closeButton.textContent = "x";
-                closeButton.className = "close tagCloseButton tagBadges";
+            final HTMLLabelElement tagLabel = (HTMLLabelElement) document.createElement("label");
+            tagLabel.textContent = tag;
+            tagLabel.className = "badge tagBadge  tagBadges";
+            tagLabel.htmlFor = "closeButton";
 
-                closeButton.onclick = ex -> {
-                    GWT.log("Item has been clicked 2");
-                    tagLabel.remove();
-                    closeButton.remove();
-                    ex.preventDefault();
-                    tagCount.setTextContent(tagSet.size() != 0 ? String.valueOf(tagSet.size()) : "");
-                    setTagTittle("Tags: " + tagSet.toString());
-                    return null;
-                };
+            final HTMLAnchorElement closeButton = (HTMLAnchorElement) document.createElement("a");
+            closeButton.id = "closeButton";
+            closeButton.textContent = "x";
+            closeButton.className = "close tagCloseButton tagBadges";
 
-                tagLabel.appendChild(closeButton);
-                tagsContainer.appendChild(tagLabel);
+            closeButton.onclick = ex -> {
+                GWT.log("Item has been clicked 2");
+                tagLabel.remove();
+                closeButton.remove();
+                ex.preventDefault();
+
+                if (updateSet) {
+                    tagSet.remove(tag);
+                    setCustomTags(new ArrayList<>(tagSet));
+                    notifyModelChanged();
+                }
 
                 tagCount.setTextContent(tagSet.size() != 0 ? String.valueOf(tagSet.size()) : "");
                 setTagTittle("Tags: " + tagSet.toString());
+                setCustomTags(new ArrayList<>(tagSet));
+                return null;
+            };
 
-                removeButtons.put(tag, closeButton);
-            }
-        }
+            tagLabel.appendChild(closeButton);
+            tagsContainer.appendChild(tagLabel);
+
+            tagCount.setTextContent(tagSet.size() != 0 ? String.valueOf(tagSet.size()) : "");
+            setTagTittle("Tags: " + tagSet.toString());
+
+            removeButtons.put(tag, closeButton);
+        } //
     }
 
     /**
@@ -552,18 +614,24 @@ public class VariableListItemWidgetViewImpl implements VariableListItemWidgetVie
      * corresponding {@link VariableRow}.
      */
     private void initVariableControls() {
+        GWT.log("Initializing Variable Controls");
         deleteButton.setIcon(IconType.TRASH);
         String cdt = getCustomDataType();
         if (cdt != null && !cdt.isEmpty()) {
             customDataType.setValue(cdt);
+            GWT.log("Initializing Custom Data Type: " + cdt);
             dataType.setValue(cdt);
         } else if (getDataTypeDisplayName() != null) {
+            GWT.log("Initializing Data Type: " + getDataTypeDisplayName());
             dataType.setValue(getDataTypeDisplayName());
         }
     }
 
     @Override
     public void notifyModelChanged() {
+        GWT.log("Model Changed");
+        GWT.log("Model Changed Tags: " + tagSet);
+
         String oldValue = currentValue;
         currentValue = getModel().toString();
         currentName = getModel().getName();
@@ -572,6 +640,12 @@ public class VariableListItemWidgetViewImpl implements VariableListItemWidgetVie
                 parentWidget.notifyModelChanged();
             }
         } else if (!oldValue.equals(currentValue)) {
+            parentWidget.notifyModelChanged();
+        }
+
+        if (tagSet.size() != 0) {
+            GWT.log("There are some tags, notifying model changed");
+            GWT.log("Values of tags: " + getModel().getTags());
             parentWidget.notifyModelChanged();
         }
     }

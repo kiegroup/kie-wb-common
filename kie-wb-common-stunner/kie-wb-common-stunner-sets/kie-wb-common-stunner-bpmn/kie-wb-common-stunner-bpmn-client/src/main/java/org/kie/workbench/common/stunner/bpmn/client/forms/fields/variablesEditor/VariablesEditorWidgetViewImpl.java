@@ -26,6 +26,7 @@ import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.dom.client.TableCellElement;
@@ -139,11 +140,13 @@ public class VariablesEditorWidgetViewImpl extends Composite implements Variable
 
     protected void setDataTypes(final List<String> dataTypes,
                                 final List<String> dataTypeDisplayNames) {
+        GWT.log("- Set Data Types: " + dataTypes);
         this.dataTypes = dataTypes;
         this.dataTypeDisplayNames = dataTypeDisplayNames;
         presenter.setDataTypes(dataTypes,
                                dataTypeDisplayNames);
     }
+
 
     protected void getDataTypes(final String value,
                                 final boolean fireEvents) {
@@ -273,10 +276,13 @@ public class VariablesEditorWidgetViewImpl extends Composite implements Variable
 
     @Override
     public void setVariableRows(final List<VariableRow> rows) {
+        GWT.log("Setting Variable Rows: " + rows);
         variableRows.setValue(rows);
         for (int i = 0; i < getVariableRowsCount(); i++) {
             VariableListItemWidgetView widget = getVariableWidget(i);
             widget.setDataTypes(dataTypeListBoxValues);
+            GWT.log("Setting Tags: " + rows.get(i).getTags());
+            widget.setTagTypes(rows.get(i).getTags());
             widget.setParentWidget(presenter);
         }
     }
@@ -291,6 +297,7 @@ public class VariablesEditorWidgetViewImpl extends Composite implements Variable
         return variableRows.getComponent(index);
     }
 
+    @Override
     public void setVariablesDataTypes(final ListBoxValues dataTypeListBoxValues) {
         this.dataTypeListBoxValues = dataTypeListBoxValues;
         for (int i = 0; i < getVariableRowsCount(); i++) {
