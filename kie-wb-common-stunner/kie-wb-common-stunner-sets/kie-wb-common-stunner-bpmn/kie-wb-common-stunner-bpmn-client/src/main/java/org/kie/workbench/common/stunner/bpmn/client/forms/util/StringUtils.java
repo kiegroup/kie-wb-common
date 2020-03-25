@@ -107,7 +107,7 @@ public class StringUtils {
         if (isEmpty(s)) {
             return s;
         }
-        return URL.encode(s);
+        return url.encode(s);
     }
 
     /**
@@ -119,7 +119,7 @@ public class StringUtils {
         if (isEmpty(s)) {
             return s;
         }
-        return URL.decode(s);
+        return url.decode(s);
     }
 
     /**
@@ -134,14 +134,6 @@ public class StringUtils {
         formattedDataType.append(dataType.substring(i + 1));
         formattedDataType.append(" [").append(dataType, 0, i).append("]");
         return formattedDataType.toString();
-    }
-
-    public static boolean isEmpty(String s) {
-        return s == null || s.isEmpty();
-    }
-
-    public static boolean nonEmpty(String s) {
-        return !isEmpty(s);
     }
 
     /**

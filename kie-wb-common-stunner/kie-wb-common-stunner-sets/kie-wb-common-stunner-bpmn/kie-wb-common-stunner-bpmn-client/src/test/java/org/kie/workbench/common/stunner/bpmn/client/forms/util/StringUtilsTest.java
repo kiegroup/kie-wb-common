@@ -19,15 +19,43 @@ package org.kie.workbench.common.stunner.bpmn.client.forms.util;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.kie.workbench.common.stunner.bpmn.client.forms.fields.model.MetaDataAttribute;
 import org.kie.workbench.common.stunner.bpmn.client.forms.fields.model.Variable;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
+@RunWith(MockitoJUnitRunner.class)
 public class StringUtilsTest {
+
+    @Mock
+    private URL url;
+
+    private String emptyString = "";
+    private String testString = "some string";
+    private String modifiedString = "some string";
+
+    @Before
+    public void setUp() {
+        StringUtils.setURL(url);
+        when(url.encode(anyString())).thenReturn(modifiedString);
+        when(url.decode(anyString())).thenReturn(modifiedString);
+
+        when(url.encodeQueryString(anyString())).thenReturn(modifiedString);
+        when(url.decodeQueryString(anyString())).thenReturn(modifiedString);
+    }
 
     @Test
     public void testCreateDataTypeDisplayName() {
@@ -81,5 +109,75 @@ public class StringUtilsTest {
         assertEquals("input1ßvalue,input2ßvalue", StringUtils.getStringForList(attributes, null));
         assertEquals("input1ßvalue,input2ßvalue", StringUtils.getStringForList(attributes, ""));
         assertEquals("input1ßvalueØinput2ßvalue", StringUtils.getStringForList(attributes, "Ø"));
+    }
+
+    @Test
+    public void testEmptyEncode() {
+        assertNull(StringUtils.encode(null));
+
+        assertSame(emptyString, StringUtils.encode(emptyString));
+        verify(url, never()).encode(anyString());
+    }
+
+    @Test
+    public void testEncode() {
+        assertEquals(testString, StringUtils.encode(testString));
+        verify(url).encode(testString);
+    }
+
+    @Test
+    public void testEmptyDecode() {
+        assertNull(StringUtils.decode(null));
+
+        assertSame(emptyString, StringUtils.decode(emptyString));
+        verify(url, never()).decode(anyString());
+    }
+
+    @Test
+    public void testDecode() {
+        assertEquals(testString, StringUtils.decode(testString));
+        verify(url).decode(testString);
+    }
+
+    @Test
+    public void testUrlDecode() {
+        assertEquals(testString, StringUtils.urlDecode(testString));
+        verify(url).decodeQueryString(testString);
+    }
+
+    @Test
+    public void testEmptyUrlDecode() {
+        assertNull(StringUtils.urlDecode(null));
+
+        assertSame(emptyString, StringUtils.urlDecode(emptyString));
+        verify(url, never()).decodeQueryString(anyString());
+    }
+
+    @Test
+    public void testUrlEncode() {
+        assertEquals(testString, StringUtils.urlEncode(testString));
+        verify(url).encodeQueryString(testString);
+    }
+
+    @Test
+    public void testEmptyUrlEncode() {
+        assertNull(StringUtils.urlEncode(null));
+
+        assertSame(emptyString, StringUtils.urlEncode(emptyString));
+        verify(url, never()).encodeQueryString(anyString());
+    }
+
+    @Test
+    public void testIsEmpty() {
+        assertTrue(StringUtils.isEmpty(null));
+        assertTrue(StringUtils.isEmpty(""));
+        assertFalse(StringUtils.isEmpty("Hello"));
+    }
+
+    @Test
+    public void testNonEmpty() {
+        assertFalse(StringUtils.nonEmpty(null));
+        assertFalse(StringUtils.nonEmpty(""));
+        assertTrue(StringUtils.nonEmpty("Hello"));
     }
 }

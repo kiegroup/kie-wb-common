@@ -81,4 +81,10 @@ public class XmlUtilsTest {
         String name = "Hello $& Name";
         assertEquals("HelloName", createValidId(name));
     }
+
+    @Test
+    public void testCreateValidIdWhenFirstSymbolIsNotCorrectNcStart() {
+        String name = "1name";
+        assertEquals("_1name", createValidId(name));
+    }
 }

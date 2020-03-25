@@ -39,4 +39,22 @@ public class URL {
     public String decodeQueryString(String s) {
         return com.google.gwt.http.client.URL.decodeQueryString(s);
     }
+
+    /**
+     * Proxy method for {@link com.google.gwt.http.client.URL#encode(String s)} ()}
+     * @param s - string to encode
+     * * @return encoded string value
+     */
+    public String encode(String s) {
+        return com.google.gwt.http.client.URL.encode(s);
+    }
+
+    /**
+     * Proxy method for {@link com.google.gwt.http.client.URL#decode(String s)}
+     * @param s - string to decode
+     * @return decoded string value
+     */
+    public String decode(String s) {
+        return com.google.gwt.http.client.URL.decode(s);
+    }
 }
