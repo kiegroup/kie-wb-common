@@ -19,9 +19,7 @@ package org.kie.workbench.common.stunner.kogito.client.services;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.logging.Logger;
 
-import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Default;
@@ -30,13 +28,14 @@ import javax.inject.Inject;
 
 import elemental2.promise.Promise;
 import org.appformer.kogito.bridge.client.resource.ResourceContentService;
-import org.appformer.kogito.bridge.client.resource.interop.ResourceContentOptions;
 import org.kie.workbench.common.stunner.bpmn.client.workitem.WorkItemDefinitionClientService;
 import org.kie.workbench.common.stunner.bpmn.workitem.WorkItemDefinition;
 import org.kie.workbench.common.stunner.bpmn.workitem.WorkItemDefinitionCacheRegistry;
 import org.kie.workbench.common.stunner.bpmn.workitem.WorkItemDefinitionRegistry;
-import org.kie.workbench.common.stunner.core.client.canvas.BaseCanvasHandler;
 import org.kie.workbench.common.stunner.core.diagram.Metadata;
+import org.kie.workbench.common.stunner.kogito.client.editor.KogitoEditorWorkItemDefinitionService;
+import org.kie.workbench.common.stunner.kogito.client.services.util.ResourceSearchPath;
+import org.kie.workbench.common.stunner.kogito.client.services.util.WorkItemIconCache;
 import org.uberfire.client.promise.Promises;
 
 import static java.util.Arrays.asList;
@@ -45,14 +44,16 @@ import static org.kie.workbench.common.stunner.bpmn.client.workitem.WorkItemDefi
 import static org.kie.workbench.common.stunner.core.util.StringUtils.nonEmpty;
 
 @ApplicationScoped
-public class WorkItemDefinitionStandaloneClientService implements WorkItemDefinitionClientService {
+public class WorkItemDefinitionStandaloneClientService implements WorkItemDefinitionClientService,
+                                                                  KogitoEditorWorkItemDefinitionService {
 
-    private static Logger LOGGER = Logger.getLogger(BaseCanvasHandler.class.getName());
     private static final String RESOURCE_ALL_WID_PATTERN = "**/*.wid";
 
     private final Promises promises;
     private final WorkItemDefinitionCacheRegistry registry;
     private final ResourceContentService resourceContentService;
+    private final ResourceSearchPath resourceSearchPath;
+    private final WorkItemIconCache workItemIconCache;
 
     // Cache the promise, as by definition will be performed just once,
     // so the available work item definitions will be also just registered once, by app.
@@ -61,16 +62,15 @@ public class WorkItemDefinitionStandaloneClientService implements WorkItemDefini
     @Inject
     public WorkItemDefinitionStandaloneClientService(final Promises promises,
                                                      final WorkItemDefinitionCacheRegistry registry,
-                                                     final ResourceContentService resourceContentService) {
+                                                     final ResourceContentService resourceContentService,
+                                                     final ResourceSearchPath resourceSearchPath,
+                                                     final WorkItemIconCache workItemIconCache) {
 
         this.promises = promises;
         this.registry = registry;
         this.resourceContentService = resourceContentService;
-    }
-
-    @PostConstruct
-    public void init() {
-        loader = allWorkItemsLoader();
+        this.resourceSearchPath = resourceSearchPath;
+        this.workItemIconCache = workItemIconCache;
     }
 
     @Produces
@@ -78,6 +78,12 @@ public class WorkItemDefinitionStandaloneClientService implements WorkItemDefini
     @Override
     public WorkItemDefinitionRegistry getRegistry() {
         return registry;
+    }
+
+    @Override
+    public void load(String diagramPath) {
+        this.resourceSearchPath.init(diagramPath);
+        loader = allWorkItemsLoader();
     }
 
     @Override
@@ -92,87 +98,73 @@ public class WorkItemDefinitionStandaloneClientService implements WorkItemDefini
     }
 
     private Promise<Collection<WorkItemDefinition>> allWorkItemsLoader() {
-        log("Starting loading of all Work Items");
         return promises.create((success, failure) -> {
-            log("Loading all Work Items");
             registry.clear();
             final List<WorkItemDefinition> loaded = new LinkedList<>();
             resourceContentService
-                                  .list(RESOURCE_ALL_WID_PATTERN)
-                                  .then(paths -> {
-                                      if (paths.length > 0) {
-                                          log("Work Items found at [" + paths + "]");
-                                          promises.all(asList(paths),
-                                                       path -> workItemsLoader(path, loaded))
-                                                  .then(wids -> {
-                                                      wids.forEach(registry::register);
-                                                      success.onInvoke(wids);
-                                                      return null;
-                                                  })
-                                                  .catch_(error -> {
-                                                      failure.onInvoke(error);
-                                                      return null;
-                                                  });
-                                      } else {
-                                          log("NO Work Items found at [" + paths + "]");
-                                          success.onInvoke(emptyList());
-                                      }
-                                      return promises.resolve();
-                                  })
-                                  .catch_(error -> {
-                                      failure.onInvoke(error);
-                                      return null;
-                                  });
+                    .list(resourceSearchPath.getSearchExpression(RESOURCE_ALL_WID_PATTERN))
+                    .then(paths -> {
+                        if (paths.length > 0) {
+                            promises.all(asList(paths),
+                                         path -> workItemsLoader(path, loaded))
+                                    .then(wids -> {
+                                        wids.forEach(registry::register);
+                                        success.onInvoke(wids);
+                                        return null;
+                                    })
+                                    .catch_(error -> {
+                                        failure.onInvoke(error);
+                                        return null;
+                                    });
+                        } else {
+                            success.onInvoke(emptyList());
+                        }
+                        return promises.resolve();
+                    })
+                    .catch_(error -> {
+                        failure.onInvoke(error);
+                        return null;
+                    });
         });
     }
 
     @SuppressWarnings("unchecked")
     private Promise<Collection<WorkItemDefinition>> workItemsLoader(final String path,
                                                                     final Collection<WorkItemDefinition> loaded) {
-        log("Processing [" + path + "]");
         if (nonEmpty(path)) {
             return resourceContentService
-                                         .get(path)
-                                         .then(value -> {
-                                             log("Content for path = [" + value + "]");
-                                             log("Loading Work Items for path [" + path + "]");
-                                             final List<WorkItemDefinition> wids = parse(value);
-                                             return promises.create((success, failure) -> {
-                                                 promises.all(wids, this::workItemIconLoader)
-                                                         .then(wid -> {
-                                                             loaded.addAll(wids);
-                                                             success.onInvoke(loaded);
-                                                             return promises.resolve();
-                                                         })
-                                                         .catch_(error -> {
-                                                             failure.onInvoke(error);
-                                                             return null;
-                                                         });
-                                             });
-                                         });
+                    .get(path)
+                    .then(value -> {
+                        final List<WorkItemDefinition> wids = parse(value);
+                        return promises.create((success, failure) -> {
+                            promises.all(wids, this::workItemIconLoader)
+                                    .then(wid -> {
+                                        loaded.addAll(wids);
+                                        success.onInvoke(loaded);
+                                        return promises.resolve();
+                                    })
+                                    .catch_(error -> {
+                                        failure.onInvoke(error);
+                                        return null;
+                                    });
+                        });
+                    });
         }
         return promises.resolve(emptyList());
     }
 
     private Promise workItemIconLoader(final WorkItemDefinition wid) {
         final String iconUri = wid.getIconDefinition().getUri();
-        log("Loading icon for URI [" + iconUri + "]");
         if (nonEmpty(iconUri)) {
-            return resourceContentService
-                                         .get(iconUri, ResourceContentOptions.binary())
-                                         .then(iconData -> {
-                                             log("Content for icon = [" + iconData + "]");
-                                             if (nonEmpty(iconData)) {
-                                                 if (!isIconDataUri(iconData)) {
-                                                     iconData = iconDataUri(iconUri, iconData);
-                                                 }
-                                                 wid.getIconDefinition().setIconData(iconData);
-                                             }
-                                             return promises.resolve();
-                                         }).catch_(error -> {
-                                             log("Not able to load icon for URI " + iconUri);
-                                             return Promise.resolve("");
-                                         });
+            return workItemIconCache.getIcon(iconUri).then(iconData -> {
+                if (nonEmpty(iconData)) {
+                    if (!isIconDataUri(iconData)) {
+                        iconData = iconDataUri(iconUri, iconData);
+                    }
+                    wid.getIconDefinition().setIconData(iconData);
+                }
+                return promises.resolve();
+            });
         }
         return promises.resolve();
     }
@@ -189,9 +181,5 @@ public class WorkItemDefinitionStandaloneClientService implements WorkItemDefini
             return "data:image/" + fileType + ";base64, " + iconData;
         }
         return iconData;
-    }
-
-    private static void log(String s) {
-        LOGGER.fine(s);
     }
 }

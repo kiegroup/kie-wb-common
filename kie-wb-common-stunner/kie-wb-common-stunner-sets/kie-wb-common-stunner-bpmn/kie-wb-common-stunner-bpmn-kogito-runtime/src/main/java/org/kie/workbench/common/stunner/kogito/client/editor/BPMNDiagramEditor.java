@@ -91,6 +91,7 @@ public class BPMNDiagramEditor extends AbstractDiagramEditor {
     private final KogitoClientDiagramService diagramServices;
     private final CanvasFileExport canvasFileExport;
     private final Promises promises;
+    private final KogitoEditorWorkItemDefinitionService editorWorkItemDefinitionService;
 
     @Inject
     public BPMNDiagramEditor(final View view,
@@ -114,7 +115,8 @@ public class BPMNDiagramEditor extends AbstractDiagramEditor {
                              final OpenDiagramLayoutExecutor openDiagramLayoutExecutor,
                              final KogitoClientDiagramService diagramServices,
                              final CanvasFileExport canvasFileExport,
-                             final Promises promises) {
+                             final Promises promises,
+                             final KogitoEditorWorkItemDefinitionService editorWorkItemDefinitionService) {
         super(view,
               fileMenuBuilder,
               placeManager,
@@ -137,6 +139,7 @@ public class BPMNDiagramEditor extends AbstractDiagramEditor {
         this.diagramServices = diagramServices;
         this.canvasFileExport = canvasFileExport;
         this.promises = promises;
+        this.editorWorkItemDefinitionService = editorWorkItemDefinitionService;
     }
 
     @OnStartup
@@ -279,6 +282,7 @@ public class BPMNDiagramEditor extends AbstractDiagramEditor {
         Promise<Void> promise =
                 promises.create((success, failure) -> {
                     superOnClose();
+                    editorWorkItemDefinitionService.load(path);
                     diagramServices.transform(value,
                                               new ServiceCallback<Diagram>() {
 
