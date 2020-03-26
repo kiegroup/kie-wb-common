@@ -22,6 +22,7 @@ import java.util.Optional;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
+import com.google.gwt.core.client.Scheduler;
 import org.jboss.errai.common.client.api.IsElement;
 import org.jboss.errai.common.client.dom.DOMUtil;
 import org.jboss.errai.common.client.dom.UnorderedList;
@@ -37,7 +38,7 @@ import org.kie.workbench.common.dmn.client.widgets.grid.controls.list.HasListSel
 @Dependent
 public class ListSelectorViewImpl implements ListSelectorView {
 
-    private static final String OPEN = "open";
+    static final String ACTION = "toggle";
 
     @DataField("items-container")
     private UnorderedList itemsContainer;
@@ -101,11 +102,34 @@ public class ListSelectorViewImpl implements ListSelectorView {
 
     @Override
     public void show() {
-        getElement().getClassList().add(OPEN);
+        //Schedule programmatic display of dropdown as it has not been attached to the DOM at this point.
+        schedule(() -> {
+            if (isDropdownMenuHidden()) {
+                dropdownTrigger().dropdown(ACTION);
+            }
+        });
     }
 
     @Override
     public void hide() {
-        getElement().getClassList().remove(OPEN);
+        if (!isDropdownMenuHidden()) {
+            dropdownTrigger().dropdown(ACTION);
+        }
+    }
+
+    void schedule(final Scheduler.ScheduledCommand command) {
+        Scheduler.get().scheduleDeferred(command);
+    }
+
+    JQueryDropdownMenu dropdown() {
+        return JQueryDropdownMenu.$("#dropdown");
+    }
+
+    JQueryDropdownMenu dropdownTrigger() {
+        return JQueryDropdownMenu.$("#dropdown-trigger");
+    }
+
+    boolean isDropdownMenuHidden() {
+        return dropdown().find(".dropdown-menu").is(":hidden");
     }
 }

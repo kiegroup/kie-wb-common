@@ -18,6 +18,7 @@ package org.kie.workbench.common.dmn.client.widgets.grid.controls.list;
 
 import java.util.Arrays;
 
+import com.google.gwt.core.client.Scheduler;
 import com.google.gwtmockito.GwtMockitoTestRunner;
 import org.jboss.errai.common.client.dom.HTMLElement;
 import org.jboss.errai.common.client.dom.UnorderedList;
@@ -30,11 +31,14 @@ import org.mockito.Mock;
 import org.uberfire.mvp.Command;
 
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 
 @RunWith(GwtMockitoTestRunner.class)
@@ -82,14 +86,17 @@ public class ListSelectorViewImplTest {
     @Mock
     private HasListSelectorControl.ListSelectorHeaderItem headerItem;
 
+    @Mock
+    private JQueryDropdownMenu jQueryDropdownMenu;
+
     private ListSelectorViewImpl view;
 
     @Before
     public void setUp() {
-        view = new ListSelectorViewImpl(itemsContainer,
-                                        listSelectorTextItemViews,
-                                        listSelectorDividerItemViews,
-                                        listSelectorHeaderItemViews);
+        view = spy(new ListSelectorViewImpl(itemsContainer,
+                                            listSelectorTextItemViews,
+                                            listSelectorDividerItemViews,
+                                            listSelectorHeaderItemViews));
         view.init(presenter);
         doReturn(textItemView).when(listSelectorTextItemViews).get();
         doReturn(textElement).when(textItemView).getElement();
@@ -97,6 +104,14 @@ public class ListSelectorViewImplTest {
         doReturn(dividerElement).when(dividerItemView).getElement();
         doReturn(headerItemView).when(listSelectorHeaderItemViews).get();
         doReturn(headerElement).when(headerItemView).getElement();
+
+        doReturn(jQueryDropdownMenu).when(view).dropdown();
+        doReturn(jQueryDropdownMenu).when(view).dropdownTrigger();
+
+        doAnswer(i -> {
+            ((Scheduler.ScheduledCommand) i.getArguments()[0]).execute();
+            return null;
+        }).when(view).schedule(any(Scheduler.ScheduledCommand.class));
     }
 
     @Test
@@ -139,5 +154,41 @@ public class ListSelectorViewImplTest {
         view.setItems(Arrays.asList(mock(HasListSelectorControl.ListSelectorItem.class)));
 
         verify(itemsContainer, never()).appendChild(any());
+    }
+
+    @Test
+    public void testShowWhenNotShown() {
+        doReturn(true).when(view).isDropdownMenuHidden();
+
+        view.show();
+
+        verify(jQueryDropdownMenu).dropdown(eq(ListSelectorViewImpl.ACTION));
+    }
+
+    @Test
+    public void testShowWhenAlreadyShown() {
+        doReturn(false).when(view).isDropdownMenuHidden();
+
+        view.show();
+
+        verify(jQueryDropdownMenu, never()).dropdown(anyString());
+    }
+
+    @Test
+    public void testHidenWhenNotHidden() {
+        doReturn(false).when(view).isDropdownMenuHidden();
+
+        view.hide();
+
+        verify(jQueryDropdownMenu).dropdown(eq(ListSelectorViewImpl.ACTION));
+    }
+
+    @Test
+    public void testHideWhenAlreadyHidden() {
+        doReturn(true).when(view).isDropdownMenuHidden();
+
+        view.hide();
+
+        verify(jQueryDropdownMenu, never()).dropdown(anyString());
     }
 }
