@@ -17,6 +17,7 @@
 package org.kie.workbench.common.dmn.client.editors.expressions.types.dtable;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
@@ -81,5 +82,32 @@ public class RuleAnnotationClauseColumnHeaderMetaData extends EditableTextHeader
     @Override
     public void onItemSelected(final ListSelectorItem item) {
         listSelectorItemConsumer.accept(item);
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        if (!super.equals(o)) {
+            return false;
+        }
+        final RuleAnnotationClauseColumnHeaderMetaData that = (RuleAnnotationClauseColumnHeaderMetaData) o;
+        return Objects.equals(listSelectorItemsSupplier, that.listSelectorItemsSupplier) &&
+                Objects.equals(listSelector, that.listSelector) &&
+                Objects.equals(listSelectorItemConsumer, that.listSelectorItemConsumer) &&
+                Objects.equals(placeHolder, that.placeHolder);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(),
+                            listSelectorItemsSupplier,
+                            listSelector,
+                            listSelectorItemConsumer,
+                            placeHolder);
     }
 }

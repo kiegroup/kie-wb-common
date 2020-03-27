@@ -42,6 +42,7 @@ import org.uberfire.ext.wires.core.grids.client.widget.grid.renderers.themes.Gri
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 import static org.kie.workbench.common.dmn.client.editors.expressions.types.dtable.RuleAnnotationClauseColumnHeaderMetaData.COLUMN_GROUP;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -49,10 +50,6 @@ import static org.mockito.Mockito.when;
 
 @RunWith(LienzoMockitoTestRunner.class)
 public class RuleAnnotationClauseColumnHeaderMetaDataTest extends BaseColumnHeaderMetaDataContextMenuTest<RuleAnnotationClauseColumnHeaderMetaData, Name, HasName> {
-
-    private static final double BLOCK_WIDTH = 10.0;
-
-    private static final double BLOCK_HEIGHT = 20.0;
 
     private RuleAnnotationClauseColumnHeaderMetaData column;
 
@@ -150,5 +147,33 @@ public class RuleAnnotationClauseColumnHeaderMetaDataTest extends BaseColumnHead
     @Test
     public void testGetPlaceHolder() {
         assertThat(headerMetaData.getPlaceHolder()).isEqualTo(placeHolder);
+    }
+
+    @Test
+    public void testEquals() {
+
+        final Supplier<String> otherGetter = mock(Supplier.class);
+        when(otherGetter.get()).thenReturn("");
+        final RuleAnnotationClauseColumnHeaderMetaData otherEqualsColumn = new RuleAnnotationClauseColumnHeaderMetaData(titleGetter,
+                                                                                                                        titleSetter,
+                                                                                                                        factory,
+                                                                                                                        placeHolder,
+                                                                                                                        listSelectorItemsSupplier,
+                                                                                                                        listSelector,
+                                                                                                                        listSelectorItemConsumer);
+
+        assertEquals(column, otherEqualsColumn);
+        assertEquals(column.hashCode(), otherEqualsColumn.hashCode());
+
+        final RuleAnnotationClauseColumnHeaderMetaData notEqualsColumn = new RuleAnnotationClauseColumnHeaderMetaData(otherGetter,
+                                                                                                                      titleSetter,
+                                                                                                                      factory,
+                                                                                                                      placeHolder,
+                                                                                                                      listSelectorItemsSupplier,
+                                                                                                                      listSelector,
+                                                                                                                      listSelectorItemConsumer);
+
+        assertNotEquals(column, notEqualsColumn);
+        assertNotEquals(column.hashCode(), notEqualsColumn.hashCode());
     }
 }
