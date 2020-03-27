@@ -51,6 +51,8 @@ public class WorkItemDefinitionClientParser {
             return Collections.emptyList();
         }
 
+        widStr = widStr.replace("\r\n", "\n");
+
         List<WorkItemDefinition> widList = new ArrayList<>();
         String[] lines = widStr.split("\n");
         Queue<String> linesQueue = new LinkedList<>(Arrays.asList(lines));
