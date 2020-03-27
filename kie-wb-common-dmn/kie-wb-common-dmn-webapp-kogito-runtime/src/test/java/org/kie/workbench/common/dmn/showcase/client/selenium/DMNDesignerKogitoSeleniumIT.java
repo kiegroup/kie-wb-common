@@ -105,6 +105,7 @@ public class DMNDesignerKogitoSeleniumIT {
     private static final String DECISION_NODE = "//div[@id='decision-graphs-content']//ul/li[@title='%s']";
     private static final String DECISION_TABLE = "//div[@id='decision-graphs-content']//ul/li[@title='%s']/ul/li[@title='Decision Table']/div";
     private static final String LIST = "//div[@id='decision-graphs-content']//ul/li[@title='%s']/ul/li[@title='List']/div";
+    private static final String NOT_PRESENT_IN_NAVIGATOR = "' was not present in the decision navigator";
 
     // context menus/popups
     private static final String MENU_ENTRY = "//div[@data-field='cellEditorControlsContainer']//ul/li/a/span[text()='%s']";
@@ -2148,7 +2149,7 @@ public class DMNDesignerKogitoSeleniumIT {
         expandDecisionNavigatorDock();
         final WebElement node = waitOperation().until(element(DECISION_NODE, nodeName));
         assertThat(node)
-                .as("Node '" + nodeName + "'was not present in the list of nodes")
+                .as("Node '" + nodeName + NOT_PRESENT_IN_NAVIGATOR)
                 .isNotNull();
         collapseDecisionNavigatorDock();
     }
@@ -2160,7 +2161,7 @@ public class DMNDesignerKogitoSeleniumIT {
         expandDecisionNavigatorDock();
         final WebElement node = waitOperation().until(element(DECISION_TABLE, decisionTable.getName()));
         assertThat(node)
-                .as("Decision table of '" + decisionTable.getName() + "'was not present in the list of nodes")
+                .as("Decision table of '" + decisionTable.getName() + NOT_PRESENT_IN_NAVIGATOR)
                 .isNotNull();
         node.click();
 
@@ -2186,7 +2187,7 @@ public class DMNDesignerKogitoSeleniumIT {
         expandDecisionNavigatorDock();
         final WebElement node = waitOperation().until(element(LIST, list.getName()));
         assertThat(node)
-                .as("Decision table of '" + list.getName() + "'was not present in the list of nodes")
+                .as("List expression '" + list.getName() + NOT_PRESENT_IN_NAVIGATOR)
                 .isNotNull();
         node.click();
 
@@ -2195,18 +2196,19 @@ public class DMNDesignerKogitoSeleniumIT {
             editor.sendKeys(Keys.ARROW_DOWN);
         }
 
+        // invoke context menu for adding an item
         editor.sendKeys(Keys.CONTROL, Keys.SPACE);
 
-        final WebElement listEntry = waitOperation().until(element(MENU_ENTRY, "Insert below"));
-        assertThat(listEntry)
-                .as("Entry in context menu not available")
+        final WebElement insertBelow = waitOperation().until(element(MENU_ENTRY, "Insert below"));
+        assertThat(insertBelow)
+                .as("Insert below entry in context menu not available")
                 .isNotNull();
-        listEntry.click();
+        insertBelow.click();
 
-        editor.sendKeys(Keys.ARROW_DOWN);
+        // move to the new cell and start edit mode
+        editor.sendKeys(Keys.ARROW_DOWN, Keys.ENTER);
 
-        editor.sendKeys(Keys.ENTER);
-
+        // put in new value and finish edit mode
         getAutocompleteEditor().sendKeys(item, Keys.TAB);
 
         collapseDecisionNavigatorDock();
