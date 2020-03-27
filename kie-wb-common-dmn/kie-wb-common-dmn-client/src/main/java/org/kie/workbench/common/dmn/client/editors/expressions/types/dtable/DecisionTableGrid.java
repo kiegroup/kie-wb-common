@@ -27,7 +27,6 @@ import java.util.function.Supplier;
 import javax.enterprise.event.Event;
 
 import com.ait.lienzo.shared.core.types.EventPropagationMode;
-import org.gwtbootstrap3.client.ui.TextBox;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.kie.workbench.common.dmn.api.definition.HasExpression;
@@ -69,7 +68,6 @@ import org.kie.workbench.common.dmn.client.editors.types.ValueAndDataTypePopover
 import org.kie.workbench.common.dmn.client.resources.i18n.DMNEditorConstants;
 import org.kie.workbench.common.dmn.client.widgets.grid.BaseExpressionGrid;
 import org.kie.workbench.common.dmn.client.widgets.grid.columns.factory.TextAreaSingletonDOMElementFactory;
-import org.kie.workbench.common.dmn.client.widgets.grid.columns.factory.dom.TextBoxDOMElement;
 import org.kie.workbench.common.dmn.client.widgets.grid.controls.container.CellEditorControlsView;
 import org.kie.workbench.common.dmn.client.widgets.grid.controls.list.HasListSelectorControl;
 import org.kie.workbench.common.dmn.client.widgets.grid.controls.list.ListSelectorView;
@@ -93,7 +91,6 @@ import org.kie.workbench.common.stunner.forms.client.event.RefreshFormProperties
 import org.uberfire.ext.wires.core.grids.client.model.GridColumn;
 import org.uberfire.ext.wires.core.grids.client.model.GridRow;
 import org.uberfire.ext.wires.core.grids.client.util.CellContextUtilities;
-import org.uberfire.ext.wires.core.grids.client.widget.dom.single.SingletonDOMElementFactory;
 import org.uberfire.mvp.Command;
 
 import static org.kie.workbench.common.dmn.client.editors.expressions.util.RendererUtils.getExpressionTextLineHeight;
@@ -107,7 +104,6 @@ public class DecisionTableGrid extends BaseExpressionGrid<DecisionTable, Decisio
     private final ManagedInstance<ValueAndDataTypePopoverView.Presenter> headerEditors;
 
     private final TextAreaSingletonDOMElementFactory textAreaFactory = getBodyTextAreaFactory();
-    private final SingletonDOMElementFactory<TextBox, TextBoxDOMElement> textBoxFactory = getHeaderTextBoxFactory();
 
     private class ListSelectorItemDefinition {
 
@@ -226,7 +222,7 @@ public class DecisionTableGrid extends BaseExpressionGrid<DecisionTable, Decisio
             final List<GridColumn.HeaderMetaData> metaData = new ArrayList<>();
             metaData.add(new RuleAnnotationClauseColumnHeaderMetaData(() -> ruleAnnotationClause.getName().getValue(),
                                                                       (value) -> ruleAnnotationClause.getName().setValue(value),
-                                                                      textBoxFactory,
+                                                                      getHeaderTextBoxFactory(),
                                                                       Optional.of(translationService.getTranslation(DMNEditorConstants.DecisionTableEditor_EnterAnnotation)),
                                                                       this::getHeaderItems,
                                                                       listSelector,

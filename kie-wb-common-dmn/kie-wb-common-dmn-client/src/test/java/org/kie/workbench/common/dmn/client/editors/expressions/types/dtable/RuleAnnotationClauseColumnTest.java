@@ -65,7 +65,7 @@ public class RuleAnnotationClauseColumnTest {
     }
 
     @Test
-    public void testEdit(){
+    public void testEdit() {
 
         final GridCell<String> cell = mock(GridCell.class);
         final GridBodyCellEditContext context = mock(GridBodyCellEditContext.class);
@@ -84,15 +84,7 @@ public class RuleAnnotationClauseColumnTest {
     }
 
     @Test
-    public void testFlush(){
-
-        column.flush();
-
-        verify(factory).flush();
-    }
-
-    @Test
-    public void testDestroyResources(){
+    public void testDestroyResources() {
 
         doNothing().when(column).superDestroyResources();
 
@@ -103,7 +95,7 @@ public class RuleAnnotationClauseColumnTest {
     }
 
     @Test
-    public void testSetWidth(){
+    public void testSetWidth() {
 
         doNothing().when(column).superSetWidth(width);
         doNothing().when(column).updateWidthOfPeers();

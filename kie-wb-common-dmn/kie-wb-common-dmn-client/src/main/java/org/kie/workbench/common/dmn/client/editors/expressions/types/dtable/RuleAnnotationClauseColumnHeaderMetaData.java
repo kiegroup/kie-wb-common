@@ -47,7 +47,10 @@ public class RuleAnnotationClauseColumnHeaderMetaData extends EditableTextHeader
                                                     final BiFunction<Integer, Integer, List<ListSelectorItem>> listSelectorItemsSupplier,
                                                     final ListSelectorView.Presenter listSelector,
                                                     final Consumer<HasListSelectorControl.ListSelectorItem> listSelectorItemConsumer) {
-        super(titleGetter, titleSetter, factory, COLUMN_GROUP);
+        super(titleGetter,
+              titleSetter,
+              factory,
+              COLUMN_GROUP);
         this.listSelectorItemsSupplier = listSelectorItemsSupplier;
         this.listSelector = listSelector;
         this.listSelectorItemConsumer = listSelectorItemConsumer;

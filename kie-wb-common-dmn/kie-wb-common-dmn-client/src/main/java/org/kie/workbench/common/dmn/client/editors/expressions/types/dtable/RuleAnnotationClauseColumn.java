@@ -29,9 +29,9 @@ import org.uberfire.ext.wires.core.grids.client.model.GridCell;
 import org.uberfire.ext.wires.core.grids.client.model.GridCellValue;
 import org.uberfire.ext.wires.core.grids.client.model.impl.BaseGridCellValue;
 import org.uberfire.ext.wires.core.grids.client.widget.context.GridBodyCellRenderContext;
-import org.uberfire.ext.wires.core.grids.client.widget.dom.single.HasSingletonDOMElementResource;
+import org.uberfire.ext.wires.core.grids.client.widget.dom.HasDOMElementResources;
 
-public class RuleAnnotationClauseColumn extends DMNSimpleGridColumn<DecisionTableGrid, String> implements HasSingletonDOMElementResource {
+public class RuleAnnotationClauseColumn extends DMNSimpleGridColumn<DecisionTableGrid, String> implements HasDOMElementResources {
 
     private final TextAreaSingletonDOMElementFactory factory;
 
@@ -70,11 +70,6 @@ public class RuleAnnotationClauseColumn extends DMNSimpleGridColumn<DecisionTabl
     @Override
     protected GridCellValue<String> makeDefaultCellValue() {
         return new BaseGridCellValue<>("");
-    }
-
-    @Override
-    public void flush() {
-        factory.flush();
     }
 
     @Override

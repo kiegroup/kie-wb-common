@@ -173,12 +173,6 @@ public class DMNEditorConstants {
     public static final String FunctionEditor_SelectFunctionKind = "FunctionEditor.SelectFunctionKind";
 
     @TranslationKey(defaultValue = "")
-    public static final String DecisionTableEditor_SelectRuleAnnotationName = "DecisionTableEditor.SelectRuleAnnotationName";
-
-    @TranslationKey(defaultValue = "")
-    public static final String DecisionTableEditor_DescriptionColumnHeader = "DecisionTableEditor.DescriptionColumnHeader";
-
-    @TranslationKey(defaultValue = "")
     public static final String DecisionTableEditor_DecisionRuleHeader = "DecisionTableEditor.DecisionRuleHeader";
 
     @TranslationKey(defaultValue = "")
@@ -288,9 +282,6 @@ public class DMNEditorConstants {
 
     @TranslationKey(defaultValue = "")
     public static final String NameAndDataTypePopover_DataTypeLabel = "NameAndDataTypePopover.DataTypeLabel";
-
-    @TranslationKey(defaultValue = "")
-    public static final String ValuePopover_ValueLabel = "ValuePopover.ValueLabel";
 
     @TranslationKey(defaultValue = "")
     public static final String DataTypeNameIsBlankErrorMessage_StrongMessage = "DataTypeNameIsBlankErrorMessage.StrongMessage";

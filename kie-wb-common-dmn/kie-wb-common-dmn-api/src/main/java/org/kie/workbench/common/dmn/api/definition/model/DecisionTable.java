@@ -30,7 +30,7 @@ import static org.kie.workbench.common.dmn.api.definition.model.common.HasTypeRe
 @Portable
 public class DecisionTable extends Expression {
 
-    private static final int STATIC_COLUMNS = 2;
+    private static final int STATIC_COLUMNS = 1;
 
     private List<InputClause> input;
     private List<OutputClause> output;
