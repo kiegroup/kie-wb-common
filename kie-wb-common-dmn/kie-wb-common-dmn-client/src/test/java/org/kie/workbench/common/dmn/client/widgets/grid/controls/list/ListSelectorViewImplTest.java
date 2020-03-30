@@ -17,6 +17,8 @@
 package org.kie.workbench.common.dmn.client.widgets.grid.controls.list;
 
 import java.util.Arrays;
+import java.util.Optional;
+import java.util.function.Consumer;
 
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwtmockito.GwtMockitoTestRunner;
@@ -26,8 +28,12 @@ import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.kie.workbench.common.dmn.client.editors.types.CanBeClosedByKeyboard;
 import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.Mock;
+import org.uberfire.client.views.pfly.selectpicker.JQuery;
+import org.uberfire.client.views.pfly.selectpicker.JQueryEvent;
 import org.uberfire.mvp.Command;
 
 import static org.mockito.Matchers.any;
@@ -88,6 +94,12 @@ public class ListSelectorViewImplTest {
 
     @Mock
     private JQueryDropdownMenu jQueryDropdownMenu;
+
+    @Mock
+    private Consumer<CanBeClosedByKeyboard> closedByKeyboardConsumer;
+
+    @Captor
+    private ArgumentCaptor<JQuery.CallbackFunction> jQueryCallbackFunctionCaptor;
 
     private ListSelectorViewImpl view;
 
@@ -160,27 +172,42 @@ public class ListSelectorViewImplTest {
     public void testShowWhenNotShown() {
         doReturn(true).when(view).isDropdownMenuHidden();
 
-        view.show();
+        view.show(Optional.empty());
 
-        verify(jQueryDropdownMenu).dropdown(eq(ListSelectorViewImpl.ACTION));
+        verify(jQueryDropdownMenu).dropdown(eq(ListSelectorViewImpl.DROPDOWN_ACTION));
     }
 
     @Test
     public void testShowWhenAlreadyShown() {
         doReturn(false).when(view).isDropdownMenuHidden();
 
-        view.show();
+        view.show(Optional.empty());
 
         verify(jQueryDropdownMenu, never()).dropdown(anyString());
     }
 
     @Test
-    public void testHidenWhenNotHidden() {
+    public void testShowWhenNotShownWithCanBeClosedByKeyboardHandler() {
+        doReturn(true).when(view).isDropdownMenuHidden();
+
+        view.setOnClosedByKeyboardCallback(closedByKeyboardConsumer);
+
+        view.show(Optional.empty());
+
+        verify(view).dropdownHiddenHandler(jQueryCallbackFunctionCaptor.capture());
+        final JQuery.CallbackFunction jQueryCallbackFunction = jQueryCallbackFunctionCaptor.getValue();
+        jQueryCallbackFunction.call(mock(JQueryEvent.class));
+
+        verify(closedByKeyboardConsumer).accept(view);
+    }
+
+    @Test
+    public void testHideWhenNotHidden() {
         doReturn(false).when(view).isDropdownMenuHidden();
 
         view.hide();
 
-        verify(jQueryDropdownMenu).dropdown(eq(ListSelectorViewImpl.ACTION));
+        verify(jQueryDropdownMenu).dropdown(eq(ListSelectorViewImpl.DROPDOWN_ACTION));
     }
 
     @Test
