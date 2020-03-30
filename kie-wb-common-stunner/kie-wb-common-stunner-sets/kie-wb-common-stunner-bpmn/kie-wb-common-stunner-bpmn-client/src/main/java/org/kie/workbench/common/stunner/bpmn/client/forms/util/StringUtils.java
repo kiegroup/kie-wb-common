@@ -99,9 +99,9 @@ public class StringUtils {
     }
 
     /**
-     * Equivalent of {@link java.net.URLDecoder#decode(String, String)} in UTF-8 decoding on server side
-     * @param s
-     * @return
+     * Equivalent of {@link java.net.URLEncoder#encode(String, String)} in UTF-8 encoding on server side
+     * @param s a string to encode on the client side
+     * @return an encoded string
      */
     public static String encode(String s) {
         if (isEmpty(s)) {
@@ -111,9 +111,9 @@ public class StringUtils {
     }
 
     /**
-     * Equivalent of {@link java.net.URLEncoder#encode(String, String)} in UTF-8 encoding on server side
-     * @param s
-     * @return
+     * Equivalent of {@link java.net.URLDecoder#decode(String, String)} in UTF-8 decoding on server side
+     * @param s a string to decode on the client side
+     * @return a decoded string
      */
     public static String decode(String s) {
         if (isEmpty(s)) {

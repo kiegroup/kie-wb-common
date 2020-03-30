@@ -25,7 +25,10 @@ public abstract class AbstractKogitoClientDiagramService implements KogitoClient
     public static final String DEFAULT_DIAGRAM_ID = "default";
 
     /**
-     * Extracts file name from path.
+     * Making correct ID diagram from path:
+     * 1. Extracts file name without extension from path
+     * 2. Returns {@link AbstractKogitoClientDiagramService#generateDefaultId}
+     * If name is empty (can be overridden in descendant)
      * @param filePath path to the file
      * @return file name
      */
@@ -37,7 +40,7 @@ public abstract class AbstractKogitoClientDiagramService implements KogitoClient
         return getFileNameWithoutExtension(getFileName(filePath));
     }
 
-    private static String getFileNameWithoutExtension(String fullName) {
+    private static String getFileNameWithoutExtension(final String fullName) {
         if (fullName.contains(".")) {
             return fullName.substring(0, fullName.lastIndexOf('.'));
         }

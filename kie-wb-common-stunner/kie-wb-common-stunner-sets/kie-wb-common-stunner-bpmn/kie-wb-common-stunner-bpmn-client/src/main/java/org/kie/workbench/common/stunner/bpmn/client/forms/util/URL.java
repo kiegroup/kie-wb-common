@@ -24,7 +24,7 @@ public class URL {
 
     /**
      * Proxy method for {@link com.google.gwt.http.client.URL#encodeQueryString(String s)} ()}
-     * @param s - string to encode
+     * @param s a string to encode
      * * @return encoded string value
      */
     public String encodeQueryString(String s) {
@@ -33,7 +33,7 @@ public class URL {
 
     /**
      * Proxy method for {@link com.google.gwt.http.client.URL#decodeQueryString(String s)}
-     * @param s - string to decode
+     * @param s a string to decode
      * @return decoded string value
      */
     public String decodeQueryString(String s) {
@@ -42,8 +42,8 @@ public class URL {
 
     /**
      * Proxy method for {@link com.google.gwt.http.client.URL#encode(String s)} ()}
-     * @param s - string to encode
-     * * @return encoded string value
+     * @param s a string to encode
+     * @return encoded string value
      */
     public String encode(String s) {
         return com.google.gwt.http.client.URL.encode(s);
@@ -51,7 +51,7 @@ public class URL {
 
     /**
      * Proxy method for {@link com.google.gwt.http.client.URL#decode(String s)}
-     * @param s - string to decode
+     * @param s a string to decode
      * @return decoded string value
      */
     public String decode(String s) {
