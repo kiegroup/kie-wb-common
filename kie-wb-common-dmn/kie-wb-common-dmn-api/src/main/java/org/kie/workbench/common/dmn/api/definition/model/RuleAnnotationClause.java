@@ -16,6 +16,8 @@
 
 package org.kie.workbench.common.dmn.api.definition.model;
 
+import java.util.Objects;
+
 import org.jboss.errai.common.client.api.annotations.Portable;
 import org.kie.workbench.common.dmn.api.definition.HasName;
 import org.kie.workbench.common.dmn.api.property.dmn.Name;
@@ -37,5 +39,22 @@ public class RuleAnnotationClause extends DMNElement implements HasName {
     @Override
     public void setName(final Name name) {
         this.name = name;
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final RuleAnnotationClause that = (RuleAnnotationClause) o;
+        return Objects.equals(name, that.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name);
     }
 }
