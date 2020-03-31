@@ -208,14 +208,14 @@ public class DMNClientDiagramServiceImpl implements KogitoClientDiagramService {
     @Override
     public Promise<String> transform(final KogitoDiagramResourceImpl resource) {
         if (resource.getType() == DiagramType.PROJECT_DIAGRAM) {
-            return promises.create((resolveCallbackFn, rejectCallbackFn) -> {
+            return promises.create((resolveOnchangeFn, rejectOnchangeFn) -> {
                 if (resource.projectDiagram().isPresent()) {
                     final Diagram diagram = resource.projectDiagram().get();
                     marshall(diagram,
-                             resolveCallbackFn,
-                             rejectCallbackFn);
+                             resolveOnchangeFn,
+                             rejectOnchangeFn);
                 } else {
-                    rejectCallbackFn.onInvoke(new IllegalStateException("DiagramType is PROJECT_DIAGRAM however no instance present"));
+                    rejectOnchangeFn.onInvoke(new IllegalStateException("DiagramType is PROJECT_DIAGRAM however no instance present"));
                 }
             });
         }
@@ -224,8 +224,8 @@ public class DMNClientDiagramServiceImpl implements KogitoClientDiagramService {
 
     @SuppressWarnings("unchecked")
     private void marshall(final Diagram diagram,
-                          final Promise.PromiseExecutorCallbackFn.ResolveCallbackFn<String> resolveCallbackFn,
-                          final Promise.PromiseExecutorCallbackFn.RejectCallbackFn rejectCallbackFn) {
+                          final Promise.PromiseExecutorCallbackFn.ResolveCallbackFn<String> resolveOnchangeFn,
+                          final Promise.PromiseExecutorCallbackFn.RejectCallbackFn rejectOnchangeFn) {
         if (Objects.isNull(diagram)) {
             return;
         }
@@ -239,7 +239,7 @@ public class DMNClientDiagramServiceImpl implements KogitoClientDiagramService {
             if (!xml.startsWith("<?xml version=\"1.0\" ?>")) {
                 xml = "<?xml version=\"1.0\" ?>" + xml;
             }
-            resolveCallbackFn.onInvoke(xml);
+            resolveOnchangeFn.onInvoke(xml);
         };
 
         try {
@@ -251,7 +251,7 @@ public class DMNClientDiagramServiceImpl implements KogitoClientDiagramService {
             MainJs.marshall(dmn12, jsitDefinitions.getNamespace(), jsCallback);
         } catch (Exception e) {
             GWT.log(e.getMessage(), e);
-            rejectCallbackFn.onInvoke(e);
+            rejectOnchangeFn.onInvoke(e);
         }
     }
 
