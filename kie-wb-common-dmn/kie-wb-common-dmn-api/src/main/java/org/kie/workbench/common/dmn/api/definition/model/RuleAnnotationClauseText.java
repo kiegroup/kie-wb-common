@@ -50,7 +50,10 @@ public class RuleAnnotationClauseText extends DMNElement implements HasText {
             return false;
         }
         final RuleAnnotationClauseText that = (RuleAnnotationClauseText) o;
-        return text.equals(that.text);
+        if (!Objects.equals(text, that.text)) {
+            return false;
+        }
+        return super.equals(that);
     }
 
     @Override
