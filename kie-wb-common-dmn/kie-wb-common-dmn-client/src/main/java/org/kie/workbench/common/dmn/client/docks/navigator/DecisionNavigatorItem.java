@@ -16,9 +16,15 @@
 
 package org.kie.workbench.common.dmn.client.docks.navigator;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.TreeSet;
 
+import org.kie.workbench.common.stunner.core.graph.Edge;
+import org.kie.workbench.common.stunner.core.graph.Node;
+import org.kie.workbench.common.stunner.core.graph.content.view.View;
+import org.kie.workbench.common.stunner.core.util.DefinitionUtils;
 import org.uberfire.mvp.Command;
 
 public class DecisionNavigatorItem implements Comparable {
@@ -134,14 +140,39 @@ public class DecisionNavigatorItem implements Comparable {
     }
 
     public enum Type {
-        ROOT,
-        ITEM,
-        CONTEXT,
-        DECISION_TABLE,
-        FUNCTION_DEFINITION,
-        INVOCATION,
-        LIST,
-        LITERAL_EXPRESSION,
-        RELATION
+        ROOT("Root"),
+        ITEM("Item"),
+        CONTEXT("Context"),
+        DECISION_TABLE("DecisionTable"),
+        FUNCTION_DEFINITION("FunctionDefinition"),
+        INVOCATION("Invocation"),
+        LIST("List"),
+        LITERAL_EXPRESSION("LiteralExpression"),
+        RELATION("Relation"),
+        TEXT_ANNOTATION("TextAnnotation"),
+        BUSINESS_KNOWLEDGE_MODEL("BusinessKnowledgeModel"),
+        INPUT_DATA("InputData"),
+        DECISION_SERVICE("DecisionService"),
+        KNOWLEDGE_SOURCE("KnowledgeSource"),
+        DECISION("Decision");
+
+        private static final Map<String, Type> BY_CLASS_NAME = new HashMap<>();
+
+        static {
+            for (Type type : values()) {
+                BY_CLASS_NAME.put(type.navigatorItemClassName, type);
+            }
+        }
+
+        private final String navigatorItemClassName;
+
+        Type(String navigatorItemClassName) {
+            this.navigatorItemClassName = navigatorItemClassName;
+        }
+
+        public static Type ofExpressionNode(final Node<View, Edge> node) {
+            String nodeClassName = DefinitionUtils.getElementDefinition(node).getClass().getSimpleName();
+            return BY_CLASS_NAME.getOrDefault(nodeClassName, ITEM);
+        }
     }
 }
