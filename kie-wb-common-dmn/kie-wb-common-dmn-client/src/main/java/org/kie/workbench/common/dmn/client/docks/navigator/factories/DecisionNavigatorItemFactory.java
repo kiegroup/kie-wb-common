@@ -20,11 +20,11 @@ import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
 import org.kie.workbench.common.dmn.client.docks.navigator.DecisionNavigatorItem;
+import org.kie.workbench.common.dmn.client.docks.navigator.DecisionNavigatorItem.Type;
 import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
 
-import static org.kie.workbench.common.dmn.client.docks.navigator.DecisionNavigatorItem.Type.ITEM;
 import static org.kie.workbench.common.dmn.client.docks.navigator.DecisionNavigatorItem.Type.ROOT;
 
 @Dependent
@@ -42,6 +42,6 @@ public class DecisionNavigatorItemFactory {
     }
 
     public DecisionNavigatorItem makeItem(final Node<View, Edge> node) {
-        return baseItemFactory.makeItem(node, ITEM);
+        return baseItemFactory.makeItem(node, Type.ofExpressionNode(node));
     }
 }
