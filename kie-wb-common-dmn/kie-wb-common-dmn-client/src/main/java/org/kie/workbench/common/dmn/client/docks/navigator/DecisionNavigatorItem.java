@@ -21,10 +21,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.TreeSet;
 
-import org.kie.workbench.common.stunner.core.graph.Edge;
-import org.kie.workbench.common.stunner.core.graph.Node;
-import org.kie.workbench.common.stunner.core.graph.content.view.View;
-import org.kie.workbench.common.stunner.core.util.DefinitionUtils;
 import org.uberfire.mvp.Command;
 
 public class DecisionNavigatorItem implements Comparable {
