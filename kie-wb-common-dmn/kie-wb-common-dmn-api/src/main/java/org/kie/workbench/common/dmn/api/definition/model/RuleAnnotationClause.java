@@ -49,6 +49,9 @@ public class RuleAnnotationClause extends DMNElement implements HasName {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
+        if (!super.equals(o)) {
+            return false;
+        }
         final RuleAnnotationClause that = (RuleAnnotationClause) o;
         return Objects.equals(name, that.name);
     }

@@ -49,6 +49,8 @@ import org.uberfire.ext.wires.core.grids.client.widget.grid.columns.RowNumberCol
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class MoveColumnsCommandTest {
@@ -308,6 +310,47 @@ public class MoveColumnsCommandTest {
                      canvasCommand.execute(canvasHandler));
 
         assertColumns(1, 2, 3, 5, 6, 4, 7, 8, 9);
+    }
+
+    @Test
+    public void testMoveSingleAnnotationColumnWithDuplicatedTitle() {
+
+        final DecisionTable decisionTable = new DecisionTable();
+        final DMNGridData model = new DMNGridData();
+
+        final RuleAnnotationClause clauseOne = new RuleAnnotationClause();
+        final RuleAnnotationClause clauseTwo = new RuleAnnotationClause();
+        final RuleAnnotationClause clauseThree = new RuleAnnotationClause();
+        decisionTable.getAnnotations().add(clauseOne);
+        decisionTable.getAnnotations().add(clauseTwo);
+        decisionTable.getAnnotations().add(clauseThree);
+
+        decisionTable.getRule().add(new DecisionRule() {{
+            getAnnotationEntry().add(new RuleAnnotationClauseText());
+            getAnnotationEntry().add(new RuleAnnotationClauseText());
+            getAnnotationEntry().add(new RuleAnnotationClauseText());
+        }});
+
+        final RuleAnnotationClauseColumn columnOne = mock(RuleAnnotationClauseColumn.class);
+        final RuleAnnotationClauseColumn columnTwo = mock(RuleAnnotationClauseColumn.class);
+        final RuleAnnotationClauseColumn columnThree = mock(RuleAnnotationClauseColumn.class);
+        model.appendColumn(uiRowNumberColumn);
+        model.appendColumn(columnOne);
+        model.appendColumn(columnTwo);
+        model.appendColumn(columnThree);
+        when(columnOne.getIndex()).thenReturn(1);
+        when(columnOne.getIndex()).thenReturn(2);
+        when(columnOne.getIndex()).thenReturn(3);
+
+        command = new MoveColumnsCommand(decisionTable, model, 2, Arrays.asList(columnOne), canvasOperation);
+        graphCommand = command.newGraphCommand(canvasHandler);
+        canvasCommand = command.newCanvasCommand(canvasHandler);
+
+        assertEquals(GraphCommandResultBuilder.SUCCESS,
+                     graphCommand.execute(graphCommandExecutionContext));
+
+        assertEquals(CanvasCommandResultBuilder.SUCCESS,
+                     canvasCommand.execute(canvasHandler));
     }
 
     @Test
