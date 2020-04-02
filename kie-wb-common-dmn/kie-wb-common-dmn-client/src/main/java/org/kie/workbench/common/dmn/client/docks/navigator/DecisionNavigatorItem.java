@@ -159,19 +159,18 @@ public class DecisionNavigatorItem implements Comparable {
         private static final Map<String, Type> BY_CLASS_NAME = new HashMap<>();
 
         static {
-            for (Type type : values()) {
+            for (final Type type : values()) {
                 BY_CLASS_NAME.put(type.navigatorItemClassName, type);
             }
         }
 
         private final String navigatorItemClassName;
 
-        Type(String navigatorItemClassName) {
+        Type(final String navigatorItemClassName) {
             this.navigatorItemClassName = navigatorItemClassName;
         }
 
-        public static Type ofExpressionNode(final Node<View, Edge> node) {
-            String nodeClassName = DefinitionUtils.getElementDefinition(node).getClass().getSimpleName();
+        public static Type ofExpressionNodeClassName(final String nodeClassName) {
             return BY_CLASS_NAME.getOrDefault(nodeClassName, ITEM);
         }
     }
