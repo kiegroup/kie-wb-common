@@ -20,6 +20,7 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Default;
@@ -28,13 +29,12 @@ import javax.inject.Inject;
 
 import elemental2.promise.Promise;
 import org.appformer.kogito.bridge.client.resource.ResourceContentService;
+import org.appformer.kogito.bridge.client.resource.interop.ResourceListOptions;
 import org.kie.workbench.common.stunner.bpmn.client.workitem.WorkItemDefinitionClientService;
 import org.kie.workbench.common.stunner.bpmn.workitem.WorkItemDefinition;
 import org.kie.workbench.common.stunner.bpmn.workitem.WorkItemDefinitionCacheRegistry;
 import org.kie.workbench.common.stunner.bpmn.workitem.WorkItemDefinitionRegistry;
 import org.kie.workbench.common.stunner.core.diagram.Metadata;
-import org.kie.workbench.common.stunner.kogito.client.editor.KogitoEditorWorkItemDefinitionService;
-import org.kie.workbench.common.stunner.kogito.client.services.util.ResourceSearchPath;
 import org.kie.workbench.common.stunner.kogito.client.services.util.WorkItemIconCache;
 import org.uberfire.client.promise.Promises;
 
@@ -44,15 +44,13 @@ import static org.kie.workbench.common.stunner.bpmn.client.workitem.WorkItemDefi
 import static org.kie.workbench.common.stunner.core.util.StringUtils.nonEmpty;
 
 @ApplicationScoped
-public class WorkItemDefinitionStandaloneClientService implements WorkItemDefinitionClientService,
-                                                                  KogitoEditorWorkItemDefinitionService {
+public class WorkItemDefinitionStandaloneClientService implements WorkItemDefinitionClientService {
 
-    private static final String RESOURCE_ALL_WID_PATTERN = "**/*.wid";
+    private static final String RESOURCE_ALL_WID_PATTERN = "*.wid";
 
     private final Promises promises;
     private final WorkItemDefinitionCacheRegistry registry;
     private final ResourceContentService resourceContentService;
-    private final ResourceSearchPath resourceSearchPath;
     private final WorkItemIconCache workItemIconCache;
 
     // Cache the promise, as by definition will be performed just once,
@@ -63,14 +61,17 @@ public class WorkItemDefinitionStandaloneClientService implements WorkItemDefini
     public WorkItemDefinitionStandaloneClientService(final Promises promises,
                                                      final WorkItemDefinitionCacheRegistry registry,
                                                      final ResourceContentService resourceContentService,
-                                                     final ResourceSearchPath resourceSearchPath,
                                                      final WorkItemIconCache workItemIconCache) {
 
         this.promises = promises;
         this.registry = registry;
         this.resourceContentService = resourceContentService;
-        this.resourceSearchPath = resourceSearchPath;
         this.workItemIconCache = workItemIconCache;
+    }
+
+    @PostConstruct
+    public void init() {
+        loader = allWorkItemsLoader();
     }
 
     @Produces
@@ -78,12 +79,6 @@ public class WorkItemDefinitionStandaloneClientService implements WorkItemDefini
     @Override
     public WorkItemDefinitionRegistry getRegistry() {
         return registry;
-    }
-
-    @Override
-    public void load(String diagramPath) {
-        this.resourceSearchPath.init(diagramPath);
-        loader = allWorkItemsLoader();
     }
 
     @Override
@@ -102,7 +97,7 @@ public class WorkItemDefinitionStandaloneClientService implements WorkItemDefini
             registry.clear();
             final List<WorkItemDefinition> loaded = new LinkedList<>();
             resourceContentService
-                    .list(resourceSearchPath.getSearchExpression(RESOURCE_ALL_WID_PATTERN))
+                    .list(RESOURCE_ALL_WID_PATTERN, ResourceListOptions.assetFolder())
                     .then(paths -> {
                         if (paths.length > 0) {
                             promises.all(asList(paths),

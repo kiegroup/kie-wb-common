@@ -23,13 +23,13 @@ import com.google.gwtmockito.GwtMockitoTestRunner;
 import elemental2.promise.Promise;
 import org.appformer.kogito.bridge.client.resource.ResourceContentService;
 import org.appformer.kogito.bridge.client.resource.interop.ResourceContentOptions;
+import org.appformer.kogito.bridge.client.resource.interop.ResourceListOptions;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.stunner.bpmn.workitem.WorkItemDefinition;
 import org.kie.workbench.common.stunner.bpmn.workitem.WorkItemDefinitionCacheRegistry;
 import org.kie.workbench.common.stunner.core.diagram.Metadata;
-import org.kie.workbench.common.stunner.kogito.client.services.util.impl.ResourceSearchPathImpl;
 import org.kie.workbench.common.stunner.kogito.client.services.util.impl.WorkItemIconCacheImpl;
 import org.uberfire.client.promise.Promises;
 import org.uberfire.promise.SyncPromises;
@@ -55,12 +55,12 @@ public class WorkItemDefinitionStandaloneClientServiceTest {
         tested = new WorkItemDefinitionStandaloneClientService(promises,
                                                                registry,
                                                                new BPMNStaticResourceContentService(promises),
-                                                               new ResourceSearchPathImpl(),
                                                                new WorkItemIconCacheImpl(new BPMNStaticResourceContentService(promises)));
     }
 
     @Test
     public void testGetRegistry() {
+        tested.init();
         assertEquals(registry, tested.getRegistry());
     }
 
@@ -123,8 +123,12 @@ public class WorkItemDefinitionStandaloneClientServiceTest {
                                                                    public Promise<String[]> list(String pattern) {
                                                                        return promises.resolve(new String[0]);
                                                                    }
+
+                                                                   @Override
+                                                                   public Promise<String[]> list(String pattern, ResourceListOptions options) {
+                                                                       return promises.resolve(new String[0]);
+                                                                   }
                                                                },
-                                                               new ResourceSearchPathImpl(),
                                                                new WorkItemIconCacheImpl(new BPMNStaticResourceContentService(promises)));
         call();
         assertTrue(registry.items().isEmpty());
@@ -151,8 +155,12 @@ public class WorkItemDefinitionStandaloneClientServiceTest {
                                                                    public Promise<String[]> list(String pattern) {
                                                                        return promises.resolve(new String[]{""});
                                                                    }
+
+                                                                   @Override
+                                                                   public Promise<String[]> list(String pattern, ResourceListOptions options) {
+                                                                       return promises.resolve(new String[0]);
+                                                                   }
                                                                },
-                                                               new ResourceSearchPathImpl(),
                                                                new WorkItemIconCacheImpl(new BPMNStaticResourceContentService(promises)));
         call();
         assertTrue(registry.items().isEmpty());
@@ -185,7 +193,7 @@ public class WorkItemDefinitionStandaloneClientServiceTest {
     }
 
     private void call() {
-        tested.load("");
+        tested.init();
         tested.call(mock(Metadata.class));
     }
 }

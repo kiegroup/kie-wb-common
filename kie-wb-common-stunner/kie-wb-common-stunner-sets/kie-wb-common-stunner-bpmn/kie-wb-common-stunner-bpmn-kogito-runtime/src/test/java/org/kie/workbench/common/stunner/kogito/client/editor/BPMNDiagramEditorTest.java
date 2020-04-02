@@ -51,7 +51,6 @@ import org.uberfire.promise.SyncPromises;
 import org.uberfire.workbench.events.NotificationEvent;
 
 import static org.jgroups.util.Util.assertEquals;
-import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.times;
@@ -127,9 +126,6 @@ public class BPMNDiagramEditorTest {
 
     private Promises promises = new SyncPromises();
 
-    @Mock
-    private KogitoEditorWorkItemDefinitionService editorWorkItemDefinitionService;
-
     @SuppressWarnings("unchecked")
     @Before
     public void setUp() {
@@ -154,8 +150,7 @@ public class BPMNDiagramEditorTest {
                                        openDiagramLayoutExecutor,
                                        diagramServices,
                                        canvasFileExport,
-                                       promises,
-                                       editorWorkItemDefinitionService);
+                                       promises);
     }
 
     @Test
@@ -174,13 +169,11 @@ public class BPMNDiagramEditorTest {
         //First setContent call context
         editor.setContent("", "");
         verify(menuSessionItems, times(1)).destroy();
-        verify(editorWorkItemDefinitionService, times(1)).load(any());
 
         //Second setContent call context
         final String path = "/project/src/main/resources/diagrams/process.bpmn";
         editor.setContent(path, "");
         verify(menuSessionItems, times(2)).destroy();
-        verify(editorWorkItemDefinitionService, times(1)).load(eq(path));
     }
 
     @Test

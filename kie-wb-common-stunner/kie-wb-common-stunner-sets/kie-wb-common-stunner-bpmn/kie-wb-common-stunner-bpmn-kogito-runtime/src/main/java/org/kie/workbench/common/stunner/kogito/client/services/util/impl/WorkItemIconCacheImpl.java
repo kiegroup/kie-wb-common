@@ -46,6 +46,8 @@ public class WorkItemIconCacheImpl implements WorkItemIconCache {
 
     private Promise<String> lookupPromise(String iconPath) {
         return resourceContentService.get(iconPath, ResourceContentOptions.binary())
-                .catch_(error -> Promise.resolve(""));
+                .catch_(error -> {
+                    return Promise.resolve("");
+                });
     }
 }
