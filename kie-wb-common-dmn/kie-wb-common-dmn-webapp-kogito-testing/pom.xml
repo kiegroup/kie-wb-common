@@ -250,6 +250,22 @@
       <scope>provided</scope>
     </dependency>
 
+
+    <dependency>
+      <groupId>org.kie</groupId>
+      <artifactId>kie-dmn-validation</artifactId>
+      <exclusions>
+        <exclusion>
+          <groupId>org.drools</groupId>
+          <artifactId>drools-verifier-api</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.drools</groupId>
+          <artifactId>drools-verifier-core</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+
     <!-- Form modeler -->
     <!-- Needed by stunner -->
     <dependency>
