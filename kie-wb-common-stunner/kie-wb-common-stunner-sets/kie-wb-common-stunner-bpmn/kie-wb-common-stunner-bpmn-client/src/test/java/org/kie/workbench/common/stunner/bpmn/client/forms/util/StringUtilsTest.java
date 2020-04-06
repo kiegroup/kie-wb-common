@@ -32,6 +32,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
+import static org.kie.workbench.common.stunner.bpmn.client.forms.util.StringUtils.replaceIllegalCharsAttribute;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -179,5 +180,15 @@ public class StringUtilsTest {
         assertFalse(StringUtils.nonEmpty(null));
         assertFalse(StringUtils.nonEmpty(""));
         assertTrue(StringUtils.nonEmpty("Hello"));
+    }
+
+    @Test
+    public void testReplaceIllegalCharsAttribute() {
+        String emptyString = "";
+        assertSame(emptyString, replaceIllegalCharsAttribute(emptyString));
+        assertEquals(null, replaceIllegalCharsAttribute(null));
+
+        String stringToEncode = "< Valid \"&\" Symbols >";
+        assertEquals("&lt; Valid &quot;&amp;&quot; Symbols &gt;", replaceIllegalCharsAttribute(stringToEncode));
     }
 }

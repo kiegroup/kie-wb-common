@@ -16,9 +16,6 @@
 
 package org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.processes;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-
 import org.eclipse.bpmn2.Process;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.ConverterFactory;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.DefinitionsBuildingContext;
@@ -34,8 +31,8 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.variables.BaseP
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.definition.Definition;
 
+import static org.jbpm.bpmn2.xml.XmlBPMNProcessDumper.replaceIllegalCharsAttribute;
 import static org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.Factories.bpmn2;
-import static org.kie.workbench.common.stunner.core.util.StringUtils.isEmpty;
 
 public class RootProcessConverter {
 
@@ -69,9 +66,9 @@ public class RootProcessConverter {
 
         BaseDiagramSet diagramSet = definition.getDiagramSet();
 
-        p.setName(encode(diagramSet.getName().getValue()));
+        p.setName(replaceIllegalCharsAttribute(diagramSet.getName().getValue()));
         p.setDocumentation(diagramSet.getDocumentation().getValue());
-        p.setId(encode(diagramSet.getId().getValue()));
+        p.setId(replaceIllegalCharsAttribute(diagramSet.getId().getValue()));
         p.setPackage(diagramSet.getPackageProperty().getValue());
         p.setType(diagramSet.getProcessType().getValue());
         p.setVersion(diagramSet.getVersion().getValue());
@@ -100,17 +97,5 @@ public class RootProcessConverter {
         p.setCaseFileVariables(caseFileVariables);
 
         return p;
-    }
-
-    private static String encode(String text) {
-        if (isEmpty(text)) {
-            return text;
-        }
-
-        try {
-            return URLEncoder.encode(text, "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            throw new IllegalArgumentException(text, e);
-        }
     }
 }
