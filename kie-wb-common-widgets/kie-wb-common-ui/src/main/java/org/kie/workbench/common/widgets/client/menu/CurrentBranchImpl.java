@@ -17,15 +17,20 @@
 
 package org.kie.workbench.common.widgets.client.menu;
 
+import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
 import org.guvnor.common.services.project.client.context.WorkspaceProjectContext;
-import org.uberfire.ext.editor.commons.client.menu.common.CurrentBranch;
+import org.uberfire.ext.editor.commons.version.CurrentBranch;
 
+@Dependent
 public class CurrentBranchImpl implements CurrentBranch {
 
     @Inject
     private WorkspaceProjectContext projectContext;
+
+    public CurrentBranchImpl() {
+    }
 
     @Override
     public String getName() {
