@@ -78,7 +78,7 @@ public class StringUtils {
      * IMPORTANT NOTE
      * Url encoding is not supported on the Engine side use this method for the internal communication
      * or to UI/Marshaller communications only.
-     * For storing data in XML use {@link StringUtils#replaceIllegalCharsAttribute}
+     * For storing data in XML use {@link org.kie.workbench.common.stunner.core.util.StringUtils#replaceIllegalCharsAttribute}
      * @param s
      * @return
      */
@@ -108,7 +108,7 @@ public class StringUtils {
      * IMPORTANT NOTE
      * Url encoding is not supported on the jBPM Engine side use this method for the internal communication
      * or to UI/Marshaller communications only.
-     * For storing data in XML use {@link StringUtils#replaceIllegalCharsAttribute}
+     * For storing data in XML use {@link org.kie.workbench.common.stunner.core.util.StringUtils#replaceIllegalCharsAttribute}
      * @param s a string to encode on the client side
      * @return an encoded string
      */
@@ -117,43 +117,6 @@ public class StringUtils {
             return s;
         }
         return url.encode(s);
-    }
-
-    /**
-     * Replacing unsafe characters by HTML escaping.
-     * <p>
-     * IMPORTANT NOTE
-     * Url encoding is not supported on the Engine side so this method should be used for attribute values.
-     * @param value a string to escape illegal characters on the client side
-     * @return an escaped string
-     */
-    public static String replaceIllegalCharsAttribute(final String value) {
-        final StringBuilder sb = new StringBuilder();
-        if (isEmpty(value)) {
-            return value;
-        }
-
-        for (int i = 0; i < value.length(); i++) {
-            final char c = value.charAt(i);
-            switch (c) {
-                case '<':
-                    sb.append("&lt;");
-                    break;
-                case '>':
-                    sb.append("&gt;");
-                    break;
-                case '&':
-                    sb.append("&amp;");
-                    break;
-                case '"':
-                    sb.append("&quot;");
-                    break;
-                default:
-                    sb.append(c);
-                    break;
-            }
-        }
-        return sb.toString();
     }
 
     /**

@@ -32,7 +32,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
-import static org.kie.workbench.common.stunner.bpmn.client.forms.util.StringUtils.replaceIllegalCharsAttribute;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -44,18 +43,18 @@ public class StringUtilsTest {
     @Mock
     private URL url;
 
-    private String emptyString = "";
-    private String testString = "some string";
-    private String modifiedString = "some string";
+    private final String EMPTY_STRING = "";
+    private final String TEST_STRING = "some string";
+    private final String MODIFIED_STRING = "some string";
 
     @Before
     public void setUp() {
         StringUtils.setURL(url);
-        when(url.encode(anyString())).thenReturn(modifiedString);
-        when(url.decode(anyString())).thenReturn(modifiedString);
+        when(url.encode(anyString())).thenReturn(MODIFIED_STRING);
+        when(url.decode(anyString())).thenReturn(MODIFIED_STRING);
 
-        when(url.encodeQueryString(anyString())).thenReturn(modifiedString);
-        when(url.decodeQueryString(anyString())).thenReturn(modifiedString);
+        when(url.encodeQueryString(anyString())).thenReturn(MODIFIED_STRING);
+        when(url.decodeQueryString(anyString())).thenReturn(MODIFIED_STRING);
     }
 
     @Test
@@ -116,55 +115,55 @@ public class StringUtilsTest {
     public void testEmptyEncode() {
         assertNull(StringUtils.encode(null));
 
-        assertSame(emptyString, StringUtils.encode(emptyString));
+        assertSame(EMPTY_STRING, StringUtils.encode(EMPTY_STRING));
         verify(url, never()).encode(anyString());
     }
 
     @Test
     public void testEncode() {
-        assertEquals(testString, StringUtils.encode(testString));
-        verify(url).encode(testString);
+        assertEquals(TEST_STRING, StringUtils.encode(TEST_STRING));
+        verify(url).encode(TEST_STRING);
     }
 
     @Test
     public void testEmptyDecode() {
         assertNull(StringUtils.decode(null));
 
-        assertSame(emptyString, StringUtils.decode(emptyString));
+        assertSame(EMPTY_STRING, StringUtils.decode(EMPTY_STRING));
         verify(url, never()).decode(anyString());
     }
 
     @Test
     public void testDecode() {
-        assertEquals(testString, StringUtils.decode(testString));
-        verify(url).decode(testString);
+        assertEquals(TEST_STRING, StringUtils.decode(TEST_STRING));
+        verify(url).decode(TEST_STRING);
     }
 
     @Test
     public void testUrlDecode() {
-        assertEquals(testString, StringUtils.urlDecode(testString));
-        verify(url).decodeQueryString(testString);
+        assertEquals(TEST_STRING, StringUtils.urlDecode(TEST_STRING));
+        verify(url).decodeQueryString(TEST_STRING);
     }
 
     @Test
     public void testEmptyUrlDecode() {
         assertNull(StringUtils.urlDecode(null));
 
-        assertSame(emptyString, StringUtils.urlDecode(emptyString));
+        assertSame(EMPTY_STRING, StringUtils.urlDecode(EMPTY_STRING));
         verify(url, never()).decodeQueryString(anyString());
     }
 
     @Test
     public void testUrlEncode() {
-        assertEquals(testString, StringUtils.urlEncode(testString));
-        verify(url).encodeQueryString(testString);
+        assertEquals(TEST_STRING, StringUtils.urlEncode(TEST_STRING));
+        verify(url).encodeQueryString(TEST_STRING);
     }
 
     @Test
     public void testEmptyUrlEncode() {
         assertNull(StringUtils.urlEncode(null));
 
-        assertSame(emptyString, StringUtils.urlEncode(emptyString));
+        assertSame(EMPTY_STRING, StringUtils.urlEncode(EMPTY_STRING));
         verify(url, never()).encodeQueryString(anyString());
     }
 
@@ -180,15 +179,5 @@ public class StringUtilsTest {
         assertFalse(StringUtils.nonEmpty(null));
         assertFalse(StringUtils.nonEmpty(""));
         assertTrue(StringUtils.nonEmpty("Hello"));
-    }
-
-    @Test
-    public void testReplaceIllegalCharsAttribute() {
-        String emptyString = "";
-        assertSame(emptyString, replaceIllegalCharsAttribute(emptyString));
-        assertEquals(null, replaceIllegalCharsAttribute(null));
-
-        String stringToEncode = "< Valid \"&\" Symbols >";
-        assertEquals("&lt; Valid &quot;&amp;&quot; Symbols &gt;", replaceIllegalCharsAttribute(stringToEncode));
     }
 }

@@ -31,8 +31,8 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.variables.BaseP
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.definition.Definition;
 
-import static org.jbpm.bpmn2.xml.XmlBPMNProcessDumper.replaceIllegalCharsAttribute;
 import static org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.Factories.bpmn2;
+import static org.kie.workbench.common.stunner.core.util.StringUtils.replaceIllegalCharsAttribute;
 
 public class RootProcessConverter {
 
