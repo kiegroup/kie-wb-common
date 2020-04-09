@@ -169,10 +169,7 @@ public class ClientBPMNDocumentationServiceTest {
     public static final String ON_ENTRY_CAPTION = "ONENTRY_CAPTION";
     public static final String TEMPLATE = "documentationTemplate";
     public static final String ASSIGNEMNTS = "assignemnts";
-    private static final String VARIABLES = "PV1:java.lang.String:false,PV2:java.lang.Boolean:false";
-    private static final String GLOBAL_VARIABLES = "GL1:java.lang.String:false,GL2:java.lang.Boolean:false";
-    private static final String METADATA = "securityRolesß<![CDATA[employees,managers]]>Ø securityRoles2ß<![CDATA[admin,managers]]>";
-    private static final String SUB_PROCESS_VARIABLES = "SUBPV1:java.lang.String:false,SUBPV2:java.lang.Boolean:false";
+    private static final String METADATA = "securityRoles<![CDATA[employees,managers]]>securityRoles2<![CDATA[admin,managers]]>";
     private static final String VARIABLES = "PV1:java.lang.String:[internal;input],PV2:java.lang.Boolean:[customTag;output]";
     private static final String GLOBAL_VARIABLES = "GL1:java.lang.String:[],GL2:java.lang.Boolean:[]";
     private static final String SUB_PROCESS_VARIABLES = "SUBPV1:java.lang.String:[internal],SUBPV2:java.lang.Boolean:[readonly;customTag]";

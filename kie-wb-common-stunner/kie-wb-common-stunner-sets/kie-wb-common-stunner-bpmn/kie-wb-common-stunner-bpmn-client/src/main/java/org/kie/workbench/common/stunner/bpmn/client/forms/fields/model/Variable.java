@@ -132,7 +132,7 @@ public class Variable {
             } else if (dataType != null && !dataType.isEmpty()) {
                 sb.append(':').append(dataType);
             }
-            if (tags != null && this.getVariableType() == Variable.VariableType.PROCESS && (customDataType != null || dataType != null)) {
+            if (tags != null && !tags.isEmpty() && this.getVariableType() == Variable.VariableType.PROCESS && (customDataType != null || dataType != null)) {
                 sb.append(":").append(String.join(";", tags));
             }
 
@@ -214,7 +214,7 @@ public class Variable {
         if (getDataType() != null ? !getDataType().equals(variable.getDataType()) : variable.getDataType() != null) {
             return false;
         }
-        if (tags != null ? !tags.equals(variable.tags) : variable.getTags() != null) {
+        if (tags != null && !tags.isEmpty() ? !tags.equals(variable.tags) : variable.getTags() != null && !variable.getTags().isEmpty()) {
             return false;
         }
         return getCustomDataType() != null ? getCustomDataType().equals(variable.getCustomDataType()) : variable.getCustomDataType() == null;

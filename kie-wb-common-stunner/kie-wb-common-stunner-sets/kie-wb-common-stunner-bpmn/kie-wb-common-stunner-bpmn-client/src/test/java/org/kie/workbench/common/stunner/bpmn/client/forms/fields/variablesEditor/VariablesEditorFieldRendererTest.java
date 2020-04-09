@@ -255,7 +255,7 @@ public class VariablesEditorFieldRendererTest {
         assertEquals(Variable.VariableType.PROCESS,
                      var.getVariableType());
 
-        assertEquals(null, var.getTags());
+        assertEquals(0, var.getTags().size());
 
         var = variableRows.get(3);
         assertEquals("var4",
