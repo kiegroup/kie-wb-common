@@ -45,6 +45,8 @@ public abstract class Expression extends DMNElement implements HasTypeRef,
         this.typeRef = typeRef;
     }
 
+    public abstract Expression copy();
+
     // -----------------------
     // DMN properties
     // -----------------------
