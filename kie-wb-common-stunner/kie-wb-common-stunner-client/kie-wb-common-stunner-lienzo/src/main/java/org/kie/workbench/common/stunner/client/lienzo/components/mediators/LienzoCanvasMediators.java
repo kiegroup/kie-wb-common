@@ -26,6 +26,8 @@ import javax.inject.Inject;
 
 import com.ait.lienzo.client.widget.panel.LienzoBoundsPanel;
 import com.ait.lienzo.client.widget.panel.mediators.PanelMediators;
+import com.ait.lienzo.client.widget.panel.scrollbars.ScrollablePanel;
+import com.ait.lienzo.client.widget.panel.scrollbars.ScrollablePanelHandler;
 import org.kie.workbench.common.stunner.client.lienzo.canvas.LienzoCanvas;
 import org.kie.workbench.common.stunner.client.lienzo.canvas.LienzoPanel;
 import org.kie.workbench.common.stunner.client.lienzo.components.views.LienzoCanvasNotification;
@@ -105,6 +107,18 @@ public class LienzoCanvasMediators {
         this.mediators = mediatorsBuilder.apply(panel.getView());
         this.notification.init(() -> panel);
         setScaleAboutPoint(false);
+
+        disableScrollOnDrag(panel);
+    }
+
+    private void disableScrollOnDrag(final LienzoPanel lienzoPanel) {
+        if (lienzoPanel.getView() instanceof ScrollablePanel) {
+            ScrollablePanelHandler handler = ((ScrollablePanel) lienzoPanel.getView()).getScrollHandler();
+
+            if (handler.isMouseDragSynchronizationEnabled()) {
+                handler.disableMouseDragSynchronization();
+            }
+        }
     }
 
     public void setMinScale(final double minScale) {

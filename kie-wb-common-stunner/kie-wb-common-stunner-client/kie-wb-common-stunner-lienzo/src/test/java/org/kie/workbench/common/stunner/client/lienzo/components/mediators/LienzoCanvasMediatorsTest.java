@@ -24,6 +24,8 @@ import com.ait.lienzo.client.core.mediator.MouseWheelZoomMediator;
 import com.ait.lienzo.client.widget.panel.LienzoBoundsPanel;
 import com.ait.lienzo.client.widget.panel.mediators.PanelMediators;
 import com.ait.lienzo.client.widget.panel.mediators.PanelPreviewMediator;
+import com.ait.lienzo.client.widget.panel.scrollbars.ScrollablePanel;
+import com.ait.lienzo.client.widget.panel.scrollbars.ScrollablePanelHandler;
 import com.ait.lienzo.test.LienzoMockitoTestRunner;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.junit.Before;
@@ -85,7 +87,13 @@ public class LienzoCanvasMediatorsTest {
     private LienzoBoundsPanel panelView;
 
     @Mock
+    private ScrollablePanelHandler scrollablePanelHandler;
+
+    @Mock
     private Consumer<AbstractCanvas.Cursors> cursor;
+
+    @Mock
+    private ScrollablePanel scrollablePanel;
 
     private LienzoCanvasMediators tested;
     private KeyEventHandler keyEventHandler;
@@ -96,7 +104,9 @@ public class LienzoCanvasMediatorsTest {
         when(canvas.getView()).thenReturn(canvasView);
         when(canvasView.getPanel()).thenReturn(panel);
         when(canvasView.getLienzoPanel()).thenReturn(panel);
-        when(panel.getView()).thenReturn(panelView);
+        when(panel.getView()).thenReturn(scrollablePanel);
+        when(scrollablePanel.getScrollHandler()).thenReturn(scrollablePanelHandler);
+        when(scrollablePanelHandler.isMouseDragSynchronizationEnabled()).thenReturn(true);
         when(mediators.getZoomMediator()).thenReturn(zoomMediator);
         when(mediators.getPanMediator()).thenReturn(panMediator);
         when(mediators.getPreviewMediator()).thenReturn(previewMediator);
@@ -106,13 +116,13 @@ public class LienzoCanvasMediatorsTest {
                                                                         mock(DefinitionUtils.class)),
                                            notification,
                                            p -> mediators);
-        tested.init(() -> canvas);
-        tested.cursor = cursor;
     }
 
     @Test
     @SuppressWarnings("unchecked")
     public void testInit() {
+        tested.init(() -> canvas);
+
         assertEquals(mediators, tested.getMediators());
         ArgumentCaptor<Supplier> panelCaptor = ArgumentCaptor.forClass(Supplier.class);
         verify(notification, times(1)).init(panelCaptor.capture());
@@ -122,7 +132,36 @@ public class LienzoCanvasMediatorsTest {
 
     @Test
     @SuppressWarnings("unchecked")
+    public void testInitScrollablePanelHandlerTrue() {
+        tested.init(() -> canvas);
+
+        verify(scrollablePanelHandler, times(1)).disableMouseDragSynchronization();
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void testInitScrollablePanelHandlerFalse() {
+        when(scrollablePanelHandler.isMouseDragSynchronizationEnabled()).thenReturn(false);
+        tested.init(() -> canvas);
+
+        verify(scrollablePanelHandler, times(0)).disableMouseDragSynchronization();
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void testInitScrollablePanelNotScrollablePanel() {
+        when(panel.getView()).thenReturn(panelView);
+        tested.init(() -> canvas);
+
+        verify(scrollablePanelHandler, times(0)).disableMouseDragSynchronization();
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
     public void testKeyBindings() {
+        tested.init(() -> canvas);
+        tested.cursor = cursor;
+
         ArgumentCaptor<KeyboardControl.KeyShortcutCallback> callbackArgumentCaptor =
                 ArgumentCaptor.forClass(KeyboardControl.KeyShortcutCallback.class);
         verify(keyEventHandler, times(1)).addKeyShortcutCallback(callbackArgumentCaptor.capture());
@@ -147,12 +186,16 @@ public class LienzoCanvasMediatorsTest {
 
     @Test
     public void testSetMinScale() {
+        tested.init(() -> canvas);
+
         tested.setMinScale(0.3d);
         verify(zoomMediator, times(1)).setMinScale(eq(0.3d));
     }
 
     @Test
     public void testSetMaxScale() {
+        tested.init(() -> canvas);
+
         tested.setMaxScale(3d);
         verify(zoomMediator, times(1)).setMaxScale(eq(3d));
         verify(previewMediator, times(1)).setMaxScale(eq(3d));
@@ -160,12 +203,16 @@ public class LienzoCanvasMediatorsTest {
 
     @Test
     public void testSetZoomFactor() {
+        tested.init(() -> canvas);
+
         tested.setZoomFactor(0.5d);
         verify(zoomMediator, times(1)).setZoomFactor(eq(0.5d));
     }
 
     @Test
     public void testSetScaleAboutPoint() {
+        tested.init(() -> canvas);
+
         tested.setScaleAboutPoint(true);
         verify(zoomMediator, atLeastOnce()).setScaleAboutPoint(eq(true));
         tested.setScaleAboutPoint(false);
@@ -174,6 +221,9 @@ public class LienzoCanvasMediatorsTest {
 
     @Test
     public void testDisable() {
+        tested.init(() -> canvas);
+
+        tested.cursor = cursor;
         tested.disable();
         verify(mediators, times(1)).disablePreview();
         verify(cursor, times(1)).accept(eq(LienzoCanvasMediators.CURSOR_DEFAULT));
@@ -182,6 +232,8 @@ public class LienzoCanvasMediatorsTest {
 
     @Test
     public void testDestroy() {
+        tested.init(() -> canvas);
+
         tested.destroy();
         verify(mediators, times(1)).destroy();
         assertNull(tested.getMediators());
