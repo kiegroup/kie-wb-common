@@ -101,6 +101,15 @@ public class InformationItem extends NamedElement implements DMNPropertySet,
     // DMN properties
     // -----------------------
 
+    public InformationItem copy() {
+        return new InformationItem(
+                new Id(),
+                description,
+                new Name(name.getValue()),
+                typeRef.copy()
+        );
+    }
+
     @Override
     public QName getTypeRef() {
         return typeRefHolder.getValue();
