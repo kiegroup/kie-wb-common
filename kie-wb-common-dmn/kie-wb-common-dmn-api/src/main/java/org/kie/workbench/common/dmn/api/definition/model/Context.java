@@ -17,6 +17,7 @@ package org.kie.workbench.common.dmn.api.definition.model;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.jboss.errai.common.client.api.annotations.Portable;
@@ -55,7 +56,9 @@ public class Context extends Expression {
         clonedContext.description = description.copy();
         clonedContext.typeRef = typeRef.copy();
         clonedContext.componentWidths = new ArrayList<>(componentWidths);
-        clonedContext.contextEntry = contextEntry.stream().map(ContextEntry::copy).collect(Collectors.toList());
+        clonedContext.contextEntry = Optional.ofNullable(contextEntry)
+                .map(contextEntryList -> contextEntryList.stream().map(ContextEntry::copy).collect(Collectors.toList()))
+                .orElse(null);
         return clonedContext;
     }
 

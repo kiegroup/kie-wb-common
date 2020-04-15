@@ -16,24 +16,21 @@
 package org.kie.workbench.common.dmn.client.commands.clone;
 
 import java.util.List;
-import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.enterprise.inject.Alternative;
 import javax.inject.Inject;
 
-import org.kie.workbench.common.dmn.api.definition.HasExpression;
 import org.kie.workbench.common.dmn.api.definition.HasVariable;
 import org.kie.workbench.common.dmn.api.definition.model.BusinessKnowledgeModel;
 import org.kie.workbench.common.dmn.api.definition.model.DRGElement;
 import org.kie.workbench.common.dmn.api.definition.model.Decision;
 import org.kie.workbench.common.dmn.api.definition.model.Expression;
-import org.kie.workbench.common.dmn.api.definition.model.FunctionDefinition;
-import org.kie.workbench.common.dmn.api.definition.model.InformationItem;
+import org.kie.workbench.common.dmn.api.definition.model.InformationItemPrimary;
+import org.kie.workbench.common.dmn.api.definition.model.IsInformationItem;
 import org.kie.workbench.common.dmn.api.property.dmn.DMNExternalLink;
 import org.kie.workbench.common.dmn.api.property.dmn.Id;
-import org.kie.workbench.common.dmn.api.property.dmn.Name;
-import org.kie.workbench.common.dmn.api.property.dmn.QName;
 import org.kie.workbench.common.stunner.core.api.FactoryManager;
 import org.kie.workbench.common.stunner.core.definition.adapter.AdapterManager;
 import org.kie.workbench.common.stunner.core.definition.clone.DeepCloneProcess;
@@ -57,80 +54,45 @@ public class DMNDeepCloneProcess extends DeepCloneProcess implements IDeepCloneP
     }
 
     @Override
-    public <S, T> T clone(S source,
-                          T target) {
+    public <S, T> T clone(final S source,
+                          final T target) {
         if (source instanceof DRGElement) {
-            DRGElement sourceDefinition = (DRGElement) source;
-            DRGElement targetDefinition = (DRGElement) target;
-
-            targetDefinition.getNameHolder().setValue(cloneName(sourceDefinition));
-            targetDefinition.getLinksHolder().getValue().getLinks().addAll(cloneExternalLinkList(sourceDefinition));
+            cloneDRGElementBasicInfo((DRGElement) source, (DRGElement) target);
         }
 
         if (source instanceof HasVariable) {
-            QName srcTypeRef = ((HasVariable) source).getVariable().getTypeRef();
-            ((HasVariable) target).getVariable().setTypeRef(cloneTypeRef(srcTypeRef));
-        }
-
-        if (source instanceof BusinessKnowledgeModel) {
-            FunctionDefinition srcFunctionDefinition = ((BusinessKnowledgeModel) source).getEncapsulatedLogic();
-            FunctionDefinition targetFunctionDefinition = cloneFunctionDefinition(srcFunctionDefinition);
-            targetFunctionDefinition.setParent((BusinessKnowledgeModel) target);
-            ((BusinessKnowledgeModel) target).setEncapsulatedLogic(targetFunctionDefinition);
+            final IsInformationItem sourceVariable = ((HasVariable) source).getVariable();
+            final IsInformationItem targetVariable = ((HasVariable) target).getVariable();
+            cloneTypeRefInfo(sourceVariable, targetVariable);
         }
 
         if (source instanceof Decision) {
-            ((Decision) target).setExpression(cloneExpression((Decision) source));
+            cloneDecision((Decision) source, (Decision) target);
+        }
+
+        if (source instanceof BusinessKnowledgeModel) {
+            cloneBusinessKnowledgeModel((BusinessKnowledgeModel) source, (BusinessKnowledgeModel) target);
         }
 
         return super.clone(source, target);
     }
 
-    private Name cloneName(DRGElement sourceDefinition) {
-        return new Name(sourceDefinition.getNameHolder().getValue().getValue());
+    private void cloneDRGElementBasicInfo(final DRGElement source, final DRGElement target) {
+        target.setName(source.getName().copy());
+        target.setNameHolder(source.getNameHolder().copy());
+        target.getLinksHolder().getValue().getLinks().addAll(cloneExternalLinkList(source));
     }
 
-    private QName cloneTypeRef(QName typeRef) {
-        return new QName(typeRef.getNamespaceURI(), typeRef.getLocalPart(), typeRef.getPrefix());
+    private void cloneTypeRefInfo(final IsInformationItem srcInformationItem, final IsInformationItem targetInformationItem) {
+        if (srcInformationItem instanceof InformationItemPrimary) {
+            final InformationItemPrimary srcInformationItemPrimary = (InformationItemPrimary) srcInformationItem;
+            final InformationItemPrimary targetInformationItemPrimary = (InformationItemPrimary) targetInformationItem;
+            targetInformationItemPrimary.setTypeRefHolder(srcInformationItemPrimary.getTypeRefHolder().copy());
+            targetInformationItemPrimary.setTypeRef(srcInformationItemPrimary.getTypeRefHolder().getValue().copy());
+        }
     }
 
-    private FunctionDefinition cloneFunctionDefinition(FunctionDefinition srcFunctionDefinition) {
-        FunctionDefinition targetFunctionDefinition = new FunctionDefinition();
-        targetFunctionDefinition.setId(new Id());
-        targetFunctionDefinition.getHasTypeRefs().addAll(srcFunctionDefinition.getHasTypeRefs());
-        targetFunctionDefinition.getFormalParameter().addAll(cloneFormalParameterList(srcFunctionDefinition));
-        targetFunctionDefinition.getAdditionalAttributes().putAll(cloneAdditionalAttributes(srcFunctionDefinition));
-        targetFunctionDefinition.setDescription(srcFunctionDefinition.getDescription());
-        targetFunctionDefinition.setExpression(cloneExpression(srcFunctionDefinition));
-        targetFunctionDefinition.setTypeRef(cloneTypeRef(srcFunctionDefinition.getTypeRef()));
-        targetFunctionDefinition.setKind(srcFunctionDefinition.getKind());
-        targetFunctionDefinition.setExtensionElements(srcFunctionDefinition.getExtensionElements());
-        return targetFunctionDefinition;
-    }
-
-    private Map<QName, String> cloneAdditionalAttributes(FunctionDefinition srcFunctionDefinition) {
-        return srcFunctionDefinition.getAdditionalAttributes().keySet()
-                .stream()
-                .map(this::cloneTypeRef)
-                .collect(Collectors.toMap(
-                        typeRef -> typeRef,
-                        typeRef -> srcFunctionDefinition.getAdditionalAttributes().get(typeRef)
-                ));
-    }
-
-    private List<InformationItem> cloneFormalParameterList(FunctionDefinition srcFunctionDefinition) {
-        return srcFunctionDefinition.getFormalParameter()
-                .stream()
-                .map(informationItem -> new InformationItem(
-                        new Id(),
-                        informationItem.getDescription(),
-                        new Name(informationItem.getName().getValue()),
-                        cloneTypeRef(informationItem.getTypeRef())
-                ))
-                .collect(Collectors.toList());
-    }
-
-    private List<DMNExternalLink> cloneExternalLinkList(DRGElement sourceDefinition) {
+    private List<DMNExternalLink> cloneExternalLinkList(final DRGElement sourceDefinition) {
         return sourceDefinition.getLinksHolder().getValue()
                 .getLinks()
                 .stream()
@@ -138,8 +100,19 @@ public class DMNDeepCloneProcess extends DeepCloneProcess implements IDeepCloneP
                 .collect(Collectors.toList());
     }
 
-    private Expression cloneExpression(HasExpression srcFunctionDefinition) {
-        // TODO Expression should be cloned as well, based on the specific real implementation
-        return srcFunctionDefinition.getExpression();
+    private void cloneDecision(final Decision source, final Decision target) {
+        target.setId(new Id());
+        target.setDescription(source.getDescription().copy());
+        target.setName(source.getName().copy());
+        target.setQuestion(source.getQuestion().copy());
+        target.setAllowedAnswers(source.getAllowedAnswers().copy());
+        target.setExpression(Optional.ofNullable(source.getExpression()).map(Expression::copy).orElse(null));
+    }
+
+    private void cloneBusinessKnowledgeModel(final BusinessKnowledgeModel source, final BusinessKnowledgeModel target) {
+        target.setId(new Id());
+        target.setDescription(source.getDescription().copy());
+        target.setName(source.getName().copy());
+        target.setEncapsulatedLogic(source.getEncapsulatedLogic().copy());
     }
 }
