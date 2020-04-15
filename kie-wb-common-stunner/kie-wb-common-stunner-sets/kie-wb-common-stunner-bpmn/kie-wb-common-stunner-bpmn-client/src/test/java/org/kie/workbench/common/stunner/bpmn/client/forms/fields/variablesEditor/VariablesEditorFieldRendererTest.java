@@ -222,8 +222,8 @@ public class VariablesEditorFieldRendererTest {
 
         variablesEditor.setDataTypes(dataTypes,
                                      dataTypeDisplayNames);
-        List<VariableRow> variableRows = variablesEditor.deserializeVariables("var1:String:[internal;input],var2:Integer:[output],var3:org.stuff.Potato,var4:com.myCustomDataType:[]");
-        assertEquals(4,
+        List<VariableRow> variableRows = variablesEditor.deserializeVariables("var1:String:[internal;input],var2:Integer:[output],var3:org.stuff.Potato,var4:com.myCustomDataType:[],var5");
+        assertEquals(5,
                      variableRows.size());
         VariableRow var = variableRows.get(0);
         assertEquals("var1",
@@ -265,6 +265,14 @@ public class VariablesEditorFieldRendererTest {
         assertEquals(Variable.VariableType.PROCESS,
                      var.getVariableType());
 
+        assertEquals(0, var.getTags().size()); // Meaning Empty List
+
+        // testing variable with only name
+        var = variableRows.get(4);
+        assertEquals(null,
+                     var.getCustomDataType());
+        assertEquals(null,
+                     var.getDataTypeDisplayName());
         assertEquals(0, var.getTags().size()); // Meaning Empty List
     }
 
