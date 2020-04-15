@@ -154,11 +154,11 @@ public class Variable {
         Variable var = new Variable(variableType);
         String[] varParts = s.split(":");
         if (varParts.length > 0) {
+            var.tags = new ArrayList<>();
             String name = varParts[0];
             if (!name.isEmpty()) {
                 var.setName(name);
                 if (varParts.length == 2 || varParts.length == 3) {
-                    var.tags = new ArrayList<>();
                     String dataType = varParts[1];
                     if (!dataType.isEmpty()) {
                         if (dataTypes != null && dataTypes.contains(dataType)) {
