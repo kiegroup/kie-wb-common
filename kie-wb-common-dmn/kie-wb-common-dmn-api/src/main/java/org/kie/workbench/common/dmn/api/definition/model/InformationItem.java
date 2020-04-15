@@ -102,12 +102,13 @@ public class InformationItem extends NamedElement implements DMNPropertySet,
     // -----------------------
 
     public InformationItem copy() {
-        return new InformationItem(
-                new Id(),
-                description,
-                new Name(name.getValue()),
-                typeRef.copy()
-        );
+        final InformationItem clonedInformationItem = new InformationItem();
+        clonedInformationItem.description = description.copy();
+        clonedInformationItem.name = name.copy();
+        clonedInformationItem.nameHolder = nameHolder.copy();
+        clonedInformationItem.typeRef = typeRef.copy();
+        clonedInformationItem.typeRefHolder = typeRefHolder.copy();
+        return clonedInformationItem;
     }
 
     @Override

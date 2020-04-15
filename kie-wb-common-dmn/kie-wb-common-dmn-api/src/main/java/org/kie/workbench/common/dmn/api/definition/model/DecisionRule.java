@@ -17,6 +17,7 @@ package org.kie.workbench.common.dmn.api.definition.model;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.jboss.errai.common.client.api.annotations.Portable;
 import org.kie.workbench.common.dmn.api.definition.HasTypeRef;
@@ -49,6 +50,15 @@ public class DecisionRule extends DMNElement implements HasTypeRefs {
               description);
         this.inputEntry = inputEntry;
         this.outputEntry = outputEntry;
+    }
+
+    public DecisionRule copy() {
+        DecisionRule clonedDecisionRule = new DecisionRule();
+        clonedDecisionRule.description = description.copy();
+        clonedDecisionRule.inputEntry = inputEntry.stream().map(UnaryTests::copy).collect(Collectors.toList());
+        clonedDecisionRule.outputEntry = outputEntry.stream().map(LiteralExpression::copy).collect(Collectors.toList());
+        clonedDecisionRule.annotationEntry = annotationEntry.stream().map(RuleAnnotationClauseText::copy).collect(Collectors.toList());
+        return clonedDecisionRule;
     }
 
     public List<RuleAnnotationClauseText> getAnnotationEntry() {
