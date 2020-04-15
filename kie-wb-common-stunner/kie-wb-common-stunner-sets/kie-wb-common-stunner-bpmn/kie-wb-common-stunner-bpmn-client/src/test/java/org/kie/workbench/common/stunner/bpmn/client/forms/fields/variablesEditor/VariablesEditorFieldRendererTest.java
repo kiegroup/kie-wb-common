@@ -269,6 +269,8 @@ public class VariablesEditorFieldRendererTest {
 
         // testing variable with only name
         var = variableRows.get(4);
+        assertEquals("var5",
+                     var.getName());
         assertEquals(null,
                      var.getCustomDataType());
         assertEquals(null,
