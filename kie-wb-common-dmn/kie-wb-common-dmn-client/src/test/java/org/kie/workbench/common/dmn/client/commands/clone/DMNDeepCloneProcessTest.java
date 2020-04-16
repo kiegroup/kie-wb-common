@@ -84,8 +84,9 @@ public class DMNDeepCloneProcessTest extends AbstractCloneProcessTest {
         assertThat(cloned.getId().getValue()).isNotEqualTo(SOURCE_ID);
         assertThat(cloned.getName().getValue()).isEqualTo(INPUT_DATA_NAME);
         assertThat(cloned.getVariable().getTypeRef()).isEqualTo(BuiltInType.STRING.asQName());
-        assertThat(cloned.getLinksHolder().getValue().getLinks()).hasSize(2);
-        assertThat(cloned.getLinksHolder().getValue().getLinks()).first().extracting("url").isEqualTo(FIRST_URL);
+        assertThat(cloned.getLinksHolder().getValue().getLinks())
+                .hasSize(2)
+                .extracting(DMNExternalLink::getUrl).contains(FIRST_URL, SECOND_URL);
     }
 
     private InputData buildInputData() {
@@ -132,14 +133,16 @@ public class DMNDeepCloneProcessTest extends AbstractCloneProcessTest {
     @Test
     public void testCloneWhenSourceIsKnowledgeSource() {
         final KnowledgeSource source = buildKnowledgeSource();
-        setLinks(source, SECOND_URL);
+        setLinks(source, FIRST_URL, SECOND_URL);
 
         final KnowledgeSource cloned = dmnDeepCloneProcess.clone(source, new KnowledgeSource());
 
         assertThat(cloned).isNotNull();
         assertThat(cloned.getId().getValue()).isNotEqualTo(SOURCE_ID);
         assertThat(cloned.getName().getValue()).isEqualTo(KNOWLEDGE_SOURCE_NAME);
-        assertThat(cloned.getLinksHolder().getValue().getLinks()).first().extracting("url").isEqualTo(SECOND_URL);
+        assertThat(cloned.getLinksHolder().getValue().getLinks())
+                .hasSize(2)
+                .extracting(DMNExternalLink::getUrl).contains(FIRST_URL, SECOND_URL);
     }
 
     private KnowledgeSource buildKnowledgeSource() {
@@ -158,14 +161,16 @@ public class DMNDeepCloneProcessTest extends AbstractCloneProcessTest {
     @Test
     public void testCloneWhenSourceIsBusinessKnowledgeModel() {
         final BusinessKnowledgeModel source = buildBusinessKnowledgeModel();
-        setLinks(source, FIRST_URL);
+        setLinks(source, FIRST_URL, SECOND_URL);
 
         final BusinessKnowledgeModel cloned = dmnDeepCloneProcess.clone(source, new BusinessKnowledgeModel());
 
         assertThat(cloned).isNotNull();
         assertThat(cloned.getId().getValue()).isNotEqualTo(SOURCE_ID);
         assertThat(cloned.getName().getValue()).isEqualTo(BKM_SOURCE_NAME);
-        assertThat(cloned.getLinksHolder().getValue().getLinks()).first().extracting("url").isEqualTo(FIRST_URL);
+        assertThat(cloned.getLinksHolder().getValue().getLinks())
+                .hasSize(2)
+                .extracting(DMNExternalLink::getUrl).contains(FIRST_URL, SECOND_URL);
         assertThat(cloned.getVariable().getTypeRef()).isEqualTo(BuiltInType.BOOLEAN.asQName());
         assertThat(cloned.getEncapsulatedLogic()).isNotNull();
         assertThat(cloned.getEncapsulatedLogic().getId().getValue()).isNotEqualTo(FUNCTION_ID);
@@ -179,14 +184,16 @@ public class DMNDeepCloneProcessTest extends AbstractCloneProcessTest {
     @Test
     public void testCloneWhenSourceIsDecision() {
         final Decision source = buildDecision();
-        setLinks(source, SECOND_URL);
+        setLinks(source, FIRST_URL, SECOND_URL);
 
         final Decision cloned = dmnDeepCloneProcess.clone(source, new Decision());
 
         assertThat(cloned).isNotNull();
         assertThat(cloned.getId().getValue()).isNotEqualTo(SOURCE_ID);
         assertThat(cloned.getName().getValue()).isEqualTo(DECISION_SOURCE_NAME);
-        assertThat(cloned.getLinksHolder().getValue().getLinks()).first().extracting("url").isEqualTo(SECOND_URL);
+        assertThat(cloned.getLinksHolder().getValue().getLinks())
+                .hasSize(2)
+                .extracting(DMNExternalLink::getUrl).contains(FIRST_URL, SECOND_URL);
         assertThat(cloned.getVariable().getTypeRef()).isEqualTo(BuiltInType.BOOLEAN.asQName());
         assertThat(cloned.getQuestion().getValue()).isEqualTo(QUESTION);
         assertThat(cloned.getAllowedAnswers().getValue()).isEqualTo(ANSWER);
