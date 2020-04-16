@@ -16,6 +16,14 @@
 
 package org.kie.workbench.common.stunner.core.definition.clone;
 
-public interface IDeepCloneProcess extends CloneProcess{
+import javax.enterprise.inject.Alternative;
+
+/**
+ * <p>This interface represent a type that has been injected in the {@link CloneManagerImpl}</p>
+ * <p>All classes that implements {@link IDeepCloneProcess} (e.g. {@link DeepCloneProcess}) can specify a different strategy for cloning </p>
+ * <p>At runtime, the correct {@link IDeepCloneProcess} instance will be selected, depending on the class annotated by {@link Alternative} </p>
+ * <p>If, for a specific module, no alternative has been specified, the fallback will be {@link DeepCloneProcess}</p>
+ */
+public interface IDeepCloneProcess extends CloneProcess {
 
 }
