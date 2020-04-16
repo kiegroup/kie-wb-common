@@ -37,6 +37,10 @@ import org.kie.workbench.common.stunner.core.definition.clone.DeepCloneProcess;
 import org.kie.workbench.common.stunner.core.definition.clone.IDeepCloneProcess;
 import org.kie.workbench.common.stunner.core.util.ClassUtils;
 
+/**
+ * <p>It represents the custom implementation of cloning process for DMN nodes.</p>
+ * <p>It is extending the cloning mechanism provided by {@link DeepCloneProcess}, including additional fields and expressions</p>
+ */
 @Alternative
 public class DMNDeepCloneProcess extends DeepCloneProcess implements IDeepCloneProcess {
 
@@ -53,6 +57,15 @@ public class DMNDeepCloneProcess extends DeepCloneProcess implements IDeepCloneP
         super(factoryManager, adapterManager, classUtils);
     }
 
+    /**
+     * <p>It defines additive fields, specific to DMN domain, to be included in the target</p>
+     * <p>Then, the "classic" clone operation, defined in {@link DeepCloneProcess} will be executed</p>
+     * <p>Note that {@link DeepCloneProcess} is already taking care of aspects related to look&feel, such as background color, font, etc.</p>
+     *
+     * @param source node to be cloned
+     * @param target destination of the cloning operation
+     * @return cloned instance, i.e. target element
+     */
     @Override
     public <S, T> T clone(final S source,
                           final T target) {
