@@ -42,6 +42,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import static org.dashbuilder.dataset.Assertions.assertDataSetValues;
 import static org.junit.Assert.*;
 import static org.kie.workbench.common.screens.contributors.model.ContributorsDataSetColumns.COLUMN_AUTHOR;
+import static org.kie.workbench.common.screens.contributors.model.ContributorsDataSetColumns.COLUMN_BRANCH;
 import static org.kie.workbench.common.screens.contributors.model.ContributorsDataSetColumns.COLUMN_DATE;
 import static org.kie.workbench.common.screens.contributors.model.ContributorsDataSetColumns.COLUMN_MSG;
 import static org.kie.workbench.common.screens.contributors.model.ContributorsDataSetColumns.COLUMN_ORG;
@@ -55,18 +56,18 @@ public class ProjectMetricsScreenTest extends AbstractDisplayerTest {
     public static class ContributorsData extends RawDataSet {
 
         public static final ContributorsData INSTANCE = new ContributorsData(
-                new String[]{COLUMN_ORG, COLUMN_REPO, COLUMN_PROJECT, COLUMN_AUTHOR, COLUMN_DATE, COLUMN_MSG},
-                new Class[]{String.class, String.class, String.class, String.class, Date.class, String.class},
+                new String[]{COLUMN_ORG, COLUMN_REPO, COLUMN_PROJECT, COLUMN_BRANCH, COLUMN_AUTHOR, COLUMN_DATE, COLUMN_MSG},
+                new Class[]{String.class, String.class, String.class, String.class, String.class, Date.class, String.class},
                 new String[][]{
-                        {"org1", "repo", "project1", "user1", "01/01/19 12:00", "Commit 1"},
-                        {"org1", "repo", "project1", "user1", "03/02/19 12:00", "Commit 2"},
-                        {"org1", "repo", "project1", "user2", "04/03/19 12:00", "Commit 3"},
-                        {"org1", "repo", "project1", "user2", "06/04/19 12:00", "Commit 4"},
-                        {"org2", "repo", "project2", "user3", "07/05/19 12:00", "Commit 5"},
-                        {"org2", "repo", "project2", "user3", "09/06/19 12:00", "Commit 6"},
-                        {"org2", "repo", "project2", "user4", "11/07/19 12:00", "Commit 7"},
-                        {"org2", "repo", "project2", "user4", "02/08/20 12:00", "Commit 8"},
-                        {"emptyOrg", null, null, null, null, null, null}});
+                        {"org1", "repo", "project1", "master", "user1", "01/01/19 12:00", "Commit 1"},
+                        {"org1", "repo", "project1", "master", "user1", "03/02/19 12:00", "Commit 2"},
+                        {"org1", "repo", "project1", "master", "user2", "04/03/19 12:00", "Commit 3"},
+                        {"org1", "repo", "project1", "master", "user2", "06/04/19 12:00", "Commit 4"},
+                        {"org2", "repo", "project2", "master", "user3", "07/05/19 12:00", "Commit 5"},
+                        {"org2", "repo", "project2", "master", "user3", "09/06/19 12:00", "Commit 6"},
+                        {"org2", "repo", "project2", "master", "user4", "11/07/19 12:00", "Commit 7"},
+                        {"org2", "repo", "project2", "master", "user4", "02/08/20 12:00", "Commit 8"},
+                        {"emptyOrg", null, null, null, null, null, null, null}});
 
         public ContributorsData(String[] columnIds,
                                 Class[] types,
@@ -100,6 +101,7 @@ public class ProjectMetricsScreenTest extends AbstractDisplayerTest {
         when(repository.getAlias()).thenReturn("repo");
         when(project.getName()).thenReturn("project1");
         when(project.getOrganizationalUnit().getName()).thenReturn("org1");
+        when(project.getBranch().getName()).thenReturn("master");
 
         contributorsDataSet = ContributorsData.INSTANCE.toDataSet();
         contributorsDataSet.setUUID(ContributorsDataSets.GIT_CONTRIB);
