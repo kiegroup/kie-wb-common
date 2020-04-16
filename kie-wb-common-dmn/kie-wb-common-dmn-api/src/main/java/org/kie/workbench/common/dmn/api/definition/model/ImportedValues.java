@@ -15,6 +15,7 @@
  */
 package org.kie.workbench.common.dmn.api.definition.model;
 
+import java.util.Optional;
 import java.util.Set;
 
 import org.jboss.errai.common.client.api.annotations.Portable;
@@ -92,7 +93,7 @@ public class ImportedValues extends Import implements DMNPropertySet,
         clonedImportedValues.locationURI = locationURI.copy();
         clonedImportedValues.importType = importType;
         clonedImportedValues.importedElement = importedElement;
-        clonedImportedValues.expressionLanguage = expressionLanguage.copy();
+        clonedImportedValues.expressionLanguage = Optional.ofNullable(expressionLanguage).map(ExpressionLanguage::copy).orElse(null);
         return clonedImportedValues;
     }
 
