@@ -34,9 +34,9 @@ import static org.junit.Assert.assertNull;
 
 public class OutputClauseLiteralExpressionTest {
 
-    public static final String TEXT = "TEXT";
-    public static final String CLAUSE_ID = "CLAUSE-ID";
-    public static final String DESCRIPTION = "DESCRIPTION";
+    private static final String TEXT = "TEXT";
+    private static final String CLAUSE_ID = "CLAUSE-ID";
+    private static final String DESCRIPTION = "DESCRIPTION";
     private OutputClauseLiteralExpression outputClauseLiteralExpression;
 
     @Before

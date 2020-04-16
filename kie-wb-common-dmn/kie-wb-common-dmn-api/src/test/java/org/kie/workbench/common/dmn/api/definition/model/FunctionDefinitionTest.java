@@ -41,8 +41,8 @@ import static org.powermock.api.mockito.PowerMockito.when;
 
 public class FunctionDefinitionTest {
 
-    public static final String FUNCTION_ID = "FUNCTION-ID";
-    public static final String DESCRIPTION = "DESCRIPTION";
+    private static final String FUNCTION_ID = "FUNCTION-ID";
+    private static final String DESCRIPTION = "DESCRIPTION";
     private FunctionDefinition functionDefinition;
 
     @Before

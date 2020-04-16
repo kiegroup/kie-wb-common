@@ -30,8 +30,8 @@ import static org.kie.workbench.common.dmn.api.definition.model.ConstraintType.N
 @RunWith(MockitoJUnitRunner.class)
 public class InputClauseUnaryTestsTest {
 
-    public static final String TEXT = "TEXT";
-    public static final String UNARY_ID = "UNARY_ID";
+    private static final String TEXT = "TEXT";
+    private static final String UNARY_ID = "UNARY_ID";
 
     @Test
     public void testDefaultConstraintTypeProperty() {

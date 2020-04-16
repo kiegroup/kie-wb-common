@@ -43,8 +43,8 @@ import static org.powermock.api.mockito.PowerMockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class ListTest {
 
-    public static final String LIST_ID = "LIST_ID";
-    public static final String DESCRIPTION = "DESCRIPTION";
+    private static final String LIST_ID = "LIST_ID";
+    private static final String DESCRIPTION = "DESCRIPTION";
     private org.kie.workbench.common.dmn.api.definition.model.List list;
 
     @Before

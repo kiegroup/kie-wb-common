@@ -40,8 +40,8 @@ import static org.powermock.api.mockito.PowerMockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class ContextTest {
 
-    public static final String CONTEXT_ID = "CONTEXT-ID";
-    public static final String DESCRIPTION = "DESCRIPTION";
+    private static final String CONTEXT_ID = "CONTEXT-ID";
+    private static final String DESCRIPTION = "DESCRIPTION";
     private Context context;
 
     @Before

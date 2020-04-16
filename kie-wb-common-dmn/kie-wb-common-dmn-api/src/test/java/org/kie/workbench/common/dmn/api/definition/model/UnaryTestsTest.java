@@ -29,10 +29,10 @@ import static org.kie.workbench.common.dmn.api.definition.model.ConstraintType.N
 
 public class UnaryTestsTest {
 
-    public static final String UNARY_ID = "UNARY-ID";
-    public static final String DESCRIPTION = "DESCRIPTION";
-    public static final String TEXT_VALUE = "TEXT-VALUE";
-    public static final String EXPRESSION_LANGUAGE = "EXPRESSION-LANGUAGE";
+    private static final String UNARY_ID = "UNARY-ID";
+    private static final String DESCRIPTION = "DESCRIPTION";
+    private static final String TEXT_VALUE = "TEXT-VALUE";
+    private static final String EXPRESSION_LANGUAGE = "EXPRESSION-LANGUAGE";
 
     @Test
     public void testCopy() {

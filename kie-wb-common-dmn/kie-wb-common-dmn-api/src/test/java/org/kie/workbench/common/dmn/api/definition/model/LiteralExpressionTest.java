@@ -37,10 +37,10 @@ import static org.junit.Assert.assertNull;
 @RunWith(MockitoJUnitRunner.class)
 public class LiteralExpressionTest {
 
-    public static final String LITERAL_ID = "LITERAL-ID";
-    public static final String DESCRIPTION = "DESCRIPTION";
-    public static final String TEXT = "TEXT";
-    public static final String EXPRESSION_LANGUAGE = "EXPRESSION-LANGUAGE";
+    private static final String LITERAL_ID = "LITERAL-ID";
+    private static final String DESCRIPTION = "DESCRIPTION";
+    private static final String TEXT = "TEXT";
+    private static final String EXPRESSION_LANGUAGE = "EXPRESSION-LANGUAGE";
     private LiteralExpression literalExpression;
 
     @Before

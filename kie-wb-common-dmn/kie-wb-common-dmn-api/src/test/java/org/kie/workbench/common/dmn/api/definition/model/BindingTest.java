@@ -44,9 +44,9 @@ import static org.mockito.Mockito.when;
 
 public class BindingTest {
 
-    public static final String ITEM_ID = "ITEM-ID";
-    public static final String DESCRIPTION = "DESCRIPTION";
-    public static final String INFORMATION_ITEM_NAME = "INFORMATION-ITEM-NAME";
+    private static final String ITEM_ID = "ITEM-ID";
+    private static final String DESCRIPTION = "DESCRIPTION";
+    private static final String INFORMATION_ITEM_NAME = "INFORMATION-ITEM-NAME";
     private Binding binding;
 
     @Before

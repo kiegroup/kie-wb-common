@@ -44,9 +44,9 @@ import static org.powermock.api.mockito.PowerMockito.when;
 
 public class DecisionTableTest {
 
-    public static final String TABLE_ID = "TABLE-ID";
-    public static final String DESCRIPTION = "DESCRIPTION";
-    public static final String OUTPUT_LABEL = "OUTPUT-LABEL";
+    private static final String TABLE_ID = "TABLE-ID";
+    private static final String DESCRIPTION = "DESCRIPTION";
+    private static final String OUTPUT_LABEL = "OUTPUT-LABEL";
     private DecisionTable decisionTable;
 
     @Before

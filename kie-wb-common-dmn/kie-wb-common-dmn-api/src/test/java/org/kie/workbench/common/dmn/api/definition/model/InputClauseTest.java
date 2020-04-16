@@ -40,11 +40,11 @@ import static org.powermock.api.mockito.PowerMockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class InputClauseTest {
 
-    public static final String UNARY_ID = "UNARY-ID";
-    public static final String INPUT_ID = "INPUT-ID";
-    public static final String TEXT = "TEXT";
-    public static final String DESCRIPTION = "DESCRIPTION";
-    public static final String CLAUSE_ID = "CLAUSE-ID";
+    private static final String UNARY_ID = "UNARY-ID";
+    private static final String INPUT_ID = "INPUT-ID";
+    private static final String TEXT = "TEXT";
+    private static final String DESCRIPTION = "DESCRIPTION";
+    private static final String CLAUSE_ID = "CLAUSE-ID";
     private InputClause inputClause;
 
     @Before

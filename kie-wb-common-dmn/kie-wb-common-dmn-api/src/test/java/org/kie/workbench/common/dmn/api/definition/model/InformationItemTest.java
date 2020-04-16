@@ -35,9 +35,9 @@ import static org.junit.Assert.assertNotNull;
 
 public class InformationItemTest {
 
-    public static final String ITEM_ID = "ITEM_ID";
-    public static final String DESCRIPTION = "DESCRIPTION";
-    public static final String INFORMATION_ITEM_NAME = "INFORMATION_ITEM_NAME";
+    private static final String ITEM_ID = "ITEM_ID";
+    private static final String DESCRIPTION = "DESCRIPTION";
+    private static final String INFORMATION_ITEM_NAME = "INFORMATION_ITEM_NAME";
     private InformationItem informationItem;
 
     @Before

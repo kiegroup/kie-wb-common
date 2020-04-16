@@ -42,8 +42,8 @@ import static org.powermock.api.mockito.PowerMockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class RelationTest {
 
-    public static final String RELATION_ID = "RELATION-ID";
-    public static final String DESCRIPTION = "DESCRIPTION";
+    private static final String RELATION_ID = "RELATION-ID";
+    private static final String DESCRIPTION = "DESCRIPTION";
     private Relation relation;
 
     @Before

@@ -26,8 +26,8 @@ import static org.junit.Assert.assertNotNull;
 
 public class OutputClauseUnaryTestsTest {
 
-    public static final String UNARY_ID = "UNARY_ID";
-    public static final String TEXT = "TEXT";
+    private static final String UNARY_ID = "UNARY_ID";
+    private static final String TEXT = "TEXT";
 
     @Test
     public void testCopy() {

@@ -25,11 +25,11 @@ import static org.junit.Assert.assertNotNull;
 
 public class ImportedValuesTest {
 
-    public static final String NAMESPACE = "NAMESPACE";
-    public static final String LOCATION_URI = "LOCATION-URI";
-    public static final String IMPORT_TYPE = "IMPORT-TYPE";
-    public static final String IMPORTED_ELEMENT = "IMPORTED-ELEMENT";
-    public static final String EXPRESSION_LANGUAGE = "EXPRESSION-LANGUAGE";
+    private static final String NAMESPACE = "NAMESPACE";
+    private static final String LOCATION_URI = "LOCATION-URI";
+    private static final String IMPORT_TYPE = "IMPORT-TYPE";
+    private static final String IMPORTED_ELEMENT = "IMPORTED-ELEMENT";
+    private static final String EXPRESSION_LANGUAGE = "EXPRESSION-LANGUAGE";
 
     @Test
     public void testCopy() {

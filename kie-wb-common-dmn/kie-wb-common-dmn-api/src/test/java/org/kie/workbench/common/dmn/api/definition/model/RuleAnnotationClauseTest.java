@@ -24,7 +24,7 @@ import static org.junit.Assert.assertNotNull;
 
 public class RuleAnnotationClauseTest {
 
-    public static final String RULE_NAME = "RULE-NAME";
+    private static final String RULE_NAME = "RULE-NAME";
 
     @Test
     public void testCopy() {

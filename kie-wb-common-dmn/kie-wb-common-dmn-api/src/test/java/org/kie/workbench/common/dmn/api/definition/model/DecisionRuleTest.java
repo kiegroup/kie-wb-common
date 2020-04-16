@@ -40,8 +40,8 @@ import static org.powermock.api.mockito.PowerMockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class DecisionRuleTest {
 
-    public static final String DECISION_RULE_ID = "DECISION_RULE_ID";
-    public static final String DESCRIPTION = "DESCRIPTION";
+    private static final String DECISION_RULE_ID = "DECISION_RULE_ID";
+    private static final String DESCRIPTION = "DESCRIPTION";
     private DecisionRule decisionRule;
 
     @Before

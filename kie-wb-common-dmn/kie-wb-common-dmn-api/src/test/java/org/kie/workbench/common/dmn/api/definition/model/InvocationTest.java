@@ -44,8 +44,8 @@ import static org.powermock.api.mockito.PowerMockito.when;
 
 public class InvocationTest {
 
-    public static final String INVOCATION_ID = "INVOCATION-ID";
-    public static final String DESCRIPTION = "DESCRIPTION";
+    private static final String INVOCATION_ID = "INVOCATION-ID";
+    private static final String DESCRIPTION = "DESCRIPTION";
     private Invocation invocation;
 
     @Before
