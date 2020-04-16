@@ -18,6 +18,8 @@ package org.kie.workbench.common.forms.dynamic.client.rendering;
 
 import java.util.List;
 
+import com.google.gwt.user.client.ui.IsWidget;
+import com.google.gwt.user.client.ui.Widget;
 import org.assertj.core.api.Assertions;
 import org.jboss.errai.common.client.dom.HTMLElement;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
@@ -59,6 +61,12 @@ public abstract class AbstractFieldRendererTest<R extends FieldRenderer, F exten
 
     @Mock
     protected FormRenderingContext context;
+
+    @Mock
+    protected IsWidget isWidget;
+
+    @Mock
+    protected Widget widget;
 
     protected F fieldDefinition;
     protected R renderer;
@@ -103,6 +111,11 @@ public abstract class AbstractFieldRendererTest<R extends FieldRenderer, F exten
                 .containsExactly(expectedError);
 
         verify(wrapperWidgetUtil, never()).getWidget(eq(renderer), any(HTMLElement.class));
+    }
+
+    protected void initFormGroup(G formGroup) {
+        when(formGroup.getBindableWidget()).thenReturn(isWidget);
+        when(isWidget.asWidget()).thenReturn(widget);
     }
 
     @Test

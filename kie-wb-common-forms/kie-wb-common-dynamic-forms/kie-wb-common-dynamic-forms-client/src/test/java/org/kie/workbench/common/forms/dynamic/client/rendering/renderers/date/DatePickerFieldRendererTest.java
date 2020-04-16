@@ -53,6 +53,7 @@ public class DatePickerFieldRendererTest extends AbstractFieldRendererTest<org.k
     @Before
     public void init() {
         super.init();
+        initFormGroup(formGroup);
 
         when(formGroupsInstance.get()).thenReturn(formGroup);
     }

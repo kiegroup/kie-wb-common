@@ -53,6 +53,7 @@ public class TextBoxFieldRendererTest extends AbstractFieldRendererTest<TextBoxF
     @Before
     public void init() {
         super.init();
+        initFormGroup(formGroup);
 
         when(formGroupsInstance.get()).thenReturn(formGroup);
     }

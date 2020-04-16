@@ -53,6 +53,7 @@ public class CheckBoxFieldRendererTest extends AbstractFieldRendererTest<CheckBo
     @Before
     public void init() {
         super.init();
+        initFormGroup(formGroup);
 
         when(formGroupsInstance.get()).thenReturn(formGroup);
     }

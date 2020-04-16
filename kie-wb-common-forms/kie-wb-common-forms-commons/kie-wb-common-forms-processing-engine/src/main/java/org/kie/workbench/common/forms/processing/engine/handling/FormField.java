@@ -30,6 +30,8 @@ public interface FormField {
 
     boolean isBindable();
 
+    boolean isActive();
+
     void setVisible(boolean visible);
 
     void setReadOnly(boolean readOnly);

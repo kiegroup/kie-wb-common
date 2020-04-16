@@ -56,6 +56,7 @@ public class SliderFieldRendererTest extends AbstractFieldRendererTest<SliderFie
     @Before
     public void init() {
         super.init();
+        initFormGroup(formGroup);
 
         when(formGroupsInstance.get()).thenReturn(formGroup);
     }

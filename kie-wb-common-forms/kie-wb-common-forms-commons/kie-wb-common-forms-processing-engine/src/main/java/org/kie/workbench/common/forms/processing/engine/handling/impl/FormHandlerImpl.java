@@ -184,9 +184,17 @@ public class FormHandlerImpl<T> implements FormHandler<T> {
     }
 
     @Override
-    public boolean validate() {
-        return validator.validate(form,
-                                  getModel());
+    public boolean validate(boolean activeFieldsOnly) {
+        if (activeFieldsOnly) {
+            for (FormField formField : form.getFields()) {
+                if (formField.isActive() && !validate(formField.getFieldName())) {
+                    return false;
+                }
+            }
+            return true;
+        } else {
+            return validator.validate(form, getModel());
+        }
     }
 
     @Override
@@ -259,9 +267,9 @@ public class FormHandlerImpl<T> implements FormHandler<T> {
 
         binder.setModel(model, StateSync.FROM_UI, true);
 
-        if (!validate()) {
+        if (!validate(true)) {
             binder.setModel(backupModel, StateSync.FROM_MODEL, true);
-            validate();
+            validate(false);
         }
 
         setEnabledOnChangeValidations(true);

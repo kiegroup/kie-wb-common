@@ -74,7 +74,7 @@ public class SubFormFieldRendererTest extends AbstractFieldRendererTest<SubFormF
     @Before
     public void init() {
         super.init();
-
+        initFormGroup(fieldSetFormGroup);
         availableForms.put(NESTED_FORM, mock(FormDefinition.class));
 
         when(context.getAvailableForms()).thenReturn(availableForms);

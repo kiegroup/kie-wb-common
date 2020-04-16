@@ -63,6 +63,7 @@ public class MultipleSubFormFieldRendererTest extends AbstractFieldRendererTest<
     @Before
     public void init() {
         super.init();
+        initFormGroup(formGroup);
 
         availableForms.put(CREATION_FORM, mock(FormDefinition.class));
         availableForms.put(EDITION_FORM, mock(FormDefinition.class));

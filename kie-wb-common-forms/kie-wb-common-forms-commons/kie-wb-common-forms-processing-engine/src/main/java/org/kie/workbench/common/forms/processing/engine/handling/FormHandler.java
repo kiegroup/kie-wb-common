@@ -68,7 +68,7 @@ public interface FormHandler<T> {
      *
      * @return
      */
-    boolean validate();
+    boolean validate(boolean activeFieldsOnly);
 
     /**
      * Validates a specific Field of the form.

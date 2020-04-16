@@ -53,6 +53,7 @@ public class TextAreaFieldRendererTest extends AbstractFieldRendererTest<TextAre
     @Before
     public void init() {
         super.init();
+        initFormGroup(formGroup);
 
         when(formGroupsInstance.get()).thenReturn(formGroup);
     }

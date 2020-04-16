@@ -144,12 +144,12 @@ public class FormHandlerImplTest extends AbstractFormEngineTest {
     }
 
     protected void runCorrectValidationTest(boolean skipGetModel) {
-        assertTrue(formHandler.validate());
+        assertTrue(formHandler.validate(false));
 
-        verify(proxy).deepUnwrap();
+        verify(proxy, times(1)).deepUnwrap();
 
         if (!skipGetModel) {
-            int expectedTimes = 7;
+            int expectedTimes = 12;
 
             verify(binder,
                    times(expectedTimes)).getModel();
@@ -181,9 +181,9 @@ public class FormHandlerImplTest extends AbstractFormEngineTest {
 
         formHandler.maybeFlush();
 
-        verify(binder, times(8)).getModel();
+        verify(binder, times(13)).getModel();
 
-        verify(proxy, times(3)).deepUnwrap();
+        verify(proxy, times(8)).deepUnwrap();
 
         verify((NeedsFlush) addressField.getWidget()).flush();
 
@@ -208,6 +208,33 @@ public class FormHandlerImplTest extends AbstractFormEngineTest {
 
         // If validation failed test rebinding the model
         verify(binder).setModel(any(), same(StateSync.FROM_MODEL), eq(true));
+    }
+
+    @Test
+    public void testHandlerFlushWithInactiveInvalidValue() {
+        testHandlerModelSetup();
+
+        when(valueField.isActive()).thenReturn(false);
+        when(nameField.isActive()).thenReturn(false);
+        when(lastNameField.isActive()).thenReturn(false);
+        when(birthdayField.isActive()).thenReturn(false);
+        when(marriedField.isActive()).thenReturn(false);
+        when(addressField.isActive()).thenReturn(false);
+
+        model.setValue(-123);
+
+        formHandler.maybeFlush();
+
+        verify(binder, times(7)).getModel();
+
+        verify(proxy, times(2)).deepUnwrap();
+
+        verify((NeedsFlush) addressField.getWidget()).flush();
+
+        verify(binder).setModel(any(), same(StateSync.FROM_UI), eq(true));
+
+        // If validation failed test rebinding the model
+        verify(binder, never()).setModel(any(), same(StateSync.FROM_MODEL), eq(true));
     }
 
     @Test
@@ -251,13 +278,12 @@ public class FormHandlerImplTest extends AbstractFormEngineTest {
         verify(userAddress).onFieldChange(eq(USER_ADDRESS_FIELD_NAME), eq(address));
     }
 
-
     protected void runWrongValidationTest(boolean skipGetModel) {
         model.setValue(-123);
         model.getUser().setLastName("");
         model.getUser().setAddress("");
 
-        assertFalse(formHandler.validate());
+        assertFalse(formHandler.validate(false));
 
         verify(proxy).deepUnwrap();
 

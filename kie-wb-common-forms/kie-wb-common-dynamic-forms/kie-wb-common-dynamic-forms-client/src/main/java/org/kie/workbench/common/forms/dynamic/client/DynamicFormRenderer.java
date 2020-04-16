@@ -58,9 +58,9 @@ public class DynamicFormRenderer implements IsWidget,
 
     private DynamicFormRendererView view;
 
-    private FormHandler formHandler;
+    FormHandler formHandler;
 
-    private FormRenderingContext context;
+    FormRenderingContext context;
 
     private FormHandlerGeneratorManager formHandlerGenerator;
 
@@ -231,7 +231,7 @@ public class DynamicFormRenderer implements IsWidget,
     }
 
     public boolean isValid() {
-        return isInitialized() && formHandler.validate();
+        return isInitialized() && formHandler.validate(false);
     }
 
     @Override

@@ -55,6 +55,7 @@ public class MultipleInputFieldRendererTest extends AbstractFieldRendererTest<Mu
     @Before
     public void init() {
         super.init();
+        initFormGroup(formGroup);
 
         when(formGroupsInstance.get()).thenReturn(formGroup);
     }

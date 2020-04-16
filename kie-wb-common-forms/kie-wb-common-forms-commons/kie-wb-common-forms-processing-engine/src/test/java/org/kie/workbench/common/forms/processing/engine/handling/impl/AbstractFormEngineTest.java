@@ -169,6 +169,7 @@ public abstract class AbstractFormEngineTest extends TestCase {
         when(field.isBindable()).thenReturn(true);
         when(field.getWidget()).thenReturn(isWidget);
         when(field.isContentValid()).thenReturn(true);
+        when(field.isActive()).thenReturn(true);
 
         return field;
     }

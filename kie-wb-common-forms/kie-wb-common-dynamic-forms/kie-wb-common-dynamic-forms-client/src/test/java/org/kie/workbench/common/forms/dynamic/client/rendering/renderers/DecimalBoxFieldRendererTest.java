@@ -58,6 +58,7 @@ public class DecimalBoxFieldRendererTest extends AbstractFieldRendererTest<Decim
     @Before
     public void init() {
         super.init();
+        initFormGroup(formGroup);
 
         when(formGroupsInstance.get()).thenReturn(formGroup);
     }

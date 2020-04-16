@@ -28,6 +28,7 @@ import org.kie.workbench.common.forms.dynamic.client.rendering.FieldLayoutCompon
 import org.kie.workbench.common.forms.dynamic.client.rendering.FieldRenderer;
 import org.kie.workbench.common.forms.dynamic.client.rendering.renderers.relations.subform.widget.SubFormWidget;
 import org.kie.workbench.common.forms.dynamic.client.test.TestDynamicFormRenderer;
+import org.kie.workbench.common.forms.dynamic.service.shared.FormRenderingContext;
 import org.kie.workbench.common.forms.dynamic.service.shared.adf.DynamicFormModelGenerator;
 import org.kie.workbench.common.forms.dynamic.test.model.Employee;
 import org.kie.workbench.common.forms.dynamic.test.util.TestFormGenerator;
@@ -38,8 +39,10 @@ import org.kie.workbench.common.forms.processing.engine.handling.FormHandler;
 import org.mockito.Mock;
 import org.uberfire.mvp.Command;
 
+import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.anyString;
+import static org.mockito.Mockito.doCallRealMethod;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -71,6 +74,8 @@ public class DynamicFormRendererTest extends TestCase {
     @Mock
     private DynamicFormModelGenerator dynamicFormModelGenerator;
 
+    private FormHandlerGeneratorManager generatorManager;
+
     private DynamicFormRenderer.DynamicFormRendererView view;
 
     private DynamicFormRenderer renderer;
@@ -91,8 +96,8 @@ public class DynamicFormRendererTest extends TestCase {
 
         when(fieldRenderer.getFormField()).thenReturn(formField);
 
-        FormHandlerGeneratorManager generatorManager = new FormHandlerGeneratorManager(context -> formHandler,
-                                                                                       context -> formHandler);
+        generatorManager = new FormHandlerGeneratorManager(context -> formHandler,
+                                                           context -> formHandler);
 
         when(dynamicFormModelGenerator.getContextForModel(any())).thenReturn(TestFormGenerator.getContextForEmployee(employee));
 
@@ -172,6 +177,28 @@ public class DynamicFormRendererTest extends TestCase {
         renderer.getModel();
 
         verify(formHandler, never()).getModel();
+    }
+
+    @Test
+    public void testIsActive() {
+        DynamicFormRenderer test = mock(DynamicFormRenderer.class);
+        FormRenderingContext context = mock(FormRenderingContext.class);
+        FormHandler handler = mock(FormHandler.class);
+
+        doCallRealMethod().when(test).isValid();
+        doCallRealMethod().when(test).isInitialized();
+
+        assertFalse(test.isValid());
+
+        test.context = context;
+        assertFalse(test.isValid());
+
+        test.formHandler = handler;
+        when(handler.validate(anyBoolean())).thenReturn(false);
+        assertFalse(test.isValid());
+
+        when(handler.validate(anyBoolean())).thenReturn(true);
+        assertTrue(test.isValid());
     }
 
     protected void doBind(int times) {

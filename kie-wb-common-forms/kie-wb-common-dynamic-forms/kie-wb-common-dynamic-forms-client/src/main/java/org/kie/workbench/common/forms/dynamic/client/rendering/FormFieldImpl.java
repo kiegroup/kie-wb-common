@@ -19,6 +19,8 @@ package org.kie.workbench.common.forms.dynamic.client.rendering;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.gwt.event.dom.client.BlurEvent;
+import com.google.gwt.event.dom.client.FocusEvent;
 import com.google.gwt.user.client.ui.IsWidget;
 import org.jboss.errai.common.client.api.Assert;
 import org.kie.workbench.common.forms.dynamic.client.rendering.formGroups.FormGroup;
@@ -29,6 +31,8 @@ import org.kie.workbench.common.forms.processing.engine.handling.FieldContainer;
 import org.kie.workbench.common.forms.processing.engine.handling.FormField;
 
 public abstract class FormFieldImpl<F extends FieldDefinition> implements FormField {
+
+    protected boolean active;
 
     protected F field;
 
@@ -44,6 +48,7 @@ public abstract class FormFieldImpl<F extends FieldDefinition> implements FormFi
                        formGroup);
         this.field = field;
         this.formGroup = formGroup;
+        initActiveFlag();
     }
 
     @Override
@@ -64,6 +69,11 @@ public abstract class FormFieldImpl<F extends FieldDefinition> implements FormFi
     @Override
     public boolean isBindable() {
         return field.getBinding() != null && !field.getBinding().isEmpty();
+    }
+
+    @Override
+    public boolean isActive() {
+        return active;
     }
 
     @Override
@@ -119,5 +129,16 @@ public abstract class FormFieldImpl<F extends FieldDefinition> implements FormFi
     @Override
     public List<CustomFieldValidator> getCustomValidators() {
         return customValidators;
+    }
+
+    protected void setActive(boolean value) {
+        active = value;
+    }
+
+    protected void initActiveFlag() {
+        this.getWidget().asWidget().addDomHandler(focusEvent -> setActive(true),
+                                                  FocusEvent.getType());
+        this.getWidget().asWidget().addDomHandler(blurEvent -> setActive(false),
+                                                  BlurEvent.getType());
     }
 }
