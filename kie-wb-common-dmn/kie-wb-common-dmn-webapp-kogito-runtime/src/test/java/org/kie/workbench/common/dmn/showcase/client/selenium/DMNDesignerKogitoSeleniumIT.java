@@ -50,6 +50,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxOptions;
+import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
@@ -100,9 +101,10 @@ public class DMNDesignerKogitoSeleniumIT {
 
     // editors
     private static final String ACE_EDITOR = "//div[@class='ace_content']";
+    private static final String CANVAS = "//div[@class='canvas-panel']//canvas";
 
     // decision navigator
-    private static final String DECISION_NODE = "//div[@id='decision-graphs-content']//ul/li[@title='%s']";
+    private static final String NODE = "//div[@id='decision-graphs-content']//ul/li[@title='%s']/div";
     private static final String DECISION_TABLE = "//div[@id='decision-graphs-content']//ul/li[@title='%s']/ul/li[@title='Decision Table']/div";
     private static final String LIST = "//div[@id='decision-graphs-content']//ul/li[@title='%s']/ul/li[@title='List']/div";
     private static final String NOT_PRESENT_IN_NAVIGATOR = "' was not present in the decision navigator";
@@ -239,6 +241,41 @@ public class DMNDesignerKogitoSeleniumIT {
                 .ignoreComments()
                 .ignoreWhitespace()
                 .areIdentical();
+    }
+
+    /**
+     * Reproducer for DROOLS-4424
+     */
+    @Test
+    public void testCopyAndPaste() throws Exception {
+        final String source = loadResource("business-knowledge-model.xml");
+        setContent(source);
+
+        expandDecisionNavigatorDock();
+
+        final String nodeName = "BusinessKnowledgeModel-1";
+        final WebElement node = waitOperation().until(element(NODE, nodeName));
+        assertThat(node)
+                .as("Node '" + nodeName + NOT_PRESENT_IN_NAVIGATOR)
+                .isNotNull();
+        node.click();
+
+        final WebElement canvas = waitOperation().until(presenceOfElementLocated(xpath(CANVAS)));
+        assertThat(canvas)
+                .as("Node 'canvas" + NOT_PRESENT_IN_NAVIGATOR)
+                .isNotNull();
+
+        final Actions actions = new Actions(driver);
+        actions.keyDown(Keys.CONTROL).sendKeys("c").keyUp(Keys.CONTROL).perform();
+        actions.keyDown(canvas, Keys.CONTROL).sendKeys("v").keyUp(Keys.CONTROL).perform();
+
+        collapseDecisionNavigatorDock();
+
+        final String actual = getContent();
+        XmlAssert.assertThat(actual)
+                .withNamespaceContext(NAMESPACES)
+                .valueByXPath("count(//dmn:businessKnowledgeModel[@name='BusinessKnowledgeModel-1'])")
+                .isEqualTo(2);
     }
 
     @Test
@@ -2229,7 +2266,7 @@ public class DMNDesignerKogitoSeleniumIT {
 
     private void assertDiagramNodeIsPresentInDecisionNavigator(final String nodeName) {
         expandDecisionNavigatorDock();
-        final WebElement node = waitOperation().until(element(DECISION_NODE, nodeName));
+        final WebElement node = waitOperation().until(element(NODE, nodeName));
         assertThat(node)
                 .as("Node '" + nodeName + NOT_PRESENT_IN_NAVIGATOR)
                 .isNotNull();
@@ -2313,7 +2350,6 @@ public class DMNDesignerKogitoSeleniumIT {
 
     /**
      * Use this for loading DMN model placed in src/test/resources
-     *
      * @param filename
      * @return Text content of the file
      * @throws IOException
