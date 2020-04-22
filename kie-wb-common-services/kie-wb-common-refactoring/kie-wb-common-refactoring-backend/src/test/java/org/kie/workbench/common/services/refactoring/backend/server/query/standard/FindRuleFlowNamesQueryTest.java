@@ -3,11 +3,14 @@ package org.kie.workbench.common.services.refactoring.backend.server.query.stand
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.services.refactoring.backend.server.query.response.ResponseBuilder;
+import org.kie.workbench.common.services.refactoring.model.query.RefactoringMapPageRow;
+import org.kie.workbench.common.services.refactoring.model.query.RefactoringPageRow;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.uberfire.ext.metadata.model.KObject;
@@ -18,7 +21,7 @@ import org.uberfire.java.nio.file.Path;
 import org.uberfire.java.nio.fs.file.SimpleFileSystemProvider;
 
 import static java.lang.String.format;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -55,7 +58,7 @@ public class FindRuleFlowNamesQueryTest {
         // Indexed RuleFlow groups mock
         when(property.getName()).thenReturn(FindRuleFlowNamesQuery.SHARED_TERM);
         when(property.getValue()).thenReturn(GROUP_NAME);
-        properties.add(property);
+        when(kObject.getProperties()).thenReturn(properties);
 
         // Class under test
         testedBuilder = query.getResponseBuilder();
@@ -63,35 +66,70 @@ public class FindRuleFlowNamesQueryTest {
 
     @Test
     public void testNullObject() {
-        fail("finish it");
+        List<RefactoringPageRow> list = testedBuilder.buildResponse(kObjects);
+
+        assertEquals(0, list.size());
     }
 
     @Test
     public void testNoProperties() {
-        fail("finish it");
+        kObjects.add(kObject);
+        List<RefactoringPageRow> list = testedBuilder.buildResponse(kObjects);
+
+        assertEquals(0, list.size());
     }
 
     @Test
     public void testNonGroupTermIsIgnored() {
-        fail("finish it");
+        when(property.getName()).thenReturn("Random value");
+        properties.add(property);
+        kObjects.add(kObject);
+        List<RefactoringPageRow> list = testedBuilder.buildResponse(kObjects);
+
+        assertEquals(0, list.size());
     }
 
     @Test
     public void testNewGroupAdded() {
-        fail("finish it");
+        properties.add(property);
+        kObjects.add(kObject);
+        when(kObject.getKey()).thenReturn(FILE_PATH);
+
+        List<RefactoringPageRow> list = testedBuilder.buildResponse(kObjects);
+        RefactoringMapPageRow row = (RefactoringMapPageRow) list.get(0);
+        assertEquals(1, list.size());
+        Map<?, ?> map = row.getValue();
+        assertEquals(3, map.size());
+        assertEquals(FILE_NAME, map.get("filename"));
+        assertEquals(path.toUri().toString(), map.get("pathuri"));
+        assertEquals(GROUP_NAME, map.get("name"));
     }
 
     @Test
     public void testExistentGroupUpdated() {
-        fail("finish it");
+        properties.add(property);
+        properties.add(property);
+
+        kObjects.add(kObject);
+        when(kObject.getKey()).thenReturn(FILE_PATH);
+
+        List<RefactoringPageRow> list = testedBuilder.buildResponse(kObjects);
+        RefactoringMapPageRow row = (RefactoringMapPageRow) list.get(0);
+        assertEquals(1, list.size());
+        Map<?, ?> map = row.getValue();
+        assertEquals(3, map.size());
+        assertEquals(FILE_NAME, map.get("filename"));
+        assertEquals(path.toUri().toString(), map.get("pathuri"));
+        assertEquals(GROUP_NAME, map.get("name"));
     }
 
     @Test
     public void testFileWithGroupIsDeletedOrNotExist() {
-        when(kObject.getProperties()).thenReturn(properties);
+        properties.add(property);
         when(kObject.getKey()).thenReturn(FILE_NOT_EXIST_PATH);
         kObjects.add(kObject);
-        testedBuilder.buildResponse(kObjects);
-        fail("finish it");
+        List<RefactoringPageRow> list = testedBuilder.buildResponse(kObjects);
+
+        assertEquals(0, list.size());
     }
 }
