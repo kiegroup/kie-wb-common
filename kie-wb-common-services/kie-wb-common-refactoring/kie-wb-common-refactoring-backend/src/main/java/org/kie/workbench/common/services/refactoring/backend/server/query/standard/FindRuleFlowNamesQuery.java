@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -58,6 +59,16 @@ public class FindRuleFlowNamesQuery extends AbstractFindQuery implements NamedQu
     private RuleFlowNamesResponseBuilder responseBuilder = new RuleFlowNamesResponseBuilder();
 
     public static final String NAME = FindRuleFlowNamesQuery.class.getSimpleName();
+    public static final String SHARED_TERM = SharedPartIndexTerm.TERM + ":" + PartType.RULEFLOW_GROUP.toString();
+
+    // For the testing purposes
+    void setIoService(IOService service) {
+        ioService = service;
+    }
+
+    public static boolean isSharedRuleFlowGroup(String parameter) {
+        return SHARED_TERM.equals(parameter);
+    }
 
     @Override
     public String getName() {
