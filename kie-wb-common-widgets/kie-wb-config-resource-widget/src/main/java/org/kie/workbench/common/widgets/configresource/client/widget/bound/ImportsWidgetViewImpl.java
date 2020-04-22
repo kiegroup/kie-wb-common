@@ -48,6 +48,7 @@ import org.gwtbootstrap3.client.ui.gwt.ButtonCell;
 import org.gwtbootstrap3.client.ui.gwt.CellTable;
 import org.kie.soup.project.datamodel.imports.Import;
 import org.kie.workbench.common.widgets.configresource.client.resources.i18n.ImportConstants;
+import org.kie.workbench.common.widgets.configresource.client.widget.BuiltInTypeImportHelper;
 import org.kie.workbench.common.widgets.configresource.client.widget.Sorters;
 import org.uberfire.client.mvp.LockRequiredEvent;
 import org.uberfire.ext.widgets.common.client.common.popups.YesNoCancelPopup;
@@ -125,7 +126,8 @@ public class ImportsWidgetViewImpl
                                final SafeHtml data,
                                final SafeHtmlBuilder sb) {
                 //Don't render a "Delete" button for "internal" Fact Types
-                if (isExternalImport(context.getIndex())) {
+                if (isExternalImport(context.getIndex()) &&
+                        BuiltInTypeImportHelper.isImportRemovable((getDataProvider().getList().get(context.getIndex())))) {
                     super.render(context,
                                  data,
                                  sb);

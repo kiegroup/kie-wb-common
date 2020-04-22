@@ -22,8 +22,10 @@ import java.util.List;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
+import com.google.gwt.cell.client.Cell;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -43,6 +45,7 @@ import org.gwtbootstrap3.client.ui.gwt.ButtonCell;
 import org.gwtbootstrap3.client.ui.gwt.CellTable;
 import org.kie.soup.project.datamodel.imports.Import;
 import org.kie.workbench.common.widgets.configresource.client.resources.i18n.ImportConstants;
+import org.kie.workbench.common.widgets.configresource.client.widget.BuiltInTypeImportHelper;
 import org.kie.workbench.common.widgets.configresource.client.widget.Sorters;
 import org.uberfire.client.mvp.LockRequiredEvent;
 import org.uberfire.ext.widgets.common.client.common.BusyPopup;
@@ -118,6 +121,15 @@ public class ImportsWidgetViewImpl
             @Override
             public String getValue(final Import importType) {
                 return ImportConstants.INSTANCE.remove();
+            }
+
+            @Override
+            public void render(final Cell.Context context,
+                               final Import object,
+                               final SafeHtmlBuilder sb) {
+                if (BuiltInTypeImportHelper.isImportRemovable(object)) {
+                    super.render(context, object, sb);
+                }
             }
         };
         deleteImportColumn.setFieldUpdater((index, importType, value) -> {
