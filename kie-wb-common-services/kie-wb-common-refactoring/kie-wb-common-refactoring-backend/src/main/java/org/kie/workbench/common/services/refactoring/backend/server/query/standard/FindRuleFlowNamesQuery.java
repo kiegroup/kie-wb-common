@@ -45,12 +45,13 @@ import org.uberfire.backend.vfs.Path;
 import org.uberfire.ext.metadata.model.KObject;
 import org.uberfire.ext.metadata.model.KProperty;
 import org.uberfire.io.IOService;
+import org.uberfire.java.nio.file.FileSystemNotFoundException;
 import org.uberfire.paging.PageResponse;
 
 @ApplicationScoped
 public class FindRuleFlowNamesQuery extends AbstractFindQuery implements NamedQuery {
 
-    private static final Logger logger = LoggerFactory.getLogger(FindRuleFlowNamesQuery.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(FindRuleFlowNamesQuery.class);
 
     @Inject
     @Named("ioStrategy")
@@ -153,17 +154,21 @@ public class FindRuleFlowNamesQuery extends AbstractFindQuery implements NamedQu
             }
             for (KProperty property : kObject.getProperties()) {
                 if (property.getName().equals(SharedPartIndexTerm.TERM + ":" + PartType.RULEFLOW_GROUP.toString())) {
-                    if (ruleFlowGroupNames.containsKey(property.getValue().toString())) {
-                        final Path path = Paths.convert(ioService.get(URI.create(kObject.getKey())));
-                        ruleFlowGroupNames.get(property.getValue().toString()).put("name", property.getValue().toString());
-                        ruleFlowGroupNames.get(property.getValue().toString()).put("filename", path.getFileName());
-                        ruleFlowGroupNames.get(property.getValue().toString()).put("pathuri", path.toURI());
-                    } else {
-                        final Path path = Paths.convert(ioService.get(URI.create(kObject.getKey())));
-                        ruleFlowGroupNames.put(property.getValue().toString(), new HashMap<String, String>());
-                        ruleFlowGroupNames.get(property.getValue().toString()).put("name", property.getValue().toString());
-                        ruleFlowGroupNames.get(property.getValue().toString()).put("filename", path.getFileName());
-                        ruleFlowGroupNames.get(property.getValue().toString()).put("pathuri", path.toURI());
+                    try {
+                        if (ruleFlowGroupNames.containsKey(property.getValue().toString())) {
+                            final Path path = Paths.convert(ioService.get(URI.create(kObject.getKey())));
+                            ruleFlowGroupNames.get(property.getValue().toString()).put("name", property.getValue().toString());
+                            ruleFlowGroupNames.get(property.getValue().toString()).put("filename", path.getFileName());
+                            ruleFlowGroupNames.get(property.getValue().toString()).put("pathuri", path.toURI());
+                        } else {
+                            final Path path = Paths.convert(ioService.get(URI.create(kObject.getKey())));
+                            ruleFlowGroupNames.put(property.getValue().toString(), new HashMap<String, String>());
+                            ruleFlowGroupNames.get(property.getValue().toString()).put("name", property.getValue().toString());
+                            ruleFlowGroupNames.get(property.getValue().toString()).put("filename", path.getFileName());
+                            ruleFlowGroupNames.get(property.getValue().toString()).put("pathuri", path.toURI());
+                        }
+                    } catch (FileSystemNotFoundException ex) {
+                        LOGGER.error(ex.toString());
                     }
                 }
             }
