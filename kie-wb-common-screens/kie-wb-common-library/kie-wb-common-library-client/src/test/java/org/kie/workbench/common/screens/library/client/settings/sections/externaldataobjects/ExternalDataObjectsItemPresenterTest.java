@@ -12,6 +12,7 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 
@@ -30,26 +31,38 @@ public class ExternalDataObjectsItemPresenterTest {
 
     @Test
     public void testSetup() {
-        final Import import_ = new Import("type");
-        externalDataObjectsItemPresenter.setup(import_, mock(ExternalDataObjectsPresenter.class));
-
-        verify(view).init(eq(externalDataObjectsItemPresenter));
-        verify(view).setTypeName(eq("type"));
-        verify(view).showRemoveButton();
-        verify(view, never()).hideRemoveButton();
-        assertEquals(import_, externalDataObjectsItemPresenter.getObject());
+        testSetupOfType("type");
+        testSetupOfRemoveButton(true);
     }
 
     @Test
-    public void testSetupWhenBuiltInTypeIsImported() {
-        final Import import_ = new Import("java.lang.Number");
-        externalDataObjectsItemPresenter.setup(import_, mock(ExternalDataObjectsPresenter.class));
+    public void testSetupWhenBuiltInJavaLangTypeIsImported() {
+        testSetupOfType("java.lang.Number");
+        testSetupOfRemoveButton(false);
+    }
 
-        verify(view).init(eq(externalDataObjectsItemPresenter));
-        verify(view).setTypeName(eq("java.lang.Number"));
-        verify(view, never()).showRemoveButton();
-        verify(view).hideRemoveButton();
-        assertEquals(import_, externalDataObjectsItemPresenter.getObject());
+    @Test
+    public void testSetupWhenBuiltInJavaUtilTypeIsImported() {
+        testSetupOfType("java.util.List");
+        testSetupOfRemoveButton(false);
+    }
+
+    @Test
+    public void testTypeChange() {
+        testTypeChange("NewType");
+        testSetupOfRemoveButton(true);
+    }
+
+    @Test
+    public void testTypeChangeWhenBuiltInJavaLangTypeIsImported() {
+        testTypeChange("java.lang.Number");
+        testSetupOfRemoveButton(false);
+    }
+
+    @Test
+    public void testTypeChangeWhenBuiltInJavaUtilTypeIsImported() {
+        testTypeChange("java.util.List");
+        testSetupOfRemoveButton(false);
     }
 
     @Test
@@ -64,5 +77,35 @@ public class ExternalDataObjectsItemPresenterTest {
 
         verify(listPresenter).remove(eq(externalDataObjectsItemPresenter));
         verify(parentPresenter).fireChangeEvent();
+    }
+
+    private void testSetupOfType(final String type) {
+        final Import import_ = new Import(type);
+        externalDataObjectsItemPresenter.setup(import_, mock(ExternalDataObjectsPresenter.class));
+
+        verify(view).init(eq(externalDataObjectsItemPresenter));
+        verify(view).setTypeName(eq(type));
+        assertEquals(import_, externalDataObjectsItemPresenter.getObject());
+    }
+
+    private void testTypeChange(final String newType) {
+        final Import import_ = new Import("com.sample.OriginalType");
+        externalDataObjectsItemPresenter.setup(import_, mock(ExternalDataObjectsPresenter.class));
+        reset(view);
+
+        externalDataObjectsItemPresenter.onTypeNameChange(newType);
+
+        assertEquals(newType, externalDataObjectsItemPresenter.getObject().getType());
+    }
+
+    private void testSetupOfRemoveButton(final boolean visible) {
+        if (visible) {
+            verify(view).showRemoveButton();
+            verify(view, never()).hideRemoveButton();
+        } else {
+
+            verify(view, never()).showRemoveButton();
+            verify(view).hideRemoveButton();
+        }
     }
 }

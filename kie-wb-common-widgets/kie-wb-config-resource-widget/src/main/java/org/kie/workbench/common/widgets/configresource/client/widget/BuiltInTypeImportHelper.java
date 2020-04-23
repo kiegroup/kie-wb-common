@@ -20,6 +20,10 @@ import org.kie.soup.project.datamodel.imports.Import;
 
 public class BuiltInTypeImportHelper {
 
+    private BuiltInTypeImportHelper() {
+        // Suggested by Sonar Cloud
+    }
+
     /**
      * Check if the import is java built in type ("java.lang.*" or "java.util.*")
      *
