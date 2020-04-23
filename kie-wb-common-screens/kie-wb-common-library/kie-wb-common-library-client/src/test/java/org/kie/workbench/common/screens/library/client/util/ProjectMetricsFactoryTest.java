@@ -61,6 +61,7 @@ public class ProjectMetricsFactoryTest {
         when(workspaceProject.getName()).thenReturn("project1");
         when(workspaceProject.getOrganizationalUnit().getName()).thenReturn("mySpace");
         when(workspaceProject.getRepository().getAlias()).thenReturn("alias");
+        when(workspaceProject.getBranch().getName()).thenReturn("master");
 
         LogicalExprFilter filter = (LogicalExprFilter) this.projectMetricsFactory.createProjectFilter(workspaceProject);
         List<String> filters = filter.getLogicalTerms()
@@ -72,11 +73,12 @@ public class ProjectMetricsFactoryTest {
                 .collect(Collectors.toList());
 
         assertThat(filters.size(),
-                   CoreMatchers.is(3));
+                   CoreMatchers.is(4));
 
         assertThat(filters,
                    CoreMatchers.hasItems("project=project1",
                                          "organization=mySpace",
-                                         "repository=alias"));
+                                         "repository=alias",
+                                         "branch=master"));
     }
 }

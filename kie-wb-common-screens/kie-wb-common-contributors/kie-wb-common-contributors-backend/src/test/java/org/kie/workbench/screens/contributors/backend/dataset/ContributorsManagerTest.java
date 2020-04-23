@@ -51,6 +51,7 @@ import org.uberfire.java.nio.base.version.VersionRecord;
 
 import static org.junit.Assert.*;
 import static org.kie.workbench.common.screens.contributors.model.ContributorsDataSetColumns.COLUMN_AUTHOR;
+import static org.kie.workbench.common.screens.contributors.model.ContributorsDataSetColumns.COLUMN_BRANCH;
 import static org.kie.workbench.common.screens.contributors.model.ContributorsDataSetColumns.COLUMN_DATE;
 import static org.kie.workbench.common.screens.contributors.model.ContributorsDataSetColumns.COLUMN_MSG;
 import static org.kie.workbench.common.screens.contributors.model.ContributorsDataSetColumns.COLUMN_ORG;
@@ -497,8 +498,8 @@ public class ContributorsManagerTest {
 
         System.out.println("SUM = " + (repositoryHistory1.size() + repositoryHistory2.size()));
 
-        final Repository repo1 = makeRepository("testRepo1");
-        final Repository repo2 = makeRepository("testRepo2");
+        final Repository repo1 = makeRepository("testRepo1", "project1");
+        final Repository repo2 = makeRepository("testRepo2", "project2");
 
         final OrganizationalUnit org1 = makeOrganizationalUnit("test1",
                                                                Arrays.asList(repo1, repo2));
@@ -520,9 +521,10 @@ public class ContributorsManagerTest {
                 .thenReturn(repositoryHistory2);
     }
 
-    private Repository makeRepository(final String repositoryAlias) {
+    private Repository makeRepository(final String repositoryAlias, final String moduleName) {
         final Repository repository = mock(Repository.class);
         when(repository.getAlias()).thenReturn(repositoryAlias);
+        when(repository.getBranches()).thenReturn(Arrays.asList(makeBranch(moduleName)));
         return repository;
     }
 
@@ -542,10 +544,14 @@ public class ContributorsManagerTest {
 
         return new WorkspaceProject(organizationalUnit,
                                     repository,
-                                    new Branch("master",
-                                               PathFactory.newPath("testFile",
-                                                                   "file:///" + moduleName)),
+                                    makeBranch(moduleName),
                                     module);
+    }
+
+    private Branch makeBranch(final String moduleName) {
+        return new Branch("master",
+                   PathFactory.newPath("testFile",
+                                       "file:///" + moduleName));
     }
 
     @Test
@@ -553,7 +559,7 @@ public class ContributorsManagerTest {
         DataSet dataSet = contributorsManager.buildDataSet(null);
         assertEquals(68,
                      dataSet.getRowCount());
-        assertEquals(6,
+        assertEquals(7,
                      dataSet.getColumns().size());
 
         DataColumn column = dataSet.getColumns().get(0);
@@ -577,16 +583,22 @@ public class ContributorsManagerTest {
         column = dataSet.getColumns().get(3);
         assertEquals(ColumnType.LABEL,
                      column.getColumnType());
-        assertEquals(COLUMN_AUTHOR,
+        assertEquals(COLUMN_BRANCH,
                      column.getId());
 
         column = dataSet.getColumns().get(4);
+        assertEquals(ColumnType.LABEL,
+                     column.getColumnType());
+        assertEquals(COLUMN_AUTHOR,
+                     column.getId());
+
+        column = dataSet.getColumns().get(5);
         assertEquals(ColumnType.TEXT,
                      column.getColumnType());
         assertEquals(COLUMN_MSG,
                      column.getId());
 
-        column = dataSet.getColumns().get(5);
+        column = dataSet.getColumns().get(6);
         assertEquals(ColumnType.DATE,
                      column.getColumnType());
         assertEquals(COLUMN_DATE,

@@ -30,6 +30,7 @@ import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.kie.workbench.common.screens.library.client.resources.i18n.LibraryConstants;
 
 import static org.dashbuilder.dataset.date.DayOfWeek.SUNDAY;
+import static org.dashbuilder.dataset.filter.FilterFactory.AND;
 import static org.dashbuilder.dataset.filter.FilterFactory.equalsTo;
 import static org.dashbuilder.dataset.group.AggregateFunctionType.COUNT;
 import static org.dashbuilder.dataset.group.AggregateFunctionType.DISTINCT;
@@ -41,6 +42,7 @@ import static org.dashbuilder.dataset.sort.SortOrder.ASCENDING;
 import static org.dashbuilder.dataset.sort.SortOrder.DESCENDING;
 import static org.dashbuilder.displayer.Position.RIGHT;
 import static org.kie.workbench.common.screens.contributors.model.ContributorsDataSetColumns.COLUMN_AUTHOR;
+import static org.kie.workbench.common.screens.contributors.model.ContributorsDataSetColumns.COLUMN_BRANCH;
 import static org.kie.workbench.common.screens.contributors.model.ContributorsDataSetColumns.COLUMN_DATE;
 import static org.kie.workbench.common.screens.contributors.model.ContributorsDataSetColumns.COLUMN_MSG;
 import static org.kie.workbench.common.screens.contributors.model.ContributorsDataSetColumns.COLUMN_ORG;
@@ -50,6 +52,7 @@ import static org.kie.workbench.common.screens.contributors.model.ContributorsDa
 @ApplicationScoped
 public class OrgUnitsMetricsFactory {
 
+    private static final String DEFAULT_BRANCH = "master";
     private TranslationService translationService;
     private DisplayerLocator displayerLocator;
 
@@ -111,8 +114,10 @@ public class OrgUnitsMetricsFactory {
     }
 
     protected ColumnFilter createOrgUnitFilter(final OrganizationalUnit organizationalUnit) {
-        return equalsTo(COLUMN_ORG,
-                        organizationalUnit.getName());
+        return AND(equalsTo(COLUMN_ORG,
+                        organizationalUnit.getName()),
+                   equalsTo(COLUMN_BRANCH,
+                            DEFAULT_BRANCH));
     }
 
     public DisplayerSettings buildCommitsPerAuthorSettings(final OrganizationalUnit organizationalUnit) {
