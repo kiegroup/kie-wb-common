@@ -53,19 +53,17 @@ public class FindRuleFlowNamesQuery extends AbstractFindQuery implements NamedQu
 
     private static final Logger LOGGER = LoggerFactory.getLogger(FindRuleFlowNamesQuery.class);
 
+    private final IOService ioService;
+
     @Inject
-    @Named("ioStrategy")
-    private IOService ioService;
+    public FindRuleFlowNamesQuery(@Named("ioStrategy") IOService ioService) {
+        this.ioService = ioService;
+    }
 
     private RuleFlowNamesResponseBuilder responseBuilder = new RuleFlowNamesResponseBuilder();
 
     public static final String NAME = FindRuleFlowNamesQuery.class.getSimpleName();
     public static final String SHARED_TERM = SharedPartIndexTerm.TERM + ":" + PartType.RULEFLOW_GROUP.toString();
-
-    // For the testing purposes
-    void setIoService(IOService service) {
-        ioService = service;
-    }
 
     public static boolean isSharedRuleFlowGroup(String parameter) {
         return SHARED_TERM.equals(parameter);

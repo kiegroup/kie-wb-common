@@ -44,8 +44,6 @@ public class FindRuleFlowNamesQueryTest {
     private List<KObject> kObjects = new ArrayList<>();
     private List<KProperty<?>> properties = new ArrayList<>();
 
-    // Tested classes
-    private static final FindRuleFlowNamesQuery query = new FindRuleFlowNamesQuery();
     private ResponseBuilder testedBuilder;
 
     @Before
@@ -53,7 +51,8 @@ public class FindRuleFlowNamesQueryTest {
         // IO Service mock
         when(ioService.get(FILE_NOT_EXIST_URI)).thenThrow(new FileSystemNotFoundException(format("No filesystem for uri %s found.", FILE_NOT_EXIST_URI.toString())));
         when(ioService.get(FILE_URI)).thenReturn(path);
-        query.setIoService(ioService);
+        // Tested classes
+        FindRuleFlowNamesQuery query = new FindRuleFlowNamesQuery(ioService);
 
         // Indexed RuleFlow groups mock
         when(property.getName()).thenReturn(FindRuleFlowNamesQuery.SHARED_TERM);
