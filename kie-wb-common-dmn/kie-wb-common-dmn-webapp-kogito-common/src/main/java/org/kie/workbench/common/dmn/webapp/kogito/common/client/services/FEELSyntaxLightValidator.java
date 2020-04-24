@@ -17,6 +17,7 @@
 package org.kie.workbench.common.dmn.webapp.kogito.common.client.services;
 
 import java.util.Arrays;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
 import static java.util.stream.Stream.of;
@@ -30,19 +31,23 @@ import static java.util.stream.Stream.of;
 public class FEELSyntaxLightValidator {
 
     private static final Character[] FORBIDDEN_CHARS = new Character[]{
-            '!', '@', '#', '$', '$', '%', '&', '^', '(', ')', '\"',
-            '{', '}', '[', ']', '|', '\\', '"', '<', '>', ';', ':', ','
+            '!', '@', '#', '$', '$', '%', '&', '^', '(', ')', '\"', '°', '§', '←', '→', '↓', '¢', 'µ',
+            '{', '}', '[', ']', '|', '\\', '=', '<', '>', ';', ':', ',', '¶', '«', '»', '”', '“'
     };
+
+    private static final Character[] ALLOWED_SEPARATORS = {'-', '.', '/', '\'', '*', '+'};
 
     private static final Character[] FORBIDDEN_CHARS_AS_INITIAL = Stream.concat(
             of(FORBIDDEN_CHARS),
-            of('-', '.', '/', '\'', '*', '+')
+            of(ALLOWED_SEPARATORS)
     ).toArray(Character[]::new);
 
     private static final String[] RESERVED_KEYWORDS = new String[]{
             "for", "return", "if", "then", "else", "some", "every", "satisfies", "instance", "of",
             "function", "external", "or", "and", "between", "not", "null", "true", "false"
     };
+
+    private static final Function<Character, String> CHAR_TO_STRING_MAPPER = c -> Character.toString(c);
 
     public static boolean isVariableNameValid(final String variableName) {
         return notEmpty(variableName)
@@ -57,17 +62,31 @@ public class FEELSyntaxLightValidator {
 
     private static boolean firstCharacterIsValid(final String variableName) {
         final char firstLetter = variableName.charAt(0);
-        return !Character.isDigit(firstLetter) && containsNone(firstLetter, FORBIDDEN_CHARS_AS_INITIAL);
+        return firstLetterIsNotADigit(firstLetter) && containsNone(firstLetter, FORBIDDEN_CHARS_AS_INITIAL);
+    }
+
+    private static boolean firstLetterIsNotADigit(final char firstLetter) {
+        return !Character.isDigit(firstLetter);
     }
 
     private static boolean firstWordIsNotReservedKeyword(final String variableName) {
-        return containsNone(variableName.split("[ \\-]")[0], RESERVED_KEYWORDS);
+        return containsNone(variableName.split(buildSeparatorRegex())[0], RESERVED_KEYWORDS);
+    }
+
+    private static String buildSeparatorRegex() {
+        return "[" + getSeparatorSequence() + "]";
+    }
+
+    private static String getSeparatorSequence() {
+        return of(ALLOWED_SEPARATORS)
+                .map(CHAR_TO_STRING_MAPPER)
+                .reduce(" ", (separatorSequence, separator) -> separatorSequence + separator);
     }
 
     private static boolean doesNotContainForbiddenChars(final String variableName) {
         final String variableNameWithoutInitial = variableName.substring(1);
         return Stream.of(FORBIDDEN_CHARS)
-                .map(c -> Character.toString(c))
+                .map(CHAR_TO_STRING_MAPPER)
                 .noneMatch(variableNameWithoutInitial::contains);
     }
 

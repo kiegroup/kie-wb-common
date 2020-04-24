@@ -48,6 +48,11 @@ public class FEELSyntaxLightValidatorTest {
     public void testValidationWhenVariableNameStartsWithReservedKeyword() {
         assertThat(FEELSyntaxLightValidator.isVariableNameValid("for variable")).isFalse();
         assertThat(FEELSyntaxLightValidator.isVariableNameValid("for-name")).isFalse();
+        assertThat(FEELSyntaxLightValidator.isVariableNameValid("for.name")).isFalse();
+        assertThat(FEELSyntaxLightValidator.isVariableNameValid("for/name")).isFalse();
+        assertThat(FEELSyntaxLightValidator.isVariableNameValid("for'name")).isFalse();
+        assertThat(FEELSyntaxLightValidator.isVariableNameValid("for*name")).isFalse();
+        assertThat(FEELSyntaxLightValidator.isVariableNameValid("for+name")).isFalse();
     }
 
     @Test
@@ -99,6 +104,40 @@ public class FEELSyntaxLightValidatorTest {
 
     @Test
     public void testValidationWhenVariableNameContainsInvalidCharacters() {
+        assertThat(FEELSyntaxLightValidator.isVariableNameValid("variable ! name")).isFalse();
         assertThat(FEELSyntaxLightValidator.isVariableNameValid("variable @ name")).isFalse();
+        assertThat(FEELSyntaxLightValidator.isVariableNameValid("variable # name")).isFalse();
+        assertThat(FEELSyntaxLightValidator.isVariableNameValid("variable $ name")).isFalse();
+        assertThat(FEELSyntaxLightValidator.isVariableNameValid("variable $ name")).isFalse();
+        assertThat(FEELSyntaxLightValidator.isVariableNameValid("variable % name")).isFalse();
+        assertThat(FEELSyntaxLightValidator.isVariableNameValid("variable & name")).isFalse();
+        assertThat(FEELSyntaxLightValidator.isVariableNameValid("variable ^ name")).isFalse();
+        assertThat(FEELSyntaxLightValidator.isVariableNameValid("variable ( name")).isFalse();
+        assertThat(FEELSyntaxLightValidator.isVariableNameValid("variable ) name")).isFalse();
+        assertThat(FEELSyntaxLightValidator.isVariableNameValid("variable \" name")).isFalse();
+        assertThat(FEELSyntaxLightValidator.isVariableNameValid("variable ° name")).isFalse();
+        assertThat(FEELSyntaxLightValidator.isVariableNameValid("variable § name")).isFalse();
+        assertThat(FEELSyntaxLightValidator.isVariableNameValid("variable ← name")).isFalse();
+        assertThat(FEELSyntaxLightValidator.isVariableNameValid("variable → name")).isFalse();
+        assertThat(FEELSyntaxLightValidator.isVariableNameValid("variable ↓ name")).isFalse();
+        assertThat(FEELSyntaxLightValidator.isVariableNameValid("variable ¢ name")).isFalse();
+        assertThat(FEELSyntaxLightValidator.isVariableNameValid("variable µ name")).isFalse();
+        assertThat(FEELSyntaxLightValidator.isVariableNameValid("variable { name")).isFalse();
+        assertThat(FEELSyntaxLightValidator.isVariableNameValid("variable } name")).isFalse();
+        assertThat(FEELSyntaxLightValidator.isVariableNameValid("variable [ name")).isFalse();
+        assertThat(FEELSyntaxLightValidator.isVariableNameValid("variable ] name")).isFalse();
+        assertThat(FEELSyntaxLightValidator.isVariableNameValid("variable | name")).isFalse();
+        assertThat(FEELSyntaxLightValidator.isVariableNameValid("variable \\ name")).isFalse();
+        assertThat(FEELSyntaxLightValidator.isVariableNameValid("variable = name")).isFalse();
+        assertThat(FEELSyntaxLightValidator.isVariableNameValid("variable < name")).isFalse();
+        assertThat(FEELSyntaxLightValidator.isVariableNameValid("variable > name")).isFalse();
+        assertThat(FEELSyntaxLightValidator.isVariableNameValid("variable ; name")).isFalse();
+        assertThat(FEELSyntaxLightValidator.isVariableNameValid("variable : name")).isFalse();
+        assertThat(FEELSyntaxLightValidator.isVariableNameValid("variable , name")).isFalse();
+        assertThat(FEELSyntaxLightValidator.isVariableNameValid("variable ¶ name")).isFalse();
+        assertThat(FEELSyntaxLightValidator.isVariableNameValid("variable « name")).isFalse();
+        assertThat(FEELSyntaxLightValidator.isVariableNameValid("variable » name")).isFalse();
+        assertThat(FEELSyntaxLightValidator.isVariableNameValid("variable ” name")).isFalse();
+        assertThat(FEELSyntaxLightValidator.isVariableNameValid("variable “ name")).isFalse();
     }
 }
