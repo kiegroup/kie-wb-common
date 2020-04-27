@@ -53,18 +53,19 @@ import static org.kie.workbench.common.dmn.api.definition.model.FunctionDefiniti
 
 public class DMNDeepCloneProcessTest extends AbstractCloneProcessTest {
 
-    public static final String SOURCE_ID = "source-id";
-    public static final String INPUT_DATA_NAME = "input-data";
-    public static final String FIRST_URL = "firstURL";
-    public static final String SECOND_URL = "secondURL";
-    public static final String DECISION_SERVICE_NAME = "decision-service";
-    public static final String KNOWLEDGE_SOURCE_NAME = "knowledge-source";
-    public static final String FUNCTION_ID = "function-id";
-    public static final String CONTEXT_ID = "context-id";
-    public static final String BKM_SOURCE_NAME = "bkm-source";
-    public static final String DECISION_SOURCE_NAME = "decision-source";
-    public static final String QUESTION = "question?";
-    public static final String ANSWER = "answer";
+    private static final String SOURCE_ID = "source-id";
+    private static final String INPUT_DATA_NAME = "input-data";
+    private static final String FIRST_URL = "firstURL";
+    private static final String SECOND_URL = "secondURL";
+    private static final String DECISION_SERVICE_NAME = "decision-service";
+    private static final String KNOWLEDGE_SOURCE_NAME = "knowledge-source";
+    private static final String FUNCTION_ID = "function-id";
+    private static final String CONTEXT_ID = "context-id";
+    private static final String BKM_SOURCE_NAME = "bkm-source";
+    private static final String DECISION_SOURCE_NAME = "decision-source";
+    private static final String QUESTION = "question?";
+    private static final String ANSWER = "answer";
+    private static final String NAME_SUFFIX = "-1";
     private DMNDeepCloneProcess dmnDeepCloneProcess;
 
     @Before
@@ -82,7 +83,7 @@ public class DMNDeepCloneProcessTest extends AbstractCloneProcessTest {
 
         assertThat(cloned).isNotNull();
         assertThat(cloned.getId().getValue()).isNotEqualTo(SOURCE_ID);
-        assertThat(cloned.getName().getValue()).isEqualTo(INPUT_DATA_NAME);
+        assertThat(cloned.getName().getValue()).isEqualTo(INPUT_DATA_NAME + NAME_SUFFIX);
         assertThat(cloned.getVariable().getTypeRef()).isEqualTo(BuiltInType.STRING.asQName());
         assertThat(cloned.getLinksHolder().getValue().getLinks())
                 .hasSize(2)
@@ -109,7 +110,7 @@ public class DMNDeepCloneProcessTest extends AbstractCloneProcessTest {
 
         assertThat(cloned).isNotNull();
         assertThat(cloned.getId().getValue()).isNotEqualTo(SOURCE_ID);
-        assertThat(cloned.getName().getValue()).isEqualTo(DECISION_SERVICE_NAME);
+        assertThat(cloned.getName().getValue()).isEqualTo(DECISION_SERVICE_NAME + NAME_SUFFIX);
         assertThat(cloned.getVariable().getTypeRef()).isEqualTo(BuiltInType.BOOLEAN.asQName());
     }
 
@@ -139,7 +140,7 @@ public class DMNDeepCloneProcessTest extends AbstractCloneProcessTest {
 
         assertThat(cloned).isNotNull();
         assertThat(cloned.getId().getValue()).isNotEqualTo(SOURCE_ID);
-        assertThat(cloned.getName().getValue()).isEqualTo(KNOWLEDGE_SOURCE_NAME);
+        assertThat(cloned.getName().getValue()).isEqualTo(KNOWLEDGE_SOURCE_NAME + NAME_SUFFIX);
         assertThat(cloned.getLinksHolder().getValue().getLinks())
                 .hasSize(2)
                 .extracting(DMNExternalLink::getUrl).contains(FIRST_URL, SECOND_URL);
@@ -167,7 +168,7 @@ public class DMNDeepCloneProcessTest extends AbstractCloneProcessTest {
 
         assertThat(cloned).isNotNull();
         assertThat(cloned.getId().getValue()).isNotEqualTo(SOURCE_ID);
-        assertThat(cloned.getName().getValue()).isEqualTo(BKM_SOURCE_NAME);
+        assertThat(cloned.getName().getValue()).isEqualTo(BKM_SOURCE_NAME + NAME_SUFFIX);
         assertThat(cloned.getLinksHolder().getValue().getLinks())
                 .hasSize(2)
                 .extracting(DMNExternalLink::getUrl).contains(FIRST_URL, SECOND_URL);
@@ -190,7 +191,7 @@ public class DMNDeepCloneProcessTest extends AbstractCloneProcessTest {
 
         assertThat(cloned).isNotNull();
         assertThat(cloned.getId().getValue()).isNotEqualTo(SOURCE_ID);
-        assertThat(cloned.getName().getValue()).isEqualTo(DECISION_SOURCE_NAME);
+        assertThat(cloned.getName().getValue()).isEqualTo(DECISION_SOURCE_NAME + NAME_SUFFIX);
         assertThat(cloned.getLinksHolder().getValue().getLinks())
                 .hasSize(2)
                 .extracting(DMNExternalLink::getUrl).contains(FIRST_URL, SECOND_URL);
@@ -260,5 +261,35 @@ public class DMNDeepCloneProcessTest extends AbstractCloneProcessTest {
                                          .getLinks()
                                          .add(new DMNExternalLink(link, "description"))
                 );
+    }
+
+    @Test
+    public void testComposingDistinguishedNodeName() {
+        assertThat(dmnDeepCloneProcess.composeDistinguishedNodeName(INPUT_DATA_NAME))
+                .isEqualTo(INPUT_DATA_NAME + NAME_SUFFIX);
+    }
+
+    @Test
+    public void testComposingDistinguishedNodeNameWhenItAlreadyContainsSuffix() {
+        assertThat(dmnDeepCloneProcess.composeDistinguishedNodeName(INPUT_DATA_NAME + "-3"))
+                .isEqualTo(INPUT_DATA_NAME + "-4");
+    }
+
+    @Test
+    public void testComposingDistinguishedNodeNameWhenItContainsWrongSuffix() {
+        assertThat(dmnDeepCloneProcess.composeDistinguishedNodeName(INPUT_DATA_NAME + "-A3"))
+                .isEqualTo(INPUT_DATA_NAME + "-A3" + NAME_SUFFIX);
+    }
+
+    @Test
+    public void testComposingDistinguishedNodeNameWhenItIsEmpty() {
+        assertThat(dmnDeepCloneProcess.composeDistinguishedNodeName(""))
+                .isEqualTo(NAME_SUFFIX);
+    }
+
+    @Test
+    public void testComposingDistinguishedNodeNameWhenItIsNull() {
+        assertThat(dmnDeepCloneProcess.composeDistinguishedNodeName(null))
+                .isEqualTo(NAME_SUFFIX);
     }
 }

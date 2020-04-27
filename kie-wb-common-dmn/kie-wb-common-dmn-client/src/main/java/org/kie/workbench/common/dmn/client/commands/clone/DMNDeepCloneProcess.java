@@ -17,11 +17,15 @@ package org.kie.workbench.common.dmn.client.commands.clone;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import javax.enterprise.inject.Alternative;
 import javax.inject.Inject;
 
+import com.google.gwt.regexp.shared.MatchResult;
+import com.google.gwt.regexp.shared.RegExp;
+import org.kie.workbench.common.dmn.api.definition.HasText;
 import org.kie.workbench.common.dmn.api.definition.HasVariable;
 import org.kie.workbench.common.dmn.api.definition.model.BusinessKnowledgeModel;
 import org.kie.workbench.common.dmn.api.definition.model.DRGElement;
@@ -31,6 +35,9 @@ import org.kie.workbench.common.dmn.api.definition.model.InformationItemPrimary;
 import org.kie.workbench.common.dmn.api.definition.model.IsInformationItem;
 import org.kie.workbench.common.dmn.api.property.dmn.DMNExternalLink;
 import org.kie.workbench.common.dmn.api.property.dmn.Id;
+import org.kie.workbench.common.dmn.api.property.dmn.Name;
+import org.kie.workbench.common.dmn.api.property.dmn.NameHolder;
+import org.kie.workbench.common.dmn.api.property.dmn.Text;
 import org.kie.workbench.common.stunner.core.api.FactoryManager;
 import org.kie.workbench.common.stunner.core.definition.adapter.AdapterManager;
 import org.kie.workbench.common.stunner.core.definition.clone.DeepCloneProcess;
@@ -43,6 +50,11 @@ import org.kie.workbench.common.stunner.core.util.ClassUtils;
  */
 @Alternative
 public class DMNDeepCloneProcess extends DeepCloneProcess implements IDeepCloneProcess {
+
+    private static final Logger LOGGER = Logger.getLogger(DMNDeepCloneProcess.class.getName());
+    private static final RegExp NAME_SUFFIX_REGEX = RegExp.compile("[?!-]\\d+$");
+    private static final String CLONED_DEFAULT_SUFFIX = "-1";
+    private static final String HYPHEN = "-";
 
     protected DMNDeepCloneProcess() {
         this(null,
@@ -69,8 +81,15 @@ public class DMNDeepCloneProcess extends DeepCloneProcess implements IDeepCloneP
     @Override
     public <S, T> T clone(final S source,
                           final T target) {
+
+        super.clone(source, target);
+
         if (source instanceof DRGElement) {
             cloneDRGElementBasicInfo((DRGElement) source, (DRGElement) target);
+        }
+
+        if (source instanceof HasText) {
+            cloneTextElementBasicInfo((HasText) source, (HasText) target);
         }
 
         if (source instanceof HasVariable) {
@@ -87,13 +106,43 @@ public class DMNDeepCloneProcess extends DeepCloneProcess implements IDeepCloneP
             cloneBusinessKnowledgeModel((BusinessKnowledgeModel) source, (BusinessKnowledgeModel) target);
         }
 
-        return super.clone(source, target);
+        return target;
     }
 
     private void cloneDRGElementBasicInfo(final DRGElement source, final DRGElement target) {
-        target.setName(source.getName().copy());
-        target.setNameHolder(source.getNameHolder().copy());
+        final String distinguishedName = composeDistinguishedNodeName(source.getName().getValue());
+        target.setId(new Id());
+        target.setNameHolder(new NameHolder(new Name(distinguishedName)));
+        target.setDescription(source.getDescription().copy());
+        target.setParent(source.getParent());
         target.getLinksHolder().getValue().getLinks().addAll(cloneExternalLinkList(source));
+    }
+
+    private void cloneTextElementBasicInfo(final HasText source, final HasText target) {
+        final String distinguishedName = composeDistinguishedNodeName(source.getText().getValue());
+        target.setText(new Text(distinguishedName));
+    }
+
+    String composeDistinguishedNodeName(final String name) {
+        final String nameValue = Optional.ofNullable(name).orElse("");
+        try {
+            final MatchResult matchResult = NAME_SUFFIX_REGEX.exec(nameValue);
+            if (matchResult != null) {
+                return incrementNameSuffixIndexIfPresent(nameValue, matchResult);
+            }
+        } catch (Exception e) {
+            LOGGER.warning("There was an issue while parsing node with name " + nameValue + " - A fallback will be used for it");
+        }
+
+        return nameValue + CLONED_DEFAULT_SUFFIX;
+    }
+
+    private String incrementNameSuffixIndexIfPresent(String nameValue, MatchResult matchResult) {
+        String suffix = matchResult.getGroup(0);
+        int suffixIndex = Integer.parseInt(suffix.substring(1));
+        final String nameValueWithoutSuffix = nameValue.split(suffix)[0];
+        final String computedSuffix = HYPHEN + (++suffixIndex);
+        return nameValueWithoutSuffix + computedSuffix;
     }
 
     private void cloneTypeRefInfo(final IsInformationItem srcInformationItem, final IsInformationItem targetInformationItem) {
@@ -114,18 +163,12 @@ public class DMNDeepCloneProcess extends DeepCloneProcess implements IDeepCloneP
     }
 
     private void cloneDecision(final Decision source, final Decision target) {
-        target.setId(new Id());
-        target.setDescription(source.getDescription().copy());
-        target.setName(source.getName().copy());
         target.setQuestion(source.getQuestion().copy());
         target.setAllowedAnswers(source.getAllowedAnswers().copy());
         target.setExpression(Optional.ofNullable(source.getExpression()).map(Expression::copy).orElse(null));
     }
 
     private void cloneBusinessKnowledgeModel(final BusinessKnowledgeModel source, final BusinessKnowledgeModel target) {
-        target.setId(new Id());
-        target.setDescription(source.getDescription().copy());
-        target.setName(source.getName().copy());
         target.setEncapsulatedLogic(source.getEncapsulatedLogic().copy());
     }
 }
