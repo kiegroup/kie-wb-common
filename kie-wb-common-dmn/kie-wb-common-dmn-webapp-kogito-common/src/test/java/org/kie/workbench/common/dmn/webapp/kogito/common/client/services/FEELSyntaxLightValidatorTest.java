@@ -91,6 +91,7 @@ public class FEELSyntaxLightValidatorTest {
         assertThat(FEELSyntaxLightValidator.isVariableNameValid("satisfies")).isFalse();
         assertThat(FEELSyntaxLightValidator.isVariableNameValid("instance")).isFalse();
         assertThat(FEELSyntaxLightValidator.isVariableNameValid("of")).isFalse();
+        assertThat(FEELSyntaxLightValidator.isVariableNameValid("in")).isFalse();
         assertThat(FEELSyntaxLightValidator.isVariableNameValid("function")).isFalse();
         assertThat(FEELSyntaxLightValidator.isVariableNameValid("external")).isFalse();
         assertThat(FEELSyntaxLightValidator.isVariableNameValid("or")).isFalse();

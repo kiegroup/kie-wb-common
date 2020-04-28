@@ -44,7 +44,7 @@ public class FEELSyntaxLightValidator {
 
     private static final String[] RESERVED_KEYWORDS = new String[]{
             "for", "return", "if", "then", "else", "some", "every", "satisfies", "instance", "of",
-            "function", "external", "or", "and", "between", "not", "null", "true", "false"
+            "in", "function", "external", "or", "and", "between", "not", "null", "true", "false"
     };
 
     private static final Function<Character, String> CHAR_TO_STRING_MAPPER = c -> Character.toString(c);
