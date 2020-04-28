@@ -122,43 +122,43 @@ public class DMNDeepCloneProcess extends DeepCloneProcess implements IDeepCloneP
     }
 
     private void cloneDRGElementBasicInfo(final DRGElement source, final DRGElement target) {
-        final String distinguishedName = composeDistinguishedNodeName(source.getName().getValue());
+        final String uniqueNodeName = composeUniqueNodeName(source.getName().getValue());
         target.setId(new Id());
-        target.setNameHolder(new NameHolder(new Name(distinguishedName)));
+        target.setNameHolder(new NameHolder(new Name(uniqueNodeName)));
         target.setDescription(source.getDescription().copy());
         target.setParent(source.getParent());
         target.getLinksHolder().getValue().getLinks().addAll(cloneExternalLinkList(source));
     }
 
     private void cloneTextElementBasicInfo(final HasText source, final HasText target) {
-        final String distinguishedName = composeDistinguishedNodeName(source.getText().getValue());
-        target.setText(new Text(distinguishedName));
+        final String uniqueNodeName = composeUniqueNodeName(source.getText().getValue());
+        target.setText(new Text(uniqueNodeName));
     }
 
-    String composeDistinguishedNodeName(final String name) {
+    String composeUniqueNodeName(final String name) {
         final String originalName = Optional.ofNullable(name).orElse("");
-        String distinguishedName = originalName + CLONED_DEFAULT_SUFFIX;
+        String uniqueName = originalName + CLONED_DEFAULT_SUFFIX;
 
         try {
             final MatchResult nameSuffixMatcher = NAME_SUFFIX_REGEX.exec(originalName);
             if (nameSuffixMatcher != null) {
-                distinguishedName = buildNameWithIncrementedSuffixIndex(originalName, nameSuffixMatcher);
+                uniqueName = buildNameWithIncrementedSuffixIndex(originalName, nameSuffixMatcher);
             }
         } catch (Exception e) {
             LOGGER.warning("There was an issue while parsing node with name " + originalName + " - A fallback will be used for it");
         }
 
-        return ensureNodeNameUniqueness(distinguishedName);
+        return ensureNodeNameUniqueness(uniqueName);
     }
 
-    private String ensureNodeNameUniqueness(final String distinguishedName) {
+    private String ensureNodeNameUniqueness(final String uniqueName) {
         return StreamSupport.stream(getGraphNodes().spliterator(), true)
                 .map(this::nodeNamesMapper)
                 .filter(Objects::nonNull)
-                .filter(Predicate.isEqual(distinguishedName))
+                .filter(Predicate.isEqual(uniqueName))
                 .findAny()
-                .map(this::composeDistinguishedNodeName)
-                .orElse(distinguishedName);
+                .map(this::composeUniqueNodeName)
+                .orElse(uniqueName);
     }
 
     private String nodeNamesMapper(final Node<View, Edge> node) {

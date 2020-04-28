@@ -33,6 +33,7 @@ import org.kie.workbench.common.dmn.api.definition.model.InformationItemPrimary;
 import org.kie.workbench.common.dmn.api.definition.model.InputData;
 import org.kie.workbench.common.dmn.api.definition.model.KnowledgeSource;
 import org.kie.workbench.common.dmn.api.definition.model.NamedElement;
+import org.kie.workbench.common.dmn.api.definition.model.TextAnnotation;
 import org.kie.workbench.common.dmn.api.property.background.BackgroundSet;
 import org.kie.workbench.common.dmn.api.property.dimensions.DecisionServiceRectangleDimensionsSet;
 import org.kie.workbench.common.dmn.api.property.dimensions.GeneralRectangleDimensionsSet;
@@ -310,44 +311,44 @@ public class DMNDeepCloneProcessTest extends AbstractCloneProcessTest {
     }
 
     @Test
-    public void testComposingDistinguishedNodeName() {
-        assertThat(dmnDeepCloneProcess.composeDistinguishedNodeName(INPUT_DATA_NAME))
+    public void testComposingUniqueNodeName() {
+        assertThat(dmnDeepCloneProcess.composeUniqueNodeName(INPUT_DATA_NAME))
                 .isEqualTo(INPUT_DATA_NAME + NAME_SUFFIX);
     }
 
     @Test
-    public void testComposingDistinguishedNodeNameWhenItAlreadyContainsSuffix() {
-        assertThat(dmnDeepCloneProcess.composeDistinguishedNodeName(INPUT_DATA_NAME + "-3"))
+    public void testComposingUniqueNodeNameWhenItAlreadyContainsIndexedSuffix() {
+        assertThat(dmnDeepCloneProcess.composeUniqueNodeName(INPUT_DATA_NAME + "-3"))
                 .isEqualTo(INPUT_DATA_NAME + "-4");
     }
 
     @Test
-    public void testComposingDistinguishedNodeNameWhenItContainsWrongSuffix() {
-        assertThat(dmnDeepCloneProcess.composeDistinguishedNodeName(INPUT_DATA_NAME + "-A3"))
+    public void testComposingUniqueNodeNameWhenItContainsNotIndexedSuffix() {
+        assertThat(dmnDeepCloneProcess.composeUniqueNodeName(INPUT_DATA_NAME + "-A3"))
                 .isEqualTo(INPUT_DATA_NAME + "-A3" + NAME_SUFFIX);
     }
 
     @Test
-    public void testComposingDistinguishedNodeNameWhenNameAlreadyPresent() {
+    public void testComposingUniqueNodeNameWhenNextIndexInSequenceAlreadyPresent() {
         when(graph.nodes()).thenReturn(Collections.singletonList(node));
         when(node.getContent()).thenReturn(content);
         when(content.getDefinition()).thenReturn(definition);
         when(definition.getName()).thenReturn(name);
         when(name.getValue()).thenReturn(INPUT_DATA_NAME + "-6");
 
-        assertThat(dmnDeepCloneProcess.composeDistinguishedNodeName(INPUT_DATA_NAME + "-5"))
+        assertThat(dmnDeepCloneProcess.composeUniqueNodeName(INPUT_DATA_NAME + "-5"))
                 .isEqualTo(INPUT_DATA_NAME + "-7");
     }
 
     @Test
-    public void testComposingDistinguishedNodeNameWhenItIsEmpty() {
-        assertThat(dmnDeepCloneProcess.composeDistinguishedNodeName(""))
+    public void testComposingUniqueNodeNameWhenItIsEmpty() {
+        assertThat(dmnDeepCloneProcess.composeUniqueNodeName(""))
                 .isEqualTo(NAME_SUFFIX);
     }
 
     @Test
-    public void testComposingDistinguishedNodeNameWhenItIsNull() {
-        assertThat(dmnDeepCloneProcess.composeDistinguishedNodeName(null))
+    public void testComposingUniqueNodeNameWhenItIsNull() {
+        assertThat(dmnDeepCloneProcess.composeUniqueNodeName(null))
                 .isEqualTo(NAME_SUFFIX);
     }
 }
