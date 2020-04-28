@@ -47,6 +47,8 @@ import org.kie.workbench.common.dmn.api.property.dmn.LocationURI;
 import org.kie.workbench.common.dmn.api.property.dmn.Name;
 import org.kie.workbench.common.dmn.api.property.dmn.QName;
 import org.kie.workbench.common.dmn.api.property.dmn.Question;
+import org.kie.workbench.common.dmn.api.property.dmn.Text;
+import org.kie.workbench.common.dmn.api.property.dmn.TextFormat;
 import org.kie.workbench.common.dmn.api.property.dmn.types.BuiltInType;
 import org.kie.workbench.common.dmn.api.property.font.FontSet;
 import org.kie.workbench.common.stunner.core.client.api.SessionManager;
@@ -81,6 +83,7 @@ public class DMNDeepCloneProcessTest extends AbstractCloneProcessTest {
     private static final String QUESTION = "question?";
     private static final String ANSWER = "answer";
     private static final String NAME_SUFFIX = "-1";
+    private static final String TEXT_DATA = "text-data";
     private DMNDeepCloneProcess dmnDeepCloneProcess;
 
     @Mock
@@ -143,6 +146,29 @@ public class DMNDeepCloneProcessTest extends AbstractCloneProcessTest {
                 new Description(),
                 new Name(INPUT_DATA_NAME),
                 buildInformationItemPrimary(BuiltInType.STRING),
+                new BackgroundSet(),
+                new FontSet(),
+                new GeneralRectangleDimensionsSet()
+        );
+    }
+
+    @Test
+    public void testCloneWhenSourceIsTextAnnotation() {
+        final TextAnnotation source = buildTextAnnotation();
+
+        final TextAnnotation cloned = dmnDeepCloneProcess.clone(source, new TextAnnotation());
+
+        assertThat(cloned).isNotNull();
+        assertThat(cloned.getId().getValue()).isNotEqualTo(SOURCE_ID);
+        assertThat(cloned.getText().getValue()).isEqualTo(TEXT_DATA + NAME_SUFFIX);
+    }
+
+    private TextAnnotation buildTextAnnotation() {
+        return new TextAnnotation(
+                new Id(SOURCE_ID),
+                new Description(),
+                new Text(TEXT_DATA),
+                new TextFormat(),
                 new BackgroundSet(),
                 new FontSet(),
                 new GeneralRectangleDimensionsSet()
