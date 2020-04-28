@@ -16,9 +16,12 @@
 package org.kie.workbench.common.dmn.client.commands.clone;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Predicate;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import javax.enterprise.inject.Alternative;
 import javax.inject.Inject;
@@ -33,15 +36,20 @@ import org.kie.workbench.common.dmn.api.definition.model.Decision;
 import org.kie.workbench.common.dmn.api.definition.model.Expression;
 import org.kie.workbench.common.dmn.api.definition.model.InformationItemPrimary;
 import org.kie.workbench.common.dmn.api.definition.model.IsInformationItem;
+import org.kie.workbench.common.dmn.api.definition.model.NamedElement;
 import org.kie.workbench.common.dmn.api.property.dmn.DMNExternalLink;
 import org.kie.workbench.common.dmn.api.property.dmn.Id;
 import org.kie.workbench.common.dmn.api.property.dmn.Name;
 import org.kie.workbench.common.dmn.api.property.dmn.NameHolder;
 import org.kie.workbench.common.dmn.api.property.dmn.Text;
 import org.kie.workbench.common.stunner.core.api.FactoryManager;
+import org.kie.workbench.common.stunner.core.client.api.SessionManager;
 import org.kie.workbench.common.stunner.core.definition.adapter.AdapterManager;
 import org.kie.workbench.common.stunner.core.definition.clone.DeepCloneProcess;
 import org.kie.workbench.common.stunner.core.definition.clone.IDeepCloneProcess;
+import org.kie.workbench.common.stunner.core.graph.Edge;
+import org.kie.workbench.common.stunner.core.graph.Node;
+import org.kie.workbench.common.stunner.core.graph.content.view.View;
 import org.kie.workbench.common.stunner.core.util.ClassUtils;
 
 /**
@@ -55,9 +63,11 @@ public class DMNDeepCloneProcess extends DeepCloneProcess implements IDeepCloneP
     private static final RegExp NAME_SUFFIX_REGEX = RegExp.compile("[?!-]\\d+$");
     private static final String CLONED_DEFAULT_SUFFIX = "-1";
     private static final String HYPHEN = "-";
+    private final SessionManager sessionManager;
 
     protected DMNDeepCloneProcess() {
         this(null,
+             null,
              null,
              null);
     }
@@ -65,8 +75,10 @@ public class DMNDeepCloneProcess extends DeepCloneProcess implements IDeepCloneP
     @Inject
     public DMNDeepCloneProcess(final FactoryManager factoryManager,
                                final AdapterManager adapterManager,
-                               final ClassUtils classUtils) {
+                               final ClassUtils classUtils,
+                               final SessionManager sessionManager) {
         super(factoryManager, adapterManager, classUtils);
+        this.sessionManager = sessionManager;
     }
 
     /**
@@ -124,21 +136,54 @@ public class DMNDeepCloneProcess extends DeepCloneProcess implements IDeepCloneP
     }
 
     String composeDistinguishedNodeName(final String name) {
-        final String nameValue = Optional.ofNullable(name).orElse("");
+        final String originalName = Optional.ofNullable(name).orElse("");
+        String distinguishedName = originalName + CLONED_DEFAULT_SUFFIX;
+
         try {
-            final MatchResult matchResult = NAME_SUFFIX_REGEX.exec(nameValue);
-            if (matchResult != null) {
-                return incrementNameSuffixIndexIfPresent(nameValue, matchResult);
+            final MatchResult nameSuffixMatcher = NAME_SUFFIX_REGEX.exec(originalName);
+            if (nameSuffixMatcher != null) {
+                distinguishedName = buildNameWithIncrementedSuffixIndex(originalName, nameSuffixMatcher);
             }
         } catch (Exception e) {
-            LOGGER.warning("There was an issue while parsing node with name " + nameValue + " - A fallback will be used for it");
+            LOGGER.warning("There was an issue while parsing node with name " + originalName + " - A fallback will be used for it");
         }
 
-        return nameValue + CLONED_DEFAULT_SUFFIX;
+        return ensureNodeNameUniqueness(distinguishedName);
     }
 
-    private String incrementNameSuffixIndexIfPresent(String nameValue, MatchResult matchResult) {
-        String suffix = matchResult.getGroup(0);
+    private String ensureNodeNameUniqueness(final String distinguishedName) {
+        return StreamSupport.stream(getGraphNodes().spliterator(), true)
+                .map(this::nodeNamesMapper)
+                .filter(Objects::nonNull)
+                .filter(Predicate.isEqual(distinguishedName))
+                .findAny()
+                .map(this::composeDistinguishedNodeName)
+                .orElse(distinguishedName);
+    }
+
+    private String nodeNamesMapper(final Node<View, Edge> node) {
+        if (node.getContent().getDefinition() instanceof NamedElement) {
+            NamedElement namedElement = (NamedElement) node.getContent().getDefinition();
+            return namedElement.getName().getValue();
+        }
+        if (node.getContent().getDefinition() instanceof HasText) {
+            HasText hasText = (HasText) node.getContent().getDefinition();
+            return hasText.getText().getValue();
+        }
+        return null;
+    }
+
+    private Iterable<Node<View, Edge>> getGraphNodes() {
+        return sessionManager
+                .getCurrentSession()
+                .getCanvasHandler()
+                .getDiagram()
+                .getGraph()
+                .nodes();
+    }
+
+    private String buildNameWithIncrementedSuffixIndex(final String nameValue, final MatchResult matchResult) {
+        final String suffix = matchResult.getGroup(0);
         int suffixIndex = Integer.parseInt(suffix.substring(1));
         final String nameValueWithoutSuffix = nameValue.split(suffix)[0];
         final String computedSuffix = HYPHEN + (++suffixIndex);

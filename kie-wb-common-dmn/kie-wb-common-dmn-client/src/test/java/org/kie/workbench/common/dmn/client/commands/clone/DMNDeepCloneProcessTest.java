@@ -17,10 +17,12 @@
 package org.kie.workbench.common.dmn.client.commands.clone;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.stream.Stream;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.kie.workbench.common.dmn.api.definition.model.BusinessKnowledgeModel;
 import org.kie.workbench.common.dmn.api.definition.model.Context;
 import org.kie.workbench.common.dmn.api.definition.model.DRGElement;
@@ -30,6 +32,7 @@ import org.kie.workbench.common.dmn.api.definition.model.FunctionDefinition;
 import org.kie.workbench.common.dmn.api.definition.model.InformationItemPrimary;
 import org.kie.workbench.common.dmn.api.definition.model.InputData;
 import org.kie.workbench.common.dmn.api.definition.model.KnowledgeSource;
+import org.kie.workbench.common.dmn.api.definition.model.NamedElement;
 import org.kie.workbench.common.dmn.api.property.background.BackgroundSet;
 import org.kie.workbench.common.dmn.api.property.dimensions.DecisionServiceRectangleDimensionsSet;
 import org.kie.workbench.common.dmn.api.property.dimensions.GeneralRectangleDimensionsSet;
@@ -45,12 +48,23 @@ import org.kie.workbench.common.dmn.api.property.dmn.QName;
 import org.kie.workbench.common.dmn.api.property.dmn.Question;
 import org.kie.workbench.common.dmn.api.property.dmn.types.BuiltInType;
 import org.kie.workbench.common.dmn.api.property.font.FontSet;
+import org.kie.workbench.common.stunner.core.client.api.SessionManager;
+import org.kie.workbench.common.stunner.core.client.canvas.CanvasHandler;
+import org.kie.workbench.common.stunner.core.client.session.ClientSession;
 import org.kie.workbench.common.stunner.core.definition.clone.AbstractCloneProcessTest;
+import org.kie.workbench.common.stunner.core.diagram.Diagram;
+import org.kie.workbench.common.stunner.core.graph.Graph;
+import org.kie.workbench.common.stunner.core.graph.Node;
+import org.kie.workbench.common.stunner.core.graph.content.view.View;
 import org.kie.workbench.common.stunner.core.util.ClassUtils;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.kie.workbench.common.dmn.api.definition.model.FunctionDefinition.Kind.JAVA;
+import static org.mockito.Mockito.when;
 
+@RunWith(MockitoJUnitRunner.class)
 public class DMNDeepCloneProcessTest extends AbstractCloneProcessTest {
 
     private static final String SOURCE_ID = "source-id";
@@ -68,10 +82,42 @@ public class DMNDeepCloneProcessTest extends AbstractCloneProcessTest {
     private static final String NAME_SUFFIX = "-1";
     private DMNDeepCloneProcess dmnDeepCloneProcess;
 
+    @Mock
+    private SessionManager sessionManager;
+
+    @Mock
+    private ClientSession currentSession;
+
+    @Mock
+    private CanvasHandler canvasHandler;
+
+    @Mock
+    private Diagram diagram;
+
+    @Mock
+    private Graph graph;
+
+    @Mock
+    private Node node;
+
+    @Mock
+    private View content;
+
+    @Mock
+    private NamedElement definition;
+
+    @Mock
+    private Name name;
+
     @Before
     public void setUp() throws Exception {
         super.setUp();
-        dmnDeepCloneProcess = new DMNDeepCloneProcess(factoryManager, adapterManager, new ClassUtils());
+        when(sessionManager.getCurrentSession()).thenReturn(currentSession);
+        when(currentSession.getCanvasHandler()).thenReturn(canvasHandler);
+        when(canvasHandler.getDiagram()).thenReturn(diagram);
+        when(diagram.getGraph()).thenReturn(graph);
+        when(graph.nodes()).thenReturn(Collections.emptyList());
+        dmnDeepCloneProcess = new DMNDeepCloneProcess(factoryManager, adapterManager, new ClassUtils(), sessionManager);
     }
 
     @Test
@@ -279,6 +325,18 @@ public class DMNDeepCloneProcessTest extends AbstractCloneProcessTest {
     public void testComposingDistinguishedNodeNameWhenItContainsWrongSuffix() {
         assertThat(dmnDeepCloneProcess.composeDistinguishedNodeName(INPUT_DATA_NAME + "-A3"))
                 .isEqualTo(INPUT_DATA_NAME + "-A3" + NAME_SUFFIX);
+    }
+
+    @Test
+    public void testComposingDistinguishedNodeNameWhenNameAlreadyPresent() {
+        when(graph.nodes()).thenReturn(Collections.singletonList(node));
+        when(node.getContent()).thenReturn(content);
+        when(content.getDefinition()).thenReturn(definition);
+        when(definition.getName()).thenReturn(name);
+        when(name.getValue()).thenReturn(INPUT_DATA_NAME + "-6");
+
+        assertThat(dmnDeepCloneProcess.composeDistinguishedNodeName(INPUT_DATA_NAME + "-5"))
+                .isEqualTo(INPUT_DATA_NAME + "-7");
     }
 
     @Test
