@@ -34,7 +34,6 @@ import org.kie.workbench.common.dmn.api.definition.model.NamedElement;
 import org.kie.workbench.common.dmn.api.definition.model.TextAnnotation;
 import org.kie.workbench.common.dmn.api.property.background.BackgroundSet;
 import org.kie.workbench.common.dmn.api.property.dimensions.RectangleDimensionsSet;
-import org.kie.workbench.common.dmn.api.property.dmn.Name;
 import org.kie.workbench.common.dmn.api.property.font.FontSet;
 import org.kie.workbench.common.dmn.webapp.kogito.common.client.converters.model.dd.ColorUtils;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dc.JSIBounds;
@@ -285,14 +284,14 @@ public class WrapperUtils {
         }
 
         final NamedElement namedElement = (NamedElement) dmnElement;
-        final String drgElementPrefix = extractNamespaceFromName(namedElement.getName());
+        final Optional<String> name = Optional.ofNullable(namedElement.getName().getValue());
 
         return definitions
                 .getImport()
                 .stream()
                 .filter(anImport -> {
                     final String importName = anImport.getName().getValue();
-                    return Objects.equals(importName, drgElementPrefix);
+                    return name.map(n -> n.startsWith(importName + ".")).orElse(false);
                 })
                 .map(anImport -> {
                     final String importNamespace = anImport.getNamespace();
@@ -311,12 +310,6 @@ public class WrapperUtils {
                 .map(Map.Entry::getKey)
                 .findFirst()
                 .orElse("");
-    }
-
-    private static String extractNamespaceFromName(final Name name) {
-        final String value = name.getValue();
-        final boolean hasNamespace = value.contains(".");
-        return hasNamespace ? value.split("\\.")[0] : "";
     }
 
     private static void applyFontStyle(final FontSet fontSet,

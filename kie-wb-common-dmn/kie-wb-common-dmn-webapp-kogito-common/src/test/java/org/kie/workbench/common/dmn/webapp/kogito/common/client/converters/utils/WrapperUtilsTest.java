@@ -81,6 +81,46 @@ public class WrapperUtilsTest {
     }
 
     @Test
+    public void testGetDmnElementRefWithNamespaceWhenImportHasAnOddName() {
+
+        final Decision drgElement = mock(Decision.class);
+        final View<? extends DMNElement> view = new ViewImpl<>(drgElement, null);
+
+        final Name drgElementName = mock(Name.class);
+        final Name importName = mock(Name.class);
+        final Id id = mock(Id.class);
+        final org.kie.workbench.common.dmn.api.definition.model.Definitions definitions = mock(org.kie.workbench.common.dmn.api.definition.model.Definitions.class);
+        final org.kie.workbench.common.dmn.api.definition.model.Import anImport = mock(org.kie.workbench.common.dmn.api.definition.model.Import.class);
+        final List<Import> imports = singletonList(anImport);
+        final String includedModelName = "d.i.v.i.";
+        final String defaultNamespace = "://default";
+        final String namespaceName = "include1";
+        final String importNamespace = "://namespace";
+        final Map<String, String> nsContext = new HashMap<>();
+
+        when(importName.getValue()).thenReturn(includedModelName);
+
+        when(anImport.getName()).thenReturn(importName);
+        when(anImport.getNamespace()).thenReturn(importNamespace);
+
+        when(id.getValue()).thenReturn("0000-1111-2222");
+        when(drgElementName.getValue()).thenReturn(includedModelName + ".Decision");
+        when(drgElement.getId()).thenReturn(id);
+        when(drgElement.getName()).thenReturn(drgElementName);
+        when(drgElement.getParent()).thenReturn(definitions);
+
+        nsContext.put(namespaceName, importNamespace);
+        when(definitions.getImport()).thenReturn(imports);
+        when(definitions.getNsContext()).thenReturn(nsContext);
+
+        final QName actual = getDmnElementRef(definitions, view, defaultNamespace);
+
+        assertEquals(defaultNamespace, actual.getNamespaceURI());
+        assertEquals("include1:0000-1111-2222", actual.getLocalPart());
+        assertEquals("", actual.getPrefix());
+    }
+
+    @Test
     public void testGetDmnElementRefWithFakeNamespace() {
 
         final Decision drgElement = mock(Decision.class);

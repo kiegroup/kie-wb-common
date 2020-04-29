@@ -80,7 +80,6 @@ import org.kie.workbench.common.dmn.api.property.dimensions.Width;
 import org.kie.workbench.common.dmn.api.property.dmn.DecisionServiceDividerLineY;
 import org.kie.workbench.common.dmn.api.property.dmn.Description;
 import org.kie.workbench.common.dmn.api.property.dmn.Id;
-import org.kie.workbench.common.dmn.api.property.dmn.Name;
 import org.kie.workbench.common.dmn.api.property.font.FontSet;
 import org.kie.workbench.common.dmn.backend.common.DMNMarshallerImportsHelperStandalone;
 import org.kie.workbench.common.dmn.backend.definition.v1_1.AssociationConverter;
@@ -1114,14 +1113,14 @@ public class DMNMarshallerStandalone implements DiagramMarshaller<Graph, Metadat
         }
 
         final NamedElement namedElement = (NamedElement) dmnElement;
-        final String drgElementPrefix = extractNamespaceFromName(namedElement.getName());
+        final Optional<String> name = Optional.ofNullable(namedElement.getName().getValue());
 
         return definitions
                 .getImport()
                 .stream()
                 .filter(anImport -> {
                     final String importName = anImport.getName().getValue();
-                    return Objects.equals(importName, drgElementPrefix);
+                    return name.map(n -> n.startsWith(importName + ".")).orElse(false);
                 })
                 .map(anImport -> {
                     final String importNamespace = anImport.getNamespace();
@@ -1140,12 +1139,6 @@ public class DMNMarshallerStandalone implements DiagramMarshaller<Graph, Metadat
                 .map(Entry::getKey)
                 .findFirst()
                 .orElse("");
-    }
-
-    private static String extractNamespaceFromName(final Name name) {
-        final String value = name.getValue();
-        final boolean hasNamespace = value.contains(".");
-        return hasNamespace ? value.split("\\.")[0] : "";
     }
 
     private static void applyFontStyle(final FontSet fontSet,
