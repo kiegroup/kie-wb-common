@@ -19,6 +19,7 @@ package org.kie.workbench.common.stunner.core.client.canvas.controls.keyboard;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import javax.annotation.PreDestroy;
@@ -54,6 +55,12 @@ public class KeyEventHandlerImpl implements KeyEventHandler {
 
     @Override
     public KeyEventHandler addKeyShortcutCallback(final KeyboardControl.KeyShortcutCallback shortcutCallback) {
+
+        final Optional<KeyboardControl.KogitoKeyShortcutCallback> possibleKogitoShortcutCallback = getAssociatedKogitoKeyShortcutCallback(shortcutCallback);
+        if (possibleKogitoShortcutCallback.isPresent()) {
+            return this;
+        }
+
         this.shortcutCallbacks.add(shortcutCallback);
         return this;
     }

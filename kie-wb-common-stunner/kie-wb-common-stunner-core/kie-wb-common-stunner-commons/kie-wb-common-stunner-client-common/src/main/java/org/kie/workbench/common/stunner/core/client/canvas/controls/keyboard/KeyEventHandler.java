@@ -16,6 +16,8 @@
 
 package org.kie.workbench.common.stunner.core.client.canvas.controls.keyboard;
 
+import java.util.Optional;
+
 public interface KeyEventHandler {
 
     KeyEventHandler addKeyShortcutCallback(final KeyboardControl.KeyShortcutCallback shortcutCallback);
@@ -26,5 +28,17 @@ public interface KeyEventHandler {
 
     default KeyEventHandler setTimerDelay(int delay) {
         return this;
+    }
+
+    default Optional<KeyboardControl.KogitoKeyShortcutCallback> getAssociatedKogitoKeyShortcutCallback(final KeyboardControl.KeyShortcutCallback shortcutCallback) {
+        if (shortcutCallback instanceof KeyboardControl.KogitoKeyShortcutCallback) {
+            return Optional.of((KeyboardControl.KogitoKeyShortcutCallback) shortcutCallback);
+        }
+
+        if (shortcutCallback instanceof KeyboardControlImpl.SessionKeyShortcutCallback && ((KeyboardControlImpl.SessionKeyShortcutCallback) shortcutCallback).getDelegate() instanceof KeyboardControl.KogitoKeyShortcutCallback) {
+            return Optional.of((KeyboardControl.KogitoKeyShortcutCallback) ((KeyboardControlImpl.SessionKeyShortcutCallback) shortcutCallback).getDelegate());
+        }
+
+        return Optional.empty();
     }
 }

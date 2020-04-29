@@ -118,18 +118,6 @@ public class KogitoKeyEventHandlerImpl implements KeyEventHandler {
         }
     }
 
-    private Optional<KogitoKeyShortcutCallback> getAssociatedKogitoKeyShortcutCallback(final KeyboardControl.KeyShortcutCallback shortcutCallback) {
-        if (shortcutCallback instanceof KogitoKeyShortcutCallback) {
-            return Optional.of((KogitoKeyShortcutCallback) shortcutCallback);
-        }
-
-        if (shortcutCallback instanceof SessionKeyShortcutCallback && ((SessionKeyShortcutCallback) shortcutCallback).getDelegate() instanceof KogitoKeyShortcutCallback) {
-            return Optional.of((KogitoKeyShortcutCallback) ((SessionKeyShortcutCallback) shortcutCallback).getDelegate());
-        }
-
-        return Optional.empty();
-    }
-
     @Override
     public void setEnabled(final boolean enabled) {
         this.enabled = enabled;
