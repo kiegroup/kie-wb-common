@@ -185,7 +185,7 @@ public class DMNDeepCloneProcess extends DeepCloneProcess implements IDeepCloneP
     private String buildNameWithIncrementedSuffixIndex(final String nameValue, final MatchResult matchResult) {
         final String suffix = matchResult.getGroup(0);
         int suffixIndex = Integer.parseInt(suffix.substring(1));
-        final String nameValueWithoutSuffix = nameValue.split(suffix)[0];
+        final String nameValueWithoutSuffix = Optional.ofNullable(nameValue.split(suffix)[0]).orElse("");
         final String computedSuffix = HYPHEN + (++suffixIndex);
         return nameValueWithoutSuffix + computedSuffix;
     }
