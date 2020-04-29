@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2020 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,6 +31,7 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.cm.CaseFileVari
 import org.kie.workbench.common.stunner.bpmn.definition.property.cm.CaseIdPrefix;
 import org.kie.workbench.common.stunner.bpmn.definition.property.cm.CaseRoles;
 import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.GlobalVariables;
+import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.MetaDataAttributes;
 import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.imports.DefaultImport;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.SLADueDate;
 import org.kie.workbench.common.stunner.bpmn.definition.property.variables.ProcessVariables;
@@ -44,6 +45,8 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.Factories.bpmn2;
 import static org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.Factories.di;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ProcessPropertyWriterTest {
@@ -150,13 +153,24 @@ public class ProcessPropertyWriterTest {
 
     @Test
     public void processVariables() {
-        ProcessVariables processVariables = new ProcessVariables("GV1:Boolean:true,GV2:Boolean:true,GV3:Integer:false");
+        ProcessVariables processVariables = new ProcessVariables("GV1:Boolean:input,GV2:Boolean:output;required,GV3:Integer:customTag;required");
         p.setProcessVariables(processVariables);
 
         final ProcessPropertyReader pp = new ProcessPropertyReader(
                 p.getProcess(), p.getBpmnDiagram(), p.getShape(), 1.0);
         String processVariablesString = pp.getProcessVariables();
-        assertThat(processVariablesString).isEqualTo("GV1:Boolean:true,GV2:Boolean:true,GV3:Integer:false");
+        assertThat(processVariablesString).isEqualTo("GV1:Boolean:<![CDATA[input]]>,GV2:Boolean:<![CDATA[output;required]]>,GV3:Integer:<![CDATA[customTag;required]]>");
+    }
+
+    @Test
+    public void processVariablesNoTags() {
+        ProcessVariables processVariables = new ProcessVariables("GV1:Boolean,GV2:Boolean,GV3:Integer");
+        p.setProcessVariables(processVariables);
+
+        final ProcessPropertyReader pp = new ProcessPropertyReader(
+                p.getProcess(), p.getBpmnDiagram(), p.getShape(), 1.0);
+        String processVariablesString = pp.getProcessVariables();
+        assertThat(processVariablesString).isEqualTo("GV1:Boolean:[],GV2:Boolean:[],GV3:Integer:[]");
     }
 
     @Test
@@ -176,7 +190,11 @@ public class ProcessPropertyWriterTest {
 
         p.setDefaultImports(defaultImports);
 
-        assertEquals(defaultImports, CustomElement.defaultImports.of(p.getProcess()).get());
+        List<DefaultImport> result = CustomElement.defaultImports.of(p.getProcess()).get();
+        assertEquals(3, result.size());
+        assertEquals("className1", result.get(0).getClassName());
+        assertEquals("className2", result.get(1).getClassName());
+        assertEquals("className3", result.get(2).getClassName());
     }
 
     @Test
@@ -185,5 +203,31 @@ public class ProcessPropertyWriterTest {
         assertNotNull(p.getProcess().getDocumentation());
         assertEquals(1, p.getProcess().getDocumentation().size());
         assertEquals("<![CDATA[DocumentationValue]]>", p.getProcess().getDocumentation().get(0).getText());
+    }
+
+    @Test
+    public void testSetMetaData() {
+        MetaDataAttributes metaDataAttributes = new MetaDataAttributes("att1ßval1Øatt2ßval2");
+        p.setMetadata(metaDataAttributes);
+        String metaDataString = CustomElement.metaDataAttributes.of(p.getProcess()).get();
+        assertThat(metaDataString).isEqualTo("att1ß<![CDATA[val1]]>Øatt2ß<![CDATA[val2]]>");
+    }
+
+    @Test
+    public void testSetMetaDataNull() {
+        MetaDataAttributes metaDataAttributes = mock(MetaDataAttributes.class);
+        when(metaDataAttributes.getValue()).thenReturn(null);
+        p.setMetadata(metaDataAttributes);
+        String metaDataString = CustomElement.metaDataAttributes.of(p.getProcess()).get();
+        assertThat(metaDataString).isEqualTo("");
+    }
+
+    @Test
+    public void testSetMetaDataEmpty() {
+        MetaDataAttributes metaDataAttributes = mock(MetaDataAttributes.class);
+        when(metaDataAttributes.getValue()).thenReturn("");
+        p.setMetadata(metaDataAttributes);
+        String metaDataString = CustomElement.metaDataAttributes.of(p.getProcess()).get();
+        assertThat(metaDataString).isEqualTo("");
     }
 }

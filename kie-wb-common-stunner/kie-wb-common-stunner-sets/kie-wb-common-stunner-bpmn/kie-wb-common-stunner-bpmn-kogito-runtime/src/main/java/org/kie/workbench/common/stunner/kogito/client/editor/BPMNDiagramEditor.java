@@ -20,6 +20,7 @@ import java.util.function.Consumer;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Event;
+import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
 import com.google.gwt.user.client.ui.IsWidget;
@@ -39,17 +40,20 @@ import org.kie.workbench.common.stunner.core.client.error.DiagramClientErrorHand
 import org.kie.workbench.common.stunner.core.client.i18n.ClientTranslationService;
 import org.kie.workbench.common.stunner.core.client.service.ClientRuntimeError;
 import org.kie.workbench.common.stunner.core.client.service.ServiceCallback;
+import org.kie.workbench.common.stunner.core.client.session.ClientSession;
 import org.kie.workbench.common.stunner.core.client.session.impl.EditorSession;
 import org.kie.workbench.common.stunner.core.client.session.impl.ViewerSession;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.kie.workbench.common.stunner.core.diagram.Metadata;
 import org.kie.workbench.common.stunner.core.documentation.DocumentationView;
+import org.kie.workbench.common.stunner.forms.client.event.FormPropertiesOpened;
+import org.kie.workbench.common.stunner.forms.client.widgets.FormsFlushManager;
 import org.kie.workbench.common.stunner.kogito.client.docks.DiagramEditorPreviewAndExplorerDock;
 import org.kie.workbench.common.stunner.kogito.client.docks.DiagramEditorPropertiesDock;
 import org.kie.workbench.common.stunner.kogito.client.editor.event.OnDiagramFocusEvent;
 import org.kie.workbench.common.stunner.kogito.client.menus.BPMNStandaloneEditorMenuSessionItems;
 import org.kie.workbench.common.stunner.kogito.client.perspectives.AuthoringPerspective;
-import org.kie.workbench.common.stunner.kogito.client.service.KogitoClientDiagramService;
+import org.kie.workbench.common.stunner.kogito.client.service.AbstractKogitoClientDiagramService;
 import org.kie.workbench.common.widgets.client.menu.FileMenuBuilder;
 import org.uberfire.backend.vfs.Path;
 import org.uberfire.backend.vfs.PathFactory;
@@ -88,9 +92,12 @@ public class BPMNDiagramEditor extends AbstractDiagramEditor {
     private final DiagramEditorPropertiesDock diagramPropertiesDock;
     private final LayoutHelper layoutHelper;
     private final OpenDiagramLayoutExecutor openDiagramLayoutExecutor;
-    private final KogitoClientDiagramService diagramServices;
+    protected final AbstractKogitoClientDiagramService diagramServices;
+    protected final FormsFlushManager formsFlushManager;
     private final CanvasFileExport canvasFileExport;
     private final Promises promises;
+
+    protected String formElementUUID;
 
     @Inject
     public BPMNDiagramEditor(final View view,
@@ -112,7 +119,8 @@ public class BPMNDiagramEditor extends AbstractDiagramEditor {
                              final DiagramEditorPropertiesDock diagramPropertiesDock,
                              final LayoutHelper layoutHelper,
                              final OpenDiagramLayoutExecutor openDiagramLayoutExecutor,
-                             final KogitoClientDiagramService diagramServices,
+                             final AbstractKogitoClientDiagramService diagramServices,
+                             final FormsFlushManager formsFlushManager,
                              final CanvasFileExport canvasFileExport,
                              final Promises promises) {
         super(view,
@@ -136,6 +144,7 @@ public class BPMNDiagramEditor extends AbstractDiagramEditor {
         this.openDiagramLayoutExecutor = openDiagramLayoutExecutor;
         this.diagramServices = diagramServices;
         this.canvasFileExport = canvasFileExport;
+        this.formsFlushManager = formsFlushManager;
         this.promises = promises;
     }
 
@@ -253,6 +262,7 @@ public class BPMNDiagramEditor extends AbstractDiagramEditor {
     @GetContent
     @Override
     public Promise getContent() {
+        flush();
         return diagramServices.transform(getEditor().getEditorProxy().getContentSupplier().get());
     }
 
@@ -279,7 +289,8 @@ public class BPMNDiagramEditor extends AbstractDiagramEditor {
         Promise<Void> promise =
                 promises.create((success, failure) -> {
                     superOnClose();
-                    diagramServices.transform(value,
+                    diagramServices.transform(path,
+                                              value,
                                               new ServiceCallback<Diagram>() {
 
                                                   @Override
@@ -327,5 +338,14 @@ public class BPMNDiagramEditor extends AbstractDiagramEditor {
     void closeDocks() {
         diagramPropertiesDock.close();
         diagramPreviewAndExplorerDock.close();
+    }
+
+    void onFormsOpenedEvent(@Observes FormPropertiesOpened event) {
+        formElementUUID = event.getUuid();
+    }
+
+    void flush() {
+        ClientSession session = getSessionPresenter().getInstance();
+        formsFlushManager.flush(session, formElementUUID);
     }
 }

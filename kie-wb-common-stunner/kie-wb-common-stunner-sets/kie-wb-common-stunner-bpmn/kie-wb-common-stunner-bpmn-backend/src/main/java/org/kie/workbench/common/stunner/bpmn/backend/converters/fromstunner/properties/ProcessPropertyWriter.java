@@ -50,6 +50,7 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.cm.CaseFileVari
 import org.kie.workbench.common.stunner.bpmn.definition.property.cm.CaseIdPrefix;
 import org.kie.workbench.common.stunner.bpmn.definition.property.cm.CaseRoles;
 import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.GlobalVariables;
+import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.MetaDataAttributes;
 import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.imports.DefaultImport;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.SLADueDate;
 import org.kie.workbench.common.stunner.bpmn.definition.property.variables.BaseProcessVariables;
@@ -192,13 +193,21 @@ public class ProcessPropertyWriter extends BasePropertyWriter implements Element
         List<Property> properties = process.getProperties();
         declarationList.getDeclarations().forEach(decl -> {
             VariableScope.Variable variable =
-                    variableScope.declare(this.process.getId(), decl.getIdentifier(), decl.getType(), decl.getKpi());
-            if (Boolean.parseBoolean(decl.getKpi())) {
-                CustomElement.customKPI.of(variable.getTypedIdentifier()).set(true);
+                    variableScope.declare(this.process.getId(), decl.getIdentifier(), decl.getType(), decl.getTags());
+
+            if (!decl.getTags().isEmpty()) {
+                CustomElement.customTags.of(variable.getTypedIdentifier()).set(decl.getTags());
             }
+
             properties.add(variable.getTypedIdentifier());
             this.itemDefinitions.add(variable.getTypeDeclaration());
         });
+    }
+
+    public void setMetadata(final MetaDataAttributes metaDataAttributes) {
+        if (null != metaDataAttributes.getValue() && !metaDataAttributes.getValue().isEmpty()) {
+            CustomElement.metaDataAttributes.of(process).set(metaDataAttributes.getValue());
+        }
     }
 
     public void setCaseFileVariables(CaseFileVariables caseFileVariables) {

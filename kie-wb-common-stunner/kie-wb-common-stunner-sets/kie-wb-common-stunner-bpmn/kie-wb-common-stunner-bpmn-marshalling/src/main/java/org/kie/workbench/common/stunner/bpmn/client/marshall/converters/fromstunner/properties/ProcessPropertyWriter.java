@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2020 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -50,6 +50,8 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.cm.CaseFileVari
 import org.kie.workbench.common.stunner.bpmn.definition.property.cm.CaseIdPrefix;
 import org.kie.workbench.common.stunner.bpmn.definition.property.cm.CaseRoles;
 import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.GlobalVariables;
+import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.MetaDataAttributes;
+import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.imports.DefaultImport;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.SLADueDate;
 import org.kie.workbench.common.stunner.bpmn.definition.property.variables.BaseProcessVariables;
 
@@ -191,13 +193,19 @@ public class ProcessPropertyWriter extends BasePropertyWriter implements Element
         List<Property> properties = process.getProperties();
         declarationList.getDeclarations().forEach(decl -> {
             VariableScope.Variable variable =
-                    variableScope.declare(this.process.getId(), decl.getIdentifier(), decl.getType(), decl.getKpi());
-            if (Boolean.parseBoolean(decl.getKpi())) {
-                CustomElement.customKPI.of(variable.getTypedIdentifier()).set(true);
+                    variableScope.declare(this.process.getId(), decl.getIdentifier(), decl.getType(), decl.getTags());
+            if (!decl.getTags().isEmpty()) {
+                CustomElement.customTags.of(variable.getTypedIdentifier()).set(decl.getTags());
             }
             properties.add(variable.getTypedIdentifier());
             this.itemDefinitions.add(variable.getTypeDeclaration());
         });
+    }
+
+    public void setMetadata(final MetaDataAttributes metaDataAttributes) {
+        if (null != metaDataAttributes.getValue() && !metaDataAttributes.getValue().isEmpty()) {
+            CustomElement.metaDataAttributes.of(process).set(metaDataAttributes.getValue());
+        }
     }
 
     public void setCaseFileVariables(CaseFileVariables caseFileVariables) {
@@ -229,6 +237,10 @@ public class ProcessPropertyWriter extends BasePropertyWriter implements Element
 
     public void setSlaDueDate(SLADueDate slaDueDate) {
         CustomElement.slaDueDate.of(process).set(slaDueDate.getValue());
+    }
+
+    public void setDefaultImports(List<DefaultImport> imports) {
+        CustomElement.defaultImports.of(process).set(imports);
     }
 
     public void addLaneSet(Collection<LanePropertyWriter> lanes) {

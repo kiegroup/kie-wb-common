@@ -17,6 +17,8 @@ package org.kie.workbench.common.dmn.api.definition.model;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.jboss.errai.common.client.api.annotations.Portable;
 import org.kie.workbench.common.dmn.api.definition.HasTypeRef;
@@ -32,6 +34,7 @@ public class DecisionRule extends DMNElement implements HasTypeRefs {
 
     private List<UnaryTests> inputEntry;
     private List<LiteralExpression> outputEntry;
+    private List<RuleAnnotationClauseText> annotationEntry;
 
     public DecisionRule() {
         this(new Id(),
@@ -48,6 +51,25 @@ public class DecisionRule extends DMNElement implements HasTypeRefs {
               description);
         this.inputEntry = inputEntry;
         this.outputEntry = outputEntry;
+    }
+
+    public DecisionRule copy() {
+        DecisionRule clonedDecisionRule = new DecisionRule();
+        clonedDecisionRule.description = description.copy();
+        clonedDecisionRule.inputEntry = inputEntry.stream().map(UnaryTests::copy).collect(Collectors.toList());
+        clonedDecisionRule.outputEntry = outputEntry.stream().map(LiteralExpression::copy).collect(Collectors.toList());
+        clonedDecisionRule.annotationEntry = Optional.ofNullable(annotationEntry)
+                .map(annotationEntryList ->
+                             annotationEntryList.stream().map(RuleAnnotationClauseText::copy).collect(Collectors.toList()))
+                .orElse(null);
+        return clonedDecisionRule;
+    }
+
+    public List<RuleAnnotationClauseText> getAnnotationEntry() {
+        if (annotationEntry == null) {
+            annotationEntry = new ArrayList<>();
+        }
+        return this.annotationEntry;
     }
 
     public List<UnaryTests> getInputEntry() {
@@ -89,6 +111,9 @@ public class DecisionRule extends DMNElement implements HasTypeRefs {
         if (inputEntry != null ? !inputEntry.equals(that.inputEntry) : that.inputEntry != null) {
             return false;
         }
+        if (annotationEntry != null ? !annotationEntry.equals(that.annotationEntry) : that.annotationEntry != null) {
+            return false;
+        }
         return outputEntry != null ? outputEntry.equals(that.outputEntry) : that.outputEntry == null;
     }
 
@@ -97,6 +122,7 @@ public class DecisionRule extends DMNElement implements HasTypeRefs {
         return HashUtil.combineHashCodes(id != null ? id.hashCode() : 0,
                                          description != null ? description.hashCode() : 0,
                                          inputEntry != null ? inputEntry.hashCode() : 0,
-                                         outputEntry != null ? outputEntry.hashCode() : 0);
+                                         outputEntry != null ? outputEntry.hashCode() : 0,
+                                         annotationEntry != null ? annotationEntry.hashCode() : 0);
     }
 }

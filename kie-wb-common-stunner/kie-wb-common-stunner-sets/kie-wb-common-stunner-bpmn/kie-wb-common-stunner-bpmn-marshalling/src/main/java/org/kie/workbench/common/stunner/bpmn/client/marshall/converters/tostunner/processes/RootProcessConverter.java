@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2020 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ import org.eclipse.bpmn2.Process;
 import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.TypedFactoryManager;
 import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.tostunner.BaseConverterFactory;
 import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.tostunner.DefinitionResolver;
+import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.tostunner.properties.DefinitionsPropertyReader;
 import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.tostunner.properties.ProcessPropertyReader;
 import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.tostunner.properties.PropertyReaderFactory;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNDiagramImpl;
@@ -27,11 +28,13 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.Diagram
 import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.Executable;
 import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.GlobalVariables;
 import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.Id;
+import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.MetaDataAttributes;
 import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.Package;
 import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.ProcessInstanceDescription;
 import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.ProcessType;
 import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.Version;
 import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.imports.Imports;
+import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.imports.ImportsValue;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.Documentation;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.Name;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.SLADueDate;
@@ -41,6 +44,8 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.variables.Proce
 import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
+
+import static org.kie.workbench.common.stunner.core.util.StringUtils.revertIllegalCharsAttribute;
 
 public class RootProcessConverter extends BaseRootProcessConverter<BPMNDiagramImpl, DiagramSet, ProcessData, AdvancedData> {
 
@@ -57,16 +62,16 @@ public class RootProcessConverter extends BaseRootProcessConverter<BPMNDiagramIm
     }
 
     @Override
-    protected DiagramSet createDiagramSet(Process process, ProcessPropertyReader e) {
-        return new DiagramSet(new Name(process.getName()),
+    protected DiagramSet createDiagramSet(Process process, ProcessPropertyReader e, DefinitionsPropertyReader d) {
+        return new DiagramSet(new Name(revertIllegalCharsAttribute(process.getName())),
                               new Documentation(e.getDocumentation()),
-                              new Id(process.getId()),
+                              new Id(revertIllegalCharsAttribute(process.getId())),
                               new Package(e.getPackage()),
                               new ProcessType(e.getProcessType()),
                               new Version(e.getVersion()),
                               new AdHoc(e.isAdHoc()),
                               new ProcessInstanceDescription(e.getDescription()),
-                              new Imports(),
+                              new Imports(new ImportsValue(e.getDefaultImports(), d.getWSDLImports())),
                               new Executable(process.isIsExecutable()),
                               new SLADueDate(e.getSlaDueDate()));
     }
@@ -77,7 +82,7 @@ public class RootProcessConverter extends BaseRootProcessConverter<BPMNDiagramIm
     }
 
     @Override
-    public AdvancedData createAdvancedData(String globalVariables) {
-        return new AdvancedData(new GlobalVariables(globalVariables));
+    public AdvancedData createAdvancedData(String globalVariables, String metaDataAttributes) {
+        return new AdvancedData(new GlobalVariables(globalVariables), new MetaDataAttributes(metaDataAttributes));
     }
 }

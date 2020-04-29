@@ -28,6 +28,7 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.Diagram
 import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.Executable;
 import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.GlobalVariables;
 import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.Id;
+import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.MetaDataAttributes;
 import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.Package;
 import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.ProcessInstanceDescription;
 import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.ProcessType;
@@ -43,6 +44,8 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.variables.Proce
 import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
+
+import static org.kie.workbench.common.stunner.core.util.StringUtils.revertIllegalCharsAttribute;
 
 public class RootProcessConverter extends BaseRootProcessConverter<BPMNDiagramImpl, DiagramSet, ProcessData, AdvancedData> {
 
@@ -60,9 +63,9 @@ public class RootProcessConverter extends BaseRootProcessConverter<BPMNDiagramIm
 
     @Override
     protected DiagramSet createDiagramSet(Process process, ProcessPropertyReader p, DefinitionsPropertyReader d) {
-        return new DiagramSet(new Name(process.getName()),
+        return new DiagramSet(new Name(revertIllegalCharsAttribute(process.getName())),
                               new Documentation(p.getDocumentation()),
-                              new Id(process.getId()),
+                              new Id(revertIllegalCharsAttribute(process.getId())),
                               new Package(p.getPackage()),
                               new ProcessType(p.getProcessType()),
                               new Version(p.getVersion()),
@@ -79,7 +82,7 @@ public class RootProcessConverter extends BaseRootProcessConverter<BPMNDiagramIm
     }
 
     @Override
-    protected AdvancedData createAdvancedData(String globalVariables) {
-        return new AdvancedData(new GlobalVariables(globalVariables));
+    protected AdvancedData createAdvancedData(String globalVariables, String metaDataAttributes) {
+        return new AdvancedData(new GlobalVariables(globalVariables), new MetaDataAttributes(metaDataAttributes));
     }
 }

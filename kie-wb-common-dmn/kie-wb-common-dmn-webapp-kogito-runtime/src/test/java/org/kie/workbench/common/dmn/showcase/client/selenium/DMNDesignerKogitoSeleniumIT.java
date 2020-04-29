@@ -50,6 +50,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxOptions;
+import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
@@ -64,6 +65,7 @@ import org.xmlunit.diff.DifferenceEvaluator;
 import org.xmlunit.diff.DifferenceEvaluators;
 import org.xmlunit.util.Predicate;
 
+import static java.lang.String.format;
 import static org.apache.commons.io.FileUtils.copyFile;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.kie.workbench.common.dmn.api.definition.model.DMNModelInstrumentedBase.Namespace.DC;
@@ -100,12 +102,13 @@ public class DMNDesignerKogitoSeleniumIT {
 
     // editors
     private static final String ACE_EDITOR = "//div[@class='ace_content']";
+    private static final String CANVAS = "//div[@class='canvas-panel']//canvas";
 
     // decision navigator
-    private static final String DECISION_NODE = "//div[@id='decision-graphs-content']//ul/li[@title='%s']";
+    private static final String NODE = "//div[@id='decision-graphs-content']//ul/li[@title='%s']/div";
     private static final String DECISION_TABLE = "//div[@id='decision-graphs-content']//ul/li[@title='%s']/ul/li[@title='Decision Table']/div";
     private static final String LIST = "//div[@id='decision-graphs-content']//ul/li[@title='%s']/ul/li[@title='List']/div";
-    private static final String NOT_PRESENT_IN_NAVIGATOR = "' was not present in the decision navigator";
+    private static final String NOT_PRESENT_IN_NAVIGATOR = "'%s' was not present in the decision navigator";
 
     // context menus/popups
     private static final String MENU_ENTRY = "//div[@data-field='cellEditorControlsContainer']//ul/li/a/span[text()='%s']";
@@ -142,16 +145,12 @@ public class DMNDesignerKogitoSeleniumIT {
         driver.get(INDEX_HTML_PATH);
 
         decisionNavigatorExpandButton = waitOperation()
+                .withMessage("Presence of decision navigator expand button is prerequisite for all tests")
                 .until(visibilityOfElementLocated(className(DECISON_NAVIGATOR_EXPAND)));
-        assertThat(decisionNavigatorExpandButton)
-                .as("Presence of decision navigator expand button is prerequisite for all tests")
-                .isNotNull();
 
         propertiesPanel = waitOperation()
+                .withMessage("Presence of properties panel expand button is prerequisite for all tests")
                 .until(visibilityOfElementLocated(className(PROPERTIES_PANEL)));
-        assertThat(propertiesPanel)
-                .as("Presence of properties panel expand button is prerequisite for all tests")
-                .isNotNull();
     }
 
     private final File screenshotDirectory = initScreenshotDirectory();
@@ -202,10 +201,9 @@ public class DMNDesignerKogitoSeleniumIT {
     public void testAceEditorForInvalidContent() {
         setContent("<!!!invalid!!!>");
 
-        final WebElement aceEditor = waitOperation().until(element(ACE_EDITOR));
-        assertThat(aceEditor)
-                .as("If invalid dmn is loaded, ace editor needs to be shown")
-                .isNotNull();
+        waitOperation()
+                .withMessage("If invalid dmn is loaded, ace editor needs to be shown")
+                .until(element(ACE_EDITOR));
     }
 
     @Test
@@ -239,6 +237,39 @@ public class DMNDesignerKogitoSeleniumIT {
                 .ignoreComments()
                 .ignoreWhitespace()
                 .areIdentical();
+    }
+
+    /**
+     * Reproducer for DROOLS-4424
+     */
+    @Test
+    public void testCopyAndPaste() throws Exception {
+        final String source = loadResource("business-knowledge-model.xml");
+        setContent(source);
+
+        expandDecisionNavigatorDock();
+
+        final String nodeName = "BusinessKnowledgeModel-1";
+        waitOperation()
+                .withMessage(format(NOT_PRESENT_IN_NAVIGATOR, nodeName))
+                .until(element(NODE, nodeName))
+                .click();
+
+        final WebElement canvas = waitOperation()
+                .withMessage(format(NOT_PRESENT_IN_NAVIGATOR, "canvas"))
+                .until(presenceOfElementLocated(xpath(CANVAS)));
+
+        final Actions actions = new Actions(driver);
+        actions.keyDown(Keys.CONTROL).sendKeys("c").keyUp(Keys.CONTROL).perform();
+        actions.keyDown(canvas, Keys.CONTROL).sendKeys("v").keyUp(Keys.CONTROL).perform();
+
+        collapseDecisionNavigatorDock();
+
+        final String actual = getContent();
+        XmlAssert.assertThat(actual)
+                .withNamespaceContext(NAMESPACES)
+                .valueByXPath("count(//dmn:businessKnowledgeModel[@name='" + nodeName + "'])")
+                .isEqualTo(2);
     }
 
     @Test
@@ -986,6 +1017,13 @@ public class DMNDesignerKogitoSeleniumIT {
                                   "/dmn:encapsulatedLogic[@id='_616FC696-1CE6-4210-A479-DEE11293ACA3' and @kind='FEEL']" +
                                   "/dmn:decisionTable[@id='_407EA8F3-1074-47EF-A764-4B2EFDD131E5']" +
                                   "/dmn:output[@id='_82865AE0-AF73-4C6C-91C1-533C1521BF2C']");
+        XmlAssert.assertThat(actual)
+                .withNamespaceContext(NAMESPACES)
+                .hasXPath("/dmn:definitions" +
+                                  "/dmn:businessKnowledgeModel[@id='_1ACB205E-7221-4573-B555-7A7626FDFC8E']" +
+                                  "/dmn:encapsulatedLogic[@id='_616FC696-1CE6-4210-A479-DEE11293ACA3' and @kind='FEEL']" +
+                                  "/dmn:decisionTable[@id='_407EA8F3-1074-47EF-A764-4B2EFDD131E5']" +
+                                  "/dmn:annotation");
         XmlAssert.assertThat(actual)
                 .withNamespaceContext(NAMESPACES)
                 .hasXPath("/dmn:definitions" +
@@ -2145,12 +2183,86 @@ public class DMNDesignerKogitoSeleniumIT {
                                   "/dmn:output[@id='_76010FA4-0EB5-4B97-AECE-184EB03BCA50' and not(@typeRef)]");
     }
 
+    @Test
+    public void testRuleAnnotationsInDecisionTable_DROOLS5045() throws Exception {
+        final String expected = loadResource("decision-expression-decision-table-rule-annotations.xml");
+        setContent(expected);
+
+        final String actual = getContent();
+        assertThat(actual).isNotBlank();
+
+        XmlAssert.assertThat(actual)
+                .and(expected)
+                .ignoreComments()
+                .ignoreWhitespace()
+                .areIdentical();
+
+        XmlAssert.assertThat(actual)
+                .withNamespaceContext(NAMESPACES)
+                .hasXPath("/dmn:definitions" +
+                                  "/dmn:decision[@id='_395E1E92-765B-47F5-9387-179B839277B1']" +
+                                  "/dmn:decisionTable[@id='_1B2AE7B6-BF51-472E-99CB-A67875CE1B57']" +
+                                  "/dmn:annotation[@name='annotation-1']");
+        XmlAssert.assertThat(actual)
+                .withNamespaceContext(NAMESPACES)
+                .hasXPath("/dmn:definitions" +
+                                  "/dmn:decision[@id='_395E1E92-765B-47F5-9387-179B839277B1']" +
+                                  "/dmn:decisionTable[@id='_1B2AE7B6-BF51-472E-99CB-A67875CE1B57']" +
+                                  "/dmn:annotation[@name='annotation-2']");
+
+        XmlAssert.assertThat(actual)
+                .withNamespaceContext(NAMESPACES)
+                .hasXPath("/dmn:definitions" +
+                                  "/dmn:decision[@id='_395E1E92-765B-47F5-9387-179B839277B1']" +
+                                  "/dmn:decisionTable[@id='_1B2AE7B6-BF51-472E-99CB-A67875CE1B57']" +
+                                  "/dmn:rule[@id='_2D2D5ABD-3C71-40E9-B493-73CDA49B3F53']" +
+                                  "/dmn:annotationEntry[1]" +
+                                  "/dmn:text[text()='A1']");
+
+        XmlAssert.assertThat(actual)
+                .withNamespaceContext(NAMESPACES)
+                .hasXPath("/dmn:definitions" +
+                                  "/dmn:decision[@id='_395E1E92-765B-47F5-9387-179B839277B1']" +
+                                  "/dmn:decisionTable[@id='_1B2AE7B6-BF51-472E-99CB-A67875CE1B57']" +
+                                  "/dmn:rule[@id='_2D2D5ABD-3C71-40E9-B493-73CDA49B3F53']" +
+                                  "/dmn:annotationEntry[2]" +
+                                  "/dmn:text[text()='B1']");
+    }
+
+    /**
+     * Previous DMN files generated by our tool does not have RuleAnnotation, only description.
+     * This test ensures that RuleAnnotation is created when that older files is opened.
+     */
+    @Test
+    public void testRuleAnnotationsInDecisionTableFromOlderVersion_DROOLS5045() throws Exception {
+        final String expected = loadResource("decision-expression-decision-table-without-rule-annotations.xml");
+        setContent(expected);
+
+        final String actual = getContent();
+        assertThat(actual).isNotBlank();
+
+        XmlAssert.assertThat(actual)
+                .withNamespaceContext(NAMESPACES)
+                .hasXPath("/dmn:definitions" +
+                                  "/dmn:decision[@id='_395E1E92-765B-47F5-9387-179B839277B1']" +
+                                  "/dmn:decisionTable[@id='_1B2AE7B6-BF51-472E-99CB-A67875CE1B57']" +
+                                  "/dmn:annotation");
+
+        XmlAssert.assertThat(actual)
+                .withNamespaceContext(NAMESPACES)
+                .hasXPath("/dmn:definitions" +
+                                  "/dmn:decision[@id='_395E1E92-765B-47F5-9387-179B839277B1']" +
+                                  "/dmn:decisionTable[@id='_1B2AE7B6-BF51-472E-99CB-A67875CE1B57']" +
+                                  "/dmn:rule[@id='_2D2D5ABD-3C71-40E9-B493-73CDA49B3F53']" +
+                                  "/dmn:annotationEntry" +
+                                  "/dmn:text[text()='the description']");
+    }
+
     private void assertDiagramNodeIsPresentInDecisionNavigator(final String nodeName) {
         expandDecisionNavigatorDock();
-        final WebElement node = waitOperation().until(element(DECISION_NODE, nodeName));
-        assertThat(node)
-                .as("Node '" + nodeName + NOT_PRESENT_IN_NAVIGATOR)
-                .isNotNull();
+        final WebElement node = waitOperation()
+                .withMessage(format(NOT_PRESENT_IN_NAVIGATOR, nodeName))
+                .until(element(NODE, nodeName));
         collapseDecisionNavigatorDock();
     }
 
@@ -2159,11 +2271,10 @@ public class DMNDesignerKogitoSeleniumIT {
      */
     private void setDecisionTableDefaultOutput(final DecisionTableSeleniumModel decisionTable) {
         expandDecisionNavigatorDock();
-        final WebElement node = waitOperation().until(element(DECISION_TABLE, decisionTable.getName()));
-        assertThat(node)
-                .as("Decision table of '" + decisionTable.getName() + NOT_PRESENT_IN_NAVIGATOR)
-                .isNotNull();
-        node.click();
+        waitOperation()
+                .withMessage(format(NOT_PRESENT_IN_NAVIGATOR, decisionTable.getName()))
+                .until(element(DECISION_TABLE, decisionTable.getName()))
+                .click();
 
         expandPropertiesPanelDock();
 
@@ -2185,11 +2296,10 @@ public class DMNDesignerKogitoSeleniumIT {
      */
     private void appendBoxedListExpressionItem(final ListSeleniumModel list, final String item) {
         expandDecisionNavigatorDock();
-        final WebElement node = waitOperation().until(element(LIST, list.getName()));
-        assertThat(node)
-                .as("List expression '" + list.getName() + NOT_PRESENT_IN_NAVIGATOR)
-                .isNotNull();
-        node.click();
+        waitOperation()
+                .withMessage(format(NOT_PRESENT_IN_NAVIGATOR, list.getName()))
+                .until(element(LIST, list.getName()))
+                .click();
 
         final WebElement editor = getEditor();
         for (int i = 0; i < list.getItems().size() - 1; i++) {
@@ -2199,11 +2309,10 @@ public class DMNDesignerKogitoSeleniumIT {
         // invoke context menu for adding an item
         editor.sendKeys(Keys.CONTROL, Keys.SPACE);
 
-        final WebElement insertBelow = waitOperation().until(element(MENU_ENTRY, "Insert below"));
-        assertThat(insertBelow)
-                .as("Insert below entry in context menu not available")
-                .isNotNull();
-        insertBelow.click();
+        waitOperation()
+                .withMessage(format("Insert below entry in context menu not available"))
+                .until(element(MENU_ENTRY, "Insert below"))
+                .click();
 
         // move to the new cell and start edit mode
         editor.sendKeys(Keys.ARROW_DOWN, Keys.ENTER);
@@ -2216,11 +2325,9 @@ public class DMNDesignerKogitoSeleniumIT {
 
     private void setContent(final String xml) {
         ((JavascriptExecutor) driver).executeScript(String.format(SET_CONTENT_TEMPLATE, xml));
-        final WebElement designer = waitOperation()
+        waitOperation()
+                .withMessage("Designer was not loaded")
                 .until(visibilityOfElementLocated(className("uf-multi-page-editor")));
-        assertThat(designer)
-                .as("Designer was not loaded")
-                .isNotNull();
     }
 
     private String getContent() {
@@ -2264,10 +2371,8 @@ public class DMNDesignerKogitoSeleniumIT {
 
     private void collapseDecisionNavigatorDock() {
         final WebElement expandedDecisionNavigator = waitOperation()
+                .withMessage("Unable to locate expanded decision navigator dock")
                 .until(visibilityOfElementLocated(className(DECISON_NAVIGATOR_EXPANDED)));
-        assertThat(expandedDecisionNavigator)
-                .as("Unable to locate expanded decision navigator dock")
-                .isNotNull();
 
         expandedDecisionNavigator.findElement(className("fa-chevron-left")).click();
     }

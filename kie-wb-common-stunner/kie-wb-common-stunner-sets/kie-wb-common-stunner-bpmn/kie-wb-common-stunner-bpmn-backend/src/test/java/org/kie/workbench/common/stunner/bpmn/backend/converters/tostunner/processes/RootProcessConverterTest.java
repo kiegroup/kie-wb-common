@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2020 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 package org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.processes;
 
 import java.util.Collections;
+import java.util.List;
 
 import org.eclipse.bpmn2.Definitions;
 import org.eclipse.bpmn2.Process;
@@ -24,6 +25,8 @@ import org.eclipse.bpmn2.di.BPMNDiagram;
 import org.junit.Before;
 import org.junit.Test;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.TypedFactoryManager;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.customproperties.elements.DefaultImportsElement;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.customproperties.elements.ElementDefinition;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.ConverterFactory;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.DefinitionResolver;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties.DefinitionsPropertyReader;
@@ -31,8 +34,10 @@ import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.proper
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties.PropertyReaderFactory;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNDiagramImpl;
 import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.DiagramSet;
+import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.imports.DefaultImport;
+import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.imports.Imports;
+import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.imports.ImportsValue;
 import org.kie.workbench.common.stunner.bpmn.definition.property.variables.AdvancedData;
-import org.kie.workbench.common.stunner.bpmn.definition.property.variables.ProcessData;
 import org.kie.workbench.common.stunner.core.api.FactoryManager;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.Bounds;
@@ -40,6 +45,9 @@ import org.kie.workbench.common.stunner.core.graph.content.view.View;
 import org.kie.workbench.common.stunner.core.graph.content.view.ViewImpl;
 import org.kie.workbench.common.stunner.core.graph.impl.NodeImpl;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.Factories.bpmn2;
 import static org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.Factories.di;
@@ -58,6 +66,7 @@ public class RootProcessConverterTest {
     private RootProcessConverter tested;
 
     @Before
+    @SuppressWarnings("all")
     public void setUp() {
         Definitions definitions = bpmn2.createDefinitions();
         process = bpmn2.createProcess();
@@ -65,6 +74,7 @@ public class RootProcessConverterTest {
         BPMNDiagram bpmnDiagram = di.createBPMNDiagram();
         bpmnDiagram.setPlane(di.createBPMNPlane());
         definitions.getDiagrams().add(bpmnDiagram);
+        ElementDefinition.getExtensionElements(process).add(DefaultImportsElement.extensionOf(new DefaultImport(getClass().getName())));
 
         definitionResolver = new DefinitionResolver(definitions, Collections.emptyList());
 
@@ -84,36 +94,56 @@ public class RootProcessConverterTest {
     }
 
     @Test
-    public void createNode() {
-        assertTrue(BPMNDiagramImpl.class.isInstance(tested.createNode("id").getContent().getDefinition()));
+    public void testCreateNode() {
+        assertTrue(tested.createNode("id").getContent().getDefinition() instanceof BPMNDiagramImpl);
     }
 
     @Test
-    public void createDiagramSet() {
-        assertTrue(DiagramSet.class.isInstance(tested.createDiagramSet(process,
-                                                                       new ProcessPropertyReader(process,
-                                                                                                 definitionResolver.getDiagram(),
-                                                                                                 definitionResolver.getShape(process.getId()),
-                                                                                                 definitionResolver.getResolutionFactor()),
-                                                                       new DefinitionsPropertyReader(definitionResolver.getDefinitions(),
-                                                                                                     definitionResolver.getDiagram(),
-                                                                                                     definitionResolver.getShape(process.getId()),
-                                                                                                     definitionResolver.getResolutionFactor()))));
+    public void testCreateProcessData() {
+        assertNotNull(tested.createProcessData("id"));
     }
 
     @Test
-    public void createProcessData() {
-        assertTrue(ProcessData.class.isInstance(tested.createProcessData("id")));
+    public void testCreateDiagramSet() {
+        DiagramSet diagramSet = createDiagramSet();
+        assertNotNull(diagramSet);
+    }
+
+    @Test
+    public void testImports() {
+        DiagramSet diagramSet = createDiagramSet();
+        Imports imports = diagramSet.getImports();
+        assertNotNull(imports);
+        ImportsValue importsValue = imports.getValue();
+        assertNotNull(importsValue);
+        List<DefaultImport> defaultImports = importsValue.getDefaultImports();
+        assertNotNull(defaultImports);
+        assertFalse(defaultImports.isEmpty());
+        DefaultImport defaultImport = defaultImports.get(0);
+        assertNotNull(defaultImport);
+        assertEquals(getClass().getName(), defaultImport.getClassName());
     }
 
     @Test
     public void createAdvancedData() {
-        assertTrue(AdvancedData.class.isInstance(tested.createAdvancedData("id")));
+        assertTrue(AdvancedData.class.isInstance(tested.createAdvancedData("id", "testßval")));
     }
 
     @Test
     public void convertAdvancedData() {
-        tested.createAdvancedData("id");
+        tested.createAdvancedData("id", "testßval");
         assertTrue(tested.convertProcess().isSuccess());
+    }
+
+    private DiagramSet createDiagramSet() {
+        return tested.createDiagramSet(process,
+                                       new ProcessPropertyReader(process,
+                                                                 definitionResolver.getDiagram(),
+                                                                 definitionResolver.getShape(process.getId()),
+                                                                 definitionResolver.getResolutionFactor()),
+                                       new DefinitionsPropertyReader(definitionResolver.getDefinitions(),
+                                                                     definitionResolver.getDiagram(),
+                                                                     definitionResolver.getShape(process.getId()),
+                                                                     definitionResolver.getResolutionFactor()));
     }
 }

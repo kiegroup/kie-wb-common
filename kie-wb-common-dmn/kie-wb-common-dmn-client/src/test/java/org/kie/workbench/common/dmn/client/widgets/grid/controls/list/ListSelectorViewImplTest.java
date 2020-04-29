@@ -17,25 +17,39 @@
 package org.kie.workbench.common.dmn.client.widgets.grid.controls.list;
 
 import java.util.Arrays;
+import java.util.Optional;
+import java.util.function.Consumer;
 
+import com.google.gwt.core.client.Scheduler;
 import com.google.gwtmockito.GwtMockitoTestRunner;
+import elemental2.dom.KeyboardEvent;
+import org.jboss.errai.common.client.dom.DOMTokenList;
+import org.jboss.errai.common.client.dom.Event;
+import org.jboss.errai.common.client.dom.EventListener;
 import org.jboss.errai.common.client.dom.HTMLElement;
 import org.jboss.errai.common.client.dom.UnorderedList;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.kie.workbench.common.dmn.client.editors.types.CanBeClosedByKeyboard;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.uberfire.mvp.Command;
 
+import static com.google.gwt.dom.client.BrowserEvents.KEYDOWN;
+import static java.util.Collections.singletonList;
+import static org.kie.workbench.common.dmn.client.widgets.grid.controls.list.ListSelectorViewImpl.OPEN;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @RunWith(GwtMockitoTestRunner.class)
 public class ListSelectorViewImplTest {
@@ -80,23 +94,42 @@ public class ListSelectorViewImplTest {
     private HTMLElement headerElement;
 
     @Mock
+    private HTMLElement viewElement;
+
+    @Mock
+    private DOMTokenList viewElementCSSClasses;
+
+    @Mock
+    private Consumer<CanBeClosedByKeyboard> canBeClosedByKeyboardConsumer;
+
+    @Mock
     private HasListSelectorControl.ListSelectorHeaderItem headerItem;
 
     private ListSelectorViewImpl view;
 
     @Before
     public void setUp() {
-        view = new ListSelectorViewImpl(itemsContainer,
-                                        listSelectorTextItemViews,
-                                        listSelectorDividerItemViews,
-                                        listSelectorHeaderItemViews);
-        view.init(presenter);
+        view = spy(new ListSelectorViewImpl(itemsContainer,
+                                            listSelectorTextItemViews,
+                                            listSelectorDividerItemViews,
+                                            listSelectorHeaderItemViews));
+
         doReturn(textItemView).when(listSelectorTextItemViews).get();
         doReturn(textElement).when(textItemView).getElement();
         doReturn(dividerItemView).when(listSelectorDividerItemViews).get();
         doReturn(dividerElement).when(dividerItemView).getElement();
         doReturn(headerItemView).when(listSelectorHeaderItemViews).get();
         doReturn(headerElement).when(headerItemView).getElement();
+        doReturn(viewElement).when(view).getElement();
+
+        view.init(presenter);
+
+        when(viewElement.getClassList()).thenReturn(viewElementCSSClasses);
+
+        doAnswer(i -> {
+            ((Scheduler.ScheduledCommand) i.getArguments()[0]).execute();
+            return null;
+        }).when(view).schedule(any(Scheduler.ScheduledCommand.class));
     }
 
     @Test
@@ -136,8 +169,87 @@ public class ListSelectorViewImplTest {
 
     @Test
     public void testSetItemsUnknownImplementation() {
-        view.setItems(Arrays.asList(mock(HasListSelectorControl.ListSelectorItem.class)));
+        view.setItems(singletonList(mock(HasListSelectorControl.ListSelectorItem.class)));
 
         verify(itemsContainer, never()).appendChild(any());
+    }
+
+    @Test
+    public void testShow() {
+        view.show(Optional.empty());
+
+        verify(viewElementCSSClasses).add(OPEN);
+        verify(viewElement).focus();
+    }
+
+    @Test
+    public void testHide() {
+        view.hide();
+
+        verify(viewElementCSSClasses).remove(OPEN);
+    }
+
+    @Test
+    public void testRegisterOnCloseHandler() {
+
+        final EventListener<Event> onKeyDown = (e) -> {/* Nothing. */};
+
+        doReturn(onKeyDown).when(view).onKeyDown();
+
+        view.registerOnCloseHandler();
+
+        verify(viewElement).addEventListener(KEYDOWN, onKeyDown, false);
+    }
+
+    @Test
+    public void testOnKeyDownWhenEscapeIsPressedOnIEOrEdge() {
+
+        final Event event = mock(Event.class);
+        final KeyboardEvent keyboardEvent = mock(KeyboardEvent.class);
+
+        doReturn(keyboardEvent).when(view).asElemental2Event(event);
+        keyboardEvent.key = "Esc";
+
+        view.onKeyDown().call(event);
+
+        verify(view).hide();
+        verify(view).returnFocusToPanel();
+    }
+
+    @Test
+    public void testOnKeyDownWhenEscapeIsPressedOnOtherBrowser() {
+
+        final Event event = mock(Event.class);
+        final KeyboardEvent keyboardEvent = mock(KeyboardEvent.class);
+
+        doReturn(keyboardEvent).when(view).asElemental2Event(event);
+        keyboardEvent.key = "Escape";
+
+        view.onKeyDown().call(event);
+
+        verify(view).hide();
+        verify(view).returnFocusToPanel();
+    }
+
+    @Test
+    public void testOnKeyDownWhenEscapeIsNotPressed() {
+
+        final Event event = mock(Event.class);
+
+        doReturn(false).when(view).isEscape(event);
+
+        view.onKeyDown().call(event);
+
+        verify(view, never()).hide();
+        verify(view, never()).returnFocusToPanel();
+    }
+
+    @Test
+    public void testReturnFocusToPanel() {
+
+        view.setOnClosedByKeyboardCallback(canBeClosedByKeyboardConsumer);
+        view.returnFocusToPanel();
+
+        verify(canBeClosedByKeyboardConsumer).accept(view);
     }
 }

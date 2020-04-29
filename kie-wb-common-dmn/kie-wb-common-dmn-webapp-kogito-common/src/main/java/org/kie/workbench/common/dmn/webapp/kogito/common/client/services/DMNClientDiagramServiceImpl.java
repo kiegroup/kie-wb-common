@@ -54,16 +54,14 @@ import org.kie.workbench.common.stunner.core.util.DefinitionUtils;
 import org.kie.workbench.common.stunner.core.util.StringUtils;
 import org.kie.workbench.common.stunner.kogito.api.editor.DiagramType;
 import org.kie.workbench.common.stunner.kogito.api.editor.impl.KogitoDiagramResourceImpl;
-import org.kie.workbench.common.stunner.kogito.client.service.KogitoClientDiagramService;
+import org.kie.workbench.common.stunner.kogito.client.service.AbstractKogitoClientDiagramService;
 import org.uberfire.backend.vfs.PathFactory;
 import org.uberfire.client.promise.Promises;
 import org.uberfire.commons.uuid.UUID;
 
 @ApplicationScoped
-public class DMNClientDiagramServiceImpl implements KogitoClientDiagramService {
+public class DMNClientDiagramServiceImpl extends AbstractKogitoClientDiagramService {
 
-    private static final char UNIX_SEPARATOR = '/';
-    private static final char WINDOWS_SEPARATOR = '\\';
     private static final String DIAGRAMS_PATH = "diagrams";
 
     //This path is needed by DiagramsNavigatorImpl's use of AbstractClientDiagramService.lookup(..) to retrieve a list of diagrams
@@ -102,40 +100,14 @@ public class DMNClientDiagramServiceImpl implements KogitoClientDiagramService {
                           final String xml,
                           final ServiceCallback<Diagram> callback) {
         if (Objects.isNull(xml) || xml.isEmpty()) {
-            doNewDiagram(getDiagramTitle(fileName), callback);
+            doNewDiagram(createDiagramTitleFromFilePath(fileName), callback);
         } else {
             doTransformation(xml, callback);
         }
     }
 
-    String getDiagramTitle(final String filePath) {
-        final String diagramTitle;
-        if (StringUtils.isEmpty(filePath)) {
-            diagramTitle = generateDiagramTitle();
-        } else {
-            final String fileName = getName(filePath);
-            if (fileName.contains(".")) {
-                diagramTitle = fileName.substring(0, fileName.lastIndexOf('.'));
-            } else {
-                diagramTitle = fileName;
-            }
-        }
-        return diagramTitle;
-    }
-
-    private String getName(final String filePath) {
-        final int index = indexOfLastSeparator(filePath);
-        return filePath.substring(index + 1);
-    }
-
-    public int indexOfLastSeparator(final String filename) {
-        final int lastUnixPos = filename.lastIndexOf(UNIX_SEPARATOR);
-        final int lastWindowsPos = filename.lastIndexOf(WINDOWS_SEPARATOR);
-        return Math.max(lastUnixPos,
-                        lastWindowsPos);
-    }
-
-    String generateDiagramTitle() {
+    @Override
+    public String generateDefaultId() {
         return UUID.uuid();
     }
 
@@ -208,14 +180,14 @@ public class DMNClientDiagramServiceImpl implements KogitoClientDiagramService {
     @Override
     public Promise<String> transform(final KogitoDiagramResourceImpl resource) {
         if (resource.getType() == DiagramType.PROJECT_DIAGRAM) {
-            return promises.create((resolveCallbackFn, rejectCallbackFn) -> {
+            return promises.create((resolveOnchangeFn, rejectOnchangeFn) -> {
                 if (resource.projectDiagram().isPresent()) {
                     final Diagram diagram = resource.projectDiagram().get();
                     marshall(diagram,
-                             resolveCallbackFn,
-                             rejectCallbackFn);
+                             resolveOnchangeFn,
+                             rejectOnchangeFn);
                 } else {
-                    rejectCallbackFn.onInvoke(new IllegalStateException("DiagramType is PROJECT_DIAGRAM however no instance present"));
+                    rejectOnchangeFn.onInvoke(new IllegalStateException("DiagramType is PROJECT_DIAGRAM however no instance present"));
                 }
             });
         }
@@ -224,8 +196,8 @@ public class DMNClientDiagramServiceImpl implements KogitoClientDiagramService {
 
     @SuppressWarnings("unchecked")
     private void marshall(final Diagram diagram,
-                          final Promise.PromiseExecutorCallbackFn.ResolveCallbackFn<String> resolveCallbackFn,
-                          final Promise.PromiseExecutorCallbackFn.RejectCallbackFn rejectCallbackFn) {
+                          final Promise.PromiseExecutorCallbackFn.ResolveCallbackFn<String> resolveOnchangeFn,
+                          final Promise.PromiseExecutorCallbackFn.RejectCallbackFn rejectOnchangeFn) {
         if (Objects.isNull(diagram)) {
             return;
         }
@@ -239,7 +211,7 @@ public class DMNClientDiagramServiceImpl implements KogitoClientDiagramService {
             if (!xml.startsWith("<?xml version=\"1.0\" ?>")) {
                 xml = "<?xml version=\"1.0\" ?>" + xml;
             }
-            resolveCallbackFn.onInvoke(xml);
+            resolveOnchangeFn.onInvoke(xml);
         };
 
         try {
@@ -251,7 +223,7 @@ public class DMNClientDiagramServiceImpl implements KogitoClientDiagramService {
             MainJs.marshall(dmn12, jsitDefinitions.getNamespace(), jsCallback);
         } catch (Exception e) {
             GWT.log(e.getMessage(), e);
-            rejectCallbackFn.onInvoke(e);
+            rejectOnchangeFn.onInvoke(e);
         }
     }
 

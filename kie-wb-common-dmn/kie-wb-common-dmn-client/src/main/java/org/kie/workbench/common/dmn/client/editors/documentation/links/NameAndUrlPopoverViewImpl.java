@@ -127,7 +127,7 @@ public class NameAndUrlPopoverViewImpl extends AbstractPopoverViewImpl implement
         attachmentNameInput.onkeyup = getOnKeyUpHandler();
     }
 
-    Element.OnkeyupCallbackFn getOnKeyUpHandler() {
+    Element.OnkeyupFn getOnKeyUpHandler() {
         return e -> {
             okButton.disabled = StringUtils.isEmpty(urlInput.value) || StringUtils.isEmpty(attachmentNameInput.value);
             return true;
@@ -160,6 +160,11 @@ public class NameAndUrlPopoverViewImpl extends AbstractPopoverViewImpl implement
     @Override
     public void init(final NameAndUrlPopoverView.Presenter presenter) {
         this.presenter = presenter;
+    }
+
+    @Override
+    protected void onShownFocus() {
+        okButton.focus();
     }
 
     public Consumer<DMNExternalLink> getOnExternalLinkCreated() {

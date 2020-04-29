@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2020 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -58,17 +58,17 @@ public class DefaultImportsElement extends ElementDefinition<List<DefaultImport>
     @Override
     public void setValue(BaseElement element, List<DefaultImport> value) {
         value.stream()
-                .map(this::extensionOf)
+                .map(DefaultImportsElement::extensionOf)
                 .forEach(getExtensionElements(element)::add);
     }
 
-    protected FeatureMap.Entry extensionOf(DefaultImport defaultImport) {
+    public static FeatureMap.Entry extensionOf(DefaultImport defaultImport) {
         return new EStructuralFeatureImpl.SimpleFeatureMapEntry(
                 (EStructuralFeature.Internal) DOCUMENT_ROOT__IMPORT,
                 importTypeDataOf(defaultImport));
     }
 
-    protected ImportType importTypeDataOf(DefaultImport defaultImport) {
+    public static ImportType importTypeDataOf(DefaultImport defaultImport) {
         ImportType importType = DroolsFactory.eINSTANCE.createImportType();
         importType.setName(defaultImport.getClassName());
         return importType;

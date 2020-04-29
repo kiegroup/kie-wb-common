@@ -18,26 +18,34 @@ package org.kie.workbench.common.dmn.client.widgets.grid.controls.list;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Consumer;
 
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
+import com.google.gwt.core.client.Scheduler;
+import elemental2.dom.KeyboardEvent;
 import org.jboss.errai.common.client.api.IsElement;
 import org.jboss.errai.common.client.dom.DOMUtil;
+import org.jboss.errai.common.client.dom.Event;
+import org.jboss.errai.common.client.dom.EventListener;
 import org.jboss.errai.common.client.dom.UnorderedList;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
+import org.kie.workbench.common.dmn.client.editors.types.CanBeClosedByKeyboard;
 import org.kie.workbench.common.dmn.client.widgets.grid.controls.list.HasListSelectorControl.ListSelectorDividerItem;
 import org.kie.workbench.common.dmn.client.widgets.grid.controls.list.HasListSelectorControl.ListSelectorHeaderItem;
 import org.kie.workbench.common.dmn.client.widgets.grid.controls.list.HasListSelectorControl.ListSelectorItem;
 import org.kie.workbench.common.dmn.client.widgets.grid.controls.list.HasListSelectorControl.ListSelectorTextItem;
 
+import static com.google.gwt.dom.client.BrowserEvents.KEYDOWN;
+
 @Templated
 @Dependent
 public class ListSelectorViewImpl implements ListSelectorView {
 
-    private static final String OPEN = "open";
+    static final String OPEN = "open";
 
     @DataField("items-container")
     private UnorderedList itemsContainer;
@@ -46,6 +54,8 @@ public class ListSelectorViewImpl implements ListSelectorView {
     private ManagedInstance<ListSelectorDividerItemView> listSelectorDividerItemViews;
     private ManagedInstance<ListSelectorHeaderItemView> listSelectorHeaderItemViews;
     private Presenter presenter;
+
+    private Optional<Consumer<CanBeClosedByKeyboard>> closedByKeyboardCallback = Optional.empty();
 
     public ListSelectorViewImpl() {
         //CDI proxy
@@ -65,6 +75,27 @@ public class ListSelectorViewImpl implements ListSelectorView {
     @Override
     public void init(final Presenter presenter) {
         this.presenter = presenter;
+        registerOnCloseHandler();
+    }
+
+    void registerOnCloseHandler() {
+        getElement().addEventListener(KEYDOWN, onKeyDown(), false);
+    }
+
+    EventListener<Event> onKeyDown() {
+        return (event) -> {
+            if (isEscape(event)) {
+                hide();
+                returnFocusToPanel();
+            }
+        };
+    }
+
+    boolean isEscape(final Event event) {
+        final KeyboardEvent keyboardEvent = asElemental2Event(event);
+        final boolean isEscape = keyboardEvent.key.equals("Esc"); /* IE/Edge specific value */
+        final boolean isEsc = keyboardEvent.key.equals("Escape");
+        return isEscape || isEsc;
     }
 
     @Override
@@ -100,12 +131,30 @@ public class ListSelectorViewImpl implements ListSelectorView {
     }
 
     @Override
-    public void show() {
+    public void show(final Optional<String> title) {
         getElement().getClassList().add(OPEN);
+        schedule(() -> getElement().focus());
     }
 
     @Override
     public void hide() {
         getElement().getClassList().remove(OPEN);
+    }
+
+    @Override
+    public void setOnClosedByKeyboardCallback(final Consumer<CanBeClosedByKeyboard> callback) {
+        closedByKeyboardCallback = Optional.ofNullable(callback);
+    }
+
+    void returnFocusToPanel() {
+        closedByKeyboardCallback.ifPresent(c -> c.accept(this));
+    }
+
+    void schedule(final Scheduler.ScheduledCommand command) {
+        Scheduler.get().scheduleDeferred(command);
+    }
+
+    KeyboardEvent asElemental2Event(final Event event) {
+        return (KeyboardEvent) event;
     }
 }

@@ -22,6 +22,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.kogito.client.editor.MultiPageEditorContainerView;
+import org.kie.workbench.common.stunner.client.widgets.presenters.session.SessionPresenter;
 import org.kie.workbench.common.stunner.client.widgets.presenters.session.impl.SessionEditorPresenter;
 import org.kie.workbench.common.stunner.client.widgets.presenters.session.impl.SessionViewerPresenter;
 import org.kie.workbench.common.stunner.core.client.canvas.util.CanvasFileExport;
@@ -29,15 +30,18 @@ import org.kie.workbench.common.stunner.core.client.components.layout.LayoutHelp
 import org.kie.workbench.common.stunner.core.client.components.layout.OpenDiagramLayoutExecutor;
 import org.kie.workbench.common.stunner.core.client.error.DiagramClientErrorHandler;
 import org.kie.workbench.common.stunner.core.client.i18n.ClientTranslationService;
+import org.kie.workbench.common.stunner.core.client.session.ClientSession;
 import org.kie.workbench.common.stunner.core.client.session.impl.EditorSession;
 import org.kie.workbench.common.stunner.core.client.session.impl.ViewerSession;
 import org.kie.workbench.common.stunner.core.documentation.DocumentationView;
+import org.kie.workbench.common.stunner.forms.client.event.FormPropertiesOpened;
+import org.kie.workbench.common.stunner.forms.client.widgets.FormsFlushManager;
 import org.kie.workbench.common.stunner.kogito.client.docks.DiagramEditorPreviewAndExplorerDock;
 import org.kie.workbench.common.stunner.kogito.client.docks.DiagramEditorPropertiesDock;
 import org.kie.workbench.common.stunner.kogito.client.editor.event.OnDiagramFocusEvent;
 import org.kie.workbench.common.stunner.kogito.client.menus.BPMNStandaloneEditorMenuSessionItems;
 import org.kie.workbench.common.stunner.kogito.client.perspectives.AuthoringPerspective;
-import org.kie.workbench.common.stunner.kogito.client.service.KogitoClientDiagramService;
+import org.kie.workbench.common.stunner.kogito.client.service.AbstractKogitoClientDiagramService;
 import org.kie.workbench.common.widgets.client.menu.FileMenuBuilder;
 import org.mockito.InOrder;
 import org.mockito.Mock;
@@ -53,11 +57,15 @@ import org.uberfire.workbench.events.NotificationEvent;
 import static org.jgroups.util.Util.assertEquals;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.inOrder;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @RunWith(GwtMockitoTestRunner.class)
 public class BPMNDiagramEditorTest {
+
+    private static final String ELEMENTUUID = "ElementUUID";
 
     private BPMNDiagramEditor editor;
 
@@ -119,38 +127,51 @@ public class BPMNDiagramEditorTest {
     private OpenDiagramLayoutExecutor openDiagramLayoutExecutor;
 
     @Mock
-    private KogitoClientDiagramService diagramServices;
+    private AbstractKogitoClientDiagramService diagramServices;
 
     @Mock
     private CanvasFileExport canvasFileExport;
+
+    @Mock
+    private FormsFlushManager formsFlushManager;
+
+    @Mock
+    private SessionPresenter sessionPresenter;
+
+    @Mock
+    private ClientSession clientSession;
 
     private Promises promises = new SyncPromises();
 
     @SuppressWarnings("unchecked")
     @Before
     public void setUp() {
-        editor = new BPMNDiagramEditor(view,
-                                       fileMenuBuilder,
-                                       placeManager,
-                                       multiPageEditorContainerView,
-                                       changeTitleNotificationEvent,
-                                       notificationEvent,
-                                       onDiagramFocusEvent,
-                                       xmlEditorView,
-                                       editorSessionPresenterInstances,
-                                       viewerSessionPresenterInstances,
-                                       menuSessionItems,
-                                       errorPopupPresenter,
-                                       diagramClientErrorHandler,
-                                       translationService,
-                                       documentationView,
-                                       diagramPreviewAndExplorerDock,
-                                       diagramPropertiesDock,
-                                       layoutHelper,
-                                       openDiagramLayoutExecutor,
-                                       diagramServices,
-                                       canvasFileExport,
-                                       promises);
+        editor = spy(new BPMNDiagramEditor(view,
+                                           fileMenuBuilder,
+                                           placeManager,
+                                           multiPageEditorContainerView,
+                                           changeTitleNotificationEvent,
+                                           notificationEvent,
+                                           onDiagramFocusEvent,
+                                           xmlEditorView,
+                                           editorSessionPresenterInstances,
+                                           viewerSessionPresenterInstances,
+                                           menuSessionItems,
+                                           errorPopupPresenter,
+                                           diagramClientErrorHandler,
+                                           translationService,
+                                           documentationView,
+                                           diagramPreviewAndExplorerDock,
+                                           diagramPropertiesDock,
+                                           layoutHelper,
+                                           openDiagramLayoutExecutor,
+                                           diagramServices,
+                                           formsFlushManager,
+                                           canvasFileExport,
+                                           promises));
+
+        when(editor.getSessionPresenter()).thenReturn(sessionPresenter);
+        when(sessionPresenter.getInstance()).thenReturn(clientSession);
     }
 
     @Test
@@ -171,7 +192,8 @@ public class BPMNDiagramEditorTest {
         verify(menuSessionItems, times(1)).destroy();
 
         //Second setContent call context
-        editor.setContent("", "");
+        final String path = "/project/src/main/resources/diagrams/process.bpmn";
+        editor.setContent(path, "");
         verify(menuSessionItems, times(2)).destroy();
     }
 
@@ -187,5 +209,25 @@ public class BPMNDiagramEditorTest {
         editor.onClose();
         initOrder.verify(diagramPropertiesDock).close();
         initOrder.verify(diagramPreviewAndExplorerDock).close();
+    }
+
+    @Test
+    public void testOnFormsOpenedEvent() {
+        editor.onFormsOpenedEvent(new FormPropertiesOpened(clientSession, ELEMENTUUID, ""));
+        assertEquals(ELEMENTUUID, editor.formElementUUID);
+    }
+
+    @Test
+    public void testGetContent() {
+        editor.formElementUUID = ELEMENTUUID;
+        editor.getContent();
+        verify(formsFlushManager, times(1)).flush(clientSession, ELEMENTUUID);
+    }
+
+    @Test
+    public void testFlush() {
+        editor.formElementUUID = ELEMENTUUID;
+        editor.flush();
+        verify(formsFlushManager, times(1)).flush(clientSession, ELEMENTUUID);
     }
 }

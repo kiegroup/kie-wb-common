@@ -15,6 +15,9 @@
  */
 package org.kie.workbench.common.stunner.cm.backend.converters.tostunner.processes;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+
 import org.eclipse.bpmn2.Process;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.TypedFactoryManager;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.BaseConverterFactory;
@@ -27,6 +30,7 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.AdHoc;
 import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.Executable;
 import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.GlobalVariables;
 import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.Id;
+import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.MetaDataAttributes;
 import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.ProcessType;
 import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.imports.Imports;
 import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.imports.ImportsValue;
@@ -44,6 +48,9 @@ import org.kie.workbench.common.stunner.cm.definition.property.variables.Process
 import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
+
+import static org.kie.workbench.common.stunner.core.util.StringUtils.isEmpty;
+import static org.kie.workbench.common.stunner.core.util.StringUtils.revertIllegalCharsAttribute;
 
 public class CaseManagementRootProcessConverter extends BaseRootProcessConverter<CaseManagementDiagram, DiagramSet, ProcessData, AdvancedData> {
 
@@ -65,9 +72,9 @@ public class CaseManagementRootProcessConverter extends BaseRootProcessConverter
 
     @Override
     protected DiagramSet createDiagramSet(Process process, ProcessPropertyReader p, DefinitionsPropertyReader d) {
-        return new DiagramSet(new Name(process.getName()),
+        return new DiagramSet(new Name(revertIllegalCharsAttribute(process.getName())),
                               new Documentation(p.getDocumentation()),
-                              new Id(process.getId()),
+                              new Id(revertIllegalCharsAttribute(process.getId())),
                               new Package(p.getPackage()),
                               new ProcessType(p.getProcessType()),
                               new Version(p.getVersion()),
@@ -84,7 +91,18 @@ public class CaseManagementRootProcessConverter extends BaseRootProcessConverter
     }
 
     @Override
-    protected AdvancedData createAdvancedData(String globalVariables) {
-        return new AdvancedData(new GlobalVariables(globalVariables));
+    protected AdvancedData createAdvancedData(String globalVariables, String metaDataAttributes) {
+        return new AdvancedData(new GlobalVariables(globalVariables), new MetaDataAttributes(metaDataAttributes));
+    }
+
+    private static String decode(String text) {
+        if (isEmpty(text)) {
+            return text;
+        }
+        try {
+            return URLDecoder.decode(text, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            throw new IllegalArgumentException(text, e);
+        }
     }
 }

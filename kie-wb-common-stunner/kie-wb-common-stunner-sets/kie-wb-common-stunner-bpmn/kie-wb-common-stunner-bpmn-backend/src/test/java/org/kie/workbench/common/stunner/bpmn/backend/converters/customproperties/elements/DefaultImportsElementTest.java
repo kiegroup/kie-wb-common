@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2020 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -54,7 +54,11 @@ public class DefaultImportsElementTest {
         BaseElement baseElement = bpmn2.createProcess();
         CustomElement.defaultImports.of(baseElement).set(defaultImports);
 
-        assertEquals(defaultImports, CustomElement.defaultImports.of(baseElement).get());
+        List<DefaultImport> result = CustomElement.defaultImports.of(baseElement).get();
+        assertEquals(3, result.size());
+        assertEquals(CLASS_NAME + 1, result.get(0).getClassName());
+        assertEquals(CLASS_NAME + 2, result.get(1).getClassName());
+        assertEquals(CLASS_NAME + 3, result.get(2).getClassName());
     }
 
     @Test
