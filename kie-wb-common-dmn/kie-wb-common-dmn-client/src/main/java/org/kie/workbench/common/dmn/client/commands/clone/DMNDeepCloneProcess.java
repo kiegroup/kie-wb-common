@@ -18,7 +18,6 @@ package org.kie.workbench.common.dmn.client.commands.clone;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.function.Predicate;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -42,6 +41,7 @@ import org.kie.workbench.common.dmn.api.property.dmn.Id;
 import org.kie.workbench.common.dmn.api.property.dmn.Name;
 import org.kie.workbench.common.dmn.api.property.dmn.NameHolder;
 import org.kie.workbench.common.dmn.api.property.dmn.Text;
+import org.kie.workbench.common.dmn.client.property.dmn.DefaultValueUtilities;
 import org.kie.workbench.common.stunner.core.api.FactoryManager;
 import org.kie.workbench.common.stunner.core.client.api.SessionManager;
 import org.kie.workbench.common.stunner.core.definition.adapter.AdapterManager;
@@ -61,7 +61,6 @@ public class DMNDeepCloneProcess extends DeepCloneProcess implements IDeepCloneP
 
     private static final Logger LOGGER = Logger.getLogger(DMNDeepCloneProcess.class.getName());
     private static final RegExp NAME_SUFFIX_REGEX = RegExp.compile("[?!-]\\d+$");
-    private static final String CLONED_DEFAULT_SUFFIX = "-1";
     private static final String HYPHEN = "-";
     private final SessionManager sessionManager;
 
@@ -135,30 +134,47 @@ public class DMNDeepCloneProcess extends DeepCloneProcess implements IDeepCloneP
         target.setText(new Text(uniqueNodeName));
     }
 
-    String composeUniqueNodeName(final String name) {
+    protected String composeUniqueNodeName(final String name) {
         final String originalName = Optional.ofNullable(name).orElse("");
-        String uniqueName = originalName + CLONED_DEFAULT_SUFFIX;
 
         try {
             final MatchResult nameSuffixMatcher = NAME_SUFFIX_REGEX.exec(originalName);
             if (nameSuffixMatcher != null) {
-                uniqueName = buildNameWithIncrementedSuffixIndex(originalName, nameSuffixMatcher);
+                return buildNameWithIncrementedSuffixIndex(originalName, nameSuffixMatcher);
             }
         } catch (Exception e) {
             LOGGER.warning("There was an issue while parsing node with name " + originalName + " - A fallback will be used for it");
         }
 
-        return ensureNodeNameUniqueness(uniqueName);
+        return joinPrefixWithIndexedSuffix(originalName);
     }
 
-    private String ensureNodeNameUniqueness(final String uniqueName) {
-        return StreamSupport.stream(getGraphNodes().spliterator(), true)
+    private String buildNameWithIncrementedSuffixIndex(final String nameValue, final MatchResult matchResult) {
+        final String suffix = matchResult.getGroup(0);
+        final String prefix = Optional.ofNullable(nameValue.split(suffix)[0]).orElse("");
+        return joinPrefixWithIndexedSuffix(prefix);
+    }
+
+    private String joinPrefixWithIndexedSuffix(final String originalName) {
+        final String originalNameWithHyphen = originalName + HYPHEN;
+        return originalNameWithHyphen + getMaxUnusedIndexByNamePrefix(originalNameWithHyphen);
+    }
+
+    private int getMaxUnusedIndexByNamePrefix(final String namePrefix) {
+        final List<String> nodeNameList = StreamSupport.stream(getGraphNodes().spliterator(), true)
                 .map(this::nodeNamesMapper)
                 .filter(Objects::nonNull)
-                .filter(Predicate.isEqual(uniqueName))
-                .findAny()
-                .map(this::composeUniqueNodeName)
-                .orElse(uniqueName);
+                .collect(Collectors.toList());
+        return DefaultValueUtilities.getMaxUnusedIndex(nodeNameList, namePrefix);
+    }
+
+    private Iterable<Node<View, Edge>> getGraphNodes() {
+        return sessionManager
+                .getCurrentSession()
+                .getCanvasHandler()
+                .getDiagram()
+                .getGraph()
+                .nodes();
     }
 
     private String nodeNamesMapper(final Node<View, Edge> node) {
@@ -171,23 +187,6 @@ public class DMNDeepCloneProcess extends DeepCloneProcess implements IDeepCloneP
             return hasText.getText().getValue();
         }
         return null;
-    }
-
-    private Iterable<Node<View, Edge>> getGraphNodes() {
-        return sessionManager
-                .getCurrentSession()
-                .getCanvasHandler()
-                .getDiagram()
-                .getGraph()
-                .nodes();
-    }
-
-    private String buildNameWithIncrementedSuffixIndex(final String nameValue, final MatchResult matchResult) {
-        final String suffix = matchResult.getGroup(0);
-        int suffixIndex = Integer.parseInt(suffix.substring(1));
-        final String nameValueWithoutSuffix = Optional.ofNullable(nameValue.split(suffix)[0]).orElse("");
-        final String computedSuffix = HYPHEN + (++suffixIndex);
-        return nameValueWithoutSuffix + computedSuffix;
     }
 
     private void cloneTypeRefInfo(final IsInformationItem srcInformationItem, final IsInformationItem targetInformationItem) {

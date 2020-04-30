@@ -84,7 +84,7 @@ public class DMNDeepCloneProcessTest extends AbstractCloneProcessTest {
     private static final String DECISION_SOURCE_NAME = "decision-source";
     private static final String QUESTION = "question?";
     private static final String ANSWER = "answer";
-    private static final String NAME_SUFFIX = "-1";
+    private static final String FIRST_INDEX_IN_SUFFIX = "-1";
     private static final String TEXT_DATA = "text-data";
     private DMNDeepCloneProcess dmnDeepCloneProcess;
 
@@ -124,11 +124,13 @@ public class DMNDeepCloneProcessTest extends AbstractCloneProcessTest {
     @Before
     public void setUp() throws Exception {
         super.setUp();
+
         when(sessionManager.getCurrentSession()).thenReturn(currentSession);
         when(currentSession.getCanvasHandler()).thenReturn(canvasHandler);
         when(canvasHandler.getDiagram()).thenReturn(diagram);
         when(diagram.getGraph()).thenReturn(graph);
         when(graph.nodes()).thenReturn(Collections.emptyList());
+
         dmnDeepCloneProcess = new DMNDeepCloneProcess(factoryManager, adapterManager, new ClassUtils(), sessionManager);
     }
 
@@ -141,7 +143,7 @@ public class DMNDeepCloneProcessTest extends AbstractCloneProcessTest {
 
         assertThat(cloned).isNotNull();
         assertThat(cloned.getId().getValue()).isNotEqualTo(SOURCE_ID);
-        assertThat(cloned.getName().getValue()).isEqualTo(INPUT_DATA_NAME + NAME_SUFFIX);
+        assertThat(cloned.getName().getValue()).isEqualTo(INPUT_DATA_NAME + FIRST_INDEX_IN_SUFFIX);
         assertThat(cloned.getVariable().getTypeRef()).isEqualTo(BuiltInType.STRING.asQName());
         assertThat(cloned.getLinksHolder().getValue().getLinks())
                 .hasSize(2)
@@ -168,7 +170,7 @@ public class DMNDeepCloneProcessTest extends AbstractCloneProcessTest {
 
         assertThat(cloned).isNotNull();
         assertThat(cloned.getId().getValue()).isNotEqualTo(SOURCE_ID);
-        assertThat(cloned.getText().getValue()).isEqualTo(TEXT_DATA + NAME_SUFFIX);
+        assertThat(cloned.getText().getValue()).isEqualTo(TEXT_DATA + FIRST_INDEX_IN_SUFFIX);
     }
 
     private TextAnnotation buildTextAnnotation() {
@@ -191,7 +193,7 @@ public class DMNDeepCloneProcessTest extends AbstractCloneProcessTest {
 
         assertThat(cloned).isNotNull();
         assertThat(cloned.getId().getValue()).isNotEqualTo(SOURCE_ID);
-        assertThat(cloned.getName().getValue()).isEqualTo(DECISION_SERVICE_NAME + NAME_SUFFIX);
+        assertThat(cloned.getName().getValue()).isEqualTo(DECISION_SERVICE_NAME + FIRST_INDEX_IN_SUFFIX);
         assertThat(cloned.getVariable().getTypeRef()).isEqualTo(BuiltInType.BOOLEAN.asQName());
     }
 
@@ -221,7 +223,7 @@ public class DMNDeepCloneProcessTest extends AbstractCloneProcessTest {
 
         assertThat(cloned).isNotNull();
         assertThat(cloned.getId().getValue()).isNotEqualTo(SOURCE_ID);
-        assertThat(cloned.getName().getValue()).isEqualTo(KNOWLEDGE_SOURCE_NAME + NAME_SUFFIX);
+        assertThat(cloned.getName().getValue()).isEqualTo(KNOWLEDGE_SOURCE_NAME + FIRST_INDEX_IN_SUFFIX);
         assertThat(cloned.getLinksHolder().getValue().getLinks())
                 .hasSize(2)
                 .extracting(DMNExternalLink::getUrl).contains(FIRST_URL, SECOND_URL);
@@ -249,7 +251,7 @@ public class DMNDeepCloneProcessTest extends AbstractCloneProcessTest {
 
         assertThat(cloned).isNotNull();
         assertThat(cloned.getId().getValue()).isNotEqualTo(SOURCE_ID);
-        assertThat(cloned.getName().getValue()).isEqualTo(BKM_SOURCE_NAME + NAME_SUFFIX);
+        assertThat(cloned.getName().getValue()).isEqualTo(BKM_SOURCE_NAME + FIRST_INDEX_IN_SUFFIX);
         assertThat(cloned.getLinksHolder().getValue().getLinks())
                 .hasSize(2)
                 .extracting(DMNExternalLink::getUrl).contains(FIRST_URL, SECOND_URL);
@@ -272,7 +274,7 @@ public class DMNDeepCloneProcessTest extends AbstractCloneProcessTest {
 
         assertThat(cloned).isNotNull();
         assertThat(cloned.getId().getValue()).isNotEqualTo(SOURCE_ID);
-        assertThat(cloned.getName().getValue()).isEqualTo(DECISION_SOURCE_NAME + NAME_SUFFIX);
+        assertThat(cloned.getName().getValue()).isEqualTo(DECISION_SOURCE_NAME + FIRST_INDEX_IN_SUFFIX);
         assertThat(cloned.getLinksHolder().getValue().getLinks())
                 .hasSize(2)
                 .extracting(DMNExternalLink::getUrl).contains(FIRST_URL, SECOND_URL);
@@ -347,51 +349,66 @@ public class DMNDeepCloneProcessTest extends AbstractCloneProcessTest {
     @Test
     public void testComposingUniqueNodeName() {
         assertThat(dmnDeepCloneProcess.composeUniqueNodeName(INPUT_DATA_NAME))
-                .isEqualTo(INPUT_DATA_NAME + NAME_SUFFIX);
+                .isEqualTo(INPUT_DATA_NAME + FIRST_INDEX_IN_SUFFIX);
     }
 
     @Test
     public void testComposingUniqueNodeNameWhenItAlreadyContainsIndexedSuffix() {
-        assertThat(dmnDeepCloneProcess.composeUniqueNodeName(INPUT_DATA_NAME + "-3"))
-                .isEqualTo(INPUT_DATA_NAME + "-4");
+        mockSingleNodeInTheGraph();
+
+        assertThat(dmnDeepCloneProcess.composeUniqueNodeName(INPUT_DATA_NAME + FIRST_INDEX_IN_SUFFIX))
+                .isEqualTo(INPUT_DATA_NAME + "-2");
+    }
+
+    private void mockSingleNodeInTheGraph() {
+        when(graph.nodes()).thenReturn(Collections.singletonList(nodeWithName));
+
+        when(nodeWithName.getContent()).thenReturn(namedElementContent);
+        when(namedElementContent.getDefinition()).thenReturn(namedElementDefinition);
+        when(namedElementDefinition.getName()).thenReturn(name);
+        when(name.getValue()).thenReturn(INPUT_DATA_NAME + FIRST_INDEX_IN_SUFFIX);
     }
 
     @Test
     public void testComposingUniqueNodeNameWhenItContainsNotIndexedSuffix() {
         assertThat(dmnDeepCloneProcess.composeUniqueNodeName(INPUT_DATA_NAME + "-A3"))
-                .isEqualTo(INPUT_DATA_NAME + "-A3" + NAME_SUFFIX);
+                .isEqualTo(INPUT_DATA_NAME + "-A3" + FIRST_INDEX_IN_SUFFIX);
     }
 
     @Test
     public void testComposingUniqueNodeNameWhenNextIndexInSequenceAlreadyPresent() {
+        mockMultipleNodesInTheGraph();
+
+        assertThat(dmnDeepCloneProcess.composeUniqueNodeName(INPUT_DATA_NAME + FIRST_INDEX_IN_SUFFIX))
+                .isEqualTo(INPUT_DATA_NAME + "-4");
+    }
+
+    private void mockMultipleNodesInTheGraph() {
         when(graph.nodes()).thenReturn(Arrays.asList(nodeWithName, nodeWithText, nodeWithNone));
 
         when(nodeWithName.getContent()).thenReturn(namedElementContent);
         when(namedElementContent.getDefinition()).thenReturn(namedElementDefinition);
         when(namedElementDefinition.getName()).thenReturn(name);
-        when(name.getValue()).thenReturn(INPUT_DATA_NAME + "-6");
+        when(name.getValue()).thenReturn(INPUT_DATA_NAME + "-2");
 
         when(nodeWithText.getContent()).thenReturn(textElementContent);
         when(textElementContent.getDefinition()).thenReturn(hasTextDefinition);
         when(hasTextDefinition.getText()).thenReturn(text);
-        when(text.getValue()).thenReturn(INPUT_DATA_NAME + "-7");
+        when(text.getValue()).thenReturn(INPUT_DATA_NAME + "-3");
 
         when(nodeWithNone.getContent()).thenReturn(noneContent);
         when(noneContent.getDefinition()).thenReturn(new Object());
-
-        assertThat(dmnDeepCloneProcess.composeUniqueNodeName(INPUT_DATA_NAME + "-5"))
-                .isEqualTo(INPUT_DATA_NAME + "-8");
     }
 
     @Test
     public void testComposingUniqueNodeNameWhenItIsEmpty() {
         assertThat(dmnDeepCloneProcess.composeUniqueNodeName(""))
-                .isEqualTo(NAME_SUFFIX);
+                .isEqualTo(FIRST_INDEX_IN_SUFFIX);
     }
 
     @Test
     public void testComposingUniqueNodeNameWhenItIsNull() {
         assertThat(dmnDeepCloneProcess.composeUniqueNodeName(null))
-                .isEqualTo(NAME_SUFFIX);
+                .isEqualTo(FIRST_INDEX_IN_SUFFIX);
     }
 }
