@@ -25,32 +25,32 @@ import static org.junit.Assert.assertTrue;
 public class BuiltInTypeImportHelperTest {
 
     @Test
-    public void testIsImportRemovableNull() {
-        assertTrue("user can remove null",
-                   BuiltInTypeImportHelper.isImportRemovable(new Import()));
+    public void testIsImportBuiltInNull() {
+        assertFalse("null is not built in",
+                    BuiltInTypeImportHelper.isBuiltIn(new Import()));
     }
 
     @Test
-    public void testIsImportRemovableEmpty() {
-        assertTrue("user can remove empty",
-                   BuiltInTypeImportHelper.isImportRemovable(new Import("")));
+    public void testIsImportBuiltInEmpty() {
+        assertFalse("empty is not built in",
+                    BuiltInTypeImportHelper.isBuiltIn(new Import("")));
     }
 
     @Test
-    public void testIsImportRemovableJavaLang() {
-        assertFalse("user can not remove java.lang.*",
-                    BuiltInTypeImportHelper.isImportRemovable(new Import("java.lang.Number")));
+    public void testIsImportBuiltInJavaLang() {
+        assertTrue("java.lang.* is built in",
+                   BuiltInTypeImportHelper.isBuiltIn(new Import("java.lang.Number")));
     }
 
     @Test
     public void testIsImportRemovableJavaUtil() {
-        assertFalse("user can not remove java.util.*",
-                    BuiltInTypeImportHelper.isImportRemovable(new Import("java.util.ArrayList")));
+        assertTrue("java.util.* is built in",
+                   BuiltInTypeImportHelper.isBuiltIn(new Import("java.util.ArrayList")));
     }
 
     @Test
-    public void testIsImportRemovableRegular() {
-        assertTrue("user can removed regular type",
-                   BuiltInTypeImportHelper.isImportRemovable(new Import("com.sample.Person")));
+    public void testIsImportBuiltInRegular() {
+        assertFalse("Person is not built in",
+                    BuiltInTypeImportHelper.isBuiltIn(new Import("com.sample.Person")));
     }
 }

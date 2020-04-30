@@ -127,7 +127,7 @@ public class ImportsWidgetViewImpl
             public void render(final Cell.Context context,
                                final Import object,
                                final SafeHtmlBuilder sb) {
-                if (BuiltInTypeImportHelper.isImportRemovable(object)) {
+                if (!BuiltInTypeImportHelper.isBuiltIn(object)) {
                     super.render(context, object, sb);
                 }
             }

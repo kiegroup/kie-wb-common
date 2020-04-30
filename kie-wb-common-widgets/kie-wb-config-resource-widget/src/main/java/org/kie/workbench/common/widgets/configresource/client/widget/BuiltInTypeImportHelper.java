@@ -26,14 +26,13 @@ public class BuiltInTypeImportHelper {
 
     /**
      * Check if the import is java built in type ("java.lang.*" or "java.util.*")
-     *
      * @return false if type is from listed packages, true otherwise
      */
-    public static boolean isImportRemovable(final Import importedType) {
+    public static boolean isBuiltIn(final Import importedType) {
         final String type = importedType.getType();
         final boolean isJavaLang = type != null && type.startsWith("java.lang.");
         final boolean isJavaUtil = type != null && type.startsWith("java.util.");
 
-        return !isJavaLang && !isJavaUtil;
+        return isJavaLang || isJavaUtil;
     }
 }
