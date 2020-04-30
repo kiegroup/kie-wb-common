@@ -17,12 +17,14 @@
 package org.kie.workbench.common.dmn.client.commands.clone;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.stream.Stream;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.kie.workbench.common.dmn.api.definition.HasText;
 import org.kie.workbench.common.dmn.api.definition.model.BusinessKnowledgeModel;
 import org.kie.workbench.common.dmn.api.definition.model.Context;
 import org.kie.workbench.common.dmn.api.definition.model.DRGElement;
@@ -102,16 +104,22 @@ public class DMNDeepCloneProcessTest extends AbstractCloneProcessTest {
     private Graph graph;
 
     @Mock
-    private Node node;
+    private Node nodeWithName, nodeWithText, nodeWithNone;
 
     @Mock
-    private View content;
+    private View namedElementContent, textElementContent, noneContent;
 
     @Mock
-    private NamedElement definition;
+    private NamedElement namedElementDefinition;
+
+    @Mock
+    private HasText hasTextDefinition;
 
     @Mock
     private Name name;
+
+    @Mock
+    private Text text;
 
     @Before
     public void setUp() throws Exception {
@@ -356,14 +364,23 @@ public class DMNDeepCloneProcessTest extends AbstractCloneProcessTest {
 
     @Test
     public void testComposingUniqueNodeNameWhenNextIndexInSequenceAlreadyPresent() {
-        when(graph.nodes()).thenReturn(Collections.singletonList(node));
-        when(node.getContent()).thenReturn(content);
-        when(content.getDefinition()).thenReturn(definition);
-        when(definition.getName()).thenReturn(name);
+        when(graph.nodes()).thenReturn(Arrays.asList(nodeWithName, nodeWithText, nodeWithNone));
+
+        when(nodeWithName.getContent()).thenReturn(namedElementContent);
+        when(namedElementContent.getDefinition()).thenReturn(namedElementDefinition);
+        when(namedElementDefinition.getName()).thenReturn(name);
         when(name.getValue()).thenReturn(INPUT_DATA_NAME + "-6");
 
+        when(nodeWithText.getContent()).thenReturn(textElementContent);
+        when(textElementContent.getDefinition()).thenReturn(hasTextDefinition);
+        when(hasTextDefinition.getText()).thenReturn(text);
+        when(text.getValue()).thenReturn(INPUT_DATA_NAME + "-7");
+
+        when(nodeWithNone.getContent()).thenReturn(noneContent);
+        when(noneContent.getDefinition()).thenReturn(new Object());
+
         assertThat(dmnDeepCloneProcess.composeUniqueNodeName(INPUT_DATA_NAME + "-5"))
-                .isEqualTo(INPUT_DATA_NAME + "-7");
+                .isEqualTo(INPUT_DATA_NAME + "-8");
     }
 
     @Test
