@@ -16,27 +16,32 @@
 
 package org.kie.workbench.common.dmn.client.widgets.codecompletion;
 
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Objects;
+
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONBoolean;
-import com.google.gwt.json.client.JSONNumber;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONString;
 import com.google.gwt.json.client.JSONValue;
-import elemental2.core.JsRegExp;
-import jsinterop.base.Js;
+import com.vmware.antlr4c3.CodeCompletionCore;
+import org.antlr.v4.runtime.tree.ParseTree;
+import org.antlr.v4.runtime.tree.TerminalNode;
+import org.kie.dmn.feel.lang.Scope;
+import org.kie.dmn.feel.lang.ast.BaseNode;
+import org.kie.dmn.feel.parser.feel11.ASTBuilderVisitor;
+import org.kie.dmn.feel.parser.feel11.FEELParser;
+import org.kie.dmn.feel.parser.feel11.FEEL_1_1Parser;
+import org.uberfire.client.views.pfly.monaco.jsinterop.ITextModel;
 import org.uberfire.client.views.pfly.monaco.jsinterop.MonacoLanguages.ProvideCompletionItemsFunction;
+import org.uberfire.client.views.pfly.monaco.jsinterop.Position;
 
 import static org.kie.workbench.common.dmn.client.widgets.codecompletion.MonacoFEELInitializer.FEEL_RESERVED_KEYWORDS;
 
-public class MonacoPropertiesFactory {
-
-    public static final String FEEL_LANGUAGE_ID = "feel-language";
-    public static final String FEEL_THEME_ID = "feel-theme";
-    private static final String INSERT_TEXT_RULES_KEY = "insertTextRules";
-    private static final String LABEL_KEY = "label";
-    private static final String INSERT_TEXT_KEY = "insertText";
-    private static final String KIND_KEY = "kind";
+public class MonacoPropertiesFactory
+        extends Populator {
 
     /*
      * This method returns a JavaScript object with properties specified here:
@@ -148,9 +153,10 @@ public class MonacoPropertiesFactory {
      * https://microsoft.github.io/monaco-editor/api/interfaces/monaco.languages.completionlist.html
      */
     ProvideCompletionItemsFunction getProvideCompletionItemsFunction(final MonacoFEELVariableSuggestions variableSuggestions) {
-        return () -> {
+        return (ITextModel model, Position position) -> {
+
             final JSONObject suggestions = makeJSONObject();
-            suggestions.put("suggestions", getSuggestions(variableSuggestions));
+            suggestions.put("suggestions", getSuggestions(variableSuggestions, model, position));
             return suggestions.getJavaScriptObject();
         };
     }
@@ -189,15 +195,119 @@ public class MonacoPropertiesFactory {
         return root;
     }
 
-    JSONArray getSuggestions(final MonacoFEELVariableSuggestions variableSuggestions) {
+    JSONArray getSuggestions(final MonacoFEELVariableSuggestions variableSuggestions,
+                             final ITextModel model,
+                             final Position position) {
 
         final JSONArray suggestionTypes = makeJSONArray();
 
-        populateKeywordSuggestions(suggestionTypes);
-        populateVariableSuggestions(variableSuggestions, suggestionTypes);
-        populateFunctionSuggestions(suggestionTypes);
+        final FEEL_1_1Parser parser = FEELParser.parse(null,
+                                                       model.getValue(),
+                                                       Collections.emptyMap(),
+                                                       Collections.emptyMap(),
+                                                       Collections.emptyList(),
+                                                       Collections.emptyList(),
+                                                       null);
 
+        final CodeCompletionCore.CandidatesCollection candidates = getCandidatesCollection(model,
+                                                                                           position,
+                                                                                           parser);
+
+        for (final Integer ruleId : candidates.rules.keySet()) {
+            if (ruleId == FEEL_1_1Parser.RULE_functionDefinition) {
+                listFunctions(suggestionTypes,
+                              parser.getHelper().getSymbolTable().getBuiltInScope());
+                listFunctions(suggestionTypes,
+                              parser.getHelper().getSymbolTable().getGlobalScope());
+            }
+        }
+
+        populateKeywordSuggestions(suggestionTypes);
+
+        for (final Integer tokenId : candidates.tokens.keySet()) {
+            final String displayName = getDisplayName(parser,
+                                                      tokenId);
+
+            if (isSkippable(displayName)) {
+                // Skip
+            } else if (Objects.equals(displayName, "Identifier")) {
+                populateVariableSuggestions(variableSuggestions,
+                                            suggestionTypes);
+            } else {
+                push(suggestionTypes,
+                     getKeywordSuggestion(displayName));
+            }
+        }
         return suggestionTypes;
+    }
+
+    private CodeCompletionCore.CandidatesCollection getCandidatesCollection(final ITextModel model,
+                                                                            final Position position,
+                                                                            final FEEL_1_1Parser parser) {
+        final ParseTree tree = parser.expression();
+
+        final ASTBuilderVisitor v = new ASTBuilderVisitor(Collections.emptyMap(),
+                                                          null);
+        final BaseNode expr = v.visit(tree);
+
+        final HashSet<Integer> preferredRules = new HashSet<>();
+        preferredRules.add(FEEL_1_1Parser.RULE_functionDefinition);
+
+        final CodeCompletionCore codeCompletionCore = new CodeCompletionCore(parser,
+                                                                             preferredRules,
+                                                                             null);
+
+        final int caretIndex = getCaretPosition(model, position, tree);
+
+        CodeCompletionCore.CandidatesCollection candidates = codeCompletionCore.collectCandidates(caretIndex,
+                                                                                                  null);
+
+        return candidates;
+    }
+
+    private boolean isSkippable(final String displayName) {
+        return Objects.equals(displayName, "IntegerLiteral")
+                || Objects.equals(displayName, "FloatingPointLiteral")
+                || Objects.equals(displayName, "StringLiteral")
+                || Objects.equals(displayName, "BooleanLiteral");
+    }
+
+    private int getCaretPosition(final ITextModel model,
+                                 final Position position,
+                                 final ParseTree parseTree) {
+
+        if (parseTree instanceof TerminalNode) {
+            int start = ((TerminalNode) parseTree).getSymbol().getCharPositionInLine();
+            int stop = ((TerminalNode) parseTree).getSymbol().getCharPositionInLine() + parseTree.getText().length();
+            if (((TerminalNode) parseTree).getSymbol().getLine() == position.getLineNumber() && start <= position.getColumn() && stop >= position.getColumn()) {
+                return ((TerminalNode) parseTree).getSymbol().getTokenIndex();
+            } else {
+                return 0;
+            }
+        } else {
+            for (int i = 0; i < parseTree.getChildCount(); i++) {
+                int index = getCaretPosition(model, position, parseTree.getChild(i));
+                if (index != -1) {
+                    return 0;
+                }
+            }
+            return 0;
+        }
+    }
+
+    protected void listFunctions(final JSONArray suggestionTypes,
+                                 final Scope builtInScope) {
+        new FunctionPopulator(builtInScope).populate(suggestionTypes);
+    }
+
+    private String getDisplayName(final FEEL_1_1Parser parser,
+                                  final Integer tokenId) {
+        final String displayName = parser.getVocabulary().getDisplayName(tokenId);
+        if (displayName.startsWith("'") && displayName.endsWith("'")) {
+            return displayName.substring(1, displayName.length() - 1);
+        } else {
+            return displayName;
+        }
     }
 
     private void populateKeywordSuggestions(JSONArray suggestionArray) {
@@ -211,150 +321,6 @@ public class MonacoPropertiesFactory {
                 .forEach(variable -> push(suggestionArray, getVariableSuggestion(variable)));
     }
 
-    private void populateFunctionSuggestions(final JSONArray suggestionTypes) {
-        push(suggestionTypes, getFunctionSuggestion("abs(duration)", "abs($1)"));
-        push(suggestionTypes, getFunctionSuggestion("abs(number)", "abs($1)"));
-        push(suggestionTypes, getFunctionSuggestion("after(range, value)", "after($1, $2)"));
-        push(suggestionTypes, getFunctionSuggestion("after(range1, range2)", "after($1, $2)"));
-        push(suggestionTypes, getFunctionSuggestion("after(value, range)", "after($1, $2)"));
-        push(suggestionTypes, getFunctionSuggestion("after(value1, value2)", "after($1, $2)"));
-        push(suggestionTypes, getFunctionSuggestion("all(b)", "all($1)"));
-        push(suggestionTypes, getFunctionSuggestion("all(list)", "all($1)"));
-        push(suggestionTypes, getFunctionSuggestion("any(b)", "any($1)"));
-        push(suggestionTypes, getFunctionSuggestion("any(list)", "any($1)"));
-        push(suggestionTypes, getFunctionSuggestion("append(list, item)", "append($1, $2)"));
-        push(suggestionTypes, getFunctionSuggestion("before(range, value)", "before($1, $2)"));
-        push(suggestionTypes, getFunctionSuggestion("before(range1, range2)", "before($1, $2)"));
-        push(suggestionTypes, getFunctionSuggestion("before(value, range)", "before($1, $2)"));
-        push(suggestionTypes, getFunctionSuggestion("before(value1, value2)", "before($1, $2)"));
-        push(suggestionTypes, getFunctionSuggestion("ceiling(n)", "ceiling($1)"));
-        push(suggestionTypes, getFunctionSuggestion("code(value)", "code($1)"));
-        push(suggestionTypes, getFunctionSuggestion("coincides(range1, range2)", "coincides($1, $2)"));
-        push(suggestionTypes, getFunctionSuggestion("coincides(value1, value2)", "coincides($1, $2)"));
-        push(suggestionTypes, getFunctionSuggestion("concatenate(list)", "concatenate($1)"));
-        push(suggestionTypes, getFunctionSuggestion("contains(string, match)", "contains($1, $2)"));
-        push(suggestionTypes, getFunctionSuggestion("count(c)", "count($1)"));
-        push(suggestionTypes, getFunctionSuggestion("count(list)", "count($1)"));
-        push(suggestionTypes, getFunctionSuggestion("date and time(date, time)", "date and time($1, $2)"));
-        push(suggestionTypes, getFunctionSuggestion("date and time(from)", "date and time($1)"));
-        push(suggestionTypes, getFunctionSuggestion("date and time(year, month, day, hour, minute, second)", "date and time($1, $2, $3, $4, $5, $6)"));
-        push(suggestionTypes, getFunctionSuggestion("date and time(year, month, day, hour, minute, second, hour offset)", "date and time($1, $2, $3, $4, $5, $6, $7)"));
-        push(suggestionTypes, getFunctionSuggestion("date and time(year, month, day, hour, minute, second, timezone)", "date and time($1, $2, $3, $4, $5, $6, $7)"));
-        push(suggestionTypes, getFunctionSuggestion("date(from)", "date($1)"));
-        push(suggestionTypes, getFunctionSuggestion("date(year, month, day)", "date($1, $2, $3)"));
-        push(suggestionTypes, getFunctionSuggestion("day of week(date)", "day of week($1)"));
-        push(suggestionTypes, getFunctionSuggestion("day of year(date)", "day of year($1)"));
-        push(suggestionTypes, getFunctionSuggestion("decimal(n, scale)", "decimal($1, $2)"));
-        push(suggestionTypes, getFunctionSuggestion("decision table(ctx, outputs, input expression list, input values list, output values, rule list, hit policy, default output value)", "decision table($1, $2, $3, $4, $5, $6, $7, $8)"));
-        push(suggestionTypes, getFunctionSuggestion("distinct values(list)", "distinct values($1)"));
-        push(suggestionTypes, getFunctionSuggestion("duration(from)", "duration($1)"));
-        push(suggestionTypes, getFunctionSuggestion("during(range1, range2)", "during($1, $2)"));
-        push(suggestionTypes, getFunctionSuggestion("during(value, range)", "during($1, $2)"));
-        push(suggestionTypes, getFunctionSuggestion("ends with(string, match)", "ends with($1, $2)"));
-        push(suggestionTypes, getFunctionSuggestion("even(number)", "even($1)"));
-        push(suggestionTypes, getFunctionSuggestion("exp(number)", "exp($1)"));
-        push(suggestionTypes, getFunctionSuggestion("finished by(range, value)", "finished by($1, $2)"));
-        push(suggestionTypes, getFunctionSuggestion("finished by(range1, range2)", "finished by($1, $2)"));
-        push(suggestionTypes, getFunctionSuggestion("finishes(range1, range2)", "finishes($1, $2)"));
-        push(suggestionTypes, getFunctionSuggestion("finishes(value, range)", "finishes($1, $2)"));
-        push(suggestionTypes, getFunctionSuggestion("flatten(list)", "flatten($1)"));
-        push(suggestionTypes, getFunctionSuggestion("floor(n)", "floor($1)"));
-        push(suggestionTypes, getFunctionSuggestion("get entries(m)", "get entries($1)"));
-        push(suggestionTypes, getFunctionSuggestion("get value(m, key)", "get value($1, $2)"));
-        push(suggestionTypes, getFunctionSuggestion("includes(range, value)", "includes($1, $2)"));
-        push(suggestionTypes, getFunctionSuggestion("includes(range1, range2)", "includes($1, $2)"));
-        push(suggestionTypes, getFunctionSuggestion("index of(list, match)", "index of($1, $2)"));
-        push(suggestionTypes, getFunctionSuggestion("insert before(list, position, newItem)", "insert before($1, $2, $3)"));
-        push(suggestionTypes, getFunctionSuggestion("invoke(ctx, namespace, model name, decision name, parameters)", "invoke($1, $2, $3, $4, $5)"));
-        push(suggestionTypes, getFunctionSuggestion("list contains(list, element)", "list contains($1, $2)"));
-        push(suggestionTypes, getFunctionSuggestion("log(number)", "log($1)"));
-        push(suggestionTypes, getFunctionSuggestion("lower case(string)", "lower case($1)"));
-        push(suggestionTypes, getFunctionSuggestion("matches(input, pattern)", "matches($1, $2)"));
-        push(suggestionTypes, getFunctionSuggestion("matches(input, pattern, flags)", "matches($1, $2, $3)"));
-        push(suggestionTypes, getFunctionSuggestion("max(c)", "max($1)"));
-        push(suggestionTypes, getFunctionSuggestion("max(list)", "max($1)"));
-        push(suggestionTypes, getFunctionSuggestion("mean(list)", "mean($1)"));
-        push(suggestionTypes, getFunctionSuggestion("mean(n)", "mean($1)"));
-        push(suggestionTypes, getFunctionSuggestion("median(list)", "median($1)"));
-        push(suggestionTypes, getFunctionSuggestion("median(n)", "median($1)"));
-        push(suggestionTypes, getFunctionSuggestion("meets(range1, range2)", "meets($1, $2)"));
-        push(suggestionTypes, getFunctionSuggestion("met by(range1, range2)", "met by($1, $2)"));
-        push(suggestionTypes, getFunctionSuggestion("min(c)", "min($1)"));
-        push(suggestionTypes, getFunctionSuggestion("min(list)", "min($1)"));
-        push(suggestionTypes, getFunctionSuggestion("mode(list)", "mode($1)"));
-        push(suggestionTypes, getFunctionSuggestion("mode(n)", "mode($1)"));
-        push(suggestionTypes, getFunctionSuggestion("modulo(dividend, divisor)", "modulo($1, $2)"));
-        push(suggestionTypes, getFunctionSuggestion("month of year(date)", "month of year($1)"));
-        push(suggestionTypes, getFunctionSuggestion("nn all(b)", "nn all($1)"));
-        push(suggestionTypes, getFunctionSuggestion("nn all(list)", "nn all($1)"));
-        push(suggestionTypes, getFunctionSuggestion("nn any(b)", "nn any($1)"));
-        push(suggestionTypes, getFunctionSuggestion("nn any(list)", "nn any($1)"));
-        push(suggestionTypes, getFunctionSuggestion("nn count(c)", "nn count($1)"));
-        push(suggestionTypes, getFunctionSuggestion("nn count(list)", "nn count($1)"));
-        push(suggestionTypes, getFunctionSuggestion("nn max(c)", "nn max($1)"));
-        push(suggestionTypes, getFunctionSuggestion("nn max(list)", "nn max($1)"));
-        push(suggestionTypes, getFunctionSuggestion("nn mean(list)", "nn mean($1)"));
-        push(suggestionTypes, getFunctionSuggestion("nn mean(n)", "nn mean($1)"));
-        push(suggestionTypes, getFunctionSuggestion("nn median(list)", "nn median($1)"));
-        push(suggestionTypes, getFunctionSuggestion("nn median(n)", "nn median($1)"));
-        push(suggestionTypes, getFunctionSuggestion("nn min(c)", "nn min($1)"));
-        push(suggestionTypes, getFunctionSuggestion("nn min(list)", "nn min($1)"));
-        push(suggestionTypes, getFunctionSuggestion("nn mode(list)", "nn mode($1)"));
-        push(suggestionTypes, getFunctionSuggestion("nn mode(n)", "nn mode($1)"));
-        push(suggestionTypes, getFunctionSuggestion("nn stddev(list)", "nn stddev($1)"));
-        push(suggestionTypes, getFunctionSuggestion("nn stddev(n)", "nn stddev($1)"));
-        push(suggestionTypes, getFunctionSuggestion("nn sum(list)", "nn sum($1)"));
-        push(suggestionTypes, getFunctionSuggestion("nn sum(n)", "nn sum($1)"));
-        push(suggestionTypes, getFunctionSuggestion("not(negand)", "not($1)"));
-        push(suggestionTypes, getFunctionSuggestion("now()", "now()"));
-        push(suggestionTypes, getFunctionSuggestion("number(from, grouping separator, decimal separator)", "number($1, $2, $3)"));
-        push(suggestionTypes, getFunctionSuggestion("odd(number)", "odd($1)"));
-        push(suggestionTypes, getFunctionSuggestion("overlapped after by(range1, range2)", "overlapped after by($1, $2)"));
-        push(suggestionTypes, getFunctionSuggestion("overlapped before by(range1, range2)", "overlapped before by($1, $2)"));
-        push(suggestionTypes, getFunctionSuggestion("overlapped by(range1, range2)", "overlapped by($1, $2)"));
-        push(suggestionTypes, getFunctionSuggestion("overlaps after(range1, range2)", "overlaps after($1, $2)"));
-        push(suggestionTypes, getFunctionSuggestion("overlaps before(range1, range2)", "overlaps before($1, $2)"));
-        push(suggestionTypes, getFunctionSuggestion("overlaps(range1, range2)", "overlaps($1, $2)"));
-        push(suggestionTypes, getFunctionSuggestion("product(list)", "product($1)"));
-        push(suggestionTypes, getFunctionSuggestion("product(n)", "product($1)"));
-        push(suggestionTypes, getFunctionSuggestion("remove(list, position)", "remove($1, $2)"));
-        push(suggestionTypes, getFunctionSuggestion("replace(input, pattern, replacement)", "replace($1, $2, $3)"));
-        push(suggestionTypes, getFunctionSuggestion("replace(input, pattern, replacement, flags)", "replace($1, $2, $3, $4)"));
-        push(suggestionTypes, getFunctionSuggestion("reverse(list)", "reverse($1)"));
-        push(suggestionTypes, getFunctionSuggestion("sort()", "sort()"));
-        push(suggestionTypes, getFunctionSuggestion("sort(ctx, list, precedes)", "sort($1, $2, $3)"));
-        push(suggestionTypes, getFunctionSuggestion("sort(list)", "sort($1)"));
-        push(suggestionTypes, getFunctionSuggestion("split(string, delimiter)", "split($1, $2)"));
-        push(suggestionTypes, getFunctionSuggestion("split(string, delimiter, flags)", "split($1, $2, $3)"));
-        push(suggestionTypes, getFunctionSuggestion("sqrt(number)", "sqrt($1)"));
-        push(suggestionTypes, getFunctionSuggestion("started by(range, value)", "started by($1, $2)"));
-        push(suggestionTypes, getFunctionSuggestion("started by(range1, range2)", "started by($1, $2)"));
-        push(suggestionTypes, getFunctionSuggestion("starts with(string, match)", "starts with($1, $2)"));
-        push(suggestionTypes, getFunctionSuggestion("starts(range1, range2)", "starts($1, $2)"));
-        push(suggestionTypes, getFunctionSuggestion("starts(value, range)", "starts($1, $2)"));
-        push(suggestionTypes, getFunctionSuggestion("stddev(list)", "stddev($1)"));
-        push(suggestionTypes, getFunctionSuggestion("stddev(n)", "stddev($1)"));
-        push(suggestionTypes, getFunctionSuggestion("string length(string)", "string length($1)"));
-        push(suggestionTypes, getFunctionSuggestion("string(from)", "string($1)"));
-        push(suggestionTypes, getFunctionSuggestion("string(mask, p)", "string($1, $2)"));
-        push(suggestionTypes, getFunctionSuggestion("sublist(list, start position)", "sublist($1, $2)"));
-        push(suggestionTypes, getFunctionSuggestion("sublist(list, start position, length)", "sublist($1, $2, $3)"));
-        push(suggestionTypes, getFunctionSuggestion("substring after(string, match)", "substring after($1, $2)"));
-        push(suggestionTypes, getFunctionSuggestion("substring before(string, match)", "substring before($1, $2)"));
-        push(suggestionTypes, getFunctionSuggestion("substring(string, start position)", "substring($1, $2)"));
-        push(suggestionTypes, getFunctionSuggestion("substring(string, start position, length)", "substring($1, $2, $3)"));
-        push(suggestionTypes, getFunctionSuggestion("sum(list)", "sum($1)"));
-        push(suggestionTypes, getFunctionSuggestion("sum(n)", "sum($1)"));
-        push(suggestionTypes, getFunctionSuggestion("time(from)", "time($1)"));
-        push(suggestionTypes, getFunctionSuggestion("time(hour, minute, second)", "time($1, $2, $3)"));
-        push(suggestionTypes, getFunctionSuggestion("time(hour, minute, second, offset)", "time($1, $2, $3, $4)"));
-        push(suggestionTypes, getFunctionSuggestion("today()", "today()"));
-        push(suggestionTypes, getFunctionSuggestion("union(list)", "union($1)"));
-        push(suggestionTypes, getFunctionSuggestion("upper case(string)", "upper case($1)"));
-        push(suggestionTypes, getFunctionSuggestion("week of year(date)", "week of year($1)"));
-        push(suggestionTypes, getFunctionSuggestion("years and months duration(from, to)", "years and months duration($1, $2)"));
-    }
-
     JSONValue getKeywordSuggestion(final String keyword) {
         final JSONObject suggestion = makeJSONObject();
         final int completionItemKindKeyword = 17;
@@ -365,21 +331,6 @@ public class MonacoPropertiesFactory {
         suggestion.put(INSERT_TEXT_RULES_KEY, makeJSONNumber(completionItemInsertTextRuleInsertAsSnippet));
         suggestion.put(LABEL_KEY, keywordSuggestion);
         suggestion.put(INSERT_TEXT_KEY, keywordSuggestion);
-
-        return suggestion;
-    }
-
-    JSONValue getFunctionSuggestion(final String label,
-                                    final String insertText) {
-
-        final JSONObject suggestion = makeJSONObject();
-        final int completionItemKindFunction = 1;
-        final int completionItemInsertTextRuleInsertAsSnippet = 4;
-
-        suggestion.put(KIND_KEY, makeJSONNumber(completionItemKindFunction));
-        suggestion.put(INSERT_TEXT_RULES_KEY, makeJSONNumber(completionItemInsertTextRuleInsertAsSnippet));
-        suggestion.put(LABEL_KEY, makeJSONString(label));
-        suggestion.put(INSERT_TEXT_KEY, makeJSONString(insertText));
 
         return suggestion;
     }
@@ -413,45 +364,5 @@ public class MonacoPropertiesFactory {
      */
     public JavaScriptObject getLanguage() {
         return makeJavaScriptObject("id", makeJSONString(FEEL_LANGUAGE_ID));
-    }
-
-    JavaScriptObject makeJavaScriptObject(final String property,
-                                          final JSONValue value) {
-        final JSONObject jsonObject = makeJSONObject();
-        jsonObject.put(property, value);
-        return jsonObject.getJavaScriptObject();
-    }
-
-    JsRegExp makeRegExp(final String pattern) {
-        return new JsRegExp(pattern);
-    }
-
-    JSONArray makeJSONArray() {
-        return new JSONArray();
-    }
-
-    JSONBoolean makeJSONBoolean(final boolean value) {
-        return JSONBoolean.getInstance(value);
-    }
-
-    JSONString makeJSONString(final String value) {
-        return new JSONString(value);
-    }
-
-    JSONValue makeJSONNumber(final int value) {
-        return new JSONNumber(value);
-    }
-
-    JSONObject makeJSONObject(final Object obj) {
-        return new JSONObject(Js.uncheckedCast(obj));
-    }
-
-    JSONObject makeJSONObject() {
-        return new JSONObject();
-    }
-
-    void push(final JSONArray jsonArray,
-              final JSONValue jsonValue) {
-        jsonArray.set(jsonArray.size(), jsonValue);
     }
 }

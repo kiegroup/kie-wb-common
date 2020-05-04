@@ -197,6 +197,14 @@
       <scope>provided</scope>
     </dependency>
 
+    <dependency>
+      <groupId>org.kie</groupId>
+      <artifactId>kie-dmn-feel-gwt</artifactId>
+      <version>7.44.0-SNAPSHOT</version>
+      <classifier>sources</classifier>
+      <scope>provided</scope>
+    </dependency>
+
     <!-- DMN Editor -->
     <dependency>
       <groupId>org.kie.workbench</groupId>
@@ -658,6 +666,11 @@
                 <compileSourcesArtifact>org.kie.workbench.stunner:kie-wb-common-stunner-kogito-api</compileSourcesArtifact>
                 <compileSourcesArtifact>org.kie.workbench.stunner:kie-wb-common-stunner-kogito-client</compileSourcesArtifact>
                 <compileSourcesArtifact>org.kie.workbench.stunner:kie-wb-common-stunner-kogito-runtime-common</compileSourcesArtifact>
+
+                <compileSourcesArtifact>org.kie:kie-dmn-api</compileSourcesArtifact>
+                <compileSourcesArtifact>org.kie:kie-dmn-feel</compileSourcesArtifact>
+                <compileSourcesArtifact>org.kie:kie-dmn-feel-gwt</compileSourcesArtifact>
+                <compileSourcesArtifact>org.kie:kie-dmn-model</compileSourcesArtifact>
 
                 <!-- DMN Editor -->
                 <compileSourcesArtifact>org.kie.workbench:kie-wb-common-dmn-api</compileSourcesArtifact>

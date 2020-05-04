@@ -17,11 +17,14 @@ package org.kie.workbench.common.dmn.webapp.common.client.navigator;
 
 import java.util.function.Consumer;
 
+import javax.inject.Inject;
+
 import com.google.gwt.user.client.ui.IsWidget;
 import org.kie.workbench.common.stunner.client.widgets.event.LoadDiagramEvent;
 import org.kie.workbench.common.stunner.client.widgets.explorer.navigator.diagrams.DiagramsNavigator;
 import org.kie.workbench.common.stunner.client.widgets.menu.dev.ShapeSetsMenuItemsBuilder;
 import org.kie.workbench.common.stunner.core.client.ShapeSet;
+import org.uberfire.client.mvp.PlaceManager;
 import org.uberfire.mvp.PlaceRequest;
 import org.uberfire.workbench.model.menu.MenuFactory;
 import org.uberfire.workbench.model.menu.Menus;
@@ -35,6 +38,9 @@ public abstract class BaseDMNDiagramsNavigatorScreen {
 
     protected Menus menu = null;
     protected LoadDiagramEvent selectedDiagramEvent = null;
+
+    @Inject
+    private PlaceManager placeManager;
 
     public BaseDMNDiagramsNavigatorScreen() {
         //CDI proxy
@@ -66,6 +72,9 @@ public abstract class BaseDMNDiagramsNavigatorScreen {
                 MenuFactory
                         .newTopLevelMenu("Load diagrams from server")
                         .respondsWith(() -> diagramsNavigator.show())
+                        .endMenu()
+                        .newTopLevelMenu("FEEL Editor")
+                        .respondsWith(() -> placeManager.goTo("test.FEELEditor"))
                         .endMenu()
                         .newTopLevelMenu("Edit")
                         .respondsWith(this::edit)

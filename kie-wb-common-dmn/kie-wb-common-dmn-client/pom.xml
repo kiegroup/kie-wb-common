@@ -269,6 +269,23 @@
       <artifactId>ahome-tooling-nativetools</artifactId>
     </dependency>
 
+
+    <dependency>
+      <groupId>org.kie</groupId>
+      <artifactId>kie-dmn-feel-gwt</artifactId>
+<!--      <scope>provided</scope>-->
+      <classifier>sources</classifier>
+    </dependency>
+    <dependency>
+      <groupId>org.rikkola.gwt</groupId>
+      <artifactId>antlr4-c3-gwt</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.rikkola.gwt</groupId>
+      <artifactId>antlr4-c3-gwt</artifactId>
+      <classifier>sources</classifier>
+    </dependency>
+
     <!-- Test -->
     <dependency>
       <groupId>org.mockito</groupId>
