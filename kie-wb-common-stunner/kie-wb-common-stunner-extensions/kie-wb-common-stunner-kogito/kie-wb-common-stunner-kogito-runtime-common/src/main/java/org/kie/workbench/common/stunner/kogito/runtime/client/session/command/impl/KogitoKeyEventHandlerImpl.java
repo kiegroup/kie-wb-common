@@ -69,14 +69,14 @@ public class KogitoKeyEventHandlerImpl implements KeyEventHandler {
             registeredShortcutsIds.add(keyboardShortcutsApi.registerKeyDownThenUp(
                     asStringCodes(kogitoShortcutCallback.getKeyCombination()),
                     kogitoShortcutCallback.getLabel(),
-                    () -> runIfEnabled(shortcutCallback::onKeyShortcut),
-                    () -> runIfEnabled(() -> shortcutCallback.onKeyUp(null)),
+                    target -> runIfEnabled(shortcutCallback::onKeyShortcut),
+                    target -> runIfEnabled(() -> shortcutCallback.onKeyUp(null)),
                     kogitoShortcutCallback.getOpts()));
         } else if (shortcutCallback instanceof KogitoKeyPress) {
             registeredShortcutsIds.add(keyboardShortcutsApi.registerKeyPress(
                     asStringCodes(kogitoShortcutCallback.getKeyCombination()),
                     kogitoShortcutCallback.getLabel(),
-                    () -> runIfEnabled(shortcutCallback::onKeyShortcut),
+                    target -> runIfEnabled(shortcutCallback::onKeyShortcut),
                     kogitoShortcutCallback.getOpts()));
         }
 
@@ -85,14 +85,14 @@ public class KogitoKeyEventHandlerImpl implements KeyEventHandler {
             registeredShortcutsIds.add(keyboardShortcutsApi.registerKeyDownThenUp(
                     asStringCodes(kogitoShortcutCallback.getKeyCombination()),
                     kogitoShortcutCallback.getLabel(),
-                    () -> runIfEnabled(shortcutCallback::onKeyShortcut),
-                    () -> runIfEnabled(() -> shortcutCallback.onKeyUp(null)),
+                    target -> runIfEnabled(shortcutCallback::onKeyShortcut),
+                    target -> runIfEnabled(() -> shortcutCallback.onKeyUp(null)),
                     kogitoShortcutCallback.getOpts()));
         } else if (shortcutCallback instanceof SessionKeyShortcutCallback && ((SessionKeyShortcutCallback) shortcutCallback).getDelegate() instanceof KogitoKeyPress) {
             registeredShortcutsIds.add(keyboardShortcutsApi.registerKeyPress(
                     asStringCodes(kogitoShortcutCallback.getKeyCombination()),
                     kogitoShortcutCallback.getLabel(),
-                    () -> runIfEnabled(shortcutCallback::onKeyShortcut),
+                    target -> runIfEnabled(shortcutCallback::onKeyShortcut),
                     kogitoShortcutCallback.getOpts()));
         }
 
@@ -101,7 +101,7 @@ public class KogitoKeyEventHandlerImpl implements KeyEventHandler {
             registeredShortcutsIds.add(keyboardShortcutsApi.registerKeyPress(
                     asStringCodes(kogitoShortcutCallback.getKeyCombination()),
                     kogitoShortcutCallback.getLabel(),
-                    () -> runIfEnabled(shortcutCallback::onKeyShortcut),
+                    target -> runIfEnabled(shortcutCallback::onKeyShortcut),
                     KeyboardShortcutsApiOpts.DEFAULT));
         }
 
