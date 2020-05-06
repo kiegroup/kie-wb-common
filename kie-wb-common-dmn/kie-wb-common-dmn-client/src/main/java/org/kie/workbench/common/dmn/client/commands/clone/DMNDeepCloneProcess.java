@@ -18,7 +18,6 @@ package org.kie.workbench.common.dmn.client.commands.clone;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -59,7 +58,6 @@ import org.kie.workbench.common.stunner.core.util.ClassUtils;
 @Alternative
 public class DMNDeepCloneProcess extends DeepCloneProcess implements IDeepCloneProcess {
 
-    private static final Logger LOGGER = Logger.getLogger(DMNDeepCloneProcess.class.getName());
     private static final RegExp NAME_SUFFIX_REGEX = RegExp.compile("[?!-]\\d+$");
     private static final String HYPHEN = "-";
     private final SessionManager sessionManager;
@@ -139,13 +137,9 @@ public class DMNDeepCloneProcess extends DeepCloneProcess implements IDeepCloneP
     protected String composeUniqueNodeName(final String name) {
         final String originalName = Optional.ofNullable(name).orElse("");
 
-        try {
-            final MatchResult nameSuffixMatcher = NAME_SUFFIX_REGEX.exec(originalName);
-            if (nameSuffixMatcher != null) {
-                return buildNameWithIncrementedSuffixIndex(originalName, nameSuffixMatcher);
-            }
-        } catch (Exception e) {
-            LOGGER.warning("There was an issue while parsing node with name " + originalName + " - A fallback will be used for it");
+        final MatchResult nameSuffixMatcher = NAME_SUFFIX_REGEX.exec(originalName);
+        if (nameSuffixMatcher != null) {
+            return buildNameWithIncrementedSuffixIndex(originalName, nameSuffixMatcher);
         }
 
         return joinPrefixWithIndexedSuffix(originalName);
