@@ -239,9 +239,6 @@ public class DMNDesignerKogitoSeleniumIT {
                 .areIdentical();
     }
 
-    /**
-     * Reproducer for DROOLS-4424
-     */
     @Test
     public void testCopyAndPaste() throws Exception {
         final String source = loadResource("business-knowledge-model.xml");
