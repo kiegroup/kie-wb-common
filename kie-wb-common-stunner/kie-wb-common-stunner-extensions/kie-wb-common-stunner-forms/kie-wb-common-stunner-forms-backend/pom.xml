@@ -228,13 +228,6 @@
       <scope>test</scope>
       <type>test-jar</type>
     </dependency>
-
-    <dependency>
-      <groupId>org.drools</groupId>
-      <artifactId>jbpm-simulation</artifactId>
-      <scope>test</scope>
-    </dependency>
   </dependencies>
-
 
 </project>
