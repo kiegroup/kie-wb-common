@@ -84,8 +84,11 @@ public class DMNDeepCloneProcessTest extends AbstractCloneProcessTest {
     private static final String DECISION_SOURCE_NAME = "decision-source";
     private static final String QUESTION = "question?";
     private static final String ANSWER = "answer";
-    private static final String FIRST_INDEX_IN_SUFFIX = "-1";
     private static final String TEXT_DATA = "text-data";
+    private static final String FIRST_INDEX_IN_SUFFIX = "-1";
+    private static final String SECOND_INDEX_IN_SUFFIX = "-2";
+    private static final String THIRD_INDEX_IN_SUFFIX = "-3";
+    private static final String FORTH_INDEX_IN_SUFFIX = "-4";
     private DMNDeepCloneProcess dmnDeepCloneProcess;
 
     @Mock
@@ -357,7 +360,7 @@ public class DMNDeepCloneProcessTest extends AbstractCloneProcessTest {
         mockSingleNodeInTheGraph();
 
         assertThat(dmnDeepCloneProcess.composeUniqueNodeName(INPUT_DATA_NAME + FIRST_INDEX_IN_SUFFIX))
-                .isEqualTo(INPUT_DATA_NAME + "-2");
+                .isEqualTo(INPUT_DATA_NAME + SECOND_INDEX_IN_SUFFIX);
     }
 
     private void mockSingleNodeInTheGraph() {
@@ -380,7 +383,7 @@ public class DMNDeepCloneProcessTest extends AbstractCloneProcessTest {
         mockMultipleNodesInTheGraph();
 
         assertThat(dmnDeepCloneProcess.composeUniqueNodeName(INPUT_DATA_NAME + FIRST_INDEX_IN_SUFFIX))
-                .isEqualTo(INPUT_DATA_NAME + "-4");
+                .isEqualTo(INPUT_DATA_NAME + FORTH_INDEX_IN_SUFFIX);
     }
 
     private void mockMultipleNodesInTheGraph() {
@@ -389,12 +392,12 @@ public class DMNDeepCloneProcessTest extends AbstractCloneProcessTest {
         when(nodeWithName.getContent()).thenReturn(namedElementContent);
         when(namedElementContent.getDefinition()).thenReturn(namedElementDefinition);
         when(namedElementDefinition.getName()).thenReturn(name);
-        when(name.getValue()).thenReturn(INPUT_DATA_NAME + "-2");
+        when(name.getValue()).thenReturn(INPUT_DATA_NAME + SECOND_INDEX_IN_SUFFIX);
 
         when(nodeWithText.getContent()).thenReturn(textElementContent);
         when(textElementContent.getDefinition()).thenReturn(hasTextDefinition);
         when(hasTextDefinition.getText()).thenReturn(text);
-        when(text.getValue()).thenReturn(INPUT_DATA_NAME + "-3");
+        when(text.getValue()).thenReturn(INPUT_DATA_NAME + THIRD_INDEX_IN_SUFFIX);
 
         when(nodeWithNone.getContent()).thenReturn(noneContent);
         when(noneContent.getDefinition()).thenReturn(new Object());
