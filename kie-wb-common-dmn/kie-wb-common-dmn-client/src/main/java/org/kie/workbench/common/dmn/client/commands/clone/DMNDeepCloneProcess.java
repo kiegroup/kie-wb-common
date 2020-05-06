@@ -84,6 +84,8 @@ public class DMNDeepCloneProcess extends DeepCloneProcess implements IDeepCloneP
      * <p>It defines additive fields, specific to DMN domain, to be included in the target</p>
      * <p>Then, the "classic" clone operation, defined in {@link DeepCloneProcess} will be executed</p>
      * <p>Note that {@link DeepCloneProcess} is already taking care of aspects related to look&feel, such as background color, font, etc.</p>
+     * <p>Every time we copy a node, in order to respect the name uniqueness logic, a new node will be created with a suffix {@code -X},
+     * where {@code X} it is an incremental numeric value</p>
      *
      * @param source node to be cloned
      * @param target destination of the cloning operation
