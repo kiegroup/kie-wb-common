@@ -179,12 +179,12 @@ public class DMNDeepCloneProcess extends DeepCloneProcess implements IDeepCloneP
 
     private String nodeNamesMapper(final Node<View, Edge> node) {
         if (node.getContent().getDefinition() instanceof NamedElement) {
-            NamedElement namedElement = (NamedElement) node.getContent().getDefinition();
+            final NamedElement namedElement = (NamedElement) node.getContent().getDefinition();
             return namedElement.getName().getValue();
         }
         if (node.getContent().getDefinition() instanceof HasText) {
-            HasText hasText = (HasText) node.getContent().getDefinition();
-            return hasText.getText().getValue();
+            final HasText textWrapper = (HasText) node.getContent().getDefinition();
+            return textWrapper.getText().getValue();
         }
         return null;
     }
