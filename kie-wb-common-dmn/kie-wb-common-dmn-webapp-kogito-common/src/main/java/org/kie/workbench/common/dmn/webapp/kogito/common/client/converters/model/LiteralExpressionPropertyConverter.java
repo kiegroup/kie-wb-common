@@ -17,6 +17,7 @@
 package org.kie.workbench.common.dmn.webapp.kogito.common.client.converters.model;
 
 import java.util.Objects;
+import java.util.Optional;
 
 import com.google.gwt.core.client.GWT;
 import org.kie.workbench.common.dmn.api.definition.model.ImportedValues;
@@ -60,6 +61,13 @@ public class LiteralExpressionPropertyConverter {
         }
         final JSITLiteralExpression result = GWT.create(JSITLiteralExpression.class);
         result.setId(wb.getId().getValue());
+        result.setDescription(wb.getDescription().getValue());
+        if (wb instanceof LiteralExpression) {
+            final ExpressionLanguage expressionLanguage = Optional
+                    .ofNullable(((LiteralExpression) wb).getExpressionLanguage())
+                    .orElse(new ExpressionLanguage());
+            result.setExpressionLanguage(expressionLanguage.getValue());
+        }
         QNamePropertyConverter.setDMNfromWB(wb.getTypeRef(), result::setTypeRef);
         result.setText(wb.getText().getValue());
         final JSITImportedValues importedValues = ImportedValuesConverter.dmnFromWB(wb.getImportedValues());
