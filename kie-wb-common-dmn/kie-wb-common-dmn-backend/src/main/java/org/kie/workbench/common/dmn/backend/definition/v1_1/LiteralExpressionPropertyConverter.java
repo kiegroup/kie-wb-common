@@ -16,6 +16,8 @@
 
 package org.kie.workbench.common.dmn.backend.definition.v1_1;
 
+import java.util.Optional;
+
 import org.kie.workbench.common.dmn.api.definition.model.ImportedValues;
 import org.kie.workbench.common.dmn.api.definition.model.IsLiteralExpression;
 import org.kie.workbench.common.dmn.api.definition.model.LiteralExpression;
@@ -55,6 +57,13 @@ public class LiteralExpressionPropertyConverter {
         }
         final org.kie.dmn.model.api.LiteralExpression result = new org.kie.dmn.model.v1_2.TLiteralExpression();
         result.setId(wb.getId().getValue());
+        result.setDescription(wb.getDescription().getValue());
+        if (wb instanceof LiteralExpression) {
+            final ExpressionLanguage expressionLanguage = Optional
+                    .ofNullable(((LiteralExpression) wb).getExpressionLanguage())
+                    .orElse(new ExpressionLanguage());
+            result.setExpressionLanguage(expressionLanguage.getValue());
+        }
         QNamePropertyConverter.setDMNfromWB(wb.getTypeRef(),
                                             result::setTypeRef);
         result.setText(wb.getText().getValue());
