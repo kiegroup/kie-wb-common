@@ -56,7 +56,10 @@ public class LiteralExpressionPropertyConverter {
         }
         final org.kie.dmn.model.api.LiteralExpression result = new org.kie.dmn.model.v1_2.TLiteralExpression();
         result.setId(wb.getId().getValue());
-        result.setDescription(wb.getDescription().getValue());
+        final String description = wb.getDescription().getValue();
+        if (StringUtils.nonEmpty(description)) {
+            result.setDescription(description);
+        }
         if (wb instanceof LiteralExpression) {
             final String expressionLanguage = ((LiteralExpression) wb).getExpressionLanguage().getValue();
             if (StringUtils.nonEmpty(expressionLanguage)) {

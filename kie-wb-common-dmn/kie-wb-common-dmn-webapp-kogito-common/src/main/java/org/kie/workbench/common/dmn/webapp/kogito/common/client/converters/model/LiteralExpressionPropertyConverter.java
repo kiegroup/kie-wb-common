@@ -61,7 +61,10 @@ public class LiteralExpressionPropertyConverter {
         }
         final JSITLiteralExpression result = GWT.create(JSITLiteralExpression.class);
         result.setId(wb.getId().getValue());
-        result.setDescription(wb.getDescription().getValue());
+        final String description = wb.getDescription().getValue();
+        if (StringUtils.nonEmpty(description)) {
+            result.setDescription(description);
+        }
         if (wb instanceof LiteralExpression) {
             final String expressionLanguage = ((LiteralExpression) wb).getExpressionLanguage().getValue();
             if (StringUtils.nonEmpty(expressionLanguage)) {
