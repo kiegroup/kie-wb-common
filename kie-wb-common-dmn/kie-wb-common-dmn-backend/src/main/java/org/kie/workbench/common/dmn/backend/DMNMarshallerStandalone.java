@@ -213,7 +213,7 @@ public class DMNMarshallerStandalone implements DiagramMarshaller<Graph, Metadat
 
         // Map external DRGElements
         final List<DMNShape> dmnShapes = dmnDDDiagram.map(this::getUniqueDMNShapes).orElse(emptyList());
-        final List<org.kie.dmn.model.api.DRGElement> importedDrgElements = getImportedDrgElementsByShape(dmnShapes, importDefinitions, dmnXml);
+        final List<org.kie.dmn.model.api.DRGElement> importedDrgElements = getImportedDrgElementsByShape(dmnShapes, importDefinitions);
 
         // Group DRGElements
         final List<org.kie.dmn.model.api.DRGElement> drgElements = new ArrayList<>();
@@ -454,8 +454,7 @@ public class DMNMarshallerStandalone implements DiagramMarshaller<Graph, Metadat
     }
 
     List<org.kie.dmn.model.api.DRGElement> getImportedDrgElementsByShape(final List<DMNShape> dmnShapes,
-                                                                         final Map<Import, org.kie.dmn.model.api.Definitions> importDefinitions,
-                                                                         final org.kie.dmn.model.api.Definitions dmnXml) {
+                                                                         final Map<Import, org.kie.dmn.model.api.Definitions> importDefinitions) {
 
         final List<org.kie.dmn.model.api.DRGElement> importedDRGElements = dmnMarshallerImportsHelper.getImportedDRGElements(importDefinitions);
 
