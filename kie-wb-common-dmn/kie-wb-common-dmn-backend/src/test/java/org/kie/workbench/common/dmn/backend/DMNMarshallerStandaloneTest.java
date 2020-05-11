@@ -1730,7 +1730,6 @@ public class DMNMarshallerStandaloneTest {
         final DMNMarshallerStandalone marshaller = spy(getDMNMarshaller());
         final List<org.kie.dmn.model.api.DRGElement> importedDRGElements = mock(List.class);
         final Map<Import, org.kie.dmn.model.api.Definitions> importDefinitions = mock(Map.class);
-        final org.kie.dmn.model.api.Definitions dmnXml = mock(org.kie.dmn.model.api.Definitions.class);
 
         final org.kie.dmn.model.api.DRGElement ref1 = mock(org.kie.dmn.model.api.DRGElement.class);
         final org.kie.dmn.model.api.DRGElement ref2 = mock(org.kie.dmn.model.api.DRGElement.class);
@@ -1754,7 +1753,7 @@ public class DMNMarshallerStandaloneTest {
         doReturn(Optional.of(ref2)).when(marshaller).getReference(importedDRGElements, "REF2");
         doReturn(Optional.of(ref3)).when(marshaller).getReference(importedDRGElements, "REF3");
 
-        final List<DRGElement> actual = marshaller.getImportedDrgElementsByShape(dmnShapes, importDefinitions, dmnXml);
+        final List<DRGElement> actual = marshaller.getImportedDrgElementsByShape(dmnShapes, importDefinitions);
 
         assertEquals(ref1, actual.get(0));
         assertEquals(ref2, actual.get(1));
