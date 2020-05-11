@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2020 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -60,11 +60,8 @@ public class BPMNDesignerKogitoSeleniumIT {
     private static final String GET_CONTENT_TEMPLATE =
             "return gwtEditorBeans.get(\"BPMNDiagramEditor\").get().getContent()";
 
-
     private static final String INDEX_HTML = "target/kie-wb-common-stunner-bpmn-kogito-runtime/index.html";
     private static final String INDEX_HTML_PATH = "file:///" + new File(INDEX_HTML).getAbsolutePath();
-
-
 
     private static final String NOT_PRESENT_IN_NAVIGATOR = "' was not present in the process navigator";
     private static final String PROPERTIES_PANEL = "qe-docks-item-E-DiagramEditorPropertiesScreen";
@@ -72,15 +69,9 @@ public class BPMNDesignerKogitoSeleniumIT {
     private static final String DIAGRAM_EXPLORER_EXPANDED = "qe-docks-bar-expanded-E";
     private static final String DIAGRAM_PANEL = "qe-static-workbench-panel-view";
     private static final String ACE_EDITOR = "//div[@class='ace_content']";
-    private static final String PALETTE = "//div[@data-field=\"kie-palette\"]";
-    private static final String PALETTE_START_EVENTS_CATEGORY_BUTTON = "//button[@data-field='categoryItem', @title=`Start Events`]";
     private static final String ERROR_MODAL_DIALOG = "//div[@class='modal-dialog']";
     private static final String ERROR_MODAL_BODY = "//div[@class='modal-body']";
-
-    private static final String CREATE_NEW_DIAGRAM_BUTTON = "//input[@value=\"Create new Diagram\"]";
-
     private static final String PROCESS_NODE = "//div[@data-field='explorerPanelBody']//a[text()='%s']";
-
     private static final Boolean HEADLESS = Boolean.valueOf(System.getProperty("org.kie.bpmn.kogito.browser.headless"));
     private static final String SCREENSHOTS_DIR = System.getProperty("org.kie.bpmn.kogito.screenshots.dir");
 
@@ -93,11 +84,6 @@ public class BPMNDesignerKogitoSeleniumIT {
      * Properties panel of BPMN Designer
      */
     private WebElement propertiesPanel;
-
-    /**
-     * Start events category button in Palette
-     */
-    private WebElement paletteStartEventCategory;
 
     /**
      * Explore diagram panel of BPMN Designer
@@ -180,7 +166,7 @@ public class BPMNDesignerKogitoSeleniumIT {
         // Verify ACE editor (default text editor) is in place and shown to user
         final WebElement aceEditor = waitOperation().until(element(ACE_EDITOR));
         assertThat(aceEditor)
-                .as("If invalid dmn is loaded, ace editor needs to be shown")
+                .as("If invalid bpmn is loaded, ace editor needs to be shown")
                 .isNotNull();
     }
 
@@ -224,6 +210,14 @@ public class BPMNDesignerKogitoSeleniumIT {
                 .and(expected)
                 .ignoreComments()
                 .ignoreWhitespace()
+                // KOGITO-1795
+                .withAttributeFilter(
+                        attr -> (!(Objects.equals(attr.getName(), "id") &&
+                                 !(Objects.equals(attr.getOwnerElement().getTagName(), "bpmn2:defintions"))))
+                )
+                .withNodeFilter(
+                        node -> !(Objects.equals(node.getNodeName(), "bpmn2:source")
+                                || Objects.equals(node.getNodeName(), "bpmn2:target")))
                 .areIdentical();
     }
 
