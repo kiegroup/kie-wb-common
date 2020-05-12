@@ -25,6 +25,7 @@ import org.kie.workbench.common.stunner.bpmn.qualifiers.BPMN;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.keyboard.shortcut.KeyboardShortcut;
 import org.kie.workbench.common.stunner.kogito.client.session.KogitoAbstractCanvasShortcutsControlImpl;
 
+@BPMN
 @Dependent
 @Alternative
 public class KogitoBPMNCanvasShortcutsControlImpl extends KogitoAbstractCanvasShortcutsControlImpl {

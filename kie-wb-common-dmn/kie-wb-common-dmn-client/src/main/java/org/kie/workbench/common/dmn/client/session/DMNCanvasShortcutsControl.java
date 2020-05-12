@@ -22,6 +22,6 @@ import org.kie.workbench.common.stunner.core.client.session.impl.EditorSession;
 
 public interface DMNCanvasShortcutsControl extends CanvasControl<AbstractCanvasHandler>,
                                                    CanvasControl.SessionAware<EditorSession>,
-                                                   KeyboardControl.KeyShortcutCallback  {
+                                                   KeyboardControl.KeyShortcutCallback {
 
 }

@@ -13,15 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kie.workbench.common.dmn.client.session;
+package org.kie.workbench.common.stunner.bpmn.client.session;
 
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.CanvasControl;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.keyboard.KeyboardControl;
 import org.kie.workbench.common.stunner.core.client.session.impl.EditorSession;
 
-public interface DMNCanvasShortcutsControl extends CanvasControl<AbstractCanvasHandler>,
-                                                   CanvasControl.SessionAware<EditorSession>,
-                                                   KeyboardControl.KeyShortcutCallback {
+public interface BPMNCanvasShortcutsControl extends CanvasControl<AbstractCanvasHandler>,
+                                                    CanvasControl.SessionAware<EditorSession>,
+                                                    KeyboardControl.KeyShortcutCallback {
 
 }

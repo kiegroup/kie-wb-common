@@ -58,6 +58,7 @@ public class KogitoKeyEventHandlerImpl implements KeyEventHandler {
 
         final Optional<KogitoKeyShortcutCallback> possibleKogitoShortcutCallback = getAssociatedKogitoKeyShortcutCallback(shortcutCallback);
         if (!possibleKogitoShortcutCallback.isPresent() || possibleKogitoShortcutCallback.get().getKeyCombination().length == 0) {
+            DomGlobal.console.debug("Not registering: " + shortcutCallback.getClass().getCanonicalName());
             return this;
         }
 

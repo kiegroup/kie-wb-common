@@ -17,7 +17,6 @@
 package org.kie.workbench.common.stunner.bpmn.client.canvas.controls;
 
 import javax.enterprise.context.Dependent;
-import javax.enterprise.inject.Alternative;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
@@ -25,8 +24,8 @@ import org.kie.workbench.common.stunner.bpmn.qualifiers.BPMN;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.keyboard.AbstractCanvasShortcutsControlImpl;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.keyboard.shortcut.KeyboardShortcut;
 
+@BPMN
 @Dependent
-@Alternative
 public class BPMNCanvasShortcutsControlImpl extends AbstractCanvasShortcutsControlImpl {
 
     @Inject

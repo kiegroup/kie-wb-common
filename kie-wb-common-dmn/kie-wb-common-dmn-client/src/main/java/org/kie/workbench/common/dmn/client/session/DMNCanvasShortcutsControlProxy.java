@@ -29,7 +29,6 @@ import org.kie.workbench.common.stunner.core.client.event.keyboard.KeyboardEvent
 import org.kie.workbench.common.stunner.core.client.session.impl.EditorSession;
 import org.kie.workbench.common.stunner.core.client.session.impl.ManagedSession;
 
-@Dependent
 /**
  * Acts as a single implementation of {@link AbstractCanvasShortcutsControlImpl} for use
  * in {@link DMNEditorSession} that delegates everything to the correct {@link Alternative} implementation
@@ -37,6 +36,7 @@ import org.kie.workbench.common.stunner.core.client.session.impl.ManagedSession;
  * not honour {@link Alternative} annotations. Consequentially attempts to register {@link AbstractCanvasShortcutsControlImpl}
  * directly leads to multiple bean implementation CDI exceptions at runtime (when the lookup is performed).
  */
+@Dependent
 public class DMNCanvasShortcutsControlProxy implements DMNCanvasShortcutsControl {
 
     private final AbstractCanvasShortcutsControlImpl delegate;
