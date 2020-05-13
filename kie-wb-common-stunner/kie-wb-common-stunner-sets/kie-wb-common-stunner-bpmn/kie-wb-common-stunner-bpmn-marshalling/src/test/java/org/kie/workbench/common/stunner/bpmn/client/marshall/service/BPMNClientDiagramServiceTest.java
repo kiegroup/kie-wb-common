@@ -419,7 +419,7 @@ public class BPMNClientDiagramServiceTest {
     public void testGetDiagramTitleWhenIsEmpty() {
         final String actual = tested.createDiagramTitleFromFilePath("");
 
-        assertEquals("default", actual);
+        assertEquals(BPMNClientDiagramService.DEFAULT_PACKAGE, actual);
     }
 
     @Test
