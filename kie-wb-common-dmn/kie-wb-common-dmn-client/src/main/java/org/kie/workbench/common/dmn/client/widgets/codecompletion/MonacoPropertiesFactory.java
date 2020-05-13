@@ -16,6 +16,8 @@
 
 package org.kie.workbench.common.dmn.client.widgets.codecompletion;
 
+import java.util.stream.Stream;
+
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONBoolean;
@@ -26,6 +28,8 @@ import com.google.gwt.json.client.JSONValue;
 import elemental2.core.JsRegExp;
 import jsinterop.base.Js;
 import org.uberfire.client.views.pfly.monaco.jsinterop.MonacoLanguages.ProvideCompletionItemsFunction;
+
+import static org.kie.workbench.common.dmn.client.widgets.codecompletion.MonacoFEELInitializer.FEEL_RESERVED_KEYWORDS;
 
 public class MonacoPropertiesFactory {
 
@@ -189,10 +193,15 @@ public class MonacoPropertiesFactory {
 
         final JSONArray suggestionTypes = makeJSONArray();
 
+        populateKeywordSuggestions(suggestionTypes);
         populateVariableSuggestions(variableSuggestions, suggestionTypes);
         populateFunctionSuggestions(suggestionTypes);
 
         return suggestionTypes;
+    }
+
+    private void populateKeywordSuggestions(JSONArray suggestionArray) {
+        Stream.of(FEEL_RESERVED_KEYWORDS).forEach(reservedKeyword -> push(suggestionArray, getKeywordSuggestion(reservedKeyword)));
     }
 
     private void populateVariableSuggestions(final MonacoFEELVariableSuggestions variableSuggestions,
@@ -344,6 +353,20 @@ public class MonacoPropertiesFactory {
         push(suggestionTypes, getFunctionSuggestion("upper case(string)", "upper case($1)"));
         push(suggestionTypes, getFunctionSuggestion("week of year(date)", "week of year($1)"));
         push(suggestionTypes, getFunctionSuggestion("years and months duration(from, to)", "years and months duration($1, $2)"));
+    }
+
+    JSONValue getKeywordSuggestion(final String keyword) {
+        final JSONObject suggestion = makeJSONObject();
+        final int completionItemKindKeyword = 17;
+        final int completionItemInsertTextRuleInsertAsSnippet = 4;
+        final JSONString keywordSuggestion = makeJSONString(keyword);
+
+        suggestion.put("kind", makeJSONNumber(completionItemKindKeyword));
+        suggestion.put("insertTextRules", makeJSONNumber(completionItemInsertTextRuleInsertAsSnippet));
+        suggestion.put("label", keywordSuggestion);
+        suggestion.put("insertText", keywordSuggestion);
+
+        return suggestion;
     }
 
     JSONValue getFunctionSuggestion(final String label,
