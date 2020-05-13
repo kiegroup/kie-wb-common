@@ -50,7 +50,7 @@ public abstract class AbstractCanvasShortcutsControlImpl extends AbstractCanvasH
     @Override
     public void bind(final EditorSession session) {
         this.editorSession = session;
-        session.getKeyboardControl().addKeyShortcutCallback(this::onKeyShortcut);
+        session.getKeyboardControl().addKeyShortcutCallback(this);
     }
 
     @Override

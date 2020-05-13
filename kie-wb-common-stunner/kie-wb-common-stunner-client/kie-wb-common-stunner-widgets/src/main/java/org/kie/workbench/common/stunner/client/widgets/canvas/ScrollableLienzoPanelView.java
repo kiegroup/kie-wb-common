@@ -42,8 +42,7 @@ public class ScrollableLienzoPanelView
     @Override
     public void setPresenter(final StunnerLienzoBoundsPanel presenter) {
 
-        // This means that we're in the Kogito environment
-        if (!BusToolsCli.isRemoteCommunicationEnabled()) {
+        if (!isRemoteCommunicationEnabled()) {
             DomGlobal.console.debug("Kogito environment detected. Skipping default event handling.");
             return;
         }
@@ -57,5 +56,9 @@ public class ScrollableLienzoPanelView
         presenter.register(
                 addKeyUpHandler(event -> presenter.onKeyUp(event.getNativeKeyCode()))
         );
+    }
+
+    boolean isRemoteCommunicationEnabled() {
+        return BusToolsCli.isRemoteCommunicationEnabled();
     }
 }

@@ -125,7 +125,7 @@ public class LienzoCanvasMediatorsTest {
     public void testKeyBindings() {
         ArgumentCaptor<KeyboardControl.KeyShortcutCallback> callbackArgumentCaptor =
                 ArgumentCaptor.forClass(KeyboardControl.KeyShortcutCallback.class);
-        verify(keyEventHandler, times(1)).addKeyShortcutCallback(callbackArgumentCaptor.capture());
+        verify(keyEventHandler, times(4)).addKeyShortcutCallback(callbackArgumentCaptor.capture());
         KeyboardControl.KeyShortcutCallback callback = callbackArgumentCaptor.getValue();
         callback.onKeyUp(KeyboardEvent.Key.ALT);
         verify(mediators, times(1)).disablePreview();

@@ -125,12 +125,12 @@ public class PasteSelectionSessionCommand extends AbstractClientSessionCommand<E
     @Override
     public void bind(final EditorSession session) {
         super.bind(session);
-        session.getKeyboardControl().addKeyShortcutCallback(this::onKeyDownEvent);
         session.getKeyboardControl().addKeyShortcutCallback(new KogitoKeyPress(new Key[]{CONTROL, V}, "Edit | Paste selection", () -> {
             if (isEnabled()) {
                 execute();
             }
         }));
+        session.getKeyboardControl().addKeyShortcutCallback(this::onKeyDownEvent);
         this.clipboardControl = session.getClipboardControl();
         this.canvasCommandFactory = this.loadCanvasFactory(canvasCommandFactoryInstance, definitionUtils);
     }

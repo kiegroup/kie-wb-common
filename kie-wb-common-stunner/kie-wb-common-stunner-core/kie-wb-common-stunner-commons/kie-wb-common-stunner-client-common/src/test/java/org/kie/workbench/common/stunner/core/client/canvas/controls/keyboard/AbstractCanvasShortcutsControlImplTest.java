@@ -101,7 +101,7 @@ public class AbstractCanvasShortcutsControlImplTest {
         canvasShortcutsControl.bind(session);
 
         assertThat(canvasShortcutsControl.editorSession).isEqualTo(session);
-        verify(keyboardControl).addKeyShortcutCallback(eq(canvasShortcutsControl::onKeyShortcut));
+        verify(keyboardControl).addKeyShortcutCallback(eq(canvasShortcutsControl));
     }
 
     @Test

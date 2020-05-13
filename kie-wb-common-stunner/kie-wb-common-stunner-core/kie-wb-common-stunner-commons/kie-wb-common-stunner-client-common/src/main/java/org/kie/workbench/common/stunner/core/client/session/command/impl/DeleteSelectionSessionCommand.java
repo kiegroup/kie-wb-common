@@ -107,7 +107,6 @@ public class DeleteSelectionSessionCommand extends AbstractSelectionAwareSession
     @Override
     public void bind(final EditorSession session) {
         super.bind(session);
-        session.getKeyboardControl().addKeyShortcutCallback(this::onKeyDownEvent);
         session.getKeyboardControl().addKeyShortcutCallback(new KogitoKeyPress(new Key[]{KEY_BACKSPACE}, "Edit | Delete selection", () -> {
             if (isEnabled()) {
                 execute();
@@ -118,6 +117,7 @@ public class DeleteSelectionSessionCommand extends AbstractSelectionAwareSession
                 execute();
             }
         }));
+        session.getKeyboardControl().addKeyShortcutCallback(this::onKeyDownEvent);
         this.canvasCommandFactory = this.loadCanvasFactory(canvasCommandFactoryInstance, definitionUtils);
     }
 
