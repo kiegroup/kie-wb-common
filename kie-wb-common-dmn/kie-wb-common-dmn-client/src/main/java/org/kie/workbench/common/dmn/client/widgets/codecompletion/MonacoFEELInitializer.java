@@ -33,9 +33,12 @@ import static org.kie.workbench.common.dmn.client.widgets.codecompletion.MonacoP
 @ApplicationScoped
 public class MonacoFEELInitializer {
 
-    private MonacoFEELInitializationStatus initializationStatus = NOT_INITIALIZED;
-
+    public static final String[] FEEL_RESERVED_KEYWORDS = new String[]{
+            "for", "return", "if", "then", "else", "some", "every", "satisfies", "instance", "of",
+            "in", "function", "external", "or", "and", "between", "not", "null", "true", "false"
+    };
     private final MonacoFEELVariableSuggestions variableSuggestions;
+    private MonacoFEELInitializationStatus initializationStatus = NOT_INITIALIZED;
 
     @Inject
     public MonacoFEELInitializer(final MonacoFEELVariableSuggestions variableSuggestions) {
