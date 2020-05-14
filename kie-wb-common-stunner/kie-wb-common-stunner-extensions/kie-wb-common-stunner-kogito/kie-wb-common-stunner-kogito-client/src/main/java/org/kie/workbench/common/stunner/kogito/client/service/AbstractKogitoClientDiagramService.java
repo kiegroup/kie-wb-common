@@ -22,7 +22,7 @@ public abstract class AbstractKogitoClientDiagramService implements KogitoClient
 
     private static final char UNIX_SEPARATOR = '/';
     private static final char WINDOWS_SEPARATOR = '\\';
-    public static final String DEFAULT_DIAGRAM_ID = "com.example";
+    public static final String DEFAULT_DIAGRAM_ID = "default";
 
     /**
      * Making correct ID diagram from path:
