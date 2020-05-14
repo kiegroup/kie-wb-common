@@ -605,15 +605,17 @@ public class MonacoPropertiesFactoryTest {
         final JSONArray row3 = mock(JSONArray.class);
         final JSONArray row4 = mock(JSONArray.class);
         final JSONArray row5 = mock(JSONArray.class);
-        final JSONArray row6 = mock(JSONArray.class);
 
         doReturn(expectedRoot).when(factory).makeJSONArray();
         doReturn(row1).when(factory).row("(?:(\\btrue\\b)|(\\bfalse\\b))", "feel-boolean");
         doReturn(row2).when(factory).row("[0-9]+", "feel-numeric");
         doReturn(row3).when(factory).row("(?:\\\"(?:.*?)\\\")", "feel-string");
         doReturn(row4).when(factory).row("(?:(?:[a-z ]+\\()|(?:\\()|(?:\\)))", "feel-function");
-        doReturn(row5).when(factory).row("(?:(\\bif\\b)|(\\bthen\\b)|(\\belse\\b))", "feel-keyword");
-        doReturn(row6).when(factory).row("(?:(\\bfor\\b)|(\\bin\\b)|(\\breturn\\b))", "feel-keyword");
+        doReturn(row5).when(factory).row("(?:(\\bfor\\b)|(\\breturn\\b)|(\\bif\\b)|(\\bthen\\b)|(\\belse\\b)" +
+                                                 "|(\\bsome\\b)|(\\bevery\\b)|(\\bsatisfies\\b)|(\\binstance\\b)" +
+                                                 "|(\\bof\\b)|(\\bin\\b)|(\\bfunction\\b)|(\\bexternal\\b)|(\\bor\\b)" +
+                                                 "|(\\band\\b)|(\\bbetween\\b)|(\\bnot\\b)|(\\bnull\\b)|(\\btrue\\b)" +
+                                                 "|(\\bfalse\\b))", "feel-keyword");
 
         final JSONArray actualRoot = factory.getRoot();
 
@@ -622,7 +624,6 @@ public class MonacoPropertiesFactoryTest {
         verify(factory).push(expectedRoot, row3);
         verify(factory).push(expectedRoot, row4);
         verify(factory).push(expectedRoot, row5);
-        verify(factory).push(expectedRoot, row6);
         assertEquals(expectedRoot, actualRoot);
     }
 }

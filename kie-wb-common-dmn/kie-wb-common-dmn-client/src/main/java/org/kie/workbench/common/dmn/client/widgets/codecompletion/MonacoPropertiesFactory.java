@@ -184,8 +184,7 @@ public class MonacoPropertiesFactory {
         push(root, row("[0-9]+", "feel-numeric"));
         push(root, row("(?:\\\"(?:.*?)\\\")", "feel-string"));
         push(root, row("(?:(?:[a-z ]+\\()|(?:\\()|(?:\\)))", "feel-function"));
-        push(root, row("(?:(\\bif\\b)|(\\bthen\\b)|(\\belse\\b))", "feel-keyword"));
-        push(root, row("(?:(\\bfor\\b)|(\\bin\\b)|(\\breturn\\b))", "feel-keyword"));
+        push(root, row("(?:(\\b" + String.join("\\b)|(\\b", FEEL_RESERVED_KEYWORDS) + "\\b))", "feel-keyword"));
         return root;
     }
 
