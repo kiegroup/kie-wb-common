@@ -227,9 +227,9 @@ public class MonacoPropertiesFactoryTest {
         when(this.variableSuggestions.getSuggestions()).thenReturn(variableSuggestions);
 
         buildKeywordSuggestions().forEach(suggestion -> {
-            final JSONValue function = mock(JSONValue.class);
-            suggestions.add(function);
-            doReturn(function).when(factory).getKeywordSuggestion(suggestion);
+            final JSONValue keyword = mock(JSONValue.class);
+            suggestions.add(keyword);
+            doReturn(keyword).when(factory).getKeywordSuggestion(suggestion);
         });
 
         buildFunctionSuggestions().forEach(suggestion -> {
@@ -239,9 +239,9 @@ public class MonacoPropertiesFactoryTest {
         });
 
         variableSuggestions.forEach(suggestion -> {
-            final JSONValue function = mock(JSONValue.class);
-            suggestions.add(function);
-            doReturn(function).when(factory).getVariableSuggestion(suggestion);
+            final JSONValue variable = mock(JSONValue.class);
+            suggestions.add(variable);
+            doReturn(variable).when(factory).getVariableSuggestion(suggestion);
         });
 
         doReturn(expectedSuggestions).when(factory).makeJSONArray();
