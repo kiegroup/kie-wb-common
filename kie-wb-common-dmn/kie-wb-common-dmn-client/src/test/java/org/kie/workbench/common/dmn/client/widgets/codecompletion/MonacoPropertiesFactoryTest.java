@@ -415,15 +415,8 @@ public class MonacoPropertiesFactoryTest {
 
     private List<String> buildKeywordSuggestions() {
         return asList(
-                "in",
-                "or",
-                "and",
-                "between",
-                "if",
-                "then",
-                "else",
-                "for",
-                "return"
+                "for", "return", "if", "then", "else", "some", "every", "satisfies", "instance", "of",
+                "in", "function", "external", "or", "and", "between", "not", "null", "true", "false"
         );
     }
 
