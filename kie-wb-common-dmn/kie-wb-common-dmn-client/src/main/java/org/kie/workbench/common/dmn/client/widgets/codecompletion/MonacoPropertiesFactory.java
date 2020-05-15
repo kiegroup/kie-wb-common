@@ -16,8 +16,6 @@
 
 package org.kie.workbench.common.dmn.client.widgets.codecompletion;
 
-import java.util.stream.Stream;
-
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONBoolean;
@@ -200,7 +198,7 @@ public class MonacoPropertiesFactory {
     }
 
     private void populateKeywordSuggestions(JSONArray suggestionArray) {
-        Stream.of(FEEL_RESERVED_KEYWORDS).forEach(reservedKeyword -> push(suggestionArray, getKeywordSuggestion(reservedKeyword)));
+        FEEL_RESERVED_KEYWORDS.forEach(reservedKeyword -> push(suggestionArray, getKeywordSuggestion(reservedKeyword)));
     }
 
     private void populateVariableSuggestions(final MonacoFEELVariableSuggestions variableSuggestions,

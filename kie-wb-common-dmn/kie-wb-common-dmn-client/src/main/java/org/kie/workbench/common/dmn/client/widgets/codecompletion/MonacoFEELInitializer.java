@@ -21,6 +21,7 @@ import java.util.function.Consumer;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
+import com.google.common.collect.ImmutableList;
 import org.uberfire.client.views.pfly.monaco.MonacoEditorInitializer;
 import org.uberfire.client.views.pfly.monaco.jsinterop.Monaco;
 
@@ -33,10 +34,10 @@ import static org.kie.workbench.common.dmn.client.widgets.codecompletion.MonacoP
 @ApplicationScoped
 public class MonacoFEELInitializer {
 
-    public static final String[] FEEL_RESERVED_KEYWORDS = new String[]{
+    public static final ImmutableList<String> FEEL_RESERVED_KEYWORDS = ImmutableList.of(
             "for", "return", "if", "then", "else", "some", "every", "satisfies", "instance", "of",
             "in", "function", "external", "or", "and", "between", "not", "null", "true", "false"
-    };
+    );
     private final MonacoFEELVariableSuggestions variableSuggestions;
     private MonacoFEELInitializationStatus initializationStatus = NOT_INITIALIZED;
 

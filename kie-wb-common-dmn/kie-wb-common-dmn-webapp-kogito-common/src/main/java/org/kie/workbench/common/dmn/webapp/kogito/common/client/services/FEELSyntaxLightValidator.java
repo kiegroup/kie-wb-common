@@ -66,7 +66,7 @@ public class FEELSyntaxLightValidator {
     }
 
     private static boolean firstWordIsNotReservedKeyword(final String variableName) {
-        return containsNone(variableName.split(buildSeparatorRegex())[0], FEEL_RESERVED_KEYWORDS);
+        return containsNone(variableName.split(buildSeparatorRegex())[0], FEEL_RESERVED_KEYWORDS.toArray());
     }
 
     private static String buildSeparatorRegex() {
