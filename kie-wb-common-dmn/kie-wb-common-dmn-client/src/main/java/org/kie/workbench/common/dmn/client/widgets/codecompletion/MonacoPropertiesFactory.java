@@ -32,8 +32,11 @@ import static org.kie.workbench.common.dmn.client.widgets.codecompletion.MonacoF
 public class MonacoPropertiesFactory {
 
     public static final String FEEL_LANGUAGE_ID = "feel-language";
-
     public static final String FEEL_THEME_ID = "feel-theme";
+    private static final String INSERT_TEXT_RULES_KEY = "insertTextRules";
+    private static final String LABEL_KEY = "label";
+    private static final String INSERT_TEXT_KEY = "insertText";
+    private static final String KIND_KEY = "kind";
 
     /*
      * This method returns a JavaScript object with properties specified here:
@@ -358,10 +361,10 @@ public class MonacoPropertiesFactory {
         final int completionItemInsertTextRuleInsertAsSnippet = 4;
         final JSONString keywordSuggestion = makeJSONString(keyword);
 
-        suggestion.put("kind", makeJSONNumber(completionItemKindKeyword));
-        suggestion.put("insertTextRules", makeJSONNumber(completionItemInsertTextRuleInsertAsSnippet));
-        suggestion.put("label", keywordSuggestion);
-        suggestion.put("insertText", keywordSuggestion);
+        suggestion.put(KIND_KEY, makeJSONNumber(completionItemKindKeyword));
+        suggestion.put(INSERT_TEXT_RULES_KEY, makeJSONNumber(completionItemInsertTextRuleInsertAsSnippet));
+        suggestion.put(LABEL_KEY, keywordSuggestion);
+        suggestion.put(INSERT_TEXT_KEY, keywordSuggestion);
 
         return suggestion;
     }
@@ -373,10 +376,10 @@ public class MonacoPropertiesFactory {
         final int completionItemKindFunction = 1;
         final int completionItemInsertTextRuleInsertAsSnippet = 4;
 
-        suggestion.put("kind", makeJSONNumber(completionItemKindFunction));
-        suggestion.put("insertTextRules", makeJSONNumber(completionItemInsertTextRuleInsertAsSnippet));
-        suggestion.put("label", makeJSONString(label));
-        suggestion.put("insertText", makeJSONString(insertText));
+        suggestion.put(KIND_KEY, makeJSONNumber(completionItemKindFunction));
+        suggestion.put(INSERT_TEXT_RULES_KEY, makeJSONNumber(completionItemInsertTextRuleInsertAsSnippet));
+        suggestion.put(LABEL_KEY, makeJSONString(label));
+        suggestion.put(INSERT_TEXT_KEY, makeJSONString(insertText));
 
         return suggestion;
     }
@@ -388,10 +391,10 @@ public class MonacoPropertiesFactory {
         final int completionItemInsertTextRuleInsertAsSnippet = 4;
         final JSONString variableSuggestion = makeJSONString(variable);
 
-        suggestion.put("kind", makeJSONNumber(completionItemKindVariable));
-        suggestion.put("insertTextRules", makeJSONNumber(completionItemInsertTextRuleInsertAsSnippet));
-        suggestion.put("label", variableSuggestion);
-        suggestion.put("insertText", variableSuggestion);
+        suggestion.put(KIND_KEY, makeJSONNumber(completionItemKindVariable));
+        suggestion.put(INSERT_TEXT_RULES_KEY, makeJSONNumber(completionItemInsertTextRuleInsertAsSnippet));
+        suggestion.put(LABEL_KEY, variableSuggestion);
+        suggestion.put(INSERT_TEXT_KEY, variableSuggestion);
 
         return suggestion;
     }
