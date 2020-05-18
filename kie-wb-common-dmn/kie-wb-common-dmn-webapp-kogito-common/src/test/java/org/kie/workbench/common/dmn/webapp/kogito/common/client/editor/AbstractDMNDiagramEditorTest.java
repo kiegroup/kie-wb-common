@@ -25,6 +25,8 @@ import org.kie.workbench.common.dmn.api.DMNDefinitionSet;
 import org.kie.workbench.common.dmn.client.commands.general.NavigateToExpressionEditorCommand;
 import org.kie.workbench.common.dmn.client.docks.navigator.DecisionNavigatorDock;
 import org.kie.workbench.common.dmn.client.editors.expressions.ExpressionEditorView;
+import org.kie.workbench.common.dmn.client.editors.included.IncludedModelsPage;
+import org.kie.workbench.common.dmn.client.editors.included.imports.IncludedModelsPageStateProviderImpl;
 import org.kie.workbench.common.dmn.client.editors.search.DMNEditorSearchIndex;
 import org.kie.workbench.common.dmn.client.editors.search.DMNSearchableElement;
 import org.kie.workbench.common.dmn.client.editors.types.DataTypePageTabActiveEvent;
@@ -237,6 +239,12 @@ public abstract class AbstractDMNDiagramEditorTest {
 
     @Mock
     protected CanvasFileExport canvasFileExport;
+
+    @Mock
+    protected IncludedModelsPage includedModelsPage;
+
+    @Mock
+    protected IncludedModelsPageStateProviderImpl importsPageProvider;
 
     @Captor
     protected ArgumentCaptor<KogitoDiagramResourceImpl> kogitoDiagramResourceArgumentCaptor;

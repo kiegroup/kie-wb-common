@@ -27,6 +27,8 @@ import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.kie.workbench.common.dmn.api.qualifiers.DMNEditor;
 import org.kie.workbench.common.dmn.client.docks.navigator.DecisionNavigatorDock;
 import org.kie.workbench.common.dmn.client.editors.expressions.ExpressionEditorView;
+import org.kie.workbench.common.dmn.client.editors.included.IncludedModelsPage;
+import org.kie.workbench.common.dmn.client.editors.included.imports.IncludedModelsPageStateProviderImpl;
 import org.kie.workbench.common.dmn.client.editors.search.DMNEditorSearchIndex;
 import org.kie.workbench.common.dmn.client.editors.search.DMNSearchableElement;
 import org.kie.workbench.common.dmn.client.editors.types.DataTypePageTabActiveEvent;
@@ -126,7 +128,9 @@ public class DMNDiagramEditor extends AbstractDMNDiagramEditor {
                             final DMNVFSService vfsService,
                             final Promises promises,
                             final MonacoFEELInitializer feelInitializer,
-                            final CanvasFileExport canvasFileExport) {
+                            final CanvasFileExport canvasFileExport,
+                            final IncludedModelsPage includedModelsPage,
+                            final IncludedModelsPageStateProviderImpl importsPageProvider) {
         super(view,
               fileMenuBuilder,
               placeManager,
@@ -156,7 +160,9 @@ public class DMNDiagramEditor extends AbstractDMNDiagramEditor {
               diagramServices,
               feelInitializer,
               canvasFileExport,
-              promises);
+              promises,
+              includedModelsPage,
+              importsPageProvider);
         this.notificationEvent = notificationEvent;
         this.vfsService = vfsService;
     }
@@ -207,6 +213,7 @@ public class DMNDiagramEditor extends AbstractDMNDiagramEditor {
             expressionEditor.setToolbarStateHandler(new DMNProjectToolbarStateHandler(getMenuSessionItems()));
             decisionNavigatorDock.setupCanvasHandler(c);
             dataTypesPage.reload();
+            includedModelsPage.setup(importsPageProvider.withDiagram(c.getDiagram()));
         });
     }
 

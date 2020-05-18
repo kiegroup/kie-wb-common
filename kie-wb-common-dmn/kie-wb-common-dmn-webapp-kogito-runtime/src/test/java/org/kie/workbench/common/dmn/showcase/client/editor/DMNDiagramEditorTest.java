@@ -72,7 +72,9 @@ public class DMNDiagramEditorTest extends AbstractDMNDiagramEditorTest {
                                     clientDiagramService,
                                     feelInitializer,
                                     canvasFileExport,
-                                    new SyncPromises()) {
+                                    new SyncPromises(),
+                                    includedModelsPage,
+                                    importsPageProvider) {
             @Override
             protected ElementWrapperWidget<?> getWidget(final HTMLElement element) {
                 return searchBarComponentWidget;

@@ -148,7 +148,9 @@ public class DMNDiagramEditorTest extends AbstractDMNDiagramEditorTest {
                                     vfsService,
                                     promises,
                                     feelInitializer,
-                                    canvasFileExport) {
+                                    canvasFileExport,
+                                    includedModelsPage,
+                                    importsPageProvider) {
 
             @Override
             protected PlaceRequest getPlaceRequest() {

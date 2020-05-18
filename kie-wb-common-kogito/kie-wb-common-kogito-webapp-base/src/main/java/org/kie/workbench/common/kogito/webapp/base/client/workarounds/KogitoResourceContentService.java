@@ -22,6 +22,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import elemental2.promise.IThenable;
+import elemental2.promise.Promise;
 import org.appformer.kogito.bridge.client.resource.ResourceContentService;
 import org.jboss.errai.common.client.api.ErrorCallback;
 import org.jboss.errai.common.client.api.RemoteCallback;
@@ -50,10 +51,10 @@ public class KogitoResourceContentService {
 
     /**
      * Load the file at given <b>uri</code> and returns its content inside the given callback
-     * @param fileUri the resource <b>uri</code> relative to the workspace/project
-     * @param callback The <code>RemoteCallback</code> to be invoked on success
-     * @param errorCallback The <code>ErrorCallback</code> to be invoked on failure
      *
+     * @param fileUri       the resource <b>uri</code> relative to the workspace/project
+     * @param callback      The <code>RemoteCallback</code> to be invoked on success
+     * @param errorCallback The <code>ErrorCallback</code> to be invoked on failure
      * @see ResourceContentService#get(String)
      */
     public void loadFile(final String fileUri,
@@ -73,9 +74,9 @@ public class KogitoResourceContentService {
     /**
      * Get the <code>List&lt;String&gt;</code> from the project/workspace where the editor is running
      * and returns it inside the given callback
-     * @param callback The <code>RemoteCallback</code> to be invoked on success
-     * @param errorCallback The <code>ErrorCallback</code> to be invoked on failure
      *
+     * @param callback      The <code>RemoteCallback</code> to be invoked on success
+     * @param errorCallback The <code>ErrorCallback</code> to be invoked on failure
      * @see ResourceContentService#list(String)
      */
     public void getAllItems(final RemoteCallback<List<String>> callback,
@@ -86,10 +87,10 @@ public class KogitoResourceContentService {
     /**
      * Get <b>filtered</b> <code>List&lt;String&gt;</code> from the project/workspace where the editor is running
      * and returns it inside the given callback
-     * @param pattern A GLOB pattern to filter files. To list all files use "*"
-     * @param callback The <code>RemoteCallback</code> to be invoked on success
-     * @param errorCallback The <code>ErrorCallback</code> to be invoked on failure
      *
+     * @param pattern       A GLOB pattern to filter files. To list all files use "*"
+     * @param callback      The <code>RemoteCallback</code> to be invoked on success
+     * @param errorCallback The <code>ErrorCallback</code> to be invoked on failure
      * @see ResourceContentService#list(String)
      */
     public void getFilteredItems(final String pattern,
@@ -103,5 +104,13 @@ public class KogitoResourceContentService {
                     errorCallback.error("Error " + error, new Throwable("Failed to retrieve files with pattern " + pattern));
                     return null;
                 });
+    }
+
+    public Promise<String[]> getFilteredItems(final String pattern) {
+        return resourceContentService.list(pattern);
+    }
+
+    public Promise<String> loadFile(final String fileUri) {
+        return resourceContentService.get(fileUri);
     }
 }

@@ -29,6 +29,8 @@ import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.kie.workbench.common.dmn.client.commands.general.NavigateToExpressionEditorCommand;
 import org.kie.workbench.common.dmn.client.docks.navigator.DecisionNavigatorDock;
 import org.kie.workbench.common.dmn.client.editors.expressions.ExpressionEditorView;
+import org.kie.workbench.common.dmn.client.editors.included.IncludedModelsPage;
+import org.kie.workbench.common.dmn.client.editors.included.imports.IncludedModelsPageStateProviderImpl;
 import org.kie.workbench.common.dmn.client.editors.search.DMNEditorSearchIndex;
 import org.kie.workbench.common.dmn.client.editors.search.DMNSearchableElement;
 import org.kie.workbench.common.dmn.client.editors.types.DataTypePageTabActiveEvent;
@@ -115,6 +117,8 @@ public abstract class AbstractDMNDiagramEditor extends AbstractDiagramEditor {
     protected final MonacoFEELInitializer feelInitializer;
     protected final CanvasFileExport canvasFileExport;
     protected final Promises promises;
+    protected final IncludedModelsPage includedModelsPage;
+    protected final IncludedModelsPageStateProviderImpl importsPageProvider;
 
     public AbstractDMNDiagramEditor(final View view,
                                     final FileMenuBuilder fileMenuBuilder,
@@ -145,7 +149,9 @@ public abstract class AbstractDMNDiagramEditor extends AbstractDiagramEditor {
                                     final KogitoClientDiagramService diagramServices,
                                     final MonacoFEELInitializer feelInitializer,
                                     final CanvasFileExport canvasFileExport,
-                                    final Promises promises) {
+                                    final Promises promises,
+                                    final IncludedModelsPage includedModelsPage,
+                                    final IncludedModelsPageStateProviderImpl importsPageProvider) {
         super(view,
               fileMenuBuilder,
               placeManager,
@@ -176,6 +182,8 @@ public abstract class AbstractDMNDiagramEditor extends AbstractDiagramEditor {
         this.feelInitializer = feelInitializer;
         this.canvasFileExport = canvasFileExport;
         this.promises = promises;
+        this.includedModelsPage = includedModelsPage;
+        this.importsPageProvider = importsPageProvider;
     }
 
     @OnStartup
@@ -197,6 +205,7 @@ public abstract class AbstractDMNDiagramEditor extends AbstractDiagramEditor {
         superInitialiseKieEditorForSession(diagram);
 
         getWidget().getMultiPage().addPage(dataTypesPage);
+        getWidget().getMultiPage().addPage(includedModelsPage);
 
         setupEditorSearchIndex();
         setupSearchComponent();
@@ -436,7 +445,7 @@ public abstract class AbstractDMNDiagramEditor extends AbstractDiagramEditor {
 
     @GetPreview
     public Promise getPreview() {
-        CanvasHandler canvasHandler = getCanvasHandler();
+        final CanvasHandler canvasHandler = getCanvasHandler();
         if (canvasHandler != null) {
             return Promise.resolve(canvasFileExport.exportToSvg((AbstractCanvasHandler) canvasHandler));
         } else {
