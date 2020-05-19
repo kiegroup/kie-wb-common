@@ -8,7 +8,7 @@
     <artifactId>kie-parent</artifactId>
     <version>7.38.0-SNAPSHOT</version>
   </parent>
-
+  <!-- a comment -->
   <groupId>org.kie.workbench</groupId>
   <artifactId>kie-wb-common</artifactId>
   <packaging>pom</packaging>
