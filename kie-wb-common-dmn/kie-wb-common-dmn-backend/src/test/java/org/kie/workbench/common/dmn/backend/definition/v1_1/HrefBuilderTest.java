@@ -16,17 +16,15 @@
 
 package org.kie.workbench.common.dmn.backend.definition.v1_1;
 
-import java.util.Collections;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.junit.Test;
 import org.kie.workbench.common.dmn.api.definition.model.DRGElement;
 import org.kie.workbench.common.dmn.api.definition.model.Definitions;
-import org.kie.workbench.common.dmn.api.definition.model.Import;
 import org.kie.workbench.common.dmn.api.property.dmn.Id;
 import org.kie.workbench.common.dmn.api.property.dmn.Name;
 
-import static java.util.Collections.singletonList;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -37,83 +35,41 @@ public class HrefBuilderTest {
     public void testGetHref() {
 
         final DRGElement drgElement = mock(DRGElement.class);
-        final Name name = mock(Name.class);
         final Id id = mock(Id.class);
-        final Definitions definitions = mock(Definitions.class);
-        final String uuid = "0000-1111-2222";
-
-        when(id.getValue()).thenReturn(uuid);
-        when(name.getValue()).thenReturn("Decision");
+        final String stringId = "someId";
+        final String expected = "#" + stringId;
+        when(id.getValue()).thenReturn(stringId);
         when(drgElement.getId()).thenReturn(id);
-        when(drgElement.getName()).thenReturn(name);
-        when(drgElement.getParent()).thenReturn(definitions);
-        when(definitions.getImport()).thenReturn(Collections.emptyList());
 
         final String actual = HrefBuilder.getHref(drgElement);
-        final String expected = "#" + uuid;
 
         assertEquals(expected, actual);
     }
 
     @Test
-    public void testGetHrefForImportedDRGElement() {
+    public void testGetHrefForImported() {
 
         final DRGElement drgElement = mock(DRGElement.class);
-        final Name drgElementName = mock(Name.class);
-        final Name importName = mock(Name.class);
         final Id id = mock(Id.class);
+        final String uuid = "_someUuid";
+        final String importName = "USER_TYPED_NAME";
+        final String uri = "https://github.com/kiegroup/dmn/something";
+        final String stringId = importName + ":" + uuid;
         final Definitions definitions = mock(Definitions.class);
-        final Import anImport = mock(Import.class);
-        final List<Import> imports = singletonList(anImport);
-        final String includedModelName = "includedModel";
 
-        when(importName.getValue()).thenReturn(includedModelName);
+        final Name importModelName = mock(Name.class);
 
-        when(anImport.getName()).thenReturn(importName);
-        when(anImport.getNamespace()).thenReturn("https://github.com/kiegroup/dmn/something");
+        final Map<String, String> nsContext = new HashMap<>();
+        nsContext.put(importName, uri);
 
-        when(id.getValue()).thenReturn("0000-1111-2222");
-        when(drgElementName.getValue()).thenReturn(includedModelName + ".Decision");
-        when(drgElement.getId()).thenReturn(id);
-        when(drgElement.getName()).thenReturn(drgElementName);
         when(drgElement.getParent()).thenReturn(definitions);
-
-        when(definitions.getImport()).thenReturn(imports);
+        when(importModelName.getValue()).thenReturn(importName);
+        when(definitions.getNsContext()).thenReturn(nsContext);
+        when(id.getValue()).thenReturn(stringId);
+        when(drgElement.getId()).thenReturn(id);
 
         final String actual = HrefBuilder.getHref(drgElement);
-        final String expected = "https://github.com/kiegroup/dmn/something#0000-1111-2222";
 
-        assertEquals(expected, actual);
-    }
-
-    @Test
-    public void testGetHrefForImportedDRGElementWhenImportHasAnOddName() {
-
-        final DRGElement drgElement = mock(DRGElement.class);
-        final Name drgElementName = mock(Name.class);
-        final Name importName = mock(Name.class);
-        final Id id = mock(Id.class);
-        final Definitions definitions = mock(Definitions.class);
-        final Import anImport = mock(Import.class);
-        final List<Import> imports = singletonList(anImport);
-        final String includedModelName = "d.i.v.i.";
-
-        when(importName.getValue()).thenReturn(includedModelName);
-
-        when(anImport.getName()).thenReturn(importName);
-        when(anImport.getNamespace()).thenReturn("https://github.com/kiegroup/dmn/something");
-
-        when(id.getValue()).thenReturn("0000-1111-2222");
-        when(drgElementName.getValue()).thenReturn(includedModelName + ".Decision");
-        when(drgElement.getId()).thenReturn(id);
-        when(drgElement.getName()).thenReturn(drgElementName);
-        when(drgElement.getParent()).thenReturn(definitions);
-
-        when(definitions.getImport()).thenReturn(imports);
-
-        final String actual = HrefBuilder.getHref(drgElement);
-        final String expected = "https://github.com/kiegroup/dmn/something#0000-1111-2222";
-
-        assertEquals(expected, actual);
+        assertEquals(uri + "#" + uuid, actual);
     }
 }

@@ -237,6 +237,7 @@ public class DMNMarshallerImportsHelperStandaloneImpl implements DMNMarshallerIm
         final String namespace = anImport.getName();
 
         drgElement.getAdditionalAttributes().put(NAMESPACE, anImport.getNamespace());
+        drgElement.setId(namespace + ":" + drgElement.getId());
         drgElement.setName(namespace + "." + drgElement.getName());
         updateInformationItem(namespace, drgElement);
 
