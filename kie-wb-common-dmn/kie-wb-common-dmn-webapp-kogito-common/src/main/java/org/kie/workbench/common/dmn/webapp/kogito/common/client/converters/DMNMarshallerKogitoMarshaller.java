@@ -193,8 +193,7 @@ public class DMNMarshallerKogitoMarshaller {
                     }
 
                     final String namespaceURI = definitionsStunnerPojo.getDefaultNamespace();
-                    dmnDDDMNDiagram.addDMNDiagramElement(WrapperUtils.getWrappedJSIDMNShape(definitionsStunnerPojo,
-                                                                                            (View<? extends DMNElement>) view,
+                    dmnDDDMNDiagram.addDMNDiagramElement(WrapperUtils.getWrappedJSIDMNShape((View<? extends DMNElement>) view,
                                                                                             namespaceURI));
                 } else if (view.getDefinition() instanceof TextAnnotation) {
                     final TextAnnotation textAnnotation = (TextAnnotation) view.getDefinition();
@@ -202,8 +201,7 @@ public class DMNMarshallerKogitoMarshaller {
                                         textAnnotationConverter.dmnFromNode((Node<View<TextAnnotation>, ?>) node,
                                                                             componentWidthsConsumer));
                     final String namespaceURI = definitionsStunnerPojo.getDefaultNamespace();
-                    dmnDDDMNDiagram.addDMNDiagramElement(WrapperUtils.getWrappedJSIDMNShape(definitionsStunnerPojo,
-                                                                                            (View<? extends DMNElement>) view,
+                    dmnDDDMNDiagram.addDMNDiagramElement(WrapperUtils.getWrappedJSIDMNShape((View<? extends DMNElement>) view,
                                                                                             namespaceURI));
 
                     final List<JSITAssociation> associations = AssociationConverter.dmnFromWB((Node<View<TextAnnotation>, ?>) node);

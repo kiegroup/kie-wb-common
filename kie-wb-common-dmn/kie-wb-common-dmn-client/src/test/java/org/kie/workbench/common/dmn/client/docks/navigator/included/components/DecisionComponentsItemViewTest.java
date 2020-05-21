@@ -17,7 +17,9 @@
 package org.kie.workbench.common.dmn.client.docks.navigator.included.components;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.google.gwt.event.dom.client.MouseDownEvent;
 import com.google.gwtmockito.GwtMockitoTestRunner;
@@ -30,8 +32,10 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.dmn.api.definition.model.DMNElement;
 import org.kie.workbench.common.dmn.api.definition.model.DRGElement;
+import org.kie.workbench.common.dmn.api.definition.model.Definitions;
 import org.kie.workbench.common.dmn.api.property.dmn.Id;
 import org.kie.workbench.common.dmn.client.DMNShapeSet;
+import org.kie.workbench.common.dmn.client.graph.DMNGraphUtils;
 import org.kie.workbench.common.dmn.client.shape.factory.DMNShapeFactory;
 import org.kie.workbench.common.stunner.client.lienzo.components.glyph.ShapeGlyphDragHandler;
 import org.kie.workbench.common.stunner.client.lienzo.components.glyph.ShapeGlyphDragHandler.Callback;
@@ -52,6 +56,7 @@ import org.mockito.Mock;
 import org.uberfire.mocks.EventSourceMock;
 import org.uberfire.workbench.events.NotificationEvent;
 
+import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
 import static org.kie.workbench.common.dmn.client.resources.i18n.DMNEditorConstants.DecisionComponentsItemView_DuplicatedNode;
 import static org.mockito.Matchers.any;
@@ -97,6 +102,9 @@ public class DecisionComponentsItemViewTest {
     private ClientTranslationService clientTranslationService;
 
     @Mock
+    private DMNGraphUtils dmnGraphUtils;
+
+    @Mock
     private DecisionComponentsItem presenter;
 
     @Captor
@@ -109,7 +117,7 @@ public class DecisionComponentsItemViewTest {
 
     @Before
     public void setup() {
-        view = spy(new DecisionComponentsItemView(icon, name, file, dmnShapeSet, sessionManager, shapeGlyphDragHandler, buildCanvasShapeEvent, decisionComponentItem, notificationEvent, clientTranslationService));
+        view = spy(new DecisionComponentsItemView(icon, name, file, dmnShapeSet, sessionManager, shapeGlyphDragHandler, buildCanvasShapeEvent, decisionComponentItem, notificationEvent, clientTranslationService, dmnGraphUtils));
         view.init(presenter);
     }
 
@@ -173,7 +181,10 @@ public class DecisionComponentsItemViewTest {
     public void testMakeDragProxyCallbackImplWhenNodeIsDuplicated() {
 
         final ShapeFactory factory = mock(ShapeFactory.class);
-        final DRGElement drgElement = mock(DRGElement.class);
+        final Definitions definitions = mock(Definitions.class);
+        final DRGElement drgElement1 = mock(DRGElement.class);
+        final DRGElement drgElement2 = mock(DRGElement.class);
+        final List<DRGElement> drgElements = asList(drgElement1, drgElement2);
         final int x = 10;
         final int y = 20;
         final String expectedWarnMessage = "This 'DRGElement' already exists!";
@@ -181,18 +192,32 @@ public class DecisionComponentsItemViewTest {
         final Graph<?, Node> graph = mock(Graph.class);
         final List<Node> nodes = new ArrayList<>();
 
+        final String namespace1 = "http://something";
+        final String alias1 = "included1";
+        final String namespace2 = "http://someotherthing";
+        final String alias2 = "included2";
         final String id1 = "123";
-        final String id2 = "123";
+        final String id2 = "456";
 
-        nodes.add(createNode(id1));
-        nodes.add(createNode(id2));
+        nodes.add(createNode(alias1, id1));
+        nodes.add(createNode(alias2, id2));
 
+        final Map<String, String> nsContext = new HashMap<>();
+        nsContext.put(alias1, namespace1);
+        nsContext.put(alias2, namespace2);
+
+        when(drgElement1.getDefaultNamespace()).thenReturn(namespace1);
+        when(drgElement2.getDefaultNamespace()).thenReturn(namespace2);
         when(graph.nodes()).thenReturn(nodes);
-        when(drgElement.getId()).thenReturn(new Id(id1));
+        when(drgElement1.getId()).thenReturn(new Id(alias1 + ":" + id1));
+        when(drgElement2.getId()).thenReturn(new Id(alias2 + ":" + id2));
         when(clientTranslationService.getValue(DecisionComponentsItemView_DuplicatedNode)).thenReturn(expectedWarnMessage);
+        when(dmnGraphUtils.getDefinitions()).thenReturn(definitions);
+        when(definitions.getDrgElement()).thenReturn(drgElements);
+        doReturn(nsContext).when(view).getNsContext();
         doReturn(graph).when(view).getGraph();
 
-        view.makeDragProxyCallbackImpl(drgElement, factory).onComplete(x, y);
+        view.makeDragProxyCallbackImpl(drgElement1, factory).onComplete(x, y);
 
         verify(buildCanvasShapeEvent, never()).fire(any());
         verify(notificationEvent).fire(notificationEventArgumentCaptor.capture());
@@ -203,7 +228,7 @@ public class DecisionComponentsItemViewTest {
         assertEquals(expectedWarnType, notificationEvent.getType());
     }
 
-    private Node createNode(final String id) {
+    private Node createNode(final String alias, final String id) {
 
         final Node n1 = mock(Node.class);
         final View v1 = mock(View.class);
@@ -213,7 +238,7 @@ public class DecisionComponentsItemViewTest {
         when(n1.getContent()).thenReturn(v1);
         when(v1.getDefinition()).thenReturn(d1);
         when(d1.getId()).thenReturn(id1);
-        when(id1.getValue()).thenReturn(id);
+        when(id1.getValue()).thenReturn(alias + ":" + id);
 
         return n1;
     }
@@ -231,22 +256,37 @@ public class DecisionComponentsItemViewTest {
         final List<Node> nodes = new ArrayList<>();
         final int x = 10;
         final int y = 20;
+        final String namespace1 = "http://something";
+        final String alias1 = "included1";
+        final String namespace2 = "http://someotherthing";
+        final String alias2 = "included2";
+        final String namespace3 = "http://someNewNamespace";
+        final String alias3 = "included3";
         final String id1 = "123";
         final String id2 = "456";
         final String id3 = "789";
 
-        nodes.add(createNode(id1));
-        nodes.add(createNode(id2));
+        nodes.add(createNode(alias1, id1));
+        nodes.add(createNode(alias2, id2));
+
+        final Map<String, String> nsContext = new HashMap<>();
+        nsContext.put(alias1, namespace1);
+        nsContext.put(alias2, namespace2);
+        nsContext.put(alias3, namespace3);
 
         when(graph.nodes()).thenReturn(nodes);
 
-        when(drgElement1.getId()).thenReturn(new Id(id1));
-        when(drgElement2.getId()).thenReturn(new Id(id2));
-        when(drgElement3.getId()).thenReturn(new Id(id3));
+        when(drgElement1.getId()).thenReturn(new Id(alias1 + ":" + id1));
+        when(drgElement2.getId()).thenReturn(new Id(alias2 + ":" + id2));
+        when(drgElement3.getId()).thenReturn(new Id(alias3 + ":" + id3));
+        when(drgElement1.getDefaultNamespace()).thenReturn(namespace1);
+        when(drgElement2.getDefaultNamespace()).thenReturn(namespace2);
+        when(drgElement3.getDefaultNamespace()).thenReturn(namespace3);
 
         when(sessionManager.getCurrentSession()).thenReturn(currentSession);
         when(currentSession.getCanvasHandler()).thenReturn(canvasHandler);
 
+        doReturn(nsContext).when(view).getNsContext();
         doReturn(graph).when(view).getGraph();
 
         view.makeDragProxyCallbackImpl(drgElement3, factory).onComplete(x, y);
