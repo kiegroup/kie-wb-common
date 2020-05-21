@@ -17,9 +17,14 @@ package org.kie.workbench.common.dmn.client.session;
 
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.CanvasControl;
+import org.kie.workbench.common.stunner.core.client.canvas.controls.keyboard.AbstractCanvasShortcutsControlImpl;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.keyboard.KeyboardControl;
 import org.kie.workbench.common.stunner.core.client.session.impl.EditorSession;
 
+/**
+ * Acts as a an indirection for resolving alternatives for {@link AbstractCanvasShortcutsControlImpl}.
+ * See {@link DMNCanvasShortcutsControlProxy}.
+ */
 public interface DMNCanvasShortcutsControl extends CanvasControl<AbstractCanvasHandler>,
                                                    CanvasControl.SessionAware<EditorSession>,
                                                    KeyboardControl.KeyShortcutCallback {
