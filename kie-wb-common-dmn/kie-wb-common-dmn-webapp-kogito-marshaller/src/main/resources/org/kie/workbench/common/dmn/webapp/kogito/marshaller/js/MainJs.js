@@ -87,9 +87,21 @@ MainJs = {
     },
 
     marshall: function (value, namespaces, callback) {
+        var namespacesValues = {};
+        if (namespaces instanceof String) {
+            namespacesValues[namespaces] = "";
+            namespacesValues["http://www.omg.org/spec/DMN/20180521/MODEL/"] = "dmn";
+            namespacesValues["http://www.omg.org/spec/DMN/20180521/DI/"] = "di";
+            namespacesValues["http://www.drools.org/kie/dmn/1.2"] = "kie";
+            namespacesValues["http://www.omg.org/spec/DMN/20180521/DMNDI/"] = "dmndi";
+            namespacesValues["http://www.omg.org/spec/DMN/20180521/DC/"] = "dc";
+            namespacesValues["http://www.omg.org/spec/DMN/20180521/FEEL/"] = "feel";
+        } else {
+            Object.assign(namespacesValues, namespaces);
+        }
         // Create Jsonix context
         var context = new Jsonix.Context(this.mappings, {
-            namespacePrefixes: namespaces
+            namespacePrefixes: namespacesValues
         });
 
         // Create marshaller
