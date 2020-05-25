@@ -45,6 +45,9 @@ public interface KeyboardControl<C extends Canvas, S extends ClientSession> exte
 
         KeyboardEvent.Key[] getKeyCombination();
 
+        /**
+         * @return The label of this shortcut. Use a `|` character to separate its section from its description. (e.g. "Moving | Up")
+         */
         String getLabel();
     }
 
