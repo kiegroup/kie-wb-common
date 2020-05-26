@@ -41,6 +41,7 @@ import org.kie.workbench.common.stunner.core.i18n.CoreTranslationMessages;
 import static com.ait.lienzo.client.core.mediator.EventFilter.ALT;
 import static com.ait.lienzo.client.core.mediator.EventFilter.CONTROL;
 import static com.ait.lienzo.client.core.mediator.EventFilter.META;
+import static org.appformer.client.context.OperatingSystem.LINUX;
 import static org.appformer.client.context.OperatingSystem.MACOS;
 import static org.kie.workbench.common.stunner.core.client.canvas.controls.keyboard.KeysMatcher.doKeysMatch;
 
@@ -71,7 +72,7 @@ public class LienzoCanvasMediators {
     }
 
     private static Function<LienzoBoundsPanel, PanelMediators> getMediatorsBuilder(final EditorContextProvider editorContextProvider) {
-        return editorContextProvider.getOperatingSystem().equals(MACOS)
+        return editorContextProvider.getOperatingSystem().orElse(LINUX).equals(MACOS)
                 ? panel -> PanelMediators.build(panel, META, ALT)
                 : panel -> PanelMediators.build(panel, CONTROL, ALT);
     }
