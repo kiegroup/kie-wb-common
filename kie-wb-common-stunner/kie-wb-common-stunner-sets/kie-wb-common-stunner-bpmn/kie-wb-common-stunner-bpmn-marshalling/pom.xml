@@ -21,7 +21,7 @@
   <parent>
     <artifactId>kie-wb-common-stunner-bpmn</artifactId>
     <groupId>org.kie.workbench.stunner</groupId>
-    <version>7.38.0-SNAPSHOT</version>
+    <version>7.39.0-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
@@ -236,17 +236,10 @@
     </dependency>
 
     <dependency>
-      <groupId>org.drools</groupId>
-      <artifactId>jbpm-simulation</artifactId>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
       <groupId>org.assertj</groupId>
       <artifactId>assertj-core</artifactId>
       <scope>test</scope>
     </dependency>
-
 
     <dependency>
       <groupId>org.jboss.spec.javax.xml.bind</groupId>
