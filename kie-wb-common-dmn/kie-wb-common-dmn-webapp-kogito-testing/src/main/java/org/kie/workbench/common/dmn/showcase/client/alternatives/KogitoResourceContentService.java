@@ -24,6 +24,7 @@ import javax.inject.Inject;
 
 import elemental2.promise.Promise;
 import org.appformer.kogito.bridge.client.resource.ResourceContentService;
+import org.appformer.kogito.bridge.client.resource.interop.ResourceListOptions;
 import org.jboss.errai.common.client.api.ErrorCallback;
 import org.jboss.errai.common.client.api.RemoteCallback;
 import org.uberfire.client.promise.Promises;
@@ -62,7 +63,7 @@ public class KogitoResourceContentService extends org.kie.workbench.common.kogit
     }
 
     @Override
-    public Promise<String[]> getFilteredItems(final String pattern) {
+    public Promise<String[]> getFilteredItems(final String pattern, final ResourceListOptions options) {
         return Promise.resolve(new String[]{BASE_MODEL, MODEL_WITH_IMPORTS});
     }
 

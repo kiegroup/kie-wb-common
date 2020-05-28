@@ -24,6 +24,7 @@ import javax.inject.Inject;
 import elemental2.promise.IThenable;
 import elemental2.promise.Promise;
 import org.appformer.kogito.bridge.client.resource.ResourceContentService;
+import org.appformer.kogito.bridge.client.resource.interop.ResourceListOptions;
 import org.jboss.errai.common.client.api.ErrorCallback;
 import org.jboss.errai.common.client.api.RemoteCallback;
 import org.uberfire.client.promise.Promises;
@@ -106,8 +107,8 @@ public class KogitoResourceContentService {
                 });
     }
 
-    public Promise<String[]> getFilteredItems(final String pattern) {
-        return resourceContentService.list(pattern);
+    public Promise<String[]> getFilteredItems(final String pattern, final ResourceListOptions options) {
+        return resourceContentService.list(pattern, options);
     }
 
     public Promise<String> loadFile(final String fileUri) {

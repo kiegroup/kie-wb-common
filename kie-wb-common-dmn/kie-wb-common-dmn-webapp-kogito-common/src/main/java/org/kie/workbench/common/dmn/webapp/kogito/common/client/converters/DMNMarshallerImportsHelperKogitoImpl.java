@@ -36,6 +36,7 @@ import javax.xml.namespace.QName;
 import elemental2.promise.IThenable;
 import elemental2.promise.Promise;
 import jsinterop.base.Js;
+import org.appformer.kogito.bridge.client.resource.interop.ResourceListOptions;
 import org.guvnor.common.services.project.model.WorkspaceProject;
 import org.kie.workbench.common.dmn.api.definition.model.ItemDefinition;
 import org.kie.workbench.common.dmn.api.editors.included.DMNImportTypes;
@@ -80,7 +81,7 @@ public class DMNMarshallerImportsHelperKogitoImpl implements DMNMarshallerImport
     private final DMNIncludedNodeFactory includedModelFactory;
 
     private static final Logger LOGGER = Logger.getLogger(DMNMarshallerImportsHelperKogitoImpl.class.getName());
-    private static final String DMN_FILES_PATTERN = "**/*.dmn";
+    private static final String DMN_FILES_PATTERN = "*.dmn";
 
     @Inject
     public DMNMarshallerImportsHelperKogitoImpl(final KogitoResourceContentService contentService,
@@ -114,9 +115,9 @@ public class DMNMarshallerImportsHelperKogitoImpl implements DMNMarshallerImport
         return promises.resolve(new HashMap<>());
     }
 
-    Promise<List<JSITDefinitions>> loadDMNDefinitions() {
-        final List<JSITDefinitions> otherDefinitions = new Vector<>();
-        return contentService.getFilteredItems(DMN_FILES_PATTERN).then(list -> {
+    Promise<Map<String, JSITDefinitions>> loadDMNDefinitions() {
+        final Map<String, JSITDefinitions> otherDefinitions = new HashMap<>();
+        return contentService.getFilteredItems(DMN_FILES_PATTERN, ResourceListOptions.assetFolder()).then(list -> {
             final List<Promise<JSITDefinitions>> fileLoadPromises = new ArrayList<>();
             for (final String file : list) {
                 final Promise<JSITDefinitions> promise = loadDefinitionFromFile(file, otherDefinitions);
@@ -132,38 +133,49 @@ public class DMNMarshallerImportsHelperKogitoImpl implements DMNMarshallerImport
 
         final List<DMNIncludedNode> result = new Vector<>();
         final List<Promise> fileLoadPromises = new ArrayList<>();
-        for (final DMNIncludedModel model : includedModels) {
-            final String path = model.getPath();
-            final Promise promise = contentService.loadFile(path).then(content -> {
-                                                                           diagramService.transform(content, new ServiceCallback<Diagram>() {
-                                                                               @Override
-                                                                               public void onSuccess(final Diagram item) {
-                                                                                   final Optional<DMNIncludedModel> diagramImport = getDiagramImport(item, includedModels);
-                                                                                   final List<DMNIncludedNode> nodes = diagramImport
-                                                                                           .map(dmn -> diagramUtils
-                                                                                                   .getDRGElements(item)
-                                                                                                   .stream()
-                                                                                                   .map(node -> includedModelFactory.makeDMNIncludeNode(path, dmn, node))
-                                                                                                   .collect(Collectors.toList()))
-                                                                                           .orElse(new ArrayList<>());
 
-                                                                                   result.addAll(nodes);
-                                                                               }
+        loadDMNDefinitions().then(existingDefinitions -> {
+            for (final DMNIncludedModel model : includedModels) {
+                String filePath = "";
+                for (final Map.Entry<String, JSITDefinitions> entry : existingDefinitions.entrySet()) {
+                    filePath = entry.getKey();
+                    final JSITDefinitions definitions = Js.uncheckedCast(entry.getValue());
+                    if (model.getNamespace().equals(definitions.getNamespace())) {
+                        break;
+                    }
+                }
+                final String path = filePath;
+                final Promise promise = contentService.loadFile(path).then(content -> {
+                                                                               diagramService.transform(content, new ServiceCallback<Diagram>() {
+                                                                                   @Override
+                                                                                   public void onSuccess(final Diagram item) {
+                                                                                       final Optional<DMNIncludedModel> diagramImport = getDiagramImport(item, includedModels);
+                                                                                       final List<DMNIncludedNode> nodes = diagramImport
+                                                                                               .map(dmn -> diagramUtils
+                                                                                                       .getDRGElements(item)
+                                                                                                       .stream()
+                                                                                                       .map(node -> includedModelFactory.makeDMNIncludeNode(path, dmn, node))
+                                                                                                       .collect(Collectors.toList()))
+                                                                                               .orElse(new ArrayList<>());
 
-                                                                               @Override
-                                                                               public void onError(final ClientRuntimeError error) {
-                                                                                   LOGGER.log(Level.SEVERE, error.getMessage());
-                                                                               }
-                                                                           });
-                                                                           return promises.resolve();
-                                                                       }
-            );
-            fileLoadPromises.add(promise);
-        }
+                                                                                       result.addAll(nodes);
+                                                                                   }
 
-        promises.all(fileLoadPromises.toArray(new Promise[]{})).then(p -> {
-            callback.onSuccess(result);
-            return promises.resolve();
+                                                                                   @Override
+                                                                                   public void onError(final ClientRuntimeError error) {
+                                                                                       LOGGER.log(Level.SEVERE, error.getMessage());
+                                                                                   }
+                                                                               });
+                                                                               return promises.resolve();
+                                                                           }
+                );
+                fileLoadPromises.add(promise);
+            }
+
+            return promises.all(fileLoadPromises.toArray(new Promise[]{})).then(p -> {
+                callback.onSuccess(result);
+                return promises.resolve();
+            });
         });
     }
 
@@ -171,7 +183,7 @@ public class DMNMarshallerImportsHelperKogitoImpl implements DMNMarshallerImport
     public void loadModels(final ServiceCallback<List<IncludedModel>> callback) {
 
         final List<IncludedModel> models = new Vector<>();
-        contentService.getFilteredItems(DMN_FILES_PATTERN).then(items -> {
+        contentService.getFilteredItems(DMN_FILES_PATTERN, ResourceListOptions.assetFolder()).then(items -> {
             final List<Promise> fileLoadPromises = new ArrayList<>();
 
             for (final String file : items) {
@@ -225,20 +237,21 @@ public class DMNMarshallerImportsHelperKogitoImpl implements DMNMarshallerImport
     }
 
     Promise loadDefinitionFromFile(final String file,
-                                   final List<JSITDefinitions> otherDefinitions) {
+                                   final Map<String, JSITDefinitions> otherDefinitions) {
         return contentService.loadFile(file).then((IThenable.ThenOnFulfilledCallbackFn<String, Void>) xml -> {
-            final ServiceCallback<Object> callback = getCallback(otherDefinitions);
+            final ServiceCallback<Object> callback = getCallback(file, otherDefinitions);
             diagramService.getDefinitions(xml, callback);
             return promises.resolve();
         });
     }
 
-    private ServiceCallback<Object> getCallback(final List<JSITDefinitions> otherDefinitions) {
+    private ServiceCallback<Object> getCallback(final String filePath,
+                                                final Map<String, JSITDefinitions> otherDefinitions) {
         return new ServiceCallback<Object>() {
             @Override
             public void onSuccess(final Object item) {
                 final JSITDefinitions def = Js.uncheckedCast(item);
-                otherDefinitions.add(def);
+                otherDefinitions.put(filePath, def);
             }
 
             @Override
@@ -393,9 +406,8 @@ public class DMNMarshallerImportsHelperKogitoImpl implements DMNMarshallerImport
                                                            final ServiceCallback<List<ItemDefinition>> callback) {
         loadDMNDefinitions().then(definitions -> {
             final List<ItemDefinition> result = new ArrayList<>();
-
-            for (int i = 0; i < definitions.size(); i++) {
-                final JSITDefinitions definition = Js.uncheckedCast(definitions.get(i));
+            for (final Map.Entry<String, JSITDefinitions> entry : definitions.entrySet()) {
+                final JSITDefinitions definition = Js.uncheckedCast(entry.getValue());
                 if (Objects.equals(definition.getNamespace(), namespace)) {
                     final List<JSITItemDefinition> items = definition.getItemDefinition();
                     for (int j = 0; j < items.size(); j++) {
