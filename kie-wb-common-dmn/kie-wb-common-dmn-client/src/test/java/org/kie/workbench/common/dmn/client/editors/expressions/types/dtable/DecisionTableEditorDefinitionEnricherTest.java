@@ -624,7 +624,7 @@ public class DecisionTableEditorDefinitionEnricherTest extends BaseDecisionTable
         final ItemDefinition tPerson = mock(ItemDefinition.class);
         final ItemDefinition name = mock(ItemDefinition.class);
         final ItemDefinition age = mock(ItemDefinition.class);
-        final List<DecisionTableEditorDefinitionEnricher.InputClauseRequirement> inputClauseRequirements = new ArrayList<>();
+        final List<DecisionTableEditorDefinitionEnricher.ClauseRequirement> inputClauseRequirements = new ArrayList<>();
         final String inputData = "InputData";
         final DecisionTableEditorDefinitionEnricher enricher = new DecisionTableEditorDefinitionEnricher(null, null, itemDefinitionUtils);
 
@@ -647,12 +647,12 @@ public class DecisionTableEditorDefinitionEnricherTest extends BaseDecisionTable
         when(tPerson.getTypeRef()).thenReturn(null);
         when(tPerson.getItemComponent()).thenReturn(asList(name, age));
 
-        enricher.addInputClauseRequirement(tPerson, inputClauseRequirements, inputData);
+        enricher.addClauseRequirement(tPerson, inputClauseRequirements, inputData);
 
         assertEquals(2, inputClauseRequirements.size());
 
-        final DecisionTableEditorDefinitionEnricher.InputClauseRequirement inputClause1 = inputClauseRequirements.get(0);
-        final DecisionTableEditorDefinitionEnricher.InputClauseRequirement inputClause2 = inputClauseRequirements.get(1);
+        final DecisionTableEditorDefinitionEnricher.ClauseRequirement inputClause1 = inputClauseRequirements.get(0);
+        final DecisionTableEditorDefinitionEnricher.ClauseRequirement inputClause2 = inputClauseRequirements.get(1);
 
         assertEquals("InputData.name", inputClause1.text);
         assertEquals(STRING.getName(), inputClause1.typeRef.getLocalPart());
@@ -666,7 +666,7 @@ public class DecisionTableEditorDefinitionEnricherTest extends BaseDecisionTable
 
         final ItemDefinition tPerson = mock(ItemDefinition.class);
         final String inputData = "InputData";
-        final List<DecisionTableEditorDefinitionEnricher.InputClauseRequirement> inputClauseRequirements = new ArrayList<>();
+        final List<DecisionTableEditorDefinitionEnricher.ClauseRequirement> inputClauseRequirements = new ArrayList<>();
         final ItemDefinitionUtils itemDefinitionUtils = new ItemDefinitionUtils(mock(DMNGraphUtils.class));
         final DecisionTableEditorDefinitionEnricher enricher = new DecisionTableEditorDefinitionEnricher(null, null, itemDefinitionUtils);
 
@@ -674,7 +674,7 @@ public class DecisionTableEditorDefinitionEnricherTest extends BaseDecisionTable
         when(tPerson.getTypeRef()).thenReturn(null);
         when(tPerson.getItemComponent()).thenReturn(emptyList());
 
-        enricher.addInputClauseRequirement(tPerson, inputClauseRequirements, inputData);
+        enricher.addClauseRequirement(tPerson, inputClauseRequirements, inputData);
 
         assertEquals(1, inputClauseRequirements.size());
 

@@ -71,31 +71,6 @@ public class DecisionTableEditorDefinitionEnricher implements ExpressionEditorMo
     private DMNGraphUtils dmnGraphUtils;
     private ItemDefinitionUtils itemDefinitionUtils;
 
-    static class InputClauseRequirement {
-
-        String text;
-        QName typeRef;
-
-        InputClauseRequirement(final String text,
-                               final QName typeRef) {
-            this.text = text;
-            this.typeRef = typeRef;
-        }
-    }
-
-    public DecisionTableEditorDefinitionEnricher() {
-        //CDI proxy
-    }
-
-    @Inject
-    public DecisionTableEditorDefinitionEnricher(final SessionManager sessionManager,
-                                                 final DMNGraphUtils dmnGraphUtils,
-                                                 final ItemDefinitionUtils itemDefinitionUtils) {
-        this.sessionManager = sessionManager;
-        this.dmnGraphUtils = dmnGraphUtils;
-        this.itemDefinitionUtils = itemDefinitionUtils;
-    }
-
     @Override
     public void enrich(final Optional<String> nodeUUID,
                        final HasExpression hasExpression,
@@ -188,15 +163,15 @@ public class DecisionTableEditorDefinitionEnricher implements ExpressionEditorMo
 
         //Extract individual components of InputData TypeRefs
         final Definitions definitions = dmnGraphUtils.getDefinitions();
-        final List<InputClauseRequirement> inputClauseRequirements = new ArrayList<>();
-        decisionSet.forEach(decision -> addInputClauseRequirement(decision.getVariable().getTypeRef(),
-                                                                  definitions,
-                                                                  inputClauseRequirements,
-                                                                  decision.getName().getValue()));
-        inputDataSet.forEach(inputData -> addInputClauseRequirement(inputData.getVariable().getTypeRef(),
-                                                                    definitions,
-                                                                    inputClauseRequirements,
-                                                                    inputData.getName().getValue()));
+        final List<ClauseRequirement> inputClauseRequirements = new ArrayList<>();
+        decisionSet.forEach(decision -> addClauseRequirement(decision.getVariable().getTypeRef(),
+                                                             definitions,
+                                                             inputClauseRequirements,
+                                                             decision.getName().getValue()));
+        inputDataSet.forEach(inputData -> addClauseRequirement(inputData.getVariable().getTypeRef(),
+                                                               definitions,
+                                                               inputClauseRequirements,
+                                                               inputData.getName().getValue()));
 
         //Add InputClause columns for each InputData TypeRef component, sorted alphabetically
         dtable.getInput().clear();
@@ -224,15 +199,15 @@ public class DecisionTableEditorDefinitionEnricher implements ExpressionEditorMo
                 });
     }
 
-    private void addInputClauseRequirement(final QName typeRef,
-                                           final Definitions definitions,
-                                           final List<InputClauseRequirement> inputClauseRequirements,
-                                           final String text) {
+    private void addClauseRequirement(final QName typeRef,
+                                      final Definitions definitions,
+                                      final List<ClauseRequirement> clauseRequirements,
+                                      final String text) {
         //TypeRef matches a BuiltInType
         for (BuiltInType bi : BuiltInType.values()) {
             for (String biName : bi.getNames()) {
                 if (Objects.equals(biName, typeRef.getLocalPart())) {
-                    inputClauseRequirements.add(new InputClauseRequirement(text, typeRef));
+                    clauseRequirements.add(new ClauseRequirement(text, typeRef));
                     return;
                 }
             }
@@ -243,20 +218,20 @@ public class DecisionTableEditorDefinitionEnricher implements ExpressionEditorMo
                 .stream()
                 .filter(itemDef -> itemDef.getName().getValue().equals(typeRef.getLocalPart()))
                 .findFirst()
-                .ifPresent(itemDefinition -> addInputClauseRequirement(itemDefinition, inputClauseRequirements, text));
+                .ifPresent(itemDefinition -> addClauseRequirement(itemDefinition, clauseRequirements, text));
     }
 
-    void addInputClauseRequirement(final ItemDefinition itemDefinition,
-                                   final List<InputClauseRequirement> inputClauseRequirements,
-                                   final String text) {
+    void addClauseRequirement(final ItemDefinition itemDefinition,
+                              final List<ClauseRequirement> clauseRequirements,
+                              final String text) {
         if (itemDefinition.getItemComponent().size() == 0) {
-            inputClauseRequirements.add(new InputClauseRequirement(text,
-                                                                   getQName(itemDefinition)));
+            clauseRequirements.add(new ClauseRequirement(text,
+                                                         getQName(itemDefinition)));
         } else {
             itemDefinition.getItemComponent()
-                    .forEach(itemComponent -> addInputClauseRequirement(itemComponent,
-                                                                        inputClauseRequirements,
-                                                                        text + "." + itemComponent.getName().getValue()));
+                    .forEach(itemComponent -> addClauseRequirement(itemComponent,
+                                                                   clauseRequirements,
+                                                                   text + "." + itemComponent.getName().getValue()));
         }
     }
 
