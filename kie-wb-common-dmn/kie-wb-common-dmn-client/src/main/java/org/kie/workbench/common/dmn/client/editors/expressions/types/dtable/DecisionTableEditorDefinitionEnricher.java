@@ -71,6 +71,19 @@ public class DecisionTableEditorDefinitionEnricher implements ExpressionEditorMo
     private DMNGraphUtils dmnGraphUtils;
     private ItemDefinitionUtils itemDefinitionUtils;
 
+    public DecisionTableEditorDefinitionEnricher() {
+        //CDI proxy
+    }
+
+    @Inject
+    public DecisionTableEditorDefinitionEnricher(final SessionManager sessionManager,
+                                                 final DMNGraphUtils dmnGraphUtils,
+                                                 final ItemDefinitionUtils itemDefinitionUtils) {
+        this.sessionManager = sessionManager;
+        this.dmnGraphUtils = dmnGraphUtils;
+        this.itemDefinitionUtils = itemDefinitionUtils;
+    }
+
     @Override
     public void enrich(final Optional<String> nodeUUID,
                        final HasExpression hasExpression,
