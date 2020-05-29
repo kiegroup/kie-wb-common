@@ -72,6 +72,18 @@ public class DecisionTableEditorDefinitionEnricher implements ExpressionEditorMo
     private DMNGraphUtils dmnGraphUtils;
     private ItemDefinitionUtils itemDefinitionUtils;
 
+    static class ClauseRequirement {
+
+        String text;
+        QName typeRef;
+
+        ClauseRequirement(final String text,
+                          final QName typeRef) {
+            this.text = text;
+            this.typeRef = typeRef;
+        }
+    }
+
     public DecisionTableEditorDefinitionEnricher() {
         //CDI proxy
     }
@@ -131,23 +143,25 @@ public class DecisionTableEditorDefinitionEnricher implements ExpressionEditorMo
         });
     }
 
-    void buildOutputClausesByDataType(final HasExpression hasExpression, final DecisionTable dtable, final DecisionRule decisionRule) {
+    void buildOutputClausesByDataType(final HasExpression hasExpression, final DecisionTable dTable, final DecisionRule decisionRule) {
         final List<ClauseRequirement> outputClausesRequirement = new ArrayList<>();
-        final HasTypeRef hasTypeRef = TypeRefUtils.getTypeRefOfExpression(dtable, hasExpression);
+        final HasTypeRef hasTypeRef = TypeRefUtils.getTypeRefOfExpression(dTable, hasExpression);
         final QName typeRef = !Objects.isNull(hasTypeRef) ? hasTypeRef.getTypeRef() : BuiltInType.UNDEFINED.asQName();
+
         addClauseRequirement(typeRef, dmnGraphUtils.getDefinitions(), outputClausesRequirement, "");
+
         if (outputClausesRequirement.size() == 1) {
             final ClauseRequirement outputClauseRequirement = outputClausesRequirement.get(0);
-            final String name = DecisionTableDefaultValueUtilities.getNewOutputClauseName(dtable);
-            dtable.getOutput().add(
-                    buildOutputClause(dtable, decisionRule, outputClauseRequirement.typeRef, name)
+            final String name = DecisionTableDefaultValueUtilities.getNewOutputClauseName(dTable);
+            dTable.getOutput().add(
+                    buildOutputClause(dTable, decisionRule, outputClauseRequirement.typeRef, name)
             );
         } else {
             outputClausesRequirement
                     .stream()
                     .sorted(Comparator.comparing(outputClauseRequirement -> outputClauseRequirement.text))
-                    .map(outputClauseRequirement -> buildOutputClause(dtable, decisionRule, outputClauseRequirement.typeRef, outputClauseRequirement.text))
-                    .forEach(dtable.getOutput()::add);
+                    .map(outputClauseRequirement -> buildOutputClause(dTable, decisionRule, outputClauseRequirement.typeRef, outputClauseRequirement.text))
+                    .forEach(dTable.getOutput()::add);
         }
     }
 
@@ -163,20 +177,6 @@ public class DecisionTableEditorDefinitionEnricher implements ExpressionEditorMo
         decisionRule.getOutputEntry().add(decisionRuleLiteralExpression);
 
         return outputClause;
-    }
-
-    void addClauseRequirement(final ItemDefinition itemDefinition,
-                              final List<ClauseRequirement> clauseRequirements,
-                              final String text) {
-        if (itemDefinition.getItemComponent().size() == 0) {
-            clauseRequirements.add(new ClauseRequirement(text,
-                                                         getQName(itemDefinition)));
-        } else {
-            itemDefinition.getItemComponent()
-                    .forEach(itemComponent -> addClauseRequirement(itemComponent,
-                                                                   clauseRequirements,
-                                                                   buildClauseTextPrefix(text) + itemComponent.getName().getValue()));
-        }
     }
 
     @SuppressWarnings("unchecked")
@@ -273,23 +273,25 @@ public class DecisionTableEditorDefinitionEnricher implements ExpressionEditorMo
                 .ifPresent(itemDefinition -> addClauseRequirement(itemDefinition, clauseRequirements, text));
     }
 
+    void addClauseRequirement(final ItemDefinition itemDefinition,
+                              final List<ClauseRequirement> clauseRequirements,
+                              final String text) {
+        if (itemDefinition.getItemComponent().size() == 0) {
+            clauseRequirements.add(new ClauseRequirement(text,
+                                                         getQName(itemDefinition)));
+        } else {
+            itemDefinition.getItemComponent()
+                    .forEach(itemComponent -> addClauseRequirement(itemComponent,
+                                                                   clauseRequirements,
+                                                                   buildClauseTextPrefix(text) + itemComponent.getName().getValue()));
+        }
+    }
+
     private String buildClauseTextPrefix(final String text) {
         if (isEmpty(text)) {
             return "";
         }
         return text + ".";
-    }
-
-    static class ClauseRequirement {
-
-        String text;
-        QName typeRef;
-
-        ClauseRequirement(final String text,
-                          final QName typeRef) {
-            this.text = text;
-            this.typeRef = typeRef;
-        }
     }
 
     private QName getQName(final ItemDefinition itemDefinition) {
