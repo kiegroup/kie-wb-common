@@ -80,6 +80,10 @@ public class DecisionTableEditorDefinitionEnricherTest extends BaseDecisionTable
 
     private static final String DECISION_NAME_1 = "b-decision1";
 
+    private static final String DEFAULT_OUTPUT_NAME = "output-1";
+
+    private static final String TYPE_PERSON = "tPerson";
+
     private static final QName DECISION_QNAME_1 = STRING.asQName();
 
     private static final QName OUTPUT_DATA_QNAME = BuiltInType.DATE.asQName();
@@ -595,7 +599,7 @@ public class DecisionTableEditorDefinitionEnricherTest extends BaseDecisionTable
 
         final List<OutputClause> output = model.getOutput();
         assertThat(output.size()).isEqualTo(1);
-        assertThat(output.get(0).getName()).isEqualTo("output-1");
+        assertThat(output.get(0).getName()).isEqualTo(DEFAULT_OUTPUT_NAME);
         assertThat(output.get(0).getTypeRef()).isEqualTo(OUTPUT_DATA_QNAME);
 
         assertStandardDecisionRuleEnrichment(model);
@@ -614,7 +618,7 @@ public class DecisionTableEditorDefinitionEnricherTest extends BaseDecisionTable
 
         final List<OutputClause> output = model.getOutput();
         assertThat(output.size()).isEqualTo(1);
-        assertThat(output.get(0).getName()).isEqualTo("output-1");
+        assertThat(output.get(0).getName()).isEqualTo(DEFAULT_OUTPUT_NAME);
         assertThat(output.get(0).getTypeRef()).isEqualTo(BuiltInType.UNDEFINED.asQName());
 
         assertStandardDecisionRuleEnrichment(model);
@@ -635,7 +639,7 @@ public class DecisionTableEditorDefinitionEnricherTest extends BaseDecisionTable
         when(definitions.getItemDefinition()).thenReturn(Collections.singletonList(tPerson));
         when(hasExpression.asDMNModelInstrumentedBase()).thenReturn(decision);
         when(decision.getVariable()).thenReturn(informationItemPrimary);
-        when(informationItemPrimary.getTypeRef()).thenReturn(new QName("", "tPerson"));
+        when(informationItemPrimary.getTypeRef()).thenReturn(new QName("", TYPE_PERSON));
 
         final DecisionTableEditorDefinitionEnricher enricher = new DecisionTableEditorDefinitionEnricher(null, dmnGraphUtils, itemDefinitionUtils);
         final Optional<DecisionTable> oModel = definition.getModelClass();
@@ -664,9 +668,9 @@ public class DecisionTableEditorDefinitionEnricherTest extends BaseDecisionTable
         final Decision decision = mock(Decision.class);
         final InformationItemPrimary informationItemPrimary = mock(InformationItemPrimary.class);
         final ItemDefinition tPerson = mock(ItemDefinition.class);
-        final QName tPersonTypeRef = new QName("", "tPerson");
+        final QName tPersonTypeRef = new QName("", TYPE_PERSON);
 
-        when(tPerson.getName()).thenReturn(new Name("tPerson"));
+        when(tPerson.getName()).thenReturn(new Name(TYPE_PERSON));
         when(tPerson.getTypeRef()).thenReturn(tPersonTypeRef);
 
         when(dmnGraphUtils.getDefinitions()).thenReturn(definitions);
@@ -685,7 +689,7 @@ public class DecisionTableEditorDefinitionEnricherTest extends BaseDecisionTable
 
         final OutputClause outputClause = outputClauses.get(0);
 
-        assertEquals("output-1", outputClause.getName());
+        assertEquals(DEFAULT_OUTPUT_NAME, outputClause.getName());
         assertEquals(tPersonTypeRef, outputClause.getTypeRef());
     }
 
@@ -731,7 +735,7 @@ public class DecisionTableEditorDefinitionEnricherTest extends BaseDecisionTable
         when(age.getTypeRef()).thenReturn(NUMBER.asQName());
         when(age.getItemComponent()).thenReturn(emptyList());
 
-        when(tPerson.getName()).thenReturn(new Name("tPerson"));
+        when(tPerson.getName()).thenReturn(new Name(TYPE_PERSON));
         when(tPerson.getTypeRef()).thenReturn(null);
         when(tPerson.getItemComponent()).thenReturn(asList(name, age));
         return tPerson;
@@ -746,7 +750,7 @@ public class DecisionTableEditorDefinitionEnricherTest extends BaseDecisionTable
         final ItemDefinitionUtils itemDefinitionUtils = new ItemDefinitionUtils(mock(DMNGraphUtils.class));
         final DecisionTableEditorDefinitionEnricher enricher = new DecisionTableEditorDefinitionEnricher(null, null, itemDefinitionUtils);
 
-        when(tPerson.getName()).thenReturn(new Name("tPerson"));
+        when(tPerson.getName()).thenReturn(new Name(TYPE_PERSON));
         when(tPerson.getTypeRef()).thenReturn(null);
         when(tPerson.getItemComponent()).thenReturn(emptyList());
 
@@ -755,6 +759,6 @@ public class DecisionTableEditorDefinitionEnricherTest extends BaseDecisionTable
         assertEquals(1, inputClauseRequirements.size());
 
         assertEquals("InputData", inputClauseRequirements.get(0).text);
-        assertEquals("tPerson", inputClauseRequirements.get(0).typeRef.getLocalPart());
+        assertEquals(TYPE_PERSON, inputClauseRequirements.get(0).typeRef.getLocalPart());
     }
 }
