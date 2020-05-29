@@ -31,7 +31,6 @@ import java.util.function.Consumer;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-import javax.xml.XMLConstants;
 import javax.xml.namespace.QName;
 
 import elemental2.promise.Promise;
@@ -121,7 +120,6 @@ import org.kie.workbench.common.stunner.core.graph.content.view.View;
 import org.kie.workbench.common.stunner.core.graph.content.view.ViewConnector;
 import org.kie.workbench.common.stunner.core.graph.impl.EdgeImpl;
 import org.kie.workbench.common.stunner.core.util.DefinitionUtils;
-import org.kie.workbench.common.stunner.core.util.StringUtils;
 import org.kie.workbench.common.stunner.core.util.UUID;
 import org.uberfire.client.promise.Promises;
 
@@ -513,29 +511,6 @@ public class DMNMarshallerKogitoUnmarshaller {
                                                                                          element.getId())));
     }
 
-    private void updateIDsWithAlias(final Map<String, String> indexByUri,
-                                    final List<JSITDRGElement> importedDrgElements) {
-        if (importedDrgElements.isEmpty()) {
-            return;
-        }
-
-        final QName defaultNamespace = new QName(XMLConstants.NULL_NS_URI,
-                                                 "Namespace",
-                                                 XMLConstants.DEFAULT_NS_PREFIX);
-
-        for (int i = 0; i < importedDrgElements.size(); i++) {
-            final JSITDRGElement element = Js.uncheckedCast(importedDrgElements.get(i));
-            final Map<QName, String> otherAttributes = element.getOtherAttributes();
-            final String namespaceAttribute = otherAttributes.getOrDefault(defaultNamespace, "");
-            if (!StringUtils.isEmpty(namespaceAttribute)) {
-                if (indexByUri.containsKey(namespaceAttribute)) {
-                    final String alias = indexByUri.get(namespaceAttribute);
-                    changeAlias(alias, element);
-                }
-            }
-        }
-    }
-
     private void changeAlias(final String alias,
                              final JSITDRGElement drgElement) {
         if (drgElement.getId().contains(":")) {
@@ -565,10 +540,6 @@ public class DMNMarshallerKogitoUnmarshaller {
                                                                final JSITDefinitions dmnXml) {
 
         final List<JSITDRGElement> importedDRGElements = dmnMarshallerImportsHelper.getImportedDRGElements(importDefinitions);
-
-        // Update IDs with the alias used in this file for the respective imports
-        //  final Map<String, String> indexByUri = NameSpaceUtils.extractNamespacesKeyedByUri(dmnXml);
-        // updateIDsWithAlias(indexByUri, importedDRGElements);
 
         final List<JSITDRGElement> elements = new ArrayList<>();
         for (int i = 0; i < dmnShapes.size(); i++) {

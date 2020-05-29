@@ -43,10 +43,10 @@ public class KogitoResourceContentService extends org.kie.workbench.common.kogit
 
     @Override
     public void getFilteredItems(final String pattern,
-                                 final RemoteCallback<List<String>> callback,
+                                 final RemoteCallback<List<String>> successCallback,
                                  final ErrorCallback<Object> errorCallback) {
 
-        callback.callback(Arrays.asList(BASE_MODEL, MODEL_WITH_IMPORTS));
+        successCallback.callback(Arrays.asList(BASE_MODEL, MODEL_WITH_IMPORTS));
     }
 
     @Override
@@ -74,7 +74,7 @@ public class KogitoResourceContentService extends org.kie.workbench.common.kogit
         } else if (MODEL_WITH_IMPORTS.equals(fileUri)) {
             return Promise.resolve(DMNClientModels.MODEL_WITH_IMPORTS);
         } else {
-            return Promise.resolve("NOT FOUND!");
+            throw new IllegalStateException("The required file ('" + fileUri + "') is not defined.");
         }
     }
 }

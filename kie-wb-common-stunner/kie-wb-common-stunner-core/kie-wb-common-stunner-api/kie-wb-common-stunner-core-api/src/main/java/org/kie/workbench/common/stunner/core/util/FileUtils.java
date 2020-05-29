@@ -22,7 +22,7 @@ public class FileUtils {
     private static final char WINDOWS_SEPARATOR = '\\';
 
     /**
-     * Gets the file name without the Windows extension.
+     * Gets the file name without the file's extension.
      * @param fullName The file with full name.
      * @return The file name without the extension.
      */

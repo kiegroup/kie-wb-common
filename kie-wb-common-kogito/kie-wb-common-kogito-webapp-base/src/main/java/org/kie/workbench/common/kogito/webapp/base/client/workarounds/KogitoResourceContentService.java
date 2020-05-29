@@ -107,10 +107,25 @@ public class KogitoResourceContentService {
                 });
     }
 
-    public Promise<String[]> getFilteredItems(final String pattern, final ResourceListOptions options) {
+    /**
+     * Get <b>filtered</b> <code>List&lt;String&gt;</code> from the project/workspace where the editor is running
+     * and returns it in an Promise
+     *
+     * @param pattern A GLOB pattern to filter files. To list all files use "*"
+     * @param options The <code>ResourceListOptions</code> used to find the files
+     * @return A <code>Promise</code> with the files
+     */
+    public Promise<String[]> getFilteredItems(final String pattern,
+                                              final ResourceListOptions options) {
         return resourceContentService.list(pattern, options);
     }
 
+    /**
+     * Load the file at given <b>uri</code> and returns its content in an Promise
+     *
+     * @param fileUri The resource <b>uri</code> relative to the workspace/project or full path to the file
+     * @return The content of the file in an <code>Promise</code>
+     */
     public Promise<String> loadFile(final String fileUri) {
         return resourceContentService.get(fileUri);
     }
