@@ -45,7 +45,7 @@ import org.kie.workbench.common.stunner.bpmn.client.forms.fields.model.Notificat
 import org.kie.workbench.common.stunner.bpmn.client.forms.fields.notificationsEditor.event.NotificationEvent;
 import org.kie.workbench.common.stunner.bpmn.client.forms.util.ReflectionUtilsTest;
 import org.kie.workbench.common.stunner.core.client.i18n.ClientTranslationService;
-import org.powermock.modules.junit4.PowerMockRunner;
+import org.mockito.runners.MockitoJUnitRunner;
 import org.uberfire.ext.widgets.common.client.common.popups.BaseModal;
 import org.uberfire.ext.widgets.common.client.dropdown.LiveSearchDropDown;
 import org.uberfire.ext.widgets.common.client.dropdown.LiveSearchDropDownView;
@@ -60,14 +60,14 @@ import static org.kie.workbench.common.stunner.bpmn.client.forms.fields.model.No
 import static org.kie.workbench.common.stunner.bpmn.client.forms.fields.notificationsEditor.validation.ExpirationTypeOracle.PERIOD;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.doCallRealMethod;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.powermock.api.mockito.PowerMockito.doCallRealMethod;
-import static org.powermock.api.mockito.PowerMockito.doNothing;
-import static org.powermock.api.mockito.PowerMockito.mock;
 
-@RunWith(PowerMockRunner.class)
+@RunWith(MockitoJUnitRunner.class)
 public class NotificationEditorWidgetTest extends ReflectionUtilsTest {
 
     private NotificationEditorWidget presenter;
@@ -140,9 +140,7 @@ public class NotificationEditorWidgetTest extends ReflectionUtilsTest {
         multipleLiveSearchSelectionHandlerGroups = mock(MultipleLiveSearchSelectionHandler.class);
         notCompletedInput = mock(HTMLInputElement.class);
         notStartedInput = mock(HTMLInputElement.class);
-        incorrectEmail = mock(ParagraphElement.class);
 
-        doNothing().when(view).markEmailsAsCorrect();
         doNothing().when(modal).hide();
         doNothing().when(modal).show();
 
@@ -195,6 +193,7 @@ public class NotificationEditorWidgetTest extends ReflectionUtilsTest {
         doCallRealMethod().when(view).init(any(NotificationEditorWidgetView.Presenter.class));
 
         when(translationService.getValue(any(String.class))).thenReturn("Notification");
+
     }
 
     @Test
