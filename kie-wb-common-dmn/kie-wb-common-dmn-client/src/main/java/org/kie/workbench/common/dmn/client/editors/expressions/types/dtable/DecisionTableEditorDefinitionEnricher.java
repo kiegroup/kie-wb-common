@@ -154,14 +154,18 @@ public class DecisionTableEditorDefinitionEnricher implements ExpressionEditorMo
 
         if (outputClausesRequirement.isEmpty()) {
             dTable.getOutput().add(
-                    buildOutputClause(dTable, decisionRule, typeRef, name)
+                    buildOutputClause(dTable, typeRef, name)
             );
+            populateOutputEntries(decisionRule);
         } else {
             outputClausesRequirement
                     .stream()
                     .sorted(Comparator.comparing(outputClauseRequirement -> outputClauseRequirement.text))
-                    .map(outputClauseRequirement -> buildOutputClause(dTable, decisionRule, outputClauseRequirement.typeRef, outputClauseRequirement.text))
-                    .forEach(dTable.getOutput()::add);
+                    .map(outputClauseRequirement -> buildOutputClause(dTable, outputClauseRequirement.typeRef, outputClauseRequirement.text))
+                    .forEach(outputClause -> {
+                        dTable.getOutput().add(outputClause);
+                        populateOutputEntries(decisionRule);
+                    });
         }
     }
 
@@ -202,18 +206,19 @@ public class DecisionTableEditorDefinitionEnricher implements ExpressionEditorMo
                         .noneMatch(typeRefIsCustom(typeRef));
     }
 
-    private OutputClause buildOutputClause(final DecisionTable dtable, final DecisionRule decisionRule, final QName typeRef, final String text) {
+    private OutputClause buildOutputClause(final DecisionTable dtable, final QName typeRef, final String text) {
         final OutputClause outputClause = new OutputClause();
         outputClause.setName(text);
         outputClause.setTypeRef(typeRef);
         outputClause.setParent(dtable);
+        return outputClause;
+    }
 
+    private void populateOutputEntries(final DecisionRule decisionRule) {
         final LiteralExpression decisionRuleLiteralExpression = new LiteralExpression();
         decisionRuleLiteralExpression.getText().setValue(DecisionTableDefaultValueUtilities.OUTPUT_CLAUSE_EXPRESSION_TEXT);
         decisionRuleLiteralExpression.setParent(decisionRule);
         decisionRule.getOutputEntry().add(decisionRuleLiteralExpression);
-
-        return outputClause;
     }
 
     @SuppressWarnings("unchecked")
