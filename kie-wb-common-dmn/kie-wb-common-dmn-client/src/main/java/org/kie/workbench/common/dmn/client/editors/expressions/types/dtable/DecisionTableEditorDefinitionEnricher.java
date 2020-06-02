@@ -64,6 +64,7 @@ import org.kie.workbench.common.stunner.core.graph.Graph;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.definition.Definition;
 
+import static org.kie.workbench.common.dmn.api.editors.types.BuiltInTypeUtils.isBuiltInType;
 import static org.kie.workbench.common.dmn.api.property.dmn.QName.NULL_NS_URI;
 import static org.kie.workbench.common.dmn.api.property.dmn.types.BuiltInType.ANY;
 
@@ -170,7 +171,7 @@ public class DecisionTableEditorDefinitionEnricher implements ExpressionEditorMo
     }
 
     private List<ClauseRequirement> generateOutputClauseRequirements(final Definitions definitions, final QName typeRef, final String name) {
-        if (typeRefMatchesBuiltInType(typeRef)) {
+        if (isBuiltInType(typeRef.getLocalPart())) {
             return Collections.singletonList(new ClauseRequirement(name, typeRef));
         }
 
@@ -200,7 +201,7 @@ public class DecisionTableEditorDefinitionEnricher implements ExpressionEditorMo
     }
 
     private boolean typeRefDoesNotMatchAnyDefinition(final QName typeRef) {
-        return !typeRefMatchesBuiltInType(typeRef) &&
+        return !isBuiltInType(typeRef.getLocalPart()) &&
                 dmnGraphUtils.getDefinitions().getItemDefinition()
                         .stream()
                         .noneMatch(typeRefIsCustom(typeRef));
@@ -298,7 +299,7 @@ public class DecisionTableEditorDefinitionEnricher implements ExpressionEditorMo
                                            final List<ClauseRequirement> inputClauseRequirements,
                                            final String text) {
         //TypeRef matches a BuiltInType
-        if (typeRefMatchesBuiltInType(typeRef)) {
+        if (isBuiltInType(typeRef.getLocalPart())) {
             inputClauseRequirements.add(new ClauseRequirement(text, typeRef));
             return;
         }
@@ -323,17 +324,6 @@ public class DecisionTableEditorDefinitionEnricher implements ExpressionEditorMo
                                                                         inputClauseRequirements,
                                                                         text + "." + itemComponent.getName().getValue()));
         }
-    }
-
-    private boolean typeRefMatchesBuiltInType(final QName typeRef) {
-        for (BuiltInType bi : BuiltInType.values()) {
-            for (String biName : bi.getNames()) {
-                if (Objects.equals(biName, typeRef.getLocalPart())) {
-                    return true;
-                }
-            }
-        }
-        return false;
     }
 
     private Predicate<ItemDefinition> typeRefIsCustom(final QName typeRef) {
