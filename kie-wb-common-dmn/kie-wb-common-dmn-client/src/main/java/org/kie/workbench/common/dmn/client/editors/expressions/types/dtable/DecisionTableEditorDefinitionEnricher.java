@@ -327,7 +327,7 @@ public class DecisionTableEditorDefinitionEnricher implements ExpressionEditorMo
     }
 
     private Predicate<ItemDefinition> typeRefIsCustom(final QName typeRef) {
-        return itemDef -> itemDef.getName().getValue().equals(typeRef.getLocalPart());
+        return itemDef -> Objects.equals(itemDef.getName().getValue(), typeRef.getLocalPart());
     }
 
     private QName getQName(final ItemDefinition itemDefinition) {
