@@ -112,15 +112,14 @@ public class DMNMarshallerImportsHelperKogitoImpl implements DMNMarshallerImport
                 return promises.resolve(importDefinitions);
             });
         }
-        return promises.resolve(new HashMap<>());
+        return promises.resolve(Collections.emptyMap());
     }
 
     Promise<Map<String, JSITDefinitions>> loadDMNDefinitions() {
-
         return contentService.getFilteredItems(DMN_FILES_PATTERN, ResourceListOptions.assetFolder())
                 .then(list -> {
                     if (list.length == 0) {
-                        return promises.resolve(new HashMap<>());
+                        return promises.resolve(Collections.emptyMap());
                     } else {
                         final Map<String, JSITDefinitions> otherDefinitions = new ConcurrentHashMap<>();
                         return promises.all(Arrays.asList(list),
@@ -133,20 +132,18 @@ public class DMNMarshallerImportsHelperKogitoImpl implements DMNMarshallerImport
     @Override
     public void loadNodesFromModels(final List<DMNIncludedModel> includedModels,
                                     final ServiceCallback<List<DMNIncludedNode>> callback) {
-
         final List<DMNIncludedNode> result = new Vector<>();
         if (includedModels.isEmpty()) {
             callback.onSuccess(result);
+        } else {
+            loadDMNDefinitions()
+                    .then(existingDefinitions -> promises.all(includedModels, model -> loadNodes(existingDefinitions, model, result))
+                            .then(p ->
+                                  {
+                                      callback.onSuccess(result);
+                                      return promises.resolve();
+                                  }));
         }
-
-        loadDMNDefinitions()
-                .then(existingDefinitions ->
-                              promises.all(includedModels, model -> loadNodes(existingDefinitions, model, result))
-                                      .then(p ->
-                                            {
-                                                callback.onSuccess(result);
-                                                return promises.resolve();
-                                            }));
     }
 
     private Promise loadNodes(final Map<String, JSITDefinitions> existingDefinitions,
@@ -163,26 +160,27 @@ public class DMNMarshallerImportsHelperKogitoImpl implements DMNMarshallerImport
         final String path = filePath;
         return contentService.loadFile(path)
                 .then(content -> {
-                          diagramService.transform(content, new ServiceCallback<Diagram>() {
-                              @Override
-                              public void onSuccess(final Diagram item) {
-                                  final List<DMNIncludedNode> nodes = diagramUtils
-                                          .getDRGElements(item)
-                                          .stream()
-                                          .map(node -> includedModelFactory.makeDMNIncludeNode(path, model, node))
-                                          .collect(Collectors.toList());
+                    return promises.create((success, fail) -> {
+                        diagramService.transform(content, new ServiceCallback<Diagram>() {
+                            @Override
+                            public void onSuccess(final Diagram item) {
+                                final List<DMNIncludedNode> nodes = diagramUtils
+                                        .getDRGElements(item)
+                                        .stream()
+                                        .map(node -> includedModelFactory.makeDMNIncludeNode(path, model, node))
+                                        .collect(Collectors.toList());
+                                result.addAll(nodes);
+                                success.onInvoke(nodes);
+                            }
 
-                                  result.addAll(nodes);
-                              }
-
-                              @Override
-                              public void onError(final ClientRuntimeError error) {
-                                  LOGGER.log(Level.SEVERE, error.getMessage());
-                              }
-                          });
-                          return promises.resolve();
-                      }
-                );
+                            @Override
+                            public void onError(final ClientRuntimeError error) {
+                                LOGGER.log(Level.SEVERE, error.getMessage());
+                                fail.onInvoke(error);
+                            }
+                        });
+                    });
+                });
     }
 
     @Override
@@ -223,15 +221,15 @@ public class DMNMarshallerImportsHelperKogitoImpl implements DMNMarshallerImport
 
     Promise loadDefinitionFromFile(final String file,
                                    final Map<String, JSITDefinitions> otherDefinitions) {
-
         return contentService.loadFile(file)
-                .then((IThenable.ThenOnFulfilledCallbackFn<String, Void>) xml ->
-                        promises.create((success, failure) -> {
-                            if (!StringUtils.isEmpty(xml)) {
-                                final ServiceCallback<Object> callback = getCallback(file, otherDefinitions, success);
-                                diagramService.getDefinitions(xml, callback);
-                            }
-                        }));
+                .then((IThenable.ThenOnFulfilledCallbackFn<String, Void>) xml -> promises.create((success, failure) -> {
+                    if (!StringUtils.isEmpty(xml)) {
+                        final ServiceCallback<Object> callback = getCallback(file, otherDefinitions, success);
+                        diagramService.getDefinitions(xml, callback);
+                    } else {
+                        success.onInvoke(promises.resolve());
+                    }
+                }));
     }
 
     private ServiceCallback<Object> getCallback(final String filePath,
