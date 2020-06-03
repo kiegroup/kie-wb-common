@@ -71,6 +71,7 @@ import static org.kie.workbench.common.dmn.api.property.dmn.types.BuiltInType.AN
 @ApplicationScoped
 public class DecisionTableEditorDefinitionEnricher implements ExpressionEditorModelEnricher<DecisionTable> {
 
+    private static final String DOT_CHAR = ".";
     private SessionManager sessionManager;
     private DMNGraphUtils dmnGraphUtils;
     private ItemDefinitionUtils itemDefinitionUtils;
@@ -192,7 +193,7 @@ public class DecisionTableEditorDefinitionEnricher implements ExpressionEditorMo
 
     private ClauseRequirement definitionToClauseRequirementMapper(final ItemDefinition itemDefinition) {
         final QName typeRef = itemDefinition.getTypeRef();
-        final String name = itemDefinition.getName().getValue();
+        final String name = computeClauseName(itemDefinition);
 
         if (Objects.isNull(typeRef) || typeRefDoesNotMatchAnyDefinition(typeRef)) {
             return new ClauseRequirement(name, ANY.asQName());
@@ -322,8 +323,20 @@ public class DecisionTableEditorDefinitionEnricher implements ExpressionEditorMo
             itemDefinition.getItemComponent()
                     .forEach(itemComponent -> addInputClauseRequirement(itemComponent,
                                                                         inputClauseRequirements,
-                                                                        text + "." + itemComponent.getName().getValue()));
+                                                                        text + DOT_CHAR + computeClauseName(itemComponent)));
         }
+    }
+
+    String computeClauseName(final ItemDefinition itemComponent) {
+        final String originalName = itemComponent.getName().getValue();
+        String nameWithoutModelRef = originalName;
+        if (itemComponent.isImported()) {
+            final int positionOfLastDot = originalName.lastIndexOf(DOT_CHAR) + 1;
+            if (positionOfLastDot > 0 && positionOfLastDot != originalName.length()) {
+                nameWithoutModelRef = originalName.substring(positionOfLastDot);
+            }
+        }
+        return nameWithoutModelRef;
     }
 
     private Predicate<ItemDefinition> typeRefIsCustom(final QName typeRef) {

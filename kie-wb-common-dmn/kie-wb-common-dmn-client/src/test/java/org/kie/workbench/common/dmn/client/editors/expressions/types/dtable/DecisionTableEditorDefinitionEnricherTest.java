@@ -828,4 +828,44 @@ public class DecisionTableEditorDefinitionEnricherTest extends BaseDecisionTable
         assertEquals("InputData", inputClauseRequirements.get(0).text);
         assertEquals(TYPE_PERSON, inputClauseRequirements.get(0).typeRef.getLocalPart());
     }
+
+    @Test
+    public void testComputingClauseNameWithoutModelRef() {
+        final ItemDefinition itemComponent = new ItemDefinition();
+        itemComponent.setName(new Name("model.age"));
+        itemComponent.setAllowOnlyVisualChange(true);
+
+        assertEquals("age", new DecisionTableEditorDefinitionEnricher(null, null, null)
+                .computeClauseName(itemComponent));
+    }
+
+    @Test
+    public void testComputingClauseNameWithoutModelRefWhenModelRefHasMultipleLevels() {
+        final ItemDefinition itemComponent = new ItemDefinition();
+        itemComponent.setName(new Name("a.b.c.age"));
+        itemComponent.setAllowOnlyVisualChange(true);
+
+        assertEquals("age", new DecisionTableEditorDefinitionEnricher(null, null, null)
+                .computeClauseName(itemComponent));
+    }
+
+    @Test
+    public void testComputingClauseNameWithoutModelRefWhenModelRefAlreadyMissing() {
+        final ItemDefinition itemComponent = new ItemDefinition();
+        itemComponent.setName(new Name("age"));
+        itemComponent.setAllowOnlyVisualChange(true);
+
+        assertEquals("age", new DecisionTableEditorDefinitionEnricher(null, null, null)
+                .computeClauseName(itemComponent));
+    }
+
+    @Test
+    public void testComputingClauseNameWithoutModelRefWhenLocalPartEndsWithDot() {
+        final ItemDefinition itemComponent = new ItemDefinition();
+        itemComponent.setName(new Name("age."));
+        itemComponent.setAllowOnlyVisualChange(true);
+
+        assertEquals("age.", new DecisionTableEditorDefinitionEnricher(null, null, null)
+                .computeClauseName(itemComponent));
+    }
 }
