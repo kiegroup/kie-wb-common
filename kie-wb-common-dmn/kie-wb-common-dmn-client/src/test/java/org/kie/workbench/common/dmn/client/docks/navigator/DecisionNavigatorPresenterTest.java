@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Optional;
 
 import com.google.gwtmockito.GwtMockitoTestRunner;
+import org.appformer.client.context.EditorContextProvider;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.junit.Before;
 import org.junit.Test;
@@ -77,6 +78,9 @@ public class DecisionNavigatorPresenterTest {
     @Mock
     private TranslationService translationService;
 
+    @Mock
+    private EditorContextProvider context;
+
     private DecisionNavigatorPresenter presenter;
 
     @Before
@@ -87,7 +91,8 @@ public class DecisionNavigatorPresenterTest {
                                                        decisionNavigatorObserver,
                                                        navigatorChildrenTraverse,
                                                        itemFactory,
-                                                       translationService));
+                                                       translationService,
+                                                       context));
     }
 
     @Test

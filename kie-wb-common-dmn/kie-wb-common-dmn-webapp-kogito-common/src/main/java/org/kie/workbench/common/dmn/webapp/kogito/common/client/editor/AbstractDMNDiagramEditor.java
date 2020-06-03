@@ -15,6 +15,7 @@
  */
 package org.kie.workbench.common.dmn.webapp.kogito.common.client.editor;
 
+import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -24,6 +25,8 @@ import com.google.gwt.user.client.ui.IsWidget;
 import elemental2.dom.DomGlobal;
 import elemental2.dom.HTMLElement;
 import elemental2.promise.Promise;
+import org.appformer.client.context.Channel;
+import org.appformer.client.context.EditorContextProvider;
 import org.jboss.errai.common.client.ui.ElementWrapperWidget;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.kie.workbench.common.dmn.client.commands.general.NavigateToExpressionEditorCommand;
@@ -92,6 +95,8 @@ import org.uberfire.workbench.events.NotificationEvent;
 import org.uberfire.workbench.model.menu.Menus;
 
 import static elemental2.dom.DomGlobal.setTimeout;
+import static org.appformer.client.context.Channel.DEFAULT;
+import static org.appformer.client.context.Channel.VSCODE;
 
 public abstract class AbstractDMNDiagramEditor extends AbstractDiagramEditor {
 
@@ -119,6 +124,7 @@ public abstract class AbstractDMNDiagramEditor extends AbstractDiagramEditor {
     protected final Promises promises;
     protected final IncludedModelsPage includedModelsPage;
     protected final IncludedModelsPageStateProviderImpl importsPageProvider;
+    private final EditorContextProvider contextProvider;
 
     public AbstractDMNDiagramEditor(final View view,
                                     final FileMenuBuilder fileMenuBuilder,
@@ -151,7 +157,8 @@ public abstract class AbstractDMNDiagramEditor extends AbstractDiagramEditor {
                                     final CanvasFileExport canvasFileExport,
                                     final Promises promises,
                                     final IncludedModelsPage includedModelsPage,
-                                    final IncludedModelsPageStateProviderImpl importsPageProvider) {
+                                    final IncludedModelsPageStateProviderImpl importsPageProvider,
+                                    final EditorContextProvider contextProvider) {
         super(view,
               fileMenuBuilder,
               placeManager,
@@ -184,6 +191,7 @@ public abstract class AbstractDMNDiagramEditor extends AbstractDiagramEditor {
         this.promises = promises;
         this.includedModelsPage = includedModelsPage;
         this.importsPageProvider = importsPageProvider;
+        this.contextProvider = contextProvider;
     }
 
     @OnStartup
@@ -205,8 +213,10 @@ public abstract class AbstractDMNDiagramEditor extends AbstractDiagramEditor {
         superInitialiseKieEditorForSession(diagram);
 
         getWidget().getMultiPage().addPage(dataTypesPage);
-        getWidget().getMultiPage().addPage(includedModelsPage);
-
+        final Channel channel = contextProvider.getChannel();
+        if (Objects.equals(channel, DEFAULT) || Objects.equals(channel, VSCODE)) {
+            getWidget().getMultiPage().addPage(includedModelsPage);
+        }
         setupEditorSearchIndex();
         setupSearchComponent();
     }

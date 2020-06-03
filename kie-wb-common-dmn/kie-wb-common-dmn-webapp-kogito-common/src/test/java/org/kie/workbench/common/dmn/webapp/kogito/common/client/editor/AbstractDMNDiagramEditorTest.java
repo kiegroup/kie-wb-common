@@ -17,6 +17,7 @@ package org.kie.workbench.common.dmn.webapp.kogito.common.client.editor;
 
 import com.google.gwtmockito.GwtMockitoTestRunner;
 import elemental2.dom.HTMLElement;
+import org.appformer.client.context.EditorContextProvider;
 import org.jboss.errai.common.client.ui.ElementWrapperWidget;
 import org.junit.Before;
 import org.junit.Test;
@@ -245,6 +246,9 @@ public abstract class AbstractDMNDiagramEditorTest {
 
     @Mock
     protected IncludedModelsPageStateProviderImpl importsPageProvider;
+
+    @Mock
+    protected EditorContextProvider contextProvider;
 
     @Captor
     protected ArgumentCaptor<KogitoDiagramResourceImpl> kogitoDiagramResourceArgumentCaptor;

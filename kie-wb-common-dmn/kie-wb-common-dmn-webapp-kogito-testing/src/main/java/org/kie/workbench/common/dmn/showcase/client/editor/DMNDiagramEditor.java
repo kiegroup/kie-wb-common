@@ -23,6 +23,7 @@ import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
+import org.appformer.client.context.EditorContextProvider;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.kie.workbench.common.dmn.api.qualifiers.DMNEditor;
 import org.kie.workbench.common.dmn.client.docks.navigator.DecisionNavigatorDock;
@@ -130,7 +131,8 @@ public class DMNDiagramEditor extends AbstractDMNDiagramEditor {
                             final MonacoFEELInitializer feelInitializer,
                             final CanvasFileExport canvasFileExport,
                             final IncludedModelsPage includedModelsPage,
-                            final IncludedModelsPageStateProviderImpl importsPageProvider) {
+                            final IncludedModelsPageStateProviderImpl importsPageProvider,
+                            final EditorContextProvider contextProvider) {
         super(view,
               fileMenuBuilder,
               placeManager,
@@ -162,7 +164,8 @@ public class DMNDiagramEditor extends AbstractDMNDiagramEditor {
               canvasFileExport,
               promises,
               includedModelsPage,
-              importsPageProvider);
+              importsPageProvider,
+              contextProvider);
         this.notificationEvent = notificationEvent;
         this.vfsService = vfsService;
     }

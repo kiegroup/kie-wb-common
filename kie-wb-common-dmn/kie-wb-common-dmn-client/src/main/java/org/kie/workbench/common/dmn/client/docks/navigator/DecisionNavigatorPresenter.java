@@ -17,6 +17,7 @@
 package org.kie.workbench.common.dmn.client.docks.navigator;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
 
@@ -25,6 +26,8 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
+import org.appformer.client.context.Channel;
+import org.appformer.client.context.EditorContextProvider;
 import org.jboss.errai.ui.client.local.api.elemental2.IsElement;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.kie.workbench.common.dmn.client.docks.navigator.events.RefreshDecisionComponents;
@@ -47,6 +50,8 @@ import org.uberfire.workbench.model.Position;
 
 import static java.util.Collections.emptyList;
 import static java.util.Optional.ofNullable;
+import static org.appformer.client.context.Channel.DEFAULT;
+import static org.appformer.client.context.Channel.VSCODE;
 import static org.kie.workbench.common.dmn.client.resources.i18n.DMNEditorConstants.DecisionNavigatorPresenter_DecisionNavigator;
 
 @ApplicationScoped
@@ -71,6 +76,8 @@ public class DecisionNavigatorPresenter {
 
     private CanvasHandler handler;
 
+    private EditorContextProvider context;
+
     protected DecisionNavigatorPresenter() {
         //CDI proxy
     }
@@ -82,7 +89,8 @@ public class DecisionNavigatorPresenter {
                                       final DecisionNavigatorObserver decisionNavigatorObserver,
                                       final DecisionNavigatorChildrenTraverse navigatorChildrenTraverse,
                                       final DecisionNavigatorItemFactory itemFactory,
-                                      final TranslationService translationService) {
+                                      final TranslationService translationService,
+                                      final EditorContextProvider context) {
         this.view = view;
         this.treePresenter = treePresenter;
         this.decisionComponents = decisionComponents;
@@ -90,6 +98,7 @@ public class DecisionNavigatorPresenter {
         this.navigatorChildrenTraverse = navigatorChildrenTraverse;
         this.itemFactory = itemFactory;
         this.translationService = translationService;
+        this.context = context;
     }
 
     @WorkbenchPartView
@@ -175,8 +184,13 @@ public class DecisionNavigatorPresenter {
 
     void setupView() {
         view.setupMainTree(treePresenter.getView());
-        view.showDecisionComponentsContainer();
-        view.setupDecisionComponents(decisionComponents.getView());
+        final Channel channel = context.getChannel();
+        if (Objects.equals(channel, VSCODE) || Objects.equals(channel, DEFAULT)) {
+            view.showDecisionComponentsContainer();
+            view.setupDecisionComponents(decisionComponents.getView());
+        } else {
+            view.hideDecisionComponentsContainer();
+        }
     }
 
     public void refreshTreeView() {
