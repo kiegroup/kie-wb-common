@@ -15,6 +15,8 @@
  */
 package org.kie.workbench.common.stunner.bpmn.definition.property.task;
 
+import java.util.Objects;
+
 import org.jboss.errai.common.client.api.annotations.Portable;
 import org.jboss.errai.databinding.client.api.Bindable;
 import org.kie.workbench.common.forms.adf.definitions.annotations.metaModel.FieldDefinition;
@@ -32,34 +34,34 @@ public class RuleFlowGroup implements BPMNProperty {
 
     @Value
     @FieldValue
-    private String value;
+    private String name;
 
     public RuleFlowGroup() {
         this("");
     }
 
-    public RuleFlowGroup(final String value) {
-        this.value = value;
+    public RuleFlowGroup(final String name) {
+        this.name = name;
     }
 
-    public String getValue() {
-        return value;
+    public String getName() {
+        return name;
     }
 
-    public void setValue(final String value) {
-        this.value = value;
+    public void setName(final String name) {
+        this.name = name;
     }
 
     @Override
     public int hashCode() {
-        return (null != value) ? value.hashCode() : 0;
+        return (null != name) ? name.hashCode() : 0;
     }
 
     @Override
     public boolean equals(Object o) {
         if (o instanceof RuleFlowGroup) {
             RuleFlowGroup other = (RuleFlowGroup) o;
-            return (null != value) ? value.equals(other.value) : null == other.value;
+            return Objects.equals(name, other.name);
         }
         return false;
     }

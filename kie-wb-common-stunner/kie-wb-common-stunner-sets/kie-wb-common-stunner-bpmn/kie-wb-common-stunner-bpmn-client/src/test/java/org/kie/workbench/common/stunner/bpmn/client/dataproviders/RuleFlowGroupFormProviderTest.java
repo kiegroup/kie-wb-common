@@ -25,6 +25,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.forms.dynamic.model.config.SelectorData;
 import org.kie.workbench.common.forms.dynamic.service.shared.FormRenderingContext;
+import org.kie.workbench.common.stunner.bpmn.definition.property.task.RuleFlowGroup;
 import org.kie.workbench.common.stunner.bpmn.forms.dataproviders.RequestRuleFlowGroupDataEvent;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -32,7 +33,6 @@ import org.uberfire.mocks.EventSourceMock;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -63,17 +63,21 @@ public class RuleFlowGroupFormProviderTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void testGetSelectorData() {
-        List<String> names = Arrays.asList("g1", "g2", "g3");
-        when(dataProvider.getRuleFlowGroupNames()).thenReturn(names);
+        RuleFlowGroup group1 = new RuleFlowGroup("g1");
+        RuleFlowGroup group2 = new RuleFlowGroup("g2");
+        RuleFlowGroup group3 = new RuleFlowGroup("g3");
+        List<RuleFlowGroup> groups = Arrays.asList(group1, group2, group3);
+        when(dataProvider.getRuleFlowGroupNames()).thenReturn(groups);
         FormRenderingContext context = mock(FormRenderingContext.class);
         SelectorData data = tested.getSelectorData(context);
-        Map values = data.getValues();
+        Map<String, String> values = data.getValues();
         assertNotNull(values);
         assertEquals(3, values.size());
-        assertTrue(values.containsKey("g1"));
-        assertTrue(values.containsKey("g2"));
-        assertTrue(values.containsKey("g3"));
+        assertEquals(group1.getName(), values.get(group1.getName()));
+        assertEquals(group2.getName(), values.get(group2.getName()));
+        assertEquals(group3.getName(), values.get(group3.getName()));
         verify(requestRuleFlowGroupDataEvent, times(1)).fire(any(RequestRuleFlowGroupDataEvent.class));
     }
 }

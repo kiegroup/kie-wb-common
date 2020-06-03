@@ -27,6 +27,7 @@ import javax.inject.Inject;
 import org.kie.workbench.common.forms.dynamic.model.config.SelectorData;
 import org.kie.workbench.common.forms.dynamic.model.config.SelectorDataProvider;
 import org.kie.workbench.common.forms.dynamic.service.shared.FormRenderingContext;
+import org.kie.workbench.common.stunner.bpmn.definition.property.task.RuleFlowGroup;
 import org.kie.workbench.common.stunner.bpmn.forms.dataproviders.RequestRuleFlowGroupDataEvent;
 
 @Dependent
@@ -50,7 +51,8 @@ public class RuleFlowGroupFormProvider implements SelectorDataProvider {
         return new SelectorData(toMap(dataProvider.getRuleFlowGroupNames()), null);
     }
 
-    private static Map<String, String> toMap(final Iterable<String> items) {
-        return StreamSupport.stream(items.spliterator(), false).collect(Collectors.toMap(s -> s, s -> s));
+    // Map<T, String> is not supported by ListBoxValue which is used for ComboBox widget
+    private static Map<String, String> toMap(final Iterable<RuleFlowGroup> items) {
+        return StreamSupport.stream(items.spliterator(), false).collect(Collectors.toMap(RuleFlowGroup::getName, RuleFlowGroup::getName));
     }
 }
