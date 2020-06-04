@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Optional;
 
 import com.google.gwtmockito.GwtMockitoTestRunner;
+import org.appformer.client.context.Channel;
 import org.appformer.client.context.EditorContextProvider;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.junit.Before;
@@ -130,11 +131,37 @@ public class DecisionNavigatorPresenterTest {
     }
 
     @Test
-    public void testSetupView() {
+    public void testSetupViewWhenChannelIsVSCodeOrDefault() {
+        testSetupViewWhenDecisionComponentsContainerIsVisible(Channel.VSCODE);
+        testSetupViewWhenDecisionComponentsContainerIsVisible(Channel.DEFAULT);
+    }
 
+    @Test
+    public void testSetupViewWhenChannelIsNotVSCodeOrDefault() {
+        testSetupViewWhenDecisionComponentsContainerIsNotVisible(Channel.GITHUB);
+        testSetupViewWhenDecisionComponentsContainerIsNotVisible(Channel.ONLINE);
+        testSetupViewWhenDecisionComponentsContainerIsNotVisible(Channel.DESKTOP);
+    }
+
+    private void testSetupViewWhenDecisionComponentsContainerIsNotVisible(final Channel channel) {
         final DecisionNavigatorTreePresenter.View treeView = mock(DecisionNavigatorTreePresenter.View.class);
         final DecisionComponents.View decisionComponentsView = mock(DecisionComponents.View.class);
+        when(context.getChannel()).thenReturn(channel);
+        when(treePresenter.getView()).thenReturn(treeView);
+        when(decisionComponents.getView()).thenReturn(decisionComponentsView);
 
+        presenter.setupView();
+
+        verify(view).setupMainTree(treeView);
+        verify(view, never()).showDecisionComponentsContainer();
+        verify(view, never()).setupDecisionComponents(decisionComponentsView);
+        verify(view).hideDecisionComponentsContainer();
+    }
+
+    private void testSetupViewWhenDecisionComponentsContainerIsVisible(final Channel channel) {
+        final DecisionNavigatorTreePresenter.View treeView = mock(DecisionNavigatorTreePresenter.View.class);
+        final DecisionComponents.View decisionComponentsView = mock(DecisionComponents.View.class);
+        when(context.getChannel()).thenReturn(channel);
         when(treePresenter.getView()).thenReturn(treeView);
         when(decisionComponents.getView()).thenReturn(decisionComponentsView);
 
@@ -143,6 +170,7 @@ public class DecisionNavigatorPresenterTest {
         verify(view).setupMainTree(treeView);
         verify(view).showDecisionComponentsContainer();
         verify(view).setupDecisionComponents(decisionComponentsView);
+        verify(view, never()).hideDecisionComponentsContainer();
     }
 
     @Test
