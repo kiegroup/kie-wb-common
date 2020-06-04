@@ -16,9 +16,8 @@
 
 package org.kie.workbench.common.stunner.bpmn.client.dataproviders;
 
+import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Event;
@@ -53,6 +52,52 @@ public class RuleFlowGroupFormProvider implements SelectorDataProvider {
 
     // Map<T, String> is not supported by ListBoxValue which is used for ComboBox widget
     private static Map<String, String> toMap(final Iterable<RuleFlowGroup> items) {
-        return StreamSupport.stream(items.spliterator(), false).collect(Collectors.toMap(RuleFlowGroup::getName, RuleFlowGroup::getName));
+        Map<String, String> result = new HashMap<>();
+        for (RuleFlowGroup rfg : items) {
+            if (result.containsKey(rfg.getName())) {
+                result.put(rfg.getName(), addProjectToDescription(result.get(rfg.getName()), rfg));
+            } else {
+                result.put(rfg.getName(), getGroupDescription(rfg));
+            }
+        }
+        return result;
+    }
+
+    private static String addProjectToDescription(String description, RuleFlowGroup rfg) {
+        String project = getProjectFromPath(rfg.getPathUri());
+        return description.replace("]", "," + project + "]");
+    }
+
+    private static String getGroupDescription(RuleFlowGroup rfg) {
+        return rfg.getName() + " [" + getSpaceAndProjectFromPath(rfg.getPathUri()) + "]";
+    }
+
+    private static String getSpaceAndProjectFromPath(String path) {
+        return getSpaceFromPath(path) + " " + getProjectFromPath(path);
+    }
+
+    private static String getSpaceFromPath(String path) {
+        String clearedPath = dropFileSystemAndGitBranchFromPath(path);
+        return clearedPath.substring(0, getIndexOfFileSeparator(path) - 1);
+    }
+
+    private static String dropFileSystemAndGitBranchFromPath(String path) {
+        return path.substring(path.indexOf('@') + 1);
+    }
+
+    private static String getProjectFromPath(String path) {
+        String clearedPath = dropFileSystemAndGitBranchFromPath(path);
+        //Drop space
+        String pathAfterSpace = clearedPath.substring(getIndexOfFileSeparator(clearedPath) + 1);
+        return pathAfterSpace.substring(0, getIndexOfFileSeparator(pathAfterSpace));
+    }
+
+    // GWT compatible way to get fileseparation for Windows/Unix
+    private static int getIndexOfFileSeparator(String string) {
+        int index = string.indexOf('/');
+        if (index == -1) {
+            return string.indexOf('\\');
+        }
+        return index;
     }
 }

@@ -65,19 +65,22 @@ public class RuleFlowGroupFormProviderTest {
     @Test
     @SuppressWarnings("unchecked")
     public void testGetSelectorData() {
+        //default://master@MySpace/Project1/src/main/resources/com/myspace/project1/RulesFile.rdrl
         RuleFlowGroup group1 = new RuleFlowGroup("g1");
+        group1.setPathUri("default://master@MySpace/Project1/src/main/resources/com/myspace/project1/RulesFile.rdrl");
         RuleFlowGroup group2 = new RuleFlowGroup("g2");
-        RuleFlowGroup group3 = new RuleFlowGroup("g3");
+        group2.setPathUri("default://master@MySpace/Project1/src/main/resources/com/myspace/RulesFile2.rdrl".replace('/', '\\'));
+        RuleFlowGroup group3 = new RuleFlowGroup("g1");
+        group3.setPathUri("default://master@MySpace/Project2/src/main/resources/com/myspace/project1/RulesFile.rdrl");
         List<RuleFlowGroup> groups = Arrays.asList(group1, group2, group3);
         when(dataProvider.getRuleFlowGroupNames()).thenReturn(groups);
         FormRenderingContext context = mock(FormRenderingContext.class);
         SelectorData data = tested.getSelectorData(context);
         Map<String, String> values = data.getValues();
         assertNotNull(values);
-        assertEquals(3, values.size());
-        assertEquals(group1.getName(), values.get(group1.getName()));
-        assertEquals(group2.getName(), values.get(group2.getName()));
-        assertEquals(group3.getName(), values.get(group3.getName()));
+        assertEquals(2, values.size());
+        assertEquals("g2 [MySpace Project1]", values.get(group2.getName()));
+        assertEquals("g1 [MySpace Project1,Project2]", values.get(group1.getName()));
         verify(requestRuleFlowGroupDataEvent, times(1)).fire(any(RequestRuleFlowGroupDataEvent.class));
     }
 }
