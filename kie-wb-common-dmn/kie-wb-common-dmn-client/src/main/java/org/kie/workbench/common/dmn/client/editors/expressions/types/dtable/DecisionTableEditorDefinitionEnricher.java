@@ -358,10 +358,8 @@ public class DecisionTableEditorDefinitionEnricher implements ExpressionEditorMo
     }
 
     void enrichOutputClauses(final DecisionTable dtable) {
-        if (dtable.getParent() instanceof ContextEntry) {
+        if (dtable.getParent() instanceof ContextEntry && dtable.getOutput().isEmpty()) {
             final ContextEntry contextEntry = (ContextEntry) dtable.getParent();
-            dtable.getOutput().clear();
-            dtable.getRule().stream().forEach(decisionRule -> decisionRule.getOutputEntry().clear());
 
             final OutputClause outputClause = new OutputClause();
             outputClause.setName(getOutputClauseName(contextEntry).orElse(DecisionTableDefaultValueUtilities.getNewOutputClauseName(dtable)));
