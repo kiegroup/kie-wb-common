@@ -56,6 +56,7 @@ public class DataObject extends BaseArtifacts {
     @Labels
     private static final Set<String> labels = new Sets.Builder<String>()
             .add("all")
+            .add("lane_child")
             .build();
 
     protected BPMNGeneralSet general;
