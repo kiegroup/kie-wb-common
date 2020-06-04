@@ -17,7 +17,6 @@
 package org.kie.workbench.common.stunner.bpmn.project.backend.service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Event;
@@ -42,8 +41,7 @@ public class RuleFlowGroupDataService {
     }
 
     public List<RuleFlowGroup> getRuleFlowGroupNames() {
-        final List<String> groupNames = queryService.getRuleFlowGroupNames();
-        return groupNames.stream().map(RuleFlowGroup::new).collect(Collectors.toList());
+        return queryService.getRuleFlowGroupNames();
     }
 
     void onRequestRuleFlowGroupDataEvent(@Observes final RequestRuleFlowGroupDataEvent event) {

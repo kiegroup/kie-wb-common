@@ -36,6 +36,10 @@ public class RuleFlowGroup implements BPMNProperty {
     @FieldValue
     private String name;
 
+    private String fileName;
+
+    private String pathUri;
+
     public RuleFlowGroup() {
         this("");
     }
@@ -50,6 +54,22 @@ public class RuleFlowGroup implements BPMNProperty {
 
     public void setName(final String name) {
         this.name = name;
+    }
+
+    public String getFileName() {
+        return fileName;
+    }
+
+    public void setFileName(final String fileName) {
+        this.fileName = fileName;
+    }
+
+    public String getPathUri() {
+        return pathUri;
+    }
+
+    public void setPathUri(final String pathUri) {
+        this.pathUri = pathUri;
     }
 
     @Override

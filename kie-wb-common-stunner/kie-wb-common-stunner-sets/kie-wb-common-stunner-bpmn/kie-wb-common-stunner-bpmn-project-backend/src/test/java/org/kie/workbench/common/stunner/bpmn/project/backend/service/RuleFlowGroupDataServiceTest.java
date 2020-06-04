@@ -52,7 +52,9 @@ public class RuleFlowGroupDataServiceTest {
 
     @Before
     public void setUp() {
-        when(queryService.getRuleFlowGroupNames()).thenReturn(Arrays.asList("g1", "g2"));
+        RuleFlowGroup group1 = new RuleFlowGroup("g1");
+        RuleFlowGroup group2 = new RuleFlowGroup("g2");
+        when(queryService.getRuleFlowGroupNames()).thenReturn(Arrays.asList(group1, group2));
         tested = new RuleFlowGroupDataService(queryService, dataChangedEvent);
     }
 
