@@ -47,6 +47,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.kie.workbench.common.dmn.client.resources.i18n.DMNEditorConstants.DecisionNavigatorPresenter_DecisionNavigator;
+import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -155,7 +156,7 @@ public class DecisionNavigatorPresenterTest {
         verify(view).setupMainTree(treeView);
         verify(view, never()).showDecisionComponentsContainer();
         verify(view, never()).setupDecisionComponents(decisionComponentsView);
-        verify(view).hideDecisionComponentsContainer();
+        verify(view, atLeastOnce()).hideDecisionComponentsContainer();
     }
 
     private void testSetupViewWhenDecisionComponentsContainerIsVisible(final Channel channel) {
@@ -168,8 +169,8 @@ public class DecisionNavigatorPresenterTest {
         presenter.setupView();
 
         verify(view).setupMainTree(treeView);
-        verify(view).showDecisionComponentsContainer();
-        verify(view).setupDecisionComponents(decisionComponentsView);
+        verify(view, atLeastOnce()).showDecisionComponentsContainer();
+        verify(view, atLeastOnce()).setupDecisionComponents(decisionComponentsView);
         verify(view, never()).hideDecisionComponentsContainer();
     }
 
