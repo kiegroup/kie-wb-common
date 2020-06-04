@@ -39,6 +39,7 @@ import org.kie.workbench.common.dmn.api.definition.model.DecisionRule;
 import org.kie.workbench.common.dmn.api.definition.model.DecisionTable;
 import org.kie.workbench.common.dmn.api.definition.model.DecisionTableOrientation;
 import org.kie.workbench.common.dmn.api.definition.model.Definitions;
+import org.kie.workbench.common.dmn.api.definition.model.FunctionDefinition;
 import org.kie.workbench.common.dmn.api.definition.model.HitPolicy;
 import org.kie.workbench.common.dmn.api.definition.model.InformationItem;
 import org.kie.workbench.common.dmn.api.definition.model.InputClause;
@@ -148,7 +149,7 @@ public class DecisionTableEditorDefinitionEnricher implements ExpressionEditorMo
     }
 
     void buildOutputClausesByDataType(final HasExpression hasExpression, final DecisionTable dTable, final DecisionRule decisionRule) {
-        final HasTypeRef hasTypeRef = TypeRefUtils.getTypeRefOfExpression(dTable, hasExpression);
+        final HasTypeRef hasTypeRef = getHasTypeRef(hasExpression, dTable);
         final QName typeRef = !Objects.isNull(hasTypeRef) ? hasTypeRef.getTypeRef() : BuiltInType.UNDEFINED.asQName();
         final String name = DecisionTableDefaultValueUtilities.getNewOutputClauseName(dTable);
 
@@ -169,6 +170,16 @@ public class DecisionTableEditorDefinitionEnricher implements ExpressionEditorMo
                         populateOutputEntries(decisionRule);
                     });
         }
+    }
+
+    private HasTypeRef getHasTypeRef(final HasExpression hasExpression, final DecisionTable dTable) {
+        if (hasExpression instanceof FunctionDefinition) {
+            final DMNModelInstrumentedBase parent = hasExpression.asDMNModelInstrumentedBase().getParent();
+            if (parent instanceof HasVariable) {
+                return ((HasVariable) parent).getVariable();
+            }
+        }
+        return TypeRefUtils.getTypeRefOfExpression(dTable, hasExpression);
     }
 
     private List<ClauseRequirement> generateOutputClauseRequirements(final Definitions definitions, final QName typeRef, final String name) {

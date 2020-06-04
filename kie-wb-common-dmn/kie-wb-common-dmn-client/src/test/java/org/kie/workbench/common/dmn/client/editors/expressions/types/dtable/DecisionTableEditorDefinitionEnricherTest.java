@@ -27,13 +27,16 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.dmn.api.definition.HasExpression;
+import org.kie.workbench.common.dmn.api.definition.model.BusinessKnowledgeModel;
 import org.kie.workbench.common.dmn.api.definition.model.Context;
 import org.kie.workbench.common.dmn.api.definition.model.ContextEntry;
 import org.kie.workbench.common.dmn.api.definition.model.DMNDiagram;
+import org.kie.workbench.common.dmn.api.definition.model.DMNModelInstrumentedBase;
 import org.kie.workbench.common.dmn.api.definition.model.Decision;
 import org.kie.workbench.common.dmn.api.definition.model.DecisionRule;
 import org.kie.workbench.common.dmn.api.definition.model.DecisionTable;
 import org.kie.workbench.common.dmn.api.definition.model.Definitions;
+import org.kie.workbench.common.dmn.api.definition.model.FunctionDefinition;
 import org.kie.workbench.common.dmn.api.definition.model.InformationItem;
 import org.kie.workbench.common.dmn.api.definition.model.InformationItemPrimary;
 import org.kie.workbench.common.dmn.api.definition.model.InputClause;
@@ -512,6 +515,34 @@ public class DecisionTableEditorDefinitionEnricherTest extends BaseDecisionTable
         when(decision.asDMNModelInstrumentedBase()).thenReturn(contextEntry);
 
         definition.enrich(Optional.empty(), decision, oModel);
+
+        final DecisionTable model = oModel.get();
+        assertBasicEnrichment(model);
+        assertStandardInputClauseEnrichment(model);
+
+        final List<OutputClause> output = model.getOutput();
+        assertThat(output.size()).isEqualTo(1);
+        assertThat(output.get(0).getName()).isEqualTo(DEFAULT_OUTPUT_NAME);
+        assertThat(output.get(0).getTypeRef()).isEqualTo(OUTPUT_DATA_QNAME);
+
+        assertStandardDecisionRuleEnrichment(model);
+        assertParentHierarchyEnrichment(model);
+    }
+
+    @Test
+    public void testModelEnrichmentWhenParentIsBKM() {
+        final FunctionDefinition functionDefinition = mock(FunctionDefinition.class);
+        final DMNModelInstrumentedBase dmnModelInstrumentedBase = mock(DMNModelInstrumentedBase.class);
+        final BusinessKnowledgeModel businessKnowledgeModel = new BusinessKnowledgeModel();
+        businessKnowledgeModel.setVariable(new InformationItemPrimary(new Id(), new Name(), OUTPUT_DATA_QNAME));
+        businessKnowledgeModel.setEncapsulatedLogic(functionDefinition);
+
+        final Optional<DecisionTable> oModel = definition.getModelClass();
+        oModel.get().setParent(functionDefinition);
+        when(functionDefinition.asDMNModelInstrumentedBase()).thenReturn(dmnModelInstrumentedBase);
+        when(dmnModelInstrumentedBase.getParent()).thenReturn(businessKnowledgeModel);
+
+        definition.enrich(Optional.empty(), functionDefinition, oModel);
 
         final DecisionTable model = oModel.get();
         assertBasicEnrichment(model);
