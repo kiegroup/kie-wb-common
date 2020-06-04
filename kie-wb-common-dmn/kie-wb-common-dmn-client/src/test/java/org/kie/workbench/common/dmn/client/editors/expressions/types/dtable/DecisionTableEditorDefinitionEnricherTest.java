@@ -498,6 +498,7 @@ public class DecisionTableEditorDefinitionEnricherTest extends BaseDecisionTable
 
     @Test
     public void testModelEnrichmentWhenParentIsContextEntry() {
+        final Decision decision = mock(Decision.class);
         final String name = "context-entry";
         final Context context = new Context();
         final ContextEntry contextEntry = new ContextEntry();
@@ -508,6 +509,7 @@ public class DecisionTableEditorDefinitionEnricherTest extends BaseDecisionTable
         oModel.get().setParent(contextEntry);
         contextEntry.setParent(context);
         context.setParent(decision);
+        when(decision.asDMNModelInstrumentedBase()).thenReturn(contextEntry);
 
         definition.enrich(Optional.empty(), decision, oModel);
 
@@ -517,7 +519,7 @@ public class DecisionTableEditorDefinitionEnricherTest extends BaseDecisionTable
 
         final List<OutputClause> output = model.getOutput();
         assertThat(output.size()).isEqualTo(1);
-        assertThat(output.get(0).getName()).isEqualTo(name);
+        assertThat(output.get(0).getName()).isEqualTo(DEFAULT_OUTPUT_NAME);
         assertThat(output.get(0).getTypeRef()).isEqualTo(OUTPUT_DATA_QNAME);
 
         assertStandardDecisionRuleEnrichment(model);
@@ -548,7 +550,7 @@ public class DecisionTableEditorDefinitionEnricherTest extends BaseDecisionTable
 
         final List<OutputClause> output = model.getOutput();
         assertThat(output.size()).isEqualTo(1);
-        assertThat(output.get(0).getName()).isEqualTo(name);
+        assertThat(output.get(0).getName()).isEqualTo(DEFAULT_OUTPUT_NAME);
         assertThat(output.get(0).getTypeRef()).isEqualTo(OUTPUT_DATA_QNAME);
 
         assertStandardDecisionRuleEnrichment(model);
@@ -557,8 +559,8 @@ public class DecisionTableEditorDefinitionEnricherTest extends BaseDecisionTable
 
     @Test
     public void testModelEnrichmentWhenParentIsNestedContextEntryDefaultResult() {
+        final Decision decision = mock(Decision.class);
         final String name = "context-entry";
-
         final Context innerContext = new Context();
         final ContextEntry innerContextEntry = new ContextEntry();
         innerContext.getContextEntry().add(innerContextEntry);
@@ -572,6 +574,7 @@ public class DecisionTableEditorDefinitionEnricherTest extends BaseDecisionTable
         outerContext.setParent(decision);
 
         outerContextEntry.setVariable(new InformationItem(new Id(), new Description(), new Name(name), OUTPUT_DATA_QNAME));
+        when(decision.asDMNModelInstrumentedBase()).thenReturn(outerContextEntry);
 
         final Optional<DecisionTable> oModel = definition.getModelClass();
         oModel.get().setParent(innerContextEntry);
@@ -584,7 +587,7 @@ public class DecisionTableEditorDefinitionEnricherTest extends BaseDecisionTable
 
         final List<OutputClause> output = model.getOutput();
         assertThat(output.size()).isEqualTo(1);
-        assertThat(output.get(0).getName()).isEqualTo(name);
+        assertThat(output.get(0).getName()).isEqualTo(DEFAULT_OUTPUT_NAME);
         assertThat(output.get(0).getTypeRef()).isEqualTo(OUTPUT_DATA_QNAME);
 
         assertStandardDecisionRuleEnrichment(model);
