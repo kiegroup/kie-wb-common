@@ -53,8 +53,10 @@ public class RuleFlowGroupDataProviderTest {
 
     @Test
     public void testOnRuleFlowGroupDataChanged() {
+        RuleFlowGroup group1 = new RuleFlowGroup("g1");
+        RuleFlowGroup group2 = new RuleFlowGroup("g2");
         RuleFlowGroupDataEvent event = mock(RuleFlowGroupDataEvent.class);
-        when(event.getGroupNames()).thenReturn(new String[]{"g1", "g2"});
+        when(event.getGroups()).thenReturn(new RuleFlowGroup[]{group1, group2});
         tested.onRuleFlowGroupDataChanged(event);
         verify(formsHandler, times(1)).refreshCurrentSessionForms(eq(BPMNDefinitionSet.class));
         List<RuleFlowGroup> values = tested.getRuleFlowGroupNames();
@@ -71,7 +73,7 @@ public class RuleFlowGroupDataProviderTest {
         tested.groups.add(group1);
         tested.groups.add(group2);
         RuleFlowGroupDataEvent event = mock(RuleFlowGroupDataEvent.class);
-        when(event.getGroupNames()).thenReturn(new String[]{"g1", "g2"});
+        when(event.getGroups()).thenReturn(new RuleFlowGroup[]{group1, group2});
         tested.onRuleFlowGroupDataChanged(event);
         verify(formsHandler, never()).refreshCurrentSessionForms(any(Class.class));
     }

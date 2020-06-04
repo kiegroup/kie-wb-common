@@ -53,7 +53,7 @@ public class RuleFlowGroupDataProvider {
     }
 
     void onRuleFlowGroupDataChanged(final @Observes RuleFlowGroupDataEvent event) {
-        setRuleFlowGroupNames(toList(event.getGroupNames()));
+        setRuleFlowGroupNames(toList(event.getGroups()));
     }
 
     private void setRuleFlowGroupNames(final List<RuleFlowGroup> groups) {
@@ -64,7 +64,7 @@ public class RuleFlowGroupDataProvider {
         }
     }
 
-    private static List<RuleFlowGroup> toList(final String[] s) {
-        return stream(s).map(RuleFlowGroup::new).collect(Collectors.toList());
+    private static List<RuleFlowGroup> toList(final RuleFlowGroup[] s) {
+        return stream(s).collect(Collectors.toList());
     }
 }

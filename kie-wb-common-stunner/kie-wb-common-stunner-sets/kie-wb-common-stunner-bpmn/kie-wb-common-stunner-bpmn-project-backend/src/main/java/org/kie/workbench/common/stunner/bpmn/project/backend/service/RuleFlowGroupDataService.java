@@ -17,12 +17,14 @@
 package org.kie.workbench.common.stunner.bpmn.project.backend.service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
+import org.kie.workbench.common.stunner.bpmn.definition.property.task.RuleFlowGroup;
 import org.kie.workbench.common.stunner.bpmn.forms.dataproviders.RequestRuleFlowGroupDataEvent;
 import org.kie.workbench.common.stunner.bpmn.forms.dataproviders.RuleFlowGroupDataEvent;
 
@@ -39,8 +41,9 @@ public class RuleFlowGroupDataService {
         this.dataChangedEvent = dataChangedEvent;
     }
 
-    public List<String> getRuleFlowGroupNames() {
-        return queryService.getRuleFlowGroupNames();
+    public List<RuleFlowGroup> getRuleFlowGroupNames() {
+        final List<String> groupNames = queryService.getRuleFlowGroupNames();
+        return groupNames.stream().map(RuleFlowGroup::new).collect(Collectors.toList());
     }
 
     void onRequestRuleFlowGroupDataEvent(@Observes final RequestRuleFlowGroupDataEvent event) {
@@ -48,7 +51,8 @@ public class RuleFlowGroupDataService {
     }
 
     void fireData() {
-        final List<String> groupNames = getRuleFlowGroupNames();
-        dataChangedEvent.fire(new RuleFlowGroupDataEvent(groupNames.toArray(new String[groupNames.size()])));
+        // TODO Can we send List directly?
+        final RuleFlowGroup[] groupNames = getRuleFlowGroupNames().toArray(new RuleFlowGroup[0]);
+        dataChangedEvent.fire(new RuleFlowGroupDataEvent(groupNames));
     }
 }
