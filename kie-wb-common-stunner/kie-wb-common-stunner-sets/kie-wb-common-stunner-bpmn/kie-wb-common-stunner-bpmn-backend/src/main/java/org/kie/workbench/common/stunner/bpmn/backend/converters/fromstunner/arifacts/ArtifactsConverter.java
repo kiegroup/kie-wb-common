@@ -27,6 +27,7 @@ import org.kie.workbench.common.stunner.bpmn.definition.TextAnnotation;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.BPMNGeneralSet;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
+import org.kie.workbench.common.stunner.core.util.StringUtils;
 
 import static org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.Factories.bpmn2;
 
@@ -70,7 +71,7 @@ public class ArtifactsConverter {
         DataObjectPropertyWriter writer = propertyWriterFactory.of(element);
 
         DataObject definition = node.getContent().getDefinition();
-        writer.setName(definition.getName().getValue());
+        writer.setName(StringUtils.replaceIllegalCharsForDataObjects(StringUtils.replaceIllegalCharsAttribute(definition.getName().getValue())));
         writer.setType(definition.getType().getValue().getType());
         writer.setAbsoluteBounds(node);
 

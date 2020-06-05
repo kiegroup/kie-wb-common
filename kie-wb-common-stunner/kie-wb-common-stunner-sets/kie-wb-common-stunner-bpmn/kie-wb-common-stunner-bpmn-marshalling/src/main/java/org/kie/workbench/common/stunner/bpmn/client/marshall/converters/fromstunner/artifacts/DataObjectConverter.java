@@ -24,6 +24,7 @@ import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.util.Con
 import org.kie.workbench.common.stunner.bpmn.definition.DataObject;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
+import org.kie.workbench.common.stunner.core.util.StringUtils;
 
 import static org.kie.workbench.common.stunner.bpmn.client.marshall.converters.fromstunner.Factories.bpmn2;
 
@@ -44,9 +45,8 @@ public class DataObjectConverter {
             DataObjectPropertyWriter writer = propertyWriterFactory.of(element);
 
             DataObject definition = node.getContent().getDefinition();
-
             // this is where the logic needs to go in
-            writer.setName(definition.getName().getValue());
+            writer.setName(StringUtils.replaceIllegalCharsForDataObjects(StringUtils.replaceIllegalCharsAttribute(definition.getName().getValue())));
             writer.setType(definition.getType().getValue().getType());
             writer.setAbsoluteBounds(node);
             return writer;

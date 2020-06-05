@@ -22,6 +22,7 @@ import org.apache.commons.lang3.StringEscapeUtils;
 import org.eclipse.bpmn2.DataObject;
 import org.eclipse.bpmn2.DataObjectReference;
 import org.eclipse.bpmn2.ItemDefinition;
+import org.kie.workbench.common.stunner.core.util.StringUtils;
 
 import static org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.Factories.bpmn2;
 
@@ -42,7 +43,7 @@ public class DataObjectPropertyWriter extends PropertyWriter {
 
     @Override
     public void setName(String value) {
-        final String escaped = StringEscapeUtils.escapeXml10(value.trim());
+        final String escaped = StringUtils.replaceIllegalCharsAttribute(value.trim());
         dataObject.setName(escaped);
         dataObject.setId(escaped);
     }

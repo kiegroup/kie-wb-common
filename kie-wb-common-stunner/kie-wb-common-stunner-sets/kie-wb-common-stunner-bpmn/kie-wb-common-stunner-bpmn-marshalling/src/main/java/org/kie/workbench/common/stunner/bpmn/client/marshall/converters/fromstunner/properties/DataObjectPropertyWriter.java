@@ -18,10 +18,10 @@ package org.kie.workbench.common.stunner.bpmn.client.marshall.converters.fromstu
 
 import java.util.Set;
 
-import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import org.eclipse.bpmn2.DataObject;
 import org.eclipse.bpmn2.DataObjectReference;
 import org.eclipse.bpmn2.ItemDefinition;
+import org.kie.workbench.common.stunner.core.util.StringUtils;
 
 import static org.kie.workbench.common.stunner.bpmn.client.marshall.converters.fromstunner.Factories.bpmn2;
 
@@ -43,7 +43,7 @@ public class DataObjectPropertyWriter extends PropertyWriter {
 
     @Override
     public void setName(String value) {
-        final String escaped = SafeHtmlUtils.htmlEscape(value.trim());
+        final String escaped = StringUtils.replaceIllegalCharsAttribute(value.trim());
         dataObject.setName(escaped);
         dataObject.setId(escaped);
     }
