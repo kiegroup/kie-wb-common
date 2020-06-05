@@ -37,8 +37,9 @@ public class DataObjectTest {
 
     @Test
     public void getLabels() {
-        assertEquals(1, dataObject.getLabels().size());
-        assertEquals("all", dataObject.getLabels().iterator().next());
+        assertEquals(2, dataObject.getLabels().size());
+        assertEquals(true, dataObject.getLabels().contains("all"));
+        assertEquals(true, dataObject.getLabels().contains("lane_child"));
     }
 
     @Test
