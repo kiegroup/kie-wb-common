@@ -18,7 +18,6 @@ package org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.pro
 
 import java.util.Set;
 
-import org.apache.commons.lang3.StringEscapeUtils;
 import org.eclipse.bpmn2.DataObject;
 import org.eclipse.bpmn2.DataObjectReference;
 import org.eclipse.bpmn2.ItemDefinition;
