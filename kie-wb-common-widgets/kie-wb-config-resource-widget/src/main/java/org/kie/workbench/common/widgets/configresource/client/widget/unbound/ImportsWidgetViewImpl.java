@@ -81,6 +81,25 @@ public class ImportsWidgetViewImpl
 
     private boolean isReadOnly = false;
 
+    final ButtonCell deleteImportButton = new ButtonCell(IconType.TRASH,
+                                                         ButtonType.DANGER,
+                                                         ButtonSize.SMALL);
+    final Column<Import, String> deleteImportColumn = new Column<Import, String>(deleteImportButton) {
+        @Override
+        public String getValue(final Import importType) {
+            return ImportConstants.INSTANCE.remove();
+        }
+
+        @Override
+        public void render(final Cell.Context context,
+                           final Import object,
+                           final SafeHtmlBuilder sb) {
+            if (!BuiltInTypeImportHelper.isBuiltIn(object)) {
+                super.render(context, object, sb);
+            }
+        }
+    };
+
     public ImportsWidgetViewImpl() {
         //CDI proxy
     }
@@ -114,24 +133,6 @@ public class ImportsWidgetViewImpl
             }
         };
 
-        final ButtonCell deleteImportButton = new ButtonCell(IconType.TRASH,
-                                                             ButtonType.DANGER,
-                                                             ButtonSize.SMALL);
-        final Column<Import, String> deleteImportColumn = new Column<Import, String>(deleteImportButton) {
-            @Override
-            public String getValue(final Import importType) {
-                return ImportConstants.INSTANCE.remove();
-            }
-
-            @Override
-            public void render(final Cell.Context context,
-                               final Import object,
-                               final SafeHtmlBuilder sb) {
-                if (!BuiltInTypeImportHelper.isBuiltIn(object)) {
-                    super.render(context, object, sb);
-                }
-            }
-        };
         deleteImportColumn.setFieldUpdater((index, importType, value) -> {
             if (isReadOnly) {
                 return;
@@ -191,6 +192,7 @@ public class ImportsWidgetViewImpl
             getDataProvider().getList().add(importType);
             getDataProvider().getList().sort(Sorters.sortByFQCN());
             lockRequired.fire(new LockRequiredEvent());
+            updateRenderedColumns();
         };
     }
 
@@ -203,6 +205,7 @@ public class ImportsWidgetViewImpl
             getDataProvider().getList().remove(i);
             getDataProvider().getList().sort(Sorters.sortByFQCN());
             lockRequired.fire(new LockRequiredEvent());
+            updateRenderedColumns();
         };
     }
 
@@ -212,5 +215,20 @@ public class ImportsWidgetViewImpl
 
     ListDataProvider<Import> getDataProvider() {
         return dataProvider;
+    }
+
+    @Override
+    public void updateRenderedColumns() {
+        final boolean isAtLeastOneImportRemovable = getDataProvider().getList()
+                .stream()
+                .anyMatch(iType -> !BuiltInTypeImportHelper.isBuiltIn(iType));
+
+        final int columnCount = table.getColumnCount();
+        if (isAtLeastOneImportRemovable && columnCount == 1) {
+            table.addColumn(deleteImportColumn,
+                            ImportConstants.INSTANCE.remove());
+        } else if (!isAtLeastOneImportRemovable && columnCount > 1) {
+            table.removeColumn(deleteImportColumn);
+        }
     }
 }

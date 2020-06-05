@@ -68,6 +68,7 @@ public class ImportsWidgetPresenterTest {
         verify(view,
                times(1)).setContent(importsArgumentCaptor.capture(),
                                     eq(false));
+        verify(view).updateRenderedColumns();
 
         final List<Import> importsArgument = importsArgumentCaptor.getValue();
 
