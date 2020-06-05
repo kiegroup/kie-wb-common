@@ -17,13 +17,11 @@ package org.kie.workbench.common.widgets.decoratedgrid.client.widget;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.Date;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import org.kie.workbench.common.services.shared.preferences.ApplicationPreferences;
 import org.kie.workbench.common.widgets.client.datamodel.AsyncPackageDataModelOracle;
-import org.kie.workbench.common.widgets.decoratedgrid.client.widget.cells.PopupDateEditCell;
 import org.kie.workbench.common.widgets.decoratedgrid.client.widget.cells.PopupNumericBigDecimalEditCell;
 import org.kie.workbench.common.widgets.decoratedgrid.client.widget.cells.PopupNumericBigIntegerEditCell;
 import org.kie.workbench.common.widgets.decoratedgrid.client.widget.cells.PopupNumericByteEditCell;
@@ -34,6 +32,7 @@ import org.kie.workbench.common.widgets.decoratedgrid.client.widget.cells.PopupN
 import org.kie.workbench.common.widgets.decoratedgrid.client.widget.cells.PopupNumericLongEditCell;
 import org.kie.workbench.common.widgets.decoratedgrid.client.widget.cells.PopupNumericShortEditCell;
 import org.kie.workbench.common.widgets.decoratedgrid.client.widget.cells.PopupTextEditCell;
+import org.kie.workbench.common.widgets.decoratedgrid.client.widget.cells.PopupUniversalDateEditCell;
 import org.uberfire.ext.widgets.table.client.CheckboxCellImpl;
 
 /**
@@ -42,7 +41,7 @@ import org.uberfire.ext.widgets.table.client.CheckboxCellImpl;
 public abstract class AbstractCellFactory<T> {
 
     protected final String DROOLS_DATE_FORMAT = ApplicationPreferences.getDroolsDateFormat();
-    protected final DateTimeFormat DATE_FORMAT = DateTimeFormat.getFormat( DROOLS_DATE_FORMAT );
+    protected final DateTimeFormat DATE_FORMAT = DateTimeFormat.getFormat(DROOLS_DATE_FORMAT);
 
     protected final AsyncPackageDataModelOracle oracle;
 
@@ -59,18 +58,18 @@ public abstract class AbstractCellFactory<T> {
      * @param isReadOnly Should cells be created for a read-only mode of operation
      * @param eventBus EventBus to which cells can send update events
      */
-    public AbstractCellFactory( final AsyncPackageDataModelOracle oracle,
-                                final CellTableDropDownDataValueMapProvider dropDownManager,
-                                final boolean isReadOnly,
-                                final EventBus eventBus ) {
-        if ( oracle == null ) {
-            throw new IllegalArgumentException( "oracle cannot be null" );
+    public AbstractCellFactory(final AsyncPackageDataModelOracle oracle,
+                               final CellTableDropDownDataValueMapProvider dropDownManager,
+                               final boolean isReadOnly,
+                               final EventBus eventBus) {
+        if (oracle == null) {
+            throw new IllegalArgumentException("oracle cannot be null");
         }
-        if ( dropDownManager == null ) {
-            throw new IllegalArgumentException( "dropDownManager cannot be null" );
+        if (dropDownManager == null) {
+            throw new IllegalArgumentException("dropDownManager cannot be null");
         }
-        if ( eventBus == null ) {
-            throw new IllegalArgumentException( "eventBus cannot be null" );
+        if (eventBus == null) {
+            throw new IllegalArgumentException("eventBus cannot be null");
         }
         this.oracle = oracle;
         this.dropDownManager = dropDownManager;
@@ -83,78 +82,79 @@ public abstract class AbstractCellFactory<T> {
      * @param column The Decision Table model column
      * @return A Cell
      */
-    public abstract DecoratedGridCellValueAdaptor<? extends Comparable<?>> getCell( T column );
+    public abstract DecoratedGridCellValueAdaptor<? extends Comparable<?>> getCell(T column);
 
     // Make a new Cell for Boolean columns
     protected DecoratedGridCellValueAdaptor<Boolean> makeBooleanCell() {
-        return new DecoratedGridCellValueAdaptor<Boolean>( new CheckboxCellImpl( isReadOnly ),
-                                                           eventBus );
+        return new DecoratedGridCellValueAdaptor<>(new CheckboxCellImpl(isReadOnly),
+                                                   eventBus);
     }
 
-    // Make a new Cell for Date columns
-    protected DecoratedGridCellValueAdaptor<Date> makeDateCell() {
-        return new DecoratedGridCellValueAdaptor<Date>(new PopupDateEditCell(isReadOnly),
-                                                       eventBus);
+    /**
+     * Make a new Cell for Date or LocalDate columns
+     */
+    protected DecoratedGridCellValueAdaptor<String> makeUniversalDateCell() {
+        return new DecoratedGridCellValueAdaptor<>(new PopupUniversalDateEditCell(isReadOnly),
+                                                   eventBus);
     }
 
     // Make a new Cell for Numeric columns
     protected DecoratedGridCellValueAdaptor<BigDecimal> makeNumericCell() {
-        return new DecoratedGridCellValueAdaptor<BigDecimal>( new PopupNumericEditCell( isReadOnly ),
-                                                              eventBus );
+        return new DecoratedGridCellValueAdaptor<>(new PopupNumericEditCell(isReadOnly),
+                                                   eventBus);
     }
 
     // Make a new Cell for BigDecimal columns
     protected DecoratedGridCellValueAdaptor<BigDecimal> makeNumericBigDecimalCell() {
-        return new DecoratedGridCellValueAdaptor<BigDecimal>( new PopupNumericBigDecimalEditCell( isReadOnly ),
-                                                              eventBus );
+        return new DecoratedGridCellValueAdaptor<>(new PopupNumericBigDecimalEditCell(isReadOnly),
+                                                   eventBus);
     }
 
     // Make a new Cell for BigInteger columns
     protected DecoratedGridCellValueAdaptor<BigInteger> makeNumericBigIntegerCell() {
-        return new DecoratedGridCellValueAdaptor<BigInteger>( new PopupNumericBigIntegerEditCell( isReadOnly ),
-                                                              eventBus );
+        return new DecoratedGridCellValueAdaptor<>(new PopupNumericBigIntegerEditCell(isReadOnly),
+                                                   eventBus);
     }
 
     // Make a new Cell for Byte columns
     protected DecoratedGridCellValueAdaptor<Byte> makeNumericByteCell() {
-        return new DecoratedGridCellValueAdaptor<Byte>( new PopupNumericByteEditCell( isReadOnly ),
-                                                        eventBus );
+        return new DecoratedGridCellValueAdaptor<>(new PopupNumericByteEditCell(isReadOnly),
+                                                   eventBus);
     }
 
     // Make a new Cell for Double columns
     protected DecoratedGridCellValueAdaptor<Double> makeNumericDoubleCell() {
-        return new DecoratedGridCellValueAdaptor<Double>( new PopupNumericDoubleEditCell( isReadOnly ),
-                                                          eventBus );
+        return new DecoratedGridCellValueAdaptor<>(new PopupNumericDoubleEditCell(isReadOnly),
+                                                   eventBus);
     }
 
     // Make a new Cell for Float columns
     protected DecoratedGridCellValueAdaptor<Float> makeNumericFloatCell() {
-        return new DecoratedGridCellValueAdaptor<Float>( new PopupNumericFloatEditCell( isReadOnly ),
-                                                         eventBus );
+        return new DecoratedGridCellValueAdaptor<>(new PopupNumericFloatEditCell(isReadOnly),
+                                                   eventBus);
     }
 
     // Make a new Cell for Integer columns
     protected DecoratedGridCellValueAdaptor<Integer> makeNumericIntegerCell() {
-        return new DecoratedGridCellValueAdaptor<Integer>( new PopupNumericIntegerEditCell( isReadOnly ),
-                                                           eventBus );
+        return new DecoratedGridCellValueAdaptor<>(new PopupNumericIntegerEditCell(isReadOnly),
+                                                   eventBus);
     }
 
     // Make a new Cell for Long columns
     protected DecoratedGridCellValueAdaptor<Long> makeNumericLongCell() {
-        return new DecoratedGridCellValueAdaptor<Long>( new PopupNumericLongEditCell( isReadOnly ),
-                                                        eventBus );
+        return new DecoratedGridCellValueAdaptor<>(new PopupNumericLongEditCell(isReadOnly),
+                                                   eventBus);
     }
 
     // Make a new Cell for Short columns
     protected DecoratedGridCellValueAdaptor<Short> makeNumericShortCell() {
-        return new DecoratedGridCellValueAdaptor<Short>( new PopupNumericShortEditCell( isReadOnly ),
-                                                         eventBus );
+        return new DecoratedGridCellValueAdaptor<>(new PopupNumericShortEditCell(isReadOnly),
+                                                   eventBus);
     }
 
     // Make a new Cell for a Text columns
     protected DecoratedGridCellValueAdaptor<String> makeTextCell() {
-        return new DecoratedGridCellValueAdaptor<String>( new PopupTextEditCell( isReadOnly ),
-                                                          eventBus );
+        return new DecoratedGridCellValueAdaptor<>(new PopupTextEditCell(isReadOnly),
+                                                   eventBus);
     }
-
 }

@@ -326,21 +326,6 @@ public abstract class AbstractMergableGridWidget<M, T> extends Widget
         }
     }
 
-    //Check whether two values are equal or both null
-    private boolean equalOrNull(Object o1,
-                                Object o2) {
-        if (o1 == null && o2 == null) {
-            return true;
-        }
-        if (o1 != null && o2 == null) {
-            return false;
-        }
-        if (o1 == null && o2 != null) {
-            return false;
-        }
-        return o1.equals(o2);
-    }
-
     // Given a base row find the maximum row that needs to be re-rendered based
     // upon each columns merged cells; where each merged cell passes through the
     // base row
@@ -1137,9 +1122,6 @@ public abstract class AbstractMergableGridWidget<M, T> extends Widget
         //Move source columns and data to destination
         if (targetColumnIndex > sourceColumnIndex) {
             for (int iCol = 0; iCol < numberOfColumns; iCol++) {
-//                this.data.addColumn( targetColumnIndex,
-//                                     this.data.removeColumn( sourceColumnIndex ),
-//                                     this.columns.get( sourceColumnIndex ).isVisible() );
                 this.columns.add(targetColumnIndex,
                                  this.columns.remove(sourceColumnIndex));
                 this.data.moveColumn(sourceColumnIndex,
@@ -1147,9 +1129,6 @@ public abstract class AbstractMergableGridWidget<M, T> extends Widget
             }
         } else if (targetColumnIndex < sourceColumnIndex) {
             for (int iCol = 0; iCol < numberOfColumns; iCol++) {
-//                this.data.addColumn( targetColumnIndex,
-//                                     this.data.removeColumn( sourceColumnIndex ),
-//                                     this.columns.get( sourceColumnIndex ).isVisible() );
                 this.columns.add(targetColumnIndex,
                                  this.columns.remove(sourceColumnIndex));
                 this.data.moveColumn(sourceColumnIndex,

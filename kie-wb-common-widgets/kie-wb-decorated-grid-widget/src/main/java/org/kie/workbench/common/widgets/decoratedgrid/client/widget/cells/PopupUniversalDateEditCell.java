@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2020 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,23 +20,20 @@ import java.util.Date;
 import com.google.gwt.cell.client.ValueUpdater;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.text.shared.SafeHtmlRenderer;
-import com.google.gwt.user.client.ui.PopupPanel.PositionCallback;
 import org.uberfire.ext.widgets.common.client.common.DatePicker;
 
 import static org.kie.workbench.common.widgets.client.util.TimeZoneUtils.FORMATTER;
 
 /**
- * A Popup Date Editor.
+ * A Popup Date Editor used in Guided Rule Template Editor if date (Date or LocalDate) needs to be shown on 'Data' tab
  */
-public class PopupDateEditCell extends AbstractPopupEditCell<Date, Date> {
+public class PopupUniversalDateEditCell extends AbstractPopupEditCell<String, String> {
 
     private final DatePicker datePicker;
 
-    public PopupDateEditCell(final boolean isReadOnly) {
+    public PopupUniversalDateEditCell(final boolean isReadOnly) {
 
         super(isReadOnly);
 
@@ -50,48 +47,39 @@ public class PopupDateEditCell extends AbstractPopupEditCell<Date, Date> {
         panel.addAutoHidePartner(datePicker.getElement());
 
         // Hide the panel and call valueUpdater.update when a date is selected
-        datePicker.addValueChangeHandler(new ValueChangeHandler<Date>() {
-            @Override
-            public void onValueChange(final ValueChangeEvent<Date> event) {
-                Date date = datePicker.getValue();
-                setValue(lastContext,
-                         lastParent,
-                         date);
-                if (valueUpdater != null) {
-                    valueUpdater.update(date);
-                }
-                panel.hide();
-            }
+        datePicker.addValueChangeHandler(event -> {
+            internalCommit();
         });
 
         vPanel.add(datePicker);
     }
 
     @Override
-    public void render(Context context,
-                       Date value,
-                       SafeHtmlBuilder sb) {
+    public void render(final Context context,
+                       final String value,
+                       final SafeHtmlBuilder sb) {
         if (value != null) {
-            sb.append(getRenderer().render(FORMATTER.format(value)));
+            sb.append(getRenderer().render(value));
         }
     }
 
     // Commit the change
     @Override
     protected void commit() {
-        final Date date = convertToServerTimeZone(getDatePicker().getValue());
-        setValue(lastContext,
-                 lastParent,
-                 date);
-
-        if (getValueUpdater() != null) {
-            getValueUpdater().update(date);
-        }
-        panel.hide();
+        internalCommit();
     }
 
-    Date convertToServerTimeZone(final Date value) {
-        return value;
+    void internalCommit() {
+        final Date date = getDatePicker().getValue();
+        final String sDate = (date == null ? null : FORMATTER.format(date));
+        setValue(lastContext,
+                 lastParent,
+                 sDate);
+
+        if (getValueUpdater() != null) {
+            getValueUpdater().update(sDate);
+        }
+        panel.hide();
     }
 
     // Start editing the cell
@@ -99,30 +87,24 @@ public class PopupDateEditCell extends AbstractPopupEditCell<Date, Date> {
     @SuppressWarnings("deprecation")
     protected void startEditing(final Context context,
                                 final Element parent,
-                                final Date value) {
+                                final String value) {
 
+        Date date = value == null || value.isEmpty() ? null : FORMATTER.parse(value);
         // Default date
-        Date date = value;
-        if (value == null) {
-            Date d = new Date();
-            int year = d.getYear();
-            int month = d.getMonth();
-            int dom = d.getDate();
+        if (date == null) {
+            final Date d = new Date();
+            final int year = d.getYear();
+            final int month = d.getMonth();
+            final int dom = d.getDate();
             date = new Date(year,
                             month,
                             dom);
         }
         getDatePicker().setValue(date);
 
-        panel.setPopupPositionAndShow(new PositionCallback() {
-            public void setPosition(int offsetWidth,
-                                    int offsetHeight) {
-                panel.setPopupPosition(parent.getAbsoluteLeft()
-                                               + offsetX,
-                                       parent.getAbsoluteTop()
-                                               + offsetY);
-            }
-        });
+        panel.setPopupPositionAndShow((offsetWidth, offsetHeight) ->
+                                              panel.setPopupPosition(parent.getAbsoluteLeft() + offsetX,
+                                                                     parent.getAbsoluteTop() + offsetY));
     }
 
     String getPattern() {
@@ -133,7 +115,7 @@ public class PopupDateEditCell extends AbstractPopupEditCell<Date, Date> {
         return datePicker;
     }
 
-    ValueUpdater<Date> getValueUpdater() {
+    ValueUpdater<String> getValueUpdater() {
         return valueUpdater;
     }
 
