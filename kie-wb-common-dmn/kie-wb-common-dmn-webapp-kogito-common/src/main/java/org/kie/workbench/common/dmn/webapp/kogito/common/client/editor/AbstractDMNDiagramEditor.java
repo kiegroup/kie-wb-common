@@ -124,7 +124,7 @@ public abstract class AbstractDMNDiagramEditor extends AbstractDiagramEditor {
     protected final Promises promises;
     protected final IncludedModelsPage includedModelsPage;
     protected final IncludedModelsPageStateProviderImpl importsPageProvider;
-    private final EditorContextProvider contextProvider;
+    protected final EditorContextProvider contextProvider;
 
     public AbstractDMNDiagramEditor(final View view,
                                     final FileMenuBuilder fileMenuBuilder,

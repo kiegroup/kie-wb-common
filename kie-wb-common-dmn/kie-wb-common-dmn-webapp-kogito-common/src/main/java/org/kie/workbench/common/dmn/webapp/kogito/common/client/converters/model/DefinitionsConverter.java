@@ -111,7 +111,7 @@ public class DefinitionsConverter {
         return result;
     }
 
-    public static JSITDefinitions dmnFromWB(final Definitions wb) {
+    public static JSITDefinitions dmnFromWB(final Definitions wb, final boolean ignoreImportedItemDefinition) {
         if (Objects.isNull(wb)) {
             return null;
         }
@@ -156,6 +156,11 @@ public class DefinitionsConverter {
             result.setItemDefinition(new ArrayList<>());
         }
         for (ItemDefinition itemDef : wb.getItemDefinition()) {
+            if (ignoreImportedItemDefinition) {
+                if (itemDef.isAllowOnlyVisualChange()) {
+                    continue;
+                }
+            }
             final JSITItemDefinition itemDefConverted = ItemDefinitionPropertyConverter.dmnFromWB(itemDef);
             result.addItemDefinition(itemDefConverted);
         }

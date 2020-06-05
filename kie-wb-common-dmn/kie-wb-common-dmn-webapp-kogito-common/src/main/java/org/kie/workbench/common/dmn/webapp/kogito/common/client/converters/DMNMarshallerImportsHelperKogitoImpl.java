@@ -35,7 +35,6 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.xml.namespace.QName;
 
-import elemental2.promise.IThenable;
 import elemental2.promise.Promise;
 import jsinterop.base.Js;
 import org.appformer.kogito.bridge.client.resource.interop.ResourceListOptions;
@@ -147,9 +146,9 @@ public class DMNMarshallerImportsHelperKogitoImpl implements DMNMarshallerImport
         }
     }
 
-    private Promise loadNodes(final Map<String, JSITDefinitions> existingDefinitions,
-                              final DMNIncludedModel model,
-                              final List<DMNIncludedNode> result) {
+    private Promise<List<DMNIncludedNode>> loadNodes(final Map<String, JSITDefinitions> existingDefinitions,
+                                                     final DMNIncludedModel model,
+                                                     final List<DMNIncludedNode> result) {
         String filePath = "";
         for (final Map.Entry<String, JSITDefinitions> entry : existingDefinitions.entrySet()) {
             filePath = entry.getKey();
@@ -160,28 +159,26 @@ public class DMNMarshallerImportsHelperKogitoImpl implements DMNMarshallerImport
         }
         final String path = filePath;
         return contentService.loadFile(path)
-                .then(content -> {
-                    return promises.create((success, fail) -> {
-                        diagramService.transform(content, new ServiceCallback<Diagram>() {
-                            @Override
-                            public void onSuccess(final Diagram item) {
-                                final List<DMNIncludedNode> nodes = diagramUtils
-                                        .getDRGElements(item)
-                                        .stream()
-                                        .map(node -> includedModelFactory.makeDMNIncludeNode(path, model, node))
-                                        .collect(Collectors.toList());
-                                result.addAll(nodes);
-                                success.onInvoke(nodes);
-                            }
+                .then(content -> promises.create((success, fail) -> {
+                    diagramService.transform(content, new ServiceCallback<Diagram>() {
+                        @Override
+                        public void onSuccess(final Diagram item) {
+                            final List<DMNIncludedNode> nodes = diagramUtils
+                                    .getDRGElements(item)
+                                    .stream()
+                                    .map(node -> includedModelFactory.makeDMNIncludeNode(path, model, node))
+                                    .collect(Collectors.toList());
+                            result.addAll(nodes);
+                            success.onInvoke(nodes);
+                        }
 
-                            @Override
-                            public void onError(final ClientRuntimeError error) {
-                                LOGGER.log(Level.SEVERE, error.getMessage());
-                                fail.onInvoke(error);
-                            }
-                        });
+                        @Override
+                        public void onError(final ClientRuntimeError error) {
+                            LOGGER.log(Level.SEVERE, error.getMessage());
+                            fail.onInvoke(error);
+                        }
                     });
-                });
+                }));
     }
 
     @Override
@@ -220,10 +217,10 @@ public class DMNMarshallerImportsHelperKogitoImpl implements DMNMarshallerImport
                 }));
     }
 
-    Promise loadDefinitionFromFile(final String file,
-                                   final Map<String, JSITDefinitions> otherDefinitions) {
+    Promise<Void> loadDefinitionFromFile(final String file,
+                                         final Map<String, JSITDefinitions> otherDefinitions) {
         return contentService.loadFile(file)
-                .then((IThenable.ThenOnFulfilledCallbackFn<String, Void>) xml -> promises.create((success, failure) -> {
+                .then(xml -> promises.create((success, failure) -> {
                     if (!StringUtils.isEmpty(xml)) {
                         final ServiceCallback<Object> callback = getCallback(file, otherDefinitions, success);
                         diagramService.getDefinitions(xml, callback);

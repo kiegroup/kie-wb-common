@@ -33,9 +33,6 @@ public abstract class KogitoKieAssetsDropdown extends AbstractKieAssetsDropdown 
 
     public interface View extends AbstractKieAssetsDropdown.View,
                                   IsElement {
-
-        void enableInputMode();
-
         void enableDropdownMode();
     }
 }

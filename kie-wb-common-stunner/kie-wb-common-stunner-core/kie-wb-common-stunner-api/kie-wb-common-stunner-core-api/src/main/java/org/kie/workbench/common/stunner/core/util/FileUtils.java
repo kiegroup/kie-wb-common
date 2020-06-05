@@ -16,6 +16,8 @@
 
 package org.kie.workbench.common.stunner.core.util;
 
+import static org.kie.workbench.common.stunner.core.util.StringUtils.isEmpty;
+
 public class FileUtils {
 
     private static final char UNIX_SEPARATOR = '/';
@@ -23,10 +25,14 @@ public class FileUtils {
 
     /**
      * Gets the file name without the file's extension.
+     *
      * @param fullName The file with full name.
      * @return The file name without the extension.
      */
     public static String getFileNameWithoutExtension(final String fullName) {
+        if (isEmpty(fullName)) {
+            return fullName;
+        }
         if (fullName.contains(".")) {
             return fullName.substring(0, fullName.lastIndexOf('.'));
         }
@@ -36,10 +42,14 @@ public class FileUtils {
 
     /**
      * Extracts the file name from UNIX or Windows path.
+     *
      * @param filePath The full file's path.
      * @return The file name including the extension.
      */
     public static String getFileName(final String filePath) {
+        if (isEmpty(filePath)) {
+            return filePath;
+        }
         final int index = indexOfLastSeparator(filePath);
         return filePath.substring(index + 1);
     }

@@ -15,6 +15,7 @@
  */
 package org.kie.workbench.common.dmn.showcase.client.editor;
 
+import java.util.Objects;
 import java.util.Optional;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -23,6 +24,7 @@ import javax.enterprise.event.Observes;
 import javax.enterprise.inject.Default;
 import javax.inject.Inject;
 
+import org.appformer.client.context.Channel;
 import org.appformer.client.context.EditorContextProvider;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.kie.workbench.common.dmn.api.qualifiers.DMNEditor;
@@ -76,6 +78,9 @@ import org.uberfire.ext.widgets.core.client.editors.texteditor.TextEditorView;
 import org.uberfire.mvp.PlaceRequest;
 import org.uberfire.mvp.impl.DefaultPlaceRequest;
 import org.uberfire.workbench.events.NotificationEvent;
+
+import static org.appformer.client.context.Channel.DEFAULT;
+import static org.appformer.client.context.Channel.VSCODE;
 
 @DiagramEditor
 @ApplicationScoped
@@ -168,7 +173,10 @@ public class DMNDiagramEditor extends AbstractDMNDiagramEditor implements Kogito
             expressionEditor.setToolbarStateHandler(new DMNProjectToolbarStateHandler(getMenuSessionItems()));
             decisionNavigatorDock.setupCanvasHandler(c);
             dataTypesPage.reload();
-            includedModelsPage.setup(importsPageProvider.withDiagram(c.getDiagram()));
+            final Channel channel = contextProvider.getChannel();
+            if (Objects.equals(channel, DEFAULT) || Objects.equals(channel, VSCODE)) {
+                includedModelsPage.setup(importsPageProvider.withDiagram(c.getDiagram()));
+            }
         });
     }
 
