@@ -36,6 +36,8 @@ import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
 
+import static org.kie.workbench.common.stunner.core.util.StringUtils.revertIllegalCharsAttribute;
+
 public class ArtifactsConverter implements NodeConverter<org.eclipse.bpmn2.FlowElement> {
 
     private final TypedFactoryManager typedFactoryManager;
@@ -80,7 +82,7 @@ public class ArtifactsConverter implements NodeConverter<org.eclipse.bpmn2.FlowE
                                                                         DataObject.class);
 
         DataObject definition = node.getContent().getDefinition();
-        definition.setName(new Name(p.getName()));
+        definition.setName(new Name(revertIllegalCharsAttribute(p.getName())));
         definition.setType(new DataObjectType(new DataObjectTypeValue(p.getType())));
         node.getContent().setBounds(p.getBounds());
 
