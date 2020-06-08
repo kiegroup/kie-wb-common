@@ -110,10 +110,14 @@ public class RuleFlowGroupQueryServiceTest {
         List<RefactoringPageRow> rows = Arrays.asList(row1, row2, row3, row4, row4_2, emptyRow1, emptyRow2);
         List<RuleFlowGroup> result = RuleFlowGroupQueryService.DEFAULT_RESULT_CONVERTER.apply(rows);
         assertEquals(4, result.size());
-        assertTrue(result.contains("row1"));
-        assertTrue(result.contains("row2"));
-        assertTrue(result.contains("row3"));
-        assertTrue(result.contains("row4"));
+        RuleFlowGroup group1 = new RuleFlowGroup("row1");
+        RuleFlowGroup group2 = new RuleFlowGroup("row2");
+        RuleFlowGroup group3 = new RuleFlowGroup("row3");
+        RuleFlowGroup group4 = new RuleFlowGroup("row4");
+        assertTrue(result.contains(group1));
+        assertTrue(result.contains(group2));
+        assertTrue(result.contains(group3));
+        assertTrue(result.contains(group4));
     }
 
     private static Map<String, String> asMap(String s) {

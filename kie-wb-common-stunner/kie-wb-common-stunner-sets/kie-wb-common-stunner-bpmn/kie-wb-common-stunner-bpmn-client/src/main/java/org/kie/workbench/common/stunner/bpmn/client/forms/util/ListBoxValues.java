@@ -100,6 +100,24 @@ public class ListBoxValues {
         }
     }
 
+    public void addValues(final Map<String, String> acceptableValues) {
+        clear();
+        if (acceptableValues == null) {
+            return;
+        }
+        List<String> keys = new ArrayList<>(acceptableValues.keySet());
+        java.util.Collections.sort(keys);
+
+        acceptableValuesWithCustomValues.add("");
+        acceptableValuesWithCustomValues.add(customPrompt);
+        for (String groupName : keys) {
+            String displayName = acceptableValues.get(groupName);
+            mapDisplayValuesToValues.put(displayName, groupName);
+            acceptableValuesWithoutCustomValues.add(displayName);
+            acceptableValuesWithCustomValues.add(displayName);
+        }
+    }
+
     public String addCustomValue(final String newValue,
                                  final String oldValue) {
         if (oldValue != null && !oldValue.isEmpty()) {
@@ -164,7 +182,7 @@ public class ListBoxValues {
         if (value == null || value.isEmpty()) {
             return false;
         } else {
-            return customValues.contains(value);
+            return customValues.contains(getValueForDisplayValue(value));
         }
     }
 
@@ -268,6 +286,16 @@ public class ListBoxValues {
             return mapDisplayValuesToValues.get(key);
         }
         return key;
+    }
+
+    public String getDisplayNameForValue(final String value) {
+        for (Map.Entry<String, String> entry : mapDisplayValuesToValues.entrySet()) {
+            if (entry.getValue().equals(value)) {
+                return entry.getKey();
+            }
+        }
+
+        return value;
     }
 
     public String getNonCustomValueForUserString(final String userValue) {
