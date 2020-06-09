@@ -41,6 +41,7 @@ import org.kie.workbench.common.stunner.core.validation.Violation;
 public class BPMNDataObjectValidator implements DomainValidator {
 
     private static final String ALLOWED_CHARS = "^[a-zA-Z0-9\\-\\_\\ \\+\\/\\*\\?\\'\\.]*$";
+    private static final String ILLEGAL_CHARS = ".*[#:\"]+.*";
 
     @Override
     public String getDefinitionSetId() {
@@ -55,25 +56,29 @@ public class BPMNDataObjectValidator implements DomainValidator {
         while (it.hasNext()) {
             Element element = it.next();
             if (element.getContent() instanceof View && ((View) element.getContent()).getDefinition() instanceof DataObject) {
-                    DataObject dataObject = (DataObject) ((View) element.getContent()).getDefinition();
+                DataObject dataObject = (DataObject) ((View) element.getContent()).getDefinition();
 
-                    String name = dataObject.getName().getValue();
-                    String type = dataObject.getType().getValue().getType();
-                    String containedType = dataObjectsMap.get(name);
+                String name = dataObject.getName().getValue();
+                String type = dataObject.getType().getValue().getType();
+                String containedType = dataObjectsMap.get(name);
 
-                    if (containedType != null && !type.equals(containedType)) { // If already defined with different type
-                        BPMNViolation bpmnViolation = new BPMNViolation("Data Object Exists with Same Name and Different Type: " + name, Violation.Type.WARNING, element.getUUID());
-                        violations.add(bpmnViolation);
-                    } else {
-                        dataObjectsMap.put(name, type);
-                    }
-
-                    if (!name.matches(ALLOWED_CHARS)) {
-                        BPMNViolation bpmnViolation = new BPMNViolation("Data Object with Invalid Name Exists: " + name, Violation.Type.WARNING, element.getUUID());
-                        violations.add(bpmnViolation);
-                    }
+                if (containedType != null && !type.equals(containedType)) { // If already defined with different type
+                    BPMNViolation bpmnViolation = new BPMNViolation("Data Object Exists with Same Name and Different Type: " + name, Violation.Type.WARNING, element.getUUID());
+                    violations.add(bpmnViolation);
+                } else {
+                    dataObjectsMap.put(name, type);
                 }
 
+                if (name.matches(ILLEGAL_CHARS)) {
+                    BPMNViolation bpmnViolation = new BPMNViolation("Data Object with Illegal Chars in Name Exists (#, :, \"), will replace with (-) : " + name, Violation.Type.WARNING, element.getUUID());
+                    violations.add(bpmnViolation);
+                }
+
+                if (!name.matches(ALLOWED_CHARS)) {
+                    BPMNViolation bpmnViolation = new BPMNViolation("Data Object with Invalid Name Exists: " + name, Violation.Type.WARNING, element.getUUID());
+                    violations.add(bpmnViolation);
+                }
+            }
         }
         resultConsumer.accept(violations);
     }

@@ -4,8 +4,11 @@
      xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 80"
      xml:space="preserve" width="60px" height="80px">
 
-  <path class="annotation_data_object_icon" d="M 33.7,0 V 448 H 382.2 C 382,337.1 382.6,215.4 382.2,105.1 345.8,67.4 318.7,38 282,0.1 h -10 z m 13.953125,13.40625 220.884375,0.546875 2.1875,100.190625 98.06875,1.64063 2.73438,319.90312 -326.60938,3.28125 z M 280.20312,20.621875 365.375,104.01875 282.9375,102.925 Z"/>
+  <path stunner:shape-state="stroke" stunner:transform="non-scalable"
+      class="annotation_data_object_main"
 
-  <g id="shapeDataObject" class="annotation_group_data_object" stunner:transform="scalable">
+        style="fill:none;stroke:#040000;stroke-width:4.98556137;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+        d="M 239.79119,3.4088849 346.11306,110.84251 m 0,334.62921 V 110.84251 H 239.79119 V 3.4088849 L 3.2632149,2.5282879 m 0,0 L 2.4927803,445.47172 H 346.11306"/>
+  <g id="shapeDataObject" class="annotation_group_data_object" stunner:transform="non-scalable">
   </g>
 </svg>

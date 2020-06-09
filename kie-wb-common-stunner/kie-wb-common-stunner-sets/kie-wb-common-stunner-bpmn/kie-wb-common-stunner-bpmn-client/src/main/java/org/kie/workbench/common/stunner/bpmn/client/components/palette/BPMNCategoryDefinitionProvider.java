@@ -21,6 +21,7 @@ import javax.inject.Singleton;
 
 import org.kie.workbench.common.stunner.bpmn.client.resources.BPMNImageResources;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNCategories;
+import org.kie.workbench.common.stunner.bpmn.definition.DataObject;
 import org.kie.workbench.common.stunner.bpmn.definition.EndNoneEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.IntermediateTimerEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.Lane;
@@ -78,6 +79,7 @@ public class BPMNCategoryDefinitionProvider extends DefaultPaletteDefinitionProv
                              .useGlyph(SvgDataUriGlyph.Builder.build(BPMNImageResources.INSTANCE.categoryServiceTasks().getSafeUri())))
                 .put(BPMNCategories.ARTIFACTS,
                      category -> category
+                             .bindToDefinition(DataObject.class)
                              .useGlyph(SvgDataUriGlyph.Builder.build(BPMNImageResources.INSTANCE.categoryArtifacts().getSafeUri())));
     }
 }

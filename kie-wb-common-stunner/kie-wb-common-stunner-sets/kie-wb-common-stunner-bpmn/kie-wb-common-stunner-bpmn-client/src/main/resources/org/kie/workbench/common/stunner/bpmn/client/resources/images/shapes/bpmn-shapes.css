@@ -95,18 +95,16 @@
     stroke-width: 0.5px;
 }
 
-.text_annotation_main{
+.text_annotation_main {
     fill:none;
     stroke:#000000;
     stroke-miterlimit:10;
 }
-.text_annotation_background{
+.text_annotation_background {
     fill:none;
     stroke:#000000;
     stroke-opacity:0;
 }
-
-
 
 .task_border {
     stroke: black;
@@ -118,14 +116,15 @@
     stroke: none;
 }
 
-.annotation_border {
-    stroke: black;
-    stroke-width: 1.5px;
-}
-
-.annotation_background {
-    fill: white;
-    stroke: none;
+.annotation_data_object_main {
+    fill:none;
+    stroke:#000000;
+    stroke-width:3;
+    stroke-linecap:round;
+    stroke-linejoin:round;
+    stroke-miterlimit:1;
+    stroke-dasharray:0;
+    stroke-opacity:1;
 }
 
 .task_group_user {
