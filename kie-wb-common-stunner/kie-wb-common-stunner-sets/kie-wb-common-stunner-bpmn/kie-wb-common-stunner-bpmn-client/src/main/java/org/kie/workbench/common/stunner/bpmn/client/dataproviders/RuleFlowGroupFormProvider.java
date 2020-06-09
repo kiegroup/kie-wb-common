@@ -44,10 +44,10 @@ public class RuleFlowGroupFormProvider implements SelectorDataProvider {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings("unchecked")RuleFlowGroupDataService
     public SelectorData getSelectorData(final FormRenderingContext context) {
         requestRuleFlowGroupDataEvent.fire(new RequestRuleFlowGroupDataEvent());
-        return new SelectorData(toMap(dataProvider.getRuleFlowGroupNames()), null);
+        return new SelectorData<>(toMap(dataProvider.getRuleFlowGroupNames()), null);
     }
 
     // Map<T, String> is not supported by ListBoxValue which is used for ComboBox widget
@@ -67,20 +67,15 @@ public class RuleFlowGroupFormProvider implements SelectorDataProvider {
     }
 
     private static String addProjectToDescription(String description, String project) {
-        return description.replace("]", "," + project + "]");
+        return description.replace("]", ", " + project + "]");
     }
 
     private static String getGroupDescription(RuleFlowGroup rfg) {
-        return rfg.getName() + " [" + getSpaceAndProjectFromPath(rfg.getPathUri()) + "]";
+        return rfg.getName() + " [" + projectFromPath(rfg.getPathUri()) + "]";
     }
 
-    private static String getSpaceAndProjectFromPath(String path) {
-        return getSpaceFromPath(path) + " " + getProjectFromPath(path);
-    }
-
-    private static String getSpaceFromPath(String path) {
-        String clearedPath = dropFileSystemAndGitBranchFromPath(path);
-        return clearedPath.substring(0, getIndexOfFileSeparator(path) - 1);
+    private static String projectFromPath(String path) {
+        return getProjectFromPath(path);
     }
 
     private static String dropFileSystemAndGitBranchFromPath(String path) {
@@ -94,7 +89,7 @@ public class RuleFlowGroupFormProvider implements SelectorDataProvider {
         return pathAfterSpace.substring(0, getIndexOfFileSeparator(pathAfterSpace));
     }
 
-    // GWT compatible way to get fileseparation for Windows/Unix
+    // GWT compatible way to get file separation for Windows/Unix
     private static int getIndexOfFileSeparator(String string) {
         int index = string.indexOf('/');
         if (index == -1) {

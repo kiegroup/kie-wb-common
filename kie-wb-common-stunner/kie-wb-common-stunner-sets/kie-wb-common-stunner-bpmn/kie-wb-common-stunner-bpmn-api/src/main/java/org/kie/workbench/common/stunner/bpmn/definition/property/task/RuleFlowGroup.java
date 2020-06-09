@@ -78,6 +78,7 @@ public class RuleFlowGroup implements BPMNProperty {
     }
 
     @Override
+    // Group is the same if it has the same name, other data are just for information
     public boolean equals(Object o) {
         if (o instanceof RuleFlowGroup) {
             RuleFlowGroup other = (RuleFlowGroup) o;

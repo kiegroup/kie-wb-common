@@ -78,13 +78,12 @@ public class RuleFlowGroupFormProviderTest {
         Map<String, String> values = data.getValues();
         assertNotNull(values);
         assertEquals(2, values.size());
-        assertEquals("g2 [MySpace Project1]", values.get(group2.getName()));
-        assertEquals("g1 [MySpace Project1,Project2]", values.get(group1.getName()));
+        assertEquals("g2 [Project1]", values.get(group2.getName()));
+        assertEquals("g1 [Project1, Project2]", values.get(group1.getName()));
         verify(requestRuleFlowGroupDataEvent, times(1)).fire(any(RequestRuleFlowGroupDataEvent.class));
     }
 
     @Test
-    @SuppressWarnings("unchecked")
     public void testGroupWithSameProject() {
         RuleFlowGroup group1 = new RuleFlowGroup("g1");
         group1.setPathUri("default://master@MySpace/Project1/src/main/resources/com/myspace/project1/RulesFile.rdrl");
@@ -95,11 +94,11 @@ public class RuleFlowGroupFormProviderTest {
         List<RuleFlowGroup> groups = Arrays.asList(group1, group2, group3);
         when(dataProvider.getRuleFlowGroupNames()).thenReturn(groups);
         FormRenderingContext context = mock(FormRenderingContext.class);
-        SelectorData data = tested.getSelectorData(context);
+        SelectorData<String> data = tested.getSelectorData(context);
         Map<String, String> values = data.getValues();
         assertNotNull(values);
         assertEquals(1, values.size());
-        assertEquals("g1 [MySpace Project1,Project2]", values.get(group1.getName()));
+        assertEquals("g1 [Project1, Project2]", values.get(group1.getName()));
         verify(requestRuleFlowGroupDataEvent, times(1)).fire(any(RequestRuleFlowGroupDataEvent.class));
     }
 }

@@ -49,7 +49,6 @@ public class RuleFlowGroupDataService {
     }
 
     void fireData() {
-        // TODO Can we send List directly?
         final RuleFlowGroup[] groupNames = getRuleFlowGroupNames().toArray(new RuleFlowGroup[0]);
         dataChangedEvent.fire(new RuleFlowGroupDataEvent(groupNames));
     }
