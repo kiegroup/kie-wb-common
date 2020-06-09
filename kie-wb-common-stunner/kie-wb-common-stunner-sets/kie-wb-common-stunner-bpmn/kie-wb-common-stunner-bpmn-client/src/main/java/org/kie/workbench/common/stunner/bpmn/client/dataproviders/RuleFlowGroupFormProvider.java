@@ -44,7 +44,7 @@ public class RuleFlowGroupFormProvider implements SelectorDataProvider {
     }
 
     @Override
-    @SuppressWarnings("unchecked")RuleFlowGroupDataService
+    @SuppressWarnings("unchecked")
     public SelectorData getSelectorData(final FormRenderingContext context) {
         requestRuleFlowGroupDataEvent.fire(new RequestRuleFlowGroupDataEvent());
         return new SelectorData<>(toMap(dataProvider.getRuleFlowGroupNames()), null);
