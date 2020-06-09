@@ -58,7 +58,6 @@ public class RuleFlowGroupQueryService {
         this.resultToSelectorData = resultToSelectorData;
     }
 
-    @SuppressWarnings("unchecked")
     public List<RuleFlowGroup> getRuleFlowGroupNames() {
         List<RefactoringPageRow> queryResult = queryService.query(
                 FindRuleFlowNamesQuery.NAME,

@@ -51,20 +51,22 @@ public class RuleFlowGroupFormProvider implements SelectorDataProvider {
     }
 
     // Map<T, String> is not supported by ListBoxValue which is used for ComboBox widget
-    private static Map<String, String> toMap(final Iterable<RuleFlowGroup> items) {
+    private static Map<String, String> toMap(final Iterable<RuleFlowGroup> groups) {
         Map<String, String> result = new HashMap<>();
-        for (RuleFlowGroup rfg : items) {
-            if (result.containsKey(rfg.getName())) {
-                result.put(rfg.getName(), addProjectToDescription(result.get(rfg.getName()), rfg));
+        for (RuleFlowGroup group : groups) {
+            if (result.containsKey(group.getName())) {
+                String project = getProjectFromPath(group.getPathUri());
+                if (!result.get(group.getName()).contains(project)) {
+                    result.put(group.getName(), addProjectToDescription(result.get(group.getName()), project));
+                }
             } else {
-                result.put(rfg.getName(), getGroupDescription(rfg));
+                result.put(group.getName(), getGroupDescription(group));
             }
         }
         return result;
     }
 
-    private static String addProjectToDescription(String description, RuleFlowGroup rfg) {
-        String project = getProjectFromPath(rfg.getPathUri());
+    private static String addProjectToDescription(String description, String project) {
         return description.replace("]", "," + project + "]");
     }
 

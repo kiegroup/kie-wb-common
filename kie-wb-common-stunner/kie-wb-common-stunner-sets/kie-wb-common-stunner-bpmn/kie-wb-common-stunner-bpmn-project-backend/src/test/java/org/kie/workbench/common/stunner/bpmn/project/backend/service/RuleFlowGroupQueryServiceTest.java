@@ -109,7 +109,7 @@ public class RuleFlowGroupQueryServiceTest {
         when(emptyRow2.getValue()).thenReturn(asMap(""));
         List<RefactoringPageRow> rows = Arrays.asList(row1, row2, row3, row4, row4_2, emptyRow1, emptyRow2);
         List<RuleFlowGroup> result = RuleFlowGroupQueryService.DEFAULT_RESULT_CONVERTER.apply(rows);
-        assertEquals(4, result.size());
+        assertEquals(5, result.size());
         RuleFlowGroup group1 = new RuleFlowGroup("row1");
         RuleFlowGroup group2 = new RuleFlowGroup("row2");
         RuleFlowGroup group3 = new RuleFlowGroup("row3");
