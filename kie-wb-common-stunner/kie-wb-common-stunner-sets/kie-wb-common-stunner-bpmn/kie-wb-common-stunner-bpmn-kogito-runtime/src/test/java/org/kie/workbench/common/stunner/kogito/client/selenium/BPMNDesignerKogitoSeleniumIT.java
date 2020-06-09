@@ -27,6 +27,7 @@ import io.github.bonigarcia.wdm.WebDriverManager;
 import org.apache.commons.io.IOUtils;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestWatcher;
@@ -149,13 +150,14 @@ public class BPMNDesignerKogitoSeleniumIT {
 
 
     @Test
+    @Ignore
     public void testHandlingInvalidContent() {
         setContent("<!!!invalid!!!>");
 
         // Check that there is error modal dialog shown to user
         final WebElement errorDialogModal = waitOperation().until(element(ERROR_MODAL_DIALOG));
         assertThat(errorDialogModal)
-                .as("If invalid dmn is loaded, error dialog modal should be shown.")
+                .as("If invalid BPMN is loaded, error dialog modal should be shown.")
                 .isNotNull();
         // Check that there is a message explaining what happened
         assertThat(errorDialogModal.findElement(By.xpath(ERROR_MODAL_BODY)).getText())
@@ -197,7 +199,6 @@ public class BPMNDesignerKogitoSeleniumIT {
     public void testBasicModel() throws Exception {
         final String expected = loadResource("basic-process.bpmn2");
         setContent(expected);
-
 
         assertDiagramNodeIsPresentInProcessNavigator("Start");
         assertDiagramNodeIsPresentInProcessNavigator("Add user to database");
