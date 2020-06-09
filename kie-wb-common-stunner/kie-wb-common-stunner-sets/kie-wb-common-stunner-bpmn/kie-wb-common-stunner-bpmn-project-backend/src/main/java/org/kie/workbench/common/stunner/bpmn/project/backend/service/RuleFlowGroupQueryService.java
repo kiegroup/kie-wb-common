@@ -85,14 +85,9 @@ public class RuleFlowGroupQueryService {
         return group;
     }
 
-    private static boolean isNotEmpty(final String s) {
-        return null != s && s.trim().length() > 0;
-    }
-
     public static final Function<List<RefactoringPageRow>, List<RuleFlowGroup>> DEFAULT_RESULT_CONVERTER =
             rows -> rows.stream()
                     .map(RuleFlowGroupQueryService::getValue)
                     .filter(Objects::nonNull)
-                    .distinct()
                     .collect(Collectors.toList());
 }
