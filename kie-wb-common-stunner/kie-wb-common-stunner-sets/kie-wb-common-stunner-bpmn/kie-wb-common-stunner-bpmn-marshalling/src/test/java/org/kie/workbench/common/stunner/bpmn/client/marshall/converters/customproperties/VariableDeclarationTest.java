@@ -394,7 +394,7 @@ public class VariableDeclarationTest {
         assertFalse(dataObject1Cast.equals("someString"));
         dataObject2 = mockDataObject("dataObject1");
         dataObject2Cast = (DataObjectImpl) dataObject2;
-        assertTrue(dataObject1Cast.equals(dataObject2Cast));
+        assertFalse(dataObject1Cast.equals(dataObject2Cast));
     }
 
     private static DataObject mockDataObject(String id) {
