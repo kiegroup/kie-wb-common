@@ -152,7 +152,7 @@ public class AssignmentsEditorWidget extends Composite implements HasValue<Strin
         }
     }
 
-    private void initTextBox() {
+    protected void initTextBox() {
 
         Map<String, String> assignmentsProperties = AssignmentParser.parseAssignmentsInfo(assignmentsInfo);
 
