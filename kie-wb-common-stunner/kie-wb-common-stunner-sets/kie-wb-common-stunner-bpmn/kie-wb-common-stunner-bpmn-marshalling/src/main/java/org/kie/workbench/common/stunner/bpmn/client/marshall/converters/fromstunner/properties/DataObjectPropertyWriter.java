@@ -48,13 +48,19 @@ public class DataObjectPropertyWriter extends PropertyWriter {
         dataObject.setId(escaped);
     }
 
+    private void addDataObjectToProcess(DataObject dataObject) {
+        if (dataObjects.stream()
+                .noneMatch(elm -> elm.getId()
+                        .equals(dataObject.getId()))) {
+            dataObjects.add(dataObject);
+        }
+    }
+
     public void setType(String type) {
         ItemDefinition itemDefinition = bpmn2.createItemDefinition();
         itemDefinition.setStructureRef(type);
         dataObject.setItemSubjectRef(itemDefinition);
-        if (!dataObjects.contains(dataObject)) {
-            dataObjects.add(dataObject);
-        }
+        addDataObjectToProcess(dataObject);
     }
 
     @Override

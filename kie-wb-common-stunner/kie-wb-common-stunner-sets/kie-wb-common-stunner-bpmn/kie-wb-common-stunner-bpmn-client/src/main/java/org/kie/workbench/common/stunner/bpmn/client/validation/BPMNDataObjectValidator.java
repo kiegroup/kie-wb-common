@@ -25,10 +25,13 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
 
 import org.kie.workbench.common.stunner.bpmn.BPMNDefinitionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.DataObject;
 import org.kie.workbench.common.stunner.bpmn.validation.BPMNViolation;
+import org.kie.workbench.common.stunner.client.widgets.resources.i18n.StunnerWidgetsConstants;
+import org.kie.workbench.common.stunner.core.client.i18n.ClientTranslationService;
 import org.kie.workbench.common.stunner.core.definition.adapter.binding.BindableAdapterUtils;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.kie.workbench.common.stunner.core.graph.Element;
@@ -43,9 +46,16 @@ public class BPMNDataObjectValidator implements DomainValidator {
     private static final String ALLOWED_CHARS = "^[a-zA-Z0-9\\-\\_\\ \\+\\/\\*\\?\\'\\.]*$";
     private static final String ILLEGAL_CHARS = ".*[#:\"]+.*";
 
+    private final ClientTranslationService translationService;
+
     @Override
     public String getDefinitionSetId() {
         return BindableAdapterUtils.getDefinitionSetId(BPMNDefinitionSet.class);
+    }
+
+    @Inject
+    public BPMNDataObjectValidator(final ClientTranslationService translationService) {
+        this.translationService = translationService;
     }
 
     @Override
@@ -63,19 +73,19 @@ public class BPMNDataObjectValidator implements DomainValidator {
                 String containedType = dataObjectsMap.get(name);
 
                 if (containedType != null && !type.equals(containedType)) { // If already defined with different type
-                    BPMNViolation bpmnViolation = new BPMNViolation("Data Object Exists with Same Name and Different Type: " + name, Violation.Type.WARNING, element.getUUID());
+                    BPMNViolation bpmnViolation = new BPMNViolation(translationService.getValue(StunnerWidgetsConstants.MarshallingResponsePopup_DataObjectsSameNameDifferentType) + " : " + name, Violation.Type.WARNING, element.getUUID());
                     violations.add(bpmnViolation);
                 } else {
                     dataObjectsMap.put(name, type);
                 }
 
                 if (name.matches(ILLEGAL_CHARS)) {
-                    BPMNViolation bpmnViolation = new BPMNViolation("Data Object with Illegal Chars in Name Exists (#, :, \"), will replace with (-) : " + name, Violation.Type.WARNING, element.getUUID());
+                    BPMNViolation bpmnViolation = new BPMNViolation(translationService.getValue(StunnerWidgetsConstants.MarshallingResponsePopup_dataObjectWithIllegalCharacters) + " : " + name, Violation.Type.WARNING, element.getUUID());
                     violations.add(bpmnViolation);
                 }
 
                 if (!name.matches(ALLOWED_CHARS)) {
-                    BPMNViolation bpmnViolation = new BPMNViolation("Data Object with Invalid Name Exists: " + name, Violation.Type.WARNING, element.getUUID());
+                    BPMNViolation bpmnViolation = new BPMNViolation(translationService.getValue(StunnerWidgetsConstants.MarshallingResponsePopup_dataObjectWithInvalidName) + " : " + name, Violation.Type.WARNING, element.getUUID());
                     violations.add(bpmnViolation);
                 }
             }

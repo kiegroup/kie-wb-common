@@ -65,8 +65,6 @@ public class DefinitionsConverter {
         p.addAllRootElements(pp.getItemDefinitions());
         p.addAllRootElements(pp.getRootElements());
         p.addAllRootElements(pp.getInterfaces());
-        pp.getProcess().getFlowElements().addAll(pp.getDataObjects());
-
         return definitions;
     }
 }

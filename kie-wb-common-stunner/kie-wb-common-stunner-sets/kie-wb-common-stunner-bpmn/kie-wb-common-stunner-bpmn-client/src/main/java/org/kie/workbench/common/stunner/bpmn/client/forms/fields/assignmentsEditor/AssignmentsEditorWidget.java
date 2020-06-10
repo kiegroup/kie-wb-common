@@ -152,7 +152,7 @@ public class AssignmentsEditorWidget extends Composite implements HasValue<Strin
         }
     }
 
-    protected void initTextBox() {
+    private void initTextBox() {
 
         Map<String, String> assignmentsProperties = AssignmentParser.parseAssignmentsInfo(assignmentsInfo);
 
@@ -209,7 +209,7 @@ public class AssignmentsEditorWidget extends Composite implements HasValue<Strin
 
         String dataObjects =
                 findDataObjects().stream()
-                        .map(this::dataObjectToProcessVariableFormat)
+                        .map(AssignmentsEditorWidget::dataObjectToProcessVariableFormat)
                         .collect(Collectors.joining(","));
 
         if (!dataObjects.isEmpty()) {
@@ -245,7 +245,7 @@ public class AssignmentsEditorWidget extends Composite implements HasValue<Strin
             parentIds.add(parent.getUUID());
 
             while (!parent.getUUID().equals(mainDiagramId)) {
-                parent = getParentElement(parent.asNode());
+                parent = graphUtils.getParent(parent.asNode());
                 parentIds.add(parent.getUUID());
             }
         }
@@ -266,7 +266,7 @@ public class AssignmentsEditorWidget extends Composite implements HasValue<Strin
                 .map(elm -> (Node<View<BPMNDefinition>, Edge>) elm)
                 .filter(elm -> {
                     if (elm.getContent().getDefinition() instanceof DataObject) {
-                        final Element parent = getParentElement(elm);
+                        final Element parent = graphUtils.getParent(elm);
                         if (parent == null) { // test
                             return true;
                         }
@@ -279,16 +279,8 @@ public class AssignmentsEditorWidget extends Composite implements HasValue<Strin
                 .collect(Collectors.toSet());
     }
 
-    protected Element<?> getParentElement(final Node<?, ? extends Edge> element) {
-        return graphUtils.getParent(element);
-    }
-
-    private String dataObjectToProcessVariableFormat(DataObject dataObject) {
-        StringBuilder builder = new StringBuilder();
-        builder.append(dataObject.getName().getValue());
-        builder.append(":");
-        builder.append(dataObject.getType().getValue().getType());
-        return builder.toString();
+    private static String dataObjectToProcessVariableFormat(DataObject dataObject) {
+        return dataObject.getName().getValue() + ":" + dataObject.getType().getValue().getType();
     }
 
     protected String getSelectedElementUUID(ClientSession clientSession) {
