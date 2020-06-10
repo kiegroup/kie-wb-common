@@ -33,6 +33,7 @@ import org.kie.workbench.common.kogito.client.editor.MultiPageEditorContainerVie
 import org.kie.workbench.common.stunner.client.widgets.presenters.Viewer;
 import org.kie.workbench.common.stunner.client.widgets.presenters.session.impl.SessionEditorPresenter;
 import org.kie.workbench.common.stunner.client.widgets.presenters.session.impl.SessionViewerPresenter;
+import org.kie.workbench.common.stunner.client.widgets.resources.i18n.StunnerWidgetsConstants;
 import org.kie.workbench.common.stunner.core.client.annotation.DiagramEditor;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
 import org.kie.workbench.common.stunner.core.client.canvas.CanvasHandler;
@@ -269,31 +270,25 @@ public class BPMNDiagramEditor extends AbstractDiagramEditor {
         return EDITOR_ID;
     }
 
-    private void displayNotifications(final boolean displayNotifications) {
-        if (getEditor().getSessionPresenter() != null) {
-            getEditor().getSessionPresenter().displayNotifications(t -> displayNotifications);
-        }
-    }
     @GetContent
     @Override
     public Promise getContent() {
         flush();
-        displayNotifications(false);
+        getSessionPresenter().displayNotifications(t -> false);
         AbstractCanvasHandler canvasHandler = (AbstractCanvasHandler) getCanvasHandler();
         validator.validate(canvasHandler, violations -> {
+            String errorMessage = getTranslationService().getValue(StunnerWidgetsConstants.MarshallingResponsePopup_ErrorMessageLabel);
 
             if (!violations.isEmpty()) {
                 List<String> violationMessages = new ArrayList<>();
                 for (DiagramElementViolation<RuleViolation> next : violations) {
                     final Collection<DomainViolation> domainViolations = next.getDomainViolations();
-
-                    domainViolations.forEach(item -> violationMessages.add("Error: " + item.getUUID() + " - " + item.getMessage() + " - " + item.getViolationType()));
+                    domainViolations.forEach(item -> violationMessages.add(errorMessage + ": " + item.getUUID() + " - " + item.getMessage() + " - " + item.getViolationType()));
                 }
-
-                getEditor().getSessionPresenter().getView().showWarning("Errors: " + violationMessages);
+                getEditor().getSessionPresenter().getView().showWarning(errorMessage + "(s): " + violationMessages);
             }
         });
-        displayNotifications(true);
+        getSessionPresenter().displayNotifications(t -> true);
         return diagramServices.transform(getEditor().getEditorProxy().getContentSupplier().get());
     }
 

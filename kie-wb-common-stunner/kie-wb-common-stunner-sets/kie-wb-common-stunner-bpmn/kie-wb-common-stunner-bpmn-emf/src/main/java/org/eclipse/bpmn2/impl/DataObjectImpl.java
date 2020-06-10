@@ -14,8 +14,6 @@
  */
 package org.eclipse.bpmn2.impl;
 
-import java.util.Objects;
-
 import com.google.gwt.user.client.rpc.GwtTransient;
 
 import org.eclipse.bpmn2.Bpmn2Package;
@@ -379,20 +377,4 @@ public class DataObjectImpl extends FlowElementImpl implements DataObject {
 		return result.toString();
 	}
 
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) {
-			return true;
-		}
-		if (!(o instanceof DataObjectImpl)) {
-			return false;
-		}
-		DataObjectImpl that = (DataObjectImpl) o;
-		return Objects.equals(getId(), that.getId());
-	}
-
-	@Override
-	public int hashCode() {
-		return Objects.hash(getId());
-	}
 } //DataObjectImpl
