@@ -29,8 +29,6 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-import javax.enterprise.inject.Instance;
-
 import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.kie.workbench.common.stunner.core.api.DefinitionManager;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
@@ -106,9 +104,7 @@ public abstract class AbstractDiagramValidator
                                 Optional.of((e, v) -> consumeBeanAndViolations(() -> violations).accept(e, v)),
                                 // At this point all violations have been already consumed, so no need
                                 // to use the resulting ones here.
-                                vs -> {
-                                    resultConsumer.accept(violations);
-                                }
+                                vs -> resultConsumer.accept(violations)
         );
     }
 
