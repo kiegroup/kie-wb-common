@@ -27,8 +27,10 @@ import org.kie.workbench.common.forms.dynamic.client.rendering.formGroups.impl.d
 import org.kie.workbench.common.forms.dynamic.client.rendering.renderers.selectors.SelectorFieldRenderer;
 import org.kie.workbench.common.forms.dynamic.service.shared.RenderMode;
 import org.kie.workbench.common.forms.fields.shared.fieldTypes.basic.selectors.StringSelectorOption;
+import org.kie.workbench.common.stunner.bpmn.client.forms.fields.i18n.StunnerBPMNConstants;
 import org.kie.workbench.common.stunner.bpmn.client.forms.util.ListBoxValues;
 import org.kie.workbench.common.stunner.bpmn.forms.model.ComboBoxFieldDefinition;
+import org.kie.workbench.common.stunner.core.client.i18n.ClientTranslationService;
 
 @Dependent
 public abstract class AbstractComboBoxFieldRenderer<T extends ComboBoxFieldDefinition>
@@ -36,11 +38,14 @@ public abstract class AbstractComboBoxFieldRenderer<T extends ComboBoxFieldDefin
 
     private ComboBoxWidgetView view;
 
+    private ClientTranslationService translationService;
+
     private ListBoxValues valueListBoxValues;
 
     @Inject
-    public AbstractComboBoxFieldRenderer(final ComboBoxWidgetView comboBoxEditor) {
+    public AbstractComboBoxFieldRenderer(final ComboBoxWidgetView comboBoxEditor, final ClientTranslationService translationService) {
         this.view = comboBoxEditor;
+        this.translationService = translationService;
     }
 
     @Override
@@ -64,7 +69,7 @@ public abstract class AbstractComboBoxFieldRenderer<T extends ComboBoxFieldDefin
 
     private ListBoxValues createDefaultListBoxValues() {
         return new ListBoxValues(ComboBoxWidgetView.CUSTOM_PROMPT,
-                                 "Edit" + " ",
+                                 translationService.getValue(StunnerBPMNConstants.EDIT) + " ",
                                  null);
     }
 

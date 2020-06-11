@@ -289,13 +289,11 @@ public class ListBoxValues {
     }
 
     public String getDisplayNameForValue(final String value) {
-        for (Map.Entry<String, String> entry : mapDisplayValuesToValues.entrySet()) {
-            if (entry.getValue().equals(value)) {
-                return entry.getKey();
-            }
-        }
-
-        return value;
+        return mapDisplayValuesToValues.entrySet().stream()
+                .filter(v -> v.getValue().equals(value))
+                .map(Map.Entry::getKey)
+                .findFirst()
+                .orElse(value);
     }
 
     public String getNonCustomValueForUserString(final String userValue) {

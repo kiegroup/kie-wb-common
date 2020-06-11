@@ -55,15 +55,27 @@ public class RuleFlowGroupFormProvider implements SelectorDataProvider {
         Map<String, String> result = new HashMap<>();
         for (RuleFlowGroup group : groups) {
             if (result.containsKey(group.getName())) {
-                String project = getProjectFromPath(group.getPathUri());
-                if (!result.get(group.getName()).contains(project)) {
-                    result.put(group.getName(), addProjectToDescription(result.get(group.getName()), project));
-                }
+                updateExistingGroup(result, group);
             } else {
-                result.put(group.getName(), getGroupDescription(group));
+                addNewGroup(result, group);
             }
         }
         return result;
+    }
+
+    private static void updateExistingGroup(Map<String, String> result, RuleFlowGroup group) {
+        String project = getProjectFromPath(group.getPathUri());
+        addProjectToGroupIfNotPresent(result, group, project);
+    }
+
+    private static void addProjectToGroupIfNotPresent(Map<String, String> result, RuleFlowGroup group, String project) {
+        if (!result.get(group.getName()).contains(project)) {
+            result.put(group.getName(), addProjectToDescription(result.get(group.getName()), project));
+        }
+    }
+
+    private static void addNewGroup(Map<String, String> result, RuleFlowGroup group) {
+        result.put(group.getName(), getGroupDescription(group));
     }
 
     private static String addProjectToDescription(String description, String project) {
@@ -92,9 +104,6 @@ public class RuleFlowGroupFormProvider implements SelectorDataProvider {
     // GWT compatible way to get file separation for Windows/Unix
     private static int getIndexOfFileSeparator(String string) {
         int index = string.indexOf('/');
-        if (index == -1) {
-            return string.indexOf('\\');
-        }
-        return index;
+        return index == -1 ? string.indexOf('\\') : index;
     }
 }
