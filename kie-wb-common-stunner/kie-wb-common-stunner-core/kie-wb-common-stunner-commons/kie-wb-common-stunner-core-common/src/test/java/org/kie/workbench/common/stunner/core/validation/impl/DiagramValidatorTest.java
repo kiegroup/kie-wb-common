@@ -16,15 +16,18 @@
 
 package org.kie.workbench.common.stunner.core.validation.impl;
 
+import java.lang.annotation.Annotation;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
 
 import javax.enterprise.inject.Instance;
 
+import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -47,7 +50,6 @@ import org.kie.workbench.common.stunner.core.validation.ModelValidator;
 import org.kie.workbench.common.stunner.core.validation.Violation;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.uberfire.mocks.MockInstanceImpl;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -104,8 +106,6 @@ public class DiagramValidatorTest {
     @Mock
     private DomainViolation domainViolationNullStr;
 
-
-
     private TestDiagramValidator tested;
     private TestingGraphMockHandler graphTestHandler;
 
@@ -115,7 +115,7 @@ public class DiagramValidatorTest {
             super(graphTestHandler.getDefinitionManager(),
                   graphTestHandler.getRuleManager(),
                   new TreeWalkTraverseProcessorImpl(),
-                  modelValidator, new MockInstanceImpl(domainValidator));
+                  modelValidator, new ManagedInstanceStub<>(domainValidator));
         }
     }
 
@@ -157,7 +157,6 @@ public class DiagramValidatorTest {
     @Test
     @SuppressWarnings("unchecked")
     public void testValidateDiagram1InvalidBean() {
-
 
         domainViolationList = Arrays.asList(domainViolation,
                                             domainViolation2,
@@ -357,5 +356,53 @@ public class DiagramValidatorTest {
         nullNode.setContent(null);
         when(diagram.getGraph()).thenReturn(graphTestHandler.graph);
         tested.validate(diagram, this::assertNoErrors);
+    }
+
+    public class ManagedInstanceStub<T> implements ManagedInstance<T> {
+
+        private final T[] instances;
+
+        public ManagedInstanceStub(T... instances) {
+            this.instances = instances;
+        }
+
+        @Override
+        public ManagedInstance<T> select(Annotation... annotations) {
+            return this;
+        }
+
+        @Override
+        @SuppressWarnings("unchecked")
+        public <U extends T> ManagedInstance<U> select(Class<U> aClass, Annotation... annotations) {
+            return (ManagedInstance<U>) this;
+        }
+
+        @Override
+        public boolean isUnsatisfied() {
+            return false;
+        }
+
+        @Override
+        public boolean isAmbiguous() {
+            return false;
+        }
+
+        @Override
+        public void destroy(T t) {
+        }
+
+        @Override
+        public void destroyAll() {
+        }
+
+        @Override
+        public Iterator<T> iterator() {
+            return Arrays.asList(this.instances).iterator();
+        }
+
+        @Override
+        public T get() {
+            return instances[0];
+        }
     }
 }

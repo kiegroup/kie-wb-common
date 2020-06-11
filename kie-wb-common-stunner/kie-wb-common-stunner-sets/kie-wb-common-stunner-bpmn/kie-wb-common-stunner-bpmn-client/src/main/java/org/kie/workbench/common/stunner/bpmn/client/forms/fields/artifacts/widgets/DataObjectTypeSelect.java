@@ -64,6 +64,7 @@ public class DataObjectTypeSelect extends Composite implements HasValue<String> 
     private String selectedValue = "";
     private EventListener onEditEvent;
     private Mode currentAction = Mode.NONE;
+    private String lastError = "";
 
     @PostConstruct
     public void init() {
@@ -121,9 +122,12 @@ public class DataObjectTypeSelect extends Composite implements HasValue<String> 
     }
 
     protected void fireValidationError(String validationError) {
-        this.notification.fire(new NotificationEvent(INSTANCE.Invalid_character_in_name()
-                                                             + " :" + validationError,
-                                                     NotificationType.ERROR));
+        if (!validationError.equals(lastError)) {
+            this.notification.fire(new NotificationEvent(INSTANCE.Invalid_character_in_name()
+                                                                 + " :" + validationError,
+                                                         NotificationType.ERROR));
+        }
+        lastError = validationError;
     }
 
     protected void onChange(Event event) {

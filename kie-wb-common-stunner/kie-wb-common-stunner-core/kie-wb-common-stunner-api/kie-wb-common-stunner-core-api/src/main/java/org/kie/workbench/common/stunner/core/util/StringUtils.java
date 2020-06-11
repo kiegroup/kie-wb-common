@@ -132,6 +132,7 @@ public class StringUtils {
                 case '#':
                 case '"':
                 case ':':
+                case ' ':
                     sb.append("-");
                     break;
                 default:

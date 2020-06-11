@@ -21,8 +21,7 @@ import java.util.Collections;
 import java.util.Objects;
 import java.util.Spliterators;
 
-import javax.enterprise.inject.Instance;
-
+import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -67,7 +66,7 @@ public class ProjectClientDiagramValidatorTest {
     private Metadata metadata;
 
     @Mock
-    private Instance<DomainValidator> validators;
+    private ManagedInstance<DomainValidator> validators;
 
     private TestingGraphMockHandler graphTestHandler;
 
@@ -76,7 +75,7 @@ public class ProjectClientDiagramValidatorTest {
     private ElementViolationImpl backendViolation;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         this.graphTestHandler = new TestingGraphMockHandler();
         treeWalkTraverseProcessor = new TreeWalkTraverseProcessorImpl();
         backendViolation = new ElementViolationImpl.Builder().setUuid(uuid).build();
