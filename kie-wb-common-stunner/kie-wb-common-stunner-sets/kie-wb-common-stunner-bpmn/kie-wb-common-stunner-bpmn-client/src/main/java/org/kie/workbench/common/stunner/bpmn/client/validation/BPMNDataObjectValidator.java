@@ -44,7 +44,7 @@ import org.kie.workbench.common.stunner.core.validation.Violation;
 public class BPMNDataObjectValidator implements DomainValidator {
 
     private static final String ALLOWED_CHARS = "^[a-zA-Z0-9\\-\\_\\ \\+\\/\\*\\?\\'\\.]*$";
-    private static final String ILLEGAL_CHARS = ".*[#:\"]+.*";
+    private static final String ILLEGAL_CHARS = ".*[#:\" ]+.*";
 
     private final ClientTranslationService translationService;
 
@@ -80,7 +80,7 @@ public class BPMNDataObjectValidator implements DomainValidator {
                 }
 
                 if (name.matches(ILLEGAL_CHARS)) {
-                    BPMNViolation bpmnViolation = new BPMNViolation(translationService.getValue(StunnerWidgetsConstants.MarshallingResponsePopup_dataObjectWithIllegalCharacters) + " : " + name, Violation.Type.WARNING, element.getUUID());
+                    BPMNViolation bpmnViolation = new BPMNViolation(translationService.getValue(StunnerWidgetsConstants.MarshallingResponsePopup_dataObjectWithName) + ": " + name + " " + translationService.getValue(StunnerWidgetsConstants.MarshallingResponsePopup_dataObjectWithIllegalCharacters), Violation.Type.WARNING, element.getUUID());
                     violations.add(bpmnViolation);
                 }
 

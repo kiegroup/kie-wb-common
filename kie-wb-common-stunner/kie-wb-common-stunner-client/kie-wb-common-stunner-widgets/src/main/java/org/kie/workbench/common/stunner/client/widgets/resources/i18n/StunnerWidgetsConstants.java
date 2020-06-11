@@ -80,7 +80,10 @@ public interface StunnerWidgetsConstants {
     @TranslationKey(defaultValue = "Data Object Exists with Same Name and Different Type")
     String MarshallingResponsePopup_DataObjectsSameNameDifferentType = "MarshallingMessage.dataObjectsSameNameDifferentType";
 
-    @TranslationKey(defaultValue = "Data Object with Illegal Chars in Name Exists (#, :, \"), will replace with (-)")
+    @TranslationKey(defaultValue = "Data Object with Name")
+    String MarshallingResponsePopup_dataObjectWithName = "MarshallingMessage.dataObjectWithName";
+
+    @TranslationKey(defaultValue = "contains Illegal Chars (#, :, \"), will replace with (-)")
     String MarshallingResponsePopup_dataObjectWithIllegalCharacters = "MarshallingMessage.dataObjectWithIllegalCharacters";
 
     @TranslationKey(defaultValue = "Data Object with Invalid Name Exists")

@@ -24,11 +24,11 @@ import java.util.Objects;
 import java.util.function.Consumer;
 
 import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.Specializes;
 import javax.inject.Inject;
 
 import org.jboss.errai.common.client.api.Caller;
+import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.kie.workbench.common.stunner.core.api.DefinitionManager;
 import org.kie.workbench.common.stunner.core.client.validation.ClientDiagramValidator;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
@@ -62,7 +62,7 @@ public class ProjectClientDiagramValidator extends ClientDiagramValidator {
                                          final TreeWalkTraverseProcessor treeWalkTraverseProcessor,
                                          final ModelValidator modelValidator,
                                          final Caller<ProjectValidationService> validationService,
-                                         final Instance<DomainValidator> validators) {
+                                         final ManagedInstance<DomainValidator> validators) {
         super(definitionManager,
               ruleManager,
               treeWalkTraverseProcessor,

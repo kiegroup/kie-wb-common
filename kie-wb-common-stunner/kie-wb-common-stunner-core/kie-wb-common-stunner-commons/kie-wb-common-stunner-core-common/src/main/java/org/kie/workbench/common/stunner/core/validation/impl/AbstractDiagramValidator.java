@@ -31,6 +31,7 @@ import java.util.stream.StreamSupport;
 
 import javax.enterprise.inject.Instance;
 
+import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.kie.workbench.common.stunner.core.api.DefinitionManager;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.kie.workbench.common.stunner.core.graph.Element;
@@ -54,13 +55,13 @@ public abstract class AbstractDiagramValidator
     private final GraphValidatorImpl graphValidator;
     private final ModelValidator modelValidator;
 
-    private final Instance<DomainValidator> validators;
+    private final ManagedInstance<DomainValidator> validators;
 
     protected AbstractDiagramValidator(final DefinitionManager definitionManager,
                                        final RuleManager ruleManager,
                                        final TreeWalkTraverseProcessor treeWalkTraverseProcessor,
                                        final ModelValidator modelValidator,
-                                       final Instance<DomainValidator> validators) {
+                                       final ManagedInstance<DomainValidator> validators) {
 
         this.graphValidator = new GraphValidatorImpl(definitionManager,
                                                      ruleManager,
