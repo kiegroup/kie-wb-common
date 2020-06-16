@@ -151,7 +151,7 @@ public class VariableTest {
 
         String test2 = DIVIDER + DIVIDER;
         Variable result2 = Variable.deserialize(test2, variableType);
-        Variable expected2 = new Variable(variableType);
+        Variable expected2 = new Variable("", variableType);
         assertEquals(expected2, result2);
 
         String test3 = NAME + DIVIDER + DIVIDER;
@@ -170,7 +170,6 @@ public class VariableTest {
         assertEquals(expected5, result5);
 
         String test6 = NAME + DIVIDER + CUSTOM_DATA_TYPE + DIVIDER;
-        ;
         Variable result6 = Variable.deserialize(test6, variableType, Arrays.asList(DATA_TYPE));
         Variable expected6 = new Variable(NAME, variableType, null, CUSTOM_DATA_TYPE);
         assertEquals(expected6, result6);
