@@ -44,6 +44,8 @@ import org.kie.workbench.common.dmn.client.docks.navigator.DecisionNavigatorItem
 import org.kie.workbench.common.stunner.core.client.ReadOnlyProvider;
 import org.mockito.Mock;
 import org.uberfire.client.mvp.LockRequiredEvent;
+import org.uberfire.client.workbench.ouia.OuiaComponentIdAttribute;
+import org.uberfire.client.workbench.ouia.OuiaComponentTypeAttribute;
 import org.uberfire.mocks.EventSourceMock;
 import org.uberfire.mvp.Command;
 
@@ -368,6 +370,7 @@ public class DecisionNavigatorTreeViewTest {
         doNothing().when(treeItem).updateCSSClass();
         doNothing().when(treeItem).updateLabel();
         doNothing().when(treeItem).updateSubItems(children);
+        doNothing().when(treeItem).initOuiaComponentAttributes();
 
         final DecisionNavigatorTreeView.TreeItem actualTreeItem = treeItem.setup(expectedItem, children);
         final DecisionNavigatorItem actualItem = treeItem.getItem();
@@ -377,6 +380,7 @@ public class DecisionNavigatorTreeViewTest {
         verify(treeItem).updateCSSClass();
         verify(treeItem).updateLabel();
         verify(treeItem).updateSubItems(children);
+        verify(treeItem).initOuiaComponentAttributes();
 
         assertEquals(treeItem, actualTreeItem);
         assertEquals(expectedItem, actualItem);
@@ -538,6 +542,48 @@ public class DecisionNavigatorTreeViewTest {
         treeItem.updateSubItems(children);
 
         verify(parentNode).replaceChild(children, subItems);
+    }
+
+    @Test
+    public void testTreeItemInitOuiaAttributes_Expression() {
+
+        final DecisionNavigatorItem item = mock(DecisionNavigatorItem.class);
+        final Text textNode = mock(Text.class);
+        final String label = "label";
+        final HTMLElement element = mock(HTMLElement.class);
+
+        doReturn(element).when(treeItem).getElement();
+        doReturn(item).when(treeItem).getItem();
+        doReturn(textNode).when(treeItem).getTextNode(label);
+        when(item.getLabel()).thenReturn(label);
+
+        treeItem.initOuiaComponentAttributes();
+
+        verify(element).setAttribute(OuiaComponentTypeAttribute.COMPONENT_TYPE, "dmn-graph-navigator-expression");
+        verify(element).setAttribute(OuiaComponentIdAttribute.COMPONENT_ID, "dmn-graph-navigator-expression-label");
+    }
+
+    @Test
+    public void testTreeItemInitOuiaAttributes_Node() {
+
+        final DecisionNavigatorItem item = mock(DecisionNavigatorItem.class);
+        final TreeSet<DecisionNavigatorItem> subItems = new TreeSet<>();
+        final DecisionNavigatorItem subItem = mock(DecisionNavigatorItem.class);
+        subItems.add(subItem);
+        final Text textNode = mock(Text.class);
+        final String label = "label";
+        final HTMLElement element = mock(HTMLElement.class);
+
+        doReturn(element).when(treeItem).getElement();
+        doReturn(item).when(treeItem).getItem();
+        doReturn(subItems).when(item).getChildren();
+        doReturn(textNode).when(treeItem).getTextNode(label);
+        when(item.getLabel()).thenReturn(label);
+
+        treeItem.initOuiaComponentAttributes();
+
+        verify(element).setAttribute(OuiaComponentTypeAttribute.COMPONENT_TYPE, "dmn-graph-navigator-node");
+        verify(element).setAttribute(OuiaComponentIdAttribute.COMPONENT_ID, "dmn-graph-navigator-node-label");
     }
 
     @Test
