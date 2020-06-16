@@ -143,29 +143,25 @@ public class Variable {
                                        final List<String> dataTypes) {
         Variable var = new Variable(variableType);
         String[] varParts = s.split(DIVIDER, -1);
-        if (varParts.length == 3) {
-            String name = varParts[0];
-            if (!name.isEmpty()) {
-                var.setName(name);
-                var.tags = new ArrayList<>();
 
-                String dataType = varParts[1];
-                if (!dataType.isEmpty()) {
-                    if (dataTypes != null && dataTypes.contains(dataType)) {
-                        var.setDataType(dataType);
-                    } else {
-                        var.setCustomDataType(dataType);
-                    }
-                }
+        String name = varParts[0];
+        var.setName(name);
 
-                final String strippedDownTags = varParts[2].replace("[", "").replace("]", "");
-                String[] elements = strippedDownTags.split(TAG_DIVIDER);
-
-                if (!strippedDownTags.isEmpty()) {
-                    var.tags.addAll(Arrays.asList(elements));
-                }
-            }
+        String dataType = varParts.length > 1 ? varParts[1] : null;
+        if (dataTypes != null && dataTypes.contains(dataType)) {
+            var.setDataType(dataType);
+        } else {
+            var.setCustomDataType(dataType);
         }
+
+        var.tags = new ArrayList<>();
+        String tags = varParts.length > 2 ? varParts[2] : "";
+        final String strippedDownTags = tags.replace("[", "").replace("]", "");
+        String[] elements = strippedDownTags.split(TAG_DIVIDER);
+        if (!strippedDownTags.isEmpty()) {
+            var.tags.addAll(Arrays.asList(elements));
+        }
+
         return var;
     }
 
@@ -185,27 +181,33 @@ public class Variable {
 
     @Override
     public boolean equals(final Object o) {
-
         if (this == o) {
             return true;
         }
+
         if (!(o instanceof Variable)) {
             return false;
         }
+
         Variable variable = (Variable) o;
+
         if (getVariableType() != variable.getVariableType()) {
             return false;
         }
-        if (getName() != null ? !getName().equals(variable.getName()) : variable.getName() != null) {
+
+        if (getName() != null && !getName().isEmpty() ? !getName().equals(variable.getName()) : variable.getName() != null && !variable.getName().isEmpty()) {
             return false;
         }
-        if (getDataType() != null ? !getDataType().equals(variable.getDataType()) : variable.getDataType() != null) {
+
+        if (getDataType() != null && !getDataType().isEmpty() ? !getDataType().equals(variable.getDataType()) : variable.getDataType() != null && !variable.getDataType().isEmpty()) {
             return false;
         }
-        if (tags != null && !tags.isEmpty() ? !tags.equals(variable.tags) : variable.getTags() != null && !variable.getTags().isEmpty()) {
+
+        if (getCustomDataType() != null && !getCustomDataType().isEmpty() ? !getCustomDataType().equals(variable.getCustomDataType()) : variable.getCustomDataType() != null && !variable.getCustomDataType().isEmpty()) {
             return false;
         }
-        return getCustomDataType() != null ? getCustomDataType().equals(variable.getCustomDataType()) : variable.getCustomDataType() == null;
+
+        return tags != null && !tags.isEmpty() ? tags.equals(variable.tags) : variable.getTags() == null || variable.getTags().isEmpty();
     }
 
     @Override

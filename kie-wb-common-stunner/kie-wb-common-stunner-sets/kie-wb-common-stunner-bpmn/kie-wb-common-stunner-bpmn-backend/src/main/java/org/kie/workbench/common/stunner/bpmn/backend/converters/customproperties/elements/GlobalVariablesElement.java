@@ -49,13 +49,7 @@ public class GlobalVariablesElement extends ElementDefinition<String> {
         setStringValue(element, value);
     }
 
-    private void setStringValue(BaseElement element, String value) {
-        Stream.of(value.split(","))
-                .map(this::extensionOf)
-                .forEach(getExtensionElements(element)::add);
-    }
-
-    private Optional<String> getStringValue(BaseElement element) {
+    protected Optional<String> getStringValue(BaseElement element) {
         List<ExtensionAttributeValue> extValues = element.getExtensionValues();
 
         List<FeatureMap> extElementsList = extValues.stream()
@@ -68,14 +62,16 @@ public class GlobalVariablesElement extends ElementDefinition<String> {
                 .collect(Collectors.toList());
 
         String globalVariables = globalExtensions.stream()
-                .filter(globalType -> globalType.getIdentifier() != null &&
-                        globalType.getIdentifier().length() > 0 &&
-                        globalType.getType() != null &&
-                        globalType.getType().length() > 0)
                 .map(globalType -> globalType.getIdentifier() + ":" + globalType.getType())
                 .collect(Collectors.joining(","));
 
         return Optional.ofNullable(globalVariables);
+    }
+
+    protected void setStringValue(BaseElement element, String value) {
+        Stream.of(value.split(","))
+                .map(this::extensionOf)
+                .forEach(getExtensionElements(element)::add);
     }
 
     protected FeatureMap.Entry extensionOf(String variable) {
@@ -86,7 +82,7 @@ public class GlobalVariablesElement extends ElementDefinition<String> {
 
     protected GlobalType globalTypeDataOf(String variable) {
         GlobalType globalType = DroolsFactory.eINSTANCE.createGlobalType();
-        String[] properties = variable.split(":");
+        String[] properties = variable.split(":", -1);
         globalType.setIdentifier(properties[0]);
         globalType.setType(properties[1]);
 
