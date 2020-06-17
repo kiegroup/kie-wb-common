@@ -55,8 +55,11 @@ import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.uberfire.backend.server.util.Paths;
 import org.uberfire.backend.vfs.Path;
+import org.uberfire.commons.data.Pair;
 import org.uberfire.io.IOService;
 import org.uberfire.java.nio.base.options.CommentedOption;
+import org.uberfire.java.nio.file.SimpleFileVisitor;
+import org.uberfire.java.nio.file.attribute.BasicFileAttributes;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -65,6 +68,7 @@ import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyObject;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
@@ -306,6 +310,39 @@ public abstract class AbstractVFSDiagramServiceTest<M extends Metadata, D extend
         assertTrue(diagramService.contains(diagram));
         verify(diagramService,
                times(1)).getDiagramByPath(path);
+    }
+
+    @Test
+    public void testGetAll() {
+        ArgumentCaptor<SimpleFileVisitor> visitorArgumentCaptor = ArgumentCaptor.forClass(SimpleFileVisitor.class);
+
+        org.uberfire.java.nio.file.Path root = mock(org.uberfire.java.nio.file.Path.class);
+
+        D diagram = mockDiagram();
+        List<Pair<Path, org.uberfire.java.nio.file.Path>> visitedPaths = new ArrayList<>();
+        for (int i = 0; i < 10; i++) {
+            Path diagramPath = mock(Path.class);
+            org.uberfire.java.nio.file.Path nioDiagramPath = mock(org.uberfire.java.nio.file.Path.class);
+            doReturn(nioDiagramPath).when(diagramService).convertToNioPath(diagramPath);
+            doReturn(diagramPath).when(diagramService).convertToBackendPath(nioDiagramPath);
+            visitedPaths.add(new Pair<>(diagramPath,
+                                        nioDiagramPath));
+            when(resourceType.accept(diagramPath)).thenReturn(true);
+            doReturn(diagram).when(diagramService).getDiagramByPath(diagramPath);
+        }
+        BasicFileAttributes attrs = mock(BasicFileAttributes.class);
+
+        when(ioService.exists(root)).thenReturn(true);
+
+        doNothing().when(diagramService).walkFileTree(eq(root), visitorArgumentCaptor.capture());
+        diagramService.getDiagramsByPath(root);
+
+        visitedPaths.forEach(pair -> {
+            visitorArgumentCaptor.getValue().visitFile(pair.getK2(),
+                                                       attrs);
+            verify(diagramService,
+                   times(1)).getDiagramByPath(pair.getK1());
+        });
     }
 
     protected void testBaseSaveOrUpdateSvg() {
