@@ -16,63 +16,42 @@
 
 package org.kie.workbench.common.stunner.bpmn.client.forms.fields.artifacts;
 
-import com.ait.lienzo.test.LienzoMockitoTestRunner;
-import org.jboss.errai.ioc.client.api.ManagedInstance;
-import org.junit.Assert;
+import com.google.gwtmockito.GwtMockitoTestRunner;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.kie.workbench.common.forms.dynamic.client.rendering.formGroups.FormGroup;
-import org.kie.workbench.common.forms.dynamic.client.rendering.formGroups.impl.def.DefaultFormGroup;
-import org.kie.workbench.common.forms.dynamic.service.shared.RenderMode;
-import org.kie.workbench.common.stunner.bpmn.client.forms.util.ReflectionUtilsTest;
 import org.mockito.Mock;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.doCallRealMethod;
-import static org.mockito.Mockito.spy;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import static org.mockito.internal.verification.VerificationModeFactory.times;
 
-@RunWith(LienzoMockitoTestRunner.class)
-public class DataObjectEditorFieldRendererTest extends ReflectionUtilsTest {
+@RunWith(GwtMockitoTestRunner.class)
+public class DataObjectEditorFieldRendererTest {
 
     @Mock
-    private DataObjectTypeWidget dataObjectTypeWidget;
+    private DataObjectTypeWidget widget;
 
-    @Mock
-    private DefaultFormGroup formGroup;
-
-    @Mock
-    private ManagedInstance<DefaultFormGroup> managedInstance;
-
-    private DataObjectEditorFieldRenderer dataObjectEditorFieldRenderer;
+    private DataObjectEditorFieldRenderer renderer;
 
     @Before
-    public void setUp() throws Exception {
-        dataObjectEditorFieldRenderer = spy(new DataObjectEditorFieldRenderer(dataObjectTypeWidget));
-
-        doCallRealMethod().when(dataObjectEditorFieldRenderer).getName();
-        doCallRealMethod().when(dataObjectEditorFieldRenderer).getField();
-        setFieldValue(dataObjectEditorFieldRenderer, "formGroupsInstance", managedInstance);
-        when(managedInstance.get()).thenReturn(formGroup);
+    public void setUp() {
+        renderer = new DataObjectEditorFieldRenderer(widget);
     }
 
     @Test
-    public void getNameTest() {
-        Assert.assertEquals("DataObjectEditor", dataObjectEditorFieldRenderer.getName());
+    public void testGetName() {
+        assertEquals("DataObjectEditor", renderer.getName());
     }
 
     @Test
-    public void testSetReadOnly() {
-        dataObjectEditorFieldRenderer.setReadOnly(true);
-        verify(dataObjectTypeWidget, times(1)).setReadOnly(true);
+    public void testSetReadonlyTrue() {
+        renderer.setReadOnly(true);
+        verify(widget).setReadOnly(true);
     }
 
     @Test
-    public void getFormGroup() {
-        FormGroup formGroup = dataObjectEditorFieldRenderer.getFormGroup(RenderMode.EDIT_MODE);
-        assertThat(formGroup).isInstanceOf(DefaultFormGroup.class);
+    public void testSetReadonlyFalse() {
+        renderer.setReadOnly(false);
+        verify(widget).setReadOnly(false);
     }
 }

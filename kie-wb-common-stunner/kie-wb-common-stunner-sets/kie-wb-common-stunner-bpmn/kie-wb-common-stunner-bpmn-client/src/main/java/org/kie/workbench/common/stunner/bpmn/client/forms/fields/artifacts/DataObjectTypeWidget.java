@@ -16,6 +16,13 @@
 
 package org.kie.workbench.common.stunner.bpmn.client.forms.fields.artifacts;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
@@ -23,45 +30,126 @@ import javax.inject.Inject;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.text.shared.Renderer;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HasValue;
+import elemental2.promise.IThenable;
+import org.gwtbootstrap3.client.ui.TextBox;
+import org.gwtbootstrap3.client.ui.ValueListBox;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
-import org.kie.workbench.common.stunner.bpmn.client.forms.fields.artifacts.widgets.DataObjectTypeSelect;
+import org.kie.workbench.common.stunner.bpmn.client.forms.DataTypeNamesService;
+import org.kie.workbench.common.stunner.bpmn.client.forms.fields.i18n.StunnerFormsClientFieldsConstants;
+import org.kie.workbench.common.stunner.bpmn.client.forms.fields.variablesEditor.VariableListItemWidgetView;
+import org.kie.workbench.common.stunner.bpmn.client.forms.util.ListBoxValues;
+import org.kie.workbench.common.stunner.bpmn.client.forms.util.StringUtils;
+import org.kie.workbench.common.stunner.bpmn.client.forms.widgets.ComboBox;
+import org.kie.workbench.common.stunner.bpmn.client.forms.widgets.ComboBoxView;
+import org.kie.workbench.common.stunner.bpmn.client.forms.widgets.CustomDataTypeTextBox;
 import org.kie.workbench.common.stunner.bpmn.definition.property.artifacts.DataObjectTypeValue;
+import org.kie.workbench.common.stunner.core.client.api.SessionManager;
+import org.kie.workbench.common.stunner.core.diagram.Diagram;
+import org.uberfire.backend.vfs.Path;
+
+import static java.util.stream.Collectors.toMap;
 
 @Dependent
 @Templated
-public class DataObjectTypeWidget extends Composite implements HasValue<DataObjectTypeValue> {
+public class DataObjectTypeWidget extends Composite implements HasValue<DataObjectTypeValue>,
+                                                               ComboBoxView.ModelPresenter {
+
+    String CUSTOM_PROMPT = "Custom" + ListBoxValues.EDIT_SUFFIX;
+    String ENTER_TYPE_PROMPT = "Enter type" + ListBoxValues.EDIT_SUFFIX;
+
+    static final List<String> simpleDataTypes = Arrays.asList("Boolean", "Float", "Integer", "Object", "String");
+
+    private final SessionManager sessionManager;
+
+    @Inject
+    protected ComboBox dataTypeComboBox;
+
+    @Inject
+    protected DataTypeNamesService clientDataTypesService;
 
     @Inject
     @DataField
-    private DataObjectTypeSelect select;
-
-    private DataObjectTypeValue current;
-
-    protected ValueChangeHandler handler;
+    protected CustomDataTypeTextBox customDataType;
 
     @Inject
-    public DataObjectTypeWidget() {
+    public DataObjectTypeWidget(final SessionManager sessionManager) {
+        this.sessionManager = sessionManager;
     }
 
     @PostConstruct
     public void init() {
-        select.setValue(Object.class.getSimpleName());
 
-        handler = (event -> {
-            DataObjectTypeValue value = new DataObjectTypeValue();
-            value.setType(select.getValue());
-            setValue(value, true);
-        });
+        dataTypeComboBox.init(this,
+                              true,
+                              dataType,
+                              customDataType,
+                              false,
+                              true,
+                              CUSTOM_PROMPT,
+                              ENTER_TYPE_PROMPT);
 
-        select.addValueChangeHandler(handler);
+        customDataType.setRegExp(StringUtils.ALPHA_NUM_UNDERSCORE_DOT_REGEXP,
+                                 StunnerFormsClientFieldsConstants.INSTANCE.Removed_invalid_characters_from_name(),
+                                 StunnerFormsClientFieldsConstants.INSTANCE.Invalid_character_in_name());
+
+        ListBoxValues dataTypeListBoxValues = new ListBoxValues(VariableListItemWidgetView.CUSTOM_PROMPT, "Edit ", null);
+
+        clientDataTypesService
+                .call(getDiagramPath())
+                .then(getListObjectThenOnFulfilledCallbackFn(simpleDataTypes, dataTypeListBoxValues))
+                .catch_(exception -> {
+                    dataTypeListBoxValues.addValues(simpleDataTypes);
+                    return null;
+                });
+
+        dataTypeComboBox.setCurrentTextValue("");
+        dataTypeComboBox.setListBoxValues(dataTypeListBoxValues);
+        dataTypeComboBox.setShowCustomValues(true);
+    }
+
+    public static Map<String, String> getMapDataTypeNamesToDisplayNames() {
+        return mapDataTypeNamesToDisplayNames;
+    }
+
+    private static final Map<String, String> mapDataTypeNamesToDisplayNames = createMapForSimpleDataTypes();
+
+    static Map<String, String> createMapForSimpleDataTypes() {
+        if (simpleDataTypes == null) {
+            return new HashMap<>();
+        }
+        return simpleDataTypes.stream().collect(toMap(x -> x, x -> x));
+    }
+
+    static IThenable.ThenOnFulfilledCallbackFn<List<String>, Object> getListObjectThenOnFulfilledCallbackFn(List<String> simpleDataTypes, ListBoxValues dataTypeListBoxValues) {
+        return serverDataTypes -> {
+            List<String> mergedList = new ArrayList<>(simpleDataTypes);
+
+            for (String type : serverDataTypes) {
+                String displayType = StringUtils.createDataTypeDisplayName(type);
+                getMapDataTypeNamesToDisplayNames().put(
+                        displayType,
+                        type
+                );
+                mergedList.add(displayType);
+            }
+
+            dataTypeListBoxValues.addValues(mergedList);
+            return null;
+        };
+    }
+
+    public Path getDiagramPath() {
+        final Diagram diagram = sessionManager.getCurrentSession().getCanvasHandler().getDiagram();
+        return diagram.getMetadata().getPath();
     }
 
     @Override
     public DataObjectTypeValue getValue() {
-        return current;
+        return new DataObjectTypeValue(getDisplayName(getFirstIfExistsOrSecond(customDataType.getValue(), dataType.getValue())));
     }
 
     @Override
@@ -73,15 +161,15 @@ public class DataObjectTypeWidget extends Composite implements HasValue<DataObje
     public void setValue(DataObjectTypeValue value, boolean fireEvents) {
 
         if (value != null) {
-            DataObjectTypeValue oldValue = current;
-            current = value;
+            DataObjectTypeValue oldValue = new DataObjectTypeValue(dataType.getValue());
+            dataType.setValue(value.getType());
 
             if (fireEvents) {
                 ValueChangeEvent.fireIfNotEqual(this,
                                                 oldValue,
-                                                current);
+                                                new DataObjectTypeValue(dataType.getValue()));
             } else {
-                select.setValue(value.getType());
+                dataType.setValue(value.getType());
             }
         }
     }
@@ -93,6 +181,58 @@ public class DataObjectTypeWidget extends Composite implements HasValue<DataObje
     }
 
     public void setReadOnly(boolean readOnly) {
-        select.setReadOnly(readOnly);
+        dataType.setEnabled(!readOnly);
+        dataTypeComboBox.setReadOnly(readOnly);
+        customDataType.setEnabled(!readOnly);
+    }
+
+    @DataField
+    protected ValueListBox<String> dataType = new ValueListBox<>(new Renderer<String>() {
+        public String render(final String value) {
+            return getNonNullName(value);
+        }
+
+        public void render(final String value,
+                           final Appendable appendable) throws IOException {
+            String s = render(value);
+            appendable.append(s);
+        }
+    });
+
+    @Override
+    public void setTextBoxModelValue(TextBox textBox, String value) {
+    }
+
+    @Override
+    public void setListBoxModelValue(ValueListBox<String> listBox, String value) {
+    }
+
+    @Override
+    public String getModelValue(ValueListBox<String> listBox) {
+        return getFirstIfExistsOrSecond(customDataType.getValue(), dataTypeComboBox.getValue());
+    }
+
+    @Override
+    public void notifyModelChanged() {
+    }
+
+    static String getDisplayName(String realType) {
+        if (getMapDataTypeNamesToDisplayNames().containsKey(realType)) {
+            return getMapDataTypeNamesToDisplayNames().get(realType);
+        }
+
+        return realType;
+    }
+
+    private static boolean isNullOrEmpty(String value) {
+        return value == null || value.isEmpty();
+    }
+
+    static String getNonNullName(String name) {
+        return name == null ? "" : name;
+    }
+
+    static String getFirstIfExistsOrSecond(String first, String second) {
+        return isNullOrEmpty(first) ? second : first;
     }
 }
