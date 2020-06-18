@@ -16,12 +16,15 @@
 
 package org.kie.workbench.common.dmn.client.editors.expressions.util;
 
+import java.util.Objects;
+
 import com.ait.lienzo.client.core.shape.Group;
 import com.ait.lienzo.client.core.shape.Text;
 import com.ait.lienzo.client.core.shape.TextLineBreakWrap;
 import com.ait.lienzo.shared.core.types.TextAlign;
 import com.google.gwt.core.client.GWT;
 import org.kie.workbench.common.dmn.api.property.dmn.QName;
+import org.kie.workbench.common.dmn.api.property.dmn.types.BuiltInType;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.context.InformationItemCell;
 import org.kie.workbench.common.dmn.client.widgets.grid.BaseExpressionGridTheme;
 import org.kie.workbench.common.dmn.client.widgets.grid.columns.EditableHeaderMetaData;
@@ -192,7 +195,7 @@ public class RendererUtils {
         final Text tTypeRef = theme.getHeaderText();
         tTypeRef.setFontStyle(FONT_STYLE_TYPE_REF);
         tTypeRef.setFontSize(BaseExpressionGridTheme.FONT_SIZE - 2.0);
-        tTypeRef.setText("(" + typeRef.toString() + ")");
+        tTypeRef.setText("(" + getTypeRefValue(typeRef) + ")");
         tTypeRef.setListening(false);
         tTypeRef.setX(blockWidth / 2);
         tTypeRef.setY(blockHeight / 2 + SPACING);
@@ -201,5 +204,12 @@ public class RendererUtils {
         headerGroup.add(tTypeRef);
 
         return headerGroup;
+    }
+
+    private static String getTypeRefValue(final QName typeRef) {
+        if (Objects.isNull(typeRef)) {
+            return BuiltInType.UNDEFINED.asQName().toString();
+        }
+        return typeRef.toString();
     }
 }

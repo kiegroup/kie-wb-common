@@ -32,6 +32,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.dmn.api.property.dmn.Name;
 import org.kie.workbench.common.dmn.api.property.dmn.QName;
+import org.kie.workbench.common.dmn.api.property.dmn.types.BuiltInType;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.context.InformationItemCell;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.literal.LiteralExpressionColumn;
 import org.kie.workbench.common.dmn.client.widgets.grid.BaseExpressionGridTheme;
@@ -67,7 +68,7 @@ public class RendererUtilsTest {
 
     private static final String TITLE = "title";
 
-    private static final QName TYPE_REF = new QName();
+    private static final QName TYPE_REF = BuiltInType.BOOLEAN.asQName();
 
     private static final int BLOCK_WIDTH = 100;
 
@@ -197,7 +198,22 @@ public class RendererUtilsTest {
                                                     BLOCK_WIDTH,
                                                     ROW_HEIGHT);
 
-        assertHasNameAndDataTypeRendering();
+        assertHasNameAndDataTypeRendering(TYPE_REF);
+    }
+
+    @Test
+    public void testRenderHeaderContentWithNameAndMissingDataTypeHeaderMetaData() {
+        final ValueAndDataTypeHeaderMetaData metaData = mock(ValueAndDataTypeHeaderMetaData.class);
+
+        when(metaData.getTitle()).thenReturn(TITLE);
+        when(metaData.getTypeRef()).thenReturn(null);
+
+        RendererUtils.getValueAndDataTypeHeaderText(metaData,
+                                                    headerContext,
+                                                    BLOCK_WIDTH,
+                                                    ROW_HEIGHT);
+
+        assertHasNameAndDataTypeRendering(BuiltInType.UNDEFINED.asQName());
     }
 
     @Test
@@ -212,7 +228,7 @@ public class RendererUtilsTest {
         RendererUtils.getNameAndDataTypeCellText(informationItemCell,
                                                  bodyContext);
 
-        assertHasNameAndDataTypeRendering();
+        assertHasNameAndDataTypeRendering(TYPE_REF);
     }
 
     @Test
@@ -269,12 +285,12 @@ public class RendererUtilsTest {
         verify(text).setTextAlign(TextAlign.LEFT);
     }
 
-    private void assertHasNameAndDataTypeRendering() {
+    private void assertHasNameAndDataTypeRendering(final QName typeRef) {
         verify(headerText1).setText(eq(TITLE));
         verify(headerText1).setX(BLOCK_WIDTH / 2);
         verify(headerText1).setY(ROW_HEIGHT / 2 - RendererUtils.SPACING);
 
-        verify(headerText2).setText(eq("(" + TYPE_REF + ")"));
+        verify(headerText2).setText(eq("(" + typeRef + ")"));
         verify(headerText2).setX(BLOCK_WIDTH / 2);
         verify(headerText2).setY(ROW_HEIGHT / 2 + RendererUtils.SPACING);
         verify(headerText2).setFontStyle(RendererUtils.FONT_STYLE_TYPE_REF);
