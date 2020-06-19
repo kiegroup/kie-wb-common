@@ -36,12 +36,16 @@ public class GuidedTourUtils {
         this.textPropertyProviderFactory = textPropertyProviderFactory;
     }
 
-    public Optional<NodeImpl<View>> getNode(final AbstractCanvasHandlerElementEvent event) {
+    public Optional<String> getName(final AbstractCanvasHandlerElementEvent event) {
         final Element<?> element = event.getElement();
         if (element instanceof NodeImpl) {
-            return Optional.ofNullable(asNodeImpl(element));
+            return Optional.ofNullable(getName(element));
         }
         return Optional.empty();
+    }
+
+    public String getName(final Element<?> element) {
+        return getName(asNodeImpl(element));
     }
 
     public String getName(final NodeImpl<View> node) {

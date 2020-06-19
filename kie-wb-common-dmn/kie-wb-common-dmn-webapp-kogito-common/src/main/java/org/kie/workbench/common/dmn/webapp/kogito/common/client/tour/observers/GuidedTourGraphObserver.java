@@ -67,8 +67,7 @@ public class GuidedTourGraphObserver extends GuidedTourObserver<GuidedTourGraphO
     }
 
     private String getNodeName(final AbstractCanvasHandlerElementEvent event) {
-        return guidedTourUtils.getNode(event)
-                .map(guidedTourUtils::getName).orElse("");
+        return guidedTourUtils.getName(event).orElse("");
     }
 
     UserInteraction buildUserInteraction(final String action,

@@ -51,15 +51,20 @@ public class GuidedTourUtilsTest {
     }
 
     @Test
-    public void testGetNode() {
-        final NodeImpl<View> expectedNode = new NodeImpl<>("uuid");
+    public void getNameWithAbstractCanvasHandlerElementEvent() {
+        final String expectedName = "name";
+        final NodeImpl<View> node = new NodeImpl<>("uuid");
         final CanvasHandler canvasHandler = mock(CanvasHandler.class);
-        final CanvasElementAddedEvent event = new CanvasElementAddedEvent(canvasHandler, expectedNode);
+        final TextPropertyProvider textPropertyProvider = mock(TextPropertyProvider.class);
+        final CanvasElementAddedEvent event = new CanvasElementAddedEvent(canvasHandler, node);
 
-        final Optional<NodeImpl<View>> actualNode = utils.getNode(event);
+        when(textPropertyProviderFactory.getProvider(node)).thenReturn(textPropertyProvider);
+        when(textPropertyProvider.getText(node)).thenReturn(expectedName);
 
-        assertTrue(actualNode.isPresent());
-        assertEquals(expectedNode, actualNode.get());
+        final Optional<String> actualName = utils.getName(event);
+
+        assertTrue(actualName.isPresent());
+        assertEquals(expectedName, actualName.get());
     }
 
     @Test
@@ -68,11 +73,11 @@ public class GuidedTourUtilsTest {
         final CanvasHandler canvasHandler = mock(CanvasHandler.class);
         final CanvasElementAddedEvent event = new CanvasElementAddedEvent(canvasHandler, edge);
 
-        assertFalse(utils.getNode(event).isPresent());
+        assertFalse(utils.getName(event).isPresent());
     }
 
     @Test
-    public void testGetName() {
+    public void testGetNameWithNodeImpl() {
         final NodeImpl<View> node = new NodeImpl<>("uuid");
         final TextPropertyProvider textPropertyProvider = mock(TextPropertyProvider.class);
         final String expectedNodeName = "Decision-1";

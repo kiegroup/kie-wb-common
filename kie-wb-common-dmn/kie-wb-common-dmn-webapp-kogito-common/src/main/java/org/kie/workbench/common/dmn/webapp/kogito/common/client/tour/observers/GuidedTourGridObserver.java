@@ -16,17 +16,18 @@
 
 package org.kie.workbench.common.dmn.webapp.kogito.common.client.tour.observers;
 
-import java.util.Optional;
+import java.util.Objects;
 
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
-import org.appformer.kogito.bridge.client.guided.tour.GuidedTourBridge;
 import org.appformer.kogito.bridge.client.guided.tour.GuidedTourObserver;
 import org.appformer.kogito.bridge.client.guided.tour.service.api.UserInteraction;
 import org.jboss.errai.ioc.client.api.Disposer;
 import org.kie.workbench.common.dmn.client.events.EditExpressionEvent;
+import org.kie.workbench.common.dmn.client.graph.DMNGraphUtils;
 import org.kie.workbench.common.dmn.client.widgets.grid.model.ExpressionEditorChanged;
+import org.kie.workbench.common.dmn.webapp.kogito.common.client.tour.common.GuidedTourUtils;
 
 import static org.kie.workbench.common.dmn.webapp.kogito.common.client.tour.common.GuidedTourActions.CREATED;
 import static org.kie.workbench.common.dmn.webapp.kogito.common.client.tour.common.GuidedTourActions.UPDATED;
@@ -35,28 +36,49 @@ public class GuidedTourGridObserver extends GuidedTourObserver<GuidedTourGridObs
 
     private static final String BOXED_EXPRESSION = "BOXED_EXPRESSION";
 
+    private final DMNGraphUtils dmnGraphUtils;
+
+    private final GuidedTourUtils guidedTourUtils;
+
     @Inject
-    public GuidedTourGridObserver(final Disposer<GuidedTourGridObserver> disposer) {
+    public GuidedTourGridObserver(final Disposer<GuidedTourGridObserver> disposer,
+                                  final DMNGraphUtils dmnGraphUtils,
+                                  final GuidedTourUtils guidedTourUtils) {
         super(disposer);
+        this.dmnGraphUtils = dmnGraphUtils;
+        this.guidedTourUtils = guidedTourUtils;
     }
 
-    public void onEditExpressionEvent(final @Observes EditExpressionEvent e) {
-        onBoxedExpressionEvent(CREATED.name());
+    public void onEditExpressionEvent(final @Observes EditExpressionEvent event) {
+        onBoxedExpressionEvent(CREATED.name(), event.getNodeUUID());
     }
 
-    public void onExpressionEditorChanged(final @Observes ExpressionEditorChanged e) {
-        onBoxedExpressionEvent(UPDATED.name());
+    public void onExpressionEditorChanged(final @Observes ExpressionEditorChanged event) {
+        onBoxedExpressionEvent(UPDATED.name(), event.getNodeUUID());
     }
 
-    private void onBoxedExpressionEvent(final String action) {
-        final Optional<GuidedTourBridge> monitorBridge = getMonitorBridge();
-        monitorBridge.ifPresent(bridge -> bridge.refresh(buildUserInteraction(action)));
+    private void onBoxedExpressionEvent(final String action,
+                                        final String nodeUUID) {
+        final String name = getName(nodeUUID);
+        final String target = BOXED_EXPRESSION + ":::" + name;
+        getMonitorBridge()
+                .ifPresent(bridge -> bridge.refresh(buildUserInteraction(action, target)));
     }
 
-    UserInteraction buildUserInteraction(final String action) {
+    private String getName(final String nodeUUID) {
+        return dmnGraphUtils
+                .getNodeStream()
+                .filter(node -> Objects.equals(node.getUUID(), nodeUUID))
+                .findFirst()
+                .map(guidedTourUtils::getName)
+                .orElse("");
+    }
+
+    UserInteraction buildUserInteraction(final String action,
+                                         final String target) {
         final UserInteraction userInteraction = new UserInteraction();
         userInteraction.setAction(action);
-        userInteraction.setTarget(BOXED_EXPRESSION);
+        userInteraction.setTarget(target);
         return userInteraction;
     }
 }

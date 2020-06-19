@@ -68,8 +68,7 @@ public class GuidedTourGraphObserverTest {
         final NodeImpl<View> node = new NodeImpl<>("0000");
         final String nodeName = "Decision-1";
 
-        when(guidedTourUtils.getNode(event)).thenReturn(Optional.of(node));
-        when(guidedTourUtils.getName(node)).thenReturn(nodeName);
+        when(guidedTourUtils.getName(event)).thenReturn(Optional.of(nodeName));
 
         doReturn(userInteraction).when(observer).buildUserInteraction(CREATED.name(), nodeName);
 
@@ -85,8 +84,7 @@ public class GuidedTourGraphObserverTest {
         final NodeImpl<View> node = new NodeImpl<>("0000");
         final String nodeName = "Decision-1";
 
-        when(guidedTourUtils.getNode(event)).thenReturn(Optional.of(node));
-        when(guidedTourUtils.getName(node)).thenReturn(nodeName);
+        when(guidedTourUtils.getName(event)).thenReturn(Optional.of(nodeName));
 
         doReturn(userInteraction).when(observer).buildUserInteraction(UPDATED.name(), nodeName);
 
@@ -102,8 +100,7 @@ public class GuidedTourGraphObserverTest {
         final NodeImpl<View> node = new NodeImpl<>("0000");
         final String nodeName = "Decision-1";
 
-        when(guidedTourUtils.getNode(event)).thenReturn(Optional.of(node));
-        when(guidedTourUtils.getName(node)).thenReturn(nodeName);
+        when(guidedTourUtils.getName(event)).thenReturn(Optional.of(nodeName));
 
         doReturn(userInteraction).when(observer).buildUserInteraction(REMOVED.name(), nodeName);
 

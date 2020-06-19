@@ -17,6 +17,7 @@
 package org.kie.workbench.common.dmn.webapp.kogito.common.client.tour.observers;
 
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import org.appformer.kogito.bridge.client.guided.tour.GuidedTourBridge;
 import org.appformer.kogito.bridge.client.guided.tour.service.api.UserInteraction;
@@ -25,7 +26,10 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.dmn.client.events.EditExpressionEvent;
+import org.kie.workbench.common.dmn.client.graph.DMNGraphUtils;
 import org.kie.workbench.common.dmn.client.widgets.grid.model.ExpressionEditorChanged;
+import org.kie.workbench.common.dmn.webapp.kogito.common.client.tour.common.GuidedTourUtils;
+import org.kie.workbench.common.stunner.core.graph.Node;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
@@ -35,9 +39,16 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class GuidedTourGridObserverTest {
+
+    @Mock
+    private DMNGraphUtils dmnGraphUtils;
+
+    @Mock
+    private GuidedTourUtils guidedTourUtils;
 
     @Mock
     private Disposer<GuidedTourGridObserver> disposer;
@@ -45,19 +56,38 @@ public class GuidedTourGridObserverTest {
     @Mock
     private GuidedTourBridge bridge;
 
+    @Mock
+    private UserInteraction userInteraction;
+
+    @Mock
+    private Node node1;
+
+    @Mock
+    private Node node2;
+
+    private String uuid1 = "uuid1";
+
+    private String uuid2 = "uuid2";
+
     private GuidedTourGridObserverFake observer;
 
     @Before
     public void setup() {
         observer = spy(new GuidedTourGridObserverFake(disposer));
+
+        when(node1.getUUID()).thenReturn(uuid1);
+        when(node2.getUUID()).thenReturn(uuid2);
+        when(dmnGraphUtils.getNodeStream()).thenReturn(Stream.of(node1, node2));
+        when(guidedTourUtils.getName(node1)).thenReturn("Decision-1");
+        when(guidedTourUtils.getName(node2)).thenReturn("Decision-2");
     }
 
     @Test
     public void testOnEditExpressionEvent() {
         final EditExpressionEvent event = mock(EditExpressionEvent.class);
-        final UserInteraction userInteraction = mock(UserInteraction.class);
 
-        doReturn(userInteraction).when(observer).buildUserInteraction(CREATED.name());
+        when(event.getNodeUUID()).thenReturn(uuid1);
+        doReturn(userInteraction).when(observer).buildUserInteraction(CREATED.name(), "BOXED_EXPRESSION:::Decision-1");
 
         observer.onEditExpressionEvent(event);
 
@@ -66,10 +96,9 @@ public class GuidedTourGridObserverTest {
 
     @Test
     public void testOnExpressionEditorChanged() {
-        final ExpressionEditorChanged event = mock(ExpressionEditorChanged.class);
-        final UserInteraction userInteraction = mock(UserInteraction.class);
+        final ExpressionEditorChanged event = new ExpressionEditorChanged(uuid2);
 
-        doReturn(userInteraction).when(observer).buildUserInteraction(UPDATED.name());
+        doReturn(userInteraction).when(observer).buildUserInteraction(UPDATED.name(), "BOXED_EXPRESSION:::Decision-2");
 
         observer.onExpressionEditorChanged(event);
 
@@ -79,7 +108,7 @@ public class GuidedTourGridObserverTest {
     class GuidedTourGridObserverFake extends GuidedTourGridObserver {
 
         GuidedTourGridObserverFake(final Disposer<GuidedTourGridObserver> disposer) {
-            super(disposer);
+            super(disposer, dmnGraphUtils, guidedTourUtils);
         }
 
         @Override

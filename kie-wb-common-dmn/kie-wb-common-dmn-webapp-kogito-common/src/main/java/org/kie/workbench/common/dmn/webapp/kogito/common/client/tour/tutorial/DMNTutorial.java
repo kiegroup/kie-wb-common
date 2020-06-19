@@ -52,6 +52,7 @@ public class DMNTutorial {
     public Tutorial getTutorial() {
         final List<String> commonAllowedElements = asList("canvas",
                                                           "body",
+                                                          "img",
                                                           "div.nameEditBoxTable",
                                                           "i.fa.fa-chevron-right.fa-fw",
                                                           "i[data-field=\"saveButton\"].fa.fa-check.nameEditBoxButton.fa-2x",
@@ -92,7 +93,7 @@ public class DMNTutorial {
                         "Open the properties panel by clicking on the pencil icon."),
 
                 getStep(view.getStepContent(5),
-                        blockMode(userInteraction("CREATED", "BOXED_EXPRESSION"), allowedSelectors(commonAllowedElements, "Can drive?", "i.fa.fa-pencil-square-o.fa-lg.fa-fw")),
+                        blockMode(userInteraction("CREATED", "BOXED_EXPRESSION:::Can drive?"), allowedSelectors(commonAllowedElements, "Can drive?", "i.fa.fa-pencil-square-o.fa-lg.fa-fw")),
                         "center",
                         "",
                         "Select the decision node and click on the pencil icon."),
