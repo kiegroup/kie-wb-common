@@ -128,10 +128,9 @@
 .annotation_data_object_main {
     fill:white;
     stroke:#000000;
-    stroke-width:10;
-    stroke-linecap:square;
-    stroke-linejoin:round;
-    stroke-miterlimit:2;
+    stroke-width:7;
+    stroke-linejoin:miter;
+    stroke-miterlimit:1;
     stroke-dasharray:0;
     stroke-opacity:1;
 }
