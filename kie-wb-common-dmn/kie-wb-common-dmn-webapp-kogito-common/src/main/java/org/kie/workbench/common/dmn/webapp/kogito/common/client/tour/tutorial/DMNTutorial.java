@@ -87,28 +87,28 @@ public class DMNTutorial {
                         "Try to double-click on the input node to rename it to \"Age\"."),
 
                 getStep(view.getStepContent(4),
-                        blockMode(userInteraction("CLICK", "i.fa.fa-pencil-square-o.fa-lg.fa-fw"), allowedSelectors(commonAllowedElements, "i.fa.fa-pencil-square-o.fa-lg.fa-fw")),
+                        blockMode(userInteraction("CLICK", "i.fa.fa-pencil-square-o.fa-lg.fa-fw"), allowedSelectors(commonAllowedElements, "i.fa.fa-pencil-square-o.fa-lg.fa-fw", "button[data-animation=\"true\"][data-delay=\"{ \"show\": 0, \"hide\": 0 }\"][data-html=\"false\"][data-placement=\"left\"][data-template=\"<div class=\"tooltip\"><div class=\"tooltip-arrow\"></div><div class=\"tooltip-inner\"></div></div>\"][data-title=\"Properties\"][data-trigger=\"hover\"][data-viewport=\"{ \"selector\": \"body\", \"padding\": 0 }\"][data-container=\"body\"][data-original-title=\"\"].btn.btn-sm.GFVDQLFDIL.btn-link")),
                         "left",
                         "DMNEditorHTMLElement:::i.fa.fa-pencil-square-o.fa-lg.fa-fw",
                         "Open the properties panel by clicking on the pencil icon."),
 
                 getStep(view.getStepContent(5),
-                        blockMode(userInteraction("CREATED", "BOXED_EXPRESSION:::Can drive?"), allowedSelectors(commonAllowedElements, "Can drive?", "i.fa.fa-pencil-square-o.fa-lg.fa-fw")),
+                        blockMode(userInteraction("CREATED", "BOXED_EXPRESSION:::Can drive?"), allowedSelectors(commonAllowedElements, "Age", "Can drive?", "i.fa.fa-pencil-square-o.fa-lg.fa-fw", "button[data-animation=\"true\"][data-delay=\"{ \"show\": 0, \"hide\": 0 }\"][data-html=\"false\"][data-placement=\"left\"][data-template=\"<div class=\"tooltip\"><div class=\"tooltip-arrow\"></div><div class=\"tooltip-inner\"></div></div>\"][data-title=\"Properties\"][data-trigger=\"hover\"][data-viewport=\"{ \"selector\": \"body\", \"padding\": 0 }\"][data-container=\"body\"][data-original-title=\"\"].btn.btn-sm.GFVDQLFDIL.btn-link")),
                         "center",
                         "",
-                        "Select the decision node and click on the pencil icon."),
+                        "Select the decision \"Can drive?\" and click on the pencil icon that appears at the left side of the node."),
 
                 getStep(view.getStepContent(6),
-                        blockMode(userInteraction("CLICK", "span[data-field=\"text\"]"), allowedSelectors(commonAllowedElements)),
+                        blockMode(userInteraction("CLICK", "span[data-field=\"text\"]"), allowedSelectors(commonAllowedElements, "div.kie-dmn-return-to-link", "BOXED_EXPRESSION:::Can drive?")),
                         "center",
                         "",
-                        "Select one of the available boxed expressions by clicking on \"Select expression\"."),
+                        "Select one of the available boxed expressions by clicking on \"Select expression\" or pressing \"Enter\"."),
 
                 getStep(view.getStepContent(7),
                         blockMode(userInteraction("CLICK", "a[data-field=\"returnToLink\"]"), allowedSelectors("a[data-field=\"returnToLink\"]", "div.kie-dmn-return-to-link")),
-                        "center",
-                        "",
-                        "Click on the \"Back to new-file\" link to go back to the canvas.")
+                        "right",
+                        "DMNEditorHTMLElement:::    a[data-field=\"returnToLink\"]",
+                        "Click on the \"Back to (your model name)\" link, below to the \"Editor\" tab, to go back to the canvas.")
 
         )));
         return tutorial;
