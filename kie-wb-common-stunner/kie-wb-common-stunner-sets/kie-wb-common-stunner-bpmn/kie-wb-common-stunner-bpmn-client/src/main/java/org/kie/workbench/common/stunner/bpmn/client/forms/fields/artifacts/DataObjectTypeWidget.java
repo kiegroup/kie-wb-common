@@ -40,7 +40,6 @@ import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.kie.workbench.common.stunner.bpmn.client.forms.DataTypeNamesService;
 import org.kie.workbench.common.stunner.bpmn.client.forms.fields.i18n.StunnerFormsClientFieldsConstants;
-import org.kie.workbench.common.stunner.bpmn.client.forms.fields.variablesEditor.VariableListItemWidgetView;
 import org.kie.workbench.common.stunner.bpmn.client.forms.util.ListBoxValues;
 import org.kie.workbench.common.stunner.bpmn.client.forms.util.StringUtils;
 import org.kie.workbench.common.stunner.bpmn.client.forms.widgets.ComboBox;
@@ -80,6 +79,8 @@ public class DataObjectTypeWidget extends Composite implements HasValue<DataObje
         this.sessionManager = sessionManager;
     }
 
+    protected DataObjectTypeValue current = new DataObjectTypeValue();
+
     @PostConstruct
     public void init() {
 
@@ -96,7 +97,7 @@ public class DataObjectTypeWidget extends Composite implements HasValue<DataObje
                                  StunnerFormsClientFieldsConstants.INSTANCE.Removed_invalid_characters_from_name(),
                                  StunnerFormsClientFieldsConstants.INSTANCE.Invalid_character_in_name());
 
-        ListBoxValues dataTypeListBoxValues = new ListBoxValues(VariableListItemWidgetView.CUSTOM_PROMPT, "Edit ", null);
+        ListBoxValues dataTypeListBoxValues = new ListBoxValues(CUSTOM_PROMPT, "Edit ", null);
 
         clientDataTypesService
                 .call(getDiagramPath())
@@ -149,7 +150,8 @@ public class DataObjectTypeWidget extends Composite implements HasValue<DataObje
 
     @Override
     public DataObjectTypeValue getValue() {
-        return new DataObjectTypeValue(getDisplayName(getFirstIfExistsOrSecond(customDataType.getValue(), dataType.getValue())));
+        current.setType(getDisplayName(getFirstIfExistsOrSecond(customDataType.getValue(), dataType.getValue())));
+        return current;
     }
 
     @Override
@@ -159,23 +161,24 @@ public class DataObjectTypeWidget extends Composite implements HasValue<DataObje
 
     @Override
     public void setValue(DataObjectTypeValue value, boolean fireEvents) {
-
         if (value != null) {
-            DataObjectTypeValue oldValue = new DataObjectTypeValue(dataType.getValue());
-            dataType.setValue(value.getType());
+            DataObjectTypeValue oldValue = current;
+            current = value;
 
             if (fireEvents) {
                 ValueChangeEvent.fireIfNotEqual(this,
                                                 oldValue,
-                                                new DataObjectTypeValue(dataType.getValue()));
+                                                current);
             } else {
-                dataType.setValue(value.getType());
+                final String type = value.getType();
+                dataType.setValue(type);
             }
         }
     }
 
     @Override
     public HandlerRegistration addValueChangeHandler(ValueChangeHandler<DataObjectTypeValue> handler) {
+
         return addHandler(handler,
                           ValueChangeEvent.getType());
     }
@@ -212,8 +215,16 @@ public class DataObjectTypeWidget extends Composite implements HasValue<DataObje
         return getFirstIfExistsOrSecond(customDataType.getValue(), dataTypeComboBox.getValue());
     }
 
+    protected String oldValue = "";
+
     @Override
     public void notifyModelChanged() {
+        String currentValue = dataType.getValue();
+
+        if (currentValue != null && !currentValue.equals(oldValue)) {
+            setValue(new DataObjectTypeValue(currentValue), true);
+        }
+        oldValue = currentValue;
     }
 
     static String getDisplayName(String realType) {
