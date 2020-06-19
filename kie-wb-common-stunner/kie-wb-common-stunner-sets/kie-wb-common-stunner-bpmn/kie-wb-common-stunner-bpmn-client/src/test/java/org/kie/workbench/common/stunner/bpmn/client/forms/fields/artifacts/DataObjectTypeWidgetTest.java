@@ -105,7 +105,7 @@ public class DataObjectTypeWidgetTest {
     public void testSetTextBoxModelValueCustomDataType() {
         final DataObjectTypeValue myValue = new DataObjectTypeValue("com.custom.myClass");
         widget.setValue(myValue);
-        verify(dataType, times(2)).setValue("com.custom.myClass");
+        verify(dataType, times(1)).setValue("com.custom.myClass");
     }
 
     @Test
