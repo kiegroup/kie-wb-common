@@ -752,14 +752,15 @@ public class ArchetypeServiceImpl implements ArchetypeService {
     Repository createArchetypeRepository(final GAV templateGav,
                                          final String repositoryUri) {
         final OrganizationalUnit archetypesOU = resolveOU();
-
         if (archetypesOU != null) {
             final Repository repository = repositoryService.createRepository(archetypesOU,
                                                                              GitRepository.SCHEME.toString(),
                                                                              makeRepositoryAlias(templateGav.toString()),
                                                                              createRepositoryConfig(repositoryUri));
 
-            cleanUpOrigin(repository);
+            if (archetypeConfigStorage.loadArchetype(repository.getAlias()) != null) {
+                cleanUpOrigin(repository);
+            }
 
             return repository;
         } else {

@@ -85,6 +85,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ArchetypeServiceImplTest {
@@ -417,6 +418,8 @@ public class ArchetypeServiceImplTest {
         doNothing().when(git).removeRemote(anyString(),
                                            anyString());
 
+        Archetype archetypeMock = mock(Archetype.class);
+        when(archetypeConfigStorage.loadArchetype(expectedRepository.getAlias())).thenReturn(archetypeMock);
         final Repository repository = service.createArchetypeRepository(templateGav,
                                                                         "repository-uri");
 
@@ -425,6 +428,33 @@ public class ArchetypeServiceImplTest {
 
         verify(git).removeRemote(anyString(),
                                  anyString());
+    }
+
+    @Test
+    public void createArchetypeRepositoryWithEmptyArchetypeRepository() {
+        final GAV templateGav = createTemplateGav();
+
+        final String repositoryAlias = service.makeRepositoryAlias(templateGav.toString());
+
+        final OrganizationalUnit orgUnit = mockArchetypesOrgUnit();
+
+        final Repository expectedRepository = mock(Repository.class);
+        final Branch branch = mock(Branch.class);
+        doReturn(Optional.of(branch)).when(expectedRepository).getDefaultBranch();
+        doReturn(expectedRepository).when(repositoryService).createRepository(eq(orgUnit),
+                                                          eq(GitRepository.SCHEME.toString()),
+                                                          eq(repositoryAlias),
+                                                          any(RepositoryEnvironmentConfigurations.class));
+
+        final Git git = mock(Git.class);
+        doReturn(git).when(service).getGitFromBranch(branch);
+        doNothing().when(git).removeRemote(anyString(), anyString());
+
+        when(archetypeConfigStorage.loadArchetype(expectedRepository.getAlias())).thenReturn(null);
+        final Repository repository = service.createArchetypeRepository(templateGav, "repository-uri");
+        assertSame(expectedRepository, repository);
+
+        verify(git,never()).removeRemote(anyString(), anyString());
     }
 
     @Test(expected = MavenExecutionException.class)
