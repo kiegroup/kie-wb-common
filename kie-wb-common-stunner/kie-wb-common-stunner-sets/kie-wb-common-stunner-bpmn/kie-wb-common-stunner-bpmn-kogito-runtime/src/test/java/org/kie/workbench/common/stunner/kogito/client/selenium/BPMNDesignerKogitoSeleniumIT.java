@@ -50,6 +50,7 @@ import static org.apache.commons.io.FileUtils.copyFile;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.openqa.selenium.By.className;
 import static org.openqa.selenium.By.xpath;
+import static org.openqa.selenium.support.ui.ExpectedConditions.presenceOfElementLocated;
 import static org.openqa.selenium.support.ui.ExpectedConditions.visibilityOfElementLocated;
 
 public class BPMNDesignerKogitoSeleniumIT {
@@ -91,7 +92,6 @@ public class BPMNDesignerKogitoSeleniumIT {
      */
     private WebElement bpmnDesignerExplorerButton;
 
-
     @BeforeClass
     public static void setupClass() {
         WebDriverManager.firefoxdriver().setup();
@@ -106,20 +106,11 @@ public class BPMNDesignerKogitoSeleniumIT {
 
         driver.get(INDEX_HTML_PATH);
 
-        // init diagram to initial state to see if we can load properties panel and diagram explorer
-        setContent("");
-       ((JavascriptExecutor) driver).executeScript(String.format(SET_CONTENT_TEMPLATE, ""));
-
-        propertiesPanel = waitOperation()
-                .until(visibilityOfElementLocated(className(PROPERTIES_PANEL)));
-        assertThat(propertiesPanel)
-                .as("Presence of properties panel expand button is prerequisite for all tests")
-                .isNotNull();
-
-        bpmnDesignerExplorerButton = waitOperation()
-                .until(visibilityOfElementLocated(className(DIAGRAM_EXPLORER)));
-        assertThat(bpmnDesignerExplorerButton)
-                .as("Presence of Explorer Diagram is prerequisite for all tests")
+        final WebElement designer = waitOperation()
+                .until(presenceOfElementLocated(className(DIAGRAM_PANEL)));
+        assertThat(designer)
+                .as("Diagram panel is a prerequisite for all tests. " +
+                            "its absence is indicator of designer load fail.")
                 .isNotNull();
     }
 
@@ -147,7 +138,6 @@ public class BPMNDesignerKogitoSeleniumIT {
             }
         }
     };
-
 
     @Test
     @Ignore
@@ -214,7 +204,7 @@ public class BPMNDesignerKogitoSeleniumIT {
                 // KOGITO-1795
                 .withAttributeFilter(
                         attr -> (!(Objects.equals(attr.getName(), "id") &&
-                                 !(Objects.equals(attr.getOwnerElement().getTagName(), "bpmn2:defintions"))))
+                                !(Objects.equals(attr.getOwnerElement().getTagName(), "bpmn2:defintions"))))
                 )
                 .withNodeFilter(
                         node -> !(Objects.equals(node.getNodeName(), "bpmn2:source")
@@ -231,7 +221,11 @@ public class BPMNDesignerKogitoSeleniumIT {
         collapseBpmnNavigatorDock();
     }
 
-    private void expandBpmnNavigatorDock() {
+    /**
+     * Click on 'Explore Diagram' panel dock icon
+     * @throws NullPointerException if 'setContent(final String content)' was not called before
+     */
+    private void expandBpmnNavigatorDock() throws NullPointerException {
         bpmnDesignerExplorerButton.click();
     }
 
@@ -244,7 +238,6 @@ public class BPMNDesignerKogitoSeleniumIT {
 
         expandedDiagramNavigator.findElement(className("fa")).click();
     }
-
 
     private File initScreenshotDirectory() {
         if (SCREENSHOTS_DIR == null) {
@@ -270,10 +263,18 @@ public class BPMNDesignerKogitoSeleniumIT {
         } catch (Exception e) {
             LOG.error("Exception during JS execution. Ex: {}", e.getMessage());
         }
-        final WebElement designer = waitOperation()
-                .until(visibilityOfElementLocated(className(DIAGRAM_PANEL)));
-        assertThat(designer)
-                .as("Designer was not loaded")
+        final WebElement propertiesPanelDockIcon = waitOperation()
+                .until(visibilityOfElementLocated(className(PROPERTIES_PANEL)));
+        assertThat(propertiesPanelDockIcon)
+                .as("Once content is set properties panel dock icon visibility is a prerequisite" +
+                            "for further test execution.")
+                .isNotNull();
+
+        bpmnDesignerExplorerButton = waitOperation()
+                .until(visibilityOfElementLocated(className(DIAGRAM_EXPLORER)));
+        assertThat(bpmnDesignerExplorerButton)
+                .as("Once content is set diagram explorer panel dock icon visibility is a prerequisite" +
+                            "for further test execution.")
                 .isNotNull();
     }
 
@@ -282,6 +283,7 @@ public class BPMNDesignerKogitoSeleniumIT {
         assertThat(result).isInstanceOf(String.class);
         return (String) result;
     }
+
     /**
      * Use this for loading BPMN model placed in src/test/resources
      * @param filename
@@ -293,7 +295,6 @@ public class BPMNDesignerKogitoSeleniumIT {
                 .stream()
                 .collect(Collectors.joining(""));
     }
-
 
     private ExpectedCondition<WebElement> element(final String xpathLocator, final String... parameters) {
         return visibilityOfElementLocated(xpath(String.format(xpathLocator, parameters)));
