@@ -20,6 +20,7 @@ package org.kie.workbench.common.command.client.registry;
  * Base type for any registry implementations.
  * @param <T> The type for the items that the registry handles.
  */
+@Deprecated
 public interface Registry<T> {
 
     boolean contains(final T item);

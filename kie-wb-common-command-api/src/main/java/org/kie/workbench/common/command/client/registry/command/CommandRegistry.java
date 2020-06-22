@@ -16,41 +16,13 @@
 
 package org.kie.workbench.common.command.client.registry.command;
 
-import java.util.List;
-
+import org.appformer.client.stateControl.registry.Registry;
 import org.kie.workbench.common.command.client.Command;
-import org.kie.workbench.common.command.client.registry.DynamicRegistry;
-import org.kie.workbench.common.command.client.registry.SizeConstrainedRegistry;
 
 /**
  * Base registry type for Commands.
  * @param <C> The type of the Command.
  */
-public interface CommandRegistry<C extends Command> extends DynamicRegistry<C>,
-                                                            SizeConstrainedRegistry {
+public interface CommandRegistry<C extends Command> extends Registry<C> {
 
-    /**
-     * Registers a single or more than one command/s.
-     */
-    void register(final C command);
-
-    /**
-     * Peek the command from the registry.
-     */
-    C peek();
-
-    /**
-     * Peek and remove the command from the registry.
-     */
-    C pop();
-
-    /**
-     * Returns the registered commands, can be composite commands as well.
-     */
-    List<C> getCommandHistory();
-
-    /**
-     * Clears the registry.
-     */
-    void clear();
 }

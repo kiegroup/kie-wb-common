@@ -21,6 +21,8 @@ import java.util.ArrayList;
 import java.util.Deque;
 import java.util.List;
 
+import org.appformer.client.stateControl.registry.Registry;
+import org.appformer.client.stateControl.registry.RegistryChangeListener;
 import org.kie.workbench.common.command.client.Command;
 
 /**
@@ -33,6 +35,7 @@ public class CommandRegistryImpl<C extends Command> implements CommandRegistry<C
 
     private final Deque<C> commands = new ArrayDeque<>();
     private int maxStackSize = 200;
+    private RegistryChangeListener registryChangeListener;
 
     @Override
     public void setMaxSize(final int size) {
@@ -41,22 +44,14 @@ public class CommandRegistryImpl<C extends Command> implements CommandRegistry<C
 
     @Override
     public void register(final C command) {
+        notifyRegistryChange();
         addIntoStack(command);
     }
 
     @Override
-    public boolean remove(final C command) {
-        throw new UnsupportedOperationException("Remove not implemented yet.");
-    }
-
-    @Override
     public void clear() {
+        notifyRegistryChange();
         commands.clear();
-    }
-
-    @Override
-    public boolean contains(final C item) {
-        throw new UnsupportedOperationException("Contains not implemented yet.");
     }
 
     @Override
@@ -65,8 +60,13 @@ public class CommandRegistryImpl<C extends Command> implements CommandRegistry<C
     }
 
     @Override
-    public List<C> getCommandHistory() {
+    public List<C> getHistory() {
         return new ArrayList<>(commands);
+    }
+
+    @Override
+    public void setRegistryChangeListener(RegistryChangeListener registryChangeListener) {
+        this.registryChangeListener = registryChangeListener;
     }
 
     @Override
@@ -76,7 +76,14 @@ public class CommandRegistryImpl<C extends Command> implements CommandRegistry<C
 
     @Override
     public C pop() {
+        notifyRegistryChange();
         return commands.pop();
+    }
+
+    private void notifyRegistryChange() {
+        if (registryChangeListener != null) {
+            registryChangeListener.notifyRegistryChange();
+        }
     }
 
     private void addIntoStack(final C command) {

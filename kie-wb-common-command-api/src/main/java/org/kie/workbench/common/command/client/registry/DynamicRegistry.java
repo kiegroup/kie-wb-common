@@ -20,6 +20,7 @@ package org.kie.workbench.common.command.client.registry;
  * Mutable registry that can add or remove items at runtime.
  * @param <T> The type of the item.
  */
+@Deprecated
 public interface DynamicRegistry<T> extends Registry<T> {
 
     void register(final T item);

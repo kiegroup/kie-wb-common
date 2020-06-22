@@ -19,6 +19,7 @@ package org.kie.workbench.common.command.client.registry;
 /**
  * Registry types that are size constrained must implement this type.
  */
+@Deprecated
 public interface SizeConstrainedRegistry {
 
     void setMaxSize(final int size);
