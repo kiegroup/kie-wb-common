@@ -164,6 +164,8 @@ public class TextEditorSingleLineBoxViewTest {
                times(1)).setValue(eq(NAME));
         verify(nameField,
                times(1)).setTextContent(eq(NAME));
+        verify(nameField,
+               times(1)).focus();
 
         verify(showCommand, times(1)).execute();
     }

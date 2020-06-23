@@ -171,6 +171,8 @@ public class TextEditorMultiLineBoxViewTest {
                times(1)).setValue(eq(NAME));
         verify(nameField,
                times(1)).setTextContent(eq(NAME));
+        verify(nameField,
+               times(1)).focus();
 
         verify(nameField,
                times(1)).setRows(eq(2));

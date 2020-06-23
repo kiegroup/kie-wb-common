@@ -80,6 +80,7 @@ public class TextEditorMultiLineBoxView
         nameField.setTextContent(name);
         nameField.setRows(2);
         nameField.setCols(25);
+        nameField.focus();
         setVisible();
     }
 

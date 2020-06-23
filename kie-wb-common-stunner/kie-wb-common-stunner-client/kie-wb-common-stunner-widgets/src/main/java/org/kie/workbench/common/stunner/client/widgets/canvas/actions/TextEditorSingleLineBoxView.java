@@ -79,6 +79,7 @@ public class TextEditorSingleLineBoxView
     public void show(final String name) {
         nameField.setValue(name);
         nameField.setTextContent(name);
+        nameField.focus();
         setVisible();
     }
 
