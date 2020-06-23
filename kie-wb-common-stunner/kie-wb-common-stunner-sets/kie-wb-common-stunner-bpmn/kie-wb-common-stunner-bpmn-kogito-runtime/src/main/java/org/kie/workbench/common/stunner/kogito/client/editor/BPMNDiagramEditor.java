@@ -274,9 +274,14 @@ public class BPMNDiagramEditor extends AbstractDiagramEditor {
     @Override
     public Promise getContent() {
         flush();
+        validateDiagram(getCanvasHandler());
+        return diagramServices.transform(getEditor().getEditorProxy().getContentSupplier().get());
+    }
+
+    private void validateDiagram(CanvasHandler canvasHandler) {
         getSessionPresenter().displayNotifications(t -> false);
-        AbstractCanvasHandler canvasHandler = (AbstractCanvasHandler) getCanvasHandler();
-        validator.validate(canvasHandler, violations -> {
+
+        validator.validate((AbstractCanvasHandler) canvasHandler, violations -> {
             String errorMessage = getTranslationService().getValue(StunnerWidgetsConstants.MarshallingResponsePopup_ErrorMessageLabel);
 
             if (!violations.isEmpty()) {
@@ -289,7 +294,6 @@ public class BPMNDiagramEditor extends AbstractDiagramEditor {
             }
         });
         getSessionPresenter().displayNotifications(t -> true);
-        return diagramServices.transform(getEditor().getEditorProxy().getContentSupplier().get());
     }
 
     @GetPreview

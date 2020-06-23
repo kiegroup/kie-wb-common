@@ -54,6 +54,7 @@ import org.kie.workbench.common.stunner.bpmn.definition.BaseTask;
 import org.kie.workbench.common.stunner.bpmn.definition.BaseUserTask;
 import org.kie.workbench.common.stunner.bpmn.definition.DataObject;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.DataIOModel;
+import org.kie.workbench.common.stunner.bpmn.util.DataObjectUtils;
 import org.kie.workbench.common.stunner.core.client.api.SessionManager;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.SelectionControl;
 import org.kie.workbench.common.stunner.core.client.session.ClientSession;
@@ -166,7 +167,7 @@ public class AssignmentsEditorWidget extends Composite implements HasValue<Strin
         assignmentsTextBox.setText(variableCountsString);
     }
 
-    protected String getVariableCountsString(final String datainput,
+    String getVariableCountsString(final String datainput,
                                              final String datainputset,
                                              final String dataoutput,
                                              final String dataoutputset,
@@ -208,7 +209,7 @@ public class AssignmentsEditorWidget extends Composite implements HasValue<Strin
         }
 
         String dataObjects =
-                findDataObjects().stream()
+                DataObjectUtils.findDataObjects(canvasSessionManager.getCurrentSession(), graphUtils, getSelectedElement(), getParentIds()).stream()
                         .map(AssignmentsEditorWidget::dataObjectToProcessVariableFormat)
                         .collect(Collectors.joining(","));
 
@@ -219,7 +220,7 @@ public class AssignmentsEditorWidget extends Composite implements HasValue<Strin
         return sb.toString();
     }
 
-    protected String getDisallowedPropertyNames() {
+    String getDisallowedPropertyNames() {
         if (bpmnModel instanceof BaseUserTask) {
             return DEFAULT_IGNORED_PROPERTY_NAMES;
         } else {
@@ -235,7 +236,7 @@ public class AssignmentsEditorWidget extends Composite implements HasValue<Strin
         return null;
     }
 
-    protected Set<String> getParentIds() {
+    Set<String> getParentIds() {
         Set<String> parentIds = new HashSet<>();
         final Node selectedElement = getSelectedElement();
         Element parent = GraphUtils.getParent(selectedElement);
