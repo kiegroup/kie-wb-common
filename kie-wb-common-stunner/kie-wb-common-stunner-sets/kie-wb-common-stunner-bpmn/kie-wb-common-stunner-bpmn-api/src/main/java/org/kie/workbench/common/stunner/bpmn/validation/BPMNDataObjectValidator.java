@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.stunner.bpmn.client.validation;
+package org.kie.workbench.common.stunner.bpmn.validation;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -24,14 +24,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
-
 import org.kie.workbench.common.stunner.bpmn.BPMNDefinitionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.DataObject;
-import org.kie.workbench.common.stunner.bpmn.validation.BPMNViolation;
-import org.kie.workbench.common.stunner.client.widgets.resources.i18n.StunnerWidgetsConstants;
-import org.kie.workbench.common.stunner.core.client.i18n.ClientTranslationService;
 import org.kie.workbench.common.stunner.core.definition.adapter.binding.BindableAdapterUtils;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.kie.workbench.common.stunner.core.graph.Element;
@@ -40,22 +34,14 @@ import org.kie.workbench.common.stunner.core.validation.DomainValidator;
 import org.kie.workbench.common.stunner.core.validation.DomainViolation;
 import org.kie.workbench.common.stunner.core.validation.Violation;
 
-@ApplicationScoped
-public class BPMNDataObjectValidator implements DomainValidator {
+public abstract class BPMNDataObjectValidator implements DomainValidator {
 
     private static final String ALLOWED_CHARS = "^[a-zA-Z0-9\\-\\_\\ \\+\\/\\*\\?\\'\\.]*$";
     private static final String ILLEGAL_CHARS = ".*[#:\" ]+.*";
 
-    private final ClientTranslationService translationService;
-
     @Override
     public String getDefinitionSetId() {
         return BindableAdapterUtils.getDefinitionSetId(BPMNDefinitionSet.class);
-    }
-
-    @Inject
-    public BPMNDataObjectValidator(final ClientTranslationService translationService) {
-        this.translationService = translationService;
     }
 
     @Override
@@ -73,23 +59,31 @@ public class BPMNDataObjectValidator implements DomainValidator {
                 String containedType = dataObjectsMap.get(name);
 
                 if (containedType != null && !type.equals(containedType)) { // If already defined with different type
-                    BPMNViolation bpmnViolation = new BPMNViolation(translationService.getValue(StunnerWidgetsConstants.MarshallingResponsePopup_DataObjectsSameNameDifferentType) + " : " + name, Violation.Type.WARNING, element.getUUID());
+                    BPMNViolation bpmnViolation = new BPMNViolation(getMessageDataObjectWithTypeSameName() + " : " + name, Violation.Type.WARNING, element.getUUID());
                     violations.add(bpmnViolation);
                 } else {
                     dataObjectsMap.put(name, type);
                 }
 
                 if (name.matches(ILLEGAL_CHARS)) {
-                    BPMNViolation bpmnViolation = new BPMNViolation(translationService.getValue(StunnerWidgetsConstants.MarshallingResponsePopup_dataObjectWithName) + ": " + name + " " + translationService.getValue(StunnerWidgetsConstants.MarshallingResponsePopup_dataObjectWithIllegalCharacters), Violation.Type.WARNING, element.getUUID());
+                    BPMNViolation bpmnViolation = new BPMNViolation(getMessageDataObjectWithName() + ": " + name + " " + getMessageDataObjectWithIllegalCharacters(), Violation.Type.WARNING, element.getUUID());
                     violations.add(bpmnViolation);
                 }
 
                 if (!name.matches(ALLOWED_CHARS)) {
-                    BPMNViolation bpmnViolation = new BPMNViolation(translationService.getValue(StunnerWidgetsConstants.MarshallingResponsePopup_dataObjectWithInvalidName) + " : " + name, Violation.Type.WARNING, element.getUUID());
+                    BPMNViolation bpmnViolation = new BPMNViolation(getMessageDataObjectIllegalName() + " : " + name, Violation.Type.WARNING, element.getUUID());
                     violations.add(bpmnViolation);
                 }
             }
         }
         resultConsumer.accept(violations);
     }
+
+    public abstract String getMessageDataObjectWithTypeSameName();
+
+    public abstract String getMessageDataObjectWithName();
+
+    public abstract String getMessageDataObjectWithIllegalCharacters();
+
+    public abstract String getMessageDataObjectIllegalName();
 }
