@@ -20,6 +20,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.kie.workbench.common.stunner.bpmn.client.forms.util.StringUtils;
+
 public class Variable {
 
     static final String DIVIDER = ":";
@@ -195,15 +197,15 @@ public class Variable {
             return false;
         }
 
-        if (getName() != null && !getName().isEmpty() ? !getName().equals(variable.getName()) : variable.getName() != null && !variable.getName().isEmpty()) {
+        if (!StringUtils.isEmpty(getName()) ? !getName().equals(variable.getName()) : !StringUtils.isEmpty(variable.getName())) {
             return false;
         }
 
-        if (getDataType() != null && !getDataType().isEmpty() ? !getDataType().equals(variable.getDataType()) : variable.getDataType() != null && !variable.getDataType().isEmpty()) {
+        if (!StringUtils.isEmpty(getDataType()) ? !getDataType().equals(variable.getDataType()) : !StringUtils.isEmpty(variable.getDataType())) {
             return false;
         }
 
-        if (getCustomDataType() != null && !getCustomDataType().isEmpty() ? !getCustomDataType().equals(variable.getCustomDataType()) : variable.getCustomDataType() != null && !variable.getCustomDataType().isEmpty()) {
+        if (!StringUtils.isEmpty(getCustomDataType()) ? !getCustomDataType().equals(variable.getCustomDataType()) : !StringUtils.isEmpty(variable.getCustomDataType())) {
             return false;
         }
 
