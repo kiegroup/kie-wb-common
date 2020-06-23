@@ -206,7 +206,7 @@ public abstract class AbstractDMNDiagramEditor extends AbstractDiagramEditor {
         decisionNavigatorDock.init(PERSPECTIVE_ID);
         diagramPropertiesDock.init(PERSPECTIVE_ID);
         diagramPreviewAndExplorerDock.init(PERSPECTIVE_ID);
-        guidedTourBridgeInitializer.initialize();
+        guidedTourBridgeInitializer.init();
     }
 
     void superDoStartUp(final PlaceRequest place) {

@@ -25,9 +25,9 @@ import elemental2.dom.HTMLDocument;
 import org.appformer.kogito.bridge.client.guided.tour.GuidedTourCustomSelectorPositionProvider.PositionProviderFunction;
 import org.appformer.kogito.bridge.client.guided.tour.service.api.Rect;
 
-public class GuidedTourHTMLElementPositionUtils implements PositionProvider {
+public class HTMLElementsPositionProviderFactory implements PositionProviderFactory {
 
-    public PositionProviderFunction getPositionProviderFunction() {
+    public PositionProviderFunction createPositionProvider() {
         return selector ->
                 Optional.ofNullable(document().querySelector(selector))
                         .map(this::makeRect)

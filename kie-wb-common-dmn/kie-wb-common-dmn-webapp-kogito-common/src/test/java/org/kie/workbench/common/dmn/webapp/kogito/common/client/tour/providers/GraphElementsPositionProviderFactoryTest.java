@@ -45,7 +45,7 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
 @RunWith(GwtMockitoTestRunner.class)
-public class GuidedTourGraphElementPositionUtilsTest {
+public class GraphElementsPositionProviderFactoryTest {
 
     @Mock
     private DMNGraphUtils dmnGraphUtils;
@@ -56,18 +56,18 @@ public class GuidedTourGraphElementPositionUtilsTest {
     @Mock
     private Elemental2DomUtil elemental2DomUtil;
 
-    private GuidedTourGraphElementPositionUtils utils;
+    private GraphElementsPositionProviderFactory utils;
 
     @Before
     public void init() {
-        utils = spy(new GuidedTourGraphElementPositionUtils(dmnGraphUtils, guidedTourUtils, elemental2DomUtil));
+        utils = spy(new GraphElementsPositionProviderFactory(dmnGraphUtils, guidedTourUtils, elemental2DomUtil));
     }
 
     @Test
     public void testGetPositionProviderFunction() {
-        final PositionProviderFunction providerFunction = utils.getPositionProviderFunction();
-        final NodeImpl<View> node = makeNodeImpl("0000", 10, 10, 50, 100);
-        final String decision1 = "Decision-1";
+        final PositionProviderFunction providerFunction = utils.createPositionProvider();
+        final NodeImpl<View> decisionNode = makeNodeImpl("0000", 10, 10, 50, 100);
+        final String decisionNodeName = "Decision-1";
         final CanvasHandler canvasHandler = mock(CanvasHandler.class);
         final WiresCanvas canvas = mock(WiresCanvas.class);
         final WiresCanvasView wiresCanvasView = mock(WiresCanvasView.class);
@@ -76,9 +76,9 @@ public class GuidedTourGraphElementPositionUtilsTest {
         final ClientRect clientRect = makeClientRect(10, 10);
         final Rect expected = mock(Rect.class);
 
-        when(guidedTourUtils.asNodeImpl(node)).thenReturn(node);
-        when(guidedTourUtils.getName(node)).thenReturn(decision1);
-        when(dmnGraphUtils.getNodeStream()).thenReturn(Stream.of(node));
+        when(guidedTourUtils.asNodeImpl(decisionNode)).thenReturn(decisionNode);
+        when(guidedTourUtils.getName(decisionNode)).thenReturn(decisionNodeName);
+        when(dmnGraphUtils.getNodeStream()).thenReturn(Stream.of(decisionNode));
 
         when(dmnGraphUtils.getCanvasHandler()).thenReturn(canvasHandler);
         when(canvasHandler.getCanvas()).thenReturn(canvas);
@@ -96,14 +96,14 @@ public class GuidedTourGraphElementPositionUtilsTest {
 
     @Test
     public void testGetPositionProviderFunctionWhenParentCanvasElementCannotBeFound() {
-        final PositionProviderFunction providerFunction = utils.getPositionProviderFunction();
-        final NodeImpl<View> node = makeNodeImpl("0000", 10, 10, 50, 100);
-        final String decision1 = "Decision-1";
+        final PositionProviderFunction providerFunction = utils.createPositionProvider();
+        final NodeImpl<View> decisionNode = makeNodeImpl("0000", 10, 10, 50, 100);
+        final String decisionNodeName = "Decision-1";
         final Rect expected = mock(Rect.class);
 
-        when(guidedTourUtils.asNodeImpl(node)).thenReturn(node);
-        when(guidedTourUtils.getName(node)).thenReturn(decision1);
-        when(dmnGraphUtils.getNodeStream()).thenReturn(Stream.of(node));
+        when(guidedTourUtils.asNodeImpl(decisionNode)).thenReturn(decisionNode);
+        when(guidedTourUtils.getName(decisionNode)).thenReturn(decisionNodeName);
+        when(dmnGraphUtils.getNodeStream()).thenReturn(Stream.of(decisionNode));
 
         when(utils.makeRect(10, 10, 50, 100)).thenReturn(expected);
 

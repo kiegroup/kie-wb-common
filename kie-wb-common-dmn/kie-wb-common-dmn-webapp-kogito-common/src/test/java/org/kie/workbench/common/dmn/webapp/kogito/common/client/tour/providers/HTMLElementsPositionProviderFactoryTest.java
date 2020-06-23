@@ -33,16 +33,16 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
 @RunWith(GwtMockitoTestRunner.class)
-public class GuidedTourHTMLElementPositionUtilsTest {
+public class HTMLElementsPositionProviderFactoryTest {
 
-    private GuidedTourHTMLElementPositionUtils utils;
+    private HTMLElementsPositionProviderFactory utils;
 
     @Mock
     private HTMLDocument document;
 
     @Before
     public void init() {
-        utils = spy(new GuidedTourHTMLElementPositionUtils());
+        utils = spy(new HTMLElementsPositionProviderFactory());
         doReturn(document).when(utils).document();
     }
 
@@ -66,7 +66,7 @@ public class GuidedTourHTMLElementPositionUtilsTest {
 
         doReturn(expected).when(utils).makeRect(60, 10, 10, 110, 50, 100);
 
-        final Rect actual = utils.getPositionProviderFunction().call(selector);
+        final Rect actual = utils.createPositionProvider().call(selector);
 
         assertEquals(expected, actual);
     }

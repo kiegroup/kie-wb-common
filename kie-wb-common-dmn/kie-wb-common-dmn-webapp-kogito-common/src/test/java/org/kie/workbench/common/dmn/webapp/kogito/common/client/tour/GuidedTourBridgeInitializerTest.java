@@ -24,8 +24,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.dmn.webapp.kogito.common.client.tour.observers.GuidedTourGraphObserver;
 import org.kie.workbench.common.dmn.webapp.kogito.common.client.tour.observers.GuidedTourGridObserver;
-import org.kie.workbench.common.dmn.webapp.kogito.common.client.tour.providers.GuidedTourGraphElementPositionUtils;
-import org.kie.workbench.common.dmn.webapp.kogito.common.client.tour.providers.GuidedTourHTMLElementPositionUtils;
+import org.kie.workbench.common.dmn.webapp.kogito.common.client.tour.providers.GraphElementsPositionProviderFactory;
+import org.kie.workbench.common.dmn.webapp.kogito.common.client.tour.providers.HTMLElementsPositionProviderFactory;
 import org.kie.workbench.common.dmn.webapp.kogito.common.client.tour.tutorial.DMNTutorial;
 import org.mockito.Mock;
 
@@ -43,10 +43,10 @@ public class GuidedTourBridgeInitializerTest {
     private GuidedTourGridObserver gridObserver;
 
     @Mock
-    private GuidedTourGraphElementPositionUtils graphPositionUtils;
+    private GraphElementsPositionProviderFactory graphPositionUtils;
 
     @Mock
-    private GuidedTourHTMLElementPositionUtils htmlPositionUtils;
+    private HTMLElementsPositionProviderFactory htmlPositionUtils;
 
     @Mock
     private GuidedTourBridge monitorBridge;
@@ -55,17 +55,17 @@ public class GuidedTourBridgeInitializerTest {
     private DMNTutorial dmnTutorial;
 
     @Test
-    public void testInitialize() {
+    public void testInit() {
         final PositionProviderFunction graphProvider = mock(PositionProviderFunction.class);
         final PositionProviderFunction htmlProvider = mock(PositionProviderFunction.class);
         final Tutorial tutorial = mock(Tutorial.class);
         final GuidedTourBridgeInitializer bridgeInitializer = new GuidedTourBridgeInitializer(graphObserver, gridObserver, graphPositionUtils, htmlPositionUtils, monitorBridge, dmnTutorial);
 
-        when(graphPositionUtils.getPositionProviderFunction()).thenReturn(graphProvider);
-        when(htmlPositionUtils.getPositionProviderFunction()).thenReturn(htmlProvider);
+        when(graphPositionUtils.createPositionProvider()).thenReturn(graphProvider);
+        when(htmlPositionUtils.createPositionProvider()).thenReturn(htmlProvider);
         when(dmnTutorial.getTutorial()).thenReturn(tutorial);
 
-        bridgeInitializer.initialize();
+        bridgeInitializer.init();
 
         verify(monitorBridge).registerPositionProvider("DMNEditorGraph", graphProvider);
         verify(monitorBridge).registerPositionProvider("DMNEditorHTMLElement", htmlProvider);

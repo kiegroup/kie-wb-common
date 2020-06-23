@@ -21,19 +21,22 @@ import javax.inject.Inject;
 import org.appformer.kogito.bridge.client.guided.tour.GuidedTourBridge;
 import org.kie.workbench.common.dmn.webapp.kogito.common.client.tour.observers.GuidedTourGraphObserver;
 import org.kie.workbench.common.dmn.webapp.kogito.common.client.tour.observers.GuidedTourGridObserver;
-import org.kie.workbench.common.dmn.webapp.kogito.common.client.tour.providers.GuidedTourGraphElementPositionUtils;
-import org.kie.workbench.common.dmn.webapp.kogito.common.client.tour.providers.GuidedTourHTMLElementPositionUtils;
+import org.kie.workbench.common.dmn.webapp.kogito.common.client.tour.providers.GraphElementsPositionProviderFactory;
+import org.kie.workbench.common.dmn.webapp.kogito.common.client.tour.providers.HTMLElementsPositionProviderFactory;
 import org.kie.workbench.common.dmn.webapp.kogito.common.client.tour.tutorial.DMNTutorial;
 
+/**
+ * Initializes the Guided Tour bridge, by registering custom position providers, observers, and the DMN tutorial.
+ */
 public class GuidedTourBridgeInitializer {
 
     private final GuidedTourGraphObserver graphObserver;
 
     private final GuidedTourGridObserver gridObserver;
 
-    private final GuidedTourGraphElementPositionUtils graphPositionUtils;
+    private final GraphElementsPositionProviderFactory graphPositionUtils;
 
-    private final GuidedTourHTMLElementPositionUtils htmlPositionUtils;
+    private final HTMLElementsPositionProviderFactory htmlPositionUtils;
 
     private final GuidedTourBridge monitorBridge;
 
@@ -42,8 +45,8 @@ public class GuidedTourBridgeInitializer {
     @Inject
     public GuidedTourBridgeInitializer(final GuidedTourGraphObserver graphObserver,
                                        final GuidedTourGridObserver gridObserver,
-                                       final GuidedTourGraphElementPositionUtils graphPositionUtils,
-                                       final GuidedTourHTMLElementPositionUtils htmlPositionUtils,
+                                       final GraphElementsPositionProviderFactory graphPositionUtils,
+                                       final HTMLElementsPositionProviderFactory htmlPositionUtils,
                                        final GuidedTourBridge monitorBridge,
                                        final DMNTutorial dmnTutorial) {
         this.graphObserver = graphObserver;
@@ -54,15 +57,15 @@ public class GuidedTourBridgeInitializer {
         this.dmnTutorial = dmnTutorial;
     }
 
-    public void initialize() {
+    public void init() {
         registerPositionProviders();
         registerObservers();
         registerTutorials();
     }
 
     private void registerPositionProviders() {
-        monitorBridge.registerPositionProvider("DMNEditorGraph", graphPositionUtils.getPositionProviderFunction());
-        monitorBridge.registerPositionProvider("DMNEditorHTMLElement", htmlPositionUtils.getPositionProviderFunction());
+        monitorBridge.registerPositionProvider("DMNEditorGraph", graphPositionUtils.createPositionProvider());
+        monitorBridge.registerPositionProvider("DMNEditorHTMLElement", htmlPositionUtils.createPositionProvider());
     }
 
     private void registerObservers() {

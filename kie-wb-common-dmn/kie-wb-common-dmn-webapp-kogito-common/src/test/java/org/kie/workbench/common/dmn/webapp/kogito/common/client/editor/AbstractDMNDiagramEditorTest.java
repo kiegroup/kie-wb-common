@@ -319,7 +319,7 @@ public abstract class AbstractDMNDiagramEditorTest {
         verify(fileMenuBuilder).build();
 
         verify(multiPageEditorContainerView).init(eq(editor));
-        verify(guidedTourBridgeInitializer).initialize();
+        verify(guidedTourBridgeInitializer).init();
     }
 
     @Test

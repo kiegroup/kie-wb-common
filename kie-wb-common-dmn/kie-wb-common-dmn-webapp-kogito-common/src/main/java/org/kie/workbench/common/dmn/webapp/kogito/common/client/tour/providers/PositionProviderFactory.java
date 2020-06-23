@@ -18,7 +18,7 @@ package org.kie.workbench.common.dmn.webapp.kogito.common.client.tour.providers;
 
 import org.appformer.kogito.bridge.client.guided.tour.GuidedTourCustomSelectorPositionProvider.PositionProviderFunction;
 
-public interface PositionProvider {
+public interface PositionProviderFactory {
 
-    PositionProviderFunction getPositionProviderFunction();
+    PositionProviderFunction createPositionProvider();
 }

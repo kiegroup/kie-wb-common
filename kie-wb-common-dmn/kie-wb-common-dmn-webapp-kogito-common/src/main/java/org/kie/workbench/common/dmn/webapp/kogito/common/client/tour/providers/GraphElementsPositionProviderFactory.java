@@ -37,7 +37,7 @@ import org.kie.workbench.common.stunner.core.graph.content.Bounds;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
 import org.kie.workbench.common.stunner.core.graph.impl.NodeImpl;
 
-public class GuidedTourGraphElementPositionUtils implements PositionProvider {
+public class GraphElementsPositionProviderFactory implements PositionProviderFactory {
 
     private final DMNGraphUtils dmnGraphUtils;
 
@@ -46,15 +46,15 @@ public class GuidedTourGraphElementPositionUtils implements PositionProvider {
     private final Elemental2DomUtil elemental2DomUtil;
 
     @Inject
-    public GuidedTourGraphElementPositionUtils(final DMNGraphUtils dmnGraphUtils,
-                                               final GuidedTourUtils guidedTourUtils,
-                                               final Elemental2DomUtil elemental2DomUtil) {
+    public GraphElementsPositionProviderFactory(final DMNGraphUtils dmnGraphUtils,
+                                                final GuidedTourUtils guidedTourUtils,
+                                                final Elemental2DomUtil elemental2DomUtil) {
         this.dmnGraphUtils = dmnGraphUtils;
         this.guidedTourUtils = guidedTourUtils;
         this.elemental2DomUtil = elemental2DomUtil;
     }
 
-    public PositionProviderFunction getPositionProviderFunction() {
+    public PositionProviderFunction createPositionProvider() {
         return selector ->
                 getGraphNodes()
                         .map(guidedTourUtils::asNodeImpl)
