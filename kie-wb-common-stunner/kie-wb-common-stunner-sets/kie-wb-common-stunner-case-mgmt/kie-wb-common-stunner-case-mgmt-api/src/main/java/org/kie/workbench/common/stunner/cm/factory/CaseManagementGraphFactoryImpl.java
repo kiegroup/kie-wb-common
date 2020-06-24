@@ -46,6 +46,7 @@ import org.kie.workbench.common.stunner.core.graph.command.impl.GraphCommandFact
 import org.kie.workbench.common.stunner.core.graph.content.definition.Definition;
 import org.kie.workbench.common.stunner.core.graph.content.definition.DefinitionSet;
 import org.kie.workbench.common.stunner.core.graph.processing.index.GraphIndexBuilder;
+import org.kie.workbench.common.stunner.core.graph.processing.index.Index;
 import org.kie.workbench.common.stunner.core.rule.RuleManager;
 import org.kie.workbench.common.stunner.core.util.UUID;
 
@@ -149,6 +150,6 @@ public class CaseManagementGraphFactoryImpl extends AbstractGraphFactory impleme
     }
 
     protected GraphCommandExecutionContext createGraphContext(final Graph graph) {
-        return new DirectGraphCommandExecutionContext(definitionManager, factoryManager, indexBuilder.build(graph));
+        return new DirectGraphCommandExecutionContext(definitionManager, factoryManager, (Index<?,?>) indexBuilder.build(graph));
     }
 }

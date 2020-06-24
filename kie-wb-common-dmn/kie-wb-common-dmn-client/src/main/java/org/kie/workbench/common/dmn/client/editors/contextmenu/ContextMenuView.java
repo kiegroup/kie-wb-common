@@ -18,8 +18,6 @@ package org.kie.workbench.common.dmn.client.editors.contextmenu;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Stream;
 
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
@@ -89,14 +87,7 @@ public class ContextMenuView implements ContextMenu.View,
     };
 
     Element[] getEventPath(Event event) {
-        return Optional
-                .ofNullable(event.path)
-                .orElseGet(() ->
-                                   Stream.of(event.composedPath())
-                                           .filter(Event.ComposedPathArrayUnionType::isElement)
-                                           .map(Event.ComposedPathArrayUnionType::asElement)
-                                           .toArray(Element[]::new)
-                );
+        return null;
     }
 
     /**
