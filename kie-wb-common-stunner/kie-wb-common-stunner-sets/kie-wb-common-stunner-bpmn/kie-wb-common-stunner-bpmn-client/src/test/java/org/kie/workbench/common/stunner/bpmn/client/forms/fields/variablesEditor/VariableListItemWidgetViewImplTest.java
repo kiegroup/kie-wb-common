@@ -32,11 +32,13 @@ import com.google.gwt.event.dom.client.KeyDownHandler;
 import com.google.gwtmockito.GwtMock;
 import com.google.gwtmockito.GwtMockito;
 import com.google.gwtmockito.GwtMockitoTestRunner;
-import elemental2.dom.ClientRect;
+import elemental2.dom.DOMRect;
 import elemental2.dom.Element;
 import elemental2.dom.HTMLAnchorElement;
 import elemental2.dom.HTMLDivElement;
+import elemental2.dom.HTMLInputElement;
 import elemental2.dom.HTMLLabelElement;
+import jsinterop.base.Js;
 import org.gwtbootstrap3.client.ui.Button;
 import org.gwtbootstrap3.client.ui.TextBox;
 import org.gwtbootstrap3.client.ui.ValueListBox;
@@ -327,11 +329,11 @@ public class VariableListItemWidgetViewImplTest {
         final HTMLDivElement overlayDiv = mock(HTMLDivElement.class);
         final Element lastNode = mock(Element.class);
 
-        final ClientRect rect = mock(ClientRect.class);
+        final DOMRect rect = mock(DOMRect.class);
         rect.left = 100;
         rect.top = 100;
 
-        final ClientRect rect2 = mock(ClientRect.class);
+        final DOMRect rect2 = mock(DOMRect.class);
         rect2.left = 150;
         rect2.top = 150;
 
@@ -432,7 +434,7 @@ public class VariableListItemWidgetViewImplTest {
     @Test
     public void testHandleCloseButton() {
         view.handleCloseButton(null);
-        verify(variableTagsSettings).click();
+        verify(Js.<HTMLInputElement>uncheckedCast(variableTagsSettings)).click();
     }
 
     @Test
