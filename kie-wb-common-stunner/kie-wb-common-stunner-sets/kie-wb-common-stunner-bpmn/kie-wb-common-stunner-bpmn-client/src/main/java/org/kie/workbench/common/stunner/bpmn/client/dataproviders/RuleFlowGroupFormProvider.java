@@ -16,8 +16,9 @@
 
 package org.kie.workbench.common.stunner.bpmn.client.dataproviders;
 
-import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Event;
@@ -28,6 +29,9 @@ import org.kie.workbench.common.forms.dynamic.model.config.SelectorDataProvider;
 import org.kie.workbench.common.forms.dynamic.service.shared.FormRenderingContext;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.RuleFlowGroup;
 import org.kie.workbench.common.stunner.bpmn.forms.dataproviders.RequestRuleFlowGroupDataEvent;
+
+import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.StreamSupport.stream;
 
 @Dependent
 public class RuleFlowGroupFormProvider implements SelectorDataProvider {
@@ -44,50 +48,28 @@ public class RuleFlowGroupFormProvider implements SelectorDataProvider {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    public SelectorData getSelectorData(final FormRenderingContext context) {
+    public SelectorData<String> getSelectorData(final FormRenderingContext context) {
         requestRuleFlowGroupDataEvent.fire(new RequestRuleFlowGroupDataEvent());
         return new SelectorData<>(toMap(dataProvider.getRuleFlowGroupNames()), null);
     }
 
     // Map<T, String> is not supported by ListBoxValue which is used for ComboBox widget
     private static Map<String, String> toMap(final Iterable<RuleFlowGroup> groups) {
-        Map<String, String> result = new HashMap<>();
-        for (RuleFlowGroup group : groups) {
-            if (result.containsKey(group.getName())) {
-                updateExistingGroup(result, group);
-            } else {
-                addNewGroup(result, group);
-            }
-        }
-        return result;
+        return stream(groups.spliterator(), false)
+                .collect(groupingBy(RuleFlowGroup::getName)).entrySet().stream()
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        entry -> createDisplayNameWithPackages(entry.getValue())
+                ));
     }
 
-    private static void updateExistingGroup(Map<String, String> result, RuleFlowGroup group) {
-        String project = getProjectFromPath(group.getPathUri());
-        addProjectToGroupIfNotPresent(result, group, project);
-    }
-
-    private static void addProjectToGroupIfNotPresent(Map<String, String> result, RuleFlowGroup group, String project) {
-        if (!result.get(group.getName()).contains(project)) {
-            result.put(group.getName(), addProjectToDescription(result.get(group.getName()), project));
-        }
-    }
-
-    private static void addNewGroup(Map<String, String> result, RuleFlowGroup group) {
-        result.put(group.getName(), getGroupDescription(group));
-    }
-
-    private static String addProjectToDescription(String description, String project) {
-        return description.replace("]", ", " + project + "]");
-    }
-
-    private static String getGroupDescription(RuleFlowGroup rfg) {
-        return rfg.getName() + " [" + projectFromPath(rfg.getPathUri()) + "]";
-    }
-
-    private static String projectFromPath(String path) {
-        return getProjectFromPath(path);
+    private static String createDisplayNameWithPackages(List<RuleFlowGroup> groups) {
+        return groups.get(0).getName()
+                + " "
+                + groups.stream()
+                .map(group -> getProjectFromPath(group.getPathUri()))
+                .distinct()
+                .collect(Collectors.joining(", ", "[", "]"));
     }
 
     private static String dropFileSystemAndGitBranchFromPath(String path) {
