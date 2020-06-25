@@ -225,7 +225,6 @@ public class VariablesEditorFieldRenderer extends FieldRenderer<VariablesEditorF
 
     /**
      * Tests whether a Row name occurs more than once in the list of rows
-     *
      * @param name
      * @return
      */
@@ -297,6 +296,11 @@ public class VariablesEditorFieldRenderer extends FieldRenderer<VariablesEditorF
         return lastOverlayOpened;
     }
 
+    @Override
+    public void addDataType(String dataType, String oldType) {
+        view.addDataType(dataType, oldType);
+    }
+
     public void closeLastOverlay() {
         if (lastOverlayOpened != null) {
             lastOverlayOpened.click();
@@ -304,7 +308,6 @@ public class VariablesEditorFieldRenderer extends FieldRenderer<VariablesEditorF
     }
 
     public static Set<String> getDefaultTagsSet() {
-        return  defaultTagsSet;
+        return defaultTagsSet;
     }
-
 }

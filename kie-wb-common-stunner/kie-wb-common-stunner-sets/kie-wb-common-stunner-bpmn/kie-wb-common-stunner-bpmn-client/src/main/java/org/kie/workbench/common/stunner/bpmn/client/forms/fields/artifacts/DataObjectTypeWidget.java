@@ -22,6 +22,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.Dependent;
@@ -31,6 +32,7 @@ import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.text.shared.Renderer;
+import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HasValue;
 import elemental2.promise.IThenable;
@@ -83,7 +85,6 @@ public class DataObjectTypeWidget extends Composite implements HasValue<DataObje
 
     @PostConstruct
     public void init() {
-
         dataTypeComboBox.init(this,
                               true,
                               dataType,
@@ -98,15 +99,15 @@ public class DataObjectTypeWidget extends Composite implements HasValue<DataObje
                                  StunnerFormsClientFieldsConstants.INSTANCE.Invalid_character_in_name());
 
         ListBoxValues dataTypeListBoxValues = new ListBoxValues(CUSTOM_PROMPT, "Edit ", null);
-
+        doneLoading = false;
         clientDataTypesService
                 .call(getDiagramPath())
                 .then(getListObjectThenOnFulfilledCallbackFn(simpleDataTypes, dataTypeListBoxValues))
                 .catch_(exception -> {
                     dataTypeListBoxValues.addValues(simpleDataTypes);
+                    doneLoading = true;
                     return null;
                 });
-
         dataTypeComboBox.setCurrentTextValue("");
         dataTypeComboBox.setListBoxValues(dataTypeListBoxValues);
         dataTypeComboBox.setShowCustomValues(true);
@@ -125,10 +126,11 @@ public class DataObjectTypeWidget extends Composite implements HasValue<DataObje
         return simpleDataTypes.stream().collect(toMap(x -> x, x -> x));
     }
 
+    static boolean doneLoading = false;
+
     static IThenable.ThenOnFulfilledCallbackFn<List<String>, Object> getListObjectThenOnFulfilledCallbackFn(List<String> simpleDataTypes, ListBoxValues dataTypeListBoxValues) {
         return serverDataTypes -> {
             List<String> mergedList = new ArrayList<>(simpleDataTypes);
-
             for (String type : serverDataTypes) {
                 String displayType = StringUtils.createDataTypeDisplayName(type);
                 getMapDataTypeNamesToDisplayNames().put(
@@ -139,6 +141,7 @@ public class DataObjectTypeWidget extends Composite implements HasValue<DataObje
             }
 
             dataTypeListBoxValues.addValues(mergedList);
+            doneLoading = true;
             return null;
         };
     }
@@ -161,6 +164,22 @@ public class DataObjectTypeWidget extends Composite implements HasValue<DataObje
 
     @Override
     public void setValue(DataObjectTypeValue value, boolean fireEvents) {
+
+        if (doneLoading) {
+            performSetValue(value, fireEvents);
+        } else {
+            final com.google.gwt.user.client.Timer t = new Timer() {
+                @Override
+                public void run() {
+                    performSetValue(value, fireEvents);
+                }
+            };
+            t.schedule(100);
+        }
+    }
+
+    private void performSetValue(DataObjectTypeValue value, boolean fireEvents) {
+        value.setType(getRealType(value.getType()));
         if (value != null) {
             DataObjectTypeValue oldValue = current;
             current = value;
@@ -204,6 +223,10 @@ public class DataObjectTypeWidget extends Composite implements HasValue<DataObje
 
     @Override
     public void setTextBoxModelValue(TextBox textBox, String value) {
+        String oldValue = current.getType();
+        if (value != null && !value.isEmpty()) {
+            clientDataTypesService.add(value, oldValue);
+        }
     }
 
     @Override
@@ -225,6 +248,19 @@ public class DataObjectTypeWidget extends Composite implements HasValue<DataObje
             setValue(new DataObjectTypeValue(currentValue), true);
         }
         oldValue = currentValue;
+    }
+
+    static String getRealType(String value) {
+        if (isNullOrEmpty(value)) {
+            return "";
+        }
+
+        for (Map.Entry<String, String> entry : getMapDataTypeNamesToDisplayNames().entrySet()) {
+            if (Objects.equals(value, entry.getValue())) {
+                return entry.getKey();
+            }
+        }
+        return value;
     }
 
     static String getDisplayName(String realType) {

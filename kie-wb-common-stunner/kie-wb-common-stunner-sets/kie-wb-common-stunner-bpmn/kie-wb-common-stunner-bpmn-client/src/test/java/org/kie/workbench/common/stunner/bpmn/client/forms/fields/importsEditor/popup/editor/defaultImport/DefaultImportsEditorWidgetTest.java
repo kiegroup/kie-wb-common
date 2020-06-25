@@ -33,6 +33,7 @@ import org.kie.workbench.common.stunner.core.client.canvas.CanvasHandler;
 import org.kie.workbench.common.stunner.core.client.session.ClientSession;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.kie.workbench.common.stunner.core.diagram.Metadata;
+import org.kie.workbench.common.stunner.forms.client.event.RefreshFormPropertiesEvent;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.uberfire.backend.vfs.Path;
@@ -81,6 +82,9 @@ public class DefaultImportsEditorWidgetTest {
 
     private DefaultImportsEditorWidget tested;
 
+    @Mock
+    private Event<RefreshFormPropertiesEvent> refreshFormsEvent;
+
     @Before
     public void setUp() throws Exception {
         tested = mock(DefaultImportsEditorWidget.class);
@@ -109,7 +113,7 @@ public class DefaultImportsEditorWidgetTest {
     public void testConstructor() {
         DefaultImportsEditorWidget widget = spy(new DefaultImportsEditorWidget(sessionManager,
                                                                                dataTypeNamesService,
-                                                                               notification));
+                                                                               notification, refreshFormsEvent));
         verify(widget, times(1)).loadDefaultDataTypes();
         verify(widget, times(1)).loadServerDataTypes();
     }

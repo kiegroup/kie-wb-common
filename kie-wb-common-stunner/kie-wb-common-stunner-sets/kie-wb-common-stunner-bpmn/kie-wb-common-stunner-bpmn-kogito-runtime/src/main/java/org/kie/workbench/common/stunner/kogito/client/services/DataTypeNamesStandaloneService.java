@@ -16,8 +16,11 @@
 
 package org.kie.workbench.common.stunner.kogito.client.services;
 
-import java.util.Collections;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.enterprise.context.ApplicationScoped;
 
@@ -28,8 +31,18 @@ import org.uberfire.backend.vfs.Path;
 @ApplicationScoped
 public class DataTypeNamesStandaloneService implements DataTypeNamesService {
 
+    Set<String> dataTypesSet = new HashSet<>(Arrays.asList("org.test.Person", "org.test.Employee"));
+
     @Override
     public Promise<List<String>> call(final Path path) {
-        return Promise.resolve(Collections.emptyList());
+        return Promise.resolve(new ArrayList<>(dataTypesSet));
+    }
+
+    @Override
+    public void add(String value, String oldValue) {
+        if (dataTypesSet.contains(oldValue)) {
+            dataTypesSet.remove(oldValue);
+        }
+        dataTypesSet.add(value);
     }
 }

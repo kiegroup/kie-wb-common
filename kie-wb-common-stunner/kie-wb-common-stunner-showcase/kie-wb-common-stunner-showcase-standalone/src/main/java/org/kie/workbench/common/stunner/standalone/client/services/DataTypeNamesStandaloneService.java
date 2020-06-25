@@ -17,6 +17,7 @@
 package org.kie.workbench.common.stunner.standalone.client.services;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -28,12 +29,21 @@ import org.uberfire.backend.vfs.Path;
 @ApplicationScoped
 public class DataTypeNamesStandaloneService implements DataTypeNamesService {
 
+    List<String> testString = new ArrayList<>(Arrays.asList("org.standalone.Test1",
+                                                            "org.standalone.Test2",
+                                                            "org.standalone.Test3"));
+
     @Override
     public Promise<List<String>> call(final Path path) {
-        List<String> testString = new ArrayList<>();
-        testString.add("org.standalone.Test1");
-        testString.add("org.standalone.Test2");
-        testString.add("org.standalone.Test3");
         return Promise.resolve(testString);
+    }
+
+    @Override
+    public void add(String value, String oldValue) {
+
+        if (testString.contains(oldValue)) {
+            testString.remove(oldValue);
+        }
+        testString.add(value);
     }
 }

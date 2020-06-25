@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2020 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,14 +14,11 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.stunner.kogito.client.service;
+package org.kie.workbench.common.stunner.bpmn.client.forms.fields.assignmentsEditor;
 
-import elemental2.promise.Promise;
-import org.kie.workbench.common.stunner.kogito.api.Kogito;
+import org.kie.workbench.common.stunner.bpmn.client.forms.util.ListBoxValues;
 
-@Kogito
-public interface KogitoClientService<T, R> {
+public interface NotifyAddDataType {
 
-    Promise<R> call(T input);
-
+    void notifyAdd(String dataType, String oldType, final ListBoxValues dataTypeListBoxValues);
 }

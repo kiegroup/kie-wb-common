@@ -45,6 +45,8 @@ public class BPMNFindDataTypesProjectService implements DataTypesService {
         this.dataModelService = dataModelService;
     }
 
+    private final List<String> addedDataTypes = new ArrayList<>();
+
     public List<String> getDataTypeNames(final Path path) {
         if (null == path) {
             return Collections.emptyList();
@@ -56,11 +58,19 @@ public class BPMNFindDataTypesProjectService implements DataTypesService {
             final String[] fullyQualifiedClassNames = DataModelOracleUtilities.getFactTypes(oracle);
 
             dataTypeNames.addAll(Arrays.asList(fullyQualifiedClassNames));
+            dataTypeNames.addAll(addedDataTypes);
             Collections.sort(dataTypeNames);
         } catch (Exception e) {
             throw ExceptionUtilities.handleException(e);
         }
 
         return dataTypeNames;
+    }
+
+    public void addDataType(String dataType, String oldType) {
+        if (addedDataTypes.contains(oldType)) {
+            addedDataTypes.remove(oldType);
+        }
+        addedDataTypes.add(dataType);
     }
 }

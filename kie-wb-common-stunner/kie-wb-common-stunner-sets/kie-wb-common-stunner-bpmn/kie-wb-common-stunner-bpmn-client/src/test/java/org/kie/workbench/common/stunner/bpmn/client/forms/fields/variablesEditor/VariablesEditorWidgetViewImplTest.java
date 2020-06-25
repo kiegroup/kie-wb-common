@@ -23,7 +23,6 @@ import java.util.List;
 import javax.enterprise.event.Event;
 
 import com.ait.lienzo.test.LienzoMockitoTestRunner;
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.TableCellElement;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwtmockito.GwtMock;
@@ -36,6 +35,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.stunner.bpmn.client.forms.fields.model.Variable;
 import org.kie.workbench.common.stunner.bpmn.client.forms.fields.model.VariableRow;
+import org.kie.workbench.common.stunner.core.client.api.SessionManager;
+import org.kie.workbench.common.stunner.forms.client.event.RefreshFormPropertiesEvent;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
@@ -106,10 +107,16 @@ public class VariablesEditorWidgetViewImplTest {
 
     protected Event<NotificationEvent> notification = mock(EventSourceMock.class);
 
+    @Mock
+    private SessionManager sessionManager;
+
+    @Mock
+    private Event<RefreshFormPropertiesEvent> refreshFormsEvent;
+
     @Before
     public void setUp() {
         GwtMockito.initMocks(this);
-        view = GWT.create(VariablesEditorWidgetViewImpl.class);
+        view = new VariablesEditorWidgetViewImpl(sessionManager, refreshFormsEvent);
         view.variableRows = variableRows;
         view.addVarButton = button;
         view.nameth = nameth;
@@ -257,5 +264,4 @@ public class VariablesEditorWidgetViewImplTest {
         view.checkTagsNotEnabled();
         verify(tagsth, times(1)).removeFromParent();
     }
-
 }

@@ -48,4 +48,9 @@ public class DataTypeNamesProjectService implements DataTypeNamesService {
                                       s.getDataTypeNames(path);
                                   });
     }
+
+    @Override
+    public void add(String value, String oldValue) {
+        dataTypesServiceCaller.call().addDataType(value, oldValue);
+    }
 }

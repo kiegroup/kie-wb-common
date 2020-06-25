@@ -24,4 +24,6 @@ import org.uberfire.backend.vfs.Path;
 public interface DataTypesService {
 
     List<String> getDataTypeNames(final Path path);
+
+    void addDataType(String dataType, String oldType);
 }

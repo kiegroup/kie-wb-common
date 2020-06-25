@@ -168,12 +168,12 @@ public class AssignmentsEditorWidget extends Composite implements HasValue<Strin
     }
 
     String getVariableCountsString(final String datainput,
-                                             final String datainputset,
-                                             final String dataoutput,
-                                             final String dataoutputset,
-                                             final String processvars,
-                                             final String assignments,
-                                             final String disallowedpropertynames) {
+                                   final String datainputset,
+                                   final String dataoutput,
+                                   final String dataoutputset,
+                                   final String processvars,
+                                   final String assignments,
+                                   final String disallowedpropertynames) {
         String inputvars = null;
         if (datainput != null) {
             inputvars = datainput;
@@ -391,12 +391,22 @@ public class AssignmentsEditorWidget extends Composite implements HasValue<Strin
                                                hasOutputVars,
                                                isSingleOutputVar);
 
-        ActivityDataIOEditor.GetDataCallback callback = assignmentDataJson -> {
-            AssignmentData assignmentData1 = Marshalling.fromJSON(assignmentDataJson,
-                                                                  AssignmentData.class);
-            String assignmentsInfoString = createAssignmentsInfoString(assignmentData1);
-            setValue(assignmentsInfoString,
-                     true);
+        ActivityDataIOEditor.GetDataCallback callback = new ActivityDataIOEditor.GetDataCallback() {
+            @Override
+            public void getData(String assignmentDataJson) {
+                AssignmentData assignmentData1 = Marshalling.fromJSON(assignmentDataJson,
+                                                                      AssignmentData.class);
+                String assignmentsInfoString = createAssignmentsInfoString(assignmentData1);
+                setValue(assignmentsInfoString,
+                         true);
+            }
+
+            @Override
+            public void addDataType(String dataType, String oldType) {
+                if (dataType != null && !dataType.isEmpty()) {
+                    clientDataTypesService.add(dataType, oldType);
+                }
+            }
         };
 
         activityDataIOEditor.setCallback(callback);

@@ -25,4 +25,5 @@ import org.uberfire.backend.vfs.Path;
 @Kogito
 public interface DataTypeNamesService extends KogitoClientService<Path, List<String>> {
 
+    void add(String value, String oldValue);
 }
