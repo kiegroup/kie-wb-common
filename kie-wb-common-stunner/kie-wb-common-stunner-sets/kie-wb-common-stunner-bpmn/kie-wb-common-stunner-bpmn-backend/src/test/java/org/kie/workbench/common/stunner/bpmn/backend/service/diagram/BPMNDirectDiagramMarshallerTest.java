@@ -57,6 +57,7 @@ import org.kie.workbench.common.stunner.bpmn.backend.converters.customproperties
 import org.kie.workbench.common.stunner.bpmn.backend.converters.customproperties.VariableDeclaration;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.DefinitionsConverter;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.properties.BasePropertyWriter;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.processes.DataTypeCacheServer;
 import org.kie.workbench.common.stunner.bpmn.definition.AdHocSubprocess;
 import org.kie.workbench.common.stunner.bpmn.definition.Association;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNDiagram;
@@ -149,6 +150,7 @@ import org.kie.workbench.common.stunner.core.graph.content.view.ViewConnector;
 import org.kie.workbench.common.stunner.core.graph.content.view.ViewConnectorImpl;
 import org.kie.workbench.common.stunner.core.graph.impl.NodeImpl;
 import org.kie.workbench.common.stunner.core.graph.util.GraphUtils;
+import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import static org.junit.Assert.assertEquals;
@@ -258,6 +260,9 @@ public class BPMNDirectDiagramMarshallerTest {
     private WorkItemDefinitionRegistry widRegistry;
     private WorkItemDefinitionLookupService widService;
 
+    @Mock
+    private DataTypeCacheServer dataTypeCacheServer;
+
     private BPMNDirectDiagramMarshaller tested;
 
     @Before
@@ -277,7 +282,8 @@ public class BPMNDirectDiagramMarshallerTest {
                                                  widService,
                                                  stunnerAPI.getFactoryManager(),
                                                  stunnerAPI.commandFactory,
-                                                 stunnerAPI.commandManager);
+                                                 stunnerAPI.commandManager,
+                                                 dataTypeCacheServer);
     }
 
     //Unsupported nodes

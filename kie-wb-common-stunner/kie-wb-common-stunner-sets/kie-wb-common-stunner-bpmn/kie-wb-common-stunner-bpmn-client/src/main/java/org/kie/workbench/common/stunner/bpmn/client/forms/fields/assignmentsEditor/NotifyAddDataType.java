@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2020 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,15 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kie.workbench.common.stunner.bpmn.project.service;
 
-import java.util.List;
+package org.kie.workbench.common.stunner.bpmn.client.forms.fields.assignmentsEditor;
 
-import org.jboss.errai.bus.server.annotations.Remote;
-import org.uberfire.backend.vfs.Path;
+import org.kie.workbench.common.stunner.bpmn.client.forms.util.ListBoxValues;
 
-@Remote
-public interface DataTypesService {
+public interface NotifyAddDataType {
 
-    List<String> getDataTypeNames(final Path path, List<String> dataTypesAdded);
+    void notifyAdd(String dataType, String oldType, final ListBoxValues dataTypeListBoxValues);
 }

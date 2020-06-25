@@ -17,6 +17,7 @@
 package org.kie.workbench.common.stunner.bpmn.client.forms.fields.importsEditor.popup.editor.defaultImport;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -29,8 +30,10 @@ import org.kie.workbench.common.stunner.bpmn.client.forms.DataTypeNamesService;
 import org.kie.workbench.common.stunner.bpmn.client.forms.fields.i18n.StunnerFormsClientFieldsConstants;
 import org.kie.workbench.common.stunner.bpmn.client.forms.fields.importsEditor.popup.editor.ImportsEditorWidget;
 import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.imports.DefaultImport;
+import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.imports.ImportsValue;
 import org.kie.workbench.common.stunner.core.client.api.SessionManager;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
+import org.kie.workbench.common.stunner.forms.client.event.RefreshFormPropertiesEvent;
 import org.uberfire.backend.vfs.Path;
 import org.uberfire.workbench.events.NotificationEvent;
 
@@ -42,16 +45,19 @@ public class DefaultImportsEditorWidget extends ImportsEditorWidget<DefaultImpor
     protected SessionManager sessionManager;
     protected DataTypeNamesService dataTypeNamesService;
     protected Event<NotificationEvent> notification;
+    protected Event<RefreshFormPropertiesEvent> refreshFormsEvent;
 
     protected Map<String, String> dataTypes = new TreeMap<>();
 
     @Inject
     public DefaultImportsEditorWidget(final SessionManager sessionManager,
                                       final DataTypeNamesService dataTypeNamesService,
-                                      final Event<NotificationEvent> notification) {
+                                      final Event<NotificationEvent> notification,
+                                      final Event<RefreshFormPropertiesEvent> refreshFormsEvent) {
         this.sessionManager = sessionManager;
         this.dataTypeNamesService = dataTypeNamesService;
         this.notification = notification;
+        this.refreshFormsEvent = refreshFormsEvent;
 
         loadDefaultDataTypes();
         loadServerDataTypes();
@@ -74,14 +80,10 @@ public class DefaultImportsEditorWidget extends ImportsEditorWidget<DefaultImpor
         return new DefaultImport();
     }
 
+    private static List<String> defaultTypes = new ArrayList<>(Arrays.asList("Boolean", "Float", "Integer", "Object", "String"));
+
     protected void loadDefaultDataTypes() {
-        List<String> dataTypes = new ArrayList<>();
-        dataTypes.add("Boolean");
-        dataTypes.add("Float");
-        dataTypes.add("Integer");
-        dataTypes.add("Object");
-        dataTypes.add("String");
-        addDataTypes(dataTypes, false);
+        addDataTypes(defaultTypes, false);
     }
 
     protected void loadServerDataTypes() {
@@ -105,6 +107,23 @@ public class DefaultImportsEditorWidget extends ImportsEditorWidget<DefaultImpor
         for (String dataType : dataTypesList) {
             String displayName = useDisplayNames ? createDataTypeDisplayName(dataType) : dataType;
             dataTypes.put(dataType, displayName);
+        }
+    }
+
+    public void addDataTypes(ImportsValue imports) {
+        boolean updated = false;
+        for (DefaultImport imported : imports.getDefaultImports()) {
+            if (defaultTypes.contains(imported.getClassName())) {
+            } else {
+                updated = true;
+                dataTypeNamesService.add(imported.getClassName(), null);
+            }
+        }
+
+        if (updated) {
+            refreshFormsEvent.fire(new RefreshFormPropertiesEvent(sessionManager.getCurrentSession()));
+        } else {
+            System.out.print("Hello");
         }
     }
 }

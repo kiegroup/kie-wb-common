@@ -48,6 +48,7 @@ import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.BaseCo
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.BpmnNode;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.DefinitionResolver;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.GraphBuilder;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.processes.DataTypeCacheServer;
 import org.kie.workbench.common.stunner.bpmn.backend.resource.JBPMBpmn2Resource;
 import org.kie.workbench.common.stunner.bpmn.backend.resource.JBPMBpmn2ResourceFactory;
 import org.kie.workbench.common.stunner.bpmn.workitem.service.WorkItemDefinitionLookupService;
@@ -88,6 +89,7 @@ public abstract class BaseDirectDiagramMarshaller implements DiagramMarshaller<G
     protected final TypedFactoryManager typedFactoryManager;
     private final GraphCommandFactory commandFactory;
     private final GraphCommandManager commandManager;
+    private final DataTypeCacheServer dataTypeCache;
 
     public BaseDirectDiagramMarshaller(final XMLEncoderDiagramMetadataMarshaller diagramMetadataMarshaller,
                                        final DefinitionManager definitionManager,
@@ -95,7 +97,8 @@ public abstract class BaseDirectDiagramMarshaller implements DiagramMarshaller<G
                                        final WorkItemDefinitionLookupService workItemDefinitionService,
                                        final FactoryManager factoryManager,
                                        final GraphCommandFactory commandFactory,
-                                       final GraphCommandManager commandManager) {
+                                       final GraphCommandManager commandManager,
+                                       final DataTypeCacheServer dataTypeCache) {
         this.diagramMetadataMarshaller = diagramMetadataMarshaller;
         this.definitionManager = definitionManager;
         this.ruleManager = ruleManager;
@@ -103,6 +106,7 @@ public abstract class BaseDirectDiagramMarshaller implements DiagramMarshaller<G
         this.typedFactoryManager = new TypedFactoryManager(factoryManager);
         this.commandFactory = commandFactory;
         this.commandManager = commandManager;
+        this.dataTypeCache = dataTypeCache;
     }
 
     @Override
@@ -162,7 +166,7 @@ public abstract class BaseDirectDiagramMarshaller implements DiagramMarshaller<G
         final InputStream inputStream = request.getInput();
 
         LOG.debug("Starting diagram unmarshalling...");
-
+        
         DefinitionResolver definitionResolver;
         try {
             // definition resolver provides utlities to access elements of the BPMN datamodel
@@ -179,8 +183,8 @@ public abstract class BaseDirectDiagramMarshaller implements DiagramMarshaller<G
 
             // perform actual conversion. Process is the root of the diagram
             Result<BpmnNode> result = converterFactory.rootProcessConverter().convertProcess();
-
             BpmnNode diagramRoot = result.value();
+            dataTypeCache.initCache(diagramRoot);
 
             LOG.debug("Diagram unmarshalling completed successfully.");
 

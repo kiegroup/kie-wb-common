@@ -202,4 +202,10 @@ public class StringUtilsTest {
         list.add("hello");
         assertTrue(StringUtils.nonEmpty(list));
     }
+
+    @Test
+    public void testDataTypeDisplayName() {
+        assertEquals("MyObject", StringUtils.createDataTypeDisplayName("MyObject"));
+        assertEquals("MyClass [com.test]", StringUtils.createDataTypeDisplayName("com.test.MyClass"));
+    }
 }

@@ -128,9 +128,11 @@ public class DiagramEditorPropertiesScreen {
             // Show the loading view.
             view.showLoading();
             // Open the forms properties widget for the current session.
+
             formPropertiesWidget
                     .bind(session)
                     .show(view::hideLoading);
+
             done = true;
         }
         if (!done) {

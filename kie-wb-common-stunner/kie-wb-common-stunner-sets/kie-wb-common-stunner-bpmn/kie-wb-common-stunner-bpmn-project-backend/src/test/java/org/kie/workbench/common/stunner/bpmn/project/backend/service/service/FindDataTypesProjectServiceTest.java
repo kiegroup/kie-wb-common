@@ -27,6 +27,7 @@ import org.kie.soup.project.datamodel.oracle.FieldAccessorsAndMutators;
 import org.kie.soup.project.datamodel.oracle.ModelField;
 import org.kie.soup.project.datamodel.oracle.PackageDataModelOracle;
 import org.kie.workbench.common.services.datamodel.backend.server.service.DataModelService;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.processes.DataTypeCacheServer;
 import org.kie.workbench.common.stunner.bpmn.project.backend.service.BPMNFindDataTypesProjectService;
 import org.kie.workbench.common.stunner.bpmn.project.service.DataTypesService;
 import org.mockito.Mock;
@@ -49,11 +50,14 @@ public class FindDataTypesProjectServiceTest {
     @Mock
     private Path path;
 
+    @Mock
+    private DataTypeCacheServer dataTypeCacheServer;
+
     private DataTypesService service;
 
     @Before
     public void setup() {
-        this.service = new BPMNFindDataTypesProjectService(dataModelService);
+        this.service = new BPMNFindDataTypesProjectService(dataModelService, dataTypeCacheServer);
     }
 
     @Test
@@ -91,7 +95,7 @@ public class FindDataTypesProjectServiceTest {
 
         when(oracle.getModuleModelFields()).thenReturn(fields);
 
-        final List<String> dataTypeNames = service.getDataTypeNames(path);
+        final List<String> dataTypeNames = service.getDataTypeNames(path, null);
 
         assertNotNull(dataTypeNames);
         assertEquals(2, dataTypeNames.size());

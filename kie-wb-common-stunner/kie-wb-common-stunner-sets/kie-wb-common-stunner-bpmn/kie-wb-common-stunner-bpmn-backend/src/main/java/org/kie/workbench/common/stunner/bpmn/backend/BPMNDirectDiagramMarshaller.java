@@ -22,6 +22,7 @@ import javax.inject.Inject;
 import org.kie.workbench.common.stunner.bpmn.BPMNDefinitionSet;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.TypedFactoryManager;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.DefinitionResolver;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.processes.DataTypeCacheServer;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNDiagramImpl;
 import org.kie.workbench.common.stunner.bpmn.workitem.service.WorkItemDefinitionLookupService;
 import org.kie.workbench.common.stunner.core.api.DefinitionManager;
@@ -42,7 +43,8 @@ public class BPMNDirectDiagramMarshaller extends BaseDirectDiagramMarshaller {
             final WorkItemDefinitionLookupService workItemDefinitionService,
             final FactoryManager factoryManager,
             final GraphCommandFactory commandFactory,
-            final GraphCommandManager commandManager) {
+            final GraphCommandManager commandManager,
+            final DataTypeCacheServer dataTypeCacheServer) {
 
         super(diagramMetadataMarshaller,
               definitionManager,
@@ -50,7 +52,8 @@ public class BPMNDirectDiagramMarshaller extends BaseDirectDiagramMarshaller {
               workItemDefinitionService,
               factoryManager,
               commandFactory,
-              commandManager);
+              commandManager,
+              dataTypeCacheServer);
     }
 
     @Override

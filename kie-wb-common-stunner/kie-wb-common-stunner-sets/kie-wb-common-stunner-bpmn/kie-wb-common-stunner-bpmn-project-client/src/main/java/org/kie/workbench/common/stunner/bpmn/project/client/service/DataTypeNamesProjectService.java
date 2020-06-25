@@ -16,6 +16,7 @@
 
 package org.kie.workbench.common.stunner.bpmn.project.client.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -41,11 +42,22 @@ public class DataTypeNamesProjectService implements DataTypeNamesService {
         this.dataTypesServiceCaller = dataTypesServiceCaller;
     }
 
+    protected List<String> addedDataTypes = new ArrayList<>();
+
     @Override
     public Promise<List<String>> call(final Path path) {
         return promises.promisify(dataTypesServiceCaller,
                                   s -> {
-                                      s.getDataTypeNames(path);
+                                      s.getDataTypeNames(path, addedDataTypes);
                                   });
+    }
+
+    @Override
+    public void add(String value, String oldValue) {
+
+        if (addedDataTypes.contains(oldValue)) {
+            addedDataTypes.remove(oldValue);
+        }
+        addedDataTypes.add(value);
     }
 }

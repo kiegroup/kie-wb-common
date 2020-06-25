@@ -294,6 +294,11 @@ public class VariablesEditorFieldRenderer extends FieldRenderer<VariablesEditorF
         return lastOverlayOpened;
     }
 
+    @Override
+    public void addDataType(String dataType, String oldType) {
+        view.addDataType(dataType, oldType);
+    }
+
     public void closeLastOverlay() {
         if (lastOverlayOpened != null) {
             lastOverlayOpened.click();

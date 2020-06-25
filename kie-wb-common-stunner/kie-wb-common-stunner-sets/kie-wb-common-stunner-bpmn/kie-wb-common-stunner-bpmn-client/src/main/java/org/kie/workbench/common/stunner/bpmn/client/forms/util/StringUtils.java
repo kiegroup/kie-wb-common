@@ -155,7 +155,9 @@ public class StringUtils {
         int i = dataType.lastIndexOf('.');
         StringBuilder formattedDataType = new StringBuilder();
         formattedDataType.append(dataType.substring(i + 1));
-        formattedDataType.append(" [").append(dataType, 0, i).append("]");
+        if (i != -1) {
+            formattedDataType.append(" [").append(dataType, 0, i).append("]");
+        }
         return formattedDataType.toString();
     }
 
