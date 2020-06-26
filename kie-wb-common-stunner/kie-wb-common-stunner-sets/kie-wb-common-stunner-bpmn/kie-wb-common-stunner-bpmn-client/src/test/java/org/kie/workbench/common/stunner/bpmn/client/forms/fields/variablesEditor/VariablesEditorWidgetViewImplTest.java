@@ -35,8 +35,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.stunner.bpmn.client.forms.fields.model.Variable;
 import org.kie.workbench.common.stunner.bpmn.client.forms.fields.model.VariableRow;
-import org.kie.workbench.common.stunner.core.client.api.SessionManager;
-import org.kie.workbench.common.stunner.forms.client.event.RefreshFormPropertiesEvent;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
@@ -95,6 +93,7 @@ public class VariablesEditorWidgetViewImplTest {
     @GwtMock
     private TableCellElement tagsth;
 
+    @GwtMock
     private VariablesEditorWidgetViewImpl view;
 
     @Captor
@@ -107,16 +106,9 @@ public class VariablesEditorWidgetViewImplTest {
 
     protected Event<NotificationEvent> notification = mock(EventSourceMock.class);
 
-    @Mock
-    private SessionManager sessionManager;
-
-    @Mock
-    private Event<RefreshFormPropertiesEvent> refreshFormsEvent;
-
     @Before
     public void setUp() {
         GwtMockito.initMocks(this);
-        view = new VariablesEditorWidgetViewImpl(sessionManager, refreshFormsEvent);
         view.variableRows = variableRows;
         view.addVarButton = button;
         view.nameth = nameth;
