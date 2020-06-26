@@ -23,7 +23,5 @@ import org.uberfire.backend.vfs.Path;
 @Remote
 public interface DataTypesService {
 
-    List<String> getDataTypeNames(final Path path);
-
-    void addDataType(String dataType, String oldType);
+    List<String> getDataTypeNames(final Path path, List<String> dataTypesAdded);
 }

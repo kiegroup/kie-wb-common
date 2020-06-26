@@ -15,6 +15,7 @@
  */
 package org.kie.workbench.common.stunner.bpmn.project.backend.service.service;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -91,7 +92,7 @@ public class FindDataTypesProjectServiceTest {
 
         when(oracle.getModuleModelFields()).thenReturn(fields);
 
-        final List<String> dataTypeNames = service.getDataTypeNames(path);
+        final List<String> dataTypeNames = service.getDataTypeNames(path, new ArrayList<>());
 
         assertNotNull(dataTypeNames);
         assertEquals(2, dataTypeNames.size());

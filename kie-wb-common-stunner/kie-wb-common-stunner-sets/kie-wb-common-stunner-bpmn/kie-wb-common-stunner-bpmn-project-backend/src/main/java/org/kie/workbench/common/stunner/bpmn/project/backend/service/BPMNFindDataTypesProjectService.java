@@ -45,9 +45,7 @@ public class BPMNFindDataTypesProjectService implements DataTypesService {
         this.dataModelService = dataModelService;
     }
 
-    private final List<String> addedDataTypes = new ArrayList<>();
-
-    public List<String> getDataTypeNames(final Path path) {
+    public List<String> getDataTypeNames(final Path path, final List<String> addedDataTypes) {
         if (null == path) {
             return Collections.emptyList();
         }
@@ -65,12 +63,5 @@ public class BPMNFindDataTypesProjectService implements DataTypesService {
         }
 
         return dataTypeNames;
-    }
-
-    public void addDataType(String dataType, String oldType) {
-        if (addedDataTypes.contains(oldType)) {
-            addedDataTypes.remove(oldType);
-        }
-        addedDataTypes.add(dataType);
     }
 }
