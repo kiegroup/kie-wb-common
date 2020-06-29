@@ -27,12 +27,10 @@ import io.github.bonigarcia.wdm.WebDriverManager;
 import org.apache.commons.io.IOUtils;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestWatcher;
 import org.junit.runner.Description;
-import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
@@ -140,20 +138,8 @@ public class BPMNDesignerKogitoSeleniumIT {
     };
 
     @Test
-    @Ignore
     public void testHandlingInvalidContent() {
         setContent("<!!!invalid!!!>");
-
-        // Check that there is error modal dialog shown to user
-        final WebElement errorDialogModal = waitOperation().until(element(ERROR_MODAL_DIALOG));
-        assertThat(errorDialogModal)
-                .as("If invalid BPMN is loaded, error dialog modal should be shown.")
-                .isNotNull();
-        // Check that there is a message explaining what happened
-        assertThat(errorDialogModal.findElement(By.xpath(ERROR_MODAL_BODY)).getText())
-                .as("If error dialog is shown, it show show proper message.")
-                .contains("Invalid BPMN file. Opening default text editor instead.");
-        errorDialogModal.click();
 
         // Verify ACE editor (default text editor) is in place and shown to user
         final WebElement aceEditor = waitOperation().until(element(ACE_EDITOR));
@@ -166,6 +152,8 @@ public class BPMNDesignerKogitoSeleniumIT {
     public void testNewDiagram() throws Exception {
         final String expected = loadResource("new-diagram.bpmn2");
         setContent("");
+
+        waitPropertiesAndExplorer();
 
         final String actual = getContent();
         assertThat(actual).isNotBlank();
@@ -189,6 +177,8 @@ public class BPMNDesignerKogitoSeleniumIT {
     public void testBasicModel() throws Exception {
         final String expected = loadResource("basic-process.bpmn2");
         setContent(expected);
+
+        waitPropertiesAndExplorer();
 
         assertDiagramNodeIsPresentInProcessNavigator("Start");
         assertDiagramNodeIsPresentInProcessNavigator("Add user to database");
@@ -257,12 +247,7 @@ public class BPMNDesignerKogitoSeleniumIT {
         return scd;
     }
 
-    private void setContent(final String xml) {
-        try {
-            ((JavascriptExecutor) driver).executeScript(String.format(SET_CONTENT_TEMPLATE, xml));
-        } catch (Exception e) {
-            LOG.error("Exception during JS execution. Ex: {}", e.getMessage());
-        }
+    private void waitPropertiesAndExplorer() {
         final WebElement propertiesPanelDockIcon = waitOperation()
                 .until(visibilityOfElementLocated(className(PROPERTIES_PANEL)));
         assertThat(propertiesPanelDockIcon)
@@ -276,6 +261,15 @@ public class BPMNDesignerKogitoSeleniumIT {
                 .as("Once content is set diagram explorer panel dock icon visibility is a prerequisite" +
                             "for further test execution.")
                 .isNotNull();
+
+    }
+
+    private void setContent(final String xml) {
+        try {
+            ((JavascriptExecutor) driver).executeScript(String.format(SET_CONTENT_TEMPLATE, xml));
+        } catch (Exception e) {
+            LOG.error("Exception during JS execution. Ex: {}", e.getMessage());
+        }
     }
 
     private String getContent() {
