@@ -394,7 +394,7 @@ public class DMNDesignerKogitoSeleniumIT {
                 .hasXPath("/dmn:definitions" +
                                   "/dmn:decision[@id='_395E1E92-765B-47F5-9387-179B839277B1']" +
                                   "/dmn:decisionTable[@id='_1B2AE7B6-BF51-472E-99CB-A67875CE1B57']" +
-                                  "/dmn:output[@id='_3C2E81E3-A8F7-4600-8FC1-7FACB5F85CB9']");
+                                  "/dmn:output[@id='_3C2E81E3-A8F7-4600-8FC1-7FACB5F85CB9' and @typeRef='UNDEFINED']");
         XmlAssert.assertThat(actual)
                 .withNamespaceContext(NAMESPACES)
                 .hasXPath("/dmn:definitions" +
@@ -699,7 +699,7 @@ public class DMNDesignerKogitoSeleniumIT {
                                   "/dmn:context[@id='_AF3119C9-837D-4D56-A560-454A2F1A934D']" +
                                   "/dmn:contextEntry" +
                                   "/dmn:decisionTable[@id='_DB23F5EF-8D43-4A04-A270-B54CF89BC13B']" +
-                                  "/dmn:output[@id='_2B19E6D4-DCA2-4792-AB67-B4AF7E6879BB']");
+                                  "/dmn:output[@id='_2B19E6D4-DCA2-4792-AB67-B4AF7E6879BB' and @typeRef='UNDEFINED']");
         XmlAssert.assertThat(actual)
                 .withNamespaceContext(NAMESPACES)
                 .hasXPath("/dmn:definitions" +
@@ -982,7 +982,7 @@ public class DMNDesignerKogitoSeleniumIT {
                                   "/dmn:businessKnowledgeModel[@id='_1ACB205E-7221-4573-B555-7A7626FDFC8E']" +
                                   "/dmn:encapsulatedLogic[@id='_616FC696-1CE6-4210-A479-DEE11293ACA3' and @kind='FEEL']" +
                                   "/dmn:decisionTable[@id='_407EA8F3-1074-47EF-A764-4B2EFDD131E5']" +
-                                  "/dmn:output[@id='_82865AE0-AF73-4C6C-91C1-533C1521BF2C']");
+                                  "/dmn:output[@id='_82865AE0-AF73-4C6C-91C1-533C1521BF2C' and @typeRef='UNDEFINED']");
         XmlAssert.assertThat(actual)
                 .withNamespaceContext(NAMESPACES)
                 .hasXPath("/dmn:definitions" +
@@ -2067,20 +2067,20 @@ public class DMNDesignerKogitoSeleniumIT {
                 .hasXPath("/dmn:definitions" +
                                   "/dmn:decision[@id='_97F03625-C4CB-4B07-8656-5807C18FA7EA']" +
                                   "/dmn:decisionTable[@id='_500030B0-6E85-4E9F-ADD9-CD6B6F400CBD']" +
-                                  "/dmn:output[@id='_9831672B-26F3-4C2A-A4BF-A874A2BFDF9C']");
+                                  "/dmn:output[@id='_9831672B-26F3-4C2A-A4BF-A874A2BFDF9C' and @typeRef='UNDEFINED']");
         XmlAssert.assertThat(actual)
                 .withNamespaceContext(NAMESPACES)
                 .doesNotHaveXPath("/dmn:definitions" +
                                           "/dmn:decision[@id='_97F03625-C4CB-4B07-8656-5807C18FA7EA']" +
                                           "/dmn:decisionTable[@id='_500030B0-6E85-4E9F-ADD9-CD6B6F400CBD']" +
-                                          "/dmn:output[@id='_9831672B-26F3-4C2A-A4BF-A874A2BFDF9C']" +
+                                          "/dmn:output[@id='_9831672B-26F3-4C2A-A4BF-A874A2BFDF9C' and @typeRef='UNDEFINED']" +
                                           "/dmn:outputValues");
         XmlAssert.assertThat(actual)
                 .withNamespaceContext(NAMESPACES)
                 .doesNotHaveXPath("/dmn:definitions" +
                                           "/dmn:decision[@id='_97F03625-C4CB-4B07-8656-5807C18FA7EA']" +
                                           "/dmn:decisionTable[@id='_500030B0-6E85-4E9F-ADD9-CD6B6F400CBD']" +
-                                          "/dmn:output[@id='_9831672B-26F3-4C2A-A4BF-A874A2BFDF9C']" +
+                                          "/dmn:output[@id='_9831672B-26F3-4C2A-A4BF-A874A2BFDF9C' and @typeRef='UNDEFINED']" +
                                           "/dmn:defaultOutputEntry");
     }
 
@@ -2103,13 +2103,13 @@ public class DMNDesignerKogitoSeleniumIT {
                 .hasXPath("/dmn:definitions" +
                                   "/dmn:decision[@id='_97F03625-C4CB-4B07-8656-5807C18FA7EA']" +
                                   "/dmn:decisionTable[@id='_500030B0-6E85-4E9F-ADD9-CD6B6F400CBD']" +
-                                  "/dmn:output[@id='_9831672B-26F3-4C2A-A4BF-A874A2BFDF9C']");
+                                  "/dmn:output[@id='_9831672B-26F3-4C2A-A4BF-A874A2BFDF9C' and @typeRef='UNDEFINED']");
         XmlAssert.assertThat(actual)
                 .withNamespaceContext(NAMESPACES)
                 .hasXPath("/dmn:definitions" +
                                   "/dmn:decision[@id='_97F03625-C4CB-4B07-8656-5807C18FA7EA']" +
                                   "/dmn:decisionTable[@id='_500030B0-6E85-4E9F-ADD9-CD6B6F400CBD']" +
-                                  "/dmn:output[@id='_9831672B-26F3-4C2A-A4BF-A874A2BFDF9C']" +
+                                  "/dmn:output[@id='_9831672B-26F3-4C2A-A4BF-A874A2BFDF9C' and @typeRef='UNDEFINED']" +
                                   "/dmn:outputValues" +
                                   "/dmn:text[text()='output']");
         XmlAssert.assertThat(actual)
@@ -2117,7 +2117,7 @@ public class DMNDesignerKogitoSeleniumIT {
                 .hasXPath("/dmn:definitions" +
                                   "/dmn:decision[@id='_97F03625-C4CB-4B07-8656-5807C18FA7EA']" +
                                   "/dmn:decisionTable[@id='_500030B0-6E85-4E9F-ADD9-CD6B6F400CBD']" +
-                                  "/dmn:output[@id='_9831672B-26F3-4C2A-A4BF-A874A2BFDF9C']" +
+                                  "/dmn:output[@id='_9831672B-26F3-4C2A-A4BF-A874A2BFDF9C' and @typeRef='UNDEFINED']" +
                                   "/dmn:defaultOutputEntry" +
                                   "/dmn:text[text()='default output']");
     }
@@ -2135,18 +2135,12 @@ public class DMNDesignerKogitoSeleniumIT {
                 .hasXPath("/dmn:definitions" +
                                   "/dmn:decision[@id='_DB91470A-68BD-432B-ADDD-6C8A6B134227']" +
                                   "/dmn:decisionTable[@id='_3020A76F-53F3-4523-B48D-D8BE634178AF']" +
-                                  "/dmn:output[@id='_76010FA4-0EB5-4B97-AECE-184EB03BCA50']");
+                                  "/dmn:output[@id='_76010FA4-0EB5-4B97-AECE-184EB03BCA50' and @typeRef='UNDEFINED']");
         XmlAssert.assertThat(actual)
                 .withNamespaceContext(NAMESPACES)
                 .hasXPath("/dmn:definitions" +
                                   "/dmn:decision[@id='_DB91470A-68BD-432B-ADDD-6C8A6B134227']" +
                                   "/dmn:variable[@id='_78742296-0BBA-45E4-88BE-29887F6BF819' and @typeRef='string']");
-        XmlAssert.assertThat(actual)
-                .withNamespaceContext(NAMESPACES)
-                .hasXPath("/dmn:definitions" +
-                                  "/dmn:decision[@id='_DB91470A-68BD-432B-ADDD-6C8A6B134227']" +
-                                  "/dmn:decisionTable[@id='_3020A76F-53F3-4523-B48D-D8BE634178AF']" +
-                                  "/dmn:output[@id='_76010FA4-0EB5-4B97-AECE-184EB03BCA50' and not(@typeRef)]");
     }
 
     @Test
