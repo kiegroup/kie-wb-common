@@ -107,7 +107,7 @@ public class DMNTutorial {
                 getStep(view.getStepContent(7),
                         blockMode(userInteraction("CLICK", "a[data-field=\"returnToLink\"]"), allowedSelectors("a[data-field=\"returnToLink\"]", "div.kie-dmn-return-to-link")),
                         "right",
-                        "DMNEditorHTMLElement:::    a[data-field=\"returnToLink\"]",
+                        "DMNEditorHTMLElement:::a[data-field=\"returnToLink\"]",
                         "Click on the \"Back to (your model name)\" link, below to the \"Editor\" tab, to go back to the canvas.")
 
         )));
