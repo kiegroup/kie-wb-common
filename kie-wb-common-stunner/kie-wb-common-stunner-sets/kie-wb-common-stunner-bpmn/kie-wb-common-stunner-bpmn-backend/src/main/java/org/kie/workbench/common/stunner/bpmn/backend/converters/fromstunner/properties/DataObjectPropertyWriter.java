@@ -16,6 +16,7 @@
 
 package org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.properties;
 
+import java.util.Optional;
 import java.util.Set;
 
 import org.eclipse.bpmn2.DataObject;
@@ -48,9 +49,12 @@ public class DataObjectPropertyWriter extends PropertyWriter {
     }
 
     private void addDataObjectToProcess(DataObject dataObject) {
-        if (dataObjects.stream()
-                .noneMatch(elm -> elm.getId()
-                        .equals(dataObject.getId()))) {
+        final Optional<DataObject> any = dataObjects.stream().filter(elm -> elm.getId()
+                .equals(dataObject.getId()))
+                .findAny();
+        if (any.isPresent()) {
+            any.get().getItemSubjectRef().setStructureRef("Object");
+        } else {
             dataObjects.add(dataObject);
         }
     }

@@ -45,8 +45,7 @@ public class DataObjectConverter {
             DataObjectPropertyWriter writer = propertyWriterFactory.of(element);
 
             DataObject definition = node.getContent().getDefinition();
-            // this is where the logic needs to go in
-            writer.setName(StringUtils.replaceIllegalCharsForDataObjects(StringUtils.replaceIllegalCharsAttribute(definition.getName().getValue())));
+            writer.setName(StringUtils.replaceIllegalCharsAttribute(StringUtils.replaceIllegalCharsForDataObjects(definition.getName().getValue())));
             writer.setType(definition.getType().getValue().getType());
             writer.setAbsoluteBounds(node);
             return writer;

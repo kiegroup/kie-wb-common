@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Event;
@@ -60,7 +59,6 @@ import org.kie.workbench.common.stunner.core.client.canvas.controls.SelectionCon
 import org.kie.workbench.common.stunner.core.client.session.ClientSession;
 import org.kie.workbench.common.stunner.core.client.session.impl.EditorSession;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
-import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Element;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
@@ -251,33 +249,6 @@ public class AssignmentsEditorWidget extends Composite implements HasValue<Strin
             }
         }
         return parentIds;
-    }
-
-    private Set<DataObject> findDataObjects() {
-        Iterable<Node> nodes = canvasSessionManager.getCurrentSession()
-                .getCanvasHandler()
-                .getDiagram()
-                .getGraph()
-                .nodes();
-
-        final Set<String> parentIds = getParentIds();
-        // Only return Data Objects that have the same id as the current as the parent and its parent recursively
-        return StreamSupport.stream(nodes.spliterator(), false)
-                .filter(this::isBPMNDefinition)
-                .map(elm -> (Node<View<BPMNDefinition>, Edge>) elm)
-                .filter(elm -> {
-                    if (elm.getContent().getDefinition() instanceof DataObject) {
-                        final Element parent = graphUtils.getParent(elm);
-                        if (parent == null) { // test
-                            return true;
-                        }
-
-                        return parentIds.contains(parent.getUUID());
-                    }
-                    return false;
-                })
-                .map(elm -> ((DataObject) elm.getContent().getDefinition()))
-                .collect(Collectors.toSet());
     }
 
     private static String dataObjectToProcessVariableFormat(DataObject dataObject) {
