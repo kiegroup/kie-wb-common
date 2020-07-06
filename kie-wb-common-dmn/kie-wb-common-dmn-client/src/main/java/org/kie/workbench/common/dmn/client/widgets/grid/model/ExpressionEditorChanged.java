@@ -20,4 +20,13 @@ import org.uberfire.workbench.events.UberFireEvent;
 
 public class ExpressionEditorChanged implements UberFireEvent {
 
+    private final String nodeUUID;
+
+    public ExpressionEditorChanged(final String nodeUUID) {
+        this.nodeUUID = nodeUUID;
+    }
+
+    public String getNodeUUID() {
+        return nodeUUID;
+    }
 }
