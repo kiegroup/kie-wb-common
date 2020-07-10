@@ -50,12 +50,6 @@
       <artifactId>uberfire-io</artifactId>
     </dependency>
 
-    <!-- EJB for AsyncDispatcher -->
-    <dependency>
-      <groupId>org.jboss.spec.javax.ejb</groupId>
-      <artifactId>jboss-ejb-api_3.2_spec</artifactId>
-    </dependency>
-
     <dependency>
       <groupId>org.kie.server</groupId>
       <artifactId>kie-server-api</artifactId>
