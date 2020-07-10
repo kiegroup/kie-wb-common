@@ -58,11 +58,6 @@
 
     <dependency>
       <groupId>org.kie.server</groupId>
-      <artifactId>kie-server-client</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>org.kie.server</groupId>
       <artifactId>kie-server-api</artifactId>
     </dependency>
 
