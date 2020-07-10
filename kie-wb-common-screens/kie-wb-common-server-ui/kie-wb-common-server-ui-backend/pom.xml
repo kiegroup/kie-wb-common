@@ -117,11 +117,6 @@
     </dependency>
 
     <dependency>
-      <groupId>org.kie.server</groupId>
-      <artifactId>kie-server-common</artifactId>
-    </dependency>
-
-    <dependency>
       <groupId>com.thoughtworks.xstream</groupId>
       <artifactId>xstream</artifactId>
     </dependency>
