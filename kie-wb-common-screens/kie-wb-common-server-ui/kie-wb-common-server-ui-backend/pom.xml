@@ -25,12 +25,6 @@
 
   <dependencies>
 
-    <!-- StandaloneControllerMultinodeIT -->
-    <dependency>
-      <groupId>org.kie</groupId>
-      <artifactId>kie-api</artifactId>
-    </dependency>
-
     <dependency>
       <groupId>org.uberfire</groupId>
       <artifactId>uberfire-commons</artifactId>
