@@ -51,11 +51,14 @@ public class DecisionNavigatorViewTest {
     @Mock
     private DecisionComponents.View decisionComponentsView;
 
+    @Mock
+    private HTMLDivElement triggerContextMenu;
+
     private DecisionNavigatorView view;
 
     @Before
     public void setup() {
-        view = spy(new DecisionNavigatorView(divMainTree, decisionComponentsContainer, decisionComponents));
+        view = spy(new DecisionNavigatorView(triggerContextMenu, divMainTree, decisionComponentsContainer, decisionComponents));
     }
 
     @Test
