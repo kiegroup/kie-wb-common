@@ -16,25 +16,29 @@
 
 package org.kie.workbench.common.dmn.client.editors.drd.contextmenu;
 
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
-import elemental2.dom.DomGlobal;
 import elemental2.dom.HTMLElement;
 import org.jboss.errai.ui.client.local.api.elemental2.IsElement;
-import org.kie.workbench.common.dmn.client.widgets.grid.controls.list.HasListSelectorControl;
+import org.kie.workbench.common.dmn.client.widgets.grid.controls.list.HasListSelectorControl.ListSelectorItem;
+import org.kie.workbench.common.dmn.client.widgets.grid.controls.list.HasListSelectorControl.ListSelectorTextItem;
 import org.uberfire.client.mvp.UberElemental;
+import org.uberfire.mvp.Command;
 
 public class DRDContextMenu {
+
+    private final List<ListSelectorItem> menuItems;
 
     private View view;
 
     @Inject
     public DRDContextMenu(final View view) {
         this.view = view;
+        this.menuItems = new ArrayList<>();
     }
 
     @PostConstruct
@@ -42,21 +46,28 @@ public class DRDContextMenu {
         view.init(this);
     }
 
+    public void show() { view.show(); }
+
+    public void hide() { view.hide(); }
+
     public HTMLElement getElement() {
         return view.getElement();
     }
 
-    public List<HasListSelectorControl.ListSelectorItem> getItems() {
-        return Collections.singletonList(
-                HasListSelectorControl.ListSelectorTextItem.build("ITEM NAME", true, () -> DomGlobal.console.log(">>>>> COMMAND: item selected!"))
-        );
+    public List<ListSelectorItem> getItems() {
+        return menuItems;
     }
 
-    public void onItemSelected(HasListSelectorControl.ListSelectorItem item) {
-        final HasListSelectorControl.ListSelectorTextItem li = (HasListSelectorControl.ListSelectorTextItem) item;
-        li.getCommand().execute();
+    public void addTextMenuItem(String itemName, boolean isEnabled, Command command) {
+        menuItems.add(ListSelectorTextItem.build(itemName, isEnabled, command));
+    }
+
+    public void resetMenuItems() {
+        menuItems.clear();
     }
 
     public interface View extends UberElemental<DRDContextMenu>, IsElement {
+        void show();
+        void hide();
     }
 }
