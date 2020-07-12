@@ -48,15 +48,16 @@ public class DecisionNavigatorView implements DecisionNavigatorPresenter.View {
 
     private DecisionNavigatorPresenter presenter;
 
-    @Inject
     private DRDContextMenu dRDContextMenu;
 
     @Inject
     public DecisionNavigatorView(final HTMLDivElement triggerContextMenu,
+                                 final DRDContextMenu dRDContextMenu,
                                  final HTMLDivElement mainTree,
                                  final HTMLDivElement decisionComponentsContainer,
                                  final HTMLDivElement decisionComponents) {
         this.triggerContextMenu = triggerContextMenu;
+        this.dRDContextMenu = dRDContextMenu;
         this.mainTree = mainTree;
         this.decisionComponentsContainer = decisionComponentsContainer;
         this.decisionComponents = decisionComponents;
@@ -65,7 +66,9 @@ public class DecisionNavigatorView implements DecisionNavigatorPresenter.View {
     @EventHandler("trigger-context-menu")
     public void triggerContextMenu(final ClickEvent event) {
         mainTree.appendChild(dRDContextMenu.getElement());
-        DomGlobal.console.log("it should be showed");
+        dRDContextMenu.resetMenuItems();
+        dRDContextMenu.addTextMenuItem("ITEM NAME", true, () -> DomGlobal.console.log(">>>>> COMMAND: item selected!"));
+        dRDContextMenu.show();
     }
 
     @Override

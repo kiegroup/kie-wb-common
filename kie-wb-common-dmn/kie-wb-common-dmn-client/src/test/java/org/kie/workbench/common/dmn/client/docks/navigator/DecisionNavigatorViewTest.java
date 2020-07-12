@@ -25,6 +25,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.dmn.client.docks.navigator.included.components.DecisionComponents;
 import org.kie.workbench.common.dmn.client.docks.navigator.tree.DecisionNavigatorTreePresenter;
+import org.kie.workbench.common.dmn.client.editors.drd.contextmenu.DRDContextMenu;
 import org.mockito.Mock;
 
 import static org.kie.workbench.common.dmn.client.editors.types.common.HiddenHelper.HIDDEN_CSS_CLASS;
@@ -54,11 +55,14 @@ public class DecisionNavigatorViewTest {
     @Mock
     private HTMLDivElement triggerContextMenu;
 
+    @Mock
+    private DRDContextMenu drdContextMenu;
+
     private DecisionNavigatorView view;
 
     @Before
     public void setup() {
-        view = spy(new DecisionNavigatorView(triggerContextMenu, divMainTree, decisionComponentsContainer, decisionComponents));
+        view = spy(new DecisionNavigatorView(triggerContextMenu, drdContextMenu, divMainTree, decisionComponentsContainer, decisionComponents));
     }
 
     @Test
