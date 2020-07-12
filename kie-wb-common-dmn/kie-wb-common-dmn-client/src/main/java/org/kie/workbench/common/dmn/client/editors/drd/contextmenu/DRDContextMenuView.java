@@ -16,10 +16,15 @@
 
 package org.kie.workbench.common.dmn.client.editors.drd.contextmenu;
 
+import java.util.Arrays;
 import java.util.List;
 
+import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 
+import com.google.gwt.dom.client.BrowserEvents;
+import elemental2.dom.DomGlobal;
+import elemental2.dom.EventListener;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.kie.workbench.common.dmn.client.widgets.grid.controls.list.HasListSelectorControl;
@@ -38,8 +43,43 @@ public class DRDContextMenuView implements DRDContextMenu.View,
     @Override
     public void init(final DRDContextMenu presenter) {
         this.presenter = presenter;
+    }
+
+    @PreDestroy
+    public void removeDOMEventListeners() {
+        DomGlobal.document.removeEventListener(BrowserEvents.MOUSEDOWN,
+                                               hideContextMenuHandler(),
+                                      false);
+        DomGlobal.document.removeEventListener(BrowserEvents.MOUSEWHEEL,
+                                      hideContextMenuHandler(),
+                                      false);
+    }
+
+    @Override
+    public void show() {
         listSelector.bind(this, 0, 0);
         listSelector.show();
+
+        DomGlobal.document.addEventListener(BrowserEvents.MOUSEDOWN,
+                                            hideContextMenuHandler(),
+                                            false);
+        DomGlobal.document.addEventListener(BrowserEvents.MOUSEWHEEL,
+                                            hideContextMenuHandler(),
+                                            false);
+    }
+
+    @Override
+    public void hide() {
+        listSelector.hide();
+        removeDOMEventListeners();
+    }
+
+    private EventListener hideContextMenuHandler() {
+        return event -> {
+             if (!Arrays.asList(event.path).contains(getElement())) {
+                 listSelector.hide();
+             }
+        };
     }
 
     @Override
@@ -49,6 +89,6 @@ public class DRDContextMenuView implements DRDContextMenu.View,
 
     @Override
     public void onItemSelected(ListSelectorItem item) {
-        presenter.onItemSelected(item);
+        ((ListSelectorTextItem) item).getCommand().execute();
     }
 }
