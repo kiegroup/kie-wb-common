@@ -68,7 +68,9 @@ public class DecisionNavigatorView implements DecisionNavigatorPresenter.View {
         mainTree.appendChild(dRDContextMenu.getElement());
         dRDContextMenu.resetMenuItems();
         dRDContextMenu.setHeaderMenu("DRD ACTIONS", "fa fa-share-alt");
-        dRDContextMenu.addTextMenuItem("ITEM NAME", true, () -> DomGlobal.console.log(">>>>> COMMAND: item selected!"));
+        dRDContextMenu.addTextMenuItem("Create", true, () -> DomGlobal.console.log("Creates a new DRD with the selected node"));
+        dRDContextMenu.addTextMenuItem("Add to", true, () -> DomGlobal.console.log("Adds a node the the selected DRD"));
+        dRDContextMenu.addTextMenuItem("Remove", true, () -> DomGlobal.console.log("Removes the node from the current DRD (it corresponds to the same action in the trash icon)"));
         dRDContextMenu.show();
     }
 
