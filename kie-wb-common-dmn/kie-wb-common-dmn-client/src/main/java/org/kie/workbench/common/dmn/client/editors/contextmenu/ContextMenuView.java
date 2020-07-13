@@ -90,5 +90,6 @@ public class ContextMenuView implements ContextMenu.View,
     @Override
     public void onItemSelected(ListSelectorItem item) {
         ((ListSelectorTextItem) item).getCommand().execute();
+        hide();
     }
 }
