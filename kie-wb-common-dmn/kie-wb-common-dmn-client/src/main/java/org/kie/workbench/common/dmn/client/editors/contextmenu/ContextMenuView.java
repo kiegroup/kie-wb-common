@@ -20,6 +20,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import javax.annotation.PreDestroy;
+import javax.inject.Inject;
 
 import com.google.gwt.dom.client.BrowserEvents;
 import elemental2.dom.DomGlobal;
@@ -38,6 +39,7 @@ public class ContextMenuView implements ContextMenu.View,
     @DataField("list-selector")
     private ListSelector listSelector;
 
+    @Inject
     public ContextMenuView(final ListSelector listSelector) {
         this.listSelector = listSelector;
     }
