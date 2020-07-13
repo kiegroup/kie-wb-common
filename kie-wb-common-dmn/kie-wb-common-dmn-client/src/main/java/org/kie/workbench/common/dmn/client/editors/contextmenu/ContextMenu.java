@@ -59,16 +59,16 @@ public class ContextMenu {
         return menuItems;
     }
 
-    public void addTextMenuItem(String itemName, boolean isEnabled, Command command) {
-        menuItems.add(ListSelectorTextItem.build(itemName, isEnabled, command));
-    }
-
     public void resetMenuItems() {
         menuItems.clear();
     }
 
     public void setHeaderMenu(final String title, final String iconClass) {
         menuItems.add(ListSelectorHeaderItem.buildWithIcon(title, iconClass));
+    }
+
+    public void addTextMenuItem(final String itemName, final boolean isEnabled, final Command command) {
+        menuItems.add(ListSelectorTextItem.build(itemName, isEnabled, command));
     }
 
     public interface View extends UberElemental<ContextMenu>, IsElement {
