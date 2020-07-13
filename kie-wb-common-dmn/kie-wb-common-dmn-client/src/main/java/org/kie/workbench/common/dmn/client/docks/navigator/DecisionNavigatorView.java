@@ -67,6 +67,7 @@ public class DecisionNavigatorView implements DecisionNavigatorPresenter.View {
     public void triggerContextMenu(final ClickEvent event) {
         mainTree.appendChild(dRDContextMenu.getElement());
         dRDContextMenu.resetMenuItems();
+        dRDContextMenu.setHeaderMenu("DRD ACTIONS", "fa fa-share-alt");
         dRDContextMenu.addTextMenuItem("ITEM NAME", true, () -> DomGlobal.console.log(">>>>> COMMAND: item selected!"));
         dRDContextMenu.show();
     }

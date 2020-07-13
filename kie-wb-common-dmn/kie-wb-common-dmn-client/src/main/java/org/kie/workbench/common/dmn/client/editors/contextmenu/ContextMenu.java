@@ -24,6 +24,7 @@ import javax.inject.Inject;
 
 import elemental2.dom.HTMLElement;
 import org.jboss.errai.ui.client.local.api.elemental2.IsElement;
+import org.kie.workbench.common.dmn.client.widgets.grid.controls.list.HasListSelectorControl.ListSelectorHeaderItem;
 import org.kie.workbench.common.dmn.client.widgets.grid.controls.list.HasListSelectorControl.ListSelectorItem;
 import org.kie.workbench.common.dmn.client.widgets.grid.controls.list.HasListSelectorControl.ListSelectorTextItem;
 import org.uberfire.client.mvp.UberElemental;
@@ -64,6 +65,10 @@ public class ContextMenu {
 
     public void resetMenuItems() {
         menuItems.clear();
+    }
+
+    public void setHeaderMenu(final String title, final String iconClass) {
+        menuItems.add(ListSelectorHeaderItem.buildWithIcon(title, iconClass));
     }
 
     public interface View extends UberElemental<ContextMenu>, IsElement {
