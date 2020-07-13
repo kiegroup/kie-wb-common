@@ -20,7 +20,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import javax.annotation.PreDestroy;
-import javax.inject.Inject;
 
 import com.google.gwt.dom.client.BrowserEvents;
 import elemental2.dom.DomGlobal;
@@ -36,9 +35,12 @@ public class ContextMenuView implements ContextMenu.View,
 
     private ContextMenu presenter;
 
-    @Inject
     @DataField("list-selector")
     private ListSelector listSelector;
+
+    public ContextMenuView(final ListSelector listSelector) {
+        this.listSelector = listSelector;
+    }
 
     @Override
     public void init(final ContextMenu presenter) {
@@ -46,7 +48,7 @@ public class ContextMenuView implements ContextMenu.View,
     }
 
     @PreDestroy
-    public void removeDOMEventListeners() {
+    private void removeDOMEventListeners() {
         DomGlobal.document.removeEventListener(BrowserEvents.MOUSEDOWN,
                                                hideContextMenuHandler(),
                                       false);
@@ -82,13 +84,22 @@ public class ContextMenuView implements ContextMenu.View,
         };
     }
 
+    /**
+     * <p>This methods returns all items belonging to list selector instance</p>
+     * <strong><p>Note that:</p></strong>
+     * <p>Since this class is exploiting ListSelector controls, in the original design, this method accepts two parameters</p>
+     * <p>For our purposes, these two parameters are just ignored</p>
+     * @param uiRowIndex unused parameter
+     * @param uiColumnIndex unused parameter
+     * @return items belonging to the context menu
+     */
     @Override
-    public List<ListSelectorItem> getItems(int uiRowIndex, int uiColumnIndex) {
+    public List<ListSelectorItem> getItems(final int uiRowIndex, final int uiColumnIndex) {
         return presenter.getItems();
     }
 
     @Override
-    public void onItemSelected(ListSelectorItem item) {
+    public void onItemSelected(final ListSelectorItem item) {
         ((ListSelectorTextItem) item).getCommand().execute();
         hide();
     }

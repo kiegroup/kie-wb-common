@@ -28,23 +28,24 @@ import static org.mockito.Mockito.verify;
 
 public class ContextMenuTest {
 
+    private ContextMenu contextMenu;
     private ContextMenuView view;
 
     @Before
     public void setUp() {
         view = mock(ContextMenuView.class);
+
+        contextMenu = new ContextMenu(view);
     }
 
     @Test
     public void testWhenInitContextMenuThenRelatedViewIsInit() {
-        final ContextMenu contextMenu = new ContextMenu(view);
         contextMenu.init();
         verify(view).init(contextMenu);
     }
 
     @Test
     public void testWhenShowingContextMenuThenRelatedViewIsShown() {
-        final ContextMenu contextMenu = new ContextMenu(view);
         contextMenu.show();
         verify(view).show();
     }
@@ -58,21 +59,18 @@ public class ContextMenuTest {
 
     @Test
     public void testWhenGettingContextMenuElementThenRelatedViewElementIsGot() {
-        final ContextMenu contextMenu = new ContextMenu(view);
         contextMenu.getElement();
         verify(view).getElement();
     }
 
     @Test
     public void testWhenGettingFreshContextMenuItemsThenListIsEmpty() {
-        final ContextMenu contextMenu = new ContextMenu(view);
         assertThat(contextMenu.getItems()).isNotNull();
         assertThat(contextMenu.getItems()).isEmpty();
     }
 
     @Test
     public void testWhenSettingHeaderForContextMenuThenItemListContainsHeader() {
-        final ContextMenu contextMenu = new ContextMenu(view);
         final String title = "TITLE";
         final String iconClass = "icon-class";
 
@@ -88,7 +86,6 @@ public class ContextMenuTest {
 
     @Test
     public void testAddingTextMenuItemForContextMenuThenItemListContainsIt() {
-        final ContextMenu contextMenu = new ContextMenu(view);
         final String title = "TITLE";
         final Command doNothing = () -> {
         };
