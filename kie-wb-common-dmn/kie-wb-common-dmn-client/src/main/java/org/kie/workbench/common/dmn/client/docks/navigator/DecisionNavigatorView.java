@@ -26,7 +26,7 @@ import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.kie.workbench.common.dmn.client.docks.navigator.included.components.DecisionComponents;
 import org.kie.workbench.common.dmn.client.docks.navigator.tree.DecisionNavigatorTreePresenter;
-import org.kie.workbench.common.dmn.client.editors.drd.contextmenu.DRDContextMenu;
+import org.kie.workbench.common.dmn.client.editors.contextmenu.ContextMenu;
 
 import static org.kie.workbench.common.dmn.client.editors.types.common.HiddenHelper.hide;
 import static org.kie.workbench.common.dmn.client.editors.types.common.HiddenHelper.show;
@@ -48,11 +48,11 @@ public class DecisionNavigatorView implements DecisionNavigatorPresenter.View {
 
     private DecisionNavigatorPresenter presenter;
 
-    private DRDContextMenu dRDContextMenu;
+    private ContextMenu dRDContextMenu;
 
     @Inject
     public DecisionNavigatorView(final HTMLDivElement triggerContextMenu,
-                                 final DRDContextMenu dRDContextMenu,
+                                 final ContextMenu dRDContextMenu,
                                  final HTMLDivElement mainTree,
                                  final HTMLDivElement decisionComponentsContainer,
                                  final HTMLDivElement decisionComponents) {

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.dmn.client.editors.drd.contextmenu;
+package org.kie.workbench.common.dmn.client.editors.contextmenu;
 
 import java.util.Arrays;
 import java.util.List;
@@ -31,17 +31,17 @@ import org.kie.workbench.common.dmn.client.widgets.grid.controls.list.HasListSel
 import org.kie.workbench.common.dmn.client.widgets.grid.controls.list.ListSelector;
 
 @Templated
-public class DRDContextMenuView implements DRDContextMenu.View,
-                                           HasListSelectorControl {
+public class ContextMenuView implements ContextMenu.View,
+                                        HasListSelectorControl {
 
-    private DRDContextMenu presenter;
+    private ContextMenu presenter;
 
     @Inject
     @DataField("list-selector")
     private ListSelector listSelector;
 
     @Override
-    public void init(final DRDContextMenu presenter) {
+    public void init(final ContextMenu presenter) {
         this.presenter = presenter;
     }
 

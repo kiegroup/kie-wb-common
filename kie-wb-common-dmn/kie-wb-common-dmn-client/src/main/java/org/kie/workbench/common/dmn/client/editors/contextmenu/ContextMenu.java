@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.dmn.client.editors.drd.contextmenu;
+package org.kie.workbench.common.dmn.client.editors.contextmenu;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,14 +29,14 @@ import org.kie.workbench.common.dmn.client.widgets.grid.controls.list.HasListSel
 import org.uberfire.client.mvp.UberElemental;
 import org.uberfire.mvp.Command;
 
-public class DRDContextMenu {
+public class ContextMenu {
 
     private final List<ListSelectorItem> menuItems;
 
     private View view;
 
     @Inject
-    public DRDContextMenu(final View view) {
+    public ContextMenu(final View view) {
         this.view = view;
         this.menuItems = new ArrayList<>();
     }
@@ -66,7 +66,7 @@ public class DRDContextMenu {
         menuItems.clear();
     }
 
-    public interface View extends UberElemental<DRDContextMenu>, IsElement {
+    public interface View extends UberElemental<ContextMenu>, IsElement {
         void show();
         void hide();
     }
