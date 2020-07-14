@@ -22,6 +22,7 @@ import org.jboss.errai.ui.client.local.api.elemental2.IsElement;
 import org.kie.soup.project.datamodel.imports.Import;
 import org.kie.workbench.common.widgets.client.widget.ListItemPresenter;
 import org.kie.workbench.common.widgets.client.widget.ListItemView;
+import org.kie.workbench.common.widgets.configresource.client.widget.BuiltInTypeImportHelper;
 
 public class ExternalDataObjectsItemPresenter extends ListItemPresenter<Import, ExternalDataObjectsPresenter, ExternalDataObjectsItemPresenter.View> {
 
@@ -82,7 +83,7 @@ public class ExternalDataObjectsItemPresenter extends ListItemPresenter<Import, 
     }
 
     private void setRemoveButtonVisibility(final String typeName) {
-        if (typeName != null && (typeName.startsWith("java.lang.") || typeName.startsWith("java.util."))) {
+        if (BuiltInTypeImportHelper.isBuiltIn(typeName)) {
             view.hideRemoveButton();
         } else {
             view.showRemoveButton();
