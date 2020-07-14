@@ -54,7 +54,9 @@ public class DataObjectPropertyWriter extends PropertyWriter {
                 .equals(dataObject.getId()))
                 .findAny();
         if (any.isPresent()) {
-            any.get().getItemSubjectRef().setStructureRef("Object");
+             if (!any.get().getItemSubjectRef().getStructureRef().equals(dataObject.getItemSubjectRef().getStructureRef())) {
+                 any.get().getItemSubjectRef().setStructureRef("Object");
+             }
         } else {
             dataObjects.add(dataObject);
         }

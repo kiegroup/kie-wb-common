@@ -77,7 +77,7 @@ public interface StunnerWidgetsConstants {
     @TranslationKey(defaultValue = "Info")
     String MarshallingResponsePopup_UnknownMessageLabel = "MarshallingResponsePopup.UnknownMessageLabel";
 
-    @TranslationKey(defaultValue = "Data Object Exists with Same Name and Different Type")
+    @TranslationKey(defaultValue = "Data Object Exists with Same Name and Different Type - Will be Changed to (Object)")
     String MarshallingResponsePopup_DataObjectsSameNameDifferentType = "MarshallingMessage.dataObjectsSameNameDifferentType";
 
     @TranslationKey(defaultValue = "Data Object-Name")
