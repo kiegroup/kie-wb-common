@@ -18,15 +18,11 @@ package org.kie.workbench.common.dmn.client.docks.navigator;
 
 import javax.inject.Inject;
 
-import com.google.gwt.event.dom.client.ClickEvent;
-import elemental2.dom.DomGlobal;
 import elemental2.dom.HTMLDivElement;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
-import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.kie.workbench.common.dmn.client.docks.navigator.included.components.DecisionComponents;
 import org.kie.workbench.common.dmn.client.docks.navigator.tree.DecisionNavigatorTreePresenter;
-import org.kie.workbench.common.dmn.client.editors.contextmenu.ContextMenu;
 
 import static org.kie.workbench.common.dmn.client.editors.types.common.HiddenHelper.hide;
 import static org.kie.workbench.common.dmn.client.editors.types.common.HiddenHelper.show;
@@ -43,35 +39,15 @@ public class DecisionNavigatorView implements DecisionNavigatorPresenter.View {
     @DataField("decision-components")
     private final HTMLDivElement decisionComponents;
 
-    @DataField("trigger-context-menu")
-    private final HTMLDivElement triggerContextMenu;
-
     private DecisionNavigatorPresenter presenter;
 
-    private ContextMenu dRDContextMenu;
-
     @Inject
-    public DecisionNavigatorView(final HTMLDivElement triggerContextMenu,
-                                 final ContextMenu dRDContextMenu,
-                                 final HTMLDivElement mainTree,
+    public DecisionNavigatorView(final HTMLDivElement mainTree,
                                  final HTMLDivElement decisionComponentsContainer,
                                  final HTMLDivElement decisionComponents) {
-        this.triggerContextMenu = triggerContextMenu;
-        this.dRDContextMenu = dRDContextMenu;
         this.mainTree = mainTree;
         this.decisionComponentsContainer = decisionComponentsContainer;
         this.decisionComponents = decisionComponents;
-    }
-
-    @EventHandler("trigger-context-menu")
-    public void triggerContextMenu(final ClickEvent event) {
-        mainTree.appendChild(dRDContextMenu.getElement());
-        dRDContextMenu.resetMenuItems();
-        dRDContextMenu.setHeaderMenu("DRD ACTIONS", "fa fa-share-alt");
-        dRDContextMenu.addTextMenuItem("Create", true, () -> DomGlobal.console.log("Creates a new DRD with the selected node"));
-        dRDContextMenu.addTextMenuItem("Add to", true, () -> DomGlobal.console.log("Adds a node the the selected DRD"));
-        dRDContextMenu.addTextMenuItem("Remove", true, () -> DomGlobal.console.log("Removes the node from the current DRD (it corresponds to the same action in the trash icon)"));
-        dRDContextMenu.show();
     }
 
     @Override
