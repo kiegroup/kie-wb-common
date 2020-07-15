@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.function.Consumer;
 
 import javax.annotation.PostConstruct;
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import elemental2.dom.HTMLElement;
@@ -31,6 +32,7 @@ import org.kie.workbench.common.dmn.client.widgets.grid.controls.list.HasListSel
 import org.uberfire.client.mvp.UberElemental;
 import org.uberfire.mvp.Command;
 
+@ApplicationScoped
 public class ContextMenu {
 
     private final List<ListSelectorItem> menuItems;
