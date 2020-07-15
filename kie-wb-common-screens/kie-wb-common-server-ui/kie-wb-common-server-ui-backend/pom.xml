@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>org.kie.workbench.screens</groupId>
@@ -354,6 +354,11 @@
           <groupId>org.codehaus.cargo</groupId>
           <artifactId>cargo-core-uberjar</artifactId>
         </exclusion>
+        <exclusion>
+          <!-- already on classpath - 'uberfire-commons' -->
+          <groupId>io.netty</groupId>
+          <artifactId>netty-transport-native-epoll</artifactId>
+        </exclusion>
       </exclusions>
     </dependency>
     <dependency>
@@ -394,7 +399,7 @@
 
         <executions>
           <execution>
-            <id>copy-dependencies-transitive</id> 
+            <id>copy-dependencies-transitive</id>
             <phase>pre-integration-test</phase>
             <goals>
               <goal>single</goal>
