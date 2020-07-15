@@ -65,6 +65,9 @@ public interface StunnerBPMNConstants {
     @TranslationKey(defaultValue = "To users")
     String NOTIFICATION_TO_USERS = "notification.toUsers";
 
+    @TranslationKey(defaultValue = "To emails")
+    String NOTIFICATION_TO_EMAILS = "notification.toEmails";
+
     @TranslationKey(defaultValue = "To groups")
     String NOTIFICATION_TO_GROUPS = "notification.toGroups";
 

@@ -72,6 +72,11 @@ public class NotificationWidget implements IsWidget,
     }
 
     @Override
+    public String getToEmailsLabel() {
+        return translationService.getValue(StunnerBPMNConstants.NOTIFICATION_TO_EMAILS);
+    }
+
+    @Override
     public String getToGroupsLabel() {
         return translationService.getValue(StunnerBPMNConstants.NOTIFICATION_TO_GROUPS);
     }

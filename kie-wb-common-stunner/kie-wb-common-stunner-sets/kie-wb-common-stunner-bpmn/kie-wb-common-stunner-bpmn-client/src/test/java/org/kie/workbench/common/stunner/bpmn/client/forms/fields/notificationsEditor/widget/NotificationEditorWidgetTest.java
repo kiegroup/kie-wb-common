@@ -92,8 +92,6 @@ public class NotificationEditorWidgetTest extends ReflectionUtilsTest {
 
     private MultipleSelectorInput<String> multipleSelectorInputGroups;
 
-    private LiveSearchDropDown<String> liveSearchFromDropDown;
-
     @GwtMock
     private LiveSearchDropDown<String> liveSearchReplyToDropDown;
 
@@ -162,6 +160,7 @@ public class NotificationEditorWidgetTest extends ReflectionUtilsTest {
         setFieldValue(view, "notCompletedInput", notCompletedInput);
         setFieldValue(view, "notStartedInput", notStartedInput);
         setFieldValue(view, "subject", subject);
+        setFieldValue(view, "emails", subject);
         setFieldValue(view, "searchSelectionFromHandler", searchSelectionFromHandler);
         setFieldValue(view, "searchSelectionReplyToHandler", searchSelectionReplyToHandler);
         setFieldValue(view, "multipleLiveSearchSelectionHandlerUsers", multipleLiveSearchSelectionHandlerUsers);
@@ -223,7 +222,7 @@ public class NotificationEditorWidgetTest extends ReflectionUtilsTest {
 
 
         when(customerBinder.getModel()).thenReturn(test);
-        when(notCompleted.getValue()).thenReturn(NotificationType.NotCompletedNotify.getAlias());
+        when(notCompleted.getValue()).thenReturn(NotificationType.NOT_COMPLETED_NOTIFY.getAlias());
         when(typeSelect.getSelectedItem()).thenReturn(notCompleted);
 
         when(searchSelectionReplyToHandler.getSelectedValue()).thenReturn("");
@@ -252,7 +251,7 @@ public class NotificationEditorWidgetTest extends ReflectionUtilsTest {
         doNothing().when(view).hide();
 
         when(customerBinder.getModel()).thenReturn(test);
-        when(notCompleted.getValue()).thenReturn(NotificationType.NotCompletedNotify.getAlias());
+        when(notCompleted.getValue()).thenReturn(NotificationType.NOT_COMPLETED_NOTIFY.getAlias());
         when(typeSelect.getSelectedItem()).thenReturn(notCompleted);
 
         when(searchSelectionReplyToHandler.getSelectedValue()).thenReturn("admin");
@@ -267,7 +266,7 @@ public class NotificationEditorWidgetTest extends ReflectionUtilsTest {
         Assert.assertEquals("QWERTY!", test.getBody());
         Assert.assertEquals("admin", test.getReplyTo());
         Assert.assertEquals("admin", test.getFrom());
-        Assert.assertEquals(NotificationType.NotCompletedNotify, test.getType());
+        Assert.assertEquals(NotificationType.NOT_COMPLETED_NOTIFY, test.getType());
         Assert.assertEquals(groups, test.getGroups());
         Assert.assertEquals(users, test.getUsers());
     }
@@ -285,7 +284,7 @@ public class NotificationEditorWidgetTest extends ReflectionUtilsTest {
         doNothing().when(view).hide();
 
         when(customerBinder.getModel()).thenReturn(test);
-        when(notCompleted.getValue()).thenReturn(NotificationType.NotStartedNotify.getAlias());
+        when(notCompleted.getValue()).thenReturn(NotificationType.NOT_STARTED_NOTIFY.getAlias());
         when(typeSelect.getSelectedItem()).thenReturn(notCompleted);
 
         when(searchSelectionReplyToHandler.getSelectedValue()).thenReturn("admin");
@@ -300,7 +299,7 @@ public class NotificationEditorWidgetTest extends ReflectionUtilsTest {
         Assert.assertNotEquals("QWERTY!", test.getBody());
         Assert.assertNotEquals("admin", test.getReplyTo());
         Assert.assertNotEquals("admin", test.getFrom());
-        Assert.assertNotEquals(NotificationType.NotStartedNotify, test.getType());
+        Assert.assertNotEquals(NotificationType.NOT_STARTED_NOTIFY, test.getType());
         Assert.assertNotEquals(groups, test.getGroups());
         Assert.assertNotEquals(users, test.getUsers());
     }

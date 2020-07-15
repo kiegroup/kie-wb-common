@@ -89,11 +89,11 @@
         <p style="font-weight: bold;">Message</p>
         <div class="form-group">
             <div class="col-sm-3" style="margin-left: -20px;">
-                <p>From</p>
+                <p style="margin: 0">From</p>
                 <select data-field="liveSearchFromDropDown" id="from" style="width: 200px;"></select>
             </div>
             <div class="col-sm-3">
-                <p>Reply to (optional)
+                <p style="margin: 0">Reply to (optional)
                     <a data-field="replyPopover" tabindex="0" role="button" data-toggle="popover" data-trigger="hover" data-html="true" class="popover-pf-info" data-content="An optional user or group that should receive replies to the notification." data-placement="top">
                         <span class="glyphicon glyphicon-info-sign"></span>
                     </a>
@@ -105,14 +105,18 @@
     <div class="row">
         <div class="form-group">
             <div class="col-sm-3" style="margin-left: -20px;">
-                <p>To: user(s)</p>
+                <p style="margin: 10px 0 0 0">To: user(s)</p>
                 <select data-field="multipleSelectorInputUsers" id="toUsers" style="width: 200px;"></select>
             </div>
             <div class="col-sm-3">
-                <p>To: group(s)</p>
+                <p style="margin: 10px 0 0 0">To: group(s)</p>
                 <select data-field="multipleSelectorInputGroups" id="toGroups" style="width: 200px;"></select>
             </div>
         </div>
+    </div>
+    <div class="row">
+        <p style="margin: 10px 0 0 0;">To: email(s)</p>
+        <input data-field="emails" type="text" class="form-control" max='99' placeholder='Enter emails separated by comma.' style='width:500px;'>
     </div>
     <div class="row">
         <input data-field="subject" type="text" class="form-control" max='99' placeholder='Enter the subject here.' style=' width:500px;    margin-top: 20px;'>
