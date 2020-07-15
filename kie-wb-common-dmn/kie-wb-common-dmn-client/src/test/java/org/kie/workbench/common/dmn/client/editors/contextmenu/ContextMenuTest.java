@@ -30,6 +30,9 @@ public class ContextMenuTest {
 
     private ContextMenu contextMenu;
     private ContextMenuView view;
+    public static final String TITLE = "TITLE";
+    public static final Command DO_NOTHING = () -> {
+    };
 
     @Before
     public void setUp() {
@@ -48,6 +51,14 @@ public class ContextMenuTest {
     public void testWhenShowingContextMenuThenRelatedViewIsShown() {
         contextMenu.show();
         verify(view).show();
+    }
+
+    @Test
+    public void testWhenShowingContextMenuAndCustomActionsArePassedThenRelatedViewIsShown() {
+        contextMenu.show(self -> self.addTextMenuItem(TITLE, true, DO_NOTHING));
+
+        verify(view).show();
+        verifyTextMenuItem();
     }
 
     @Test
@@ -71,34 +82,32 @@ public class ContextMenuTest {
 
     @Test
     public void testWhenSettingHeaderForContextMenuThenItemListContainsHeader() {
-        final String title = "TITLE";
         final String iconClass = "icon-class";
 
-        contextMenu.setHeaderMenu(title, iconClass);
+        contextMenu.setHeaderMenu(TITLE, iconClass);
 
         assertThat(contextMenu.getItems()).isNotNull();
         assertThat(contextMenu.getItems()).isNotEmpty();
         assertThat(contextMenu.getItems().size()).isEqualTo(1);
         ListSelectorHeaderItem headerItem = (ListSelectorHeaderItem) contextMenu.getItems().get(0);
-        assertThat(headerItem.getText()).isEqualTo(title);
+        assertThat(headerItem.getText()).isEqualTo(TITLE);
         assertThat(headerItem.getIconClass()).isEqualTo(iconClass);
     }
 
     @Test
     public void testAddingTextMenuItemForContextMenuThenItemListContainsIt() {
-        final String title = "TITLE";
-        final Command doNothing = () -> {
-        };
+        contextMenu.addTextMenuItem(TITLE, true, DO_NOTHING);
 
-        contextMenu.addTextMenuItem(title, true, doNothing);
+        verifyTextMenuItem();
+    }
 
+    private void verifyTextMenuItem() {
         assertThat(contextMenu.getItems()).isNotNull();
         assertThat(contextMenu.getItems()).isNotEmpty();
         assertThat(contextMenu.getItems().size()).isEqualTo(1);
         ListSelectorTextItem textItem = (ListSelectorTextItem) contextMenu.getItems().get(0);
-        assertThat(textItem.getText()).isEqualTo(title);
+        assertThat(textItem.getText()).isEqualTo(TITLE);
         assertThat(textItem.isEnabled()).isEqualTo(true);
-        assertThat(textItem.getCommand()).isEqualTo(doNothing);
+        assertThat(textItem.getCommand()).isEqualTo(DO_NOTHING);
     }
-
 }

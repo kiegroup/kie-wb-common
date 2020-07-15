@@ -18,6 +18,7 @@ package org.kie.workbench.common.dmn.client.editors.contextmenu;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
@@ -48,6 +49,12 @@ public class ContextMenu {
     }
 
     public void show() { view.show(); }
+
+    public void show(Consumer<ContextMenu> contextMenuConsumer) {
+        this.resetMenuItems();
+        contextMenuConsumer.accept(this);
+        this.show();
+    }
 
     public void hide() { view.hide(); }
 
