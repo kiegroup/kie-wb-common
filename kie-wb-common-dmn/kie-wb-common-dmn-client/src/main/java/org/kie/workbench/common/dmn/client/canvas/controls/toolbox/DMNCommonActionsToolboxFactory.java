@@ -25,6 +25,7 @@ import javax.enterprise.context.Dependent;
 import javax.enterprise.inject.Any;
 import javax.inject.Inject;
 
+import elemental2.dom.DomGlobal;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.kie.workbench.common.dmn.api.definition.model.BusinessKnowledgeModel;
 import org.kie.workbench.common.dmn.api.definition.model.Decision;
@@ -38,6 +39,10 @@ import org.kie.workbench.common.stunner.core.client.components.toolbox.actions.C
 import org.kie.workbench.common.stunner.core.client.components.toolbox.actions.CommonActionsToolboxFactory;
 import org.kie.workbench.common.stunner.core.client.components.toolbox.actions.DeleteNodeToolboxAction;
 import org.kie.workbench.common.stunner.core.client.components.toolbox.actions.ToolboxAction;
+import org.kie.workbench.common.stunner.core.client.resources.StunnerCommonImageResources;
+import org.kie.workbench.common.stunner.core.client.shape.ImageDataUriGlyph;
+import org.kie.workbench.common.stunner.core.client.shape.view.event.MouseClickEvent;
+import org.kie.workbench.common.stunner.core.definition.shape.Glyph;
 import org.kie.workbench.common.stunner.core.graph.Element;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.definition.Definition;
@@ -86,7 +91,28 @@ public class DMNCommonActionsToolboxFactory
         } else if (isBusinessKnowledgeModel(element)) {
             actions.add(editBusinessKnowledgeModelToolboxActions.get());
         }
+        actions.add(getDRDAction());
         return actions;
+    }
+
+    private ToolboxAction<AbstractCanvasHandler> getDRDAction() {
+        return new ToolboxAction<AbstractCanvasHandler>() {
+            @Override
+            public Glyph getGlyph(AbstractCanvasHandler canvasHandler1, String uuid) {
+                return ImageDataUriGlyph.create(StunnerCommonImageResources.INSTANCE.drd().getSafeUri());
+            }
+
+            @Override
+            public String getTitle(AbstractCanvasHandler canvasHandler1, String uuid) {
+                return "DRD Actions";
+            }
+
+            @Override
+            public ToolboxAction<AbstractCanvasHandler> onMouseClick(AbstractCanvasHandler canvasHandler1, String uuid, MouseClickEvent event) {
+                DomGlobal.console.log("DRD Actions!");
+                return this;
+            }
+        };
     }
 
     Collection<ToolboxAction<AbstractCanvasHandler>> superGetActions(final AbstractCanvasHandler canvasHandler,
