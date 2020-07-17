@@ -26,12 +26,14 @@ import javax.enterprise.inject.Any;
 import javax.inject.Inject;
 
 import elemental2.dom.DomGlobal;
+import elemental2.dom.HTMLElement;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.kie.workbench.common.dmn.api.definition.model.BusinessKnowledgeModel;
 import org.kie.workbench.common.dmn.api.definition.model.Decision;
 import org.kie.workbench.common.dmn.api.definition.model.DecisionService;
 import org.kie.workbench.common.dmn.api.qualifiers.DMNEditor;
 import org.kie.workbench.common.dmn.client.commands.factory.DefaultCanvasCommandFactory;
+import org.kie.workbench.common.dmn.client.editors.contextmenu.ContextMenu;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
 import org.kie.workbench.common.stunner.core.client.command.CanvasCommandManager;
 import org.kie.workbench.common.stunner.core.client.components.toolbox.actions.ActionsToolboxView;
@@ -55,6 +57,7 @@ public class DMNCommonActionsToolboxFactory
     private final ManagedInstance<DMNEditDecisionToolboxAction> editDecisionToolboxActions;
     private final ManagedInstance<DMNEditBusinessKnowledgeModelToolboxAction> editBusinessKnowledgeModelToolboxActions;
     private final ManagedInstance<ActionsToolboxView> views;
+    private final ContextMenu drdContextMenu;
 
     @Inject
     public DMNCommonActionsToolboxFactory(final @Any ManagedInstance<DMNEditDecisionToolboxAction> editDecisionToolboxActions,
@@ -62,12 +65,14 @@ public class DMNCommonActionsToolboxFactory
                                           final @Any @CommonActionsToolbox ManagedInstance<ActionsToolboxView> views,
                                           final CanvasCommandManager<AbstractCanvasHandler> commandManager,
                                           final @DMNEditor DefaultCanvasCommandFactory commandFactory,
-                                          final @Any ManagedInstance<DeleteNodeToolboxAction> deleteNodeActions) {
+                                          final @Any ManagedInstance<DeleteNodeToolboxAction> deleteNodeActions,
+                                          final ContextMenu drdContextMenu) {
         super(commandManager, commandFactory, deleteNodeActions, views);
 
         this.editDecisionToolboxActions = editDecisionToolboxActions;
         this.editBusinessKnowledgeModelToolboxActions = editBusinessKnowledgeModelToolboxActions;
         this.views = views;
+        this.drdContextMenu = drdContextMenu;
     }
 
     @Override
@@ -91,11 +96,11 @@ public class DMNCommonActionsToolboxFactory
         } else if (isBusinessKnowledgeModel(element)) {
             actions.add(editBusinessKnowledgeModelToolboxActions.get());
         }
-        actions.add(getDRDAction());
+        actions.add(getDRDAction(element));
         return actions;
     }
 
-    private ToolboxAction<AbstractCanvasHandler> getDRDAction() {
+    private ToolboxAction<AbstractCanvasHandler> getDRDAction(final Element<?> element) {
         return new ToolboxAction<AbstractCanvasHandler>() {
             @Override
             public Glyph getGlyph(AbstractCanvasHandler canvasHandler1, String uuid) {
@@ -109,7 +114,19 @@ public class DMNCommonActionsToolboxFactory
 
             @Override
             public ToolboxAction<AbstractCanvasHandler> onMouseClick(AbstractCanvasHandler canvasHandler1, String uuid, MouseClickEvent event) {
-                DomGlobal.console.log("DRD Actions!");
+                final HTMLElement contextMenuElement = drdContextMenu.getElement();
+                contextMenuElement.style.position = "absolute";
+                contextMenuElement.style.left = event.getClientX()+"px";
+                contextMenuElement.style.top = event.getClientY()+"px";
+                DomGlobal.document.body.appendChild(contextMenuElement);
+
+                drdContextMenu.show(self -> {
+                    self.setHeaderMenu("DRD ACTIONS", "fa fa-share-alt");
+                    self.addTextMenuItem("Create", true, () -> DomGlobal.console.log("A", element));
+                    self.addTextMenuItem("Add to", true, () -> DomGlobal.console.log("B", element));
+                    self.addTextMenuItem("Remove", true, () -> DomGlobal.console.log("C", element));
+                });
+
                 return this;
             }
         };
