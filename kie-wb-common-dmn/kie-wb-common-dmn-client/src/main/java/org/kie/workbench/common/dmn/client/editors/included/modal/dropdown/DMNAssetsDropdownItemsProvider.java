@@ -26,6 +26,7 @@ import java.util.stream.Collectors;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
+import elemental2.dom.DomGlobal;
 import org.kie.soup.commons.util.Maps;
 import org.kie.workbench.common.dmn.api.editors.included.DMNIncludedModel;
 import org.kie.workbench.common.dmn.api.editors.included.IncludedModel;
@@ -119,7 +120,7 @@ public class DMNAssetsDropdownItemsProvider implements KieAssetsDropdownItemsPro
         final String subText = includedModel.getModelPackage();
         final String value = getKieAssetValue(includedModel);
         final Map<String, String> metaData = buildMetaData(includedModel);
-
+        DomGlobal.console.log(text, subText, value, metaData);
         return new KieAssetsDropdownItem(text, subText, value, metaData);
     }
 

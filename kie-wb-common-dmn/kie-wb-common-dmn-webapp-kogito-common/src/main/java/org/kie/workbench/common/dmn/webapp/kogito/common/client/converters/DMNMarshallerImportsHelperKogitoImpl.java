@@ -35,6 +35,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.xml.namespace.QName;
 
+import elemental2.dom.DomGlobal;
 import elemental2.promise.Promise;
 import jsinterop.base.Js;
 import org.appformer.kogito.bridge.client.resource.interop.ResourceListOptions;
@@ -45,6 +46,7 @@ import org.kie.workbench.common.dmn.api.editors.included.DMNIncludedModel;
 import org.kie.workbench.common.dmn.api.editors.included.DMNIncludedNode;
 import org.kie.workbench.common.dmn.api.editors.included.IncludedModel;
 import org.kie.workbench.common.dmn.api.editors.included.PMMLDocumentMetadata;
+import org.kie.workbench.common.dmn.api.editors.included.PMMLIncludedModel;
 import org.kie.workbench.common.dmn.api.graph.DMNDiagramUtils;
 import org.kie.workbench.common.dmn.webapp.kogito.common.client.converters.model.ImportedItemDefinitionPropertyConverter;
 import org.kie.workbench.common.dmn.webapp.kogito.common.client.services.DMNClientDiagramServiceImpl;
@@ -62,7 +64,6 @@ import org.kie.workbench.common.stunner.core.client.service.ClientRuntimeError;
 import org.kie.workbench.common.stunner.core.client.service.ServiceCallback;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.kie.workbench.common.stunner.core.diagram.Metadata;
-import org.kie.workbench.common.stunner.core.graph.Graph;
 import org.kie.workbench.common.stunner.core.util.FileUtils;
 import org.kie.workbench.common.stunner.core.util.StringUtils;
 import org.uberfire.backend.vfs.Path;
@@ -82,6 +83,7 @@ public class DMNMarshallerImportsHelperKogitoImpl implements DMNMarshallerImport
 
     private static final Logger LOGGER = Logger.getLogger(DMNMarshallerImportsHelperKogitoImpl.class.getName());
     private static final String DMN_FILES_PATTERN = "*.dmn";
+    private static final String MODEL_FILES_PATTERN = "*.{dmn,pmml}";
 
     @Inject
     public DMNMarshallerImportsHelperKogitoImpl(final KogitoResourceContentService contentService,
@@ -183,38 +185,62 @@ public class DMNMarshallerImportsHelperKogitoImpl implements DMNMarshallerImport
 
     @Override
     public void loadModels(final ServiceCallback<List<IncludedModel>> callback) {
+        LOGGER.log(Level.SEVERE, "LoadModels called");
         final List<IncludedModel> models = new Vector<>();
-        contentService.getFilteredItems(DMN_FILES_PATTERN, ResourceListOptions.assetFolder())
-                .then(items -> promises.all(Arrays.asList(items), file -> contentService.loadFile(file).then(fileContent -> {
-                    diagramService.transform(fileContent, new ServiceCallback<Diagram>() {
-                        @Override
-                        public void onSuccess(final Diagram item) {
-                            final String modelPackage = "";
-                            final Diagram<Graph, Metadata> diagram = (Diagram<Graph, Metadata>) item;
-                            final String namespace = diagramUtils.getNamespace(diagram);
-                            final String importType = DMNImportTypes.DMN.getDefaultNamespace();
-                            final int drgElementCount = diagramUtils.getDRGElements(diagram).size();
-                            final int itemDefinitionCount = diagramUtils.getDefinitions(diagram).getItemDefinition().size();
-                            final String filename = FileUtils.getFileName(file);
-                            models.add(new DMNIncludedModel(filename,
-                                                            modelPackage,
-                                                            filename,
-                                                            namespace,
-                                                            importType,
-                                                            drgElementCount,
-                                                            itemDefinitionCount));
-                        }
-
-                        @Override
-                        public void onError(final ClientRuntimeError error) {
-                            LOGGER.log(Level.SEVERE, error.getMessage());
-                        }
+        contentService.getFilteredItems(MODEL_FILES_PATTERN, ResourceListOptions.assetFolder())
+            .then(items -> promises.all(Arrays.asList(items), file -> {
+                final String fileName = FileUtils.getFileName(file);
+                DomGlobal.console.log(fileName);
+                if (fileName.endsWith("." + DMNImportTypes.DMN.getFileExtension())) {
+                    return contentService.loadFile(file).then(fileContent -> {
+                        diagramService.transform(fileContent, getDMNDiagramCallback(file, models));
+                        return promises.resolve();
                     });
+                }
+                else if (fileName.endsWith("." + DMNImportTypes.PMML.getFileExtension())) {
+                    models.add(new PMMLIncludedModel(fileName,
+                                                     "",
+                                                     fileName,
+                                                     DMNImportTypes.PMML.getDefaultNamespace(),
+                                                     0));
+                    DomGlobal.console.log("PMML file " + fileName + "added on models!");
                     return promises.resolve();
-                })).then(v -> {
-                    callback.onSuccess(models);
-                    return promises.resolve();
-                }));
+                } else {
+                    return promises.reject("Error");
+                }
+            }).then(v -> {
+                callback.onSuccess(models);
+                return promises.resolve();
+            }));
+    }
+
+    private ServiceCallback<Diagram> getDMNDiagramCallback(final String fileName,
+                                                           final List<IncludedModel> models) {
+        return new ServiceCallback<Diagram>() {
+
+            @Override
+            public void onSuccess(final Diagram diagram) {
+                final String modelPackage = "";
+                final String namespace = diagramUtils.getNamespace(diagram);
+                final String importType = DMNImportTypes.DMN.getDefaultNamespace();
+                final int drgElementCount = diagramUtils.getDRGElements(diagram).size();
+                final int itemDefinitionCount = diagramUtils.getDefinitions(diagram).getItemDefinition().size();
+                models.add(new DMNIncludedModel(fileName,
+                            modelPackage,
+                            fileName,
+                            namespace,
+                            importType,
+                            drgElementCount,
+                            itemDefinitionCount));
+                DomGlobal.console.log("DMN file " + fileName + " added on models!");
+            }
+
+            @Override
+            public void onError(final ClientRuntimeError error) {
+                DomGlobal.console.log("Error trying to add DMN file " + error.getMessage());
+                LOGGER.log(Level.SEVERE, error.getMessage());
+            }
+        };
     }
 
     Promise<Void> loadDefinitionFromFile(final String file,
