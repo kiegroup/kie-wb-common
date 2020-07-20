@@ -133,7 +133,7 @@ public class DMNCommonActionsToolboxFactoryTest {
         final ActionsToolbox actionsToolbox = (ActionsToolbox) toolbox;
         assertEquals(E_UUID,
                      actionsToolbox.getElementUUID());
-        assertEquals(1,
+        assertEquals(2,
                      actionsToolbox.size());
         assertEquals(deleteNodeAction,
                      actionsToolbox.iterator().next());
@@ -159,14 +159,14 @@ public class DMNCommonActionsToolboxFactoryTest {
         final ActionsToolbox actionsToolbox = (ActionsToolbox) toolbox;
         assertEquals("decisionNode1",
                      actionsToolbox.getElementUUID());
-        assertEquals(2,
+        assertEquals(3,
                      actionsToolbox.size());
         final Iterator<ToolboxAction> actionsIt = actionsToolbox.iterator();
         assertEquals(deleteNodeAction,
                      actionsIt.next());
         assertEquals(editDecisionToolboxActionInstance,
                      actionsIt.next());
-        assertFalse(actionsIt.hasNext());
+        assertTrue(actionsIt.hasNext());
         verify(viewInstance,
                times(1)).init(eq(actionsToolbox));
     }
@@ -189,14 +189,14 @@ public class DMNCommonActionsToolboxFactoryTest {
         final ActionsToolbox actionsToolbox = (ActionsToolbox) toolbox;
         assertEquals("bkmNode1",
                      actionsToolbox.getElementUUID());
-        assertEquals(2,
+        assertEquals(3,
                      actionsToolbox.size());
         final Iterator<ToolboxAction> actionsIt = actionsToolbox.iterator();
         assertEquals(deleteNodeAction,
                      actionsIt.next());
         assertEquals(editBusinessKnowledgeModelToolboxActionInstance,
                      actionsIt.next());
-        assertFalse(actionsIt.hasNext());
+        assertTrue(actionsIt.hasNext());
         verify(viewInstance,
                times(1)).init(eq(actionsToolbox));
     }
