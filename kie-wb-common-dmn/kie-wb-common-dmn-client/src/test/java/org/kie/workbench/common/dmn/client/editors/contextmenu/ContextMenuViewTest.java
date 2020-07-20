@@ -20,6 +20,8 @@ import java.util.Collections;
 import java.util.List;
 
 import elemental2.dom.DomGlobal;
+import elemental2.dom.Element;
+import elemental2.dom.Event;
 import elemental2.dom.HTMLDocument;
 import org.junit.Before;
 import org.junit.Test;
@@ -32,6 +34,7 @@ import org.uberfire.mvp.Command;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyInt;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -97,4 +100,52 @@ public class ContextMenuViewTest {
         verify(listSelector).hide();
     }
 
+    @Test
+    public void testWhenGettingEventPath() {
+        final Event event = mock(Event.class);
+        final Element element = mock(Element.class);
+        final String value = "test-val";
+        event.path = new Element[] {element};
+
+        when(element.getAttribute(anyString())).thenReturn(value);
+
+        final Element[] eventPath = contextMenuView.getEventPath(event);
+
+        assertThat(eventPath).isNotNull();
+        assertThat(eventPath).isNotEmpty();
+        assertThat(eventPath.length).isEqualTo(1);
+        assertThat(eventPath[0]).extracting(elem -> elem.getAttribute("test-attr")).isEqualTo(value);
+    }
+
+    @Test
+    public void testWhenGettingEventPathAndPathIsNull() {
+        final Event event = mock(Event.class);
+        final Element element = mock(Element.class);
+        final String value = "test-val";
+        event.path = null;
+
+        when(event.composedPath()).thenReturn(new Event.ComposedPathArrayUnionType[]{buildComposedPathArrayUnionType(element)});
+        when(element.getAttribute(anyString())).thenReturn(value);
+
+        final Element[] eventPath = contextMenuView.getEventPath(event);
+
+        assertThat(eventPath).isNotNull();
+        assertThat(eventPath).isNotEmpty();
+        assertThat(eventPath.length).isEqualTo(1);
+        assertThat(eventPath[0]).extracting(elem -> elem.getAttribute("test-attr")).isEqualTo(value);
+    }
+
+    private Event.ComposedPathArrayUnionType buildComposedPathArrayUnionType(Element element) {
+        return new Event.ComposedPathArrayUnionType() {
+                @Override
+                public boolean isElement() {
+                    return true;
+                }
+
+                @Override
+                public Element asElement() {
+                    return element;
+                }
+            };
+    }
 }
