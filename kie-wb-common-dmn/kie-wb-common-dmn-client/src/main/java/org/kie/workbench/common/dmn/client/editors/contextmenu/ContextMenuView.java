@@ -18,12 +18,16 @@ package org.kie.workbench.common.dmn.client.editors.contextmenu;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Stream;
 
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 
 import com.google.gwt.dom.client.BrowserEvents;
 import elemental2.dom.DomGlobal;
+import elemental2.dom.Element;
+import elemental2.dom.Event;
 import elemental2.dom.EventListener;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
@@ -53,10 +57,10 @@ public class ContextMenuView implements ContextMenu.View,
     private void removeDOMEventListeners() {
         DomGlobal.document.removeEventListener(BrowserEvents.MOUSEDOWN,
                                                hideContextMenuHandler(),
-                                      false);
+                                               false);
         DomGlobal.document.removeEventListener(BrowserEvents.MOUSEWHEEL,
-                                      hideContextMenuHandler(),
-                                      false);
+                                               hideContextMenuHandler(),
+                                               false);
     }
 
     @Override
@@ -80,10 +84,21 @@ public class ContextMenuView implements ContextMenu.View,
 
     private EventListener hideContextMenuHandler() {
         return event -> {
-             if (!Arrays.asList(event.path).contains(getElement())) {
-                 listSelector.hide();
-             }
+            if (!Arrays.asList(getEventPath(event)).contains(getElement())) {
+                listSelector.hide();
+            }
         };
+    }
+
+    Element[] getEventPath(Event event) {
+        return Optional
+                .ofNullable(event.path)
+                .orElseGet(() ->
+                        Stream.of(event.composedPath())
+                                .filter(Event.ComposedPathArrayUnionType::isElement)
+                                .map(Event.ComposedPathArrayUnionType::asElement)
+                                .toArray(Element[]::new)
+                );
     }
 
     /**
