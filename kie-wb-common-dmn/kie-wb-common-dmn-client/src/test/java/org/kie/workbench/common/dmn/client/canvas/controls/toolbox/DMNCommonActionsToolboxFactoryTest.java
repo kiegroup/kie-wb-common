@@ -95,10 +95,13 @@ public class DMNCommonActionsToolboxFactoryTest {
     @Mock
     private ManagedInstance<DeleteNodeToolboxAction> deleteNodeActions;
 
+    @Mock
+    private ManagedInstance<DMNEditDRDToolboxAction> editDRDToolboxActions;
+
     private DMNCommonActionsToolboxFactory tested;
 
     @Before
-    public void setup() throws Exception {
+    public void setup() {
         when(element.getUUID()).thenReturn(E_UUID);
         when(element.asNode()).thenReturn(element);
         editDecisionToolboxAction = new ManagedInstanceStub<>(editDecisionToolboxActionInstance);
@@ -106,6 +109,7 @@ public class DMNCommonActionsToolboxFactoryTest {
         view = new ManagedInstanceStub<>(viewInstance);
         this.tested = spy(new DMNCommonActionsToolboxFactory(editDecisionToolboxAction,
                                                              editBusinessKnowledgeModelToolboxAction,
+                                                             editDRDToolboxActions,
                                                              view,
                                                              commandManager,
                                                              commandFactory,
