@@ -33,6 +33,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.xml.namespace.QName;
 
+import elemental2.dom.DomGlobal;
 import elemental2.promise.Promise;
 import jsinterop.base.Js;
 import org.kie.workbench.common.dmn.api.DMNDefinitionSet;
@@ -197,12 +198,14 @@ public class DMNMarshallerKogitoUnmarshaller {
         final List<JSITDRGElement> diagramDrgElements = jsiDefinitions.getDrgElement();
         final Optional<JSIDMNDiagram> dmnDDDiagram = findJSIDiagram(jsiDefinitions);
 
+        DomGlobal.console.log("Preparing Async calls");
         // Get external DMN model information
         final Promise<Map<JSITImport, JSITDefinitions>> importAsync = dmnMarshallerImportsHelper.getImportDefinitionsAsync(metadata, jsiDefinitions.getImport());
+        // Get external PMML model information
+        final Promise<Map<JSITImport, PMMLDocumentMetadata>> pmmlDocumentsAsync = dmnMarshallerImportsHelper.getPMMLDocumentsAsync(metadata, jsiDefinitions.getImport());
         return importAsync.then(importDefinitions -> {
+            DomGlobal.console.log("Imported definitions: " + importDefinitions.size());
 
-            // Get external PMML model information
-            final Map<JSITImport, PMMLDocumentMetadata> pmmlDocuments = dmnMarshallerImportsHelper.getPMMLDocuments(metadata, jsiDefinitions.getImport());
 
             // Map external DRGElements
             final List<JSIDMNShape> dmnShapes = new ArrayList<>();
@@ -417,73 +420,77 @@ public class DMNMarshallerKogitoUnmarshaller {
             elems.values().stream().map(Entry::getValue).forEach(graph::addNode);
             textAnnotations.values().forEach(graph::addNode);
 
-            final Node<?, ?> dmnDiagramRoot = DMNMarshallerUtils.findDMNDiagramRoot(graph);
-            final Definitions definitionsStunnerPojo = DefinitionsConverter.wbFromDMN(jsiDefinitions,
-                                                                                      importDefinitions,
-                                                                                      pmmlDocuments);
+            pmmlDocumentsAsync.then(pmmlDocuments -> {
+                DomGlobal.console.log("PMML definitions: " + pmmlDocuments.size());
 
-            loadImportedItemDefinitions(definitionsStunnerPojo, importDefinitions);
+                final Node<?, ?> dmnDiagramRoot = DMNMarshallerUtils.findDMNDiagramRoot(graph);
+                final Definitions definitionsStunnerPojo = DefinitionsConverter.wbFromDMN(jsiDefinitions,
+                                                                                          importDefinitions,
+                                                                                          pmmlDocuments);
 
-            ((View<DMNDiagram>) dmnDiagramRoot.getContent()).getDefinition().setDefinitions(definitionsStunnerPojo);
+                loadImportedItemDefinitions(definitionsStunnerPojo, importDefinitions);
 
-            //Only connect Nodes to the Diagram that are not referenced by DecisionServices
-            final List<String> references = new ArrayList<>();
-            final List<JSITDecisionService> lstDecisionServices = new ArrayList<>(dmnDecisionServices);
-            for (int iDS = 0; iDS < lstDecisionServices.size(); iDS++) {
-                final JSITDecisionService jsiDecisionService = Js.uncheckedCast(lstDecisionServices.get(iDS));
-                final List<JSITDMNElementReference> jsiEncapsulatedDecisions = jsiDecisionService.getEncapsulatedDecision();
-                if (Objects.nonNull(jsiEncapsulatedDecisions)) {
-                    for (int i = 0; i < jsiEncapsulatedDecisions.size(); i++) {
-                        final JSITDMNElementReference jsiEncapsulatedDecision = Js.uncheckedCast(jsiEncapsulatedDecisions.get(i));
-                        references.add(jsiEncapsulatedDecision.getHref());
+                ((View<DMNDiagram>) dmnDiagramRoot.getContent()).getDefinition().setDefinitions(definitionsStunnerPojo);
+
+                //Only connect Nodes to the Diagram that are not referenced by DecisionServices
+                final List<String> references = new ArrayList<>();
+                final List<JSITDecisionService> lstDecisionServices = new ArrayList<>(dmnDecisionServices);
+                for (int iDS = 0; iDS < lstDecisionServices.size(); iDS++) {
+                    final JSITDecisionService jsiDecisionService = Js.uncheckedCast(lstDecisionServices.get(iDS));
+                    final List<JSITDMNElementReference> jsiEncapsulatedDecisions = jsiDecisionService.getEncapsulatedDecision();
+                    if (Objects.nonNull(jsiEncapsulatedDecisions)) {
+                        for (int i = 0; i < jsiEncapsulatedDecisions.size(); i++) {
+                            final JSITDMNElementReference jsiEncapsulatedDecision = Js.uncheckedCast(jsiEncapsulatedDecisions.get(i));
+                            references.add(jsiEncapsulatedDecision.getHref());
+                        }
+                    }
+
+                    final List<JSITDMNElementReference> jsiOutputDecisions = jsiDecisionService.getOutputDecision();
+                    if (Objects.nonNull(jsiOutputDecisions)) {
+                        for (int i = 0; i < jsiOutputDecisions.size(); i++) {
+                            final JSITDMNElementReference jsiOutputDecision = Js.uncheckedCast(jsiOutputDecisions.get(i));
+                            references.add(jsiOutputDecision.getHref());
+                        }
                     }
                 }
 
-                final List<JSITDMNElementReference> jsiOutputDecisions = jsiDecisionService.getOutputDecision();
-                if (Objects.nonNull(jsiOutputDecisions)) {
-                    for (int i = 0; i < jsiOutputDecisions.size(); i++) {
-                        final JSITDMNElementReference jsiOutputDecision = Js.uncheckedCast(jsiOutputDecisions.get(i));
-                        references.add(jsiOutputDecision.getHref());
+                final Map<JSITDRGElement, Node> elementsToConnectToRoot = new HashMap<>();
+                for (Entry<JSITDRGElement, Node> kv : elems.values()) {
+                    final JSITDRGElement element = Js.uncheckedCast(kv.getKey());
+                    final Node node = kv.getValue();
+                    if (!references.contains("#" + element.getId())) {
+                        elementsToConnectToRoot.put(element, node);
                     }
                 }
-            }
+                elementsToConnectToRoot.values().forEach(node -> connectRootWithChild(dmnDiagramRoot, node));
+                textAnnotations.values().forEach(node -> connectRootWithChild(dmnDiagramRoot, node));
 
-            final Map<JSITDRGElement, Node> elementsToConnectToRoot = new HashMap<>();
-            for (Entry<JSITDRGElement, Node> kv : elems.values()) {
-                final JSITDRGElement element = Js.uncheckedCast(kv.getKey());
-                final Node node = kv.getValue();
-                if (!references.contains("#" + element.getId())) {
-                    elementsToConnectToRoot.put(element, node);
-                }
-            }
-            elementsToConnectToRoot.values().forEach(node -> connectRootWithChild(dmnDiagramRoot, node));
-            textAnnotations.values().forEach(node -> connectRootWithChild(dmnDiagramRoot, node));
-
-            //Copy ComponentWidths information
-            final Optional<JSITComponentsWidthsExtension> extension = findComponentsWidthsExtension(dmnDDDiagram);
-            extension.ifPresent(componentsWidthsExtension -> {
-                //This condition is required because a node with ComponentsWidthsExtension
-                //can be imported from another diagram but the extension is not imported or present in this diagram.
-                if (Objects.nonNull(componentsWidthsExtension.getComponentWidths())) {
-                    hasComponentWidthsMap.entrySet().forEach(es -> {
-                        final List<JSITComponentWidths> jsiComponentWidths = componentsWidthsExtension.getComponentWidths();
-                        for (int i = 0; i < jsiComponentWidths.size(); i++) {
-                            final JSITComponentWidths jsiWidths = Js.uncheckedCast(jsiComponentWidths.get(i));
-                            if (Objects.equals(jsiWidths.getDmnElementRef(), es.getKey())) {
-                                final List<Double> widths = es.getValue().getComponentWidths();
-                                if (Objects.nonNull(jsiWidths.getWidth())) {
-                                    widths.clear();
-                                    for (int w = 0; w < jsiWidths.getWidth().size(); w++) {
-                                        final double width = jsiWidths.getWidth().get(w).doubleValue();
-                                        widths.add(width);
+                //Copy ComponentWidths information
+                final Optional<JSITComponentsWidthsExtension> extension = findComponentsWidthsExtension(dmnDDDiagram);
+                extension.ifPresent(componentsWidthsExtension -> {
+                    //This condition is required because a node with ComponentsWidthsExtension
+                    //can be imported from another diagram but the extension is not imported or present in this diagram.
+                    if (Objects.nonNull(componentsWidthsExtension.getComponentWidths())) {
+                        hasComponentWidthsMap.entrySet().forEach(es -> {
+                            final List<JSITComponentWidths> jsiComponentWidths = componentsWidthsExtension.getComponentWidths();
+                            for (int i = 0; i < jsiComponentWidths.size(); i++) {
+                                final JSITComponentWidths jsiWidths = Js.uncheckedCast(jsiComponentWidths.get(i));
+                                if (Objects.equals(jsiWidths.getDmnElementRef(), es.getKey())) {
+                                    final List<Double> widths = es.getValue().getComponentWidths();
+                                    if (Objects.nonNull(jsiWidths.getWidth())) {
+                                        widths.clear();
+                                        for (int w = 0; w < jsiWidths.getWidth().size(); w++) {
+                                            final double width = jsiWidths.getWidth().get(w).doubleValue();
+                                            widths.add(width);
+                                        }
                                     }
                                 }
                             }
-                        }
-                    });
-                }
+                        });
+                    }
+                });
+                return promises.resolve();
             });
-
             return promises.resolve(graph);
         });
     }

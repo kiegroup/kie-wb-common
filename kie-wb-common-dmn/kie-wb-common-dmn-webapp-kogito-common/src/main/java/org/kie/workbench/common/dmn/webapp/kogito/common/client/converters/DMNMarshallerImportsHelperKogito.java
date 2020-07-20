@@ -19,10 +19,12 @@ import java.util.List;
 import java.util.Map;
 
 import elemental2.promise.Promise;
+import org.guvnor.common.services.project.model.WorkspaceProject;
 import org.kie.workbench.common.dmn.api.definition.model.ItemDefinition;
 import org.kie.workbench.common.dmn.api.editors.included.DMNIncludedModel;
 import org.kie.workbench.common.dmn.api.editors.included.DMNIncludedNode;
 import org.kie.workbench.common.dmn.api.editors.included.IncludedModel;
+import org.kie.workbench.common.dmn.api.editors.included.PMMLDocumentMetadata;
 import org.kie.workbench.common.dmn.api.marshalling.DMNMarshallerImportsHelper;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITDRGElement;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITDefinitions;
@@ -30,11 +32,15 @@ import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSIT
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITItemDefinition;
 import org.kie.workbench.common.stunner.core.client.service.ServiceCallback;
 import org.kie.workbench.common.stunner.core.diagram.Metadata;
+import org.uberfire.backend.vfs.Path;
 
 public interface DMNMarshallerImportsHelperKogito extends DMNMarshallerImportsHelper<JSITImport, JSITDefinitions, JSITDRGElement, JSITItemDefinition> {
 
     Promise<Map<JSITImport, JSITDefinitions>> getImportDefinitionsAsync(final Metadata metadata,
                                                                         final List<JSITImport> imports);
+
+    Promise<Map<JSITImport, PMMLDocumentMetadata>> getPMMLDocumentsAsync(final Metadata metadata,
+                                                                         final List<JSITImport> imports);
 
     void getImportedItemDefinitionsByNamespaceAsync(final String modelName,
                                                     final String namespace,
@@ -44,4 +50,30 @@ public interface DMNMarshallerImportsHelperKogito extends DMNMarshallerImportsHe
                              final ServiceCallback<List<DMNIncludedNode>> callback);
 
     void loadModels(final ServiceCallback<List<IncludedModel>> callback);
+
+    @Override
+    default Map<JSITImport, JSITDefinitions> getImportDefinitions(final Metadata metadata,
+                                                                  final List<JSITImport> jsitImports) {
+        throw new UnsupportedOperationException("This implementation does not support sync calls. Please, use getImportDefinitionsAsync.");
+    }
+
+    @Override
+    default Map<JSITImport, PMMLDocumentMetadata> getPMMLDocuments(final Metadata metadata,
+                                                                   final List<JSITImport> imports) {
+        throw new UnsupportedOperationException("This implementation does not support sync calls. Please, use getPMMLDocumentsAsync.");
+    }
+
+    @Override
+    default List<JSITItemDefinition> getImportedItemDefinitionsByNamespace(final WorkspaceProject workspaceProject,
+                                                                          final String modelName,
+                                                                          final String namespace) {
+        throw new UnsupportedOperationException("This implementation does not support sync calls. Please, use getImportedItemDefinitionsByNamespaceAsync.");
+    }
+
+    @Override
+    default Path getDMNModelPath(final Metadata metadata,
+                                final String modelNamespace,
+                                final String modelName) {
+        throw new UnsupportedOperationException("Imports are not supported in the kogito-based editors.");
+    }
 }

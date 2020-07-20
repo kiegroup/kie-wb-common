@@ -39,7 +39,6 @@ import elemental2.dom.DomGlobal;
 import elemental2.promise.Promise;
 import jsinterop.base.Js;
 import org.appformer.kogito.bridge.client.resource.interop.ResourceListOptions;
-import org.guvnor.common.services.project.model.WorkspaceProject;
 import org.kie.workbench.common.dmn.api.definition.model.ItemDefinition;
 import org.kie.workbench.common.dmn.api.editors.included.DMNImportTypes;
 import org.kie.workbench.common.dmn.api.editors.included.DMNIncludedModel;
@@ -83,6 +82,7 @@ public class DMNMarshallerImportsHelperKogitoImpl implements DMNMarshallerImport
 
     private static final Logger LOGGER = Logger.getLogger(DMNMarshallerImportsHelperKogitoImpl.class.getName());
     private static final String DMN_FILES_PATTERN = "*.dmn";
+    private static final String PMML_FILES_PATTERN = "*.pmml";
     private static final String MODEL_FILES_PATTERN = "*.{dmn,pmml}";
 
     @Inject
@@ -185,7 +185,6 @@ public class DMNMarshallerImportsHelperKogitoImpl implements DMNMarshallerImport
 
     @Override
     public void loadModels(final ServiceCallback<List<IncludedModel>> callback) {
-        LOGGER.log(Level.SEVERE, "LoadModels called");
         final List<IncludedModel> models = new Vector<>();
         contentService.getFilteredItems(MODEL_FILES_PATTERN, ResourceListOptions.assetFolder())
             .then(items -> promises.all(Arrays.asList(items), file -> {
@@ -193,11 +192,12 @@ public class DMNMarshallerImportsHelperKogitoImpl implements DMNMarshallerImport
                 DomGlobal.console.log(fileName);
                 if (fileName.endsWith("." + DMNImportTypes.DMN.getFileExtension())) {
                     return contentService.loadFile(file).then(fileContent -> {
-                        diagramService.transform(fileContent, getDMNDiagramCallback(file, models));
+                        diagramService.transform(fileContent, getDMNDiagramCallback(fileName, models));
                         return promises.resolve();
                     });
                 }
-                else if (fileName.endsWith("." + DMNImportTypes.PMML.getFileExtension())) {
+                if (fileName.endsWith("." + DMNImportTypes.PMML.getFileExtension())) {
+                    /* Here, a call to the PMML Marshaller should be added to retrieve the models number */
                     models.add(new PMMLIncludedModel(fileName,
                                                      "",
                                                      fileName,
@@ -205,9 +205,8 @@ public class DMNMarshallerImportsHelperKogitoImpl implements DMNMarshallerImport
                                                      0));
                     DomGlobal.console.log("PMML file " + fileName + "added on models!");
                     return promises.resolve();
-                } else {
-                    return promises.reject("Error");
                 }
+                return promises.reject("Error: Invalid file: " + fileName);
             }).then(v -> {
                 callback.onSuccess(models);
                 return promises.resolve();
@@ -286,15 +285,23 @@ public class DMNMarshallerImportsHelperKogitoImpl implements DMNMarshallerImport
     }
 
     @Override
-    public Map<JSITImport, JSITDefinitions> getImportDefinitions(final Metadata metadata,
-                                                                 final List<JSITImport> jsitImports) {
-        throw new UnsupportedOperationException("This implementation does not support sync calls. Please, use getImportDefinitionsAsync.");
-    }
+    public Promise<Map<JSITImport, PMMLDocumentMetadata>> getPMMLDocumentsAsync(final Metadata metadata,
+                                                                                final List<JSITImport> imports) {
+        return contentService.getFilteredItems(PMML_FILES_PATTERN, ResourceListOptions.assetFolder()).
+                then(items -> promises.all(Arrays.asList(items), file -> {
+                    DomGlobal.console.log("PMML file items found: " + items.length);
+                    if (items.length == 0) {
+                        return promises.resolve(Collections.emptyMap());
+                    }
+                    return promises.resolve(Collections.emptyMap());
 
-    @Override
-    public Map<JSITImport, PMMLDocumentMetadata> getPMMLDocuments(final Metadata metadata,
-                                                                  final List<JSITImport> imports) {
-        return Collections.emptyMap();
+                     /*   final Map<String, PMMLDocumentMetadata> pmmlDocuments = new ConcurrentHashMap<>();
+                        return promises.all(Arrays.asList(list),
+                                (String file) -> loadDefinitionFromFile(file, otherDefinitions))
+                                .then(v -> promises.resolve(otherDefinitions));
+                        return promises.resolve(pmmlDocuments);
+                    }*/
+                }));
     }
 
     @Override
@@ -434,20 +441,6 @@ public class DMNMarshallerImportsHelperKogitoImpl implements DMNMarshallerImport
             callback.onSuccess(result);
             return promises.resolve(result);
         });
-    }
-
-    @Override
-    public List<JSITItemDefinition> getImportedItemDefinitionsByNamespace(final WorkspaceProject workspaceProject,
-                                                                          final String modelName,
-                                                                          final String namespace) {
-        throw new UnsupportedOperationException("This implementation does not support sync calls. Please, use getImportedItemDefinitionsByNamespaceAsync.");
-    }
-
-    @Override
-    public Path getDMNModelPath(final Metadata metadata,
-                                final String modelNamespace,
-                                final String modelName) {
-        throw new UnsupportedOperationException("Imports are not supported in the kogito-based editors.");
     }
 
     @Override
