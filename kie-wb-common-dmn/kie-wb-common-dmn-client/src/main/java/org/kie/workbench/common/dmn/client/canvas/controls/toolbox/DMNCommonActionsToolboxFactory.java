@@ -25,15 +25,12 @@ import javax.enterprise.context.Dependent;
 import javax.enterprise.inject.Any;
 import javax.inject.Inject;
 
-import elemental2.dom.DomGlobal;
-import elemental2.dom.HTMLElement;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.kie.workbench.common.dmn.api.definition.model.BusinessKnowledgeModel;
 import org.kie.workbench.common.dmn.api.definition.model.Decision;
 import org.kie.workbench.common.dmn.api.definition.model.DecisionService;
 import org.kie.workbench.common.dmn.api.qualifiers.DMNEditor;
 import org.kie.workbench.common.dmn.client.commands.factory.DefaultCanvasCommandFactory;
-import org.kie.workbench.common.dmn.client.editors.contextmenu.ContextMenu;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
 import org.kie.workbench.common.stunner.core.client.command.CanvasCommandManager;
 import org.kie.workbench.common.stunner.core.client.components.toolbox.actions.ActionsToolboxView;
@@ -41,10 +38,6 @@ import org.kie.workbench.common.stunner.core.client.components.toolbox.actions.C
 import org.kie.workbench.common.stunner.core.client.components.toolbox.actions.CommonActionsToolboxFactory;
 import org.kie.workbench.common.stunner.core.client.components.toolbox.actions.DeleteNodeToolboxAction;
 import org.kie.workbench.common.stunner.core.client.components.toolbox.actions.ToolboxAction;
-import org.kie.workbench.common.stunner.core.client.resources.StunnerCommonImageResources;
-import org.kie.workbench.common.stunner.core.client.shape.ImageDataUriGlyph;
-import org.kie.workbench.common.stunner.core.client.shape.view.event.MouseClickEvent;
-import org.kie.workbench.common.stunner.core.definition.shape.Glyph;
 import org.kie.workbench.common.stunner.core.graph.Element;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.definition.Definition;
@@ -56,23 +49,23 @@ public class DMNCommonActionsToolboxFactory
 
     private final ManagedInstance<DMNEditDecisionToolboxAction> editDecisionToolboxActions;
     private final ManagedInstance<DMNEditBusinessKnowledgeModelToolboxAction> editBusinessKnowledgeModelToolboxActions;
+    private final ManagedInstance<DMNEditDRDToolboxAction> editDRDToolboxActions;
     private final ManagedInstance<ActionsToolboxView> views;
-    private final ContextMenu drdContextMenu;
 
     @Inject
     public DMNCommonActionsToolboxFactory(final @Any ManagedInstance<DMNEditDecisionToolboxAction> editDecisionToolboxActions,
                                           final @Any ManagedInstance<DMNEditBusinessKnowledgeModelToolboxAction> editBusinessKnowledgeModelToolboxActions,
+                                          final @Any ManagedInstance<DMNEditDRDToolboxAction> editDRDToolboxActions,
                                           final @Any @CommonActionsToolbox ManagedInstance<ActionsToolboxView> views,
                                           final CanvasCommandManager<AbstractCanvasHandler> commandManager,
                                           final @DMNEditor DefaultCanvasCommandFactory commandFactory,
-                                          final @Any ManagedInstance<DeleteNodeToolboxAction> deleteNodeActions,
-                                          final ContextMenu drdContextMenu) {
+                                          final @Any ManagedInstance<DeleteNodeToolboxAction> deleteNodeActions) {
         super(commandManager, commandFactory, deleteNodeActions, views);
 
         this.editDecisionToolboxActions = editDecisionToolboxActions;
         this.editBusinessKnowledgeModelToolboxActions = editBusinessKnowledgeModelToolboxActions;
+        this.editDRDToolboxActions = editDRDToolboxActions;
         this.views = views;
-        this.drdContextMenu = drdContextMenu;
     }
 
     @Override
@@ -96,40 +89,8 @@ public class DMNCommonActionsToolboxFactory
         } else if (isBusinessKnowledgeModel(element)) {
             actions.add(editBusinessKnowledgeModelToolboxActions.get());
         }
-        actions.add(getDRDAction(element));
+        actions.add(editDRDToolboxActions.get());
         return actions;
-    }
-
-    private ToolboxAction<AbstractCanvasHandler> getDRDAction(final Element<?> element) {
-        return new ToolboxAction<AbstractCanvasHandler>() {
-            @Override
-            public Glyph getGlyph(AbstractCanvasHandler canvasHandler1, String uuid) {
-                return ImageDataUriGlyph.create(StunnerCommonImageResources.INSTANCE.drd().getSafeUri());
-            }
-
-            @Override
-            public String getTitle(AbstractCanvasHandler canvasHandler1, String uuid) {
-                return "DRD Actions";
-            }
-
-            @Override
-            public ToolboxAction<AbstractCanvasHandler> onMouseClick(AbstractCanvasHandler canvasHandler1, String uuid, MouseClickEvent event) {
-                final HTMLElement contextMenuElement = drdContextMenu.getElement();
-                contextMenuElement.style.position = "absolute";
-                contextMenuElement.style.left = event.getClientX()+"px";
-                contextMenuElement.style.top = event.getClientY()+"px";
-                DomGlobal.document.body.appendChild(contextMenuElement);
-
-                drdContextMenu.show(self -> {
-                    self.setHeaderMenu("DRD ACTIONS", "fa fa-share-alt");
-                    self.addTextMenuItem("Create", true, () -> DomGlobal.console.log("A", element));
-                    self.addTextMenuItem("Add to", true, () -> DomGlobal.console.log("B", element));
-                    self.addTextMenuItem("Remove", true, () -> DomGlobal.console.log("C", element));
-                });
-
-                return this;
-            }
-        };
     }
 
     Collection<ToolboxAction<AbstractCanvasHandler>> superGetActions(final AbstractCanvasHandler canvasHandler,
@@ -142,6 +103,7 @@ public class DMNCommonActionsToolboxFactory
     public void destroy() {
         editDecisionToolboxActions.destroyAll();
         editBusinessKnowledgeModelToolboxActions.destroyAll();
+        editDRDToolboxActions.destroyAll();
         views.destroyAll();
     }
 

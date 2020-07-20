@@ -29,7 +29,6 @@ import org.kie.workbench.common.dmn.api.definition.model.BusinessKnowledgeModel;
 import org.kie.workbench.common.dmn.api.definition.model.Decision;
 import org.kie.workbench.common.dmn.api.definition.model.DecisionService;
 import org.kie.workbench.common.dmn.client.commands.factory.DefaultCanvasCommandFactory;
-import org.kie.workbench.common.dmn.client.editors.contextmenu.ContextMenu;
 import org.kie.workbench.common.stunner.core.client.ManagedInstanceStub;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
 import org.kie.workbench.common.stunner.core.client.command.CanvasCommandManager;
@@ -96,9 +95,6 @@ public class DMNCommonActionsToolboxFactoryTest {
     @Mock
     private ManagedInstance<DeleteNodeToolboxAction> deleteNodeActions;
 
-    @Mock
-    private ContextMenu contextMenu;
-
     private DMNCommonActionsToolboxFactory tested;
 
     @Before
@@ -113,8 +109,7 @@ public class DMNCommonActionsToolboxFactoryTest {
                                                              view,
                                                              commandManager,
                                                              commandFactory,
-                                                             deleteNodeActions,
-                                                             contextMenu));
+                                                             deleteNodeActions));
 
         doReturn(Collections.singleton(deleteNodeAction)).
                 when(tested).superGetActions(eq(canvasHandler),
