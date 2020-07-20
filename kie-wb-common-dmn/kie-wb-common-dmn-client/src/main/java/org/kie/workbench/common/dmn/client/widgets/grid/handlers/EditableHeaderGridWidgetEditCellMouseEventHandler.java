@@ -19,6 +19,7 @@ package org.kie.workbench.common.dmn.client.widgets.grid.handlers;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Supplier;
 
 import com.ait.lienzo.client.core.event.AbstractNodeMouseEvent;
 import com.ait.lienzo.client.core.types.Point2D;
@@ -33,6 +34,12 @@ import org.uberfire.ext.wires.core.grids.client.widget.grid.impl.DefaultGridWidg
 
 public class EditableHeaderGridWidgetEditCellMouseEventHandler extends DefaultGridWidgetEditCellMouseEventHandler {
 
+    private final Supplier<Boolean> isReadOnly;
+
+    public EditableHeaderGridWidgetEditCellMouseEventHandler(final Supplier<Boolean> isReadOnly) {
+        this.isReadOnly = isReadOnly;
+    }
+
     @Override
     public boolean onNodeMouseEvent(final GridWidget gridWidget,
                                     final Point2D relativeLocation,
@@ -41,7 +48,7 @@ public class EditableHeaderGridWidgetEditCellMouseEventHandler extends DefaultGr
                                     final Optional<Integer> uiRowIndex,
                                     final Optional<Integer> uiColumnIndex,
                                     final AbstractNodeMouseEvent event) {
-        if (DynamicReadOnlyUtils.isOnlyVisualChangeAllowed(gridWidget)) {
+        if (DynamicReadOnlyUtils.isOnlyVisualChangeAllowed(gridWidget) || isReadOnly.get()) {
             return false;
         }
 

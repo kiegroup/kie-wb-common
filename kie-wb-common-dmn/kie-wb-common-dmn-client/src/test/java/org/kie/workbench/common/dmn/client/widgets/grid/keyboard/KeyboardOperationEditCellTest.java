@@ -19,6 +19,6 @@ public class KeyboardOperationEditCellTest extends BaseDynamicReadOnlyKeyboardOp
 
     @Override
     protected KeyboardOperationEditCell getOperation() {
-        return new KeyboardOperationEditCell(gridLayer);
+        return new KeyboardOperationEditCell(gridLayer, readOnlyProvider);
     }
 }

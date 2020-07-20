@@ -16,18 +16,23 @@
 package org.kie.workbench.common.dmn.client.widgets.grid.keyboard;
 
 import org.kie.workbench.common.dmn.client.editors.expressions.util.DynamicReadOnlyUtils;
+import org.kie.workbench.common.stunner.core.client.ReadOnlyProvider;
 import org.uberfire.ext.wires.core.grids.client.widget.grid.GridWidget;
 import org.uberfire.ext.wires.core.grids.client.widget.layer.GridLayer;
 
 public class KeyboardOperationInvokeContextMenuForSelectedCell extends org.uberfire.ext.wires.core.grids.client.widget.grid.impl.KeyboardOperationInvokeContextMenuForSelectedCell {
 
-    public KeyboardOperationInvokeContextMenuForSelectedCell(final GridLayer gridLayer) {
+    private final ReadOnlyProvider readOnlyProvider;
+
+    public KeyboardOperationInvokeContextMenuForSelectedCell(final GridLayer gridLayer,
+                                                             final ReadOnlyProvider readOnlyProvider) {
         super(gridLayer);
+        this.readOnlyProvider = readOnlyProvider;
     }
 
     @Override
     public boolean isExecutable(final GridWidget gridWidget) {
-        if (DynamicReadOnlyUtils.isOnlyVisualChangeAllowed(gridWidget)) {
+        if (DynamicReadOnlyUtils.isOnlyVisualChangeAllowed(gridWidget) || readOnlyProvider.isReadOnlyDiagram()) {
             return false;
         }
 

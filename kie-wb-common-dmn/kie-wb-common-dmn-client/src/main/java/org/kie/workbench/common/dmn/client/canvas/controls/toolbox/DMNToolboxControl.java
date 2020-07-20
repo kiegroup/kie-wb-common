@@ -26,6 +26,7 @@ import javax.inject.Inject;
 
 import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.kie.workbench.common.dmn.api.qualifiers.DMNEditor;
+import org.kie.workbench.common.stunner.core.client.ReadOnlyProvider;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.toolbox.AbstractToolboxControl;
 import org.kie.workbench.common.stunner.core.client.components.toolbox.actions.ActionsToolboxFactory;
 
@@ -35,18 +36,25 @@ public class DMNToolboxControl extends AbstractToolboxControl {
 
     private final ManagedInstance<ActionsToolboxFactory> flowActionsToolboxFactories;
     private final ManagedInstance<ActionsToolboxFactory> commonActionsToolboxFactories;
+    private final ReadOnlyProvider readonlyProvider;
 
     @Inject
     public DMNToolboxControl(final @Any @DMNFlowActionsToolbox ManagedInstance<ActionsToolboxFactory> flowActionsToolboxFactories,
-                             final @Any @DMNCommonActionsToolbox ManagedInstance<ActionsToolboxFactory> commonActionsToolboxFactories) {
+                             final @Any @DMNCommonActionsToolbox ManagedInstance<ActionsToolboxFactory> commonActionsToolboxFactories,
+                             final @Any @DMNEditor ReadOnlyProvider readOnlyProvider) {
         this.flowActionsToolboxFactories = flowActionsToolboxFactories;
         this.commonActionsToolboxFactories = commonActionsToolboxFactories;
+        this.readonlyProvider = readOnlyProvider;
     }
 
     @Override
     protected List<ActionsToolboxFactory> getFactories() {
-        return Arrays.asList(flowActionsToolboxFactories.get(),
-                             commonActionsToolboxFactories.get());
+        if (readonlyProvider.isReadOnlyDiagram()) {
+            return Arrays.asList(commonActionsToolboxFactories.get());
+        } else {
+            return Arrays.asList(flowActionsToolboxFactories.get(),
+                                 commonActionsToolboxFactories.get());
+        }
     }
 
     @PreDestroy

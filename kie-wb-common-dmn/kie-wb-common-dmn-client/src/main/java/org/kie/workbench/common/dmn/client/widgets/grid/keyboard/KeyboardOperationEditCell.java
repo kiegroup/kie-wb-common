@@ -16,18 +16,22 @@
 package org.kie.workbench.common.dmn.client.widgets.grid.keyboard;
 
 import org.kie.workbench.common.dmn.client.editors.expressions.util.DynamicReadOnlyUtils;
+import org.kie.workbench.common.stunner.core.client.ReadOnlyProvider;
 import org.uberfire.ext.wires.core.grids.client.widget.grid.GridWidget;
 import org.uberfire.ext.wires.core.grids.client.widget.layer.GridLayer;
 
 public class KeyboardOperationEditCell extends org.uberfire.ext.wires.core.grids.client.widget.grid.impl.KeyboardOperationEditCell {
 
-    public KeyboardOperationEditCell(final GridLayer gridLayer) {
+    private final ReadOnlyProvider readonlyProvider;
+
+    public KeyboardOperationEditCell(final GridLayer gridLayer, final ReadOnlyProvider readOnlyProvider) {
         super(gridLayer);
+        this.readonlyProvider = readOnlyProvider;
     }
 
     @Override
     public boolean isExecutable(final GridWidget gridWidget) {
-        if (DynamicReadOnlyUtils.isOnlyVisualChangeAllowed(gridWidget)) {
+        if (DynamicReadOnlyUtils.isOnlyVisualChangeAllowed(gridWidget) || readonlyProvider.isReadOnlyDiagram()) {
             return false;
         }
 

@@ -32,6 +32,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.dmn.client.widgets.grid.BaseGrid;
 import org.kie.workbench.common.dmn.client.widgets.grid.columns.EditableHeaderMetaData;
+import org.kie.workbench.common.stunner.core.client.ReadOnlyProvider;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
@@ -99,6 +100,9 @@ public class EditableHeaderGridWidgetEditCellMouseEventHandlerTest {
     @Mock
     private EditableHeaderMetaData editableHeaderMetaData;
 
+    @Mock
+    private ReadOnlyProvider readOnlyProvider;
+
     @Captor
     private ArgumentCaptor<GridBodyCellEditContext> gridBodyCellEditContextCaptor;
 
@@ -142,12 +146,29 @@ public class EditableHeaderGridWidgetEditCellMouseEventHandlerTest {
 
         when(editableHeaderMetaData.getSupportedEditAction()).thenReturn(GridCellEditAction.SINGLE_CLICK);
 
-        this.handler = new EditableHeaderGridWidgetEditCellMouseEventHandler();
+        this.handler = new EditableHeaderGridWidgetEditCellMouseEventHandler(() -> readOnlyProvider.isReadOnlyDiagram());
     }
 
     @Test
     public void testOnNodeMouseEventWhenOnlyVisualChangeAllowed() {
         when(gridWidget.isOnlyVisualChangeAllowed()).thenReturn(true);
+
+        assertThat(handler.onNodeMouseEvent(gridWidget,
+                                            relativeLocation,
+                                            Optional.empty(),
+                                            Optional.empty(),
+                                            Optional.empty(),
+                                            Optional.empty(),
+                                            clickEvent)).isFalse();
+
+        verify(gridWidget, never()).startEditingCell(any(Point2D.class));
+        verify(editableHeaderMetaData, never()).edit(any(GridBodyCellEditContext.class));
+    }
+
+    @Test
+    public void testOnNodeMouseEventWhenIsReadOnlyDiagram() {
+        when(gridWidget.isOnlyVisualChangeAllowed()).thenReturn(false);
+        when(readOnlyProvider.isReadOnlyDiagram()).thenReturn(true);
 
         assertThat(handler.onNodeMouseEvent(gridWidget,
                                             relativeLocation,
