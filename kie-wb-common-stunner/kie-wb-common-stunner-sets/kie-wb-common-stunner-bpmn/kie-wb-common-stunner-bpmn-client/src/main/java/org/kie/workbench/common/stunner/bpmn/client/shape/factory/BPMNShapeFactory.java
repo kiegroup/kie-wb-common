@@ -28,11 +28,11 @@ import org.kie.workbench.common.stunner.bpmn.client.shape.def.AssociationConnect
 import org.kie.workbench.common.stunner.bpmn.client.shape.def.BPMNDiagramShapeDef;
 import org.kie.workbench.common.stunner.bpmn.client.shape.def.CatchingIntermediateEventShapeDef;
 import org.kie.workbench.common.stunner.bpmn.client.shape.def.CustomTaskShapeDef;
+import org.kie.workbench.common.stunner.bpmn.client.shape.def.DataObjectShapeDef;
 import org.kie.workbench.common.stunner.bpmn.client.shape.def.EndEventShapeDef;
 import org.kie.workbench.common.stunner.bpmn.client.shape.def.GatewayShapeDef;
 import org.kie.workbench.common.stunner.bpmn.client.shape.def.LaneShapeDef;
 import org.kie.workbench.common.stunner.bpmn.client.shape.def.SequenceFlowConnectorDef;
-import org.kie.workbench.common.stunner.bpmn.client.shape.def.ServiceTaskShapeDef;
 import org.kie.workbench.common.stunner.bpmn.client.shape.def.StartEventShapeDef;
 import org.kie.workbench.common.stunner.bpmn.client.shape.def.SubprocessShapeDef;
 import org.kie.workbench.common.stunner.bpmn.client.shape.def.TaskShapeDef;
