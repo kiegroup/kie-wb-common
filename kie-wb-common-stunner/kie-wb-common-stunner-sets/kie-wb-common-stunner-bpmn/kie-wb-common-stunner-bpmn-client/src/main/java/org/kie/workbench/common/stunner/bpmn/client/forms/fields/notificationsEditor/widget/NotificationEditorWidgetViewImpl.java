@@ -29,6 +29,7 @@ import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.gwt.dom.client.ParagraphElement;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyDownEvent;
@@ -73,6 +74,7 @@ import org.uberfire.ext.widgets.common.client.dropdown.SingleLiveSearchSelection
 
 import static java.util.Collections.emptyList;
 import static jsinterop.annotations.JsPackage.GLOBAL;
+import static org.kie.workbench.common.stunner.bpmn.client.forms.fields.i18n.StunnerFormsClientFieldsConstants.CONSTANTS;
 import static org.kie.workbench.common.stunner.bpmn.client.forms.fields.model.NotificationType.NOT_COMPLETED_NOTIFY;
 import static org.kie.workbench.common.stunner.bpmn.client.forms.fields.model.NotificationType.NOT_STARTED_NOTIFY;
 import static org.kie.workbench.common.stunner.bpmn.client.forms.fields.notificationsEditor.validation.ExpirationTypeOracle.ISO_DATE_TIME;
@@ -110,6 +112,30 @@ public class NotificationEditorWidgetViewImpl extends Composite implements Notif
     @Inject
     @DataField
     protected HTMLDivElement repeatNotificationPanelDiv;
+
+    @Inject
+    @DataField("from")
+    ParagraphElement pFrom;
+
+    @Inject
+    @DataField("to-users")
+    ParagraphElement pUsers;
+
+    @Inject
+    @DataField("to-groups")
+    ParagraphElement pGroups;
+
+    @Inject
+    @DataField("to-emails")
+    ParagraphElement pEmails;
+
+    @Inject
+    @DataField("message")
+    ParagraphElement pMessage;
+
+    @Inject
+    @DataField("replyToOptional")
+    ParagraphElement replyToOptional;
 
     @Inject
     @DataField
@@ -231,8 +257,6 @@ public class NotificationEditorWidgetViewImpl extends Composite implements Notif
 
     protected MultipleLiveSearchSelectionHandler<String> multipleLiveSearchSelectionHandlerGroups = new MultipleLiveSearchSelectionHandler<>();
 
-    protected MultipleLiveSearchSelectionHandler<String> multipleLiveSearchSelectionHandlerEmails = new MultipleLiveSearchSelectionHandler<>();
-
     protected SingleLiveSearchSelectionHandler<String> searchSelectionFromHandler = new SingleLiveSearchSelectionHandler<>();
 
     protected SingleLiveSearchSelectionHandler<String> searchSelectionReplyToHandler = new SingleLiveSearchSelectionHandler<>();
@@ -246,15 +270,13 @@ public class NotificationEditorWidgetViewImpl extends Composite implements Notif
     @Inject
     public NotificationEditorWidgetViewImpl(final MultipleSelectorInput multipleSelectorInputUsers,
                                             final MultipleSelectorInput multipleSelectorInputGroups,
-                                            final MultipleSelectorInput emails,
                                             final LiveSearchDropDown liveSearchFromDropDown,
                                             final LiveSearchDropDown liveSearchReplyToDropDown,
 
                                             final AssigneeLiveSearchService assigneeLiveSearchServiceFrom,
                                             final AssigneeLiveSearchService assigneeLiveSearchServiceReplyTo,
                                             final AssigneeLiveSearchService assigneeLiveSearchServiceUsers,
-                                            final AssigneeLiveSearchService assigneeLiveSearchServiceGroups,
-                                            final AssigneeLiveSearchService assigneeLiveSearchServiceEmails) {
+                                            final AssigneeLiveSearchService assigneeLiveSearchServiceGroups) {
         initUsersAndGroupsDropdowns(multipleSelectorInputUsers,
                                     multipleSelectorInputGroups,
                                     liveSearchFromDropDown,
@@ -269,14 +291,18 @@ public class NotificationEditorWidgetViewImpl extends Composite implements Notif
     private void initPopover() {
         PopOver.$(notificationPopover).popovers();
         PopOver.$(replyPopover).popovers();
+        replyPopover.setAttribute("data-content", CONSTANTS.replyToMessage());
     }
 
     protected void initTextBoxes() {
         subject.setMaxLength(255);
-        emails.addKeyUpHandler(event -> emails.setValue(emails.getValue().replaceAll("\\s","")));
+        subject.setPlaceholder(CONSTANTS.subjectPlaceholder());
+        emails.addKeyUpHandler(event -> emails.setValue(emails.getValue().replaceAll("\\s", "")));
+        emails.setPlaceholder(CONSTANTS.emailsPlaceholder());
         periodBox.showLabel(false);
         body.setMaxLength(65535);
         body.setHeight("70px");
+        body.setPlaceholder(CONSTANTS.bodyPlaceholder());
 
         dateTimePicker.setValue(new Date());
         repeatBox.showLabel(false);
@@ -326,7 +352,7 @@ public class NotificationEditorWidgetViewImpl extends Composite implements Notif
     void initTaskExpirationSelector() {
         for (Expiration value : Expiration.values()) {
             Option option = new Option();
-            option.setText(presenter.getExpirationLabel(value.toString()));
+            option.setText(presenter.getExpirationLabel(value));
             option.setValue(value.getName());
             taskExpiration.add(option);
         }
@@ -376,10 +402,10 @@ public class NotificationEditorWidgetViewImpl extends Composite implements Notif
     public void init() {
         closeButton.addEventListener("click", event -> close(), false);
         okButton.addEventListener("click", event -> ok(), false);
-        taskExpiration.addValueChangeHandler(event -> onTaskExpressionChange(event));
+        taskExpiration.addValueChangeHandler(this::onTaskExpressionChange);
         repeatCount.value = "1";
 
-        panels = ImmutableMap.of(Expiration.TIMEPERIOD.getName(), timeperiodDiv,
+        panels = ImmutableMap.of(Expiration.TIME_PERIOD.getName(), timeperiodDiv,
                                  Expiration.EXPRESSION.getName(), expressionDiv,
                                  Expiration.DATETIME.getName(), datetimeDiv);
         initPopover();
@@ -392,6 +418,16 @@ public class NotificationEditorWidgetViewImpl extends Composite implements Notif
         initModel();
         initTextBoxes();
         initTaskExpirationSelector();
+        initLabels();
+    }
+
+    private void initLabels() {
+        pEmails.setInnerText(CONSTANTS.toEmails());
+        pGroups.setInnerText(CONSTANTS.toGroups());
+        pUsers.setInnerText(CONSTANTS.toUsers());
+        pFrom.setInnerText(presenter.getFromLabel());
+        pMessage.setInnerText(CONSTANTS.message());
+        replyToOptional.setInnerText(CONSTANTS.replyToOptional());
     }
 
     protected void initModel() {
@@ -436,15 +472,14 @@ public class NotificationEditorWidgetViewImpl extends Composite implements Notif
             liveSearchReplyToDropDown.setSelectedItem(row.getReplyTo());
         }
 
-        if (row.getType() != null) {
-            if (row.getType().equals(NOT_COMPLETED_NOTIFY)) {
-                notCompletedInput.checked = true;
-                notStartedInput.checked = false;
-            } else if (row.getType().equals(NOT_STARTED_NOTIFY)) {
-                notCompletedInput.checked = false;
-                notStartedInput.checked = true;
-            }
+        if (NOT_COMPLETED_NOTIFY.equals(row.getType())) {
+            notCompletedInput.checked = true;
+            notStartedInput.checked = false;
+        } else if (NOT_STARTED_NOTIFY.equals(row.getType())) {
+            notCompletedInput.checked = false;
+            notStartedInput.checked = true;
         }
+
         setExpiration(row);
         modal.show();
     }
@@ -452,18 +487,23 @@ public class NotificationEditorWidgetViewImpl extends Composite implements Notif
     protected void setExpiration(NotificationRow row) {
         Expiration expiration;
         if (row.getExpiresAt().isEmpty()) {
-            expiration = Expiration.TIMEPERIOD;
+            expiration = Expiration.TIME_PERIOD;
         } else {
             expiration = row.getExpiration() != null ? row.getExpiration()
                     : new ExpirationTypeOracle().guess(row.getExpiresAt());
         }
         taskExpiration.setValue(expiration.getName(), true);
-        if (expiration.equals(Expiration.EXPRESSION)) {
-            expressionTextArea.setValue(row.getExpiresAt());
-        } else if (expiration.equals(Expiration.DATETIME)) {
-            setExpirationDATETIME(row);
-        } else if (expiration.equals(Expiration.TIMEPERIOD)) {
-            setExpirationTimeperiod(row.getExpiresAt());
+
+        switch (expiration) {
+            case EXPRESSION:
+                expressionTextArea.setValue(row.getExpiresAt());
+                break;
+            case DATETIME:
+                setExpirationDATETIME(row);
+                break;
+            case TIME_PERIOD:
+                setExpirationTimeperiod(row.getExpiresAt());
+                break;
         }
     }
 
@@ -471,19 +511,19 @@ public class NotificationEditorWidgetViewImpl extends Composite implements Notif
         MatchResult result = RegExp.compile(REPEATABLE + "/" + ISO_DATE_TIME + "/" + PERIOD).exec(row.getExpiresAt());
         if (result != null) {
             repeatNotification.setValue(true, true);
-            Date DATETIME = dateTimeFormat.parse(result.getGroup(2));
+            Date dateTime = dateTimeFormat.parse(result.getGroup(2));
             String tz = result.getGroup(3);
             setPeriod(row.getExpiresAt().split("/")[2], repeatBox);
-            dateTimePicker.setValue(DATETIME);
+            dateTimePicker.setValue(dateTime);
             setTimeZonePickerValue(tz.equals("00Z") ? "0" : tz);
             setTaskStateOrRepeatCountValue(getRepeatCount(row.getExpiresAt().split("/")[0]));
         } else {
             result = RegExp.compile(ISO_DATE_TIME).exec(row.getExpiresAt());
             if (result != null) {
                 repeatNotification.setValue(false);
-                Date DATETIME = dateTimeFormat.parse(result.getGroup(1));
+                Date dateTime = dateTimeFormat.parse(result.getGroup(1));
                 String tz = result.getGroup(2);
-                dateTimePicker.setValue(DATETIME);
+                dateTimePicker.setValue(dateTime);
                 setTimeZonePickerValue(tz);
             }
         }
@@ -544,15 +584,13 @@ public class NotificationEditorWidgetViewImpl extends Composite implements Notif
     protected void setPeriod(String period, PeriodBox box) {
         MatchResult match = RegExp.compile(PERIOD).exec(period);
         String duration = match.getGroup(2);
-        StringBuilder result = new StringBuilder();
-        result.append(duration);
-        result.append(minuteOrMonth(match));
-        box.setValue(result.toString());
+        String result = duration + minuteOrMonth(match);
+        box.setValue(result);
     }
 
     protected String minuteOrMonth(MatchResult match) {
-        String _T = match.getGroup(1);
-        return ((match.getGroup(3).equals("M") && !_T.isEmpty()) ? "m" : match.getGroup(3));
+        String t = match.getGroup(1);
+        return ((match.getGroup(3).equals("M") && !t.isEmpty()) ? "m" : match.getGroup(3));
     }
 
     protected boolean isRepeatable(String repeatable) {
@@ -604,7 +642,7 @@ public class NotificationEditorWidgetViewImpl extends Composite implements Notif
         notStartedInput.checked = true;
         repeatBox.clear();
         repeatNotification.setValue(false, true);
-        taskExpiration.setValue(Expiration.TIMEPERIOD.getName(), true);
+        taskExpiration.setValue(Expiration.TIME_PERIOD.getName(), true);
         repeatBox.setValue("1");
         errorDivPanel.innerHTML = "";
         expressionTextArea.getElement().getStyle().setBorderColor("");
@@ -705,7 +743,7 @@ public class NotificationEditorWidgetViewImpl extends Composite implements Notif
                 sb.append("/");
             }
 
-            if (type.equals(Expiration.TIMEPERIOD.getName())) {
+            if (type.equals(Expiration.TIME_PERIOD.getName())) {
                 // Note: "P1M" is a one-month duration and "PT1M" is a one-minute duration;
                 sb.append((period.contains("M") || period.contains("Y") || period.contains("D")) ? "P" : "PT");
                 sb.append(period.toUpperCase());
@@ -741,7 +779,7 @@ public class NotificationEditorWidgetViewImpl extends Composite implements Notif
     private abstract static class PopOver {
 
         @JsMethod(namespace = GLOBAL, name = "jQuery")
-        public native static PopOver $(final elemental2.dom.Node selector);
+        public static native PopOver $(final elemental2.dom.Node selector);
 
         public native void popovers();
     }

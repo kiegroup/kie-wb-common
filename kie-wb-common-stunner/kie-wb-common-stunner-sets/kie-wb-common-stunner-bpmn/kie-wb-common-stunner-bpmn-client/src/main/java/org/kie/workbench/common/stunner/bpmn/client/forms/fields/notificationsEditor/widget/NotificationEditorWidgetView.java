@@ -17,6 +17,7 @@
 package org.kie.workbench.common.stunner.bpmn.client.forms.fields.notificationsEditor.widget;
 
 import com.google.gwt.user.client.ui.IsWidget;
+import org.kie.workbench.common.stunner.bpmn.client.forms.fields.model.Expiration;
 import org.kie.workbench.common.stunner.bpmn.client.forms.fields.model.NotificationRow;
 
 public interface NotificationEditorWidgetView extends IsWidget {
@@ -25,7 +26,9 @@ public interface NotificationEditorWidgetView extends IsWidget {
 
         String getNameHeader();
 
-        String getExpirationLabel(String type);
+        String getFromLabel();
+
+        String getExpirationLabel(Expiration type);
 
         void createOrEdit(NotificationWidgetView parent, NotificationRow row);
     }

@@ -1,5 +1,5 @@
 <!--
-  ~ Copyright 2019 Red Hat, Inc. and/or its affiliates.
+  ~ Copyright 2020 Red Hat, Inc. and/or its affiliates.
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -86,18 +86,17 @@
     </div>
 
     <div class="row">
-        <p style="font-weight: bold;">Message</p>
+        <p data-field="message" style="font-weight: bold;"></p>
         <div class="form-group">
             <div class="col-sm-3" style="margin-left: -20px;">
-                <p style="margin: 0">From</p>
+                <p data-field="from" style="margin: 0"></p>
                 <select data-field="liveSearchFromDropDown" id="from" style="width: 200px;"></select>
             </div>
             <div class="col-sm-3">
-                <p style="margin: 0">Reply to (optional)
-                    <a data-field="replyPopover" tabindex="0" role="button" data-toggle="popover" data-trigger="hover" data-html="true" class="popover-pf-info" data-content="An optional user or group that should receive replies to the notification." data-placement="top">
-                        <span class="glyphicon glyphicon-info-sign"></span>
-                    </a>
-                </p>
+                <p data-field="replyToOptional" style="margin: 0; display: inline"></p>
+                <a data-field="replyPopover" tabindex="0" role="button" data-toggle="popover" data-trigger="hover" data-html="true" class="popover-pf-info" data-placement="top">
+                    <span class="glyphicon glyphicon-info-sign"></span>
+                </a>
                 <select data-field="liveSearchReplyToDropDown" id="replyTo" style="width: 200px;"></select>
             </div>
         </div>
@@ -105,32 +104,32 @@
     <div class="row">
         <div class="form-group">
             <div class="col-sm-3" style="margin-left: -20px;">
-                <p style="margin: 10px 0 0 0">To: user(s)</p>
+                <p data-field="to-users" style="margin: 10px 0 0 0"></p>
                 <select data-field="multipleSelectorInputUsers" id="toUsers" style="width: 200px;"></select>
             </div>
             <div class="col-sm-3">
-                <p style="margin: 10px 0 0 0">To: group(s)</p>
+                <p data-field="to-groups" style="margin: 10px 0 0 0"></p>
                 <select data-field="multipleSelectorInputGroups" id="toGroups" style="width: 200px;"></select>
             </div>
         </div>
     </div>
     <div class="row">
-        <p style="margin: 10px 0 0 0;">To: email(s)</p>
-        <input data-field="emails" type="text" class="form-control" max='99' placeholder='Enter emails separated by comma.' style='width:500px;'>
+        <p data-field="to-emails" style="margin: 10px 0 0 0;"></p>
+        <input data-field="emails" type="text" class="form-control" max="99" style="width:500px;">
     </div>
     <div class="row">
-        <input data-field="subject" type="text" class="form-control" max='99' placeholder='Enter the subject here.' style=' width:500px;    margin-top: 20px;'>
+        <input data-field="subject" type="text" class="form-control" max="99" style="width:500px; margin-top: 20px;">
     </div>
     <div class="row">
-        <textarea data-field="body" placeholder="Enter the body of your message here" class="form-control" rows="5" id="comment" style="width:500px; resize: none;   margin-top: 20px;"></textarea>
+        <textarea data-field="body" class="form-control" rows="5" id="comment" style="width:500px; resize: none;   margin-top: 20px;"></textarea>
     </div>
     <div class="row" data-field="errorDivPanel" style="width: 500px; margin-top:10px; color:red;">
     </div>
 
     <div class="row" style="width: 500px; margin-top:10px;">
         <div class="text-right">
-            <button data-i18n-key="reassignment.close" type="button" data-field="closeButton" class="btn btn-default">Cancel</button>
-            <button data-i18n-key="reassignment.ok" type="button" data-field="okButton" class="btn btn-primary">OK</button>
+            <button data-i18n-key="notification.close" type="button" data-field="closeButton" class="btn btn-default"></button>
+            <button data-i18n-key="notification.ok" type="button" data-field="okButton" class="btn btn-primary"></button>
         </div>
     </div>
 </div>

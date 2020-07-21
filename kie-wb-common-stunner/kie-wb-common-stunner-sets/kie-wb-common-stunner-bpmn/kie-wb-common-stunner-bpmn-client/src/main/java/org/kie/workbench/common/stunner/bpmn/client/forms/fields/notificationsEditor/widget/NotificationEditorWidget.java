@@ -22,6 +22,7 @@ import javax.inject.Inject;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
 import org.kie.workbench.common.stunner.bpmn.client.forms.fields.i18n.StunnerBPMNConstants;
+import org.kie.workbench.common.stunner.bpmn.client.forms.fields.model.Expiration;
 import org.kie.workbench.common.stunner.bpmn.client.forms.fields.model.NotificationRow;
 import org.kie.workbench.common.stunner.core.client.i18n.ClientTranslationService;
 
@@ -56,8 +57,22 @@ public class NotificationEditorWidget implements IsWidget,
     }
 
     @Override
-    public String getExpirationLabel(String type) {
-        return translationService.getValue(EXPIRATION_PREFIX + type.toLowerCase() + EXPIRATION_POSTFIX);
+    public String getFromLabel() {
+        return translationService.getValue(StunnerBPMNConstants.NOTIFICATION_FROM);
+    }
+
+    @Override
+    public String getExpirationLabel(Expiration type) {
+        switch (type) {
+            case EXPRESSION:
+                return translationService.getValue(EXPIRATION_PREFIX + "expression" + EXPIRATION_POSTFIX);
+            case DATETIME:
+                return translationService.getValue(EXPIRATION_PREFIX + "datetime" + EXPIRATION_POSTFIX);
+            case TIME_PERIOD:
+                return translationService.getValue(EXPIRATION_PREFIX + "time.period" + EXPIRATION_POSTFIX);
+            default:
+                return "";
+        }
     }
 
     @Override
