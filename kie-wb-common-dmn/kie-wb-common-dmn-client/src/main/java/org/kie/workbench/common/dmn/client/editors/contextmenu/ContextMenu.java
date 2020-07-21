@@ -52,6 +52,10 @@ public class ContextMenu {
 
     public void show() { view.show(); }
 
+    /**
+     * This overloaded version of show method accepts a lambda with a series of operations to be performed before showing the context menu
+     * @param contextMenuConsumer whatever function that takes as argument the contextMenu itself and returns nothing
+     */
     public void show(Consumer<ContextMenu> contextMenuConsumer) {
         this.resetMenuItems();
         contextMenuConsumer.accept(this);

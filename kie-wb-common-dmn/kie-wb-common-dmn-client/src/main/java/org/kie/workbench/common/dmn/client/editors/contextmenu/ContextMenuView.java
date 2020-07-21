@@ -56,10 +56,10 @@ public class ContextMenuView implements ContextMenu.View,
     @PreDestroy
     private void removeDOMEventListeners() {
         DomGlobal.document.removeEventListener(BrowserEvents.MOUSEDOWN,
-                                               hideContextMenuHandler(),
+                                               hideContextMenuHandler,
                                                false);
         DomGlobal.document.removeEventListener(BrowserEvents.MOUSEWHEEL,
-                                               hideContextMenuHandler(),
+                                               hideContextMenuHandler,
                                                false);
     }
 
@@ -69,10 +69,10 @@ public class ContextMenuView implements ContextMenu.View,
         listSelector.show();
 
         DomGlobal.document.addEventListener(BrowserEvents.MOUSEDOWN,
-                                            hideContextMenuHandler(),
+                                            hideContextMenuHandler,
                                             false);
         DomGlobal.document.addEventListener(BrowserEvents.MOUSEWHEEL,
-                                            hideContextMenuHandler(),
+                                            hideContextMenuHandler,
                                             false);
     }
 
@@ -82,22 +82,20 @@ public class ContextMenuView implements ContextMenu.View,
         removeDOMEventListeners();
     }
 
-    private EventListener hideContextMenuHandler() {
-        return event -> {
-            if (!Arrays.asList(getEventPath(event)).contains(getElement())) {
-                listSelector.hide();
-            }
-        };
-    }
+    private final EventListener hideContextMenuHandler = event -> {
+        if (!Arrays.asList(getEventPath(event)).contains(getElement())) {
+            listSelector.hide();
+        }
+    };
 
     Element[] getEventPath(Event event) {
         return Optional
                 .ofNullable(event.path)
                 .orElseGet(() ->
-                        Stream.of(event.composedPath())
-                                .filter(Event.ComposedPathArrayUnionType::isElement)
-                                .map(Event.ComposedPathArrayUnionType::asElement)
-                                .toArray(Element[]::new)
+                                   Stream.of(event.composedPath())
+                                           .filter(Event.ComposedPathArrayUnionType::isElement)
+                                           .map(Event.ComposedPathArrayUnionType::asElement)
+                                           .toArray(Element[]::new)
                 );
     }
 
@@ -106,7 +104,8 @@ public class ContextMenuView implements ContextMenu.View,
      * <strong><p>Note that:</p></strong>
      * <p>Since this class is exploiting ListSelector controls, in the original design, this method accepts two parameters</p>
      * <p>For our purposes, these two parameters are just ignored</p>
-     * @param uiRowIndex unused parameter
+     *
+     * @param uiRowIndex    unused parameter
      * @param uiColumnIndex unused parameter
      * @return items belonging to the context menu
      */
