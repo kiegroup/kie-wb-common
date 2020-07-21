@@ -25,6 +25,7 @@ import org.kie.workbench.common.dmn.client.editors.contextmenu.ContextMenu;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
 import org.kie.workbench.common.stunner.core.client.canvas.util.CanvasLayoutUtils;
 import org.kie.workbench.common.stunner.core.client.components.toolbox.actions.ToolboxAction;
+import org.kie.workbench.common.stunner.core.client.i18n.ClientTranslationService;
 import org.kie.workbench.common.stunner.core.client.resources.StunnerCommonImageResources;
 import org.kie.workbench.common.stunner.core.client.shape.ImageDataUriGlyph;
 import org.kie.workbench.common.stunner.core.client.shape.view.event.MouseClickEvent;
@@ -35,11 +36,18 @@ import org.kie.workbench.common.stunner.core.graph.content.definition.Definition
 @Dependent
 public class DMNEditDRDToolboxAction implements ToolboxAction<AbstractCanvasHandler> {
 
+    public static final String DRDACTIONS_CONTEXT_MENU_TITLE = "DRDActions.ContextMenu.Title";
+    public static final String DRDACTIONS_CONTEXT_MENU_ACTIONS_CREATE = "DRDActions.ContextMenu.Actions.Create";
+    public static final String DRDACTIONS_CONTEXT_MENU_ACTIONS_ADD_TO = "DRDActions.ContextMenu.Actions.AddTo";
+    public static final String DRDACTIONS_CONTEXT_MENU_ACTIONS_REMOVE = "DRDActions.ContextMenu.Actions.Remove";
+    public static final String HEADER_MENU_ICON_CLASS = "fa fa-share-alt";
     private final ContextMenu drdContextMenu;
+    private final ClientTranslationService translationService;
 
     @Inject
-    public DMNEditDRDToolboxAction(final ContextMenu drdContextMenu) {
+    public DMNEditDRDToolboxAction(final ContextMenu drdContextMenu, final ClientTranslationService translationService) {
         this.drdContextMenu = drdContextMenu;
+        this.translationService = translationService;
     }
 
     @Override
@@ -49,7 +57,7 @@ public class DMNEditDRDToolboxAction implements ToolboxAction<AbstractCanvasHand
 
     @Override
     public String getTitle(final AbstractCanvasHandler canvasHandler, final String uuid) {
-        return "DRD Actions";
+        return translationService.getValue(DRDACTIONS_CONTEXT_MENU_TITLE);
     }
 
     @Override
@@ -62,13 +70,21 @@ public class DMNEditDRDToolboxAction implements ToolboxAction<AbstractCanvasHand
         contextMenuElement.style.top = event.getClientY() + "px";
         DomGlobal.document.body.appendChild(contextMenuElement);
 
-        drdContextMenu.show(self -> {
-            self.setHeaderMenu("DRD ACTIONS", "fa fa-share-alt");
-            self.addTextMenuItem("Create", true, () -> DomGlobal.console.log("A", element));
-            self.addTextMenuItem("Add to", true, () -> DomGlobal.console.log("B", element));
-            self.addTextMenuItem("Remove", true, () -> DomGlobal.console.log("C", element));
-        });
+        drdContextMenu.show(self -> contextMenuHandler(self, element));
 
         return this;
+    }
+
+    void contextMenuHandler(final ContextMenu contextMenu, final Element<? extends Definition<?>> element) {
+        contextMenu.setHeaderMenu(translationService.getValue(DRDACTIONS_CONTEXT_MENU_TITLE).toUpperCase(), HEADER_MENU_ICON_CLASS);
+        contextMenu.addTextMenuItem(translationService.getValue(DRDACTIONS_CONTEXT_MENU_ACTIONS_CREATE),
+                                    true,
+                                    () -> DomGlobal.console.log("A", element));
+        contextMenu.addTextMenuItem(translationService.getValue(DRDACTIONS_CONTEXT_MENU_ACTIONS_ADD_TO),
+                                    true,
+                                    () -> DomGlobal.console.log("B", element));
+        contextMenu.addTextMenuItem(translationService.getValue(DRDACTIONS_CONTEXT_MENU_ACTIONS_REMOVE),
+                                    true,
+                                    () -> DomGlobal.console.log("C", element));
     }
 }
