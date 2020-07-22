@@ -54,26 +54,29 @@ public interface DMNMarshallerImportsHelperKogito extends DMNMarshallerImportsHe
     @Override
     default Map<JSITImport, JSITDefinitions> getImportDefinitions(final Metadata metadata,
                                                                   final List<JSITImport> jsitImports) {
-        throw new UnsupportedOperationException("This implementation does not support sync calls. Please, use getImportDefinitionsAsync.");
+        throw new UnsupportedOperationException("This implementation does not support sync calls. " +
+                "Please, use getImportDefinitionsAsync.");
     }
 
     @Override
     default Map<JSITImport, PMMLDocumentMetadata> getPMMLDocuments(final Metadata metadata,
                                                                    final List<JSITImport> imports) {
-        throw new UnsupportedOperationException("This implementation does not support sync calls. Please, use getPMMLDocumentsAsync.");
+        throw new UnsupportedOperationException("This implementation does not support sync calls. " +
+                "Please, use getPMMLDocumentsAsync.");
     }
 
     @Override
     default List<JSITItemDefinition> getImportedItemDefinitionsByNamespace(final WorkspaceProject workspaceProject,
-                                                                          final String modelName,
-                                                                          final String namespace) {
-        throw new UnsupportedOperationException("This implementation does not support sync calls. Please, use getImportedItemDefinitionsByNamespaceAsync.");
+                                                                           final String modelName,
+                                                                           final String namespace) {
+        throw new UnsupportedOperationException("This implementation does not support sync calls. " +
+                "Please, use getImportedItemDefinitionsByNamespaceAsync.");
     }
 
     @Override
     default Path getDMNModelPath(final Metadata metadata,
-                                final String modelNamespace,
-                                final String modelName) {
+                                 final String modelNamespace,
+                                 final String modelName) {
         throw new UnsupportedOperationException("Imports are not supported in the kogito-based editors.");
     }
 }

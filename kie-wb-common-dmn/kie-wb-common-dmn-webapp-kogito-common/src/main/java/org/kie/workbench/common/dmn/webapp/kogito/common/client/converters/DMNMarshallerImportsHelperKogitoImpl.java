@@ -283,17 +283,71 @@ public class DMNMarshallerImportsHelperKogitoImpl implements DMNMarshallerImport
         return Optional.empty();
     }
 
+    private Optional<JSITImport> findImportByPMMLDocument(final String includedPMMLModelFile,
+                                                          final List<JSITImport> imports) {
+        for (int i = 0; i < imports.size(); i++) {
+            final JSITImport anImport = Js.uncheckedCast(imports.get(i));
+            DomGlobal.console.log("findImportByPMMLDocument: " + anImport.getLocationURI() + " " + includedPMMLModelFile);
+            if (Objects.equals(anImport.getLocationURI(), includedPMMLModelFile)) {
+                return Optional.of(anImport);
+            }
+        }
+        return Optional.empty();
+    }
+
     @Override
     public Promise<Map<JSITImport, PMMLDocumentMetadata>> getPMMLDocumentsAsync(final Metadata metadata,
                                                                                 final List<JSITImport> imports) {
-        return contentService.getFilteredItems(PMML_FILES_PATTERN, ResourceListOptions.assetFolder()).
-            then(items -> promises.all(Arrays.asList(items), file -> {
-                DomGlobal.console.log("PMML file items found: " + items.length);
-                if (items.length == 0) {
-                    return promises.resolve(Collections.emptyMap());
+        if (!imports.isEmpty()) {
+            return loadPMMLDefinitions().then(otherDefinitions -> {
+                final Map<JSITImport, PMMLDocumentMetadata> importDefinitions = new HashMap<>();
+
+                for (final Map.Entry<String, PMMLDocumentMetadata> entry : otherDefinitions.entrySet()) {
+                    final PMMLDocumentMetadata def = entry.getValue();
+                    findImportByPMMLDocument(def.getName(), imports).ifPresent(anImport -> {
+                        final JSITImport foundImported = Js.uncheckedCast(anImport);
+                        importDefinitions.put(foundImported, def);
+                    });
                 }
-                return promises.resolve(Collections.emptyMap());
-            }));
+                return promises.resolve(importDefinitions);
+            });
+        }
+        return promises.resolve(Collections.emptyMap());
+    }
+
+    private Promise<Map<String, PMMLDocumentMetadata>> loadPMMLDefinitions() {
+        return contentService.getFilteredItems(PMML_FILES_PATTERN, ResourceListOptions.assetFolder()).
+                then(items -> promises.all(Arrays.asList(items), file -> {
+                    DomGlobal.console.log("PMML file items found: " + items.length);
+                    if (items.length == 0) {
+                        return promises.resolve(Collections.emptyMap());
+                    } else {
+                        final Map<String, PMMLDocumentMetadata> otherDefinitions = new HashMap<>();
+                        return promises.all(Arrays.asList(items),
+                                (String file1) -> loadPMMLDefinitionFromFile(file1, otherDefinitions))
+                                .then(v -> promises.resolve(otherDefinitions));
+                    }
+                }));
+    }
+
+    Promise<Void> loadPMMLDefinitionFromFile(final String file,
+                                             final Map<String, PMMLDocumentMetadata> otherDefinitions) {
+        return contentService.loadFile(file)
+                .then(xml -> promises.create((success, failure) -> {
+                    if (!StringUtils.isEmpty(xml)) {
+                        /* Put here a call to the PMML marshaller to retrieve the PMMLDocumentData, currently Mocked */
+                        String fileName = FileUtils.getFileName(file);
+                        PMMLDocumentMetadata documentMetadata = new PMMLDocumentMetadata(file,
+                                                                                         fileName,
+                                                                                         DMNImportTypes.PMML.getDefaultNamespace(),
+                                                                                         Collections.emptyList());
+                        otherDefinitions.put(file, documentMetadata);
+                        DomGlobal.console.log("PMML otherdefinition added: " + file);
+                        success.onInvoke(promises.resolve());
+                    } else {
+                        failure.onInvoke("File " + file + "is empty");
+                    }
+                }));
     }
 
     @Override
