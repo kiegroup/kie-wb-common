@@ -155,4 +155,32 @@ public interface StunnerFormsClientFieldsConstants extends Messages {
     String emailsPlaceholder();
 
     String bodyPlaceholder();
+
+    String taskStateType();
+
+    String notCompleted();
+
+    String notStarted();
+
+    String taskExpirationDefinition();
+
+    String notificationPopover();
+
+    String notifyLabel();
+
+    String notifyAfter();
+
+    String notificationRepeat();
+
+    String notifyEvery();
+
+    String until();
+
+    String expressionTextArea();
+
+    String taskStateChangesLabel();
+
+    String repeatCountReachesLabel();
+
+    String syntaxRequirement();
 }

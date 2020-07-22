@@ -29,7 +29,9 @@ import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.gwt.dom.client.LabelElement;
 import com.google.gwt.dom.client.ParagraphElement;
+import com.google.gwt.dom.client.SpanElement;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyDownEvent;
@@ -80,6 +82,7 @@ import static org.kie.workbench.common.stunner.bpmn.client.forms.fields.model.No
 import static org.kie.workbench.common.stunner.bpmn.client.forms.fields.notificationsEditor.validation.ExpirationTypeOracle.ISO_DATE_TIME;
 import static org.kie.workbench.common.stunner.bpmn.client.forms.fields.notificationsEditor.validation.ExpirationTypeOracle.PERIOD;
 import static org.kie.workbench.common.stunner.bpmn.client.forms.fields.notificationsEditor.validation.ExpirationTypeOracle.REPEATABLE;
+import static org.kie.workbench.common.stunner.bpmn.client.forms.util.StringUtils.nonEmpty;
 
 @Dependent
 @Templated("NotificationEditorWidgetViewImpl.html#container")
@@ -134,8 +137,56 @@ public class NotificationEditorWidgetViewImpl extends Composite implements Notif
     ParagraphElement pMessage;
 
     @Inject
+    @DataField("syntaxRequirement")
+    SpanElement syntaxRequirement;
+
+    @Inject
     @DataField("replyToOptional")
     ParagraphElement replyToOptional;
+
+    @Inject
+    @DataField("taskStateType")
+    ParagraphElement taskStateType;
+
+    @Inject
+    @DataField("taskExpirationDefinition")
+    ParagraphElement taskExpirationDefinition;
+
+    @Inject
+    @DataField("notify")
+    ParagraphElement notify;
+
+    @Inject
+    @DataField("notifyAfter")
+    ParagraphElement notifyAfter;
+
+    @Inject
+    @DataField("notStarted")
+    LabelElement labelNotStarted;
+
+    @Inject
+    @DataField("notCompleted")
+    LabelElement labelNotCompleted;
+
+    @Inject
+    @DataField("taskStateChangesLabel")
+    LabelElement taskStateChangesLabel;
+
+    @Inject
+    @DataField("repeatCountReachesLabel")
+    LabelElement repeatCountReachesLabel;
+
+    @Inject
+    @DataField("notificationRepeat")
+    ParagraphElement notificationRepeat;
+
+    @Inject
+    @DataField("notifyEvery")
+    ParagraphElement notifyEvery;
+
+    @Inject
+    @DataField("until")
+    ParagraphElement untilLabel;
 
     @Inject
     @DataField
@@ -292,6 +343,7 @@ public class NotificationEditorWidgetViewImpl extends Composite implements Notif
         PopOver.$(notificationPopover).popovers();
         PopOver.$(replyPopover).popovers();
         replyPopover.setAttribute("data-content", CONSTANTS.replyToMessage());
+        notificationPopover.setAttribute("data-content", CONSTANTS.notificationPopover());
     }
 
     protected void initTextBoxes() {
@@ -303,6 +355,7 @@ public class NotificationEditorWidgetViewImpl extends Composite implements Notif
         body.setMaxLength(65535);
         body.setHeight("70px");
         body.setPlaceholder(CONSTANTS.bodyPlaceholder());
+        expressionTextArea.setPlaceholder(CONSTANTS.expressionTextArea());
 
         dateTimePicker.setValue(new Date());
         repeatBox.showLabel(false);
@@ -428,6 +481,18 @@ public class NotificationEditorWidgetViewImpl extends Composite implements Notif
         pFrom.setInnerText(presenter.getFromLabel());
         pMessage.setInnerText(CONSTANTS.message());
         replyToOptional.setInnerText(CONSTANTS.replyToOptional());
+        taskStateType.setInnerText(CONSTANTS.taskStateType());
+        labelNotCompleted.setInnerText(CONSTANTS.notCompleted());
+        labelNotStarted.setInnerText(CONSTANTS.notStarted());
+        taskStateChangesLabel.setInnerText(CONSTANTS.taskStateChangesLabel());
+        repeatCountReachesLabel.setInnerText(CONSTANTS.repeatCountReachesLabel());
+        taskExpirationDefinition.setInnerText(CONSTANTS.taskExpirationDefinition());
+        notify.setInnerText(CONSTANTS.notifyLabel());
+        notifyAfter.setInnerText(CONSTANTS.notifyAfter());
+        notificationRepeat.setInnerText(CONSTANTS.notificationRepeat());
+        notifyEvery.setInnerText(CONSTANTS.notifyEvery());
+        untilLabel.setInnerText(CONSTANTS.until());
+        syntaxRequirement.setInnerText(CONSTANTS.syntaxRequirement());
     }
 
     protected void initModel() {
@@ -453,32 +518,27 @@ public class NotificationEditorWidgetViewImpl extends Composite implements Notif
     public void createOrEdit(NotificationWidgetView parent, NotificationRow row) {
         current = row;
         customerBinder.setModel(row.clone());
-        if (row.getUsers() != null && !row.getUsers().isEmpty()) {
+        if (nonEmpty(row.getUsers())) {
             row.getUsers().forEach(u -> assigneeLiveSearchServiceUsers.addCustomEntry(u));
             multipleSelectorInputUsers.setValue(row.getUsers());
         }
-        if (row.getGroups() != null && !row.getGroups().isEmpty()) {
+        if (nonEmpty(row.getGroups())) {
             row.getGroups().forEach(u -> assigneeLiveSearchServiceGroups.addCustomEntry(u));
             multipleSelectorInputGroups.setValue(row.getGroups());
         }
 
-        if (row.getFrom() != null && !row.getFrom().isEmpty()) {
+        if (nonEmpty(row.getFrom())) {
             assigneeLiveSearchServiceFrom.addCustomEntry(row.getFrom());
             liveSearchFromDropDown.setSelectedItem(row.getFrom());
         }
 
-        if (row.getReplyTo() != null && !row.getReplyTo().isEmpty()) {
+        if (nonEmpty(row.getReplyTo())) {
             assigneeLiveSearchServiceReplyTo.addCustomEntry(row.getReplyTo());
             liveSearchReplyToDropDown.setSelectedItem(row.getReplyTo());
         }
 
-        if (NOT_COMPLETED_NOTIFY.equals(row.getType())) {
-            notCompletedInput.checked = true;
-            notStartedInput.checked = false;
-        } else if (NOT_STARTED_NOTIFY.equals(row.getType())) {
-            notCompletedInput.checked = false;
-            notStartedInput.checked = true;
-        }
+        notCompletedInput.checked = NOT_COMPLETED_NOTIFY.equals(row.getType());
+        notStartedInput.textContent = "test value";
 
         setExpiration(row);
         modal.show();
