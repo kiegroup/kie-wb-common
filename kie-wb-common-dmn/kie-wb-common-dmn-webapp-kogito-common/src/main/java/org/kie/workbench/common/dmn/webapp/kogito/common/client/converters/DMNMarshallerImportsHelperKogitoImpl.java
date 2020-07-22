@@ -185,16 +185,14 @@ public class DMNMarshallerImportsHelperKogitoImpl implements DMNMarshallerImport
 
     @Override
     public void loadModels(final ServiceCallback<List<IncludedModel>> callback) {
-        final List<IncludedModel> models = new Vector<>();
+        final List<IncludedModel> models = new ArrayList<>();
         contentService.getFilteredItems(MODEL_FILES_PATTERN, ResourceListOptions.assetFolder())
             .then(items -> promises.all(Arrays.asList(items), file -> {
                 final String fileName = FileUtils.getFileName(file);
-                DomGlobal.console.log(fileName);
                 if (fileName.endsWith("." + DMNImportTypes.DMN.getFileExtension())) {
-                    return contentService.loadFile(file).then(fileContent -> {
-                        diagramService.transform(fileContent, getDMNDiagramCallback(fileName, models));
-                        return promises.resolve();
-                    });
+                    return contentService.loadFile(file)
+                            .then(fileContent -> promises.create((success, failed) ->
+                                    diagramService.transform(fileContent, getDMNDiagramCallback(fileName, models, success, failed))));
                 }
                 if (fileName.endsWith("." + DMNImportTypes.PMML.getFileExtension())) {
                     /* Here, a call to the PMML Marshaller should be added to retrieve the models number */
@@ -203,10 +201,9 @@ public class DMNMarshallerImportsHelperKogitoImpl implements DMNMarshallerImport
                                                      fileName,
                                                      DMNImportTypes.PMML.getDefaultNamespace(),
                                                      0));
-                    DomGlobal.console.log("PMML file " + fileName + "added on models!");
                     return promises.resolve();
                 }
-                return promises.reject("Error: Invalid file: " + fileName);
+                return promises.reject("Error: " + fileName + " is an invalid file.");
             }).then(v -> {
                 callback.onSuccess(models);
                 return promises.resolve();
@@ -214,7 +211,9 @@ public class DMNMarshallerImportsHelperKogitoImpl implements DMNMarshallerImport
     }
 
     private ServiceCallback<Diagram> getDMNDiagramCallback(final String fileName,
-                                                           final List<IncludedModel> models) {
+                                                           final List<IncludedModel> models,
+                                                           final Promise.PromiseExecutorCallbackFn.ResolveCallbackFn<Object> success,
+                                                           final Promise.PromiseExecutorCallbackFn.RejectCallbackFn failed) {
         return new ServiceCallback<Diagram>() {
 
             @Override
@@ -225,19 +224,19 @@ public class DMNMarshallerImportsHelperKogitoImpl implements DMNMarshallerImport
                 final int drgElementCount = diagramUtils.getDRGElements(diagram).size();
                 final int itemDefinitionCount = diagramUtils.getDefinitions(diagram).getItemDefinition().size();
                 models.add(new DMNIncludedModel(fileName,
-                            modelPackage,
-                            fileName,
-                            namespace,
-                            importType,
-                            drgElementCount,
-                            itemDefinitionCount));
-                DomGlobal.console.log("DMN file " + fileName + " added on models!");
+                                                modelPackage,
+                                                fileName,
+                                                namespace,
+                                                importType,
+                                                drgElementCount,
+                                                itemDefinitionCount));
+                success.onInvoke(promises.resolve());
             }
 
             @Override
             public void onError(final ClientRuntimeError error) {
-                DomGlobal.console.log("Error trying to add DMN file " + error.getMessage());
                 LOGGER.log(Level.SEVERE, error.getMessage());
+                failed.onInvoke(promises.reject(error.getMessage()));
             }
         };
     }
@@ -288,20 +287,13 @@ public class DMNMarshallerImportsHelperKogitoImpl implements DMNMarshallerImport
     public Promise<Map<JSITImport, PMMLDocumentMetadata>> getPMMLDocumentsAsync(final Metadata metadata,
                                                                                 final List<JSITImport> imports) {
         return contentService.getFilteredItems(PMML_FILES_PATTERN, ResourceListOptions.assetFolder()).
-                then(items -> promises.all(Arrays.asList(items), file -> {
-                    DomGlobal.console.log("PMML file items found: " + items.length);
-                    if (items.length == 0) {
-                        return promises.resolve(Collections.emptyMap());
-                    }
+            then(items -> promises.all(Arrays.asList(items), file -> {
+                DomGlobal.console.log("PMML file items found: " + items.length);
+                if (items.length == 0) {
                     return promises.resolve(Collections.emptyMap());
-
-                     /*   final Map<String, PMMLDocumentMetadata> pmmlDocuments = new ConcurrentHashMap<>();
-                        return promises.all(Arrays.asList(list),
-                                (String file) -> loadDefinitionFromFile(file, otherDefinitions))
-                                .then(v -> promises.resolve(otherDefinitions));
-                        return promises.resolve(pmmlDocuments);
-                    }*/
-                }));
+                }
+                return promises.resolve(Collections.emptyMap());
+            }));
     }
 
     @Override
