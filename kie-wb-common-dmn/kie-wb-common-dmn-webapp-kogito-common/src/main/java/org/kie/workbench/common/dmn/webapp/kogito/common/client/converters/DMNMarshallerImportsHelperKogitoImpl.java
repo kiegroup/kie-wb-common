@@ -15,7 +15,6 @@
  */
 package org.kie.workbench.common.dmn.webapp.kogito.common.client.converters;
 
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -35,7 +34,6 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.xml.namespace.QName;
 
-import elemental2.dom.DomGlobal;
 import elemental2.promise.Promise;
 import jsinterop.base.Js;
 import org.appformer.kogito.bridge.client.resource.interop.ResourceListOptions;
@@ -66,7 +64,6 @@ import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.kie.workbench.common.stunner.core.diagram.Metadata;
 import org.kie.workbench.common.stunner.core.util.FileUtils;
 import org.kie.workbench.common.stunner.core.util.StringUtils;
-import org.uberfire.backend.vfs.Path;
 import org.uberfire.client.promise.Promises;
 
 import static org.kie.workbench.common.dmn.api.editors.types.BuiltInTypeUtils.isBuiltInType;
@@ -295,7 +292,6 @@ public class DMNMarshallerImportsHelperKogitoImpl implements DMNMarshallerImport
                                                           final List<JSITImport> imports) {
         for (int i = 0; i < imports.size(); i++) {
             final JSITImport anImport = Js.uncheckedCast(imports.get(i));
-            DomGlobal.console.log("findImportByPMMLDocument: " + anImport.getLocationURI() + " " + includedPMMLModelFile);
             if (Objects.equals(anImport.getLocationURI(), includedPMMLModelFile)) {
                 return Optional.of(anImport);
             }
@@ -307,7 +303,6 @@ public class DMNMarshallerImportsHelperKogitoImpl implements DMNMarshallerImport
     public Promise<Map<JSITImport, PMMLDocumentMetadata>> getPMMLDocumentsAsync(final Metadata metadata,
                                                                                 final List<JSITImport> imports) {
         if (!imports.isEmpty()) {
-            DomGlobal.console.log("getPMMLDocumentsAsync: Imports is not empty ");
             return loadPMMLDefinitions().then(otherDefinitions -> {
                 final Map<JSITImport, PMMLDocumentMetadata> importDefinitions = new HashMap<>();
 
@@ -318,10 +313,10 @@ public class DMNMarshallerImportsHelperKogitoImpl implements DMNMarshallerImport
                         importDefinitions.put(foundImported, def);
                     });
                 }
+
                 return promises.resolve(importDefinitions);
             });
         }
-        DomGlobal.console.log("getPMMLDocumentsAsync: Imports is empty ");
         return promises.resolve(Collections.emptyMap());
     }
 
@@ -485,10 +480,5 @@ public class DMNMarshallerImportsHelperKogitoImpl implements DMNMarshallerImport
             callback.onSuccess(result);
             return promises.resolve(result);
         });
-    }
-
-    @Override
-    public Optional<InputStream> loadPath(final Path path) {
-        return Optional.empty();
     }
 }

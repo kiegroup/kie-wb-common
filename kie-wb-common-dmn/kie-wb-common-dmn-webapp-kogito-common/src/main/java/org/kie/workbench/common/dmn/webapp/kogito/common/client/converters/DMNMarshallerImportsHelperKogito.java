@@ -15,8 +15,10 @@
  */
 package org.kie.workbench.common.dmn.webapp.kogito.common.client.converters;
 
+import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import elemental2.promise.Promise;
 import org.guvnor.common.services.project.model.WorkspaceProject;
@@ -77,6 +79,11 @@ public interface DMNMarshallerImportsHelperKogito extends DMNMarshallerImportsHe
     default Path getDMNModelPath(final Metadata metadata,
                                  final String modelNamespace,
                                  final String modelName) {
+        throw new UnsupportedOperationException("Imports are not supported in the kogito-based editors.");
+    }
+
+    @Override
+    default Optional<InputStream> loadPath(final Path path) {
         throw new UnsupportedOperationException("Imports are not supported in the kogito-based editors.");
     }
 }
