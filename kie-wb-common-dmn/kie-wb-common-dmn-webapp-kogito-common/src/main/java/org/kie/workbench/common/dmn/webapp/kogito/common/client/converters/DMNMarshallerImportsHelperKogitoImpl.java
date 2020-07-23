@@ -49,6 +49,7 @@ import org.kie.workbench.common.dmn.api.editors.included.PMMLIncludedModel;
 import org.kie.workbench.common.dmn.api.graph.DMNDiagramUtils;
 import org.kie.workbench.common.dmn.webapp.kogito.common.client.converters.model.ImportedItemDefinitionPropertyConverter;
 import org.kie.workbench.common.dmn.webapp.kogito.common.client.services.DMNClientDiagramServiceImpl;
+import org.kie.workbench.common.dmn.webapp.kogito.common.client.services.PMMLMarshallerService;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITDMNElement;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITDRGElement;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITDecision;
@@ -79,6 +80,7 @@ public class DMNMarshallerImportsHelperKogitoImpl implements DMNMarshallerImport
     private final Promises promises;
     private final DMNDiagramUtils diagramUtils;
     private final DMNIncludedNodeFactory includedModelFactory;
+    private final PMMLMarshallerService pmmlMarshallerService;
 
     private static final Logger LOGGER = Logger.getLogger(DMNMarshallerImportsHelperKogitoImpl.class.getName());
     private static final String DMN_FILES_PATTERN = "*.dmn";
@@ -90,12 +92,14 @@ public class DMNMarshallerImportsHelperKogitoImpl implements DMNMarshallerImport
                                                 final DMNClientDiagramServiceImpl diagramService,
                                                 final Promises promises,
                                                 final DMNDiagramUtils diagramUtils,
-                                                final DMNIncludedNodeFactory includedModelFactory) {
+                                                final DMNIncludedNodeFactory includedModelFactory,
+                                                final PMMLMarshallerService pmmlMarshallerService) {
         this.contentService = contentService;
         this.diagramService = diagramService;
         this.promises = promises;
         this.diagramUtils = diagramUtils;
         this.includedModelFactory = includedModelFactory;
+        this.pmmlMarshallerService = pmmlMarshallerService;
     }
 
     @Override
@@ -192,16 +196,20 @@ public class DMNMarshallerImportsHelperKogitoImpl implements DMNMarshallerImport
                 if (fileName.endsWith("." + DMNImportTypes.DMN.getFileExtension())) {
                     return contentService.loadFile(file)
                             .then(fileContent -> promises.create((success, failed) ->
-                                    diagramService.transform(fileContent, getDMNDiagramCallback(fileName, models, success, failed))));
+                                diagramService.transform(fileContent, getDMNDiagramCallback(fileName, models, success, failed))));
                 }
                 if (fileName.endsWith("." + DMNImportTypes.PMML.getFileExtension())) {
-                    /* Here, a call to the PMML Marshaller should be added to retrieve the models number */
-                    models.add(new PMMLIncludedModel(fileName,
-                                                     "",
-                                                     fileName,
-                                                     DMNImportTypes.PMML.getDefaultNamespace(),
-                                                     0));
-                    return promises.resolve();
+                    return contentService.loadFile(file)
+                        .then(fileContent -> pmmlMarshallerService.getDocumentMetadata(file, fileContent))
+                        .then(pmmlDocumentMetadata -> {
+                            int modelNumber = pmmlDocumentMetadata.getModels() != null ? pmmlDocumentMetadata.getModels().size() : 0;
+                            models.add(new PMMLIncludedModel(fileName,
+                                                            "",
+                                                             fileName,
+                                                             DMNImportTypes.PMML.getDefaultNamespace(),
+                                                             modelNumber));
+                            return promises.resolve();
+                        });
                 }
                 return promises.reject("Error: " + fileName + " is an invalid file.");
             }).then(v -> {
@@ -299,6 +307,7 @@ public class DMNMarshallerImportsHelperKogitoImpl implements DMNMarshallerImport
     public Promise<Map<JSITImport, PMMLDocumentMetadata>> getPMMLDocumentsAsync(final Metadata metadata,
                                                                                 final List<JSITImport> imports) {
         if (!imports.isEmpty()) {
+            DomGlobal.console.log("getPMMLDocumentsAsync: Imports is not empty ");
             return loadPMMLDefinitions().then(otherDefinitions -> {
                 final Map<JSITImport, PMMLDocumentMetadata> importDefinitions = new HashMap<>();
 
@@ -312,42 +321,31 @@ public class DMNMarshallerImportsHelperKogitoImpl implements DMNMarshallerImport
                 return promises.resolve(importDefinitions);
             });
         }
+        DomGlobal.console.log("getPMMLDocumentsAsync: Imports is empty ");
         return promises.resolve(Collections.emptyMap());
     }
 
     private Promise<Map<String, PMMLDocumentMetadata>> loadPMMLDefinitions() {
         return contentService.getFilteredItems(PMML_FILES_PATTERN, ResourceListOptions.assetFolder()).
-                then(items -> promises.all(Arrays.asList(items), file -> {
-                    DomGlobal.console.log("PMML file items found: " + items.length);
-                    if (items.length == 0) {
+                then(files -> {
+                    if (files.length == 0) {
                         return promises.resolve(Collections.emptyMap());
                     } else {
                         final Map<String, PMMLDocumentMetadata> otherDefinitions = new HashMap<>();
-                        return promises.all(Arrays.asList(items),
-                                (String file1) -> loadPMMLDefinitionFromFile(file1, otherDefinitions))
-                                .then(v -> promises.resolve(otherDefinitions));
+                        return promises.all(Arrays.asList(files), file -> loadPMMLDefinitionFromFile(file, otherDefinitions)
+                                .then(v -> promises.resolve(otherDefinitions)));
                     }
-                }));
+                });
     }
 
     Promise<Void> loadPMMLDefinitionFromFile(final String file,
                                              final Map<String, PMMLDocumentMetadata> otherDefinitions) {
         return contentService.loadFile(file)
-                .then(xml -> promises.create((success, failure) -> {
-                    if (!StringUtils.isEmpty(xml)) {
-                        /* Put here a call to the PMML marshaller to retrieve the PMMLDocumentData, currently Mocked */
-                        String fileName = FileUtils.getFileName(file);
-                        PMMLDocumentMetadata documentMetadata = new PMMLDocumentMetadata(file,
-                                                                                         fileName,
-                                                                                         DMNImportTypes.PMML.getDefaultNamespace(),
-                                                                                         Collections.emptyList());
-                        otherDefinitions.put(file, documentMetadata);
-                        DomGlobal.console.log("PMML otherdefinition added: " + file);
-                        success.onInvoke(promises.resolve());
-                    } else {
-                        failure.onInvoke("File " + file + "is empty");
-                    }
-                }));
+                .then(fileContent -> pmmlMarshallerService.getDocumentMetadata(file, fileContent))
+                .then(pmmlDocumentMetadata -> {
+                    otherDefinitions.put(file, pmmlDocumentMetadata);
+                    return promises.resolve();
+                });
     }
 
     @Override
