@@ -30,6 +30,7 @@ import org.junit.runner.RunWith;
 import org.kie.workbench.common.stunner.bpmn.client.shape.def.SequenceFlowConnectorDef;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNDefinition;
 import org.kie.workbench.common.stunner.bpmn.definition.BusinessRuleTask;
+import org.kie.workbench.common.stunner.bpmn.definition.DataObject;
 import org.kie.workbench.common.stunner.bpmn.definition.DirectionalAssociation;
 import org.kie.workbench.common.stunner.bpmn.definition.EmbeddedSubprocess;
 import org.kie.workbench.common.stunner.bpmn.definition.EndCompensationEvent;
@@ -66,7 +67,7 @@ import org.kie.workbench.common.stunner.bpmn.definition.StartMessageEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.StartNoneEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.StartSignalEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.StartTimerEvent;
-import org.kie.workbench.common.stunner.bpmn.workitem.ServiceTask;
+import org.kie.workbench.common.stunner.bpmn.workitem.CustomTask;
 import org.kie.workbench.common.stunner.cm.client.canvas.CaseManagementCanvasHandler;
 import org.kie.workbench.common.stunner.cm.client.resources.CaseManagementSVGViewFactory;
 import org.kie.workbench.common.stunner.cm.client.shape.CaseManagementShape;
@@ -399,9 +400,9 @@ public class CaseManagementShapeFactoryTest {
 
     @Test
     public void checkServiceTask() {
-        assertShapeConstructionNotSupported(new ServiceTask(),
+        assertShapeConstructionNotSupported(new CustomTask(),
                                             connectorAssertions);
-        assertShapeGlyph(new ServiceTask());
+        assertShapeGlyph(new CustomTask());
     }
 
     @Test
@@ -598,6 +599,13 @@ public class CaseManagementShapeFactoryTest {
         assertShapeConstructionNotSupported(new DirectionalAssociation(),
                                             connectorAssertions);
         assertShapeGlyph(new DirectionalAssociation());
+    }
+
+    @Test
+    public void checkDataObject() {
+        assertShapeConstructionNotSupported(new DataObject(),
+                                            connectorAssertions);
+        assertShapeGlyph(new DataObject());
     }
 
     @SuppressWarnings("unchecked")

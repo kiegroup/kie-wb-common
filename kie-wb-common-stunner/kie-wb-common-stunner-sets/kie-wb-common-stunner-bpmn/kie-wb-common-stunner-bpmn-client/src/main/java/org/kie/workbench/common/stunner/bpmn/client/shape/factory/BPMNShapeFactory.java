@@ -27,11 +27,12 @@ import org.kie.workbench.common.stunner.bpmn.BPMNDefinitionSet;
 import org.kie.workbench.common.stunner.bpmn.client.shape.def.AssociationConnectorDef;
 import org.kie.workbench.common.stunner.bpmn.client.shape.def.BPMNDiagramShapeDef;
 import org.kie.workbench.common.stunner.bpmn.client.shape.def.CatchingIntermediateEventShapeDef;
+import org.kie.workbench.common.stunner.bpmn.client.shape.def.CustomTaskShapeDef;
+import org.kie.workbench.common.stunner.bpmn.client.shape.def.DataObjectShapeDef;
 import org.kie.workbench.common.stunner.bpmn.client.shape.def.EndEventShapeDef;
 import org.kie.workbench.common.stunner.bpmn.client.shape.def.GatewayShapeDef;
 import org.kie.workbench.common.stunner.bpmn.client.shape.def.LaneShapeDef;
 import org.kie.workbench.common.stunner.bpmn.client.shape.def.SequenceFlowConnectorDef;
-import org.kie.workbench.common.stunner.bpmn.client.shape.def.ServiceTaskShapeDef;
 import org.kie.workbench.common.stunner.bpmn.client.shape.def.StartEventShapeDef;
 import org.kie.workbench.common.stunner.bpmn.client.shape.def.SubprocessShapeDef;
 import org.kie.workbench.common.stunner.bpmn.client.shape.def.TaskShapeDef;
@@ -43,6 +44,7 @@ import org.kie.workbench.common.stunner.bpmn.definition.BPMNDefinition;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNDiagramImpl;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNViewDefinition;
 import org.kie.workbench.common.stunner.bpmn.definition.BusinessRuleTask;
+import org.kie.workbench.common.stunner.bpmn.definition.DataObject;
 import org.kie.workbench.common.stunner.bpmn.definition.DirectionalAssociation;
 import org.kie.workbench.common.stunner.bpmn.definition.EmbeddedSubprocess;
 import org.kie.workbench.common.stunner.bpmn.definition.EndCompensationEvent;
@@ -86,7 +88,7 @@ import org.kie.workbench.common.stunner.bpmn.definition.StartSignalEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.StartTimerEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.TextAnnotation;
 import org.kie.workbench.common.stunner.bpmn.definition.UserTask;
-import org.kie.workbench.common.stunner.bpmn.workitem.ServiceTask;
+import org.kie.workbench.common.stunner.bpmn.workitem.CustomTask;
 import org.kie.workbench.common.stunner.bpmn.workitem.WorkItemDefinitionRegistry;
 import org.kie.workbench.common.stunner.core.client.preferences.StunnerPreferencesRegistries;
 import org.kie.workbench.common.stunner.core.client.preferences.StunnerTextPreferences;
@@ -174,8 +176,8 @@ public class BPMNShapeFactory
                 .delegate(BusinessRuleTask.class,
                           new TaskShapeDef(),
                           () -> svgShapeFactory)
-                .delegate(ServiceTask.class,
-                          new ServiceTaskShapeDef(workItemDefinitionRegistry),
+                .delegate(CustomTask.class,
+                          new CustomTaskShapeDef(workItemDefinitionRegistry),
                           () -> svgShapeFactory)
                 .delegate(StartNoneEvent.class,
                           new StartEventShapeDef(),
@@ -296,6 +298,9 @@ public class BPMNShapeFactory
                           () -> basicShapesFactory)
                 .delegate(TextAnnotation.class,
                           new TextAnnotationShapeDef(),
+                          () -> svgShapeFactory)
+                .delegate(DataObject.class,
+                          new DataObjectShapeDef(),
                           () -> svgShapeFactory);
     }
 

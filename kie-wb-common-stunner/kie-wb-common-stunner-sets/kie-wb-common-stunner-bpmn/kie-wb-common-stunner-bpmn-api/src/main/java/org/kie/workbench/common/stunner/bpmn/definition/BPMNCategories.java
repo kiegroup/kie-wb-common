@@ -36,7 +36,6 @@ public class BPMNCategories {
 
     public static final String GATEWAYS = "Gateways";
 
-    public static final String SERVICE_TASKS = "ServiceTasks";
+    public static final String CUSTOM_TASKS = "CustomTasks";
 
-    public static final String TEXT_ANNOTATION = "TextAnnotations";
 }
