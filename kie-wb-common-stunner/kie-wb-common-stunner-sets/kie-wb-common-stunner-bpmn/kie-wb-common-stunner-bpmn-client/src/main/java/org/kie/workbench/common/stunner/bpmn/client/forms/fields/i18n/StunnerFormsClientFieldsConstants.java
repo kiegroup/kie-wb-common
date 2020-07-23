@@ -183,4 +183,6 @@ public interface StunnerFormsClientFieldsConstants extends Messages {
     String repeatCountReachesLabel();
 
     String syntaxRequirement();
+
+    String incorrectEmail();
 }

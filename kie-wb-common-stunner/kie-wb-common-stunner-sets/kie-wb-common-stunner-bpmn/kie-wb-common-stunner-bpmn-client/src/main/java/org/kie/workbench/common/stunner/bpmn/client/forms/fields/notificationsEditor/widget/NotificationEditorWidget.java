@@ -80,6 +80,41 @@ public class NotificationEditorWidget implements IsWidget,
         view.createOrEdit(parent, row);
     }
 
+    @Override
+    public void ok(String emails) {
+        String incorrectValue = getFirstInvalidEmail(emails);
+        if (incorrectValue.isEmpty()) {
+            view.ok();
+        } else {
+            view.setValidationFailed(incorrectValue);
+        }
+    }
+
+    @Override
+    public String clearEmails(String emails) {
+        String result = emails.replaceAll("\\s", "");
+        if (result.startsWith(",")) {
+            result = result.substring(1);
+        }
+
+        if (result.endsWith(",")) {
+            result = result.substring(0, result.length() - 1);
+        }
+        return result;
+    }
+
+    private String getFirstInvalidEmail(String emailsString) {
+        String[] emails = clearEmails(emailsString).split(",");
+
+        for (String email : emails) {
+            if (!email.matches("^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$")) {
+                return email;
+            }
+        }
+
+        return "";
+    }
+
     public void setReadOnly(boolean readOnly) {
         view.setReadOnly(readOnly);
     }

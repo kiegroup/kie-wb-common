@@ -23,6 +23,7 @@ import java.util.List;
 import javax.enterprise.event.Event;
 import javax.validation.Validator;
 
+import com.google.gwt.dom.client.ParagraphElement;
 import com.google.gwtmockito.GwtMock;
 import com.google.gwtmockito.GwtMockito;
 import elemental2.dom.HTMLButtonElement;
@@ -51,6 +52,9 @@ import org.uberfire.ext.widgets.common.client.dropdown.MultipleLiveSearchSelecti
 import org.uberfire.ext.widgets.common.client.dropdown.SingleLiveSearchSelectionHandler;
 
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.powermock.api.mockito.PowerMockito.doCallRealMethod;
 import static org.powermock.api.mockito.PowerMockito.doNothing;
@@ -60,7 +64,7 @@ import static org.powermock.api.mockito.PowerMockito.mock;
 public class NotificationEditorWidgetTest extends ReflectionUtilsTest {
 
     @GwtMock
-    private NotificationEditorWidget notificationEditorWidget;
+    private NotificationEditorWidget presenter;
 
     @GwtMock
     private NotificationWidgetViewImpl notificationWidgetViewImpl;
@@ -118,6 +122,8 @@ public class NotificationEditorWidgetTest extends ReflectionUtilsTest {
 
     HTMLInputElement notStartedInput;
 
+    ParagraphElement incorrectEmail;
+
     @Before
     public void setUp() throws Exception {
         super.setUp();
@@ -136,16 +142,19 @@ public class NotificationEditorWidgetTest extends ReflectionUtilsTest {
         multipleLiveSearchSelectionHandlerGroups = mock(MultipleLiveSearchSelectionHandler.class);
         notCompletedInput = mock(HTMLInputElement.class);
         notStartedInput = mock(HTMLInputElement.class);
+        incorrectEmail = mock(ParagraphElement.class);
 
+        doNothing().when(view).markEmailsAsCorrect();
         doNothing().when(modal).hide();
         doNothing().when(modal).show();
 
         doNothing().when(notificationEvent).fire(any(NotificationEvent.class));
 
-        doCallRealMethod().when(notificationEditorWidget).setReadOnly(any(boolean.class));
-        doCallRealMethod().when(notificationEditorWidget).getNameHeader();
-        setFieldValue(notificationEditorWidget, "view", view);
-        setFieldValue(notificationEditorWidget, "translationService", translationService);
+        doCallRealMethod().when(presenter).setReadOnly(any(boolean.class));
+        doCallRealMethod().when(presenter).getNameHeader();
+        doCallRealMethod().when(presenter).ok(anyString());
+        setFieldValue(presenter, "view", view);
+        setFieldValue(presenter, "translationService", translationService);
 
         doCallRealMethod().when(typeSelect).setValue(any(String.class));
         doCallRealMethod().when(typeSelect).getValue();
@@ -173,6 +182,7 @@ public class NotificationEditorWidgetTest extends ReflectionUtilsTest {
         setFieldValue(view, "typeSelect", typeSelect);
         setFieldValue(view, "notStarted", notStarted);
         setFieldValue(view, "notCompleted", notCompleted);
+        setFieldValue(view, "incorrectEmail", incorrectEmail);
 
         doCallRealMethod().when(body).setValue(any(String.class));
         doCallRealMethod().when(body).getValue();
@@ -191,19 +201,18 @@ public class NotificationEditorWidgetTest extends ReflectionUtilsTest {
         doCallRealMethod().when(view).init(any(NotificationEditorWidgetView.Presenter.class));
 
         when(translationService.getValue(any(String.class))).thenReturn("Notification");
-
     }
 
     @Test
     public void testReadOnly() {
-        notificationEditorWidget.setReadOnly(true);
+        presenter.setReadOnly(true);
 
         HTMLButtonElement closeButton = getFieldValue(NotificationEditorWidgetViewImpl.class,
                                                       view,
                                                       "closeButton");
         HTMLButtonElement okButton = getFieldValue(NotificationEditorWidgetViewImpl.class,
-                                                     view,
-                                                     "okButton");
+                                                   view,
+                                                   "okButton");
 
         Assert.assertFalse(closeButton.disabled);
         Assert.assertTrue(okButton.disabled);
@@ -211,7 +220,7 @@ public class NotificationEditorWidgetTest extends ReflectionUtilsTest {
 
     @Test
     public void testGetNameHeader() {
-        Assert.assertEquals(notificationEditorWidget.getNameHeader(), "Notification");
+        Assert.assertEquals(presenter.getNameHeader(), "Notification");
     }
 
     @Test
@@ -219,7 +228,6 @@ public class NotificationEditorWidgetTest extends ReflectionUtilsTest {
         NotificationRow test = new NotificationRow();
         doNothing().when(view).hide();
         when(taskExpiration.getValue()).thenReturn(Expiration.EXPRESSION.getName());
-
 
         when(customerBinder.getModel()).thenReturn(test);
         when(notCompleted.getValue()).thenReturn(NotificationType.NOT_COMPLETED_NOTIFY.getAlias());
@@ -269,6 +277,23 @@ public class NotificationEditorWidgetTest extends ReflectionUtilsTest {
         Assert.assertEquals(NotificationType.NOT_COMPLETED_NOTIFY, test.getType());
         Assert.assertEquals(groups, test.getGroups());
         Assert.assertEquals(users, test.getUsers());
+    }
+
+    @Test
+    public void testOkWithIncorrectString() {
+        String stringWithInvalidEmail = "invalid";
+        presenter.ok(stringWithInvalidEmail);
+        verify(view).setValidationFailed(stringWithInvalidEmail);
+        verify(view, never()).ok();
+    }
+
+    @Test
+    public void testOkWithCorrectString() {
+        String stringWithInvalidEmail = "valid@email.com";
+        doNothing().when(view).ok();
+        presenter.ok(stringWithInvalidEmail);
+        verify(view, never()).setValidationFailed(anyString());
+        verify(view).ok();
     }
 
     @Test

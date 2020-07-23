@@ -31,6 +31,10 @@ public interface NotificationEditorWidgetView extends IsWidget {
         String getExpirationLabel(Expiration type);
 
         void createOrEdit(NotificationWidgetView parent, NotificationRow row);
+
+        void ok(String emails);
+
+        String clearEmails(String emailsString);
     }
 
     void init(final NotificationEditorWidgetView.Presenter presenter);
@@ -38,4 +42,8 @@ public interface NotificationEditorWidgetView extends IsWidget {
     void createOrEdit(NotificationWidgetView parent, NotificationRow row);
 
     void setReadOnly(boolean readOnly);
+
+    void ok();
+
+    void setValidationFailed(String incorrectValue);
 }

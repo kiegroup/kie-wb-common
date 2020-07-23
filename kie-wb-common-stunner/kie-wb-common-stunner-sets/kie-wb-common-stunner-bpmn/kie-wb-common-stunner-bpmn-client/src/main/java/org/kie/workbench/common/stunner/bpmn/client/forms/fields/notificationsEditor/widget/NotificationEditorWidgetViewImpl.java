@@ -18,14 +18,11 @@ package org.kie.workbench.common.stunner.bpmn.client.forms.fields.notificationsE
 
 import java.util.Date;
 import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
-import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
 
 import com.google.common.collect.ImmutableMap;
@@ -175,6 +172,10 @@ public class NotificationEditorWidgetViewImpl extends Composite implements Notif
     @Inject
     @DataField("repeatCountReachesLabel")
     LabelElement repeatCountReachesLabel;
+
+    @Inject
+    @DataField("incorrectEmail")
+    ParagraphElement incorrectEmail;
 
     @Inject
     @DataField("notificationRepeat")
@@ -454,7 +455,7 @@ public class NotificationEditorWidgetViewImpl extends Composite implements Notif
     @PostConstruct
     public void init() {
         closeButton.addEventListener("click", event -> close(), false);
-        okButton.addEventListener("click", event -> ok(), false);
+        okButton.addEventListener("click", event -> presenter.ok(emails.getValue()), false);
         taskExpiration.addValueChangeHandler(this::onTaskExpressionChange);
         repeatCount.value = "1";
 
@@ -663,11 +664,12 @@ public class NotificationEditorWidgetViewImpl extends Composite implements Notif
         return matcher.getGroup(1);
     }
 
-    void ok() {
+    @Override
+    public void ok() {
         // TODO looks like errai data binder doesn't support liststore widgets.
         current.setUsers(multipleLiveSearchSelectionHandlerUsers.getSelectedValues());
         current.setGroups(multipleLiveSearchSelectionHandlerGroups.getSelectedValues());
-        current.setEmails(emails.getValue());
+        current.setEmails(presenter.clearEmails(emails.getValue()));
         current.setBody(body.getValue());
         current.setSubject(subject.getValue());
         current.setFrom(searchSelectionFromHandler.getSelectedValue() != null ? searchSelectionFromHandler.getSelectedValue() : "");
@@ -676,17 +678,25 @@ public class NotificationEditorWidgetViewImpl extends Composite implements Notif
         current.setExpiration(Expiration.get(taskExpiration.getValue()));
         current.setType(notStartedInput.checked ? NOT_STARTED_NOTIFY : NOT_COMPLETED_NOTIFY);
         notificationEvent.fire(new NotificationEvent(current));
+        markEmailsAsCorrect();
         hide();
+    }
+
+    public void markEmailsAsCorrect() {
+        incorrectEmail.getStyle().setDisplay(Style.Display.NONE);
+        emails.getElement().getStyle().setBorderColor("#bbb");
+    }
+
+    @Override
+    public void setValidationFailed(String incorrectValue) {
+        incorrectEmail.setInnerText(CONSTANTS.incorrectEmail() + " " + incorrectValue);
+        incorrectEmail.getStyle().setDisplay(Style.Display.BLOCK);
+        emails.getElement().getStyle().setBorderColor("red");
     }
 
     void close() {
         notificationEvent.fire(new NotificationEvent(null));
         hide();
-    }
-
-    protected void onViolationError(Set<ConstraintViolation<NotificationRow>> violations) {
-        expressionTextArea.getElement().getStyle().setBorderColor("red");
-        errorDivPanel.innerHTML = violations.stream().map(v -> "* " + v.getMessage()).collect(Collectors.joining("\n"));
     }
 
     void hide() {
