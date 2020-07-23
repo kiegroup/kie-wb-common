@@ -16,6 +16,9 @@
 
 package org.kie.workbench.common.stunner.bpmn.client.forms.fields.notificationsEditor.widget;
 
+import java.util.Date;
+import java.util.List;
+
 import com.google.gwt.user.client.ui.IsWidget;
 import org.kie.workbench.common.stunner.bpmn.client.forms.fields.model.Expiration;
 import org.kie.workbench.common.stunner.bpmn.client.forms.fields.model.NotificationRow;
@@ -35,13 +38,61 @@ public interface NotificationEditorWidgetView extends IsWidget {
         void ok(String emails);
 
         String clearEmails(String emailsString);
+
+        void setRepeatNotificationVisibility(boolean invisible);
+
+        void setRepeatNotificationInvisibility(boolean invisible);
+
+        void setNotificationPanelDivVisibility(boolean isVisible);
+
+        void addUsers(List<String> users);
+
+        void addGroups(List<String> groups);
+
+        Expiration parseExpiration(String expirationAt, Expiration expiration);
+
+        void setExpiration(Expiration expiration, NotificationRow row);
+
+        String getRepeatCount(String repeatable);
+
+        void setExpirationDateTime(String expiresAt);
+
+        Date parseDate(String date);
+
+        String clearTimeZone(String value);
     }
+
+    void hideRepeatNotificationDiv();
+
+    void showRepeatNotificationDiv();
+
+    void showRepeatNotificationPanel();
+
+    void hideRepeatNotificationPanel();
 
     void init(final NotificationEditorWidgetView.Presenter presenter);
 
     void createOrEdit(NotificationWidgetView parent, NotificationRow row);
 
+    void addUserToLiveSearch(String user);
+
+    void addUsersToSelect(List<String> user);
+
+    void addGroupToLiveSearch(String group);
+
+    void addGroupsToSelect(List<String> groups);
+
+    void setExpressionTextValue(String value);
+
+    void setExpirationDateTime(NotificationRow row);
+
+    void enableRepeatNotification(Date dateTime, String timeZone, String period, String repeatCount);
+
+    void disableRepeatNotification(Date dateTime, String timeZone);
+
     void setReadOnly(boolean readOnly);
+
+    void setExpirationTimePeriod(String iso);
 
     void ok();
 

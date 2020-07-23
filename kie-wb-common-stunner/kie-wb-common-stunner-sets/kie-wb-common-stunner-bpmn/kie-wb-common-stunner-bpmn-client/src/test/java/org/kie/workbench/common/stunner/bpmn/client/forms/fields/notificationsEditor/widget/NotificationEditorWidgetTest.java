@@ -16,6 +16,7 @@
 
 package org.kie.workbench.common.stunner.bpmn.client.forms.fields.notificationsEditor.widget;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -37,7 +38,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.kie.workbench.common.forms.dynamic.client.rendering.renderers.lov.selector.input.MultipleSelectorInput;
 import org.kie.workbench.common.stunner.bpmn.client.forms.fields.model.Expiration;
 import org.kie.workbench.common.stunner.bpmn.client.forms.fields.model.NotificationRow;
 import org.kie.workbench.common.stunner.bpmn.client.forms.fields.model.NotificationType;
@@ -51,6 +51,7 @@ import org.uberfire.ext.widgets.common.client.dropdown.LiveSearchDropDownView;
 import org.uberfire.ext.widgets.common.client.dropdown.MultipleLiveSearchSelectionHandler;
 import org.uberfire.ext.widgets.common.client.dropdown.SingleLiveSearchSelectionHandler;
 
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.never;
@@ -63,13 +64,10 @@ import static org.powermock.api.mockito.PowerMockito.mock;
 @RunWith(PowerMockRunner.class)
 public class NotificationEditorWidgetTest extends ReflectionUtilsTest {
 
-    @GwtMock
     private NotificationEditorWidget presenter;
 
     @GwtMock
     private NotificationWidgetViewImpl notificationWidgetViewImpl;
-
-    private BaseModal modal;
 
     @GwtMock
     private TextArea body;
@@ -80,8 +78,6 @@ public class NotificationEditorWidgetTest extends ReflectionUtilsTest {
     @GwtMock
     private Select typeSelect;
 
-    private Option notStarted;
-
     private Option notCompleted;
 
     @GwtMock
@@ -89,12 +85,8 @@ public class NotificationEditorWidgetTest extends ReflectionUtilsTest {
 
     private DataBinder<NotificationRow> customerBinder;
 
-    private MultipleSelectorInput<String> multipleSelectorInputUsers;
-
     @GwtMock
     private Event<NotificationEvent> notificationEvent;
-
-    private MultipleSelectorInput<String> multipleSelectorInputGroups;
 
     @GwtMock
     private LiveSearchDropDown<String> liveSearchReplyToDropDown;
@@ -129,11 +121,11 @@ public class NotificationEditorWidgetTest extends ReflectionUtilsTest {
         super.setUp();
         GwtMockito.initMocks(this);
 
-        modal = mock(BaseModal.class);
+        BaseModal modal = mock(BaseModal.class);
         taskExpiration = mock(Select.class);
         setFieldValue(view, "taskExpiration", taskExpiration);
 
-        notStarted = mock(Option.class);
+        Option notStarted = mock(Option.class);
         notCompleted = mock(Option.class);
         customerBinder = mock(DataBinder.class);
         searchSelectionReplyToHandler = mock(SingleLiveSearchSelectionHandler.class);
@@ -150,18 +142,14 @@ public class NotificationEditorWidgetTest extends ReflectionUtilsTest {
 
         doNothing().when(notificationEvent).fire(any(NotificationEvent.class));
 
-        doCallRealMethod().when(presenter).setReadOnly(any(boolean.class));
-        doCallRealMethod().when(presenter).getNameHeader();
-        doCallRealMethod().when(presenter).ok(anyString());
-        setFieldValue(presenter, "view", view);
-        setFieldValue(presenter, "translationService", translationService);
+        presenter = new NotificationEditorWidget(view, translationService);
 
         doCallRealMethod().when(typeSelect).setValue(any(String.class));
         doCallRealMethod().when(typeSelect).getValue();
 
         doCallRealMethod().when(view).setReadOnly(any(boolean.class));
-        doCallRealMethod().when(view).createOrEdit(any(NotificationWidgetView.class), any(NotificationRow.class));
-        doCallRealMethod().when(view).ok();
+        doNothing().when(view).createOrEdit(any(NotificationWidgetView.class), any(NotificationRow.class));
+        doNothing().when(view).ok();
 
         setFieldValue(view, "modal", modal);
         setFieldValue(view, "body", body);
@@ -220,63 +208,7 @@ public class NotificationEditorWidgetTest extends ReflectionUtilsTest {
 
     @Test
     public void testGetNameHeader() {
-        Assert.assertEquals(presenter.getNameHeader(), "Notification");
-    }
-
-    @Test
-    public void testCreateAndSaveEmpty() {
-        NotificationRow test = new NotificationRow();
-        doNothing().when(view).hide();
-        when(taskExpiration.getValue()).thenReturn(Expiration.EXPRESSION.getName());
-
-        when(customerBinder.getModel()).thenReturn(test);
-        when(notCompleted.getValue()).thenReturn(NotificationType.NOT_COMPLETED_NOTIFY.getAlias());
-        when(typeSelect.getSelectedItem()).thenReturn(notCompleted);
-
-        when(searchSelectionReplyToHandler.getSelectedValue()).thenReturn("");
-        when(searchSelectionFromHandler.getSelectedValue()).thenReturn("");
-        when(multipleLiveSearchSelectionHandlerGroups.getSelectedValues()).thenReturn(Collections.EMPTY_LIST);
-        when(multipleLiveSearchSelectionHandlerUsers.getSelectedValues()).thenReturn(Collections.EMPTY_LIST);
-        view.createOrEdit(notificationWidgetViewImpl, test);
-        view.ok();
-
-        NotificationRow result = getFieldValue(NotificationEditorWidgetViewImpl.class, view, "current");
-        Assert.assertEquals(result, test);
-    }
-
-    @Test
-    public void testCreateAndSave() {
-        when(taskExpiration.getValue()).thenReturn(Expiration.EXPRESSION.getName());
-
-        List<String> groups = Arrays.asList("AAA", "BBB", "CCC", "DDD");
-        List<String> users = Arrays.asList("aaa", "bbb", "ccc");
-
-        doNothing().when(view).hide();
-        when(subject.getValue()).thenReturn("QWERTY!");
-        when(body.getValue()).thenReturn("QWERTY!");
-
-        NotificationRow test = new NotificationRow();
-        doNothing().when(view).hide();
-
-        when(customerBinder.getModel()).thenReturn(test);
-        when(notCompleted.getValue()).thenReturn(NotificationType.NOT_COMPLETED_NOTIFY.getAlias());
-        when(typeSelect.getSelectedItem()).thenReturn(notCompleted);
-
-        when(searchSelectionReplyToHandler.getSelectedValue()).thenReturn("admin");
-        when(searchSelectionFromHandler.getSelectedValue()).thenReturn("admin");
-
-        when(multipleLiveSearchSelectionHandlerGroups.getSelectedValues()).thenReturn(groups);
-        when(multipleLiveSearchSelectionHandlerUsers.getSelectedValues()).thenReturn(users);
-        view.createOrEdit(notificationWidgetViewImpl, test);
-        view.ok();
-
-        Assert.assertEquals("QWERTY!", test.getSubject());
-        Assert.assertEquals("QWERTY!", test.getBody());
-        Assert.assertEquals("admin", test.getReplyTo());
-        Assert.assertEquals("admin", test.getFrom());
-        Assert.assertEquals(NotificationType.NOT_COMPLETED_NOTIFY, test.getType());
-        Assert.assertEquals(groups, test.getGroups());
-        Assert.assertEquals(users, test.getUsers());
+        assertEquals("Notification", presenter.getNameHeader());
     }
 
     @Test
@@ -289,9 +221,15 @@ public class NotificationEditorWidgetTest extends ReflectionUtilsTest {
 
     @Test
     public void testOkWithCorrectString() {
-        String stringWithInvalidEmail = "valid@email.com";
-        doNothing().when(view).ok();
-        presenter.ok(stringWithInvalidEmail);
+        String stringWithValidEmail = "valid@email.com";
+        presenter.ok(stringWithValidEmail);
+        verify(view, never()).setValidationFailed(anyString());
+        verify(view).ok();
+    }
+
+    @Test
+    public void testOkWithEmptyValue() {
+        presenter.ok("");
         verify(view, never()).setValidationFailed(anyString());
         verify(view).ok();
     }
@@ -327,5 +265,221 @@ public class NotificationEditorWidgetTest extends ReflectionUtilsTest {
         Assert.assertNotEquals(NotificationType.NOT_STARTED_NOTIFY, test.getType());
         Assert.assertNotEquals(groups, test.getGroups());
         Assert.assertNotEquals(users, test.getUsers());
+    }
+
+    @Test
+    public void testClearEmailsWithEmptyValue() {
+        assertEquals("", presenter.clearEmails(""));
+    }
+
+    @Test
+    public void testClearEmailsFromSpaces() {
+        assertEquals("abcd", presenter.clearEmails(" a b  c   d  "));
+    }
+
+    @Test
+    public void testClearEmailsFromCommas() {
+        assertEquals("abc", presenter.clearEmails(",abc,"));
+    }
+
+    @Test
+    public void testGetExpirationLabelDateTime() {
+        presenter.getExpirationLabel(Expiration.DATETIME);
+        verify(translationService).getValue("notification.expiration.datetime.label");
+    }
+
+    @Test
+    public void testGetExpirationLabelExpression() {
+        presenter.getExpirationLabel(Expiration.EXPRESSION);
+        verify(translationService).getValue("notification.expiration.expression.label");
+    }
+
+    @Test
+    public void testGetExpirationLabelTimePeriod() {
+        presenter.getExpirationLabel(Expiration.TIME_PERIOD);
+        verify(translationService).getValue("notification.expiration.time.period.label");
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void testGetExpirationLabelNull() {
+        presenter.getExpirationLabel(null);
+    }
+
+    @Test
+    public void testShowRepeatNotification() {
+        presenter.setRepeatNotificationVisibility(true);
+        verify(view).showRepeatNotificationDiv();
+        verify(view, never()).hideRepeatNotificationDiv();
+    }
+
+    @Test
+    public void testHideRepeatNotification() {
+        presenter.setRepeatNotificationVisibility(false);
+        verify(view).hideRepeatNotificationDiv();
+        verify(view, never()).showRepeatNotificationDiv();
+    }
+
+    @Test
+    public void testShowInvisibleRepeatNotification() {
+        presenter.setRepeatNotificationInvisibility(false);
+        verify(view).showRepeatNotificationDiv();
+        verify(view, never()).hideRepeatNotificationDiv();
+    }
+
+    @Test
+    public void testHideInvisibleRepeatNotification() {
+        presenter.setRepeatNotificationInvisibility(true);
+        verify(view).hideRepeatNotificationDiv();
+        verify(view, never()).showRepeatNotificationDiv();
+    }
+
+    @Test
+    public void testShowRepeatNotificationPanel() {
+        presenter.setNotificationPanelDivVisibility(true);
+        verify(view).showRepeatNotificationPanel();
+        verify(view, never()).hideRepeatNotificationPanel();
+    }
+
+    @Test
+    public void testHideRepeatNotificationPanel() {
+        presenter.setNotificationPanelDivVisibility(false);
+        verify(view).hideRepeatNotificationPanel();
+        verify(view, never()).showRepeatNotificationPanel();
+    }
+
+    @Test
+    public void testAddEmptyUsers() {
+        presenter.addUsers(null);
+        presenter.addUsers(new ArrayList<>());
+        verify(view, never()).addUserToLiveSearch(anyString());
+        verify(view, never()).addUsersToSelect(any());
+    }
+
+    @Test
+    public void testAddUsers() {
+        String user1 = "user1";
+        String user2 = "user2";
+        List<String> users = new ArrayList<>();
+        users.add(user1);
+        users.add(user2);
+
+        presenter.addUsers(users);
+        verify(view).addUsersToSelect(users);
+        verify(view).addUserToLiveSearch(user1);
+        verify(view).addUserToLiveSearch(user2);
+    }
+
+    @Test
+    public void testAddEmptyGroups() {
+        presenter.addGroups(null);
+        presenter.addGroups(new ArrayList<>());
+        verify(view, never()).addGroupToLiveSearch(anyString());
+        verify(view, never()).addGroupsToSelect(any());
+    }
+
+    @Test
+    public void testAddGroups() {
+        String group1 = "group1";
+        String group2 = "group2";
+        List<String> users = new ArrayList<>();
+        users.add(group1);
+        users.add(group2);
+
+        presenter.addGroups(users);
+        verify(view).addGroupsToSelect(users);
+        verify(view).addGroupToLiveSearch(group1);
+        verify(view).addGroupToLiveSearch(group2);
+    }
+
+    @Test
+    public void testParseExpirationAtIsEmpty() {
+        assertEquals(Expiration.TIME_PERIOD, presenter.parseExpiration(null, Expiration.DATETIME));
+        assertEquals(Expiration.TIME_PERIOD, presenter.parseExpiration("", Expiration.DATETIME));
+    }
+
+    @Test
+    public void testParseExpirationIsEmpty() {
+        assertEquals(Expiration.DATETIME, presenter.parseExpiration("nonEmpty", Expiration.DATETIME));
+    }
+
+    @Test
+    public void testParseExpiration() {
+        assertEquals(Expiration.EXPRESSION, presenter.parseExpiration("R5", null));
+    }
+
+    @Test
+    public void testSetExpirationExpression() {
+        String expiresAt = "some value";
+        NotificationRow row = new NotificationRow();
+        row.setExpiresAt(expiresAt);
+
+        presenter.setExpiration(Expiration.EXPRESSION, row);
+        verify(view).setExpressionTextValue(expiresAt);
+        verify(view, never()).setExpirationDateTime(any());
+        verify(view, never()).setExpirationTimePeriod(any());
+    }
+
+    @Test
+    public void testSetExpirationDateTime() {
+        String expiresAt = "some value";
+        NotificationRow row = new NotificationRow();
+        row.setExpiresAt(expiresAt);
+
+        presenter.setExpiration(Expiration.DATETIME, row);
+        verify(view, never()).setExpressionTextValue(any());
+        verify(view).setExpirationDateTime(row);
+        verify(view, never()).setExpirationTimePeriod(any());
+    }
+
+    @Test
+    public void testSetExpirationTimePeriod() {
+        String expiresAt = "some value";
+        NotificationRow row = new NotificationRow();
+        row.setExpiresAt(expiresAt);
+
+        presenter.setExpiration(Expiration.TIME_PERIOD, row);
+        verify(view, never()).setExpressionTextValue(any());
+        verify(view, never()).setExpirationDateTime(any());
+        verify(view).setExpirationTimePeriod(expiresAt);
+    }
+
+    @Test
+    public void testClearZeroTimeZone() {
+        assertEquals("0", presenter.clearTimeZone("00Z"));
+    }
+
+    @Test
+    public void testClearTimeZone() {
+        assertEquals("-02Z", presenter.clearTimeZone("-02Z"));
+    }
+
+    @Test
+    public void testSetEmptyExpirationDateTime() {
+        presenter.setExpirationDateTime("");
+        verify(view, never()).enableRepeatNotification(any(), any(), any(), any());
+        verify(view, never()).disableRepeatNotification(any(), any());
+    }
+
+    @Test
+    public void testDisableRepeatNotification() {
+        String dateTime = "2020-07-23T16:36";
+        String timeZone = "+02:00";
+        presenter.setExpirationDateTime(dateTime + timeZone);
+        verify(view, never()).enableRepeatNotification(any(), any(), any(), any());
+        verify(view).disableRepeatNotification(presenter.parseDate(dateTime), timeZone);
+    }
+
+    @Test
+    public void testEnableRepeatNotification() {
+        String dateTime = "2020-07-23T16:36";
+        String timeZone = "+02:00";
+        String period = "P2D";
+        String repeatCount = "R2";
+        presenter.setExpirationDateTime(repeatCount + "/" + dateTime + timeZone + "/" + period);
+        verify(view).enableRepeatNotification(presenter.parseDate(dateTime),
+                                              timeZone,
+                                              period,
+                                              repeatCount);
+        verify(view, never()).disableRepeatNotification(any(), any());
     }
 }
