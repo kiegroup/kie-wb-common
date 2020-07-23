@@ -392,6 +392,36 @@ public class NotificationEditorWidgetTest extends ReflectionUtilsTest {
     }
 
     @Test
+    public void testAddFrom() {
+        String from = "from";
+        presenter.addFrom(from);
+        verify(view).addFrom(from);
+    }
+
+    @Test
+    public void testAddEmptyFrom() {
+        String from = "";
+        presenter.addFrom(null);
+        presenter.addFrom(from);
+        verify(view, never()).addFrom(from);
+    }
+
+    @Test
+    public void testAddReplyTo() {
+        String replyTo = "replyTo";
+        presenter.addReplyTo(replyTo);
+        verify(view).addReplyTo(replyTo);
+    }
+
+    @Test
+    public void testAddEmptyReplyTo() {
+        String replyTo = "";
+        presenter.addReplyTo(null);
+        presenter.addReplyTo(replyTo);
+        verify(view, never()).addReplyTo(replyTo);
+    }
+
+    @Test
     public void testParseExpirationAtIsEmpty() {
         assertEquals(Expiration.TIME_PERIOD, presenter.parseExpiration(null, Expiration.DATETIME));
         assertEquals(Expiration.TIME_PERIOD, presenter.parseExpiration("", Expiration.DATETIME));

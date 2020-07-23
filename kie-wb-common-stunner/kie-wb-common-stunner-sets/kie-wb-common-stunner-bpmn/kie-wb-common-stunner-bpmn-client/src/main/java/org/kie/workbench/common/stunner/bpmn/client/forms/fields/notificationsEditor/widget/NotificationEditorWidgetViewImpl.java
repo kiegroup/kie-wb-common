@@ -531,18 +531,27 @@ public class NotificationEditorWidgetViewImpl extends Composite implements Notif
         customerBinder.setModel(row.clone());
         presenter.addUsers(row.getUsers());
         presenter.addGroups(row.getGroups());
-
-        assigneeLiveSearchServiceFrom.addCustomEntry(row.getFrom());
-        liveSearchFromDropDown.setSelectedItem(row.getFrom());
-
-        assigneeLiveSearchServiceReplyTo.addCustomEntry(row.getReplyTo());
-        liveSearchReplyToDropDown.setSelectedItem(row.getReplyTo());
+        presenter.addFrom(row.getFrom());
+        presenter.addReplyTo(row.getReplyTo());
 
         notCompletedInput.checked = NOT_COMPLETED_NOTIFY.equals(row.getType());
         notStartedInput.textContent = "test value";
 
         setExpiration(row);
         modal.show();
+    }
+
+    @Override
+    public void addFrom(String from) {
+        assigneeLiveSearchServiceFrom.addCustomEntry(from);
+        liveSearchFromDropDown.setSelectedItem(from);
+    }
+
+    @Override
+    public void addReplyTo(String replyTo) {
+        assigneeLiveSearchServiceReplyTo.addCustomEntry(replyTo);
+        liveSearchReplyToDropDown.setSelectedItem(replyTo);
+
     }
 
     @Override

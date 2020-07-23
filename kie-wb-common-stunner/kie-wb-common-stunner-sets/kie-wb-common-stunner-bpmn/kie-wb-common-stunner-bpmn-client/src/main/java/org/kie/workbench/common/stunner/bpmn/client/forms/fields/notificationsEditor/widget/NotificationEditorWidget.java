@@ -174,6 +174,20 @@ public class NotificationEditorWidget implements IsWidget,
     }
 
     @Override
+    public void addFrom(String from) {
+        if (nonEmpty(from)) {
+            view.addFrom(from);
+        }
+    }
+
+    @Override
+    public void addReplyTo(String replyTo) {
+        if (nonEmpty(replyTo)) {
+            view.addReplyTo(replyTo);
+        }
+    }
+
+    @Override
     public Expiration parseExpiration(String expirationAt, Expiration expiration) {
         if (isEmpty(expirationAt)) {
             return Expiration.TIME_PERIOD;

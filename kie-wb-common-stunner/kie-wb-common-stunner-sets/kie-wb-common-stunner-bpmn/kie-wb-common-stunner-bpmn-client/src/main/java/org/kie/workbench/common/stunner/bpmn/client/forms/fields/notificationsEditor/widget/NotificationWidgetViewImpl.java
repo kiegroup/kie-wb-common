@@ -313,7 +313,7 @@ public class NotificationWidgetViewImpl extends Composite implements Notificatio
         };
         deleteColumn.setSortable(false);
         table.addColumn(deleteColumn, presenter.getDeleteLabel());
-        table.setColumnWidth(deleteColumn, 50, Style.Unit.PX);
+        table.setColumnWidth(deleteColumn, 60, Style.Unit.PX);
     }
 
     private void initEdit() {

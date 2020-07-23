@@ -49,6 +49,10 @@ public interface NotificationEditorWidgetView extends IsWidget {
 
         void addGroups(List<String> groups);
 
+        void addFrom(String string);
+
+        void addReplyTo(String replyTo);
+
         Expiration parseExpiration(String expirationAt, Expiration expiration);
 
         void setExpiration(Expiration expiration, NotificationRow row);
@@ -73,6 +77,10 @@ public interface NotificationEditorWidgetView extends IsWidget {
     void init(final NotificationEditorWidgetView.Presenter presenter);
 
     void createOrEdit(NotificationWidgetView parent, NotificationRow row);
+
+    void addFrom(String from);
+
+    void addReplyTo(String replyTo);
 
     void addUserToLiveSearch(String user);
 
