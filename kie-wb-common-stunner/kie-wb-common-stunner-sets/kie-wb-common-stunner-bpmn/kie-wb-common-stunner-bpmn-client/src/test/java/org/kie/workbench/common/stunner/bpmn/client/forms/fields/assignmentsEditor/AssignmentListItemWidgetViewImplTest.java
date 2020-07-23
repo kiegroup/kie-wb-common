@@ -361,9 +361,8 @@ public class AssignmentListItemWidgetViewImplTest {
     public void testSetConstantToOutput() {
         AssignmentRow row = new AssignmentRow(null, OUTPUT, null, null, null, null);
         when(view.getModel()).thenReturn(row);
-        view.setExpression("hello");
-
-        assertNull(view.getModel().getExpression());
+        view.setExpression("{hello}");
+        assertEquals(view.getModel().getExpression(), "{hello}");
     }
 
     @Test

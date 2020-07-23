@@ -281,13 +281,7 @@ public class AssignmentListItemWidgetViewImpl extends Composite implements Assig
 
     @Override
     public void setExpression(final String expression) {
-        if (getModel().getVariableType() == OUTPUT && isConstant(expression)) {
-            notification.fire(new NotificationEvent(StunnerFormsClientFieldsConstants.CONSTANTS.Only_expressions_allowed_for_output(),
-                                                    NotificationEvent.NotificationType.ERROR));
-            processVarComboBox.textBoxValueChanged("");
-        } else {
             getModel().setExpression(expression);
-        }
     }
 
     private static boolean isConstant(String expression) {
