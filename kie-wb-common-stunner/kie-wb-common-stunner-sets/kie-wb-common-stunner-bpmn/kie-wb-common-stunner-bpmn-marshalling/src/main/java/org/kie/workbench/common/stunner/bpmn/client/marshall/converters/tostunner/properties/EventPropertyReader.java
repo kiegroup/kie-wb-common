@@ -27,6 +27,7 @@ import org.eclipse.bpmn2.Event;
 import org.eclipse.bpmn2.EventDefinition;
 import org.eclipse.bpmn2.Expression;
 import org.eclipse.bpmn2.FormalExpression;
+import org.eclipse.bpmn2.LinkEventDefinition;
 import org.eclipse.bpmn2.SignalEventDefinition;
 import org.eclipse.bpmn2.TimerEventDefinition;
 import org.eclipse.bpmn2.di.BPMNDiagram;
@@ -98,6 +99,15 @@ public abstract class EventPropertyReader extends FlowElementPropertyReader {
         if (eventDefinitions.size() == 1 && eventDefinitions.get(0) instanceof SignalEventDefinition) {
             String signalRefId = ((SignalEventDefinition) eventDefinitions.get(0)).getSignalRef();
             return signalRefId != null ? definitionResolver.resolveSignalName(signalRefId) : "";
+        }
+        return "";
+    }
+
+    public String getLinkRef() {
+        List<EventDefinition> eventDefinitions = getEventDefinitions();
+        if (eventDefinitions.size() == 1 && eventDefinitions.get(0) instanceof LinkEventDefinition) {
+            String linkRef = ((LinkEventDefinition) eventDefinitions.get(0)).getName();
+            return linkRef != null ? linkRef : "";
         }
         return "";
     }

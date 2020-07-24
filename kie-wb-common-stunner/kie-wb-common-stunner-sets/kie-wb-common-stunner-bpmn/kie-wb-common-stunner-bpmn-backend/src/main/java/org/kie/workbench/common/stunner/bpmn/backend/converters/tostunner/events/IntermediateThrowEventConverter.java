@@ -84,7 +84,7 @@ public class IntermediateThrowEventConverter extends AbstractConverter implement
             case 1:
                 return Match.of(EventDefinition.class, BpmnNode.class)
                         .when(SignalEventDefinition.class, e -> signalEvent(event, e))
-                        .when(LinkEventDefinition.class, e -> linkEvent(event, e))
+                        .when(LinkEventDefinition.class, e -> linkEvent(event))
                         .when(MessageEventDefinition.class, e -> messageEvent(event, e))
                         .when(EscalationEventDefinition.class, e -> escalationEvent(event, e))
                         .when(CompensateEventDefinition.class, e -> compensationEvent(event, e))
@@ -161,8 +161,7 @@ public class IntermediateThrowEventConverter extends AbstractConverter implement
         return BpmnNode.of(node, p);
     }
 
-    private BpmnNode linkEvent(IntermediateThrowEvent event,
-                               LinkEventDefinition eventDefinition) {
+    private BpmnNode linkEvent(IntermediateThrowEvent event) {
 
         Node<View<IntermediateLinkEventThrowing>, Edge> node =
                 factoryManager.newNode(event.getId(), IntermediateLinkEventThrowing.class);
