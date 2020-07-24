@@ -17,7 +17,6 @@
 package org.kie.workbench.common.dmn.client.api;
 
 import com.google.gwtmockito.GwtMockitoTestRunner;
-import org.appformer.client.context.Channel;
 import org.appformer.client.context.EditorContextProvider;
 import org.junit.Before;
 import org.junit.Test;
