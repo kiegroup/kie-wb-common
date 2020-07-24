@@ -414,7 +414,25 @@
     stroke-width: 5px;
     stroke: #e5a000;
 }
-#intermediateSignalCatchingEvent #signal-catching {
+#intermediateLinkCatchingEvent #link-catching {
+    opacity: 1;
+    fill: #e5a000;
+}
+
+#intermediateLinkCatchingEvent #event-background {
+    opacity: 1;
+    fill: #fbefcf;
+}
+#intermediateLinkCatchingEvent #intermediate {
+    opacity: 1;
+    fill-opacity: 1;
+    fill: #e5a000;
+    stroke-opacity: 0;
+    stroke-dasharray: 15, 15;
+    stroke-width: 5px;
+    stroke: #e5a000;
+}
+#intermediateLinkCatchingEvent #link-catching {
     opacity: 1;
     fill: #e5a000;
 }
@@ -495,6 +513,19 @@
     fill: #007a87;
 }
 #intermediateSignalThrowingEvent #signal-throwing {
+    opacity: 1;
+    fill: #007a87;
+}
+
+#intermediateLinkThrowingEvent #event-background {
+    opacity: 1;
+    fill: #bedee1;
+}
+#intermediateLinkThrowingEvent #intermediate {
+    opacity: 1;
+    fill: #007a87;
+}
+#intermediateLinkThrowingEvent #link-throwing {
     opacity: 1;
     fill: #007a87;
 }
