@@ -33,7 +33,6 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.xml.namespace.QName;
 
-import elemental2.dom.DomGlobal;
 import elemental2.promise.Promise;
 import jsinterop.base.Js;
 import org.kie.workbench.common.dmn.api.DMNDefinitionSet;
@@ -204,9 +203,6 @@ public class DMNMarshallerKogitoUnmarshaller {
         final Promise<Map<JSITImport, PMMLDocumentMetadata>> pmmlDocumentsAsync = dmnMarshallerImportsHelper.getPMMLDocumentsAsync(metadata, jsiDefinitions.getImport());
 
         return pmmlDocumentsAsync.then(pmmlDocuments -> importAsync.then(importDefinitions -> {
-
-            DomGlobal.console.log("Imported definitions: " + importDefinitions.size());
-            DomGlobal.console.log("PMML definitions: " + pmmlDocuments.size());
 
             // Map external DRGElements
             final List<JSIDMNShape> dmnShapes = new ArrayList<>();
