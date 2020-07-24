@@ -30,9 +30,11 @@ import org.guvnor.common.services.project.model.Module;
 import org.guvnor.common.services.project.model.Package;
 import org.jboss.errai.common.client.api.Caller;
 import org.jboss.errai.common.client.api.IsElement;
+import org.jboss.errai.common.client.api.RemoteCallback;
 import org.jboss.errai.common.client.dom.HTMLElement;
 import org.kie.workbench.common.services.shared.project.KieModulePackages;
 import org.kie.workbench.common.services.shared.project.KieModuleService;
+import org.kie.workbench.common.services.shared.project.PackageItem;
 import org.uberfire.mvp.Command;
 
 /**
@@ -45,8 +47,8 @@ public class PackageListBox
     private PackageListBoxView view;
     private WorkspaceProjectContext projectContext;
     protected Caller<KieModuleService> moduleService;
-    private Map<String, Package> packages;
-    private String selectedPackage = null;
+    private Map<String, PackageItem> packages;
+    private Package selectedPackage = null;
 
     @Inject
     public PackageListBox(final PackageListBoxView view,
@@ -80,31 +82,29 @@ public class PackageListBox
     private void showListOfPackages(final boolean includeDefaultPackage,
                                     final Command packagesLoadedCommand) {
         final Module activeModule = projectContext.getActiveModule().orElse(null);
-        if (activeModule == null) {
-            return;
-        } else {
+        if (activeModule != null) {
             moduleService.call((KieModulePackages kieModulePackages) -> {
                 //Sort by caption
-                    final List<Package> sortedPackages = getSortedPackages(includeDefaultPackage,
+                final List<PackageItem> sortedPackages = getSortedPackages(includeDefaultPackage,
                                                                            kieModulePackages.getPackages());
 
-                    // Disable and set default content if no Packages available
-                    if (sortedPackages.isEmpty()) {
-                        return;
-                    }
-                    addPackagesToSelect(sortedPackages,
-                                        kieModulePackages.getDefaultPackage());
+                // Disable and set default content if no Packages available
+                if (sortedPackages.isEmpty()) {
+                    return;
+                }
+                addPackagesToSelect(sortedPackages,
+                                    kieModulePackages.getDefaultPackage());
 
-                    if (packagesLoadedCommand != null) {
-                        packagesLoadedCommand.execute();
-                    }
-             }).resolveModulePackages(activeModule);
+                if (packagesLoadedCommand != null) {
+                    packagesLoadedCommand.execute();
+                }
+            }).resolveModulePackages(activeModule);
         }
     }
 
-    private List<Package> getSortedPackages(final boolean includeDefaultPackage,
-                                            final Set<Package> pkgs) {
-        final List<Package> sortedPackages = new ArrayList<>(pkgs);
+    private List<PackageItem> getSortedPackages(final boolean includeDefaultPackage,
+                                                final Set<PackageItem> pkgs) {
+        final List<PackageItem> sortedPackages = new ArrayList<>(pkgs);
         Collections.sort(sortedPackages,
                          (p1, p2) -> p1.getCaption().compareTo(p2.getCaption()));
 
@@ -118,27 +118,27 @@ public class PackageListBox
         return sortedPackages;
     }
 
-    private void addPackagesToSelect(final List<Package> sortedPackages,
+    private void addPackagesToSelect(final List<PackageItem> sortedPackages,
                                      final Package activePackage) {
 
         final Map<String, String> packageNames = new HashMap<>();
 
-        for (Package pkg : sortedPackages) {
+        for (PackageItem pkg : sortedPackages) {
             packageNames.put(pkg.getCaption(),
                              pkg.getPackageName());
             packages.put(pkg.getCaption(),
                          pkg);
         }
 
-        selectedPackage = getSelectedPackage(activePackage,
-                                             packageNames);
+        setSelectedPackage(activePackage);
 
-        view.setUp(selectedPackage,
+        view.setUp(getSelectedPackageName(activePackage,
+                                          packageNames),
                    packageNames);
     }
 
-    private String getSelectedPackage(final Package activePackage,
-                                      final Map<String, String> packageNames) {
+    private String getSelectedPackageName(final Package activePackage,
+                                          final Map<String, String> packageNames) {
         if (packageNames.containsKey(activePackage.getCaption())) {
             return activePackage.getCaption();
         } else if (!packageNames.isEmpty()) {
@@ -148,12 +148,24 @@ public class PackageListBox
         }
     }
 
-    public Package getSelectedPackage() {
-
-        if (packages.isEmpty()) {
-            return null;
+    private void setSelectedPackage(final String selectedPackage) {
+        final Module activeModule = projectContext.getActiveModule().orElse(null);
+        if (activeModule == null) {
+            return;
+        } else {
+            moduleService
+                    .call((RemoteCallback<Package>) this::setSelectedPackage)
+                    .resolvePackage(activeModule,
+                                    selectedPackage);
         }
-        return packages.get(selectedPackage);
+    }
+
+    private void setSelectedPackage(final Package selectedPackage) {
+        this.selectedPackage = selectedPackage;
+    }
+
+    public Package getSelectedPackage() {
+        return selectedPackage;
     }
 
     @Override
@@ -162,6 +174,6 @@ public class PackageListBox
     }
 
     public void onPackageSelected(final String selectedPackage) {
-        this.selectedPackage = selectedPackage;
+        setSelectedPackage(selectedPackage);
     }
 }
