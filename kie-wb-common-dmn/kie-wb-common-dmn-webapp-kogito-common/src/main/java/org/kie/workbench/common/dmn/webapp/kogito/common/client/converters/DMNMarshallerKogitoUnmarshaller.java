@@ -198,14 +198,15 @@ public class DMNMarshallerKogitoUnmarshaller {
         final List<JSITDRGElement> diagramDrgElements = jsiDefinitions.getDrgElement();
         final Optional<JSIDMNDiagram> dmnDDDiagram = findJSIDiagram(jsiDefinitions);
 
-        DomGlobal.console.log("Preparing Async calls");
         // Get external DMN model information
         final Promise<Map<JSITImport, JSITDefinitions>> importAsync = dmnMarshallerImportsHelper.getImportDefinitionsAsync(metadata, jsiDefinitions.getImport());
         // Get external PMML model information
         final Promise<Map<JSITImport, PMMLDocumentMetadata>> pmmlDocumentsAsync = dmnMarshallerImportsHelper.getPMMLDocumentsAsync(metadata, jsiDefinitions.getImport());
-        return importAsync.then(importDefinitions -> {
-            DomGlobal.console.log("Imported definitions: " + importDefinitions.size());
 
+        return pmmlDocumentsAsync.then(pmmlDocuments -> importAsync.then(importDefinitions -> {
+
+            DomGlobal.console.log("Imported definitions: " + importDefinitions.size());
+            DomGlobal.console.log("PMML definitions: " + pmmlDocuments.size());
 
             // Map external DRGElements
             final List<JSIDMNShape> dmnShapes = new ArrayList<>();
@@ -420,9 +421,6 @@ public class DMNMarshallerKogitoUnmarshaller {
             elems.values().stream().map(Entry::getValue).forEach(graph::addNode);
             textAnnotations.values().forEach(graph::addNode);
 
-            pmmlDocumentsAsync.then(pmmlDocuments -> {
-                DomGlobal.console.log("PMML definitions: " + pmmlDocuments.size());
-
                 final Node<?, ?> dmnDiagramRoot = DMNMarshallerUtils.findDMNDiagramRoot(graph);
                 final Definitions definitionsStunnerPojo = DefinitionsConverter.wbFromDMN(jsiDefinitions,
                                                                                           importDefinitions,
@@ -489,10 +487,8 @@ public class DMNMarshallerKogitoUnmarshaller {
                         });
                     }
                 });
-                return promises.resolve();
-            });
-            return promises.resolve(graph);
-        });
+                return promises.resolve(graph);
+        }));
     }
 
     private Optional<JSIDMNDiagram> findJSIDiagram(final JSITDefinitions dmnXml) {
