@@ -25,6 +25,8 @@ import javax.enterprise.event.Event;
 import javax.validation.Validator;
 
 import com.google.gwt.dom.client.ParagraphElement;
+import com.google.gwt.regexp.shared.MatchResult;
+import com.google.gwt.regexp.shared.RegExp;
 import com.google.gwtmockito.GwtMock;
 import com.google.gwtmockito.GwtMockito;
 import elemental2.dom.HTMLButtonElement;
@@ -40,7 +42,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.stunner.bpmn.client.forms.fields.model.Expiration;
 import org.kie.workbench.common.stunner.bpmn.client.forms.fields.model.NotificationRow;
-import org.kie.workbench.common.stunner.bpmn.client.forms.fields.model.NotificationType;
 import org.kie.workbench.common.stunner.bpmn.client.forms.fields.notificationsEditor.event.NotificationEvent;
 import org.kie.workbench.common.stunner.bpmn.client.forms.util.ReflectionUtilsTest;
 import org.kie.workbench.common.stunner.core.client.i18n.ClientTranslationService;
@@ -52,6 +53,11 @@ import org.uberfire.ext.widgets.common.client.dropdown.MultipleLiveSearchSelecti
 import org.uberfire.ext.widgets.common.client.dropdown.SingleLiveSearchSelectionHandler;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.kie.workbench.common.stunner.bpmn.client.forms.fields.model.NotificationType.NOT_COMPLETED_NOTIFY;
+import static org.kie.workbench.common.stunner.bpmn.client.forms.fields.model.NotificationType.NOT_STARTED_NOTIFY;
+import static org.kie.workbench.common.stunner.bpmn.client.forms.fields.notificationsEditor.validation.ExpirationTypeOracle.PERIOD;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.never;
@@ -202,8 +208,8 @@ public class NotificationEditorWidgetTest extends ReflectionUtilsTest {
                                                    view,
                                                    "okButton");
 
-        Assert.assertFalse(closeButton.disabled);
-        Assert.assertTrue(okButton.disabled);
+        assertFalse(closeButton.disabled);
+        assertTrue(okButton.disabled);
     }
 
     @Test
@@ -247,7 +253,7 @@ public class NotificationEditorWidgetTest extends ReflectionUtilsTest {
         doNothing().when(view).hide();
 
         when(customerBinder.getModel()).thenReturn(test);
-        when(notCompleted.getValue()).thenReturn(NotificationType.NOT_STARTED_NOTIFY.getAlias());
+        when(notCompleted.getValue()).thenReturn(NOT_STARTED_NOTIFY.getAlias());
         when(typeSelect.getSelectedItem()).thenReturn(notCompleted);
 
         when(searchSelectionReplyToHandler.getSelectedValue()).thenReturn("admin");
@@ -262,7 +268,7 @@ public class NotificationEditorWidgetTest extends ReflectionUtilsTest {
         Assert.assertNotEquals("QWERTY!", test.getBody());
         Assert.assertNotEquals("admin", test.getReplyTo());
         Assert.assertNotEquals("admin", test.getFrom());
-        Assert.assertNotEquals(NotificationType.NOT_STARTED_NOTIFY, test.getType());
+        Assert.assertNotEquals(NOT_STARTED_NOTIFY, test.getType());
         Assert.assertNotEquals(groups, test.getGroups());
         Assert.assertNotEquals(users, test.getUsers());
     }
@@ -511,5 +517,34 @@ public class NotificationEditorWidgetTest extends ReflectionUtilsTest {
                                               period,
                                               repeatCount);
         verify(view, never()).disableRepeatNotification(any(), any());
+    }
+
+    @Test
+    public void testGetNotificationType() {
+        assertEquals(NOT_STARTED_NOTIFY, presenter.getNotificationType(true));
+        assertEquals(NOT_COMPLETED_NOTIFY, presenter.getNotificationType(false));
+    }
+
+    @Test
+    public void testIsRepeatable() {
+        assertTrue(presenter.isRepeatable("R/something"));
+        assertFalse(presenter.isRepeatable("something"));
+    }
+
+    @Test
+    public void testMinutesOrMonth() {
+        String minutes = "PT4M";
+        String month = "P11M";
+        String repeatMonth = "R/P7M";
+        String repeatMinutes = "R/PT9M";
+
+        assertEquals("m", presenter.minuteOrMonth(getMatchFor(minutes)));
+        assertEquals("m", presenter.minuteOrMonth(getMatchFor(repeatMinutes)));
+        assertEquals("M", presenter.minuteOrMonth(getMatchFor(month)));
+        assertEquals("M", presenter.minuteOrMonth(getMatchFor(repeatMonth)));
+    }
+
+    private MatchResult getMatchFor(String pattern) {
+        return RegExp.compile(PERIOD).exec(pattern);
     }
 }

@@ -30,9 +30,12 @@ import com.google.gwt.user.client.ui.Widget;
 import org.kie.workbench.common.stunner.bpmn.client.forms.fields.i18n.StunnerBPMNConstants;
 import org.kie.workbench.common.stunner.bpmn.client.forms.fields.model.Expiration;
 import org.kie.workbench.common.stunner.bpmn.client.forms.fields.model.NotificationRow;
+import org.kie.workbench.common.stunner.bpmn.client.forms.fields.model.NotificationType;
 import org.kie.workbench.common.stunner.bpmn.client.forms.fields.notificationsEditor.validation.ExpirationTypeOracle;
 import org.kie.workbench.common.stunner.core.client.i18n.ClientTranslationService;
 
+import static org.kie.workbench.common.stunner.bpmn.client.forms.fields.model.NotificationType.NOT_COMPLETED_NOTIFY;
+import static org.kie.workbench.common.stunner.bpmn.client.forms.fields.model.NotificationType.NOT_STARTED_NOTIFY;
 import static org.kie.workbench.common.stunner.bpmn.client.forms.fields.notificationsEditor.validation.ExpirationTypeOracle.ISO_DATE_TIME;
 import static org.kie.workbench.common.stunner.bpmn.client.forms.fields.notificationsEditor.validation.ExpirationTypeOracle.PERIOD;
 import static org.kie.workbench.common.stunner.bpmn.client.forms.fields.notificationsEditor.validation.ExpirationTypeOracle.REPEATABLE;
@@ -247,5 +250,22 @@ public class NotificationEditorWidget implements IsWidget,
     @Override
     public String clearTimeZone(String value) {
         return value.equals("00Z") ? "0" : value;
+    }
+
+    @Override
+    public NotificationType getNotificationType(boolean isNotStarted) {
+        return isNotStarted ? NOT_STARTED_NOTIFY : NOT_COMPLETED_NOTIFY;
+    }
+
+    @Override
+    public boolean isRepeatable(String repeatable) {
+        MatchResult matcher = RegExp.compile(REPEATABLE).exec(repeatable);
+        return matcher != null;
+    }
+
+    @Override
+    public String minuteOrMonth(MatchResult match) {
+        String t = match.getGroup(1);
+        return ((match.getGroup(3).equals("M") && !t.isEmpty()) ? "m" : match.getGroup(3));
     }
 }

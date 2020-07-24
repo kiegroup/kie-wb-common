@@ -551,7 +551,6 @@ public class NotificationEditorWidgetViewImpl extends Composite implements Notif
     public void addReplyTo(String replyTo) {
         assigneeLiveSearchServiceReplyTo.addCustomEntry(replyTo);
         liveSearchReplyToDropDown.setSelectedItem(replyTo);
-
     }
 
     @Override
@@ -637,7 +636,7 @@ public class NotificationEditorWidgetViewImpl extends Composite implements Notif
     public void setExpirationTimePeriod(String iso) {
         MatchResult result = RegExp.compile(REPEATABLE + "/" + PERIOD).exec(iso);
         if (result != null) {
-            if (isRepeatable(iso.split("/")[0])) {
+            if (presenter.isRepeatable(iso.split("/")[0])) {
                 repeatNotification.setValue(true, true);
                 setPeriod(iso.split("/")[1], periodBox);
                 setTaskStateOrRepeatCountValue(presenter.getRepeatCount(iso.split("/")[0]));
@@ -663,18 +662,8 @@ public class NotificationEditorWidgetViewImpl extends Composite implements Notif
     protected void setPeriod(String period, PeriodBox box) {
         MatchResult match = RegExp.compile(PERIOD).exec(period);
         String duration = match.getGroup(2);
-        String result = duration + minuteOrMonth(match);
+        String result = duration + presenter.minuteOrMonth(match);
         box.setValue(result);
-    }
-
-    protected String minuteOrMonth(MatchResult match) {
-        String t = match.getGroup(1);
-        return ((match.getGroup(3).equals("M") && !t.isEmpty()) ? "m" : match.getGroup(3));
-    }
-
-    protected boolean isRepeatable(String repeatable) {
-        MatchResult matcher = RegExp.compile(REPEATABLE).exec(repeatable);
-        return matcher != null;
     }
 
     @Override
@@ -689,7 +678,7 @@ public class NotificationEditorWidgetViewImpl extends Composite implements Notif
         current.setReplyTo(searchSelectionReplyToHandler.getSelectedValue() != null ? searchSelectionReplyToHandler.getSelectedValue() : "");
         current.setExpiresAt(combineISO8601String());
         current.setExpiration(Expiration.get(taskExpiration.getValue()));
-        current.setType(notStartedInput.checked ? NOT_STARTED_NOTIFY : NOT_COMPLETED_NOTIFY);
+        current.setType(presenter.getNotificationType(notStartedInput.checked));
         notificationEvent.fire(new NotificationEvent(current));
         markEmailsAsCorrect();
         hide();
