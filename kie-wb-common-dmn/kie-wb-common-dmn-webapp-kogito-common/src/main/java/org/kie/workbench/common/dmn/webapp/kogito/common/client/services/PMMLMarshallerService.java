@@ -21,7 +21,6 @@ import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
 import elemental2.promise.Promise;
-import org.appformer.kogito.bridge.client.interop.WindowRef;
 import org.kie.workbench.common.dmn.api.editors.included.DMNImportTypes;
 import org.kie.workbench.common.dmn.api.editors.included.PMMLDocumentMetadata;
 import org.kie.workbench.common.stunner.core.util.FileUtils;
@@ -34,8 +33,16 @@ import org.uberfire.client.promise.Promises;
 @Dependent
 public class PMMLMarshallerService {
 
-    @Inject
     private Promises promises;
+
+    public PMMLMarshallerService() {
+        // CDI
+    }
+
+    @Inject
+    public PMMLMarshallerService(final Promises promises) {
+        this.promises = promises;
+    }
 
     public Promise<PMMLDocumentMetadata> getDocumentMetadata(final String pmmlFile, final String pmmlFileContent) {
         if (StringUtils.isEmpty(pmmlFile)) {
@@ -44,9 +51,7 @@ public class PMMLMarshallerService {
         if (StringUtils.isEmpty(pmmlFileContent)) {
             return promises.reject("PMML file " + pmmlFile + " content required to be marshalled is empty or null");
         }
-        if(!isEnvelopeAvailable()) {
-            return promises.reject("Envelope not available. Impossible to marshall " + pmmlFile + " file");
-        }
+
         /* Here, a JSInterop call through enveloper should be used passing pmmlFileContent */
         String pmmlFileName = FileUtils.getFileName(pmmlFile);
         PMMLDocumentMetadata documentMetadata = new PMMLDocumentMetadata(pmmlFile,
@@ -54,9 +59,5 @@ public class PMMLMarshallerService {
                                                                          DMNImportTypes.PMML.getDefaultNamespace(),
                                                                          Collections.emptyList());
         return promises.resolve(documentMetadata);
-    }
-
-    private boolean isEnvelopeAvailable() {
-        return WindowRef.isEnvelopeAvailable();
     }
 }

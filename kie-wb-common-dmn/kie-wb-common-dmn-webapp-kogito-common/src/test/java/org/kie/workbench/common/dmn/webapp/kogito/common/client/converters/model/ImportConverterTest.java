@@ -74,7 +74,7 @@ public class ImportConverterTest {
         when(jsitImportMock.getImportType()).thenReturn(DMN_IMPORT_TYPE);
         when(jsitDefinitionsMock.getDrgElement()).thenReturn(new ArrayList<>(Arrays.asList(mock(JSITDRGElement.class), mock(JSITDRGElement.class))));
         when(jsitDefinitionsMock.getItemDefinition()).thenReturn(new ArrayList<>(Arrays.asList(mock(JSITItemDefinition.class))));
-        Import resultImport = ImportConverter.wbFromDMN(jsitImportMock, jsitDefinitionsMock, pmmlDocumentMetadata);
+        Import resultImport = ImportConverter.wbFromDMN(jsitImportMock, jsitDefinitionsMock, null);
         assertTrue(resultImport instanceof ImportDMN);
         assertEquals(NAMESPACE, resultImport.getNamespace());
         assertEquals(LOCATION_URI, resultImport.getLocationURI().getValue());
@@ -90,7 +90,7 @@ public class ImportConverterTest {
         when(jsitImportMock.getImportType()).thenReturn(DMN_IMPORT_TYPE);
         when(jsitDefinitionsMock.getDrgElement()).thenReturn(new ArrayList<>(Arrays.asList(mock(JSITDRGElement.class), mock(JSITDRGElement.class))));
         when(jsitDefinitionsMock.getItemDefinition()).thenReturn(new ArrayList<>(Arrays.asList(mock(JSITItemDefinition.class))));
-        Import resultImport = ImportConverter.wbFromDMN(jsitImportMock, null, pmmlDocumentMetadata);
+        Import resultImport = ImportConverter.wbFromDMN(jsitImportMock, null, null);
         assertTrue(resultImport instanceof ImportDMN);
         assertEquals(NAMESPACE, resultImport.getNamespace());
         assertEquals(LOCATION_URI, resultImport.getLocationURI().getValue());
