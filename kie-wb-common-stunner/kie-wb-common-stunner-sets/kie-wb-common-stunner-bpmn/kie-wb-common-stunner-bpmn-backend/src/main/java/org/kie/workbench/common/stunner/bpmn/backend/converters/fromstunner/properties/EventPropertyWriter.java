@@ -51,6 +51,7 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.general.SLADueD
 
 import static org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.Factories.bpmn2;
 import static org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties.Scripts.asCData;
+import static org.kie.workbench.common.stunner.core.util.StringUtils.replaceIllegalCharsAttribute;
 
 public abstract class EventPropertyWriter extends PropertyWriter {
 
@@ -104,7 +105,7 @@ public abstract class EventPropertyWriter extends PropertyWriter {
     public void addLink(LinkRef linkRef) {
         LinkEventDefinition linkEventDefinition =
                 bpmn2.createLinkEventDefinition();
-        linkEventDefinition.setName(linkRef.getValue());
+        linkEventDefinition.setName(replaceIllegalCharsAttribute(linkRef.getValue()));
 
         addEventDefinition(linkEventDefinition);
     }
