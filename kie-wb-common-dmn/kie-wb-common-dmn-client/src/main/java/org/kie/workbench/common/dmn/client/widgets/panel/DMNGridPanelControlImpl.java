@@ -17,11 +17,14 @@
 package org.kie.workbench.common.dmn.client.widgets.panel;
 
 import javax.enterprise.context.Dependent;
+import javax.inject.Inject;
 
 import com.google.gwt.event.dom.client.ContextMenuHandler;
+import org.kie.workbench.common.dmn.api.qualifiers.DMNEditor;
 import org.kie.workbench.common.dmn.client.session.DMNSession;
 import org.kie.workbench.common.dmn.client.widgets.grid.controls.container.CellEditorControlsView;
 import org.kie.workbench.common.dmn.client.widgets.layer.DMNGridLayer;
+import org.kie.workbench.common.stunner.core.client.ReadOnlyProvider;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvas;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.AbstractCanvasControl;
 import org.uberfire.ext.wires.core.grids.client.widget.layer.pinning.impl.RestrictedMousePanMediator;
@@ -30,6 +33,12 @@ import org.uberfire.ext.wires.core.grids.client.widget.layer.pinning.impl.Restri
 public class DMNGridPanelControlImpl extends AbstractCanvasControl<AbstractCanvas> implements DMNGridPanelControl {
 
     private DMNGridPanel panel;
+    private ReadOnlyProvider readOnlyProvider;
+
+    @Inject
+    public void DMNGridPanelControlImpl(@DMNEditor final ReadOnlyProvider readOnlyProvider) {
+        this.readOnlyProvider = readOnlyProvider;
+    }
 
     @Override
     public void bind(final DMNSession session) {
@@ -40,7 +49,8 @@ public class DMNGridPanelControlImpl extends AbstractCanvasControl<AbstractCanva
         final DMNGridPanelCellSelectionHandler selectionHandler = new DMNGridPanelCellSelectionHandlerImpl(gridLayer);
         final ContextMenuHandler contextMenuHandler = new DMNGridPanelContextMenuHandler(gridLayer,
                                                                                          cellEditorControls,
-                                                                                         selectionHandler);
+                                                                                         selectionHandler,
+                                                                                         readOnlyProvider);
 
         this.panel = new DMNGridPanel(gridLayer,
                                       mousePanMediator,
