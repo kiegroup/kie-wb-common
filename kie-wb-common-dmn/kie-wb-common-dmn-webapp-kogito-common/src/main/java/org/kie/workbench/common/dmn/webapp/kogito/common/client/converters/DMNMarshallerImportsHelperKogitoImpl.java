@@ -81,8 +81,8 @@ public class DMNMarshallerImportsHelperKogitoImpl implements DMNMarshallerImport
 
     private static final Logger LOGGER = Logger.getLogger(DMNMarshallerImportsHelperKogitoImpl.class.getName());
     private static final String DMN_FILES_PATTERN = "*.dmn";
-    private static final String PMML_FILES_PATTERN = "*.pmml";
-    private static final String MODEL_FILES_PATTERN = "*.{dmn,pmml}";
+    static final String PMML_FILES_PATTERN = "*.pmml";
+    static final String MODEL_FILES_PATTERN = "*.{dmn,pmml}";
 
     @Inject
     public DMNMarshallerImportsHelperKogitoImpl(final KogitoResourceContentService contentService,
