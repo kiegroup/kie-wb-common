@@ -202,7 +202,7 @@ public class DMNMarshallerKogitoUnmarshaller {
         // Get external PMML model information
         final Promise<Map<JSITImport, PMMLDocumentMetadata>> pmmlDocumentsAsync = dmnMarshallerImportsHelper.getPMMLDocumentsAsync(metadata, jsiDefinitions.getImport());
 
-        return pmmlDocumentsAsync.then(pmmlDocuments -> importAsync.then(importDefinitions -> {
+        return importAsync.then(importDefinitions -> pmmlDocumentsAsync.then(pmmlDocuments -> {
 
             // Map external DRGElements
             final List<JSIDMNShape> dmnShapes = new ArrayList<>();
