@@ -16,23 +16,36 @@
 
 package org.kie.workbench.common.dmn.webapp.kogito.common.client.converters;
 
+import java.util.Collections;
+import java.util.List;
+
 import com.google.gwtmockito.GwtMockitoTestRunner;
 import org.appformer.kogito.bridge.client.resource.interop.ResourceListOptions;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.kie.workbench.common.dmn.api.editors.included.DMNImportTypes;
+import org.kie.workbench.common.dmn.api.editors.included.IncludedModel;
+import org.kie.workbench.common.dmn.api.editors.included.PMMLDocumentMetadata;
+import org.kie.workbench.common.dmn.api.editors.included.PMMLIncludedModel;
 import org.kie.workbench.common.dmn.api.graph.DMNDiagramUtils;
 import org.kie.workbench.common.dmn.webapp.kogito.common.client.services.DMNClientDiagramServiceImpl;
 import org.kie.workbench.common.dmn.webapp.kogito.common.client.services.PMMLMarshallerService;
 import org.kie.workbench.common.kogito.webapp.base.client.workarounds.KogitoResourceContentService;
 import org.kie.workbench.common.stunner.core.client.service.ServiceCallback;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.Mock;
 import org.uberfire.client.promise.Promises;
 import org.uberfire.promise.SyncPromises;
 
+import static org.junit.Assert.assertEquals;
 import static org.kie.workbench.common.dmn.webapp.kogito.common.client.converters.DMNMarshallerImportsHelperKogitoImpl.MODEL_FILES_PATTERN;
+import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Matchers.isA;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -52,6 +65,8 @@ public class DMNMarshallerImportsHelperKogitoImplTest {
     private PMMLMarshallerService pmmlMarshallerServiceMock;
     @Mock
     private ServiceCallback serviceCallbackMock;
+    @Captor
+    private ArgumentCaptor<List<IncludedModel>> modelsCapture;
 
     private static final String DMN_FILE = "test-dmn.dmn";
     private static final String DMN_PATH = "dmntest/" + DMN_FILE;
@@ -60,6 +75,9 @@ public class DMNMarshallerImportsHelperKogitoImplTest {
     private static final String PMML_FILE = "test-pmml.pmml";
     private static final String PMML_PATH = "dmnpmml/" + PMML_FILE;
     private static final String PMML_CONTENT = "<xml> xml PMML content </xml>";
+
+    private static final String TEXT_FILE = "test-file.txt";
+    private static final String TEXT_PATH = "invalidfile/" + TEXT_FILE;
 
     private DMNMarshallerImportsHelperKogitoImpl dmnMarshallerImportsHelperKogitoImpl;
     private Promises promises;
@@ -90,10 +108,30 @@ public class DMNMarshallerImportsHelperKogitoImplTest {
     public void loadModelsPMMLFile() {
         when(kogitoResourceContentServiceMock.getFilteredItems(eq(MODEL_FILES_PATTERN), isA(ResourceListOptions.class))).thenReturn(promises.resolve(new String[]{PMML_PATH}));
         when(kogitoResourceContentServiceMock.loadFile(PMML_PATH)).thenReturn(promises.resolve(PMML_CONTENT));
+        when(pmmlMarshallerServiceMock.getDocumentMetadata(PMML_PATH, PMML_CONTENT)).thenReturn(promises.resolve(new PMMLDocumentMetadata(PMML_PATH,
+                                                                                                                         PMML_FILE,
+                                                                                                                         DMNImportTypes.PMML.getDefaultNamespace(),
+                                                                                                                         Collections.emptyList())));
         dmnMarshallerImportsHelperKogitoImpl.loadModels(serviceCallbackMock);
         verify(kogitoResourceContentServiceMock, times(1)).getFilteredItems(eq(MODEL_FILES_PATTERN), isA(ResourceListOptions.class));
         verify(kogitoResourceContentServiceMock, times(1)).loadFile(eq(PMML_PATH));
         verify(pmmlMarshallerServiceMock, times(1)).getDocumentMetadata(eq(PMML_PATH), eq(PMML_CONTENT));
+        verify(serviceCallbackMock, times(1)).onSuccess(modelsCapture.capture());
+        assertEquals(1, modelsCapture.getValue().size());
+        assertEquals(PMML_FILE, modelsCapture.getValue().get(0).getPath());
+        assertEquals(PMML_FILE, modelsCapture.getValue().get(0).getModelName());
+        assertEquals(DMNImportTypes.PMML.getDefaultNamespace(), modelsCapture.getValue().get(0).getImportType());
+        assertEquals(0, ((PMMLIncludedModel) modelsCapture.getValue().get(0)).getModelCount().intValue());
+    }
+
+    @Test
+    public void loadModelsInvalidFile() {
+        when(kogitoResourceContentServiceMock.getFilteredItems(eq(MODEL_FILES_PATTERN), isA(ResourceListOptions.class))).thenReturn(promises.resolve(new String[]{TEXT_PATH}));
+        dmnMarshallerImportsHelperKogitoImpl.loadModels(serviceCallbackMock);
+        verify(kogitoResourceContentServiceMock, times(1)).getFilteredItems(eq(MODEL_FILES_PATTERN), isA(ResourceListOptions.class));
+        verify(kogitoResourceContentServiceMock, never()).loadFile(any());
+        verify(pmmlMarshallerServiceMock, never()).getDocumentMetadata(any(), any());
+        verify(dmnClientDiagramServiceMock, never()).transform(any(), any());
     }
 
 }
