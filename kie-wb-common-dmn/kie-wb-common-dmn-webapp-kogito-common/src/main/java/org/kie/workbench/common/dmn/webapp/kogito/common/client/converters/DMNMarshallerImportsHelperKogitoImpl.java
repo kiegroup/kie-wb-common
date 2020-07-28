@@ -333,7 +333,7 @@ public class DMNMarshallerImportsHelperKogitoImpl implements DMNMarshallerImport
                 });
     }
 
-    Promise<Void> loadPMMLDefinitionFromFile(final String file,
+    private Promise<Void> loadPMMLDefinitionFromFile(final String file,
                                              final Map<String, PMMLDocumentMetadata> otherDefinitions) {
         return contentService.loadFile(file)
                 .then(fileContent -> pmmlMarshallerService.getDocumentMetadata(file, fileContent))
