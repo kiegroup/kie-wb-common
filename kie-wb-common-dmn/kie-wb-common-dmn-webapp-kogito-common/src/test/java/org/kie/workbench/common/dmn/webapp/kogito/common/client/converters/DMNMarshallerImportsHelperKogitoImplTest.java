@@ -16,11 +16,15 @@
 
 package org.kie.workbench.common.dmn.webapp.kogito.common.client.converters;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import com.google.gwtmockito.GwtMockitoTestRunner;
+import elemental2.promise.Promise;
 import org.appformer.kogito.bridge.client.resource.interop.ResourceListOptions;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -31,8 +35,10 @@ import org.kie.workbench.common.dmn.api.editors.included.PMMLIncludedModel;
 import org.kie.workbench.common.dmn.api.graph.DMNDiagramUtils;
 import org.kie.workbench.common.dmn.webapp.kogito.common.client.services.DMNClientDiagramServiceImpl;
 import org.kie.workbench.common.dmn.webapp.kogito.common.client.services.PMMLMarshallerService;
+import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITImport;
 import org.kie.workbench.common.kogito.webapp.base.client.workarounds.KogitoResourceContentService;
 import org.kie.workbench.common.stunner.core.client.service.ServiceCallback;
+import org.kie.workbench.common.stunner.core.diagram.Metadata;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
@@ -40,12 +46,14 @@ import org.uberfire.client.promise.Promises;
 import org.uberfire.promise.SyncPromises;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.kie.workbench.common.dmn.webapp.kogito.common.client.converters.DMNMarshallerImportsHelperKogitoImpl.MODEL_FILES_PATTERN;
+import static org.kie.workbench.common.dmn.webapp.kogito.common.client.converters.DMNMarshallerImportsHelperKogitoImpl.PMML_FILES_PATTERN;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Matchers.isA;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -61,6 +69,8 @@ public class DMNMarshallerImportsHelperKogitoImplTest {
     private DMNIncludedNodeFactory dmnIncludedNodeFactoryMock;
     @Mock
     private KogitoResourceContentService kogitoResourceContentServiceMock;
+    @Mock
+    private Metadata metadataMock;
     @Mock
     private PMMLMarshallerService pmmlMarshallerServiceMock;
     @Mock
@@ -132,6 +142,64 @@ public class DMNMarshallerImportsHelperKogitoImplTest {
         verify(kogitoResourceContentServiceMock, never()).loadFile(any());
         verify(pmmlMarshallerServiceMock, never()).getDocumentMetadata(any(), any());
         verify(dmnClientDiagramServiceMock, never()).transform(any(), any());
+    }
+
+    @Test
+    public void getPMMLDocumentsAsync_EmptyImports() {
+        Promise<Map<JSITImport, PMMLDocumentMetadata>> returnPromise = dmnMarshallerImportsHelperKogitoImpl.getPMMLDocumentsAsync(metadataMock, Collections.emptyList());
+        returnPromise.then(p0 -> {
+            assertEquals(0, p0.size());
+            return promises.resolve();
+        }).catch_(i -> {
+            Assert.fail("Promise should've been resolved!");
+            return promises.resolve();
+        });
+    }
+
+    @Test
+    public void getPMMLDocumentsAsyncNoPMMLFiles() {
+        when(kogitoResourceContentServiceMock.getFilteredItems(eq(PMML_FILES_PATTERN), isA(ResourceListOptions.class))).thenReturn(promises.resolve(new String[0]));
+        List<JSITImport> imports = new ArrayList<>();
+        imports.add(mock(JSITImport.class));
+        Promise<Map<JSITImport, PMMLDocumentMetadata>> returnPromise = dmnMarshallerImportsHelperKogitoImpl.getPMMLDocumentsAsync(metadataMock, imports);
+        verify(kogitoResourceContentServiceMock, times(1)).getFilteredItems(eq(PMML_FILES_PATTERN), isA(ResourceListOptions.class));
+        returnPromise.then(p0 -> {
+            assertEquals(0, p0.size());
+            return promises.resolve();
+        }).catch_(i -> {
+            Assert.fail("Promise should've been resolved!");
+            return promises.resolve();
+        });
+    }
+
+    @Test
+    public void getPMMLDocumentsAsync() {
+        when(kogitoResourceContentServiceMock.getFilteredItems(eq(PMML_FILES_PATTERN), isA(ResourceListOptions.class))).thenReturn(promises.resolve(new String[]{PMML_PATH}));
+        when(kogitoResourceContentServiceMock.loadFile(PMML_PATH)).thenReturn(promises.resolve(PMML_CONTENT));
+        when(pmmlMarshallerServiceMock.getDocumentMetadata(PMML_PATH, PMML_CONTENT)).thenReturn(promises.resolve(new PMMLDocumentMetadata(PMML_PATH,
+                                                                                                                                          PMML_FILE,
+                                                                                                                                          DMNImportTypes.PMML.getDefaultNamespace(),
+                                                                                                                                          Collections.emptyList())));
+
+
+
+        List<JSITImport> imports = new ArrayList<>();
+        JSITImport jsImportMock = mock(JSITImport.class);
+        when(jsImportMock.getLocationURI()).thenReturn(PMML_FILE);
+        imports.add(jsImportMock);
+        Promise<Map<JSITImport, PMMLDocumentMetadata>> returnPromise = dmnMarshallerImportsHelperKogitoImpl.getPMMLDocumentsAsync(metadataMock, imports);
+        verify(kogitoResourceContentServiceMock, times(1)).getFilteredItems(eq(PMML_FILES_PATTERN), isA(ResourceListOptions.class));
+        returnPromise.then(def -> {
+            assertEquals(1, def.size());
+            assertEquals(PMML_PATH, def.get(jsImportMock).getPath());
+            assertEquals(PMML_FILE, def.get(jsImportMock).getName());
+            assertEquals(DMNImportTypes.PMML.getDefaultNamespace(), def.get(jsImportMock).getImportType());
+            assertEquals(0, def.get(jsImportMock).getModels().size());
+            return promises.resolve();
+        }).catch_(i -> {
+            Assert.fail("Promise should've been resolved!");
+            return promises.resolve();
+        });
     }
 
 }
