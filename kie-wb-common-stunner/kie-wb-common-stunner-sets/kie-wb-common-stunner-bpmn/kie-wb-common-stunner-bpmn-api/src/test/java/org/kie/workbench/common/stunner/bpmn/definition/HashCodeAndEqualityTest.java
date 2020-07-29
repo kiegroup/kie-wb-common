@@ -44,6 +44,8 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.event.escalatio
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.escalation.EscalationEventExecutionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.escalation.EscalationRef;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.escalation.InterruptingEscalationEventExecutionSet;
+import org.kie.workbench.common.stunner.bpmn.definition.property.event.link.LinkEventExecutionSet;
+import org.kie.workbench.common.stunner.bpmn.definition.property.event.link.LinkRef;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.message.CancellingMessageEventExecutionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.message.InterruptingMessageEventExecutionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.message.MessageEventExecutionSet;
@@ -229,6 +231,27 @@ public class HashCodeAndEqualityTest {
         EndTerminateEvent b = new EndTerminateEvent();
         assertEquals(a.hashCode(),
                      b.hashCode());
+    }
+
+    @Test
+    public void testIntermediateLinkCatchEventEquals() {
+        IntermediateLinkEventCatching linkEvent = new IntermediateLinkEventCatching();
+        IntermediateLinkEventCatching linkEvent2 = new IntermediateLinkEventCatching();
+        assertNotEquals(null, linkEvent);
+        assertNotEquals("", linkEvent);
+        assertEquals(linkEvent, linkEvent);
+        assertEquals(linkEvent, linkEvent2);
+
+        BackgroundSet backgroundSet = new BackgroundSet();
+        backgroundSet.setBgColor(new BgColor("black"));
+        linkEvent.setBackgroundSet(new BackgroundSet());
+        assertNotEquals(linkEvent, linkEvent2);
+
+        linkEvent2.setBackgroundSet(new BackgroundSet());
+        assertEquals(linkEvent, linkEvent2);
+
+        linkEvent.setExecutionSet(new LinkEventExecutionSet(new LinkRef("value")));
+        assertNotEquals(linkEvent, linkEvent2);
     }
 
     @Test
