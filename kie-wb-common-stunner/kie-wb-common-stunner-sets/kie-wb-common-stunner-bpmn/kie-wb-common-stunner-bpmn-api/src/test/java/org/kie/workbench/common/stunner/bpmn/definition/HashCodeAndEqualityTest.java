@@ -237,21 +237,74 @@ public class HashCodeAndEqualityTest {
     public void testIntermediateLinkCatchEventEquals() {
         IntermediateLinkEventCatching linkEvent = new IntermediateLinkEventCatching();
         IntermediateLinkEventCatching linkEvent2 = new IntermediateLinkEventCatching();
-        assertNotEquals(null, linkEvent);
-        assertNotEquals("", linkEvent);
+        assertNotEquals(linkEvent, null);
+        assertNotEquals(linkEvent, "");
         assertEquals(linkEvent, linkEvent);
         assertEquals(linkEvent, linkEvent2);
 
         BackgroundSet backgroundSet = new BackgroundSet();
         backgroundSet.setBgColor(new BgColor("black"));
-        linkEvent.setBackgroundSet(new BackgroundSet());
+        linkEvent.setBackgroundSet(backgroundSet);
         assertNotEquals(linkEvent, linkEvent2);
 
-        linkEvent2.setBackgroundSet(new BackgroundSet());
+        linkEvent2.setBackgroundSet(backgroundSet);
         assertEquals(linkEvent, linkEvent2);
 
+        linkEvent.setBackgroundSet(backgroundSet);
         linkEvent.setExecutionSet(new LinkEventExecutionSet(new LinkRef("value")));
         assertNotEquals(linkEvent, linkEvent2);
+    }
+
+    @Test
+    public void testIntermediateLinkThrowingEventEquals() {
+        IntermediateLinkEventThrowing linkEvent = new IntermediateLinkEventThrowing();
+        IntermediateLinkEventThrowing linkEvent2 = new IntermediateLinkEventThrowing();
+        assertNotEquals(linkEvent, null);
+        assertNotEquals(linkEvent, "");
+        assertEquals(linkEvent, linkEvent);
+        assertEquals(linkEvent, linkEvent2);
+
+        BackgroundSet backgroundSet = new BackgroundSet();
+        backgroundSet.setBgColor(new BgColor("black"));
+        linkEvent.setBackgroundSet(backgroundSet);
+        assertNotEquals(linkEvent, linkEvent2);
+
+        linkEvent2.setBackgroundSet(backgroundSet);
+        assertEquals(linkEvent, linkEvent2);
+
+        linkEvent.setBackgroundSet(backgroundSet);
+        linkEvent.setExecutionSet(new LinkEventExecutionSet(new LinkRef("value")));
+        assertNotEquals(linkEvent, linkEvent2);
+    }
+
+    @Test
+    public void testLinkRef() {
+        LinkRef link = new LinkRef("link");
+        assertNotEquals(link, null);
+        assertNotEquals(link, "");
+        assertEquals(link, link);
+
+        LinkRef link2 = new LinkRef("link");
+        assertEquals(link, link2);
+
+        link2.setValue("link2");
+        assertNotEquals(link, link2);
+    }
+
+    @Test
+    public void testLinkEventExecutionSet() {
+        LinkRef link = new LinkRef("link");
+        LinkEventExecutionSet executionSet = new LinkEventExecutionSet(link);
+        assertNotEquals(executionSet, null);
+        assertNotEquals(executionSet, "");
+        assertEquals(executionSet, executionSet);
+
+        LinkRef link2 = new LinkRef("link");
+        LinkEventExecutionSet executionSet2 = new LinkEventExecutionSet(link2);
+        assertEquals(executionSet, executionSet2);
+
+        link2.setValue("link2");
+        assertNotEquals(executionSet, executionSet2);
     }
 
     @Test
