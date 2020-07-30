@@ -326,19 +326,19 @@ public class DMNMarshallerImportsHelperKogitoImpl implements DMNMarshallerImport
                     if (files.length == 0) {
                         return promises.resolve(Collections.emptyMap());
                     } else {
-                        final Map<String, PMMLDocumentMetadata> otherDefinitions = new HashMap<>();
-                        return promises.all(Arrays.asList(files), file -> loadPMMLDefinitionFromFile(file, otherDefinitions)
-                                .then(v -> promises.resolve(otherDefinitions)));
+                        final Map<String, PMMLDocumentMetadata> definitions = new HashMap<>();
+                        return promises.all(Arrays.asList(files), file -> loadPMMLDefinitionFromFile(file, definitions)
+                                .then(v -> promises.resolve(definitions)));
                     }
                 });
     }
 
     private Promise<Void> loadPMMLDefinitionFromFile(final String file,
-                                             final Map<String, PMMLDocumentMetadata> otherDefinitions) {
+                                                     final Map<String, PMMLDocumentMetadata> definitions) {
         return contentService.loadFile(file)
                 .then(fileContent -> pmmlMarshallerService.getDocumentMetadata(file, fileContent))
                 .then(pmmlDocumentMetadata -> {
-                    otherDefinitions.put(file, pmmlDocumentMetadata);
+                    definitions.put(file, pmmlDocumentMetadata);
                     return promises.resolve();
                 });
     }
