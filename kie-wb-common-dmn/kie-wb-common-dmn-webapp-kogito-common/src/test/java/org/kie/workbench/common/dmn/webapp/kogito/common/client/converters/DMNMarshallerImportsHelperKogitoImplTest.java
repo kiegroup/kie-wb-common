@@ -17,6 +17,7 @@
 package org.kie.workbench.common.dmn.webapp.kogito.common.client.converters;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -179,9 +180,6 @@ public class DMNMarshallerImportsHelperKogitoImplTest {
                                                                                                                                           PMML_FILE,
                                                                                                                                           DMNImportTypes.PMML.getDefaultNamespace(),
                                                                                                                                           Collections.emptyList())));
-
-
-
         List<JSITImport> imports = new ArrayList<>();
         JSITImport jsImportMock = mock(JSITImport.class);
         when(jsImportMock.getLocationURI()).thenReturn(PMML_FILE);
@@ -199,6 +197,26 @@ public class DMNMarshallerImportsHelperKogitoImplTest {
             Assert.fail("Promise should've been resolved!");
             return promises.resolve();
         });
+    }
+
+    @Test
+    public void getPMMLDocumentsMetadataFromFilesEmptyFiles() {
+        dmnMarshallerImportsHelperKogitoImpl.getPMMLDocumentsMetadataFromFiles(Collections.emptyList(), serviceCallbackMock);
+        dmnMarshallerImportsHelperKogitoImpl.getPMMLDocumentsMetadataFromFiles(null, serviceCallbackMock);
+        verify(serviceCallbackMock, times(2)).onSuccess(eq(Collections.emptyList()));
+    }
+
+    @Test
+    public void getPMMLDocumentsMetadataFromFiles() {
+        PMMLDocumentMetadata documentMetadata = new PMMLDocumentMetadata(PMML_PATH,
+                                                                         PMML_FILE,
+                                                                         DMNImportTypes.PMML.getDefaultNamespace(),
+                                                                         Collections.emptyList());
+        when(kogitoResourceContentServiceMock.getFilteredItems(eq(PMML_FILES_PATTERN), isA(ResourceListOptions.class))).thenReturn(promises.resolve(new String[]{PMML_PATH}));
+        when(kogitoResourceContentServiceMock.loadFile(PMML_PATH)).thenReturn(promises.resolve(PMML_CONTENT));
+        when(pmmlMarshallerServiceMock.getDocumentMetadata(PMML_PATH, PMML_CONTENT)).thenReturn(promises.resolve(documentMetadata));
+        dmnMarshallerImportsHelperKogitoImpl.getPMMLDocumentsMetadataFromFiles(Arrays.asList(PMML_PATH), serviceCallbackMock);
+        verify(serviceCallbackMock, times(1)).onSuccess(eq(Arrays.asList(documentMetadata)));
     }
 
 }
