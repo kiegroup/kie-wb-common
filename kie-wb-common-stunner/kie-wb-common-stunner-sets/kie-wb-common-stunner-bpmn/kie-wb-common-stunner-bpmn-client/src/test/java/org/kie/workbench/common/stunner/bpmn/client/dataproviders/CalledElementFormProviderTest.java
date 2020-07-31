@@ -20,6 +20,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import com.google.gwtmockito.GwtMockitoTestRunner;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -27,19 +28,20 @@ import org.kie.workbench.common.forms.dynamic.model.config.SelectorData;
 import org.kie.workbench.common.forms.dynamic.service.shared.FormRenderingContext;
 import org.kie.workbench.common.stunner.bpmn.forms.dataproviders.RequestProcessDataEvent;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
 import org.uberfire.mocks.EventSourceMock;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.powermock.api.mockito.PowerMockito.spy;
 
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(GwtMockitoTestRunner.class)
 public class CalledElementFormProviderTest {
 
     @Mock
@@ -52,9 +54,13 @@ public class CalledElementFormProviderTest {
 
     @Before
     public void setup() {
-        tested = new CalledElementFormProvider();
+        tested = spy(new CalledElementFormProvider());
         tested.dataProvider = dataProvider;
         tested.requestProcessDataEvent = event;
+        doAnswer(i -> {
+            ((com.google.gwt.user.client.Command) i.getArguments()[0]).execute();
+            return null;
+        }).when(tested).scheduleServiceCall(any());
     }
 
     @Test

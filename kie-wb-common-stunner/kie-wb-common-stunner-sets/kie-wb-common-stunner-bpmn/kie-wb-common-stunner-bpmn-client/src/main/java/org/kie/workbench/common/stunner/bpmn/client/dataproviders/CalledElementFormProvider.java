@@ -22,6 +22,7 @@ import java.util.stream.StreamSupport;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
+import com.google.gwt.user.client.Timer;
 import org.kie.workbench.common.forms.dynamic.model.config.SelectorData;
 import org.kie.workbench.common.forms.dynamic.model.config.SelectorDataProvider;
 import org.kie.workbench.common.forms.dynamic.service.shared.FormRenderingContext;
@@ -38,6 +39,19 @@ public class CalledElementFormProvider implements SelectorDataProvider {
     @Override
     public String getProviderName() {
         return getClass().getSimpleName();
+    }
+
+    public CalledElementFormProvider() {
+        scheduleServiceCall(() -> requestProcessDataEvent.fire(new RequestProcessDataEvent()));
+    }
+
+    protected void scheduleServiceCall(final com.google.gwt.user.client.Command command) {
+        new Timer() {
+            @Override
+            public void run() {
+                command.execute();
+            }
+        }.schedule(100);
     }
 
     @Override
