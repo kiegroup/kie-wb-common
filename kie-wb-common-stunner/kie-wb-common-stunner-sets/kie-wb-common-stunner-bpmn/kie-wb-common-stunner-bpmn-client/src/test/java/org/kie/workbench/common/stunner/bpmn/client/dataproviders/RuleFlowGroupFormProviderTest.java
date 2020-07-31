@@ -20,6 +20,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import com.google.gwtmockito.GwtMockitoTestRunner;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -28,7 +29,6 @@ import org.kie.workbench.common.forms.dynamic.service.shared.FormRenderingContex
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.RuleFlowGroup;
 import org.kie.workbench.common.stunner.bpmn.forms.dataproviders.RequestRuleFlowGroupDataEvent;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
 import org.uberfire.mocks.EventSourceMock;
 
 import static org.junit.Assert.assertEquals;
@@ -38,8 +38,10 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.powermock.api.mockito.PowerMockito.doAnswer;
+import static org.powermock.api.mockito.PowerMockito.spy;
 
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(GwtMockitoTestRunner.class)
 public class RuleFlowGroupFormProviderTest {
 
     @Mock
@@ -52,9 +54,14 @@ public class RuleFlowGroupFormProviderTest {
 
     @Before
     public void setup() {
-        tested = new RuleFlowGroupFormProvider();
+        tested = spy(new RuleFlowGroupFormProvider());
         tested.dataProvider = dataProvider;
         tested.requestRuleFlowGroupDataEvent = requestRuleFlowGroupDataEvent;
+
+        doAnswer(i -> {
+            ((com.google.gwt.user.client.Command) i.getArguments()[0]).execute();
+            return null;
+        }).when(tested).scheduleServiceCall(any());
     }
 
     @Test
