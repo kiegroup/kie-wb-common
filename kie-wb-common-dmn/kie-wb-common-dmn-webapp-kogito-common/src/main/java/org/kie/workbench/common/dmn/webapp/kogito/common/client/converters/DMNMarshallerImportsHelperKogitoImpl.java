@@ -199,12 +199,12 @@ public class DMNMarshallerImportsHelperKogitoImpl implements DMNMarshallerImport
                     return contentService.loadFile(file)
                         .then(fileContent -> pmmlMarshallerService.getDocumentMetadata(file, fileContent))
                         .then(pmmlDocumentMetadata -> {
-                            int modelNumber = pmmlDocumentMetadata.getModels() != null ? pmmlDocumentMetadata.getModels().size() : 0;
+                            int modelCount = pmmlDocumentMetadata.getModels() != null ? pmmlDocumentMetadata.getModels().size() : 0;
                             models.add(new PMMLIncludedModel(fileName,
                                                             "",
                                                              fileName,
                                                              DMNImportTypes.PMML.getDefaultNamespace(),
-                                                             modelNumber));
+                                                             modelCount));
                             return promises.resolve();
                         });
                 }
@@ -326,9 +326,9 @@ public class DMNMarshallerImportsHelperKogitoImpl implements DMNMarshallerImport
                     if (files.length == 0) {
                         return promises.resolve(Collections.emptyMap());
                     } else {
-                        final Map<String, PMMLDocumentMetadata> otherDefinitions = new HashMap<>();
-                        return promises.all(Arrays.asList(files), file -> loadPMMLDefinitionFromFile(file, otherDefinitions)
-                                .then(v -> promises.resolve(otherDefinitions)));
+                        final Map<String, PMMLDocumentMetadata> definitions = new HashMap<>();
+                        return promises.all(Arrays.asList(files), file -> loadPMMLDefinitionFromFile(file, definitions)
+                                .then(v -> promises.resolve(definitions)));
                     }
                 });
     }

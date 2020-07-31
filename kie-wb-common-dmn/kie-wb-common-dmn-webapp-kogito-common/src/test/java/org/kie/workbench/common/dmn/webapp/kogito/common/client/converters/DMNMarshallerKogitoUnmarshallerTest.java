@@ -68,7 +68,7 @@ public class DMNMarshallerKogitoUnmarshallerTest {
     }
 
     @Test
-    public void umarshall() {
+    public void unmarshall() {
         dmnMarshallerKogitoUnmarshaller.unmarshall(metadataMock, jsitDefinitionsMock);
         verify(dmnMarshallerImportsHelperKogitoMock, times(1)).getImportDefinitionsAsync(eq(metadataMock), eq(imports));
         verify(dmnMarshallerImportsHelperKogitoMock, times(1)).getPMMLDocumentsAsync(eq(metadataMock), eq(imports));
