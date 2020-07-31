@@ -204,7 +204,7 @@ public class DMNMarshallerImportsHelperKogitoImpl implements DMNMarshallerImport
                                                             "",
                                                              fileName,
                                                              DMNImportTypes.PMML.getDefaultNamespace(),
-                                                             modelNumber));
+                                                             modelCount));
                             return promises.resolve();
                         });
                 }
