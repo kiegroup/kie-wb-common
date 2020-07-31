@@ -346,6 +346,10 @@ public class DMNMarshallerImportsHelperKogitoImpl implements DMNMarshallerImport
     @Override
     public void getPMMLDocumentsMetadataFromFile(final List<String> files,
                                                  final ServiceCallback<List<PMMLDocumentMetadata>> callback) {
+        if (files == null || files.isEmpty()) {
+            callback.onSuccess(Collections.emptyList());
+            return;
+        }
         final Map<String, PMMLDocumentMetadata> pmmlDefinitions = new HashMap<>();
         promises.all(files, file -> loadPMMLDefinitionFromFile(file, pmmlDefinitions)
                 .then(v -> {
