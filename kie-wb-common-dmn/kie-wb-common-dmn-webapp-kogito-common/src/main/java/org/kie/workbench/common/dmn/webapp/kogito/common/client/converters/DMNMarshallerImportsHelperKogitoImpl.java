@@ -199,7 +199,7 @@ public class DMNMarshallerImportsHelperKogitoImpl implements DMNMarshallerImport
                     return contentService.loadFile(file)
                         .then(fileContent -> pmmlMarshallerService.getDocumentMetadata(file, fileContent))
                         .then(pmmlDocumentMetadata -> {
-                            int modelNumber = pmmlDocumentMetadata.getModels() != null ? pmmlDocumentMetadata.getModels().size() : 0;
+                            int modelCount = pmmlDocumentMetadata.getModels() != null ? pmmlDocumentMetadata.getModels().size() : 0;
                             models.add(new PMMLIncludedModel(fileName,
                                                             "",
                                                              fileName,
