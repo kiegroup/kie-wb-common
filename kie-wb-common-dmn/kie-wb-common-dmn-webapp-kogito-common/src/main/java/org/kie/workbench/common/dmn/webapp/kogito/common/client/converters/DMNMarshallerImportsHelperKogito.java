@@ -44,8 +44,8 @@ public interface DMNMarshallerImportsHelperKogito extends DMNMarshallerImportsHe
     Promise<Map<JSITImport, PMMLDocumentMetadata>> getPMMLDocumentsAsync(final Metadata metadata,
                                                                          final List<JSITImport> imports);
 
-    void getPMMLDocumentsMetadataFromFile(final List<String> files,
-                                          final ServiceCallback<List<PMMLDocumentMetadata>> callback);
+    void getPMMLDocumentsMetadataFromFiles(final List<String> files,
+                                           final ServiceCallback<List<PMMLDocumentMetadata>> callback);
 
     void getImportedItemDefinitionsByNamespaceAsync(final String modelName,
                                                     final String namespace,

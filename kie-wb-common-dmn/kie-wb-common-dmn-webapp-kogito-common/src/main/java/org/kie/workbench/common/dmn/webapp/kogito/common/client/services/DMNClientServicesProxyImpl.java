@@ -67,7 +67,7 @@ public class DMNClientServicesProxyImpl implements DMNClientServicesProxy {
                                              final List<PMMLIncludedModel> includedModels,
                                              final ServiceCallback<List<PMMLDocumentMetadata>> callback) {
         List<String> files = includedModels.stream().map(PMMLIncludedModel::getPath).collect(Collectors.toList());
-        kogitoImportsHelper.getPMMLDocumentsMetadataFromFile(files, callback);
+        kogitoImportsHelper.getPMMLDocumentsMetadataFromFiles(files, callback);
     }
 
     @Override
