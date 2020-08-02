@@ -22,7 +22,6 @@ import elemental2.dom.Element;
 import elemental2.dom.HTMLDocument;
 import org.appformer.kogito.bridge.client.guided.tour.service.api.Rect;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -48,7 +47,6 @@ public class HTMLElementsPositionProviderFactoryTest {
     }
 
     @Test
-    @Ignore
     public void testGetPositionProviderFunction() {
 
         final String selector = ".my-button--inside-of-iframe";
