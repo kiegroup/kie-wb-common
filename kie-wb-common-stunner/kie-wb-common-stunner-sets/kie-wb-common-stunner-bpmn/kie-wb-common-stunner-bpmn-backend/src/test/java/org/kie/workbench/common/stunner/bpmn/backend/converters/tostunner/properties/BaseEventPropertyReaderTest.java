@@ -121,6 +121,11 @@ public abstract class BaseEventPropertyReaderTest {
 
     @Test
     public void testGetLinkRef() {
+        // Link Event can't be Boundary
+        if (this instanceof BoundaryEventPropertyReaderTest) {
+            return;
+        }
+
         assertEquals("", propertyReader.getLinkRef());
 
         LinkEventDefinition eventDefinition = mock(LinkEventDefinition.class);
