@@ -59,6 +59,7 @@ public class IntermediateLinkEventPostConverter implements PostConverterProcesso
                                                           linkName);
             if (target != null) {
                 source.setTarget(target);
+                target.getSource().add(source);
             }
         }
     }

@@ -75,6 +75,9 @@ public class IntermediateLinkEventPostConverterTest {
     @Mock
     private Process process;
 
+    @Mock
+    EList<LinkEventDefinition> sourceDefinitions;
+
     private static final String EVENT_ID = "EVENT_ID";
     private static final String LINK_NAME = "LINK_NAME";
 
@@ -95,6 +98,7 @@ public class IntermediateLinkEventPostConverterTest {
         when(catchDefinition.getName()).thenReturn(LINK_NAME);
         EList<EventDefinition> catchDefinitions = ECollections.singletonEList(catchDefinition);
         when(catchLinkEvent.getEventDefinitions()).thenReturn(catchDefinitions);
+        when(catchDefinition.getSource()).thenReturn(sourceDefinitions);
 
         EList<EventDefinition> signalDefinitions = ECollections.singletonEList(mock(EventDefinition.class));
         when(catchSignalEvent.getEventDefinitions()).thenReturn(signalDefinitions);
@@ -174,5 +178,7 @@ public class IntermediateLinkEventPostConverterTest {
         verify(converter).findTarget(eq(process), eq(EVENT_ID), eq(LINK_NAME));
         verify(converter).getCatchLinkEventWithSameName(eq(process), eq(LINK_NAME));
         verify(throwDefinition).setTarget(catchDefinition);
+        verify(catchDefinition).getSource();
+        verify(sourceDefinitions).add(throwDefinition);
     }
 }
