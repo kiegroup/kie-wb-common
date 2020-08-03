@@ -57,10 +57,13 @@ public class PMMLMarshallerService {
             return promises.reject("PMML file " + pmmlFile + " content required to be marshalled is empty or null");
         }
 
-        /* Here, a JSInterop call through enveloper should be used passing pmmlFileContent */
         DomGlobal.console.log(pmmlFileContent);
-        Object pmml = pmmlMarshaller.get().marshall(pmmlFileContent);
-        DomGlobal.console.log(pmml);
+        try {
+            Object pmml = pmmlMarshaller.get().marshall(pmmlFileContent);
+            DomGlobal.console.log(pmml);
+        } catch (Exception e) {
+            return promises.reject("Error during marshalling of PMML file " + pmmlFile + ": " + e.getMessage());
+        }
         String pmmlFileName = FileUtils.getFileName(pmmlFile);
         PMMLDocumentMetadata documentMetadata = new PMMLDocumentMetadata(pmmlFile,
                                                                          pmmlFileName,
