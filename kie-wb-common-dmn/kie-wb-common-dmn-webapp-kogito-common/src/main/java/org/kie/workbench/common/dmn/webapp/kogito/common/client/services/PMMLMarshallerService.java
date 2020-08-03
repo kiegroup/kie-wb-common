@@ -16,11 +16,14 @@
 package org.kie.workbench.common.dmn.webapp.kogito.common.client.services;
 
 import java.util.Collections;
+import java.util.function.Supplier;
 
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
+import elemental2.dom.DomGlobal;
 import elemental2.promise.Promise;
+import org.appformer.kogito.bridge.client.marshaller.pmml.PMMLMarshaller;
 import org.kie.workbench.common.dmn.api.editors.included.DMNImportTypes;
 import org.kie.workbench.common.dmn.api.editors.included.PMMLDocumentMetadata;
 import org.kie.workbench.common.stunner.core.util.FileUtils;
@@ -34,6 +37,7 @@ import org.uberfire.client.promise.Promises;
 public class PMMLMarshallerService {
 
     private Promises promises;
+    private Supplier<PMMLMarshaller> pmmlMarshaller;
 
     public PMMLMarshallerService() {
         // CDI
@@ -42,6 +46,7 @@ public class PMMLMarshallerService {
     @Inject
     public PMMLMarshallerService(final Promises promises) {
         this.promises = promises;
+        pmmlMarshaller = PMMLMarshaller::get;
     }
 
     public Promise<PMMLDocumentMetadata> getDocumentMetadata(final String pmmlFile, final String pmmlFileContent) {
@@ -53,6 +58,9 @@ public class PMMLMarshallerService {
         }
 
         /* Here, a JSInterop call through enveloper should be used passing pmmlFileContent */
+        DomGlobal.console.log(pmmlFileContent);
+        Object pmml = pmmlMarshaller.get().marshall(pmmlFileContent);
+        DomGlobal.console.log(pmml);
         String pmmlFileName = FileUtils.getFileName(pmmlFile);
         PMMLDocumentMetadata documentMetadata = new PMMLDocumentMetadata(pmmlFile,
                                                                          pmmlFileName,
