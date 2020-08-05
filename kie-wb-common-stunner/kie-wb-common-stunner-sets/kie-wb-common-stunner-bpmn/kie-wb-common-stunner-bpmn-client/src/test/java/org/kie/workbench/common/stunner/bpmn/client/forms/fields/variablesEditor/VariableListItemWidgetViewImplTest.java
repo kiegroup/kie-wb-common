@@ -36,9 +36,8 @@ import elemental2.dom.DOMRect;
 import elemental2.dom.Element;
 import elemental2.dom.HTMLAnchorElement;
 import elemental2.dom.HTMLDivElement;
-import elemental2.dom.HTMLInputElement;
 import elemental2.dom.HTMLLabelElement;
-import jsinterop.base.Js;
+import elemental2.dom.MouseEvent;
 import org.gwtbootstrap3.client.ui.Button;
 import org.gwtbootstrap3.client.ui.TextBox;
 import org.gwtbootstrap3.client.ui.ValueListBox;
@@ -434,7 +433,7 @@ public class VariableListItemWidgetViewImplTest {
     @Test
     public void testHandleCloseButton() {
         view.handleCloseButton(null);
-        verify(Js.<HTMLInputElement>uncheckedCast(variableTagsSettings)).click();
+        verify(variableTagsSettings, times(1)).dispatchEvent(any(MouseEvent.class));
     }
 
     @Test
