@@ -82,11 +82,11 @@ public interface DMNMarshallerImportsHelperKogito extends DMNMarshallerImportsHe
     default Path getDMNModelPath(final Metadata metadata,
                                  final String modelNamespace,
                                  final String modelName) {
-        throw new UnsupportedOperationException("Imports are not supported in the kogito-based editors.");
+        throw new UnsupportedOperationException("Sync calls are not supported in the kogito-based editors.");
     }
 
     @Override
     default Optional<InputStream> loadPath(final Path path) {
-        throw new UnsupportedOperationException("Imports are not supported in the kogito-based editors.");
+        throw new UnsupportedOperationException("Sync calls are not supported in the kogito-based editors.");
     }
 }
