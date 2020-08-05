@@ -19,6 +19,6 @@ public class KeyboardOperationInvokeContextMenuForSelectedCellTest extends BaseD
 
     @Override
     protected KeyboardOperationInvokeContextMenuForSelectedCell getOperation() {
-        return new KeyboardOperationInvokeContextMenuForSelectedCell(gridLayer, readOnlyProvider);
+        return new KeyboardOperationInvokeContextMenuForSelectedCell(gridLayer);
     }
 }

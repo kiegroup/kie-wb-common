@@ -24,7 +24,6 @@ import com.ait.lienzo.client.core.event.AbstractNodeMouseEvent;
 import com.ait.lienzo.client.core.types.Point2D;
 import org.kie.workbench.common.dmn.client.editors.expressions.util.DynamicReadOnlyUtils;
 import org.kie.workbench.common.dmn.client.widgets.grid.model.GridCellTuple;
-import org.kie.workbench.common.stunner.core.client.ReadOnlyProvider;
 import org.uberfire.ext.wires.core.grids.client.model.GridCell;
 import org.uberfire.ext.wires.core.grids.client.model.GridCellEditAction;
 import org.uberfire.ext.wires.core.grids.client.model.GridData;
@@ -35,14 +34,11 @@ public class DelegatingGridWidgetEditCellMouseEventHandler extends DefaultGridWi
 
     private final Supplier<GridCellTuple> parentSupplier;
     private final Supplier<Integer> nestingSupplier;
-    private final ReadOnlyProvider readonlyProvider;
 
     public DelegatingGridWidgetEditCellMouseEventHandler(final Supplier<GridCellTuple> parentSupplier,
-                                                         final Supplier<Integer> nestingSupplier,
-                                                         final ReadOnlyProvider readOnlyProvider) {
+                                                         final Supplier<Integer> nestingSupplier) {
         this.parentSupplier = parentSupplier;
         this.nestingSupplier = nestingSupplier;
-        this.readonlyProvider = readOnlyProvider;
     }
 
     @Override
@@ -53,7 +49,7 @@ public class DelegatingGridWidgetEditCellMouseEventHandler extends DefaultGridWi
                                     final Optional<Integer> uiRowIndex,
                                     final Optional<Integer> uiColumnIndex,
                                     final AbstractNodeMouseEvent event) {
-        if (DynamicReadOnlyUtils.isOnlyVisualChangeAllowed(gridWidget) || readonlyProvider.isReadOnlyDiagram()) {
+        if (DynamicReadOnlyUtils.isOnlyVisualChangeAllowed(gridWidget)) {
             return false;
         }
 

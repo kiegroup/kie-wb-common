@@ -28,7 +28,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.literal.LiteralExpressionGrid;
 import org.kie.workbench.common.dmn.client.widgets.grid.model.GridCellTuple;
-import org.kie.workbench.common.stunner.core.client.ReadOnlyProvider;
 import org.mockito.Mock;
 import org.uberfire.ext.wires.core.grids.client.model.GridCell;
 import org.uberfire.ext.wires.core.grids.client.model.GridCellEditAction;
@@ -78,9 +77,6 @@ public class DelegatingGridWidgetEditCellMouseEventHandlerTest {
     @Mock
     private GridData.SelectedCell selectedCell;
 
-    @Mock
-    private ReadOnlyProvider readOnlyProvider;
-
     private Optional<Integer> uiHeaderRowIndex;
 
     private Optional<Integer> uiHeaderColumnIndex;
@@ -94,8 +90,7 @@ public class DelegatingGridWidgetEditCellMouseEventHandlerTest {
     private void setupGrid(final Supplier<GridCellTuple> parentSupplier,
                            final Supplier<Integer> nestingSupplier) {
         this.handler = spy(new DelegatingGridWidgetEditCellMouseEventHandler(parentSupplier,
-                                                                             nestingSupplier,
-                                                                             readOnlyProvider));
+                                                                             nestingSupplier));
 
         when(gridWidget.getModel()).thenReturn(gridData);
         when(parent.getGridWidget()).thenReturn(parentGridWidget);
@@ -108,23 +103,6 @@ public class DelegatingGridWidgetEditCellMouseEventHandlerTest {
     public void testOnNodeMouseEventWhenOnlyVisualChangeAllowed() {
         when(gridWidget.isOnlyVisualChangeAllowed()).thenReturn(true);
 
-        setupGrid(() -> null, () -> 0);
-
-        assertThat(handler.onNodeMouseEvent(gridWidget,
-                                            relativeLocation,
-                                            uiHeaderRowIndex,
-                                            uiHeaderColumnIndex,
-                                            uiRowIndex,
-                                            uiColumnIndex,
-                                            event)).isFalse();
-
-        verify(gridWidget, never()).startEditingCell(any(Point2D.class));
-    }
-
-    @Test
-    public void testOnNodeMouseEventWhenIsReadOnlyDiagram() {
-        when(gridWidget.isOnlyVisualChangeAllowed()).thenReturn(false);
-        when(readOnlyProvider.isReadOnlyDiagram()).thenReturn(true);
         setupGrid(() -> null, () -> 0);
 
         assertThat(handler.onNodeMouseEvent(gridWidget,

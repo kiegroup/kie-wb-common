@@ -52,7 +52,6 @@ import org.kie.workbench.common.dmn.client.widgets.grid.model.GridCellTuple;
 import org.kie.workbench.common.dmn.client.widgets.layer.DMNGridLayer;
 import org.kie.workbench.common.dmn.client.widgets.panel.DMNGridPanel;
 import org.kie.workbench.common.dmn.client.widgets.panel.DMNGridPanelContainer;
-import org.kie.workbench.common.stunner.core.client.ReadOnlyProvider;
 import org.kie.workbench.common.stunner.core.client.api.SessionManager;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
 import org.kie.workbench.common.stunner.core.client.canvas.event.selection.DomainObjectSelectionEvent;
@@ -184,9 +183,6 @@ public class ExpressionEditorViewImplTest {
     @Mock
     private HasExpression hasExpression;
 
-    @Mock
-    private ReadOnlyProvider readonlyProvider;
-
     @Captor
     private ArgumentCaptor<Transform> transformArgumentCaptor;
 
@@ -239,8 +235,7 @@ public class ExpressionEditorViewImplTest {
                                                      canvasCommandFactory,
                                                      expressionEditorDefinitionsSupplier,
                                                      refreshFormPropertiesEvent,
-                                                     domainObjectSelectionEvent,
-                                                     readonlyProvider));
+                                                     domainObjectSelectionEvent));
         view.init(presenter);
         view.bind(session);
 

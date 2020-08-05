@@ -20,8 +20,7 @@ import java.util.Collections;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.kie.workbench.common.dmn.client.widgets.grid.BaseGrid;
-import org.kie.workbench.common.stunner.core.client.ReadOnlyProvider;
+import org.kie.workbench.common.dmn.client.widgets.grid.BaseExpressionGrid;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.uberfire.ext.wires.core.grids.client.model.GridData;
@@ -39,13 +38,10 @@ public abstract class BaseDynamicReadOnlyKeyboardOperationTest<O extends Keyboar
     protected GridLayer gridLayer;
 
     @Mock
-    protected BaseGrid gridWidget;
+    protected BaseExpressionGrid gridWidget;
 
     @Mock
     protected GridData uiModel;
-
-    @Mock
-    protected ReadOnlyProvider readOnlyProvider;
 
     private O operation;
 
@@ -69,14 +65,6 @@ public abstract class BaseDynamicReadOnlyKeyboardOperationTest<O extends Keyboar
     @Test
     public void testIsExecutableWhenOnlyVisualChangeAllowed() {
         when(gridWidget.isOnlyVisualChangeAllowed()).thenReturn(true);
-
-        assertThat(operation.isExecutable(gridWidget)).isFalse();
-    }
-
-    @Test
-    public void testIsExecutableWhenIsReadOnlyDiagram() {
-        when(gridWidget.isOnlyVisualChangeAllowed()).thenReturn(false);
-        when(readOnlyProvider.isReadOnlyDiagram()).thenReturn(true);
 
         assertThat(operation.isExecutable(gridWidget)).isFalse();
     }

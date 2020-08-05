@@ -135,8 +135,7 @@ public class UndefinedExpressionGrid extends BaseDelegatingExpressionGrid<Expres
                                                                            this::getParentInformation,
                                                                            () -> nesting));
         handlers.add(new DelegatingGridWidgetEditCellMouseEventHandler(this::getParentInformation,
-                                                                       () -> nesting,
-                                                                       () -> readOnlyProvider.isReadOnlyDiagram()));
+                                                                       () -> nesting));
         return handlers;
     }
 

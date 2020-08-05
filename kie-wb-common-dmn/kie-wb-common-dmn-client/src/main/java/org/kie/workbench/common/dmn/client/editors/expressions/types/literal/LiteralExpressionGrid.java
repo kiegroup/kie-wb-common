@@ -122,7 +122,7 @@ public class LiteralExpressionGrid extends BaseDelegatingExpressionGrid<LiteralE
         handlers.add(new DelegatingGridWidgetCellSelectorMouseEventHandler(selectionManager,
                                                                            this::getParentInformation,
                                                                            () -> nesting));
-        handlers.add(new EditableHeaderGridWidgetEditCellMouseEventHandler(() -> readOnlyProvider.isReadOnlyDiagram()));
+        handlers.add(new EditableHeaderGridWidgetEditCellMouseEventHandler());
         return handlers;
     }
 
@@ -130,8 +130,7 @@ public class LiteralExpressionGrid extends BaseDelegatingExpressionGrid<LiteralE
     public List<NodeMouseEventHandler> getNodeMouseDoubleClickEventHandlers(final GridSelectionManager selectionManager,
                                                                             final GridPinnedModeManager pinnedModeManager) {
         return Collections.singletonList(new DelegatingGridWidgetEditCellMouseEventHandler(this::getParentInformation,
-                                                                                           () -> nesting,
-                                                                                           () -> readOnlyProvider.isReadOnlyDiagram()));
+                                                                                           () -> nesting));
     }
 
     @Override

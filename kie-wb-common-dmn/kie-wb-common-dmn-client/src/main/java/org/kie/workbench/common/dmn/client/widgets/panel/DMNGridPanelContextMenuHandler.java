@@ -27,7 +27,6 @@ import org.kie.workbench.common.dmn.client.editors.expressions.util.DynamicReadO
 import org.kie.workbench.common.dmn.client.widgets.grid.controls.HasCellEditorControls;
 import org.kie.workbench.common.dmn.client.widgets.grid.controls.container.CellEditorControlsView;
 import org.kie.workbench.common.dmn.client.widgets.layer.DMNGridLayer;
-import org.kie.workbench.common.stunner.core.client.ReadOnlyProvider;
 import org.uberfire.ext.wires.core.grids.client.model.GridCell;
 import org.uberfire.ext.wires.core.grids.client.model.GridColumn;
 import org.uberfire.ext.wires.core.grids.client.model.GridData;
@@ -43,7 +42,6 @@ import static org.uberfire.ext.wires.core.grids.client.util.CoordinateUtilities.
 
 public class DMNGridPanelContextMenuHandler implements ContextMenuHandler {
 
-    private final ReadOnlyProvider readOnlyProvider;
     private DMNGridLayer gridLayer;
     private CellEditorControlsView.Presenter cellEditorControls;
     private DMNGridPanelCellSelectionHandler cellSelectionHandler;
@@ -74,12 +72,10 @@ public class DMNGridPanelContextMenuHandler implements ContextMenuHandler {
 
     DMNGridPanelContextMenuHandler(final DMNGridLayer gridLayer,
                                    final CellEditorControlsView.Presenter cellEditorControls,
-                                   final DMNGridPanelCellSelectionHandler cellSelectionHandler,
-                                   final ReadOnlyProvider readOnlyProvider) {
+                                   final DMNGridPanelCellSelectionHandler cellSelectionHandler) {
         this.gridLayer = gridLayer;
         this.cellEditorControls = cellEditorControls;
         this.cellSelectionHandler = cellSelectionHandler;
-        this.readOnlyProvider = readOnlyProvider;
     }
 
     @Override
@@ -95,7 +91,7 @@ public class DMNGridPanelContextMenuHandler implements ContextMenuHandler {
         final List<CandidateGridWidget> candidateGridWidgets = new ArrayList<>();
         for (GridWidget gridWidget : gridLayer.getGridWidgets()) {
 
-            if (DynamicReadOnlyUtils.isOnlyVisualChangeAllowed(gridWidget) || readOnlyProvider.isReadOnlyDiagram()) {
+            if (DynamicReadOnlyUtils.isOnlyVisualChangeAllowed(gridWidget)) {
                 continue;
             }
 

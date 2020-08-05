@@ -146,7 +146,7 @@ public class EditableHeaderGridWidgetEditCellMouseEventHandlerTest {
 
         when(editableHeaderMetaData.getSupportedEditAction()).thenReturn(GridCellEditAction.SINGLE_CLICK);
 
-        this.handler = new EditableHeaderGridWidgetEditCellMouseEventHandler(() -> readOnlyProvider.isReadOnlyDiagram());
+        this.handler = new EditableHeaderGridWidgetEditCellMouseEventHandler();
     }
 
     @Test

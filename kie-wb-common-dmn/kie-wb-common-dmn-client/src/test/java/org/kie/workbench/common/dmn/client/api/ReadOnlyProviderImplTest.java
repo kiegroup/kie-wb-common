@@ -48,7 +48,7 @@ public class ReadOnlyProviderImplTest {
     @Test
     public void testIsReadOnlyDiagramWhenIsGithub() {
         when(contextProvider.getChannel()).thenReturn(GITHUB);
-        assertFalse(readOnlyProvider.isReadOnlyDiagram());
+        assertTrue(readOnlyProvider.isReadOnlyDiagram());
     }
 
     @Test

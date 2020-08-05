@@ -147,8 +147,7 @@ public class DMNGridPanelContextMenuHandlerTest {
     public void setup() {
         this.handler = new DMNGridPanelContextMenuHandler(gridLayer,
                                                           cellEditorControls,
-                                                          cellSelectionHandler,
-                                                          readOnlyProvider);
+                                                          cellSelectionHandler);
 
         when(event.getNativeEvent()).thenReturn(nativeEvent);
         when(event.getRelativeElement()).thenReturn(element);

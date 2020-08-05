@@ -981,6 +981,20 @@ public class BaseExpressionGridGeneralTest extends BaseExpressionGridTest {
         assertThat(command).isInstanceOf(SetComponentWidthCommand.class);
     }
 
+    @Test
+    public void testReadOnlyModeActive() {
+        when(readOnlyProvider.isReadOnlyDiagram()).thenReturn(true);
+
+        assertThat(grid.isOnlyVisualChangeAllowed()).isTrue();
+    }
+
+    @Test
+    public void testReadOnlyModeNonActive() {
+        when(readOnlyProvider.isReadOnlyDiagram()).thenReturn(false);
+
+        assertThat(grid.isOnlyVisualChangeAllowed()).isFalse();
+    }
+
     /*
      * Test that parent column width is updated to sum of nested columns
      * The update is forced from nested column at position indexOfColumnToUpdate

@@ -170,6 +170,11 @@ public abstract class BaseExpressionGrid<E extends Expression, D extends GridDat
 
     public abstract void initialiseUiCells();
 
+    @Override
+    public boolean isOnlyVisualChangeAllowed() {
+        return super.isOnlyVisualChangeAllowed() || readOnlyProvider.isReadOnlyDiagram();
+    }
+
     @SuppressWarnings("unchecked")
     public <V, HV extends HasValue<V>> Consumer<HV> clearValueConsumer(final boolean updateStunnerTitle,
                                                                        final V emptyValue) {
@@ -340,7 +345,7 @@ public abstract class BaseExpressionGrid<E extends Expression, D extends GridDat
     public List<NodeMouseEventHandler> getNodeMouseClickEventHandlers(final GridSelectionManager selectionManager) {
         final List<NodeMouseEventHandler> handlers = new ArrayList<>();
         handlers.add(new DefaultGridWidgetCellSelectorMouseEventHandler(selectionManager));
-        handlers.add(new EditableHeaderGridWidgetEditCellMouseEventHandler(()-> readOnlyProvider.isReadOnlyDiagram()));
+        handlers.add(new EditableHeaderGridWidgetEditCellMouseEventHandler());
         return handlers;
     }
 
@@ -348,7 +353,7 @@ public abstract class BaseExpressionGrid<E extends Expression, D extends GridDat
     public List<NodeMouseEventHandler> getNodeMouseDoubleClickEventHandlers(final GridSelectionManager selectionManager,
                                                                             final GridPinnedModeManager pinnedModeManager) {
         final List<NodeMouseEventHandler> handlers = new ArrayList<>();
-        handlers.add(new EditableHeaderGridWidgetEditCellMouseEventHandler(()-> readOnlyProvider.isReadOnlyDiagram()));
+        handlers.add(new EditableHeaderGridWidgetEditCellMouseEventHandler());
         return handlers;
     }
 

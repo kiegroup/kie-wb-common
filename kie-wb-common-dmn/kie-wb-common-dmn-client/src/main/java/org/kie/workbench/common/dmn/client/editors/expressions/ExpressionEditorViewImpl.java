@@ -48,7 +48,6 @@ import org.kie.workbench.common.dmn.client.widgets.grid.keyboard.KeyboardOperati
 import org.kie.workbench.common.dmn.client.widgets.layer.DMNGridLayer;
 import org.kie.workbench.common.dmn.client.widgets.panel.DMNGridPanel;
 import org.kie.workbench.common.dmn.client.widgets.panel.DMNGridPanelContainer;
-import org.kie.workbench.common.stunner.core.client.ReadOnlyProvider;
 import org.kie.workbench.common.stunner.core.client.api.SessionManager;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
 import org.kie.workbench.common.stunner.core.client.canvas.event.selection.DomainObjectSelectionEvent;
@@ -97,7 +96,6 @@ public class ExpressionEditorViewImpl implements ExpressionEditorView {
     private CellEditorControlsView.Presenter cellEditorControls;
     private RestrictedMousePanMediator mousePanMediator;
     private ExpressionContainerGrid expressionContainerGrid;
-    private ReadOnlyProvider readonlyprovider;
 
     public ExpressionEditorViewImpl() {
         //CDI proxy
@@ -115,8 +113,7 @@ public class ExpressionEditorViewImpl implements ExpressionEditorView {
                                     final @DMNEditor DefaultCanvasCommandFactory canvasCommandFactory,
                                     final @DMNEditor Supplier<ExpressionEditorDefinitions> expressionEditorDefinitionsSupplier,
                                     final Event<RefreshFormPropertiesEvent> refreshFormPropertiesEvent,
-                                    final Event<DomainObjectSelectionEvent> domainObjectSelectionEvent,
-                                    final @DMNEditor ReadOnlyProvider readOnlyProvider) {
+                                    final Event<DomainObjectSelectionEvent> domainObjectSelectionEvent) {
         this.returnToLink = returnToLink;
         this.expressionName = expressionName;
         this.expressionType = expressionType;
@@ -131,7 +128,6 @@ public class ExpressionEditorViewImpl implements ExpressionEditorView {
         this.expressionEditorDefinitionsSupplier = expressionEditorDefinitionsSupplier;
         this.refreshFormPropertiesEvent = refreshFormPropertiesEvent;
         this.domainObjectSelectionEvent = domainObjectSelectionEvent;
-        this.readonlyprovider = readOnlyProvider;
     }
 
     @Override
@@ -157,13 +153,13 @@ public class ExpressionEditorViewImpl implements ExpressionEditorView {
         gridPanel.getViewport().setTransform(transform);
 
         final BaseGridWidgetKeyboardHandler handler = new BaseGridWidgetKeyboardHandler(gridLayer);
-        addKeyboardOperation(handler, new KeyboardOperationEditCell(gridLayer, readonlyprovider));
+        addKeyboardOperation(handler, new KeyboardOperationEditCell(gridLayer));
         addKeyboardOperation(handler, new KeyboardOperationEscapeGridCell(gridLayer));
         addKeyboardOperation(handler, new KeyboardOperationMoveLeft(gridLayer, gridPanel));
         addKeyboardOperation(handler, new KeyboardOperationMoveRight(gridLayer, gridPanel));
         addKeyboardOperation(handler, new KeyboardOperationMoveUp(gridLayer, gridPanel));
         addKeyboardOperation(handler, new KeyboardOperationMoveDown(gridLayer, gridPanel));
-        addKeyboardOperation(handler, new KeyboardOperationInvokeContextMenuForSelectedCell(gridLayer, readonlyprovider));
+        addKeyboardOperation(handler, new KeyboardOperationInvokeContextMenuForSelectedCell(gridLayer));
         gridPanel.addKeyDownHandler(handler);
 
         gridPanelContainer.clear();
