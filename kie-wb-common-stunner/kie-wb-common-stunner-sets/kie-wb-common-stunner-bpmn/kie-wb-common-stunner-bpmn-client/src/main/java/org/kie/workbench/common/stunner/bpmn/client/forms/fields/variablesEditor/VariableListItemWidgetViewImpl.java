@@ -39,11 +39,10 @@ import elemental2.dom.CSSProperties;
 import elemental2.dom.Element;
 import elemental2.dom.HTMLAnchorElement;
 import elemental2.dom.HTMLDivElement;
-import elemental2.dom.HTMLInputElement;
 import elemental2.dom.HTMLLabelElement;
+import elemental2.dom.MouseEvent;
 import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsType;
-import jsinterop.base.Js;
 import org.gwtbootstrap3.client.ui.Button;
 import org.gwtbootstrap3.client.ui.TextBox;
 import org.gwtbootstrap3.client.ui.ValueListBox;
@@ -492,7 +491,7 @@ public class VariableListItemWidgetViewImpl implements VariableListItemWidgetVie
 
     @EventHandler("closeButton")
     public void handleCloseButton(final ClickEvent e) {
-        Js.<HTMLInputElement>uncheckedCast(variableTagsSettings).click();
+        variableTagsSettings.dispatchEvent(new MouseEvent("click"));
     }
 
     @EventHandler("acceptButton")
