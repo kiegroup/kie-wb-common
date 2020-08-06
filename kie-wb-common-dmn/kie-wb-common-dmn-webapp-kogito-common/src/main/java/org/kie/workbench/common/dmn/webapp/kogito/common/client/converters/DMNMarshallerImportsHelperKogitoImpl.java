@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -135,7 +134,7 @@ public class DMNMarshallerImportsHelperKogitoImpl implements DMNMarshallerImport
     @Override
     public void loadNodesFromModels(final List<DMNIncludedModel> includedModels,
                                     final ServiceCallback<List<DMNIncludedNode>> callback) {
-        final List<DMNIncludedNode> result = new Vector<>();
+        final List<DMNIncludedNode> result = new ArrayList<>();
         if (includedModels.isEmpty()) {
             callback.onSuccess(result);
         } else {
@@ -162,7 +161,7 @@ public class DMNMarshallerImportsHelperKogitoImpl implements DMNMarshallerImport
         }
         final String path = filePath;
         return contentService.loadFile(path)
-                .then(content -> promises.create((success, fail) -> {
+                .then(content -> promises.create((success, fail) ->
                     diagramService.transform(content, new ServiceCallback<Diagram>() {
                         @Override
                         public void onSuccess(final Diagram item) {
@@ -180,8 +179,8 @@ public class DMNMarshallerImportsHelperKogitoImpl implements DMNMarshallerImport
                             LOGGER.log(Level.SEVERE, error.getMessage());
                             fail.onInvoke(error);
                         }
-                    });
-                }));
+                    })
+                ));
     }
 
     @Override
@@ -208,7 +207,8 @@ public class DMNMarshallerImportsHelperKogitoImpl implements DMNMarshallerImport
                             return promises.resolve();
                         });
                 }
-                return promises.reject("Error: " + fileName + " is an invalid file.");
+                return promises.reject("Error: " + fileName + " is an invalid file. Only " + DMN_FILES_PATTERN +
+                                               " and " + PMML_FILES_PATTERN + " are supported");
             }).then(v -> {
                 callback.onSuccess(models);
                 return promises.resolve();
@@ -227,7 +227,8 @@ public class DMNMarshallerImportsHelperKogitoImpl implements DMNMarshallerImport
                 final String namespace = diagramUtils.getNamespace(diagram);
                 final String importType = DMNImportTypes.DMN.getDefaultNamespace();
                 final int drgElementCount = diagramUtils.getDRGElements(diagram).size();
-                final int itemDefinitionCount = diagramUtils.getDefinitions(diagram).getItemDefinition().size();
+                final int itemDefinitionCount = diagramUtils.getDefinitions(diagram) != null ?
+                        diagramUtils.getDefinitions(diagram).getItemDefinition().size() : 0;
                 models.add(new DMNIncludedModel(fileName,
                                                 modelPackage,
                                                 fileName,
