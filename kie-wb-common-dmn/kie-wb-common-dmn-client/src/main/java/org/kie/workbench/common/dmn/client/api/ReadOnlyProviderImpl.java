@@ -24,8 +24,6 @@ import org.appformer.client.context.EditorContextProvider;
 import org.kie.workbench.common.dmn.api.qualifiers.DMNEditor;
 import org.kie.workbench.common.stunner.core.client.ReadOnlyProvider;
 
-import static org.appformer.client.context.Channel.GITHUB;
-
 @Alternative
 @ApplicationScoped
 @DMNEditor

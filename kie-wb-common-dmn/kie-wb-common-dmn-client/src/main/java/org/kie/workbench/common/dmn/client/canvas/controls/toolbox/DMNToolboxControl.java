@@ -17,6 +17,7 @@
 package org.kie.workbench.common.dmn.client.canvas.controls.toolbox;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import javax.annotation.PreDestroy;
@@ -50,7 +51,7 @@ public class DMNToolboxControl extends AbstractToolboxControl {
     @Override
     protected List<ActionsToolboxFactory> getFactories() {
         if (readonlyProvider.isReadOnlyDiagram()) {
-            return Arrays.asList(commonActionsToolboxFactories.get());
+            return Collections.singletonList(commonActionsToolboxFactories.get());
         } else {
             return Arrays.asList(flowActionsToolboxFactories.get(),
                                  commonActionsToolboxFactories.get());

@@ -30,7 +30,6 @@ import static org.appformer.client.context.Channel.GITHUB;
 import static org.appformer.client.context.Channel.ONLINE;
 import static org.appformer.client.context.Channel.VSCODE;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 
 @RunWith(GwtMockitoTestRunner.class)
