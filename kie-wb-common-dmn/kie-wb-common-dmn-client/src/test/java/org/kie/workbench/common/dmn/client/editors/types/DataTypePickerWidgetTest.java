@@ -181,7 +181,6 @@ public class DataTypePickerWidgetTest {
 
         verify(typeSelector).setLiveSearchPlaceholder(eq(DMNEditorConstants.TypePickerWidget_Choose));
         verify(manageLabel).setTextContent(eq(DMNEditorConstants.TypePickerWidget_Manage));
-        verify(picker).setTypeButtonCSSClass();
     }
 
     @Test
@@ -427,7 +426,7 @@ public class DataTypePickerWidgetTest {
     }
 
     @Test
-    public void testSetTypeButtonCSSClassWhenIsReadOnlyDiagram(){
+    public void testSetTypeButtonCSSClassWhenIsReadOnlyDiagram() {
 
         when(readOnlyProvider.isReadOnlyDiagram()).thenReturn(true);
 
@@ -438,7 +437,7 @@ public class DataTypePickerWidgetTest {
     }
 
     @Test
-    public void testSetTypeButtonCSSClassWhenIsNotReadOnlyDiagram(){
+    public void testSetTypeButtonCSSClassWhenIsNotReadOnlyDiagram() {
 
         when(readOnlyProvider.isReadOnlyDiagram()).thenReturn(false);
 
