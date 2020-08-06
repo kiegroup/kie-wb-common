@@ -230,7 +230,7 @@ public abstract class BaseProjectImportService implements ImportService {
             put(SCHEME,
                 GitRepository.SCHEME.toString());
             put("replaceIfExists",
-                false);
+                true);
             put("username",
                 username);
             put("password",
