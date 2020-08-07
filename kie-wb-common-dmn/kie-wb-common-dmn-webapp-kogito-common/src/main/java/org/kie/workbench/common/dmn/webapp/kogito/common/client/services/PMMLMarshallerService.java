@@ -15,17 +15,22 @@
  */
 package org.kie.workbench.common.dmn.webapp.kogito.common.client.services;
 
-import java.util.Collections;
-import java.util.function.Supplier;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
 import elemental2.dom.DomGlobal;
 import elemental2.promise.Promise;
-import org.appformer.kogito.bridge.client.marshaller.pmml.PMMLEditorMarshallerService;
+import org.appformer.kogito.bridge.client.marshaller.pmml.PMMLEditorMarshallerApi;
+import org.appformer.kogito.bridge.client.marshaller.pmml.model.PMMLDocumentData;
 import org.kie.workbench.common.dmn.api.editors.included.DMNImportTypes;
 import org.kie.workbench.common.dmn.api.editors.included.PMMLDocumentMetadata;
+import org.kie.workbench.common.dmn.api.editors.included.PMMLModelMetadata;
+import org.kie.workbench.common.dmn.api.editors.included.PMMLParameterMetadata;
 import org.kie.workbench.common.stunner.core.util.FileUtils;
 import org.kie.workbench.common.stunner.core.util.StringUtils;
 import org.uberfire.client.promise.Promises;
@@ -37,16 +42,17 @@ import org.uberfire.client.promise.Promises;
 public class PMMLMarshallerService {
 
     private Promises promises;
-    private Supplier<PMMLEditorMarshallerService> pmmlEditorMarshallerService;
+    private PMMLEditorMarshallerApi pmmlEditorMarshallerApi;
 
     public PMMLMarshallerService() {
         // CDI
     }
 
     @Inject
-    public PMMLMarshallerService(final Promises promises) {
+    public PMMLMarshallerService(final Promises promises,
+                                 final PMMLEditorMarshallerApi pmmlEditorMarshallerApi) {
         this.promises = promises;
-        pmmlEditorMarshallerService = pmmlEditorMarshallerService::get;
+        this.pmmlEditorMarshallerApi = pmmlEditorMarshallerApi;
     }
 
     public Promise<PMMLDocumentMetadata> getDocumentMetadata(final String pmmlFile, final String pmmlFileContent) {
@@ -57,20 +63,27 @@ public class PMMLMarshallerService {
             return promises.reject("PMML file " + pmmlFile + " content required to be marshalled is empty or null");
         }
 
-        DomGlobal.console.log(pmmlEditorMarshallerService);
-        DomGlobal.console.log(pmmlEditorMarshallerService.get());
-
         try {
-            Object pmml = pmmlEditorMarshallerService.get().getPMMLModelData(pmmlFileContent);
+            PMMLDocumentData pmml = pmmlEditorMarshallerApi.getPMMLDocumentData(pmmlFileContent);
             DomGlobal.console.log(pmml);
+            List<PMMLModelMetadata> models = new ArrayList<>();
+            pmml.getModels().stream().forEach(pmmlModelData -> {
+                final String modelName = pmmlModelData.getModelName();
+                Set<PMMLParameterMetadata> fields = new HashSet<>();
+                for (String field : pmmlModelData.getFields()) {
+                    fields.add(new PMMLParameterMetadata(field));
+                }
+                models.add(new PMMLModelMetadata(modelName, fields));
+            });
+            String pmmlFileName = FileUtils.getFileName(pmmlFile);
+            PMMLDocumentMetadata documentMetadata = new PMMLDocumentMetadata(pmmlFile,
+                                                                             pmmlFileName,
+                                                                             DMNImportTypes.PMML.getDefaultNamespace(),
+                                                                             models);
+            DomGlobal.console.log(models);
+            return promises.resolve(documentMetadata);
         } catch (Exception e) {
             return promises.reject("Error during marshalling of PMML file " + pmmlFile + ": " + e.getMessage());
         }
-        String pmmlFileName = FileUtils.getFileName(pmmlFile);
-        PMMLDocumentMetadata documentMetadata = new PMMLDocumentMetadata(pmmlFile,
-                                                                         pmmlFileName,
-                                                                         DMNImportTypes.PMML.getDefaultNamespace(),
-                                                                         Collections.emptyList());
-        return promises.resolve(documentMetadata);
     }
 }

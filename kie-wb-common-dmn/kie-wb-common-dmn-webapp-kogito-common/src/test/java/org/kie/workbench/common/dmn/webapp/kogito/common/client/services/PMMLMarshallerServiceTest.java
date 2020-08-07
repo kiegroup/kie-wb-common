@@ -16,11 +16,13 @@
 package org.kie.workbench.common.dmn.webapp.kogito.common.client.services;
 
 import elemental2.promise.Promise;
+import org.appformer.kogito.bridge.client.marshaller.pmml.PMMLEditorMarshallerApi;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.kie.workbench.common.dmn.api.editors.included.DMNImportTypes;
 import org.kie.workbench.common.dmn.api.editors.included.PMMLDocumentMetadata;
+import org.mockito.Mock;
 import org.uberfire.client.promise.Promises;
 import org.uberfire.promise.SyncPromises;
 
@@ -33,13 +35,16 @@ public class PMMLMarshallerServiceTest {
     private static final String PATH = "test/" + FILENAME;
     private static final String CONTENT = "<xml>content</xml>";
 
+    @Mock
+    private PMMLEditorMarshallerApi pmmlEditorMarshallerApiMock;
+
     private Promises promises;
     private PMMLMarshallerService pmmlMarshallerService;
 
     @Before
     public void setup() {
         promises = new SyncPromises();
-        pmmlMarshallerService = new PMMLMarshallerService(promises);
+        pmmlMarshallerService = new PMMLMarshallerService(promises, pmmlEditorMarshallerApiMock);
     }
 
     @Test

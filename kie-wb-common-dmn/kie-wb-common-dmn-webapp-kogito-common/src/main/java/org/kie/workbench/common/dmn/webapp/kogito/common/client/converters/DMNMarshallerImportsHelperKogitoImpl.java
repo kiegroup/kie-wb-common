@@ -201,7 +201,7 @@ public class DMNMarshallerImportsHelperKogitoImpl implements DMNMarshallerImport
                             int modelCount = pmmlDocumentMetadata.getModels() != null ? pmmlDocumentMetadata.getModels().size() : 0;
                             models.add(new PMMLIncludedModel(fileName,
                                                             "",
-                                                             fileName,
+                                                             file,
                                                              DMNImportTypes.PMML.getDefaultNamespace(),
                                                              modelCount));
                             return promises.resolve();
