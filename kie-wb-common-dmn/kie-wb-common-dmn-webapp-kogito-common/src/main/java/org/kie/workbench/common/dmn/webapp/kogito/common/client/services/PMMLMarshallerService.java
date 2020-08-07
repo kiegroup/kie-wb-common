@@ -23,7 +23,7 @@ import javax.inject.Inject;
 
 import elemental2.dom.DomGlobal;
 import elemental2.promise.Promise;
-import org.appformer.kogito.bridge.client.marshaller.pmml.PMMLMarshaller;
+import org.appformer.kogito.bridge.client.marshaller.pmml.PMMLEditorMarshallerService;
 import org.kie.workbench.common.dmn.api.editors.included.DMNImportTypes;
 import org.kie.workbench.common.dmn.api.editors.included.PMMLDocumentMetadata;
 import org.kie.workbench.common.stunner.core.util.FileUtils;
@@ -37,7 +37,7 @@ import org.uberfire.client.promise.Promises;
 public class PMMLMarshallerService {
 
     private Promises promises;
-    private Supplier<PMMLMarshaller> pmmlMarshaller;
+    private Supplier<PMMLEditorMarshallerService> pmmlEditorMarshallerService;
 
     public PMMLMarshallerService() {
         // CDI
@@ -46,7 +46,7 @@ public class PMMLMarshallerService {
     @Inject
     public PMMLMarshallerService(final Promises promises) {
         this.promises = promises;
-        pmmlMarshaller = PMMLMarshaller::get;
+        pmmlEditorMarshallerService = pmmlEditorMarshallerService::get;
     }
 
     public Promise<PMMLDocumentMetadata> getDocumentMetadata(final String pmmlFile, final String pmmlFileContent) {
@@ -57,9 +57,11 @@ public class PMMLMarshallerService {
             return promises.reject("PMML file " + pmmlFile + " content required to be marshalled is empty or null");
         }
 
-        DomGlobal.console.log(pmmlFileContent);
+        DomGlobal.console.log(pmmlEditorMarshallerService);
+        DomGlobal.console.log(pmmlEditorMarshallerService.get());
+
         try {
-            Object pmml = pmmlMarshaller.get().marshall(pmmlFileContent);
+            Object pmml = pmmlEditorMarshallerService.get().getPMMLModelData(pmmlFileContent);
             DomGlobal.console.log(pmml);
         } catch (Exception e) {
             return promises.reject("Error during marshalling of PMML file " + pmmlFile + ": " + e.getMessage());
