@@ -16,7 +16,7 @@
 package org.kie.workbench.common.dmn.webapp.kogito.common.client.services;
 
 import elemental2.promise.Promise;
-import org.appformer.kogito.bridge.client.marshaller.pmml.PMMLEditorMarshallerApi;
+import org.appformer.kogito.bridge.client.pmmleditor.marshaller.PMMLEditorMarshallerApi;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;

@@ -15,23 +15,14 @@
  */
 package org.kie.workbench.common.dmn.webapp.kogito.common.client.services;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
-import elemental2.dom.DomGlobal;
 import elemental2.promise.Promise;
-import org.appformer.kogito.bridge.client.marshaller.pmml.PMMLEditorMarshallerApi;
-import org.appformer.kogito.bridge.client.marshaller.pmml.model.PMMLDocumentData;
-import org.kie.workbench.common.dmn.api.editors.included.DMNImportTypes;
+import org.appformer.kogito.bridge.client.pmmleditor.marshaller.PMMLEditorMarshallerApi;
+import org.appformer.kogito.bridge.client.pmmleditor.marshaller.model.PMMLDocumentData;
 import org.kie.workbench.common.dmn.api.editors.included.PMMLDocumentMetadata;
-import org.kie.workbench.common.dmn.api.editors.included.PMMLModelMetadata;
-import org.kie.workbench.common.dmn.api.editors.included.PMMLParameterMetadata;
-import org.kie.workbench.common.stunner.core.util.FileUtils;
+import org.kie.workbench.common.dmn.webapp.kogito.common.client.converters.PMMLMarshallerConverter;
 import org.kie.workbench.common.stunner.core.util.StringUtils;
 import org.uberfire.client.promise.Promises;
 
@@ -55,35 +46,20 @@ public class PMMLMarshallerService {
         this.pmmlEditorMarshallerApi = pmmlEditorMarshallerApi;
     }
 
-    public Promise<PMMLDocumentMetadata> getDocumentMetadata(final String pmmlFile, final String pmmlFileContent) {
-        if (StringUtils.isEmpty(pmmlFile)) {
+    public Promise<PMMLDocumentMetadata> getDocumentMetadata(final String pmmlFilePath, final String pmmlFileContent) {
+        if (StringUtils.isEmpty(pmmlFilePath)) {
             return promises.reject("PMML fileName required to be marshalled is empty or null");
         }
         if (StringUtils.isEmpty(pmmlFileContent)) {
-            return promises.reject("PMML file " + pmmlFile + " content required to be marshalled is empty or null");
+            return promises.reject("PMML file " + pmmlFilePath + " content required to be marshalled is empty or null");
         }
 
         try {
-            PMMLDocumentData pmml = pmmlEditorMarshallerApi.getPMMLDocumentData(pmmlFileContent);
-            DomGlobal.console.log(pmml);
-            List<PMMLModelMetadata> models = new ArrayList<>();
-            pmml.getModels().stream().forEach(pmmlModelData -> {
-                final String modelName = pmmlModelData.getModelName();
-                Set<PMMLParameterMetadata> fields = new HashSet<>();
-                for (String field : pmmlModelData.getFields()) {
-                    fields.add(new PMMLParameterMetadata(field));
-                }
-                models.add(new PMMLModelMetadata(modelName, fields));
-            });
-            String pmmlFileName = FileUtils.getFileName(pmmlFile);
-            PMMLDocumentMetadata documentMetadata = new PMMLDocumentMetadata(pmmlFile,
-                                                                             pmmlFileName,
-                                                                             DMNImportTypes.PMML.getDefaultNamespace(),
-                                                                             models);
-            DomGlobal.console.log(models);
-            return promises.resolve(documentMetadata);
+            PMMLDocumentData pmmlDocumentData = pmmlEditorMarshallerApi.getPMMLDocumentData(pmmlFileContent);
+            PMMLDocumentMetadata pmmlDocumentMetadata = PMMLMarshallerConverter.fromJSInteropToMetadata(pmmlFilePath, pmmlDocumentData);
+            return promises.resolve(pmmlDocumentMetadata);
         } catch (Exception e) {
-            return promises.reject("Error during marshalling of PMML file " + pmmlFile + ": " + e.getMessage());
+            return promises.reject("Error during marshalling of PMML file " + pmmlFilePath + ": " + e.getMessage());
         }
     }
 }
