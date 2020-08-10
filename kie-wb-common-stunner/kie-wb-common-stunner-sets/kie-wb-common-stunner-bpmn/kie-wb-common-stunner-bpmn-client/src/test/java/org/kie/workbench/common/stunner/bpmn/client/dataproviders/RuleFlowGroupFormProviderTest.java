@@ -57,11 +57,6 @@ public class RuleFlowGroupFormProviderTest {
         tested = spy(new RuleFlowGroupFormProvider());
         tested.dataProvider = dataProvider;
         tested.requestRuleFlowGroupDataEvent = requestRuleFlowGroupDataEvent;
-
-        doAnswer(i -> {
-            ((com.google.gwt.user.client.Command) i.getArguments()[0]).execute();
-            return null;
-        }).when(tested).scheduleServiceCall(any());
     }
 
     @Test

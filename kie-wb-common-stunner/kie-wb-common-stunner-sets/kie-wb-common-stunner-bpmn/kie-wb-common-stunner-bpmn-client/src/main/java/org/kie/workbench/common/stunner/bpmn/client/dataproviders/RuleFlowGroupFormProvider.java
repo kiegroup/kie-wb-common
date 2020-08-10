@@ -20,11 +20,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import javax.annotation.PostConstruct;
 import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
-import com.google.gwt.user.client.Timer;
 import org.kie.workbench.common.forms.dynamic.model.config.SelectorData;
 import org.kie.workbench.common.forms.dynamic.model.config.SelectorDataProvider;
 import org.kie.workbench.common.forms.dynamic.service.shared.FormRenderingContext;
@@ -43,17 +43,9 @@ public class RuleFlowGroupFormProvider implements SelectorDataProvider {
     @Inject
     RuleFlowGroupDataProvider dataProvider;
 
-    public RuleFlowGroupFormProvider() {
-        scheduleServiceCall(() -> requestRuleFlowGroupDataEvent.fire(new RequestRuleFlowGroupDataEvent()));
-    }
-
-    protected void scheduleServiceCall(final com.google.gwt.user.client.Command command) {
-        new Timer() {
-            @Override
-            public void run() {
-                command.execute();
-            }
-        }.schedule(100);
+    @PostConstruct
+    public void populateData() {
+        requestRuleFlowGroupDataEvent.fire(new RequestRuleFlowGroupDataEvent());
     }
 
     @Override
