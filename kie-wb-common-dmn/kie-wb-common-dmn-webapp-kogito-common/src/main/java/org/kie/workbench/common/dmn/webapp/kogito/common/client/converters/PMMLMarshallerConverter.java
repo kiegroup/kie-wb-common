@@ -38,14 +38,15 @@ public class PMMLMarshallerConverter {
         pmmlDocumentData.getModels().stream().forEach(pmmlModelData -> {
             final String modelName = pmmlModelData.getModelName();
             Set<PMMLParameterMetadata> fields = new HashSet<>();
+
             for (String field : pmmlModelData.getFields()) {
                 fields.add(new PMMLParameterMetadata(field));
             }
+
             models.add(new PMMLModelMetadata(modelName, fields));
         });
-        String pmmlFileName = FileUtils.getFileName(pmmlFilePath);
         return new PMMLDocumentMetadata(pmmlFilePath,
-                                        pmmlFileName,
+                                        FileUtils.getFileName(pmmlFilePath),
                                         DMNImportTypes.PMML.getDefaultNamespace(),
                                         models);
     }
