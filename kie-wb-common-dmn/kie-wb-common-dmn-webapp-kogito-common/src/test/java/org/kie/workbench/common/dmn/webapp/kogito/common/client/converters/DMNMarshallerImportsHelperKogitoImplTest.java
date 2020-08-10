@@ -128,7 +128,7 @@ public class DMNMarshallerImportsHelperKogitoImplTest {
         verify(pmmlMarshallerServiceMock, times(1)).getDocumentMetadata(eq(PMML_PATH), eq(PMML_CONTENT));
         verify(serviceCallbackMock, times(1)).onSuccess(modelsCapture.capture());
         assertEquals(1, modelsCapture.getValue().size());
-        assertEquals(PMML_FILE, modelsCapture.getValue().get(0).getPath());
+        assertEquals(PMML_PATH, modelsCapture.getValue().get(0).getPath());
         assertEquals(PMML_FILE, modelsCapture.getValue().get(0).getModelName());
         assertEquals(DMNImportTypes.PMML.getDefaultNamespace(), modelsCapture.getValue().get(0).getImportType());
         assertEquals(0, ((PMMLIncludedModel) modelsCapture.getValue().get(0)).getModelCount().intValue());
