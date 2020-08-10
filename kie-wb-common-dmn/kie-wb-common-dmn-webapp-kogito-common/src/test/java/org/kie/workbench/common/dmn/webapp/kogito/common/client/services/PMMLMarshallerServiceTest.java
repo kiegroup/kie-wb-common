@@ -15,12 +15,11 @@
  */
 package org.kie.workbench.common.dmn.webapp.kogito.common.client.services;
 
-import java.util.ArrayList;
+import java.util.Collections;
 
 import elemental2.promise.Promise;
 import org.appformer.kogito.bridge.client.pmmleditor.marshaller.PMMLEditorMarshallerApi;
 import org.appformer.kogito.bridge.client.pmmleditor.marshaller.model.PMMLDocumentData;
-import org.appformer.kogito.bridge.client.pmmleditor.marshaller.model.PMMLModelData;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -28,17 +27,18 @@ import org.junit.runner.RunWith;
 import org.kie.workbench.common.dmn.api.editors.included.DMNImportTypes;
 import org.kie.workbench.common.dmn.api.editors.included.PMMLDocumentMetadata;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 import org.uberfire.client.promise.Promises;
 import org.uberfire.promise.SyncPromises;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(PowerMockRunner.class)
+@PrepareForTest(PMMLDocumentData.class)
 public class PMMLMarshallerServiceTest {
 
     private static final String FILENAME = "fileName.pmml";
@@ -59,8 +59,8 @@ public class PMMLMarshallerServiceTest {
 
     @Test
     public void getDocumentMetadata() {
-        PMMLDocumentData pmmlDocumentData = mock(PMMLDocumentData.class);
-        doReturn(new ArrayList<PMMLModelData>()).when(pmmlDocumentData).getModels();
+        PMMLDocumentData pmmlDocumentData = PowerMockito.mock(PMMLDocumentData.class);
+        PowerMockito.when(pmmlDocumentData.getModels()).thenReturn(Collections.emptyList());
         when(pmmlEditorMarshallerApiMock.getPMMLDocumentData(CONTENT)).thenReturn(pmmlDocumentData);
         Promise<PMMLDocumentMetadata> returnPromise = pmmlMarshallerService.getDocumentMetadata(PATH, CONTENT);
         assertNotNull(returnPromise);
