@@ -34,7 +34,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -57,10 +56,6 @@ public class CalledElementFormProviderTest {
         tested = spy(new CalledElementFormProvider());
         tested.dataProvider = dataProvider;
         tested.requestProcessDataEvent = event;
-        doAnswer(i -> {
-            ((com.google.gwt.user.client.Command) i.getArguments()[0]).execute();
-            return null;
-        }).when(tested).scheduleServiceCall(any());
     }
 
     @Test
