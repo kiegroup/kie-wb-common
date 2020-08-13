@@ -40,7 +40,7 @@ public class PMMLMarshallerConverterTest {
 
     @Test
     public void fromJSInteropToMetadata_EmptyModels() {
-        PMMLDocumentData pmmlDocumentDataMock = PowerMockito.mock(PMMLDocumentData.class);
+        final PMMLDocumentData pmmlDocumentDataMock = PowerMockito.mock(PMMLDocumentData.class);
         PowerMockito.when(pmmlDocumentDataMock.getModels()).thenReturn(Collections.emptyList());
         PMMLDocumentMetadata metadata = PMMLMarshallerConverter.fromJSInteropToMetadata(PATH, pmmlDocumentDataMock);
         assertEquals(PATH, metadata.getPath());
