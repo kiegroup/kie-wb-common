@@ -50,11 +50,11 @@ public class PMMLMarshallerConverterTest {
 
     @Test
     public void fromJSInteropToMetadata_WithModels() {
-        String modelName = "LinearRegression";
-        String[] fieldsNames = {"field1", "field2"};
-        List<String> fields = Arrays.asList(fieldsNames);
-        List<PMMLModelData> modelsData = new ArrayList<>();
-                PMMLModelData pmmlModelDataMock = PowerMockito.mock(PMMLModelData.class);
+        final String modelName = "LinearRegression";
+        final String[] fieldsNames = {"field1", "field2"};
+        final List<String> fields = Arrays.asList(fieldsNames);
+        final List<PMMLModelData> modelsData = new ArrayList<>();
+        final PMMLModelData pmmlModelDataMock = PowerMockito.mock(PMMLModelData.class);
         modelsData.add(pmmlModelDataMock);
         PowerMockito.when(pmmlModelDataMock.getModelName()).thenReturn(modelName);
         PowerMockito.when(pmmlModelDataMock.getFields()).thenReturn(fields);
