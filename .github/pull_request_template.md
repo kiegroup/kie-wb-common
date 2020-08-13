@@ -1,23 +1,22 @@
 **Thank you for submitting this pull request**
 
-**JIRA**: _(please edit the JIRA link if it exists)_ 
+**JIRA**: [JBPM-0000](https://issues.redhat.com/browse/JBPM-0000)
 
-[link](https://www.example.com)
+**Referenced Pull Requests**:
+* paste the link(s) from GitHub here
+* link 2
+* link 3 etc.
 
-**referenced Pull Requests**: _(please edit the URLs of referenced pullrequests if they exist)_
+**Business Central**: [WAR file](https://donwnload.here/something)
 
-paste the link(s) from GitHub here
+**VS Code**: [plugin](https://donwnload.here/something)
 
-**How to retest or run**:
+<pre>
+To retest a PR or trigger a specific build please add a comment:
 
-* a pull request please add comment: regex **[.\*[j|J]enkins,?.\*(retest|test) this.\*]**
-
-* a full downstream build please add comment: regex **[.*\[j|J]enkins,?.\*(execute|run|trigger|start|do) fdb.\*]**
-
-* a compile downstream build please  add comment: regex **[.\*[j|J]enkins,?.\*(execute|run|trigger|start|do) cdb.\*]**
-
-* a full production downstream please add comment: regex **[.\*[j|J]enkins,?.\*(execute|run|trigger|start|do) product fdb.\*]**
-
-* an upstream build please add comment: regex **[.\*[j|J]enkins,?.\*(execute|run|trigger|start|do) upstream.\*]**
-
-i.e for running a full downstream build =  **Jenkins do fdb**
+* Retest PR: <b>jenkins retest this</b>
+* A full downstream build: <b>jenkins do fdb</b>
+* A compile downstream build: <b>jenkins do cdb</b>
+* A full production downstream build: <b>jenkins do product fdb</b>
+* An upstream build: <b>jenkins do upstream</b>
+</pre>
