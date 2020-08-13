@@ -55,7 +55,7 @@ public class PMMLMarshallerService {
         }
 
         try {
-            PMMLDocumentData pmmlDocumentData = pmmlEditorMarshallerApi.getPMMLDocumentData(pmmlFileContent);
+            final PMMLDocumentData pmmlDocumentData = pmmlEditorMarshallerApi.getPMMLDocumentData(pmmlFileContent);
             PMMLDocumentMetadata pmmlDocumentMetadata = PMMLMarshallerConverter.fromJSInteropToMetadata(pmmlFilePath, pmmlDocumentData);
             return promises.resolve(pmmlDocumentMetadata);
         } catch (final Exception e) {
