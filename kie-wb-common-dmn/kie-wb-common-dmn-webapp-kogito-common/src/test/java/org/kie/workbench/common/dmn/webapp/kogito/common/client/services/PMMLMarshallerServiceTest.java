@@ -59,7 +59,7 @@ public class PMMLMarshallerServiceTest {
 
     @Test
     public void getDocumentMetadata() {
-        PMMLDocumentData pmmlDocumentData = PowerMockito.mock(PMMLDocumentData.class);
+        final PMMLDocumentData pmmlDocumentData = PowerMockito.mock(PMMLDocumentData.class);
         PowerMockito.when(pmmlDocumentData.getModels()).thenReturn(Collections.emptyList());
         when(pmmlEditorMarshallerApiMock.getPMMLDocumentData(CONTENT)).thenReturn(pmmlDocumentData);
         Promise<PMMLDocumentMetadata> returnPromise = pmmlMarshallerService.getDocumentMetadata(PATH, CONTENT);

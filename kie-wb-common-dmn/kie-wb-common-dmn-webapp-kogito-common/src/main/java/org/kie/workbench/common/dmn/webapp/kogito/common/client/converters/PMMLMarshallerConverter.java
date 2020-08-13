@@ -33,13 +33,13 @@ public class PMMLMarshallerConverter {
         // Utils class with static methods.
     }
 
-    public static PMMLDocumentMetadata fromJSInteropToMetadata(String pmmlFilePath, PMMLDocumentData pmmlDocumentData) {
-        List<PMMLModelMetadata> models = new ArrayList<>();
+    public static PMMLDocumentMetadata fromJSInteropToMetadata(final String pmmlFilePath, final PMMLDocumentData pmmlDocumentData) {
+        final List<PMMLModelMetadata> models = new ArrayList<>();
         pmmlDocumentData.getModels().stream().forEach(pmmlModelData -> {
             final String modelName = pmmlModelData.getModelName();
-            Set<PMMLParameterMetadata> fields = new HashSet<>();
+            final Set<PMMLParameterMetadata> fields = new HashSet<>();
 
-            for (String field : pmmlModelData.getFields()) {
+            for (final String field : pmmlModelData.getFields()) {
                 fields.add(new PMMLParameterMetadata(field));
             }
 

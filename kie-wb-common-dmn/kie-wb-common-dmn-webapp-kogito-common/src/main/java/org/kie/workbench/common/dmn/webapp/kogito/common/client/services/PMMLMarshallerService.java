@@ -55,10 +55,10 @@ public class PMMLMarshallerService {
         }
 
         try {
-            PMMLDocumentData pmmlDocumentData = pmmlEditorMarshallerApi.getPMMLDocumentData(pmmlFileContent);
-            PMMLDocumentMetadata pmmlDocumentMetadata = PMMLMarshallerConverter.fromJSInteropToMetadata(pmmlFilePath, pmmlDocumentData);
+            final PMMLDocumentData pmmlDocumentData = pmmlEditorMarshallerApi.getPMMLDocumentData(pmmlFileContent);
+            final PMMLDocumentMetadata pmmlDocumentMetadata = PMMLMarshallerConverter.fromJSInteropToMetadata(pmmlFilePath, pmmlDocumentData);
             return promises.resolve(pmmlDocumentMetadata);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             return promises.reject("Error during marshalling of PMML file " + pmmlFilePath + ": " + e.getMessage());
         }
     }
