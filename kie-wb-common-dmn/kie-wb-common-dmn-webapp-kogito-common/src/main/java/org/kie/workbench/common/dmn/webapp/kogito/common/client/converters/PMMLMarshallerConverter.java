@@ -34,7 +34,7 @@ public class PMMLMarshallerConverter {
     }
 
     public static PMMLDocumentMetadata fromJSInteropToMetadata(final String pmmlFilePath, final PMMLDocumentData pmmlDocumentData) {
-        List<PMMLModelMetadata> models = new ArrayList<>();
+        final List<PMMLModelMetadata> models = new ArrayList<>();
         pmmlDocumentData.getModels().stream().forEach(pmmlModelData -> {
             final String modelName = pmmlModelData.getModelName();
             Set<PMMLParameterMetadata> fields = new HashSet<>();
