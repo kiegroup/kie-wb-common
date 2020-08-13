@@ -118,7 +118,6 @@ public abstract class BaseNavigationCommandTest {
 
         this.command = spy(getCommand(isOnlyVisualChangeAllowed));
 
-        //doNothing().when(command).hidePaletteWidget(any(Boolean.class));
         doReturn(editorContainerForErrai1090).when(command).wrapElementForErrai1090();
     }
 
