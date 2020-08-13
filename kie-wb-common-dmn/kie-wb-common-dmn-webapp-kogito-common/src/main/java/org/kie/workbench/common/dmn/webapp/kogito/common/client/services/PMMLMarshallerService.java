@@ -48,7 +48,7 @@ public class PMMLMarshallerService {
 
     public Promise<PMMLDocumentMetadata> getDocumentMetadata(final String pmmlFilePath, final String pmmlFileContent) {
         if (StringUtils.isEmpty(pmmlFilePath)) {
-            return promises.reject("PMML fileName required to be marshalled is empty or null");
+            return promises.reject("PMML file required to be marshalled is empty or null");
         }
         if (StringUtils.isEmpty(pmmlFileContent)) {
             return promises.reject("PMML file " + pmmlFilePath + " content required to be marshalled is empty or null");
