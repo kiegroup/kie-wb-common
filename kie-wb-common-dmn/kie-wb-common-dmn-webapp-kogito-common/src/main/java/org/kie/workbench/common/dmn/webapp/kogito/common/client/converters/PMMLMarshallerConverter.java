@@ -39,7 +39,7 @@ public class PMMLMarshallerConverter {
             final String modelName = pmmlModelData.getModelName();
             final Set<PMMLParameterMetadata> fields = new HashSet<>();
 
-            for (String field : pmmlModelData.getFields()) {
+            for (final String field : pmmlModelData.getFields()) {
                 fields.add(new PMMLParameterMetadata(field));
             }
 
