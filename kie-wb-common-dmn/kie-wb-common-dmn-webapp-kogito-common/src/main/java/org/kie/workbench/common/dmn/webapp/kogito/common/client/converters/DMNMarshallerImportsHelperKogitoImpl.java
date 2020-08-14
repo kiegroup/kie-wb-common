@@ -309,7 +309,7 @@ public class DMNMarshallerImportsHelperKogitoImpl implements DMNMarshallerImport
 
                 for (final Map.Entry<String, PMMLDocumentMetadata> entry : otherDefinitions.entrySet()) {
                     final PMMLDocumentMetadata def = entry.getValue();
-                    findImportByPMMLDocument(def.getName(), imports).ifPresent(anImport -> {
+                    findImportByPMMLDocument(def.getPath(), imports).ifPresent(anImport -> {
                         final JSITImport foundImported = Js.uncheckedCast(anImport);
                         importDefinitions.put(foundImported, def);
                     });
