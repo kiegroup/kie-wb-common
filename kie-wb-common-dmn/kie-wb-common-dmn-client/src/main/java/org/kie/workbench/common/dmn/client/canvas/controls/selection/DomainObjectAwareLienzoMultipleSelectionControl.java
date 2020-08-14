@@ -29,6 +29,7 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
 import com.google.gwt.event.dom.client.ContextMenuEvent;
+import com.google.gwt.event.shared.HandlerRegistration;
 import elemental2.dom.DomGlobal;
 import org.kie.workbench.common.dmn.api.qualifiers.DMNEditor;
 import org.kie.workbench.common.dmn.client.editors.contextmenu.ContextMenu;
@@ -72,6 +73,7 @@ public class DomainObjectAwareLienzoMultipleSelectionControl<H extends AbstractC
     private Optional<DomainObject> selectedDomainObject = Optional.empty();
     private final ContextMenu drdContextMenu;
     private final ClientTranslationService translationService;
+    private HandlerRegistration handlerRegistration;
 
     @Inject
     public DomainObjectAwareLienzoMultipleSelectionControl(final Event<CanvasSelectionEvent> canvasSelectionEvent,
@@ -88,7 +90,7 @@ public class DomainObjectAwareLienzoMultipleSelectionControl<H extends AbstractC
     protected void onEnable(H canvasHandler) {
         super.onEnable(canvasHandler);
 
-        canvasHandler
+        handlerRegistration = canvasHandler
                 .getAbstractCanvas()
                 .getView()
                 .asWidget()
@@ -103,8 +105,7 @@ public class DomainObjectAwareLienzoMultipleSelectionControl<H extends AbstractC
                         drdContextMenu.appendContextMenuToTheDOM(event.getNativeEvent().getClientX(), event.getNativeEvent().getClientY());
                         drdContextMenu.show(self -> contextMenuHandler(self, getSelectedNodes(canvasHandler)));
                     }
-
-        }, ContextMenuEvent.getType());
+                }, ContextMenuEvent.getType());
     }
 
     private boolean isClickedOnShape(final H canvasHandler, final int canvasX, final int canvasY) {
@@ -186,6 +187,7 @@ public class DomainObjectAwareLienzoMultipleSelectionControl<H extends AbstractC
     @Override
     protected void onDestroy() {
         selectedDomainObject = Optional.empty();
+        handlerRegistration.removeHandler();
         super.onDestroy();
     }
 
