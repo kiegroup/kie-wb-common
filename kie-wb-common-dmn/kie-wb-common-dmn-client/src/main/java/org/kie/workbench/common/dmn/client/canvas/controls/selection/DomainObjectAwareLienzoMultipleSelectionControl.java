@@ -30,9 +30,8 @@ import javax.inject.Inject;
 
 import com.google.gwt.event.dom.client.ContextMenuEvent;
 import com.google.gwt.event.shared.HandlerRegistration;
-import elemental2.dom.DomGlobal;
 import org.kie.workbench.common.dmn.api.qualifiers.DMNEditor;
-import org.kie.workbench.common.dmn.client.editors.contextmenu.ContextMenu;
+import org.kie.workbench.common.dmn.client.editors.drd.DRDContextMenu;
 import org.kie.workbench.common.stunner.client.lienzo.canvas.controls.LienzoMultipleSelectionControl;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.SelectionControl;
@@ -41,7 +40,6 @@ import org.kie.workbench.common.stunner.core.client.canvas.event.selection.Canva
 import org.kie.workbench.common.stunner.core.client.canvas.event.selection.CanvasSelectionEvent;
 import org.kie.workbench.common.stunner.core.client.canvas.event.selection.DomainObjectSelectionEvent;
 import org.kie.workbench.common.stunner.core.client.canvas.util.CanvasLayoutUtils;
-import org.kie.workbench.common.stunner.core.client.i18n.ClientTranslationService;
 import org.kie.workbench.common.stunner.core.domainobject.DomainObject;
 import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Element;
@@ -51,11 +49,6 @@ import org.kie.workbench.common.stunner.core.graph.content.definition.Definition
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
 
 import static org.kie.soup.commons.validation.PortablePreconditions.checkNotNull;
-import static org.kie.workbench.common.dmn.client.canvas.controls.toolbox.DMNEditDRDToolboxAction.DRDACTIONS_CONTEXT_MENU_ACTIONS_ADD_TO;
-import static org.kie.workbench.common.dmn.client.canvas.controls.toolbox.DMNEditDRDToolboxAction.DRDACTIONS_CONTEXT_MENU_ACTIONS_CREATE;
-import static org.kie.workbench.common.dmn.client.canvas.controls.toolbox.DMNEditDRDToolboxAction.DRDACTIONS_CONTEXT_MENU_ACTIONS_REMOVE;
-import static org.kie.workbench.common.dmn.client.canvas.controls.toolbox.DMNEditDRDToolboxAction.DRDACTIONS_CONTEXT_MENU_TITLE;
-import static org.kie.workbench.common.dmn.client.canvas.controls.toolbox.DMNEditDRDToolboxAction.HEADER_MENU_ICON_CLASS;
 import static org.uberfire.ext.wires.core.grids.client.util.CoordinateUtilities.getRelativeXOfEvent;
 import static org.uberfire.ext.wires.core.grids.client.util.CoordinateUtilities.getRelativeYOfEvent;
 
@@ -71,23 +64,20 @@ import static org.uberfire.ext.wires.core.grids.client.util.CoordinateUtilities.
 public class DomainObjectAwareLienzoMultipleSelectionControl<H extends AbstractCanvasHandler> extends LienzoMultipleSelectionControl<H> {
 
     private Optional<DomainObject> selectedDomainObject = Optional.empty();
-    private final ContextMenu drdContextMenu;
-    private final ClientTranslationService translationService;
+    private final DRDContextMenu drdContextMenu;
     private HandlerRegistration handlerRegistration;
 
     @Inject
     public DomainObjectAwareLienzoMultipleSelectionControl(final Event<CanvasSelectionEvent> canvasSelectionEvent,
                                                            final Event<CanvasClearSelectionEvent> clearSelectionEvent,
-                                                           final ContextMenu drdContextMenu,
-                                                           final ClientTranslationService translationService) {
+                                                           final DRDContextMenu drdContextMenu) {
         super(canvasSelectionEvent,
               clearSelectionEvent);
         this.drdContextMenu = drdContextMenu;
-        this.translationService = translationService;
     }
 
     @Override
-    protected void onEnable(H canvasHandler) {
+    protected void onEnable(final H canvasHandler) {
         super.onEnable(canvasHandler);
 
         handlerRegistration = canvasHandler
@@ -103,7 +93,7 @@ public class DomainObjectAwareLienzoMultipleSelectionControl<H extends AbstractC
 
                     if (selectionIsMultiple && aSelectedShapeHasBeenClicked) {
                         drdContextMenu.appendContextMenuToTheDOM(event.getNativeEvent().getClientX(), event.getNativeEvent().getClientY());
-                        drdContextMenu.show(self -> contextMenuHandler(self, getSelectedNodes(canvasHandler)));
+                        drdContextMenu.show(getSelectedNodes(canvasHandler));
                     }
                 }, ContextMenuEvent.getType());
     }
@@ -129,20 +119,6 @@ public class DomainObjectAwareLienzoMultipleSelectionControl<H extends AbstractC
         return getSelectedItems().stream()
                 .map(uuid -> CanvasLayoutUtils.getElement(canvasHandler, uuid))
                 .filter(element -> element instanceof Node);
-    }
-
-    void contextMenuHandler(final ContextMenu contextMenu, final List<Node<? extends Definition<?>, Edge>> selectedNodes) {
-        contextMenu.hide();
-        contextMenu.setHeaderMenu(translationService.getValue(DRDACTIONS_CONTEXT_MENU_TITLE), HEADER_MENU_ICON_CLASS);
-        contextMenu.addTextMenuItem(translationService.getValue(DRDACTIONS_CONTEXT_MENU_ACTIONS_CREATE),
-                                    true,
-                                    () -> DomGlobal.console.log("A", selectedNodes));
-        contextMenu.addTextMenuItem(translationService.getValue(DRDACTIONS_CONTEXT_MENU_ACTIONS_ADD_TO),
-                                    true,
-                                    () -> DomGlobal.console.log("B", selectedNodes));
-        contextMenu.addTextMenuItem(translationService.getValue(DRDACTIONS_CONTEXT_MENU_ACTIONS_REMOVE),
-                                    true,
-                                    () -> DomGlobal.console.log("C", selectedNodes));
     }
 
     @Override

@@ -23,18 +23,18 @@ import com.ait.lienzo.client.core.shape.Viewport;
 import com.ait.lienzo.client.core.shape.wires.SelectionManager;
 import com.ait.lienzo.client.core.shape.wires.WiresManager;
 import com.ait.lienzo.test.LienzoMockitoTestRunner;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.Widget;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.kie.workbench.common.dmn.client.editors.contextmenu.ContextMenu;
+import org.kie.workbench.common.dmn.client.editors.drd.DRDContextMenu;
 import org.kie.workbench.common.stunner.client.lienzo.canvas.wires.WiresCanvas;
 import org.kie.workbench.common.stunner.client.lienzo.canvas.wires.WiresCanvasView;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
 import org.kie.workbench.common.stunner.core.client.canvas.event.selection.CanvasClearSelectionEvent;
 import org.kie.workbench.common.stunner.core.client.canvas.event.selection.CanvasSelectionEvent;
 import org.kie.workbench.common.stunner.core.client.canvas.event.selection.DomainObjectSelectionEvent;
-import org.kie.workbench.common.stunner.core.client.i18n.ClientTranslationService;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.kie.workbench.common.stunner.core.diagram.Metadata;
 import org.kie.workbench.common.stunner.core.domainobject.DomainObject;
@@ -46,6 +46,7 @@ import org.mockito.Mock;
 import org.uberfire.mocks.EventSourceMock;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
@@ -103,16 +104,16 @@ public class DomainObjectAwareLienzoMultipleSelectionControlTest {
     private EventSourceMock<CanvasClearSelectionEvent> clearSelectionEvent;
 
     @Mock
-    private ContextMenu drdContextMenu;
-
-    @Mock
-    private ClientTranslationService translationService;
+    private DRDContextMenu drdContextMenu;
 
     @Mock
     private WiresCanvasView wiresCanvasView;
 
     @Mock
     private Widget canvasWidget;
+
+    @Mock
+    private HandlerRegistration handlerRegistration;
 
     private DomainObjectAwareLienzoMultipleSelectionControl control;
 
@@ -127,13 +128,13 @@ public class DomainObjectAwareLienzoMultipleSelectionControlTest {
 
         this.control = new DomainObjectAwareLienzoMultipleSelectionControl(canvasSelectionEvent,
                                                                            clearSelectionEvent,
-                                                                           drdContextMenu,
-                                                                           translationService);
+                                                                           drdContextMenu);
 
         when(canvasHandler.getCanvas()).thenReturn(canvas);
         when(canvasHandler.getAbstractCanvas()).thenReturn(canvas);
         when(canvas.getView()).thenReturn(wiresCanvasView);
         when(wiresCanvasView.asWidget()).thenReturn(canvasWidget);
+        when(canvasWidget.addDomHandler(any(), any())).thenReturn(handlerRegistration);
         when(canvasHandler.getDiagram()).thenReturn(diagram);
         when(canvasHandler.getGraphIndex()).thenReturn(graphIndex);
         when(diagram.getMetadata()).thenReturn(diagramMetadata);
