@@ -20,7 +20,6 @@ import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
 import elemental2.dom.DomGlobal;
-import elemental2.dom.HTMLElement;
 import org.kie.workbench.common.dmn.client.editors.contextmenu.ContextMenu;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
 import org.kie.workbench.common.stunner.core.client.canvas.util.CanvasLayoutUtils;
@@ -62,16 +61,9 @@ public class DMNEditDRDToolboxAction implements ToolboxAction<AbstractCanvasHand
 
     @Override
     public ToolboxAction<AbstractCanvasHandler> onMouseClick(final AbstractCanvasHandler canvasHandler, final String uuid, final MouseClickEvent event) {
-        final Element<? extends Definition<?>> element = CanvasLayoutUtils.getElement(canvasHandler, uuid);
+        drdContextMenu.appendContextMenuToTheDOM(event.getClientX(), event.getClientY());
 
-        final HTMLElement contextMenuElement = drdContextMenu.getElement();
-        contextMenuElement.style.position = "absolute";
-        contextMenuElement.style.left = event.getClientX() + "px";
-        contextMenuElement.style.top = event.getClientY() + "px";
-        DomGlobal.document.body.appendChild(contextMenuElement);
-
-        drdContextMenu.show(self -> contextMenuHandler(self, element));
-
+        drdContextMenu.show(self -> contextMenuHandler(self, CanvasLayoutUtils.getElement(canvasHandler, uuid)));
         return this;
     }
 

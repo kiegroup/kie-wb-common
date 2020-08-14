@@ -24,6 +24,7 @@ import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
+import elemental2.dom.DomGlobal;
 import elemental2.dom.HTMLElement;
 import org.jboss.errai.ui.client.local.api.elemental2.IsElement;
 import org.kie.workbench.common.dmn.client.widgets.grid.controls.list.HasListSelectorControl.ListSelectorHeaderItem;
@@ -82,6 +83,14 @@ public class ContextMenu {
 
     public void addTextMenuItem(final String itemName, final boolean isEnabled, final Command command) {
         menuItems.add(ListSelectorTextItem.build(itemName, isEnabled, command));
+    }
+
+    public void appendContextMenuToTheDOM(final double x, final double y) {
+        final HTMLElement contextMenuElement = this.getElement();
+        contextMenuElement.style.position = "absolute";
+        contextMenuElement.style.left = x + "px";
+        contextMenuElement.style.top = y + "px";
+        DomGlobal.document.body.appendChild(contextMenuElement);
     }
 
     public interface View extends UberElemental<ContextMenu>, IsElement {

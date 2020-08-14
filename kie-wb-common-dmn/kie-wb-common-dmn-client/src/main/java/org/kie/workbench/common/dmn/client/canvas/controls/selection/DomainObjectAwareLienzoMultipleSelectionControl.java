@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Event;
@@ -29,7 +30,6 @@ import javax.inject.Inject;
 
 import com.google.gwt.event.dom.client.ContextMenuEvent;
 import elemental2.dom.DomGlobal;
-import elemental2.dom.HTMLElement;
 import org.kie.workbench.common.dmn.api.qualifiers.DMNEditor;
 import org.kie.workbench.common.dmn.client.editors.contextmenu.ContextMenu;
 import org.kie.workbench.common.stunner.client.lienzo.canvas.controls.LienzoMultipleSelectionControl;
@@ -95,25 +95,20 @@ public class DomainObjectAwareLienzoMultipleSelectionControl<H extends AbstractC
                 .addDomHandler(event -> {
                     event.preventDefault();
                     event.stopPropagation();
-                    final int canvasX = getRelativeXOfEvent(event);
-                    final int canvasY = getRelativeYOfEvent(event);
 
-                    if (isClickedOnShape(canvasHandler, canvasX, canvasY) && getSelectedItems().size() > 1) {
-                        final HTMLElement contextMenuElement = drdContextMenu.getElement();
-                        contextMenuElement.style.position = "absolute";
-                        contextMenuElement.style.left = event.getNativeEvent().getClientX() + "px";
-                        contextMenuElement.style.top = event.getNativeEvent().getClientY() + "px";
-                        DomGlobal.document.body.appendChild(contextMenuElement);
-                        drdContextMenu.show(self -> contextMenuHandler(self, getSelectedNodes(getSelectedItems(), canvasHandler)));
+                    final boolean selectionIsMultiple = getSelectedItems().size() > 1;
+                    final boolean aSelectedShapeHasBeenClicked = isClickedOnShape(canvasHandler, getRelativeXOfEvent(event), getRelativeYOfEvent(event));
+
+                    if (selectionIsMultiple && aSelectedShapeHasBeenClicked) {
+                        drdContextMenu.appendContextMenuToTheDOM(event.getNativeEvent().getClientX(), event.getNativeEvent().getClientY());
+                        drdContextMenu.show(self -> contextMenuHandler(self, getSelectedNodes(canvasHandler)));
                     }
 
         }, ContextMenuEvent.getType());
     }
 
-    private boolean isClickedOnShape(H canvasHandler, int canvasX, int canvasY) {
-        return getSelectedItems().stream()
-                .map(uuid -> CanvasLayoutUtils.getElement(canvasHandler, uuid))
-                .filter(element -> element instanceof Node)
+    private boolean isClickedOnShape(final H canvasHandler, final int canvasX, final int canvasY) {
+        return getSelectedNodesStream(canvasHandler)
                 .map(Element::getContent)
                 .filter(content -> content instanceof View)
                 .anyMatch(view -> {
@@ -123,15 +118,19 @@ public class DomainObjectAwareLienzoMultipleSelectionControl<H extends AbstractC
                 });
     }
 
-    private List<Node<? extends Definition<?>, Edge>> getSelectedNodes(Collection<String> selectedItemsIds, H canvasHandler) {
-        return selectedItemsIds.stream()
-                .map(uuid -> CanvasLayoutUtils.getElement(canvasHandler, uuid))
-                .filter(element -> element instanceof Node)
+    private List<Node<? extends Definition<?>, Edge>> getSelectedNodes(final H canvasHandler) {
+        return getSelectedNodesStream(canvasHandler)
                 .map(Element::asNode)
                 .collect(Collectors.toList());
     }
 
-    void contextMenuHandler(final ContextMenu contextMenu, List<Node<? extends Definition<?>, Edge>> selectedNodes) {
+    private Stream<? extends Element<? extends Definition<?>>> getSelectedNodesStream(final H canvasHandler) {
+        return getSelectedItems().stream()
+                .map(uuid -> CanvasLayoutUtils.getElement(canvasHandler, uuid))
+                .filter(element -> element instanceof Node);
+    }
+
+    void contextMenuHandler(final ContextMenu contextMenu, final List<Node<? extends Definition<?>, Edge>> selectedNodes) {
         contextMenu.hide();
         contextMenu.setHeaderMenu(translationService.getValue(DRDACTIONS_CONTEXT_MENU_TITLE), HEADER_MENU_ICON_CLASS);
         contextMenu.addTextMenuItem(translationService.getValue(DRDACTIONS_CONTEXT_MENU_ACTIONS_CREATE),
