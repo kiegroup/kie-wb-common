@@ -98,7 +98,7 @@ public class DomainObjectAwareLienzoMultipleSelectionControl<H extends AbstractC
                 }, ContextMenuEvent.getType());
     }
 
-    private boolean isClickedOnShape(final H canvasHandler, final int canvasX, final int canvasY) {
+    protected boolean isClickedOnShape(final H canvasHandler, final int canvasX, final int canvasY) {
         return getSelectedNodesStream(canvasHandler)
                 .map(Element::getContent)
                 .filter(content -> content instanceof View)
@@ -109,13 +109,13 @@ public class DomainObjectAwareLienzoMultipleSelectionControl<H extends AbstractC
                 });
     }
 
-    private List<Node<? extends Definition<?>, Edge>> getSelectedNodes(final H canvasHandler) {
+    protected List<Node<? extends Definition<?>, Edge>> getSelectedNodes(final H canvasHandler) {
         return getSelectedNodesStream(canvasHandler)
                 .map(Element::asNode)
                 .collect(Collectors.toList());
     }
 
-    private Stream<? extends Element<? extends Definition<?>>> getSelectedNodesStream(final H canvasHandler) {
+    protected Stream<? extends Element<? extends Definition<?>>> getSelectedNodesStream(final H canvasHandler) {
         return getSelectedItems().stream()
                 .map(uuid -> CanvasLayoutUtils.getElement(canvasHandler, uuid))
                 .filter(element -> element instanceof Node);

@@ -63,7 +63,7 @@ public class DRDContextMenu {
         contextMenu.show(self -> setDRDContextMenuHandler(self, selectedNodes));
     }
 
-    public void setDRDContextMenuHandler(final ContextMenu contextMenu, final Collection<Node<? extends Definition<?>, Edge>> selectedNodes) {
+    protected void setDRDContextMenuHandler(final ContextMenu contextMenu, final Collection<Node<? extends Definition<?>, Edge>> selectedNodes) {
         contextMenu.hide();
         contextMenu.setHeaderMenu(translationService.getValue(DRDACTIONS_CONTEXT_MENU_TITLE).toUpperCase(), HEADER_MENU_ICON_CLASS);
         contextMenu.addTextMenuItem(translationService.getValue(DRDACTIONS_CONTEXT_MENU_ACTIONS_CREATE),

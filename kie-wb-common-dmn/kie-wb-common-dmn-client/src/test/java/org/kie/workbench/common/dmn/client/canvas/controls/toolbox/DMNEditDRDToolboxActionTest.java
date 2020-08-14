@@ -80,13 +80,14 @@ public class DMNEditDRDToolboxActionTest {
         assertThat(dmnEditDRDToolboxAction.getGlyph(canvasHandler, UUID)).isInstanceOf(ImageDataUriGlyph.class);
     }
 
-//    @Test
-//    public void testGetTitle() {
-//        dmnEditDRDToolboxAction.getTitle(canvasHandler, UUID);
-//
-//        verify(translationService,
-//               times(1)).getValue(eq(DRDACTIONS_CONTEXT_MENU_TITLE));
-//    }
+    @Test
+    public void testGetTitle() {
+        final String title = "TITLE";
+
+        when(drdContextMenu.getTitle()).thenReturn(title);
+
+        assertThat(dmnEditDRDToolboxAction.getTitle(canvasHandler, UUID)).isEqualTo(title);
+    }
 
     @Test
     public void testOnMouseClick() {
@@ -102,12 +103,4 @@ public class DMNEditDRDToolboxActionTest {
         verify(drdContextMenu, times(1)).show(any(Collection.class));
     }
 
-//    @Test
-//    public void testContextMenuHandler() {
-//        when(translationService.getValue(anyString())).thenReturn(StringUtils.EMPTY);
-//        dmnEditDRDToolboxAction.contextMenuHandler(drdContextMenu, node);
-//
-//        verify(drdContextMenu, times(1)).setHeaderMenu(anyString(), anyString());
-//        verify(drdContextMenu, times(3)).addTextMenuItem(anyString(), anyBoolean(), any(Command.class));
-//    }
 }
