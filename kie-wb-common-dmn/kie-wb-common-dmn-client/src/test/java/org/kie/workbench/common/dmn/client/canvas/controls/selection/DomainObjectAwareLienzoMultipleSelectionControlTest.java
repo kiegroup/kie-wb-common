@@ -23,14 +23,18 @@ import com.ait.lienzo.client.core.shape.Viewport;
 import com.ait.lienzo.client.core.shape.wires.SelectionManager;
 import com.ait.lienzo.client.core.shape.wires.WiresManager;
 import com.ait.lienzo.test.LienzoMockitoTestRunner;
+import com.google.gwt.user.client.ui.Widget;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.kie.workbench.common.dmn.client.editors.contextmenu.ContextMenu;
 import org.kie.workbench.common.stunner.client.lienzo.canvas.wires.WiresCanvas;
+import org.kie.workbench.common.stunner.client.lienzo.canvas.wires.WiresCanvasView;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
 import org.kie.workbench.common.stunner.core.client.canvas.event.selection.CanvasClearSelectionEvent;
 import org.kie.workbench.common.stunner.core.client.canvas.event.selection.CanvasSelectionEvent;
 import org.kie.workbench.common.stunner.core.client.canvas.event.selection.DomainObjectSelectionEvent;
+import org.kie.workbench.common.stunner.core.client.i18n.ClientTranslationService;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.kie.workbench.common.stunner.core.diagram.Metadata;
 import org.kie.workbench.common.stunner.core.domainobject.DomainObject;
@@ -98,6 +102,18 @@ public class DomainObjectAwareLienzoMultipleSelectionControlTest {
     @Mock
     private EventSourceMock<CanvasClearSelectionEvent> clearSelectionEvent;
 
+    @Mock
+    private ContextMenu drdContextMenu;
+
+    @Mock
+    private ClientTranslationService translationService;
+
+    @Mock
+    private WiresCanvasView wiresCanvasView;
+
+    @Mock
+    private Widget canvasWidget;
+
     private DomainObjectAwareLienzoMultipleSelectionControl control;
 
     @Before
@@ -110,10 +126,14 @@ public class DomainObjectAwareLienzoMultipleSelectionControlTest {
         final WiresManager wiresManager = spy(WiresManager.get(lienzoLayer));
 
         this.control = new DomainObjectAwareLienzoMultipleSelectionControl(canvasSelectionEvent,
-                                                                           clearSelectionEvent);
+                                                                           clearSelectionEvent,
+                                                                           drdContextMenu,
+                                                                           translationService);
 
         when(canvasHandler.getCanvas()).thenReturn(canvas);
         when(canvasHandler.getAbstractCanvas()).thenReturn(canvas);
+        when(canvas.getView()).thenReturn(wiresCanvasView);
+        when(wiresCanvasView.asWidget()).thenReturn(canvasWidget);
         when(canvasHandler.getDiagram()).thenReturn(diagram);
         when(canvasHandler.getGraphIndex()).thenReturn(graphIndex);
         when(diagram.getMetadata()).thenReturn(diagramMetadata);

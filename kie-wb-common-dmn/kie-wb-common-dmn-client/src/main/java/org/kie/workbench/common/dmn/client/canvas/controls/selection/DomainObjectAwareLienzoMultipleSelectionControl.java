@@ -17,15 +17,21 @@
 package org.kie.workbench.common.dmn.client.canvas.controls.selection;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
+import com.google.gwt.event.dom.client.ContextMenuEvent;
+import elemental2.dom.DomGlobal;
+import elemental2.dom.HTMLElement;
 import org.kie.workbench.common.dmn.api.qualifiers.DMNEditor;
+import org.kie.workbench.common.dmn.client.editors.contextmenu.ContextMenu;
 import org.kie.workbench.common.stunner.client.lienzo.canvas.controls.LienzoMultipleSelectionControl;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.SelectionControl;
@@ -33,10 +39,24 @@ import org.kie.workbench.common.stunner.core.client.canvas.controls.select.Multi
 import org.kie.workbench.common.stunner.core.client.canvas.event.selection.CanvasClearSelectionEvent;
 import org.kie.workbench.common.stunner.core.client.canvas.event.selection.CanvasSelectionEvent;
 import org.kie.workbench.common.stunner.core.client.canvas.event.selection.DomainObjectSelectionEvent;
+import org.kie.workbench.common.stunner.core.client.canvas.util.CanvasLayoutUtils;
+import org.kie.workbench.common.stunner.core.client.i18n.ClientTranslationService;
 import org.kie.workbench.common.stunner.core.domainobject.DomainObject;
+import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Element;
+import org.kie.workbench.common.stunner.core.graph.Node;
+import org.kie.workbench.common.stunner.core.graph.content.Bounds;
+import org.kie.workbench.common.stunner.core.graph.content.definition.Definition;
+import org.kie.workbench.common.stunner.core.graph.content.view.View;
 
 import static org.kie.soup.commons.validation.PortablePreconditions.checkNotNull;
+import static org.kie.workbench.common.dmn.client.canvas.controls.toolbox.DMNEditDRDToolboxAction.DRDACTIONS_CONTEXT_MENU_ACTIONS_ADD_TO;
+import static org.kie.workbench.common.dmn.client.canvas.controls.toolbox.DMNEditDRDToolboxAction.DRDACTIONS_CONTEXT_MENU_ACTIONS_CREATE;
+import static org.kie.workbench.common.dmn.client.canvas.controls.toolbox.DMNEditDRDToolboxAction.DRDACTIONS_CONTEXT_MENU_ACTIONS_REMOVE;
+import static org.kie.workbench.common.dmn.client.canvas.controls.toolbox.DMNEditDRDToolboxAction.DRDACTIONS_CONTEXT_MENU_TITLE;
+import static org.kie.workbench.common.dmn.client.canvas.controls.toolbox.DMNEditDRDToolboxAction.HEADER_MENU_ICON_CLASS;
+import static org.uberfire.ext.wires.core.grids.client.util.CoordinateUtilities.getRelativeXOfEvent;
+import static org.uberfire.ext.wires.core.grids.client.util.CoordinateUtilities.getRelativeYOfEvent;
 
 /**
  * Specializes {@link LienzoMultipleSelectionControl} to also support selection of a single {@link DomainObject}.
@@ -50,12 +70,79 @@ import static org.kie.soup.commons.validation.PortablePreconditions.checkNotNull
 public class DomainObjectAwareLienzoMultipleSelectionControl<H extends AbstractCanvasHandler> extends LienzoMultipleSelectionControl<H> {
 
     private Optional<DomainObject> selectedDomainObject = Optional.empty();
+    private final ContextMenu drdContextMenu;
+    private final ClientTranslationService translationService;
 
     @Inject
     public DomainObjectAwareLienzoMultipleSelectionControl(final Event<CanvasSelectionEvent> canvasSelectionEvent,
-                                                           final Event<CanvasClearSelectionEvent> clearSelectionEvent) {
+                                                           final Event<CanvasClearSelectionEvent> clearSelectionEvent,
+                                                           final ContextMenu drdContextMenu,
+                                                           final ClientTranslationService translationService) {
         super(canvasSelectionEvent,
               clearSelectionEvent);
+        this.drdContextMenu = drdContextMenu;
+        this.translationService = translationService;
+    }
+
+    @Override
+    protected void onEnable(H canvasHandler) {
+        super.onEnable(canvasHandler);
+
+        canvasHandler
+                .getAbstractCanvas()
+                .getView()
+                .asWidget()
+                .addDomHandler(event -> {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    final int canvasX = getRelativeXOfEvent(event);
+                    final int canvasY = getRelativeYOfEvent(event);
+
+                    if (isClickedOnShape(canvasHandler, canvasX, canvasY) && getSelectedItems().size() > 1) {
+                        final HTMLElement contextMenuElement = drdContextMenu.getElement();
+                        contextMenuElement.style.position = "absolute";
+                        contextMenuElement.style.left = event.getNativeEvent().getClientX() + "px";
+                        contextMenuElement.style.top = event.getNativeEvent().getClientY() + "px";
+                        DomGlobal.document.body.appendChild(contextMenuElement);
+                        drdContextMenu.show(self -> contextMenuHandler(self, getSelectedNodes(getSelectedItems(), canvasHandler)));
+                    }
+
+        }, ContextMenuEvent.getType());
+    }
+
+    private boolean isClickedOnShape(H canvasHandler, int canvasX, int canvasY) {
+        return getSelectedItems().stream()
+                .map(uuid -> CanvasLayoutUtils.getElement(canvasHandler, uuid))
+                .filter(element -> element instanceof Node)
+                .map(Element::getContent)
+                .filter(content -> content instanceof View)
+                .anyMatch(view -> {
+                    final Bounds bounds = ((View) view).getBounds();
+                    return canvasX >= bounds.getUpperLeft().getX() && canvasX <= bounds.getLowerRight().getX()
+                            && canvasY >= bounds.getUpperLeft().getY() && canvasY <= bounds.getLowerRight().getY();
+                });
+    }
+
+    private List<Node<? extends Definition<?>, Edge>> getSelectedNodes(Collection<String> selectedItemsIds, H canvasHandler) {
+        return selectedItemsIds.stream()
+                .map(uuid -> CanvasLayoutUtils.getElement(canvasHandler, uuid))
+                .filter(element -> element instanceof Node)
+                .map(Element::asNode)
+                .collect(Collectors.toList());
+    }
+
+    void contextMenuHandler(final ContextMenu contextMenu, List<Node<? extends Definition<?>, Edge>> selectedNodes) {
+        contextMenu.hide();
+        contextMenu.setHeaderMenu(translationService.getValue(DRDACTIONS_CONTEXT_MENU_TITLE), HEADER_MENU_ICON_CLASS);
+        contextMenu.addTextMenuItem(translationService.getValue(DRDACTIONS_CONTEXT_MENU_ACTIONS_CREATE),
+                                    true,
+                                    () -> DomGlobal.console.log("A", selectedNodes));
+        contextMenu.addTextMenuItem(translationService.getValue(DRDACTIONS_CONTEXT_MENU_ACTIONS_ADD_TO),
+                                    true,
+                                    () -> DomGlobal.console.log("B", selectedNodes));
+        contextMenu.addTextMenuItem(translationService.getValue(DRDACTIONS_CONTEXT_MENU_ACTIONS_REMOVE),
+                                    true,
+                                    () -> DomGlobal.console.log("C", selectedNodes));
     }
 
     @Override
