@@ -182,7 +182,7 @@ public class DMNMarshallerImportsHelperKogitoImplTest {
                                                                                                                                           Collections.emptyList())));
         List<JSITImport> imports = new ArrayList<>();
         JSITImport jsImportMock = mock(JSITImport.class);
-        when(jsImportMock.getLocationURI()).thenReturn(PMML_FILE);
+        when(jsImportMock.getLocationURI()).thenReturn(PMML_PATH);
         imports.add(jsImportMock);
         Promise<Map<JSITImport, PMMLDocumentMetadata>> returnPromise = dmnMarshallerImportsHelperKogitoImpl.getPMMLDocumentsAsync(metadataMock, imports);
         verify(kogitoResourceContentServiceMock, times(1)).getFilteredItems(eq(PMML_FILES_PATTERN), isA(ResourceListOptions.class));

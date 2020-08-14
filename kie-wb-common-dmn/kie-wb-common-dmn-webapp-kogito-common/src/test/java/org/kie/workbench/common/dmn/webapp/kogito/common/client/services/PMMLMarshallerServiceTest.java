@@ -79,12 +79,12 @@ public class PMMLMarshallerServiceTest {
 
     @Test
     public void getDocumentMetadataNullFile() {
-        getDocumentMetadataInvalidContent(null, CONTENT, "PMML fileName required to be marshalled is empty or null");
+        getDocumentMetadataInvalidContent(null, CONTENT, "PMML file required to be marshalled is empty or null");
     }
 
     @Test
     public void getDocumentMetadataEmptyFile() {
-        getDocumentMetadataInvalidContent("", CONTENT, "PMML fileName required to be marshalled is empty or null");
+        getDocumentMetadataInvalidContent("", CONTENT, "PMML file required to be marshalled is empty or null");
     }
 
     @Test
