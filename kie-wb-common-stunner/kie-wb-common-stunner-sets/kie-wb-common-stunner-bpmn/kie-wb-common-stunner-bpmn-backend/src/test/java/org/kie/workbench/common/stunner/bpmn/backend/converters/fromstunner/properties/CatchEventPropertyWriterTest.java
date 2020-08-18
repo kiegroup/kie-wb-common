@@ -19,30 +19,40 @@ package org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.pro
 import java.util.HashSet;
 
 import bpsim.ElementParameters;
+import org.eclipse.bpmn2.CatchEvent;
+import org.eclipse.bpmn2.ErrorEventDefinition;
 import org.eclipse.bpmn2.StartEvent;
+import org.junit.Before;
 import org.junit.Test;
 import org.kie.workbench.common.stunner.bpmn.definition.property.simulation.SimulationAttributeSet;
 
 import static org.junit.Assert.assertEquals;
 import static org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.Factories.bpmn2;
+import static org.mockito.Mockito.spy;
 
-public class CatchEventPropertyWriterTest {
+public class CatchEventPropertyWriterTest extends EventPropertyWriterTest {
+
+    @Before
+    public void init() {
+        event = bpmn2.createStartEvent();
+        event.setId(elementId);
+        propertyWriter = spy(new CatchEventPropertyWriter((StartEvent) event,
+                                                          new FlatVariableScope(),
+                                                          new HashSet<>()));
+    }
 
     @Test
-    public void simulationSetMustHaveElementRef() {
-        String elementId = "MY_ID";
-        StartEvent startEvent = bpmn2.createStartEvent();
-        startEvent.setId(elementId);
-
-        CatchEventPropertyWriter p =
-                new CatchEventPropertyWriter(
-                        startEvent,
-                        new FlatVariableScope(), new HashSet<>());
-
+    public void testSimulationSetMustHaveElementRef() {
+        CatchEventPropertyWriter catchEventPropertyWriter = (CatchEventPropertyWriter) propertyWriter;
         SimulationAttributeSet defaults = new SimulationAttributeSet();
-        p.setSimulationSet(defaults);
+        catchEventPropertyWriter.setSimulationSet(defaults);
 
-        ElementParameters simulationParameters = p.getSimulationParameters();
+        ElementParameters simulationParameters = catchEventPropertyWriter.getSimulationParameters();
         assertEquals(elementId, simulationParameters.getElementRef());
+    }
+
+    @Override
+    public ErrorEventDefinition getErrorDefinition() {
+        return (ErrorEventDefinition) ((CatchEvent)event).getEventDefinitions().get(0);
     }
 }

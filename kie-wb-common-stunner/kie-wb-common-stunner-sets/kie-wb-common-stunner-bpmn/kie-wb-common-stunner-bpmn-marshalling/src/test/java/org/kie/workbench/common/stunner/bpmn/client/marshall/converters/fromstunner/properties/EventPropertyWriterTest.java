@@ -16,91 +16,101 @@
 
 package org.kie.workbench.common.stunner.bpmn.client.marshall.converters.fromstunner.properties;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.bpmn2.EventDefinition;
+import org.eclipse.bpmn2.Error;
+import org.eclipse.bpmn2.ErrorEventDefinition;
+import org.eclipse.bpmn2.Event;
 import org.eclipse.bpmn2.ItemDefinition;
-import org.eclipse.bpmn2.StartEvent;
+import org.eclipse.bpmn2.RootElement;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.AssignmentsInfo;
+import org.kie.workbench.common.stunner.bpmn.definition.property.event.error.ErrorRef;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.message.MessageRef;
-import org.mockito.Mock;
+import org.mockito.ArgumentCaptor;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import static org.jgroups.util.Util.assertEquals;
-import static org.kie.workbench.common.stunner.bpmn.client.marshall.converters.fromstunner.Factories.bpmn2;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class EventPropertyWriterTest {
+public abstract class EventPropertyWriterTest {
 
-    private MessageRef messageRef = new MessageRef("someVar", "");
+    private static final String SAMPLE_STRUCTURE_REF = "my.var.ref";
+    protected final static String elementId = "MY_ID";
+    private final static String ERROR_CODE = "ERROR_CODE";
 
-    private static final String sampleStructureRef = "my.var.ref";
-
-    @Mock
-    private ItemDefinition itemDefinition;
+    protected Event event;
+    protected EventPropertyWriter propertyWriter;
 
     @Test
     public void testMessageStructureRef() {
-        String elementId = "MY_ID";
-        StartEvent startEvent = bpmn2.createStartEvent();
-        startEvent.setId(elementId);
+        MessageRef messageRef = new MessageRef("someVar", "");
+        List<ItemDefinition> itemDefinitions = new ArrayList<>();
+        ItemDefinition itemDefinition = mock(ItemDefinition.class);
+        itemDefinitions.add(itemDefinition);
 
-        when(itemDefinition.getStructureRef()).thenReturn(sampleStructureRef);
-        EventPropertyWriter writer = new EventPropertyWriter(startEvent, new FlatVariableScope()) {
+        when(itemDefinition.getStructureRef()).thenReturn(SAMPLE_STRUCTURE_REF);
+        when(propertyWriter.getItemDefinitions()).thenReturn(itemDefinitions);
+        propertyWriter.addMessage(messageRef);
+        assertEquals(messageRef.getStructure(), SAMPLE_STRUCTURE_REF);
 
-            @Override
-            public void setAssignmentsInfo(AssignmentsInfo assignmentsInfo) {
-
-            }
-
-            @Override
-            protected void addEventDefinition(EventDefinition eventDefinition) {
-
-            }
-
-            public List<ItemDefinition> getItemDefinitions() {
-                itemDefinitions.clear();
-                itemDefinitions.add(itemDefinition);
-                return itemDefinitions;
-            }
-        };
-
-        writer.addMessage(messageRef);
-        assertEquals(messageRef.getStructure(), sampleStructureRef);
-
-        when(itemDefinition.getStructureRef()).thenReturn(sampleStructureRef);
+        when(itemDefinition.getStructureRef()).thenReturn(SAMPLE_STRUCTURE_REF);
 
         messageRef.setStructure("nonEmpty");
-        writer.addMessage(messageRef);
+        propertyWriter.addMessage(messageRef);
         assertEquals(messageRef.getStructure(), "nonEmpty");
 
-        writer = new EventPropertyWriter(startEvent, new FlatVariableScope()) {
-
-            @Override
-            public void setAssignmentsInfo(AssignmentsInfo assignmentsInfo) {
-
-            }
-
-            @Override
-            protected void addEventDefinition(EventDefinition eventDefinition) {
-
-            }
-
-            public List<ItemDefinition> getItemDefinitions() {
-                itemDefinitions.clear();
-                return itemDefinitions;
-            }
-        };
-
+        itemDefinitions.clear();
         messageRef.setStructure("");
-        writer.addMessage(messageRef);
+        propertyWriter.addMessage(messageRef);
         assertEquals(messageRef.getStructure(), "");
 
         messageRef.setStructure("nonEmpty");
-        writer.addMessage(messageRef);
+        propertyWriter.addMessage(messageRef);
         assertEquals(messageRef.getStructure(), "nonEmpty");
     }
+
+    @Test
+    public void testAddEmptyError() {
+        final ArgumentCaptor<RootElement> captor = ArgumentCaptor.forClass(RootElement.class);
+
+        ErrorRef errorRef = new ErrorRef();
+        propertyWriter.addError(errorRef);
+        ErrorEventDefinition definition = getErrorDefinition();
+        assertNull(definition.getErrorRef().getErrorCode());
+        assertFalse(definition.getErrorRef().getId().isEmpty());
+
+        verify(propertyWriter).addRootElement(captor.capture());
+        Error error = (Error) captor.getValue();
+
+        assertNull(error.getErrorCode());
+        assertFalse(error.getId().isEmpty());
+    }
+
+    @Test
+    public void testAddError() {
+        final ArgumentCaptor<RootElement> captor = ArgumentCaptor.forClass(RootElement.class);
+
+        ErrorRef errorRef = new ErrorRef();
+        errorRef.setValue(ERROR_CODE);
+        propertyWriter.addError(errorRef);
+        ErrorEventDefinition definition = getErrorDefinition();
+        Assert.assertEquals(ERROR_CODE, definition.getErrorRef().getErrorCode());
+        assertFalse(definition.getErrorRef().getId().isEmpty());
+
+        verify(propertyWriter).addRootElement(captor.capture());
+        Error error = (Error) captor.getValue();
+
+        Assert.assertEquals(ERROR_CODE, error.getErrorCode());
+        assertFalse(error.getId().isEmpty());
+    }
+
+    public abstract ErrorEventDefinition getErrorDefinition();
 }
