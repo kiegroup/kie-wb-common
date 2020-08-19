@@ -10,4 +10,4 @@ If you want your pull requests (or patches) to be merged into master, please res
 
 - [link to README](kie-wb-common-services/kie-wb-common-refactoring/README.md) for the [kie-wb-common-refactoring](kie-wb-common-services/kie-wb-common-refactoring) modules, 
   which explains how information is organized in the lucene index
-
+.
