@@ -142,6 +142,8 @@ public class BPMNGraphFactoryImpl
 
     @SuppressWarnings("unchecked")
     protected GraphCommandExecutionContext createGraphContext(final Graph graph) {
+        //AF-2542: the new version of JDT used by GWT has a hard time to resolve some generics.
+        //         the unnecessary cast is required because of that.
         final Index index = (Index) indexBuilder.build(graph);
         return new DirectGraphCommandExecutionContext(definitionManager,
                                                       factoryManager,
