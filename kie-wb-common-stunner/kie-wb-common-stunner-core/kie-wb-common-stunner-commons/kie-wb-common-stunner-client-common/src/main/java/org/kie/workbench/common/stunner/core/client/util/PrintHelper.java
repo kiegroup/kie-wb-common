@@ -90,6 +90,7 @@ public class PrintHelper {
                 printWindow.print();
                 printWindow.close();
             }, 10);
+            return true;
         };
     }
 
