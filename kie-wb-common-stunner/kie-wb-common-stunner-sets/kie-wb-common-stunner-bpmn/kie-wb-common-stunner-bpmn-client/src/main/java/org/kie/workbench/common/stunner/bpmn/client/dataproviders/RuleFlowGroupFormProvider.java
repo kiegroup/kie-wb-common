@@ -40,12 +40,15 @@ public class RuleFlowGroupFormProvider implements SelectorDataProvider {
     @Inject
     Event<RequestRuleFlowGroupDataEvent> requestRuleFlowGroupDataEvent;
 
+    private static Event<RequestRuleFlowGroupDataEvent> requestRuleFlowGroupDataEventEventSingleton = null;
+
     @Inject
     RuleFlowGroupDataProvider dataProvider;
 
     @PostConstruct
     public void populateData() {
         requestRuleFlowGroupDataEvent.fire(new RequestRuleFlowGroupDataEvent());
+        requestRuleFlowGroupDataEventEventSingleton = requestRuleFlowGroupDataEvent;
     }
 
     @Override
@@ -93,5 +96,11 @@ public class RuleFlowGroupFormProvider implements SelectorDataProvider {
     private static int getIndexOfFileSeparator(String string) {
         int index = string.indexOf('/');
         return index == -1 ? string.indexOf('\\') : index;
+    }
+
+    public static void initServerData() {
+        if (requestRuleFlowGroupDataEventEventSingleton != null) {
+            requestRuleFlowGroupDataEventEventSingleton.fire(new RequestRuleFlowGroupDataEvent());
+        }
     }
 }
