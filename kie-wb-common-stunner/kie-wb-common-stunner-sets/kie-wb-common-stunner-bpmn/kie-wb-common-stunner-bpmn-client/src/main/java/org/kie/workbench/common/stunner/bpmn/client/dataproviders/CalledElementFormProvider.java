@@ -36,6 +36,8 @@ public class CalledElementFormProvider implements SelectorDataProvider {
     @Inject
     Event<RequestProcessDataEvent> requestProcessDataEvent;
 
+    private static Event<RequestProcessDataEvent> requestProcessDataEventSingleton = null;
+
     @Override
     public String getProviderName() {
         return getClass().getSimpleName();
@@ -44,6 +46,7 @@ public class CalledElementFormProvider implements SelectorDataProvider {
     @PostConstruct
     public void populateData() {
         requestProcessDataEvent.fire(new RequestProcessDataEvent());
+        requestProcessDataEventSingleton = requestProcessDataEvent;
     }
 
     @Override
@@ -55,5 +58,11 @@ public class CalledElementFormProvider implements SelectorDataProvider {
 
     private static Map<Object, String> toMap(final Iterable<String> items) {
         return StreamSupport.stream(items.spliterator(), false).collect(Collectors.toMap(s -> s, s -> s));
+    }
+
+    public static void initServerData() {
+        if (requestProcessDataEventSingleton != null) {
+            requestProcessDataEventSingleton.fire(new RequestProcessDataEvent());
+        }
     }
 }
