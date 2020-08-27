@@ -22,9 +22,11 @@ import java.util.function.Supplier;
 import org.jboss.errai.common.client.dom.HTMLElement;
 import org.kie.workbench.common.dmn.api.definition.HasExpression;
 import org.kie.workbench.common.dmn.api.definition.HasName;
+import org.kie.workbench.common.dmn.api.definition.model.DMNDiagramElement;
 import org.kie.workbench.common.dmn.api.definition.model.Definitions;
 import org.kie.workbench.common.dmn.api.property.dmn.Name;
 import org.kie.workbench.common.dmn.client.docks.navigator.DecisionNavigatorPresenter;
+import org.kie.workbench.common.dmn.client.docks.navigator.drds.DMNDiagramsSession;
 import org.kie.workbench.common.dmn.client.editors.toolbar.ToolbarStateHandler;
 import org.kie.workbench.common.dmn.client.graph.DMNGraphUtils;
 import org.kie.workbench.common.dmn.client.session.DMNSession;
@@ -35,6 +37,8 @@ import org.kie.workbench.common.stunner.core.graph.content.definition.Definition
 import org.uberfire.mvp.Command;
 
 public class ExpressionEditor implements ExpressionEditorView.Presenter {
+
+    private DMNDiagramsSession dmnDiagramsSession;
 
     private ExpressionEditorView view;
 
@@ -48,13 +52,18 @@ public class ExpressionEditor implements ExpressionEditorView.Presenter {
 
     private DMNGraphUtils dmnGraphUtils;
 
-    // See DROOLS-3706. This returns the name of the DMN file's Definitions not the name of
-    // the DRG or DRD being displayed. At the point DROOLS-3706 was implemented the DMN
-    // Editor did not support DRGs so this name was chosen by default.
+    // When the current selection is the DRG, we return its name, otherwise the name of the selected DRD
     private final Supplier<String> returnToLinkTextSupplier = new Supplier<String>() {
         @Override
         public String get() {
-            return extractReturnToLinkFromDefinitions();
+            if (dmnDiagramsSession.isGlobalGraph()) {
+                return extractReturnToLinkFromDefinitions();
+            }
+            return dmnDiagramsSession
+                    .getCurrentDMNDiagramElement()
+                    .map(DMNDiagramElement::getName)
+                    .orElse(new Name())
+                    .getValue();
         }
 
         private String extractReturnToLinkFromDefinitions() {
@@ -73,10 +82,12 @@ public class ExpressionEditor implements ExpressionEditorView.Presenter {
     @SuppressWarnings("unchecked")
     public ExpressionEditor(final ExpressionEditorView view,
                             final DecisionNavigatorPresenter decisionNavigator,
-                            final DMNGraphUtils dmnGraphUtils) {
+                            final DMNGraphUtils dmnGraphUtils,
+                            final DMNDiagramsSession dmnDiagramsSession) {
         this.view = view;
         this.decisionNavigator = decisionNavigator;
         this.dmnGraphUtils = dmnGraphUtils;
+        this.dmnDiagramsSession = dmnDiagramsSession;
 
         this.view.init(this);
     }
