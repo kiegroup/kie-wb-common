@@ -29,7 +29,7 @@ import org.kie.workbench.common.dmn.client.commands.factory.canvas.DMNDeleteNode
 import org.kie.workbench.common.stunner.client.lienzo.canvas.command.LienzoCanvasCommandFactory;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
 import org.kie.workbench.common.stunner.core.client.command.CanvasCommand;
-import org.kie.workbench.common.stunner.core.diagram.SelectedDiagramProvider;
+import org.kie.workbench.common.stunner.core.diagram.GraphsProvider;
 import org.kie.workbench.common.stunner.core.graph.Element;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.processing.traverse.content.ChildrenTraverseProcessor;
@@ -39,7 +39,7 @@ import org.kie.workbench.common.stunner.core.graph.processing.traverse.content.V
 @ApplicationScoped
 public class DefaultCanvasCommandFactory extends LienzoCanvasCommandFactory {
 
-    private SelectedDiagramProvider selectedDiagramProvider;
+    private GraphsProvider graphsProvider;
 
     protected DefaultCanvasCommandFactory() {
         super();
@@ -48,10 +48,10 @@ public class DefaultCanvasCommandFactory extends LienzoCanvasCommandFactory {
     @Inject
     public DefaultCanvasCommandFactory(final ManagedInstance<ChildrenTraverseProcessor> childrenTraverseProcessors,
                                        final ManagedInstance<ViewTraverseProcessor> viewTraverseProcessors,
-                                       final SelectedDiagramProvider selectedDiagramProvider) {
+                                       final GraphsProvider graphsProvider) {
         super(childrenTraverseProcessors,
               viewTraverseProcessors);
-        this.selectedDiagramProvider = selectedDiagramProvider;
+        this.graphsProvider = graphsProvider;
     }
 
     @Override
@@ -65,11 +65,11 @@ public class DefaultCanvasCommandFactory extends LienzoCanvasCommandFactory {
 
     @Override
     public CanvasCommand<AbstractCanvasHandler> delete(final Collection<Element> candidates) {
-        return new DMNDeleteElementsCommand(candidates, selectedDiagramProvider);
+        return new DMNDeleteElementsCommand(candidates, graphsProvider);
     }
 
     @Override
     public CanvasCommand<AbstractCanvasHandler> deleteNode(final Node candidate) {
-        return new DMNDeleteNodeCommand(candidate, selectedDiagramProvider);
+        return new DMNDeleteNodeCommand(candidate, graphsProvider);
     }
 }

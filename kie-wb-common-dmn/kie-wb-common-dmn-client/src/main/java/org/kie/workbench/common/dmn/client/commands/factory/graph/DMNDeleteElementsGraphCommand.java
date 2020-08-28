@@ -20,34 +20,35 @@ import java.util.Collection;
 import java.util.function.Supplier;
 
 import org.kie.workbench.common.dmn.client.commands.factory.canvas.DMNSafeDeleteNodeCommand;
-import org.kie.workbench.common.stunner.core.diagram.SelectedDiagramProvider;
+import org.kie.workbench.common.stunner.core.diagram.GraphsProvider;
 import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Element;
 import org.kie.workbench.common.stunner.core.graph.Node;
+import org.kie.workbench.common.stunner.core.graph.command.impl.DeleteElementsCommand;
 import org.kie.workbench.common.stunner.core.graph.command.impl.SafeDeleteNodeCommand;
 
-public class DMNDeleteElementsGraphCommand extends org.kie.workbench.common.stunner.core.graph.command.impl.DeleteElementsCommand {
+public class DMNDeleteElementsGraphCommand extends DeleteElementsCommand {
 
-    private final SelectedDiagramProvider selectedDiagramProvider;
+    private GraphsProvider graphsProvider;
 
     public DMNDeleteElementsGraphCommand(final Supplier<Collection<Element>> elements,
                                          final DeleteCallback callback,
-                                         final SelectedDiagramProvider selectedDiagramProvider) {
+                                         final GraphsProvider graphsProvider) {
         super(elements, callback);
-        this.selectedDiagramProvider = selectedDiagramProvider;
+        this.graphsProvider = graphsProvider;
     }
 
     @Override
-    protected SafeDeleteNodeCommand createSafeDeleteNodeCommand(final Node<?, Edge> node,
-                                                                final SafeDeleteNodeCommand.Options options,
-                                                                final DeleteCallback callback) {
+    protected DMNSafeDeleteNodeCommand createSafeDeleteNodeCommand(final Node<?, Edge> node,
+                                                                   final SafeDeleteNodeCommand.Options options,
+                                                                   final DeleteCallback callback) {
         return new DMNSafeDeleteNodeCommand(node,
                                             callback.onDeleteNode(node, options),
                                             options,
-                                            getSelectedDiagramProvider());
+                                            getGraphsProvider());
     }
 
-    public SelectedDiagramProvider getSelectedDiagramProvider() {
-        return selectedDiagramProvider;
+    public GraphsProvider getGraphsProvider() {
+        return graphsProvider;
     }
 }

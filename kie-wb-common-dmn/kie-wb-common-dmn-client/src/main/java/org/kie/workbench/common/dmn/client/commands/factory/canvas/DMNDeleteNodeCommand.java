@@ -19,23 +19,26 @@ package org.kie.workbench.common.dmn.client.commands.factory.canvas;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
 import org.kie.workbench.common.stunner.core.client.canvas.command.DeleteNodeCommand;
 import org.kie.workbench.common.stunner.core.command.Command;
-import org.kie.workbench.common.stunner.core.diagram.SelectedDiagramProvider;
+import org.kie.workbench.common.stunner.core.diagram.GraphsProvider;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.command.GraphCommandExecutionContext;
+import org.kie.workbench.common.stunner.core.graph.command.impl.SafeDeleteNodeCommand;
 import org.kie.workbench.common.stunner.core.rule.RuleViolation;
 
 public class DMNDeleteNodeCommand extends DeleteNodeCommand {
 
-    private final SelectedDiagramProvider selectedDiagramProvider;
+    private final GraphsProvider graphsProvider;
 
     public DMNDeleteNodeCommand(final Node candidate,
-                                final SelectedDiagramProvider selectedDiagramProvider) {
-        super(candidate);
-        this.selectedDiagramProvider = selectedDiagramProvider;
+                                final GraphsProvider graphsProvider) {
+        super(candidate,
+              SafeDeleteNodeCommand.Options.defaults(),
+              new CanvasDeleteProcessor(SafeDeleteNodeCommand.Options.defaults()));
+        this.graphsProvider = graphsProvider;
     }
 
-    public SelectedDiagramProvider getSelectedDiagramProvider() {
-        return selectedDiagramProvider;
+    public GraphsProvider getGraphsProvider() {
+        return graphsProvider;
     }
 
     @Override
@@ -43,6 +46,6 @@ public class DMNDeleteNodeCommand extends DeleteNodeCommand {
         return new DMNSafeDeleteNodeCommand(candidate,
                                             deleteProcessor,
                                             options,
-                                            getSelectedDiagramProvider());
+                                            getGraphsProvider());
     }
 }

@@ -19,7 +19,7 @@ package org.kie.workbench.common.dmn.client.commands.factory.canvas;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.stunner.core.command.Command;
-import org.kie.workbench.common.stunner.core.diagram.SelectedDiagramProvider;
+import org.kie.workbench.common.stunner.core.diagram.GraphsProvider;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.command.GraphCommandExecutionContext;
 import org.kie.workbench.common.stunner.core.rule.RuleViolation;
@@ -36,7 +36,7 @@ public class DMNDeleteNodeCommandTest {
     @Test
     public void testNewGraphCommand() {
 
-        final SelectedDiagramProvider selectedDiagramProvider = mock(SelectedDiagramProvider.class);
+        final GraphsProvider selectedDiagramProvider = mock(GraphsProvider.class);
         final Node candidate = mock(Node.class);
         when(candidate.getUUID()).thenReturn("uuid");
         final DMNDeleteNodeCommand cmd = new DMNDeleteNodeCommand(candidate, selectedDiagramProvider);
@@ -47,6 +47,6 @@ public class DMNDeleteNodeCommandTest {
         assertEquals(cmd.getCandidate(), safeCmd.getNode());
         assertEquals(cmd.getDeleteProcessor(), safeCmd.getSafeDeleteCallback().get());
         assertEquals(cmd.getOptions(), safeCmd.getOptions());
-        assertEquals(cmd.getSelectedDiagramProvider(), safeCmd.getSelectedDiagramProvider());
+        assertEquals(cmd.getGraphsProvider(), safeCmd.getGraphsProvider());
     }
 }

@@ -22,29 +22,29 @@ import org.kie.workbench.common.dmn.client.commands.factory.graph.DMNDeleteEleme
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
 import org.kie.workbench.common.stunner.core.client.canvas.command.DeleteElementsCommand;
 import org.kie.workbench.common.stunner.core.command.Command;
-import org.kie.workbench.common.stunner.core.diagram.SelectedDiagramProvider;
+import org.kie.workbench.common.stunner.core.diagram.GraphsProvider;
 import org.kie.workbench.common.stunner.core.graph.Element;
 import org.kie.workbench.common.stunner.core.graph.command.GraphCommandExecutionContext;
 import org.kie.workbench.common.stunner.core.rule.RuleViolation;
 
 public class DMNDeleteElementsCommand extends DeleteElementsCommand {
 
-    private final SelectedDiagramProvider selectedDiagramProvider;
+    private final GraphsProvider graphsProvider;
 
     public DMNDeleteElementsCommand(final Collection<Element> elements,
-                                    final SelectedDiagramProvider selectedDiagramProvider) {
+                                    final GraphsProvider graphsProvider) {
         super(elements);
-        this.selectedDiagramProvider = selectedDiagramProvider;
+        this.graphsProvider = graphsProvider;
     }
 
-    public SelectedDiagramProvider getSelectedDiagramProvider() {
-        return selectedDiagramProvider;
+    public GraphsProvider getGraphsProvider() {
+        return graphsProvider;
     }
 
     @Override
     protected Command<GraphCommandExecutionContext, RuleViolation> newGraphCommand(final AbstractCanvasHandler context) {
         return new DMNDeleteElementsGraphCommand(() -> elements,
                                                  new CanvasMultipleDeleteProcessor(),
-                                                 getSelectedDiagramProvider());
+                                                 getGraphsProvider());
     }
 }

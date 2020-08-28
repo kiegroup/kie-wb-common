@@ -17,20 +17,24 @@
 package org.kie.workbench.common.stunner.core.graph.util;
 
 import java.util.ArrayDeque;
+import java.util.Arrays;
 import java.util.Deque;
+import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.stunner.core.TestingGraphInstanceBuilder;
 import org.kie.workbench.common.stunner.core.TestingGraphMockHandler;
-import org.kie.workbench.common.stunner.core.diagram.SelectedDiagramProvider;
+import org.kie.workbench.common.stunner.core.diagram.GraphsProvider;
 import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Graph;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.HasContentDefinitionId;
 import org.kie.workbench.common.stunner.core.graph.content.definition.Definition;
 import org.kie.workbench.common.stunner.core.graph.processing.traverse.content.ChildrenTraverseProcessorImpl;
+import org.kie.workbench.common.stunner.core.graph.processing.traverse.tree.AbstractTreeTraverseCallback;
+import org.kie.workbench.common.stunner.core.graph.processing.traverse.tree.TreeWalkTraverseProcessor;
 import org.kie.workbench.common.stunner.core.graph.processing.traverse.tree.TreeWalkTraverseProcessorImpl;
 import org.mockito.InOrder;
 import org.mockito.Mock;
@@ -282,15 +286,15 @@ public class SafeDeleteNodeProcessorTest {
     public void testRunKeepChildren() {
         final Graph graph = mock(Graph.class);
         final Node node = mock(Node.class);
-        final SelectedDiagramProvider selectedDiagramProvider = mock(SelectedDiagramProvider.class);
-        when(selectedDiagramProvider.isGlobalGraph()).thenReturn(false);
+        final GraphsProvider graphsProvider = mock(GraphsProvider.class);
+        when(graphsProvider.isGlobalGraphSelected()).thenReturn(false);
 
         this.tested = spy(new SafeDeleteNodeProcessor(new ChildrenTraverseProcessorImpl(new TreeWalkTraverseProcessorImpl()),
                                                       graph,
                                                       node,
                                                       true,
                                                       new TreeWalkTraverseProcessorImpl(),
-                                                      selectedDiagramProvider));
+                                                      graphsProvider));
         final ArrayDeque nodes = mock(ArrayDeque.class);
         doReturn(nodes).when(tested).createNodesDequeue();
         doNothing().when(tested).deleteChildren(callback, nodes);
@@ -306,15 +310,15 @@ public class SafeDeleteNodeProcessorTest {
     public void testRunKeepChildrenAndIsGlobalGraph() {
         final Graph graph = mock(Graph.class);
         final Node node = mock(Node.class);
-        final SelectedDiagramProvider selectedDiagramProvider = mock(SelectedDiagramProvider.class);
-        when(selectedDiagramProvider.isGlobalGraph()).thenReturn(true);
+        final GraphsProvider graphsProvider = mock(GraphsProvider.class);
+        when(graphsProvider.isGlobalGraphSelected()).thenReturn(true);
 
         this.tested = spy(new SafeDeleteNodeProcessor(new ChildrenTraverseProcessorImpl(new TreeWalkTraverseProcessorImpl()),
                                                       graph,
                                                       node,
                                                       true,
                                                       new TreeWalkTraverseProcessorImpl(),
-                                                      selectedDiagramProvider));
+                                                      graphsProvider));
         final ArrayDeque nodes = mock(ArrayDeque.class);
         doReturn(nodes).when(tested).createNodesDequeue();
         doNothing().when(tested).deleteChildren(callback, nodes);
@@ -330,36 +334,42 @@ public class SafeDeleteNodeProcessorTest {
     @Test
     public void testDeleteGlobalGraphNodes() {
         final Node node = mock(Node.class);
-        final SelectedDiagramProvider selectedDiagramProvider = mock(SelectedDiagramProvider.class);
+        final GraphsProvider graphsProvider = mock(GraphsProvider.class);
         final Deque nodes = new ArrayDeque();
-        when(selectedDiagramProvider.isGlobalGraph()).thenReturn(false);
+        final TreeWalkTraverseProcessor treeWalk = mock(TreeWalkTraverseProcessor.class);
+        final List<Graph> graphs = Arrays.asList(graphHolder.graph,
+                                                 graphHolderContainer.graph,
+                                                 graphHolderDocked.graph);
+
+        when(graphsProvider.isGlobalGraphSelected()).thenReturn(false);
 
         this.tested = spy(new SafeDeleteNodeProcessor(new ChildrenTraverseProcessorImpl(new TreeWalkTraverseProcessorImpl()),
                                                       graphHolder.graph,
                                                       node,
                                                       true,
-                                                      new TreeWalkTraverseProcessorImpl(),
-                                                      selectedDiagramProvider));
+                                                      treeWalk,
+                                                      graphsProvider));
 
+        when(graphsProvider.getGraphs()).thenReturn(graphs);
         doReturn(nodes).when(tested).createNodesDequeue();
         doReturn(true).when(tested).processGlobalNodeForDeletion(any(Node.class), eq(nodes));
 
         tested.deleteGlobalGraphNodes(callback, nodes);
 
-        // The number of the nodes on the graph
-        verify(tested, times(4)).processGlobalNodeForDeletion(any(Node.class), eq(nodes));
+        verify(treeWalk).traverse(eq(graphHolder.graph), any(AbstractTreeTraverseCallback.class));
+        verify(treeWalk).traverse(eq(graphHolderContainer.graph), any(AbstractTreeTraverseCallback.class));
+        verify(treeWalk).traverse(eq(graphHolderDocked.graph), any(AbstractTreeTraverseCallback.class));
     }
 
     @Test
     public void testProcessGlobalNodeForDeletion() {
 
-        final Node node = mock(Node.class);
         final Deque deque = mock(Deque.class);
         final String nodeId = "id";
+        final Node node = createNode(nodeId, "diagramId");
 
         this.tested = mock(SafeDeleteNodeProcessor.class);
 
-        when(tested.getContentDefinitionId(node)).thenReturn(nodeId);
         when(tested.getCandidateContentDefinitionId()).thenReturn(nodeId);
         when(tested.isDuplicatedOnTheCurrentDiagram(eq(node), anyString(), anyString())).thenReturn(false);
         when(tested.processGlobalNodeForDeletion(node, deque)).thenCallRealMethod();
@@ -374,15 +384,13 @@ public class SafeDeleteNodeProcessorTest {
     @Test
     public void testProcessDuplicatedGlobalNodeForDeletion() {
 
-        final Node node = mock(Node.class);
-        final Deque deque = mock(Deque.class);
         final String nodeId = "id";
         final String diagramId = "diagramId";
+        final Node node = createNode(nodeId, diagramId);
+        final Deque deque = mock(Deque.class);
 
         this.tested = mock(SafeDeleteNodeProcessor.class);
 
-        when(tested.getContentDefinitionId(node)).thenReturn(nodeId);
-        when(tested.getDiagramId(node)).thenReturn(diagramId);
         when(tested.getCandidateContentDefinitionId()).thenReturn(nodeId);
         when(tested.isDuplicatedOnTheCurrentDiagram(node, nodeId, diagramId)).thenReturn(true);
         when(tested.processGlobalNodeForDeletion(node, deque)).thenCallRealMethod();
@@ -393,6 +401,20 @@ public class SafeDeleteNodeProcessorTest {
         verify(deque, never()).add(node);
 
         assertFalse(shouldDeleteDuplicatedDRGNodes);
+    }
+
+    private Node createNode(final String contentDefinitionId,
+                            final String diagramId) {
+
+        final Node node = mock(Node.class);
+        final Definition content = mock(Definition.class);
+        final HasContentDefinitionId hasContentDefinitionId = mock(HasContentDefinitionId.class);
+        when(hasContentDefinitionId.getContentDefinitionId()).thenReturn(contentDefinitionId);
+        when(hasContentDefinitionId.getDiagramId()).thenReturn(diagramId);
+        when(node.getContent()).thenReturn(content);
+        when(content.getDefinition()).thenReturn(hasContentDefinitionId);
+
+        return node;
     }
 
     @Test
