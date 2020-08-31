@@ -40,7 +40,7 @@
     </dmn:context>
   </dmn:decision>
   <dmndi:DMNDI>
-    <dmndi:DMNDiagram>
+    <dmndi:DMNDiagram id='_1985B1A3-1952-42CA-B63C-34B8FA448A4A' name='DRG'>
       <di:extension>
         <kie:ComponentsWidthsExtension>
           <kie:ComponentWidths dmnElementRef='_AF3119C9-837D-4D56-A560-454A2F1A934D'>
@@ -56,7 +56,7 @@
           </kie:ComponentWidths>
         </kie:ComponentsWidthsExtension>
       </di:extension>
-      <dmndi:DMNShape id='dmnshape-_FAAA1E11-7107-4745-8F51-804BFB7E2F96' dmnElementRef='_FAAA1E11-7107-4745-8F51-804BFB7E2F96' isCollapsed='false'>
+      <dmndi:DMNShape id='dmnshape-drg-_FAAA1E11-7107-4745-8F51-804BFB7E2F96' dmnElementRef='_FAAA1E11-7107-4745-8F51-804BFB7E2F96' isCollapsed='false'>
         <dmndi:DMNStyle>
           <dmndi:FillColor red='255' green='255' blue='255'/>
           <dmndi:StrokeColor red='0' green='0' blue='0'/>

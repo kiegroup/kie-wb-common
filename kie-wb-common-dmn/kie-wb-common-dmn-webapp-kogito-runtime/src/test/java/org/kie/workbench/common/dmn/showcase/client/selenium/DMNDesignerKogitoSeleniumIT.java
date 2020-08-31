@@ -301,6 +301,172 @@ public class DMNDesignerKogitoSeleniumIT {
     }
 
     @Test
+    public void testMultipleDiagramsWithoutDRG() throws Exception {
+
+        final String fixture = loadResource("multiple-diagrams-without-drg.xml");
+        setContent(fixture);
+
+        final String actual = getContent();
+        assertThat(actual).isNotBlank();
+        XmlAssert.assertThat(actual)
+                .and(fixture)
+                .ignoreComments()
+                .ignoreWhitespace()
+                .areNotIdentical();
+
+        // Assert DRG diagram
+        XmlAssert.assertThat(actual)
+                .withNamespaceContext(NAMESPACES)
+                .hasXPath("/dmn:definitions" +
+                                  "/dmndi:DMNDI" +
+                                  "/dmndi:DMNDiagram[@name='DRG']");
+        XmlAssert.assertThat(actual)
+                .withNamespaceContext(NAMESPACES)
+                .hasXPath("/dmn:definitions" +
+                                  "/dmndi:DMNDI" +
+                                  "/dmndi:DMNDiagram[@name='DRG']" +
+                                  "/dmndi:DMNShape[@id='dmnshape-drg-_99e87528-2017-4b18-9b9f-83f66a5c1b85']" +
+                                  "/dc:Bounds[@x='56.5' and @y='56' and @width='153' and @height='60']");
+        XmlAssert.assertThat(actual)
+                .withNamespaceContext(NAMESPACES)
+                .hasXPath("/dmn:definitions" +
+                                  "/dmndi:DMNDI" +
+                                  "/dmndi:DMNDiagram[@name='DRG']" +
+                                  "/dmndi:DMNShape[@id='dmnshape-drg-2-_99e87528-2017-4b18-9b9f-83f66a5c1b85']" +
+                                  "/dc:Bounds[@x='56.5' and @y='167' and @width='153' and @height='60']");
+        XmlAssert.assertThat(actual)
+                .withNamespaceContext(NAMESPACES)
+                .hasXPath("/dmn:definitions" +
+                                  "/dmndi:DMNDI" +
+                                  "/dmndi:DMNDiagram[@name='DRG']" +
+                                  "/dmndi:DMNShape[@id='dmnshape-drg-3-_99e87528-2017-4b18-9b9f-83f66a5c1b85']" +
+                                  "/dc:Bounds[@x='266' and @y='57' and @width='153' and @height='60']");
+        XmlAssert.assertThat(actual)
+                .withNamespaceContext(NAMESPACES)
+                .hasXPath("/dmn:definitions" +
+                                  "/dmndi:DMNDI" +
+                                  "/dmndi:DMNDiagram[@name='DRG']" +
+                                  "/dmndi:DMNShape[@id='dmnshape-drg-4-_99e87528-2017-4b18-9b9f-83f66a5c1b85']" +
+                                  "/dc:Bounds[@x='266' and @y='168' and @width='153' and @height='60']");
+
+        // Assert Page 1 diagram
+        XmlAssert.assertThat(actual)
+                .withNamespaceContext(NAMESPACES)
+                .hasXPath("/dmn:definitions" +
+                                  "/dmndi:DMNDI" +
+                                  "/dmndi:DMNDiagram[@name='Page 1']");
+        XmlAssert.assertThat(actual)
+                .withNamespaceContext(NAMESPACES)
+                .hasXPath("/dmn:definitions" +
+                                  "/dmndi:DMNDI" +
+                                  "/dmndi:DMNDiagram[@name='Page 1']" +
+                                  "/dmndi:DMNShape[@id='dmnshape-page-1-_99e87528-2017-4b18-9b9f-83f66a5c1b85']" +
+                                  "/dc:Bounds[@x='56.5' and @y='56' and @width='153' and @height='60']");
+        XmlAssert.assertThat(actual)
+                .withNamespaceContext(NAMESPACES)
+                .hasXPath("/dmn:definitions" +
+                                  "/dmndi:DMNDI" +
+                                  "/dmndi:DMNDiagram[@name='Page 1']" +
+                                  "/dmndi:DMNShape[@id='dmnshape-page-1-2-_99e87528-2017-4b18-9b9f-83f66a5c1b85']" +
+                                  "/dc:Bounds[@x='56.5' and @y='167' and @width='153' and @height='60']");
+
+        // Assert Page 2 diagram
+        XmlAssert.assertThat(actual)
+                .withNamespaceContext(NAMESPACES)
+                .hasXPath("/dmn:definitions" +
+                                  "/dmndi:DMNDI" +
+                                  "/dmndi:DMNDiagram[@name='Page 2']");
+        XmlAssert.assertThat(actual)
+                .withNamespaceContext(NAMESPACES)
+                .hasXPath("/dmn:definitions" +
+                                  "/dmndi:DMNDI" +
+                                  "/dmndi:DMNDiagram[@name='Page 2']" +
+                                  "/dmndi:DMNShape[@id='dmnshape-page-2-_99e87528-2017-4b18-9b9f-83f66a5c1b85']" +
+                                  "/dc:Bounds[@x='56.5' and @y='57' and @width='153' and @height='60']");
+        XmlAssert.assertThat(actual)
+                .withNamespaceContext(NAMESPACES)
+                .hasXPath("/dmn:definitions" +
+                                  "/dmndi:DMNDI" +
+                                  "/dmndi:DMNDiagram[@name='Page 2']" +
+                                  "/dmndi:DMNShape[@id='dmnshape-page-2-2-_99e87528-2017-4b18-9b9f-83f66a5c1b85']" +
+                                  "/dc:Bounds[@x='56.5' and @y='168' and @width='153' and @height='60']");
+    }
+
+    @Test
+    public void testMultipleDiagramsWithDRG() throws Exception {
+
+        final String fixture = loadResource("multiple-diagrams-with-drg.xml");
+        setContent(fixture);
+
+        final String actual = getContent();
+        assertThat(actual).isNotBlank();
+        XmlAssert.assertThat(actual)
+                .and(fixture)
+                .ignoreComments()
+                .ignoreWhitespace()
+                .areIdentical();
+    }
+
+    @Test
+    public void testSingleDiagramWithDRG() throws Exception {
+
+        final String fixture = loadResource("single-diagram-with-drg.xml");
+        setContent(fixture);
+
+        final String actual = getContent();
+        assertThat(actual).isNotBlank();
+        XmlAssert.assertThat(actual)
+                .and(fixture)
+                .ignoreComments()
+                .ignoreWhitespace()
+                .areIdentical();
+    }
+
+    @Test
+    public void testSingleDiagramWithoutDRG() throws Exception {
+
+        final String fixture = loadResource("single-diagram-without-drg.xml");
+        final String expected = loadResource("single-diagram-with-drg.xml");
+        setContent(fixture);
+
+        final String actual = getContent();
+        assertThat(actual).isNotBlank();
+        XmlAssert.assertThat(actual)
+                .and(expected)
+                .ignoreComments()
+                .ignoreWhitespace()
+                .areIdentical();
+    }
+
+    @Test
+    public void testDiagramWithoutDMNDI() throws Exception {
+
+        final String fixture = loadResource("single-diagram-without-dmndi.xml");
+        setContent(fixture);
+
+        final String actual = getContent();
+        assertThat(actual).isNotBlank();
+        XmlAssert.assertThat(actual)
+                .and(fixture)
+                .ignoreComments()
+                .ignoreWhitespace()
+                .areNotIdentical();
+
+        XmlAssert.assertThat(actual)
+                .withNamespaceContext(NAMESPACES)
+                .hasXPath("/dmn:definitions" +
+                                  "/dmndi:DMNDI" +
+                                  "/dmndi:DMNDiagram[@name='DRG']");
+        XmlAssert.assertThat(actual)
+                .withNamespaceContext(NAMESPACES)
+                .hasXPath("/dmn:definitions" +
+                                  "/dmndi:DMNDI" +
+                                  "/dmndi:DMNDiagram[@name='DRG']" +
+                                  "/dmndi:DMNShape[@id='dmnshape-drg-_99e87528-2017-4b18-9b9f-83f66a5c1b85']" +
+                                  "/dc:Bounds[@x='50' and @y='50' and @width='100' and @height='50']");
+    }
+
+    @Test
     public void testDecisionExpressionContextSimple() throws Exception {
         final String expected = loadResource("decision-expression-context-simple.xml");
         setContent(expected);
@@ -1454,7 +1620,7 @@ public class DMNDesignerKogitoSeleniumIT {
                 .hasXPath("/dmn:definitions" +
                                   "/dmndi:DMNDI" +
                                   "/dmndi:DMNDiagram" +
-                                  "/dmndi:DMNShape[@id='dmnshape-_E5D538FB-D142-4CC6-9F11-229A0A766B7C' and @dmnElementRef='_E5D538FB-D142-4CC6-9F11-229A0A766B7C']" +
+                                  "/dmndi:DMNShape[@id='dmnshape-drg-_E5D538FB-D142-4CC6-9F11-229A0A766B7C' and @dmnElementRef='_E5D538FB-D142-4CC6-9F11-229A0A766B7C']" +
                                   "/dmndi:DMNStyle[@fontFamily='sans serif' and @fontSize='12']" +
                                   "/dmndi:FillColor[@red='248' and @green='4' and @blue='4']");
         XmlAssert.assertThat(actual)
@@ -1462,7 +1628,7 @@ public class DMNDesignerKogitoSeleniumIT {
                 .hasXPath("/dmn:definitions" +
                                   "/dmndi:DMNDI" +
                                   "/dmndi:DMNDiagram" +
-                                  "/dmndi:DMNShape[@id='dmnshape-_E5D538FB-D142-4CC6-9F11-229A0A766B7C' and @dmnElementRef='_E5D538FB-D142-4CC6-9F11-229A0A766B7C']" +
+                                  "/dmndi:DMNShape[@id='dmnshape-drg-_E5D538FB-D142-4CC6-9F11-229A0A766B7C' and @dmnElementRef='_E5D538FB-D142-4CC6-9F11-229A0A766B7C']" +
                                   "/dmndi:DMNStyle[@fontFamily='sans serif' and @fontSize='12']" +
                                   "/dmndi:StrokeColor[@red='9' and @green='252' and @blue='17']");
         XmlAssert.assertThat(actual)
@@ -1470,7 +1636,7 @@ public class DMNDesignerKogitoSeleniumIT {
                 .hasXPath("/dmn:definitions" +
                                   "/dmndi:DMNDI" +
                                   "/dmndi:DMNDiagram" +
-                                  "/dmndi:DMNShape[@id='dmnshape-_E5D538FB-D142-4CC6-9F11-229A0A766B7C' and @dmnElementRef='_E5D538FB-D142-4CC6-9F11-229A0A766B7C']" +
+                                  "/dmndi:DMNShape[@id='dmnshape-drg-_E5D538FB-D142-4CC6-9F11-229A0A766B7C' and @dmnElementRef='_E5D538FB-D142-4CC6-9F11-229A0A766B7C']" +
                                   "/dmndi:DMNStyle[@fontFamily='sans serif' and @fontSize='12']" +
                                   "/dmndi:FontColor[@red='39' and @green='16' and @blue='237']");
         XmlAssert.assertThat(actual)
@@ -1478,7 +1644,7 @@ public class DMNDesignerKogitoSeleniumIT {
                 .hasXPath("/dmn:definitions" +
                                   "/dmndi:DMNDI" +
                                   "/dmndi:DMNDiagram" +
-                                  "/dmndi:DMNShape[@id='dmnshape-_E5D538FB-D142-4CC6-9F11-229A0A766B7C' and @dmnElementRef='_E5D538FB-D142-4CC6-9F11-229A0A766B7C']" +
+                                  "/dmndi:DMNShape[@id='dmnshape-drg-_E5D538FB-D142-4CC6-9F11-229A0A766B7C' and @dmnElementRef='_E5D538FB-D142-4CC6-9F11-229A0A766B7C']" +
                                   "/dc:Bounds[@x='556' and @y='156' and @width='200' and @height='100']");
     }
 
@@ -1747,42 +1913,42 @@ public class DMNDesignerKogitoSeleniumIT {
                 .hasXPath("/dmn:definitions" +
                                   "/dmndi:DMNDI" +
                                   "/dmndi:DMNDiagram" +
-                                  "/dmndi:DMNShape[@id='dmnshape-_4CEF4A0F-B605-4551-9403-7FA31C97DCD1']" +
+                                  "/dmndi:DMNShape[@id='dmnshape-drg-_4CEF4A0F-B605-4551-9403-7FA31C97DCD1']" +
                                   "/dc:Bounds[@x='670' and @y='153' and @width='200' and @height='200']");
         XmlAssert.assertThat(actual)
                 .withNamespaceContext(NAMESPACES)
                 .hasXPath("/dmn:definitions" +
                                   "/dmndi:DMNDI" +
                                   "/dmndi:DMNDiagram" +
-                                  "/dmndi:DMNShape[@id='dmnshape-_B067B665-3343-495F-8257-608689084A91']" +
+                                  "/dmndi:DMNShape[@id='dmnshape-drg-_B067B665-3343-495F-8257-608689084A91']" +
                                   "/dc:Bounds[@x='510' and @y='265' and @width='100' and @height='50']");
         XmlAssert.assertThat(actual)
                 .withNamespaceContext(NAMESPACES)
                 .hasXPath("/dmn:definitions" +
                                   "/dmndi:DMNDI" +
                                   "/dmndi:DMNDiagram" +
-                                  "/dmndi:DMNShape[@id='dmnshape-_964EF7FB-010B-4698-9954-BB95ABBDF2A2']" +
+                                  "/dmndi:DMNShape[@id='dmnshape-drg-_964EF7FB-010B-4698-9954-BB95ABBDF2A2']" +
                                   "/dc:Bounds[@x='720' and @y='265' and @width='100' and @height='50']");
         XmlAssert.assertThat(actual)
                 .withNamespaceContext(NAMESPACES)
                 .hasXPath("/dmn:definitions" +
                                   "/dmndi:DMNDI" +
                                   "/dmndi:DMNDiagram" +
-                                  "/dmndi:DMNShape[@id='dmnshape-_A531F162-5032-40CF-B53A-E5818BD2C21A']" +
+                                  "/dmndi:DMNShape[@id='dmnshape-drg-_A531F162-5032-40CF-B53A-E5818BD2C21A']" +
                                   "/dc:Bounds[@x='720' and @y='195' and @width='100' and @height='50']");
         XmlAssert.assertThat(actual)
                 .withNamespaceContext(NAMESPACES)
                 .hasXPath("/dmn:definitions" +
                                   "/dmndi:DMNDI" +
                                   "/dmndi:DMNDiagram" +
-                                  "/dmndi:DMNShape[@id='dmnshape-_4C183144-7DAC-42FB-8243-A666FFDA2177']" +
+                                  "/dmndi:DMNShape[@id='dmnshape-drg-_4C183144-7DAC-42FB-8243-A666FFDA2177']" +
                                   "/dc:Bounds[@x='930' and @y='195' and @width='100' and @height='50']");
         XmlAssert.assertThat(actual)
                 .withNamespaceContext(NAMESPACES)
                 .hasXPath("/dmn:definitions" +
                                   "/dmndi:DMNDI" +
                                   "/dmndi:DMNDiagram" +
-                                  "/dmndi:DMNShape[@id='dmnshape-_93FD724C-DF9A-4B85-B048-6E26F28B987A']" +
+                                  "/dmndi:DMNShape[@id='dmnshape-drg-_93FD724C-DF9A-4B85-B048-6E26F28B987A']" +
                                   "/dc:Bounds[@x='930' and @y='265' and @width='100' and @height='50']");
     }
 
@@ -2060,6 +2226,7 @@ public class DMNDesignerKogitoSeleniumIT {
         XmlAssert.assertThat(actual)
                 .and(expected)
                 .ignoreComments()
+                .ignoreChildNodesOrder()
                 .ignoreWhitespace()
                 .withDifferenceEvaluator(DifferenceEvaluators.chain(firstEvaluator, secondEvaluator))
                 .withNodeFilter(nodeFilter)

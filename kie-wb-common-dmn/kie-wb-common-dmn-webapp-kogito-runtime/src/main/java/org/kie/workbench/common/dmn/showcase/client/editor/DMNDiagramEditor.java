@@ -178,7 +178,7 @@ public class DMNDiagramEditor extends AbstractDMNDiagramEditor implements Kogito
         canvasHandler.ifPresent(c -> {
             final ExpressionEditorView.Presenter expressionEditor = ((DMNSession) sessionManager.getCurrentSession()).getExpressionEditor();
             expressionEditor.setToolbarStateHandler(new DMNProjectToolbarStateHandler(getMenuSessionItems()));
-            decisionNavigatorDock.setupCanvasHandler(c);
+            decisionNavigatorDock.reload();
             dataTypesPage.reload();
             final Channel channel = contextProvider.getChannel();
             if (Objects.equals(channel, DEFAULT) || Objects.equals(channel, VSCODE)) {
