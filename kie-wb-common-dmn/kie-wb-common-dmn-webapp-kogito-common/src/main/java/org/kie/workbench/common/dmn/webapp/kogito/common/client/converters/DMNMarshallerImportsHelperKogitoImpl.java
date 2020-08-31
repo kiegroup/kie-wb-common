@@ -201,7 +201,7 @@ public class DMNMarshallerImportsHelperKogitoImpl implements DMNMarshallerImport
                             int modelCount = pmmlDocumentMetadata.getModels() != null ? pmmlDocumentMetadata.getModels().size() : 0;
                             models.add(new PMMLIncludedModel(fileName,
                                                             "",
-                                                             file,
+                                                             fileName,
                                                              DMNImportTypes.PMML.getDefaultNamespace(),
                                                              modelCount));
                             return promises.resolve();
@@ -309,7 +309,7 @@ public class DMNMarshallerImportsHelperKogitoImpl implements DMNMarshallerImport
 
                 for (final Map.Entry<String, PMMLDocumentMetadata> entry : otherDefinitions.entrySet()) {
                     final PMMLDocumentMetadata def = entry.getValue();
-                    findImportByPMMLDocument(def.getPath(), imports).ifPresent(anImport -> {
+                    findImportByPMMLDocument(def.getName(), imports).ifPresent(anImport -> {
                         final JSITImport foundImported = Js.uncheckedCast(anImport);
                         importDefinitions.put(foundImported, def);
                     });
@@ -351,14 +351,15 @@ public class DMNMarshallerImportsHelperKogitoImpl implements DMNMarshallerImport
             callback.onSuccess(Collections.emptyList());
             return;
         }
-        final Map<String, PMMLDocumentMetadata> pmmlDefinitions = new HashMap<>();
-        promises.all(files, file -> loadPMMLDefinitionFromFile(file, pmmlDefinitions)
-                .then(v -> {
-                    final List<PMMLDocumentMetadata> pmmlDocumentMetadata = new ArrayList<>(pmmlDefinitions.values());
-                    pmmlDocumentMetadata.sort(Comparator.comparing(PMMLDocumentMetadata::getName));
-                    callback.onSuccess(pmmlDocumentMetadata);
-                    return promises.resolve();
-                }));
+        loadPMMLDefinitions().then(allDefinitions -> {
+            final List<PMMLDocumentMetadata> pmmlDocumentMetadata = allDefinitions.entrySet().stream()
+                    .filter(entry -> files.contains(FileUtils.getFileName(entry.getKey())))
+                    .map(Map.Entry::getValue)
+                    .collect(Collectors.toList());
+            pmmlDocumentMetadata.sort(Comparator.comparing(PMMLDocumentMetadata::getName));
+            callback.onSuccess(pmmlDocumentMetadata);
+            return promises.resolve();
+        });
     }
 
     @Override
