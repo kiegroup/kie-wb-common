@@ -103,4 +103,9 @@ public class RuleFlowGroupFormProvider implements SelectorDataProvider {
             requestRuleFlowGroupDataEventEventSingleton.fire(new RequestRuleFlowGroupDataEvent());
         }
     }
+
+    public static Event<RequestRuleFlowGroupDataEvent> getRequestRuleFlowGroupDataEventEventSingleton() {
+        return requestRuleFlowGroupDataEventEventSingleton;
+    }
+
 }
