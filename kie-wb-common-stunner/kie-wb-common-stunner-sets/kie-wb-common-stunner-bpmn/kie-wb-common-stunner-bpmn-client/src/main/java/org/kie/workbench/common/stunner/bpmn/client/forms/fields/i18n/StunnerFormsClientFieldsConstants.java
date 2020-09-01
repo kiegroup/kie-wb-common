@@ -21,7 +21,7 @@ import com.google.gwt.i18n.client.Messages;
 
 public interface StunnerFormsClientFieldsConstants extends Messages {
 
-    StunnerFormsClientFieldsConstants INSTANCE = GWT.create(StunnerFormsClientFieldsConstants.class);
+    StunnerFormsClientFieldsConstants CONSTANTS = GWT.create(StunnerFormsClientFieldsConstants.class);
 
     String Add();
 
@@ -74,8 +74,6 @@ public interface StunnerFormsClientFieldsConstants extends Messages {
     String No_Data_Output();
 
     String Only_single_entry_allowed();
-
-    String Only_expressions_allowed_for_output();
 
     String Ok();
 
@@ -136,4 +134,53 @@ public interface StunnerFormsClientFieldsConstants extends Messages {
     String Namespace();
 
     String ClassName();
+
+    // Notifications
+    String replyToOptional();
+
+    String replyToMessage();
+
+    String message();
+
+    String toUsers();
+
+    String toGroups();
+
+    String toEmails();
+
+    String subjectPlaceholder();
+
+    String emailsPlaceholder();
+
+    String bodyPlaceholder();
+
+    String taskStateType();
+
+    String notCompleted();
+
+    String notStarted();
+
+    String taskExpirationDefinition();
+
+    String notificationPopover();
+
+    String notifyLabel();
+
+    String notifyAfter();
+
+    String notificationRepeat();
+
+    String notifyEvery();
+
+    String until();
+
+    String expressionTextArea();
+
+    String taskStateChangesLabel();
+
+    String repeatCountReachesLabel();
+
+    String syntaxRequirement();
+
+    String incorrectEmail();
 }

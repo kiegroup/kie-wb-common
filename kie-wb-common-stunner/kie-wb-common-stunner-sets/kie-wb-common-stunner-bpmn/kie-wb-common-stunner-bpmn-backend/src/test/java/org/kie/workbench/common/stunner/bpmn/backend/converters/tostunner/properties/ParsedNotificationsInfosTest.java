@@ -20,24 +20,27 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.customproperties.ParsedNotificationsInfos;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.associations.AssociationType;
 import org.kie.workbench.common.stunner.bpmn.definition.property.notification.NotificationValue;
+import org.mockito.runners.MockitoJUnitRunner;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 
+@RunWith(MockitoJUnitRunner.class)
 public class ParsedNotificationsInfosTest {
 
     @Test
     public void testNotification() {
-        String body = "[from:director|tousers:director,jack,katy|togroups:Forms,IT|replyTo:guest|subject:asd|body:asd]@[11h]";
+        String body = "[from:director|tousers:director,jack,katy|togroups:Forms,IT|replyTo:guest|subject:&#94;asd|body:asd]@[11h]";
         NotificationValue actual = ParsedNotificationsInfos.of(AssociationType.NOT_COMPLETED_NOTIFY.getName(), body);
         NotificationValue expected = new NotificationValue();
         expected.setType(AssociationType.NOT_COMPLETED_NOTIFY.getName());
         expected.setFrom("director");
         expected.setReplyTo("guest");
-        expected.setSubject("asd");
+        expected.setSubject("^asd");
         expected.setBody("asd");
         expected.setExpiresAt("11h");
         expected.setGroups(new ArrayList<>(Arrays.asList("Forms", "IT")));
@@ -48,7 +51,7 @@ public class ParsedNotificationsInfosTest {
 
     @Test
     public void testNotificationPartial() {
-        String body = "[from:|tousers:|togroups:|replyTo:|subject:|body:]@[0h]";
+        String body = "[from:|tousers:|togroups:|toemails:|replyTo:|subject:|body:]@[0h]";
         NotificationValue actual = ParsedNotificationsInfos.of(AssociationType.NOT_COMPLETED_NOTIFY.getName(), body);
         NotificationValue expected = new NotificationValue();
         expected.setType(AssociationType.NOT_COMPLETED_NOTIFY.getName());

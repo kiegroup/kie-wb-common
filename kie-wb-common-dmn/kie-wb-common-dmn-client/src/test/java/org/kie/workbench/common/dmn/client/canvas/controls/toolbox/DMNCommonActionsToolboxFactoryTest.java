@@ -16,8 +16,10 @@
 
 package org.kie.workbench.common.dmn.client.canvas.controls.toolbox;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Optional;
 
 import com.google.gwtmockito.GwtMockitoTestRunner;
@@ -30,6 +32,7 @@ import org.kie.workbench.common.dmn.api.definition.model.Decision;
 import org.kie.workbench.common.dmn.api.definition.model.DecisionService;
 import org.kie.workbench.common.dmn.client.commands.factory.DefaultCanvasCommandFactory;
 import org.kie.workbench.common.stunner.core.client.ManagedInstanceStub;
+import org.kie.workbench.common.stunner.core.client.ReadOnlyProvider;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
 import org.kie.workbench.common.stunner.core.client.command.CanvasCommandManager;
 import org.kie.workbench.common.stunner.core.client.components.toolbox.Toolbox;
@@ -95,10 +98,16 @@ public class DMNCommonActionsToolboxFactoryTest {
     @Mock
     private ManagedInstance<DeleteNodeToolboxAction> deleteNodeActions;
 
+    @Mock
+    private ReadOnlyProvider readonlyProvider;
+
+    @Mock
+    private ManagedInstance<DMNEditDRDToolboxAction> editDRDToolboxActions;
+
     private DMNCommonActionsToolboxFactory tested;
 
     @Before
-    public void setup() throws Exception {
+    public void setup() {
         when(element.getUUID()).thenReturn(E_UUID);
         when(element.asNode()).thenReturn(element);
         editDecisionToolboxAction = new ManagedInstanceStub<>(editDecisionToolboxActionInstance);
@@ -106,10 +115,12 @@ public class DMNCommonActionsToolboxFactoryTest {
         view = new ManagedInstanceStub<>(viewInstance);
         this.tested = spy(new DMNCommonActionsToolboxFactory(editDecisionToolboxAction,
                                                              editBusinessKnowledgeModelToolboxAction,
+                                                             editDRDToolboxActions,
                                                              view,
                                                              commandManager,
                                                              commandFactory,
-                                                             deleteNodeActions));
+                                                             deleteNodeActions,
+                                                             readonlyProvider));
 
         doReturn(Collections.singleton(deleteNodeAction)).
                 when(tested).superGetActions(eq(canvasHandler),
@@ -128,7 +139,7 @@ public class DMNCommonActionsToolboxFactoryTest {
         final ActionsToolbox actionsToolbox = (ActionsToolbox) toolbox;
         assertEquals(E_UUID,
                      actionsToolbox.getElementUUID());
-        assertEquals(1,
+        assertEquals(2,
                      actionsToolbox.size());
         assertEquals(deleteNodeAction,
                      actionsToolbox.iterator().next());
@@ -154,14 +165,14 @@ public class DMNCommonActionsToolboxFactoryTest {
         final ActionsToolbox actionsToolbox = (ActionsToolbox) toolbox;
         assertEquals("decisionNode1",
                      actionsToolbox.getElementUUID());
-        assertEquals(2,
+        assertEquals(3,
                      actionsToolbox.size());
         final Iterator<ToolboxAction> actionsIt = actionsToolbox.iterator();
         assertEquals(deleteNodeAction,
                      actionsIt.next());
         assertEquals(editDecisionToolboxActionInstance,
                      actionsIt.next());
-        assertFalse(actionsIt.hasNext());
+        assertTrue(actionsIt.hasNext());
         verify(viewInstance,
                times(1)).init(eq(actionsToolbox));
     }
@@ -184,14 +195,14 @@ public class DMNCommonActionsToolboxFactoryTest {
         final ActionsToolbox actionsToolbox = (ActionsToolbox) toolbox;
         assertEquals("bkmNode1",
                      actionsToolbox.getElementUUID());
-        assertEquals(2,
+        assertEquals(3,
                      actionsToolbox.size());
         final Iterator<ToolboxAction> actionsIt = actionsToolbox.iterator();
         assertEquals(deleteNodeAction,
                      actionsIt.next());
         assertEquals(editBusinessKnowledgeModelToolboxActionInstance,
                      actionsIt.next());
-        assertFalse(actionsIt.hasNext());
+        assertTrue(actionsIt.hasNext());
         verify(viewInstance,
                times(1)).init(eq(actionsToolbox));
     }
@@ -224,5 +235,61 @@ public class DMNCommonActionsToolboxFactoryTest {
         final boolean actual = tested.isAllowed(canvasHandler, node);
 
         assertFalse(actual);
+    }
+
+    @Test
+    public void testAddEditDecisionAction() {
+
+        final List<ToolboxAction<AbstractCanvasHandler>> actions = new ArrayList<>();
+
+        final Element element = mock(Element.class);
+        final Node node = mock(Node.class);
+        final Definition definition = mock(Definition.class);
+        final Decision decision = mock(Decision.class);
+        when(element.asNode()).thenReturn(node);
+        when(element.getContent()).thenReturn(definition);
+        when(definition.getDefinition()).thenReturn(decision);
+
+        tested.addEditAction(element, actions);
+
+        assertEquals(1, actions.size());
+        assertTrue(DMNEditDecisionToolboxAction.class.isInstance(actions.get(0)));
+    }
+
+    @Test
+    public void testAddEditBusinessKnowledgeModelAction() {
+
+        final List<ToolboxAction<AbstractCanvasHandler>> actions = new ArrayList<>();
+
+        final Element element = mock(Element.class);
+        final Node node = mock(Node.class);
+        final Definition definition = mock(Definition.class);
+        final BusinessKnowledgeModel bkm = mock(BusinessKnowledgeModel.class);
+        when(element.asNode()).thenReturn(node);
+        when(element.getContent()).thenReturn(definition);
+        when(definition.getDefinition()).thenReturn(bkm);
+
+        tested.addEditAction(element, actions);
+
+        assertEquals(1, actions.size());
+        assertTrue(DMNEditBusinessKnowledgeModelToolboxAction.class.isInstance(actions.get(0)));
+    }
+
+    @Test
+    public void testAddEditWhenIsNotDecisionOrBusinessKnowledgeModelAction() {
+
+        final List<ToolboxAction<AbstractCanvasHandler>> actions = new ArrayList<>();
+
+        final Element element = mock(Element.class);
+        final Node node = mock(Node.class);
+        final Definition definition = mock(Definition.class);
+        final Object someObject = mock(Object.class);
+        when(element.asNode()).thenReturn(node);
+        when(element.getContent()).thenReturn(definition);
+        when(definition.getDefinition()).thenReturn(someObject);
+
+        tested.addEditAction(element, actions);
+
+        assertEquals(0, actions.size());
     }
 }

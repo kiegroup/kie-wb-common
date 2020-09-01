@@ -21,6 +21,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.bpmn2.Assignment;
+import org.eclipse.bpmn2.DataObject;
 import org.eclipse.bpmn2.DataOutput;
 import org.eclipse.bpmn2.DataOutputAssociation;
 import org.eclipse.bpmn2.FormalExpression;
@@ -28,7 +29,9 @@ import org.eclipse.bpmn2.ItemAwareElement;
 import org.eclipse.bpmn2.Property;
 import org.eclipse.bpmn2.impl.DataOutputAssociationImpl;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.customproperties.AssociationDeclaration;
+import org.mockito.runners.MockitoJUnitRunner;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -37,6 +40,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
+@RunWith(MockitoJUnitRunner.class)
 public class OutputAssignmentReaderTest {
 
     private static final String SOURCE_NAME = "SOURCE_NAME";
@@ -90,10 +94,12 @@ public class OutputAssignmentReaderTest {
     }
 
     @Test
-    public void testFromAssociationWithNonPropertyItem() {
-        ItemAwareElement item = mock(ItemAwareElement.class);
+    public void testFromAssociationWithDataObjectItem() {
+        ItemAwareElement item = mock(DataObject.class);
         DataOutputAssociation outputAssociation = mockDataOutputAssociation(SOURCE_NAME, item);
-        assertNull(OutputAssignmentReader.fromAssociation(outputAssociation));
+        OutputAssignmentReader outputReader = OutputAssignmentReader.fromAssociation(outputAssociation);
+        assertNotNull(outputReader);
+        assertNotNull(SOURCE_NAME, outputReader.getAssociationDeclaration());
     }
 
     private void assertResult(String sourceName, String targetId, AssociationDeclaration.Type type, AssociationDeclaration associationDeclaration) {

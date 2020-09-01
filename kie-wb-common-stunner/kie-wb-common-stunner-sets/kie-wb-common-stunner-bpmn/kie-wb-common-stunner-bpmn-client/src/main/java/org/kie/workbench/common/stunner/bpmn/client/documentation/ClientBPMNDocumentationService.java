@@ -16,13 +16,13 @@
 
 package org.kie.workbench.common.stunner.bpmn.client.documentation;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -96,8 +96,8 @@ import org.kie.workbench.common.stunner.bpmn.documentation.model.general.General
 import org.kie.workbench.common.stunner.bpmn.documentation.model.general.Imports;
 import org.kie.workbench.common.stunner.bpmn.documentation.model.general.ProcessOverview;
 import org.kie.workbench.common.stunner.bpmn.documentation.model.general.ProcessVariablesTotal;
+import org.kie.workbench.common.stunner.bpmn.workitem.CustomTask;
 import org.kie.workbench.common.stunner.bpmn.workitem.IconDefinition;
-import org.kie.workbench.common.stunner.bpmn.workitem.ServiceTask;
 import org.kie.workbench.common.stunner.bpmn.workitem.WorkItemDefinition;
 import org.kie.workbench.common.stunner.bpmn.workitem.WorkItemDefinitionRegistry;
 import org.kie.workbench.common.stunner.client.widgets.components.glyph.DOMGlyphRenderers;
@@ -109,6 +109,7 @@ import org.kie.workbench.common.stunner.core.client.i18n.ClientTranslationServic
 import org.kie.workbench.common.stunner.core.client.session.ClientSession;
 import org.kie.workbench.common.stunner.core.client.shape.ImageStripGlyph;
 import org.kie.workbench.common.stunner.core.client.util.js.JsConverter;
+import org.kie.workbench.common.stunner.core.definition.adapter.DefinitionAdapter;
 import org.kie.workbench.common.stunner.core.definition.adapter.DefinitionId;
 import org.kie.workbench.common.stunner.core.definition.adapter.PropertyAdapter;
 import org.kie.workbench.common.stunner.core.definition.adapter.binding.BindableAdapterUtils;
@@ -303,7 +304,7 @@ public class ClientBPMNDocumentationService implements BPMNDocumentationService 
                         .map(BaseProcessVariables::getValue))
                 .map(ProcessVariableSerializer::deserialize)
                 .flatMap(v -> v.entrySet().stream())
-                .sorted((e1, e2) -> e1.getKey().compareTo(e2.getKey()))
+                .sorted(Comparator.comparing(Map.Entry::getKey))
                 .collect(Collectors.toList());
 
         return ProcessVariablesTotal.create(variables.size(), variables.size(), JsConverter.fromEntries(variables));
@@ -386,9 +387,12 @@ public class ClientBPMNDocumentationService implements BPMNDocumentationService 
     }
 
     private Map<String, String> getElementProperties(Object definition) {
+        final DefinitionAdapter<Object> definitionAdapter = definitionManager.adapters().registry().getDefinitionAdapter(definition.getClass());
         final PropertyAdapter<Object, Object> propertyAdapter = definitionManager.adapters().forProperty();
-        final Set<?> properties = definitionManager.adapters().forDefinition().getProperties(definition);
-        return properties.stream()
+        return Arrays.stream(definitionAdapter.getPropertyFields(definition))
+                .map(field -> definitionAdapter.getProperty(definition, field))
+                .filter(Optional::isPresent)
+                .map(Optional::get)
                 .filter(prop -> !ignoredPropertiesIds.containsKey(propertyAdapter.getId(prop)))
                 .filter(prop -> StringUtils.nonEmpty(propertyAdapter.getCaption(prop)))
                 .filter(prop -> Objects.nonNull(propertyAdapter.getValue(prop)))
@@ -463,11 +467,11 @@ public class ClientBPMNDocumentationService implements BPMNDocumentationService 
         private DefinitionHelper() {
 
             iconFactory = new Maps.Builder<Class, Function<Object, Optional<String>>>()
-                    .put(ServiceTask.class, def -> getServiceTaskIcon(def))
+                    .put(CustomTask.class, def -> getServiceTaskIcon(def))
                     .build();
 
             categoryFactory = new Maps.Builder<Class, Function<Object, Optional<String>>>()
-                    .put(ServiceTask.class, def -> getServiceTaskCategory(def))
+                    .put(CustomTask.class, def -> getServiceTaskCategory(def))
                     .build();
         }
 
@@ -495,9 +499,9 @@ public class ClientBPMNDocumentationService implements BPMNDocumentationService 
 
         private Optional<String> getServiceTaskIcon(Object definition) {
             return Optional.ofNullable(definition)
-                    .filter(def -> def instanceof ServiceTask)
-                    .map(def -> (ServiceTask) def)
-                    .map(ServiceTask::getName)
+                    .filter(def -> def instanceof CustomTask)
+                    .map(def -> (CustomTask) def)
+                    .map(org.kie.workbench.common.stunner.bpmn.workitem.CustomTask::getName)
                     .map(name -> Optional.ofNullable(workItemDefinitionRegistry
                                                              .get()
                                                              .get(name))
@@ -518,9 +522,9 @@ public class ClientBPMNDocumentationService implements BPMNDocumentationService 
 
         private Optional<String> getServiceTaskCategory(Object definition) {
             return Optional.ofNullable(definition)
-                    .filter(def -> def instanceof ServiceTask)
-                    .map(def -> (ServiceTask) def)
-                    .map(ServiceTask::getName)
+                    .filter(def -> def instanceof CustomTask)
+                    .map(def -> (CustomTask) def)
+                    .map(org.kie.workbench.common.stunner.bpmn.workitem.CustomTask::getName)
                     .map(name -> Optional.ofNullable(workItemDefinitionRegistry
                                                              .get()
                                                              .get(name))

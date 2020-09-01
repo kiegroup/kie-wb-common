@@ -146,7 +146,7 @@ public class VariablesEditorFieldRendererTest {
     public void testRemoveVariableWhenBoundToNodes() {
         prepareRemoveVariableTest(true);
         variablesEditor.removeVariable(variableRow);
-        verify(errorPopupPresenter).showMessage(StunnerFormsClientFieldsConstants.INSTANCE.DeleteDiagramVariableError());
+        verify(errorPopupPresenter).showMessage(StunnerFormsClientFieldsConstants.CONSTANTS.DeleteDiagramVariableError());
         verify(variablesEditorWidgetView).getVariableRows();
         verify(variablesEditorWidgetView, never()).doSave();
     }
@@ -155,7 +155,7 @@ public class VariablesEditorFieldRendererTest {
     public void testRemoveVariableWhenNotBoundToNodes() {
         prepareRemoveVariableTest(false);
         variablesEditor.removeVariable(variableRow);
-        verify(errorPopupPresenter, never()).showMessage(StunnerFormsClientFieldsConstants.INSTANCE.DeleteDiagramVariableError());
+        verify(errorPopupPresenter, never()).showMessage(StunnerFormsClientFieldsConstants.CONSTANTS.DeleteDiagramVariableError());
         verify(variablesEditorWidgetView, times(2)).getVariableRows();
         verify(variablesEditorWidgetView).doSave();
     }
@@ -406,5 +406,12 @@ public class VariablesEditorFieldRendererTest {
         variablesEditor.setReadOnly(false);
         verify(variablesEditorWidgetView,
                times(1)).setReadOnly(false);
+    }
+
+    @Test
+    public void testCreateVariableRow() {
+        VariableRow variableRow = VariablesEditorFieldRenderer.createVariableRow();
+        assertEquals(Variable.VariableType.PROCESS, variableRow.getVariableType());
+        assertEquals("Object", variableRow.getDataTypeDisplayName());
     }
 }

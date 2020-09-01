@@ -23,6 +23,7 @@ import org.jboss.errai.databinding.client.api.Bindable;
 import org.kie.workbench.common.stunner.bpmn.definition.AdHocSubprocess;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNDiagramImpl;
 import org.kie.workbench.common.stunner.bpmn.definition.BusinessRuleTask;
+import org.kie.workbench.common.stunner.bpmn.definition.DataObject;
 import org.kie.workbench.common.stunner.bpmn.definition.DirectionalAssociation;
 import org.kie.workbench.common.stunner.bpmn.definition.EmbeddedSubprocess;
 import org.kie.workbench.common.stunner.bpmn.definition.EndCompensationEvent;
@@ -43,6 +44,8 @@ import org.kie.workbench.common.stunner.bpmn.definition.IntermediateConditionalE
 import org.kie.workbench.common.stunner.bpmn.definition.IntermediateErrorEventCatching;
 import org.kie.workbench.common.stunner.bpmn.definition.IntermediateEscalationEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.IntermediateEscalationEventThrowing;
+import org.kie.workbench.common.stunner.bpmn.definition.IntermediateLinkEventCatching;
+import org.kie.workbench.common.stunner.bpmn.definition.IntermediateLinkEventThrowing;
 import org.kie.workbench.common.stunner.bpmn.definition.IntermediateMessageEventCatching;
 import org.kie.workbench.common.stunner.bpmn.definition.IntermediateMessageEventThrowing;
 import org.kie.workbench.common.stunner.bpmn.definition.IntermediateSignalEventCatching;
@@ -106,6 +109,8 @@ import org.kie.workbench.common.stunner.core.rule.annotation.Occurrences;
                 IntermediateMessageEventCatching.class,
                 IntermediateSignalEventCatching.class,
                 IntermediateSignalEventThrowing.class,
+                IntermediateLinkEventCatching.class,
+                IntermediateLinkEventThrowing.class,
                 IntermediateErrorEventCatching.class,
                 IntermediateEscalationEvent.class,
                 IntermediateCompensationEvent.class,
@@ -125,7 +130,8 @@ import org.kie.workbench.common.stunner.core.rule.annotation.Occurrences;
                 SequenceFlow.class,
                 DirectionalAssociation.class,
                 NonDirectionalAssociation.class,
-                TextAnnotation.class
+                TextAnnotation.class,
+                DataObject.class
         },
         builder = BPMNDefinitionSet.BPMNDefinitionSetBuilder.class
 )

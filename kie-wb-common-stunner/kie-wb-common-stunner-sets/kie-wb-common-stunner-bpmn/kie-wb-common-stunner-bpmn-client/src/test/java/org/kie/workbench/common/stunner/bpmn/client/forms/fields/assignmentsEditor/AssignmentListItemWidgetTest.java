@@ -208,7 +208,7 @@ public class AssignmentListItemWidgetTest {
         verify(constant,
                never()).setVisible(anyBoolean());
         verify(widget).getCustomDataType();
-        verify(widget).getDataType();
+        verify(widget, times(2)).getDataType();
         verify(widget).getExpression();
         verify(widget).getProcessVar();
     }
@@ -220,7 +220,7 @@ public class AssignmentListItemWidgetTest {
         verify(deleteButton).setIcon(IconType.TRASH);
         verify(constant).setVisible(false);
         verify(widget).getCustomDataType();
-        verify(widget).getDataType();
+        verify(widget, times(2)).getDataType();
         verify(widget).getExpression();
         verify(widget).getProcessVar();
     }
@@ -314,7 +314,7 @@ public class AssignmentListItemWidgetTest {
     public void testSetProcessVariablesVar() {
         ListBoxValues.ValueTester processVarTester = userValue -> null;
         ListBoxValues processVarListBoxValues = new ListBoxValues(AssignmentListItemWidgetView.EXPRESSION_PROMPT,
-                                                                  StunnerFormsClientFieldsConstants.INSTANCE.Edit() + " ",
+                                                                  StunnerFormsClientFieldsConstants.CONSTANTS.Edit() + " ",
                                                                   processVarTester,
                                                                   ActivityDataIOEditorViewImpl.EXPRESSION_MAX_DISPLAY_LENGTH);
         processVarComboBox.setListBoxValues(processVarListBoxValues);
@@ -334,7 +334,7 @@ public class AssignmentListItemWidgetTest {
     public void testSetProcessVariablesConst() {
         ListBoxValues.ValueTester processVarTester = userValue -> null;
         ListBoxValues processVarListBoxValues = new ListBoxValues(AssignmentListItemWidgetView.EXPRESSION_PROMPT,
-                                                                  StunnerFormsClientFieldsConstants.INSTANCE.Edit() + " ",
+                                                                  StunnerFormsClientFieldsConstants.CONSTANTS.Edit() + " ",
                                                                   processVarTester,
                                                                   ActivityDataIOEditorViewImpl.EXPRESSION_MAX_DISPLAY_LENGTH);
         processVarComboBox.setAddCustomValues(true);

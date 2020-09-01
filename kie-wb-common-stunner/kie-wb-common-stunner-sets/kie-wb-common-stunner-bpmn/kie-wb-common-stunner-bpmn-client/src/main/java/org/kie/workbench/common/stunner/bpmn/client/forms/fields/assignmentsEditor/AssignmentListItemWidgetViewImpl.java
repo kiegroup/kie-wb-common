@@ -50,7 +50,6 @@ import org.kie.workbench.common.stunner.bpmn.client.forms.widgets.VariableNameTe
 import org.uberfire.workbench.events.NotificationEvent;
 
 import static org.kie.workbench.common.stunner.bpmn.client.forms.fields.model.Variable.VariableType.OUTPUT;
-import static org.kie.workbench.common.stunner.bpmn.client.forms.util.StringUtils.EXPRESSION;
 import static org.kie.workbench.common.stunner.bpmn.client.forms.util.StringUtils.isEmpty;
 import static org.kie.workbench.common.stunner.bpmn.client.forms.util.StringUtils.nonEmpty;
 
@@ -185,13 +184,13 @@ public class AssignmentListItemWidgetViewImpl extends Composite implements Assig
     @PostConstruct
     public void init() {
         name.setRegExp(ALLOWED_CHARS,
-                       StunnerFormsClientFieldsConstants.INSTANCE.Removed_invalid_characters_from_name(),
-                       StunnerFormsClientFieldsConstants.INSTANCE.Invalid_character_in_name());
+                       StunnerFormsClientFieldsConstants.CONSTANTS.Removed_invalid_characters_from_name(),
+                       StunnerFormsClientFieldsConstants.CONSTANTS.Invalid_character_in_name());
         name.addChangeHandler(event -> {
             String value = name.getText();
             String notifyMessage = null;
             if (isMultipleInstanceVariable(value)) {
-                notifyMessage = StunnerFormsClientFieldsConstants.INSTANCE.AssignmentNameAlreadyInUseAsMultipleInstanceInputOutputVariable(value);
+                notifyMessage = StunnerFormsClientFieldsConstants.CONSTANTS.AssignmentNameAlreadyInUseAsMultipleInstanceInputOutputVariable(value);
             } else if (!allowDuplicateNames && isDuplicateName(value)) {
                 notifyMessage = duplicateNameErrorMessage;
             }
@@ -202,8 +201,8 @@ public class AssignmentListItemWidgetViewImpl extends Composite implements Assig
             }
         });
         customDataType.setRegExp(StringUtils.ALPHA_NUM_UNDERSCORE_DOT_REGEXP,
-                                 StunnerFormsClientFieldsConstants.INSTANCE.Removed_invalid_characters_from_name(),
-                                 StunnerFormsClientFieldsConstants.INSTANCE.Invalid_character_in_name());
+                                 StunnerFormsClientFieldsConstants.CONSTANTS.Removed_invalid_characters_from_name(),
+                                 StunnerFormsClientFieldsConstants.CONSTANTS.Invalid_character_in_name());
         customDataType.addKeyDownHandler(event -> {
             int iChar = event.getNativeKeyCode();
             if (iChar == ' ') {
@@ -281,17 +280,7 @@ public class AssignmentListItemWidgetViewImpl extends Composite implements Assig
 
     @Override
     public void setExpression(final String expression) {
-        if (getModel().getVariableType() == OUTPUT && isConstant(expression)) {
-            notification.fire(new NotificationEvent(StunnerFormsClientFieldsConstants.INSTANCE.Only_expressions_allowed_for_output(),
-                                                    NotificationEvent.NotificationType.ERROR));
-            processVarComboBox.textBoxValueChanged("");
-        } else {
-            getModel().setExpression(expression);
-        }
-    }
-
-    private static boolean isConstant(String expression) {
-        return !isEmpty(expression) && !EXPRESSION.test(expression);
+        getModel().setExpression(expression);
     }
 
     @Override

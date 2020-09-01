@@ -27,8 +27,10 @@ import java.util.Set;
 
 import javax.enterprise.inject.Instance;
 
+import org.jboss.errai.security.shared.api.identity.User;
 import org.kie.workbench.common.stunner.core.api.DefinitionManager;
 import org.kie.workbench.common.stunner.core.api.FactoryManager;
+import org.kie.workbench.common.stunner.core.definition.adapter.DefinitionAdapter;
 import org.kie.workbench.common.stunner.core.definition.adapter.binding.BindableAdapterUtils;
 import org.kie.workbench.common.stunner.core.definition.property.PropertyMetaTypes;
 import org.kie.workbench.common.stunner.core.definition.service.DefinitionSetService;
@@ -51,6 +53,7 @@ import org.uberfire.backend.server.util.Paths;
 import org.uberfire.backend.vfs.Path;
 import org.uberfire.io.IOService;
 import org.uberfire.java.nio.IOException;
+import org.uberfire.java.nio.base.options.CommentedOption;
 import org.uberfire.java.nio.file.FileAlreadyExistsException;
 import org.uberfire.java.nio.file.FileVisitResult;
 import org.uberfire.java.nio.file.SimpleFileVisitor;
@@ -73,15 +76,18 @@ public abstract class AbstractVFSDiagramService<M extends Metadata, D extends Di
     private final BackendRegistryFactory registryFactory;
     private Collection<DefinitionSetService> definitionSetServices = new LinkedList<>();
     private DiagramRegistry<D> registry;
+    private User identity;
 
     public AbstractVFSDiagramService(final DefinitionManager definitionManager,
                                      final FactoryManager factoryManager,
                                      final Instance<DefinitionSetService> definitionSetServiceInstances,
-                                     final BackendRegistryFactory registryFactory) {
+                                     final BackendRegistryFactory registryFactory,
+                                     final User identity) {
         this.definitionManager = definitionManager;
         this.factoryManager = factoryManager;
         this.definitionSetServiceInstances = definitionSetServiceInstances;
         this.registryFactory = registryFactory;
+        this.identity = identity;
     }
 
     protected abstract IOService getIoService();
@@ -115,7 +121,8 @@ public abstract class AbstractVFSDiagramService<M extends Metadata, D extends Di
                                                         metadata);
             final String[] raw = serialize(diagram);
             getIoService().write(kiePath,
-                                 raw[0]);
+                                 raw[0],
+                                 new CommentedOption(identity.getIdentifier()));
             return Paths.convert(kiePath);
         } catch (final Exception e) {
             LOG.error("Cannot create diagram in path [" + kiePath + "]",
@@ -207,7 +214,9 @@ public abstract class AbstractVFSDiagramService<M extends Metadata, D extends Di
     public Path saveOrUpdateSvg(Path diagramPath, String rawDiagramSvg) {
         final org.uberfire.java.nio.file.Path svgPath = getDiagramSvgFilePath(getDiagramByPath(diagramPath));
         LOG.info("Saving diagram SVG " + svgPath);
-        getIoService().write(svgPath, rawDiagramSvg);
+        getIoService().write(svgPath,
+                             rawDiagramSvg,
+                             new CommentedOption(identity.getIdentifier()));
         return Paths.convert(svgPath);
     }
 
@@ -217,13 +226,14 @@ public abstract class AbstractVFSDiagramService<M extends Metadata, D extends Di
         return diagramFilePath.getParent().resolve(fileName);
     }
 
-    private String getDiagramSvgFileName(Diagram diagram) {
-        final Object metaProperty = definitionManager.adapters()
-                .forDefinition()
-                .getMetaProperty(PropertyMetaTypes.ID,
-                                 ((Definition) diagram.getGraph()
-                                         .getNode(diagram.getMetadata().getCanvasRootUUID())
-                                         .getContent()).getDefinition());
+    @SuppressWarnings("all")
+    private String getDiagramSvgFileName(final Diagram diagram) {
+        final DefinitionAdapter<Object> definitionAdapter = definitionManager.adapters().forDefinition();
+        final Object pojo = ((Definition) diagram.getGraph()
+                .getNode(diagram.getMetadata().getCanvasRootUUID())
+                .getContent()).getDefinition();
+        final String metaPropertyField = definitionAdapter.getMetaPropertyField(pojo, PropertyMetaTypes.ID);
+        final Object metaProperty = definitionAdapter.getProperty(pojo, metaPropertyField).get();
         final Object diagramFileId = definitionManager.adapters().forProperty().getValue(metaProperty);
         return String.valueOf(diagramFileId).concat(SVG_SUFFIX);
     }

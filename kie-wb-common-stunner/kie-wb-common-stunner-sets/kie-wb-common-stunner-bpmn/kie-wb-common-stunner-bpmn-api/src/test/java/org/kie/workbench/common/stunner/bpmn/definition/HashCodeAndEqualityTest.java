@@ -44,6 +44,8 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.event.escalatio
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.escalation.EscalationEventExecutionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.escalation.EscalationRef;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.escalation.InterruptingEscalationEventExecutionSet;
+import org.kie.workbench.common.stunner.bpmn.definition.property.event.link.LinkEventExecutionSet;
+import org.kie.workbench.common.stunner.bpmn.definition.property.event.link.LinkRef;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.message.CancellingMessageEventExecutionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.message.InterruptingMessageEventExecutionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.message.MessageEventExecutionSet;
@@ -113,8 +115,8 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.task.UserTaskEx
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.WaitForCompletion;
 import org.kie.workbench.common.stunner.bpmn.definition.property.variables.ProcessData;
 import org.kie.workbench.common.stunner.bpmn.definition.property.variables.ProcessVariables;
-import org.kie.workbench.common.stunner.bpmn.workitem.ServiceTask;
-import org.kie.workbench.common.stunner.bpmn.workitem.ServiceTaskExecutionSet;
+import org.kie.workbench.common.stunner.bpmn.workitem.CustomTask;
+import org.kie.workbench.common.stunner.bpmn.workitem.CustomTaskExecutionSet;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -172,15 +174,15 @@ public class HashCodeAndEqualityTest {
 
     @Test
     public void testServiceTaskHashCode() {
-        ServiceTask a = new ServiceTask();
-        ServiceTask b = new ServiceTask();
+        CustomTask a = new CustomTask();
+        CustomTask b = new CustomTask();
         assertEquals(a.hashCode(), b.hashCode());
     }
 
     @Test
     public void testServiceTaskEquals() {
-        ServiceTask a = new ServiceTask();
-        ServiceTask b = new ServiceTask();
+        CustomTask a = new CustomTask();
+        CustomTask b = new CustomTask();
         assertEquals(a, b);
         assertFalse(a.equals(19));
         assertFalse(a.equals(null));
@@ -229,6 +231,80 @@ public class HashCodeAndEqualityTest {
         EndTerminateEvent b = new EndTerminateEvent();
         assertEquals(a.hashCode(),
                      b.hashCode());
+    }
+
+    @Test
+    public void testIntermediateLinkCatchEventEquals() {
+        IntermediateLinkEventCatching linkEvent = new IntermediateLinkEventCatching();
+        IntermediateLinkEventCatching linkEvent2 = new IntermediateLinkEventCatching();
+        assertNotEquals(linkEvent, null);
+        assertNotEquals(linkEvent, "");
+        assertEquals(linkEvent, linkEvent);
+        assertEquals(linkEvent, linkEvent2);
+
+        BackgroundSet backgroundSet = new BackgroundSet();
+        backgroundSet.setBgColor(new BgColor("black"));
+        linkEvent.setBackgroundSet(backgroundSet);
+        assertNotEquals(linkEvent, linkEvent2);
+
+        linkEvent2.setBackgroundSet(backgroundSet);
+        assertEquals(linkEvent, linkEvent2);
+
+        linkEvent.setBackgroundSet(backgroundSet);
+        linkEvent.setExecutionSet(new LinkEventExecutionSet(new LinkRef("value")));
+        assertNotEquals(linkEvent, linkEvent2);
+    }
+
+    @Test
+    public void testIntermediateLinkThrowingEventEquals() {
+        IntermediateLinkEventThrowing linkEvent = new IntermediateLinkEventThrowing();
+        IntermediateLinkEventThrowing linkEvent2 = new IntermediateLinkEventThrowing();
+        assertNotEquals(linkEvent, null);
+        assertNotEquals(linkEvent, "");
+        assertEquals(linkEvent, linkEvent);
+        assertEquals(linkEvent, linkEvent2);
+
+        BackgroundSet backgroundSet = new BackgroundSet();
+        backgroundSet.setBgColor(new BgColor("black"));
+        linkEvent.setBackgroundSet(backgroundSet);
+        assertNotEquals(linkEvent, linkEvent2);
+
+        linkEvent2.setBackgroundSet(backgroundSet);
+        assertEquals(linkEvent, linkEvent2);
+
+        linkEvent.setBackgroundSet(backgroundSet);
+        linkEvent.setExecutionSet(new LinkEventExecutionSet(new LinkRef("value")));
+        assertNotEquals(linkEvent, linkEvent2);
+    }
+
+    @Test
+    public void testLinkRef() {
+        LinkRef link = new LinkRef("link");
+        assertNotEquals(link, null);
+        assertNotEquals(link, "");
+        assertEquals(link, link);
+
+        LinkRef link2 = new LinkRef("link");
+        assertEquals(link, link2);
+
+        link2.setValue("link2");
+        assertNotEquals(link, link2);
+    }
+
+    @Test
+    public void testLinkEventExecutionSet() {
+        LinkRef link = new LinkRef("link");
+        LinkEventExecutionSet executionSet = new LinkEventExecutionSet(link);
+        assertNotEquals(executionSet, null);
+        assertNotEquals(executionSet, "");
+        assertEquals(executionSet, executionSet);
+
+        LinkRef link2 = new LinkRef("link");
+        LinkEventExecutionSet executionSet2 = new LinkEventExecutionSet(link2);
+        assertEquals(executionSet, executionSet2);
+
+        link2.setValue("link2");
+        assertNotEquals(executionSet, executionSet2);
     }
 
     @Test
@@ -1472,21 +1548,21 @@ public class HashCodeAndEqualityTest {
     @Test
     public void testServiceTaskExecutionSetEqualsAndHashCode() {
         TestCaseBuilder.newTestCase()
-                .addTrueCase(new ServiceTaskExecutionSet(),
-                             new ServiceTaskExecutionSet())
+                .addTrueCase(new CustomTaskExecutionSet(),
+                             new CustomTaskExecutionSet())
 
-                .addTrueCase(new ServiceTaskExecutionSet(new TaskName(),
-                                                         new IsAsync(),
-                                                         new AdHocAutostart(),
-                                                         new OnEntryAction(),
-                                                         new OnExitAction(),
-                                                         new SLADueDate()),
-                             new ServiceTaskExecutionSet(new TaskName(),
-                                                         new IsAsync(),
-                                                         new AdHocAutostart(),
-                                                         new OnEntryAction(),
-                                                         new OnExitAction(),
-                                                         new SLADueDate()))
+                .addTrueCase(new CustomTaskExecutionSet(new TaskName(),
+                                                        new IsAsync(),
+                                                        new AdHocAutostart(),
+                                                        new OnEntryAction(),
+                                                        new OnExitAction(),
+                                                        new SLADueDate()),
+                             new CustomTaskExecutionSet(new TaskName(),
+                                                        new IsAsync(),
+                                                        new AdHocAutostart(),
+                                                        new OnEntryAction(),
+                                                        new OnExitAction(),
+                                                        new SLADueDate()))
                 .test();
     }
 

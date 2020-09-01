@@ -26,6 +26,7 @@ import org.eclipse.bpmn2.Event;
 import org.eclipse.bpmn2.EventDefinition;
 import org.eclipse.bpmn2.FormalExpression;
 import org.eclipse.bpmn2.ItemDefinition;
+import org.eclipse.bpmn2.LinkEventDefinition;
 import org.eclipse.bpmn2.Message;
 import org.eclipse.bpmn2.MessageEventDefinition;
 import org.eclipse.bpmn2.Signal;
@@ -41,15 +42,19 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.common.Conditio
 import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.AssignmentsInfo;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.error.ErrorRef;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.escalation.EscalationRef;
+import org.kie.workbench.common.stunner.bpmn.definition.property.event.link.LinkRef;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.message.MessageRef;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.signal.SignalRef;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.signal.SignalScope;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.timer.TimerSettings;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.timer.TimerSettingsValue;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.SLADueDate;
+import org.kie.workbench.common.stunner.core.util.StringUtils;
+import org.kie.workbench.common.stunner.core.util.UUID;
 
 import static org.kie.workbench.common.stunner.bpmn.client.marshall.converters.fromstunner.Factories.bpmn2;
 import static org.kie.workbench.common.stunner.bpmn.client.marshall.converters.tostunner.properties.Scripts.asCData;
+import static org.kie.workbench.common.stunner.core.util.StringUtils.replaceIllegalCharsAttribute;
 
 public abstract class EventPropertyWriter extends PropertyWriter {
 
@@ -89,6 +94,14 @@ public abstract class EventPropertyWriter extends PropertyWriter {
         addRootElement(message);
     }
 
+    public void addLink(LinkRef linkRef) {
+        LinkEventDefinition linkEventDefinition =
+                bpmn2.createLinkEventDefinition();
+        linkEventDefinition.setName(replaceIllegalCharsAttribute(linkRef.getValue()));
+
+        addEventDefinition(linkEventDefinition);
+    }
+
     public void addSignal(SignalRef signalRef) {
         SignalEventDefinition signalEventDefinition =
                 bpmn2.createSignalEventDefinition();
@@ -118,15 +131,18 @@ public abstract class EventPropertyWriter extends PropertyWriter {
         addEventDefinition(errorEventDefinition);
 
         String errorCode = errorRef.getValue();
-        if (errorCode == null || errorCode.isEmpty()) {
-            return;
+        String errorId;
+        if (StringUtils.nonEmpty(errorCode)) {
+            error.setErrorCode(errorCode);
+            CustomAttribute.errorName.of(errorEventDefinition).set(errorCode);
+            errorId = errorCode;
+        } else {
+            errorId = UUID.uuid();
         }
 
-        error.setId(errorCode);
-        error.setErrorCode(errorCode);
+        error.setId(errorId);
         errorEventDefinition.setErrorRef(error);
 
-        CustomAttribute.errorName.of(errorEventDefinition).set(errorCode);
         addRootElement(error);
     }
 

@@ -22,10 +22,13 @@ import org.eclipse.bpmn2.EventDefinition;
 import org.eclipse.bpmn2.SignalEventDefinition;
 import org.eclipse.emf.common.util.ECollections;
 import org.eclipse.emf.common.util.EList;
+import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 
 import static org.mockito.Mockito.when;
 
+@RunWith(MockitoJUnitRunner.class)
 public class CatchEventPropertyReaderTest extends BaseEventPropertyReaderTest {
 
     @Mock
@@ -40,6 +43,12 @@ public class CatchEventPropertyReaderTest extends BaseEventPropertyReaderTest {
     protected void setSignalEventDefinitionOnCurrentMock(SignalEventDefinition eventDefinition) {
         EList<EventDefinition> eventDefinitions = ECollections.singletonEList(eventDefinition);
         when(catchEvent.getEventDefinitions()).thenReturn(eventDefinitions);
+        when(catchEvent.getEventDefinitionRefs()).thenReturn(ECollections.emptyEList());
+    }
+
+    @Override
+    protected void setLinkEventDefinitionOnCurrentMock(EventDefinition eventDefinition) {
+        when(catchEvent.getEventDefinitions()).thenReturn(ECollections.singletonEList(eventDefinition));
         when(catchEvent.getEventDefinitionRefs()).thenReturn(ECollections.emptyEList());
     }
 

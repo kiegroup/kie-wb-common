@@ -19,4 +19,6 @@ package org.kie.workbench.common.dmn.client.widgets.grid.controls.list;
 public interface ListSelectorHeaderItemView extends org.jboss.errai.ui.client.local.api.IsElement {
 
     void setText(final String text);
+
+    void setIconClass(final String iconClass);
 }

@@ -23,10 +23,13 @@ import org.eclipse.bpmn2.Event;
 import org.eclipse.bpmn2.EventDefinition;
 import org.eclipse.bpmn2.SignalEventDefinition;
 import org.eclipse.bpmn2.ThrowEvent;
+import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 
 import static org.mockito.Mockito.when;
 
+@RunWith(MockitoJUnitRunner.class)
 public class ThrowEventPropertyReaderTest extends BaseEventPropertyReaderTest {
 
     @Mock
@@ -39,6 +42,13 @@ public class ThrowEventPropertyReaderTest extends BaseEventPropertyReaderTest {
 
     @Override
     protected void setSignalEventDefinitionOnCurrentMock(SignalEventDefinition eventDefinition) {
+        List<EventDefinition> eventDefinitions = Collections.singletonList(eventDefinition);
+        when(throwEvent.getEventDefinitions()).thenReturn(eventDefinitions);
+        when(throwEvent.getEventDefinitionRefs()).thenReturn(Collections.EMPTY_LIST);
+    }
+
+    @Override
+    protected void setLinkEventDefinitionOnCurrentMock(EventDefinition eventDefinition) {
         List<EventDefinition> eventDefinitions = Collections.singletonList(eventDefinition);
         when(throwEvent.getEventDefinitions()).thenReturn(eventDefinitions);
         when(throwEvent.getEventDefinitionRefs()).thenReturn(Collections.EMPTY_LIST);

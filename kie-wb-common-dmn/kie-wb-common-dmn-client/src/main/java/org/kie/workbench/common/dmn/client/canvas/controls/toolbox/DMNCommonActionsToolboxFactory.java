@@ -31,6 +31,7 @@ import org.kie.workbench.common.dmn.api.definition.model.Decision;
 import org.kie.workbench.common.dmn.api.definition.model.DecisionService;
 import org.kie.workbench.common.dmn.api.qualifiers.DMNEditor;
 import org.kie.workbench.common.dmn.client.commands.factory.DefaultCanvasCommandFactory;
+import org.kie.workbench.common.stunner.core.client.ReadOnlyProvider;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
 import org.kie.workbench.common.stunner.core.client.command.CanvasCommandManager;
 import org.kie.workbench.common.stunner.core.client.components.toolbox.actions.ActionsToolboxView;
@@ -49,20 +50,26 @@ public class DMNCommonActionsToolboxFactory
 
     private final ManagedInstance<DMNEditDecisionToolboxAction> editDecisionToolboxActions;
     private final ManagedInstance<DMNEditBusinessKnowledgeModelToolboxAction> editBusinessKnowledgeModelToolboxActions;
+    private final ManagedInstance<DMNEditDRDToolboxAction> editDRDToolboxActions;
     private final ManagedInstance<ActionsToolboxView> views;
+    private final ReadOnlyProvider readOnlyProvider;
 
     @Inject
     public DMNCommonActionsToolboxFactory(final @Any ManagedInstance<DMNEditDecisionToolboxAction> editDecisionToolboxActions,
                                           final @Any ManagedInstance<DMNEditBusinessKnowledgeModelToolboxAction> editBusinessKnowledgeModelToolboxActions,
+                                          final @Any ManagedInstance<DMNEditDRDToolboxAction> editDRDToolboxActions,
                                           final @Any @CommonActionsToolbox ManagedInstance<ActionsToolboxView> views,
                                           final CanvasCommandManager<AbstractCanvasHandler> commandManager,
                                           final @DMNEditor DefaultCanvasCommandFactory commandFactory,
-                                          final @Any ManagedInstance<DeleteNodeToolboxAction> deleteNodeActions) {
+                                          final @Any ManagedInstance<DeleteNodeToolboxAction> deleteNodeActions,
+                                          final @DMNEditor ReadOnlyProvider readOnlyProvider) {
         super(commandManager, commandFactory, deleteNodeActions, views);
 
         this.editDecisionToolboxActions = editDecisionToolboxActions;
         this.editBusinessKnowledgeModelToolboxActions = editBusinessKnowledgeModelToolboxActions;
+        this.editDRDToolboxActions = editDRDToolboxActions;
         this.views = views;
+        this.readOnlyProvider = readOnlyProvider;
     }
 
     @Override
@@ -74,6 +81,11 @@ public class DMNCommonActionsToolboxFactory
     @SuppressWarnings("unchecked")
     public Collection<ToolboxAction<AbstractCanvasHandler>> getActions(final AbstractCanvasHandler canvasHandler,
                                                                        final Element<?> element) {
+        if (readOnlyProvider.isReadOnlyDiagram()) {
+            final List<ToolboxAction<AbstractCanvasHandler>> editActions = new ArrayList<>();
+            addEditAction(element, editActions);
+            return editActions;
+        }
 
         // Obtain default common toolbox actions.
         final List<ToolboxAction<AbstractCanvasHandler>> actions =
@@ -81,12 +93,18 @@ public class DMNCommonActionsToolboxFactory
                                                 element));
 
         // Add specific additional toolbox actions for different DMN node-types.
+        addEditAction(element, actions);
+        actions.add(editDRDToolboxActions.get());
+        return actions;
+    }
+
+    void addEditAction(final Element<?> element,
+                       final List<ToolboxAction<AbstractCanvasHandler>> actions) {
         if (isDecision(element)) {
             actions.add(editDecisionToolboxActions.get());
         } else if (isBusinessKnowledgeModel(element)) {
             actions.add(editBusinessKnowledgeModelToolboxActions.get());
         }
-        return actions;
     }
 
     Collection<ToolboxAction<AbstractCanvasHandler>> superGetActions(final AbstractCanvasHandler canvasHandler,
@@ -99,6 +117,7 @@ public class DMNCommonActionsToolboxFactory
     public void destroy() {
         editDecisionToolboxActions.destroyAll();
         editBusinessKnowledgeModelToolboxActions.destroyAll();
+        editDRDToolboxActions.destroyAll();
         views.destroyAll();
     }
 

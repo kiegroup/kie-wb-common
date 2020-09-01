@@ -25,8 +25,8 @@ import org.kie.workbench.common.stunner.bpmn.definition.BPMNDiagram;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNDiagramImpl;
 import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.AdHoc;
 import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.DiagramSet;
-import org.kie.workbench.common.stunner.bpmn.workitem.ServiceTask;
-import org.kie.workbench.common.stunner.bpmn.workitem.ServiceTaskFactory;
+import org.kie.workbench.common.stunner.bpmn.workitem.CustomTask;
+import org.kie.workbench.common.stunner.bpmn.workitem.CustomTaskFactory;
 import org.kie.workbench.common.stunner.bpmn.workitem.service.WorkItemDefinitionLookupService;
 import org.kie.workbench.common.stunner.core.api.DefinitionManager;
 import org.kie.workbench.common.stunner.core.api.FactoryManager;
@@ -40,7 +40,6 @@ import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.command.GraphCommandManager;
 import org.kie.workbench.common.stunner.core.graph.command.impl.AddNodeCommand;
 import org.kie.workbench.common.stunner.core.graph.command.impl.GraphCommandFactory;
-import org.kie.workbench.common.stunner.core.graph.command.impl.UpdateElementPropertyValueCommand;
 import org.kie.workbench.common.stunner.core.graph.content.definition.Definition;
 import org.kie.workbench.common.stunner.core.graph.processing.index.GraphIndexBuilder;
 import org.kie.workbench.common.stunner.core.graph.processing.index.Index;
@@ -86,7 +85,7 @@ public class CaseGraphFactoryImplTest {
     private GraphIndexBuilder<?> indexBuilder;
 
     @Mock
-    private ServiceTaskFactory serviceTaskFactory;
+    private CustomTaskFactory customTaskFactory;
 
     @Mock
     private WorkItemDefinitionLookupService workItemDefinitionService;
@@ -109,7 +108,7 @@ public class CaseGraphFactoryImplTest {
     @Mock
     private DefinitionAdapter<Object> adapter;
 
-    private ServiceTask milestone;
+    private CustomTask milestone;
 
     @Mock
     private Definition<BPMNDiagram> diagramContent;
@@ -128,12 +127,12 @@ public class CaseGraphFactoryImplTest {
 
     @Before
     public void setUp() throws Exception {
-        milestone = new ServiceTask();
+        milestone = new CustomTask();
         graphCommandFactory = new GraphCommandFactory();
-        when(serviceTaskFactory.buildItem(MILESTONE)).thenReturn(milestone);
+        when(customTaskFactory.buildItem(MILESTONE)).thenReturn(milestone);
         when(definitionManager.adapters()).thenReturn(adapters);
         when(adapters.registry()).thenReturn(registry);
-        when(registry.getDefinitionAdapter(ServiceTask.class)).thenReturn(adapter);
+        when(registry.getDefinitionAdapter(CustomTask.class)).thenReturn(adapter);
         when(adapter.getId(milestone)).thenReturn(DefinitionId.build(MILESTONE_ID));
         when(factoryManager.newElement(anyString(),
                                        eq(getDefinitionId(BPMNDiagramImpl.class)))).thenReturn(diagramNode);
@@ -155,7 +154,7 @@ public class CaseGraphFactoryImplTest {
                                           graphCommandManager,
                                           graphCommandFactory,
                                           indexBuilder,
-                                          serviceTaskFactory,
+                                          customTaskFactory,
                                           workItemDefinitionService);
     }
 
@@ -166,16 +165,11 @@ public class CaseGraphFactoryImplTest {
     }
 
     @Test
+    @SuppressWarnings("all")
     public void buildInitialisationCommands() {
         final List<Command> commands = tested.buildInitialisationCommands();
-        assertEquals(2, commands.size());
-
+        assertEquals(1, commands.size());
         final AddNodeCommand addNodeCommand = (AddNodeCommand) commands.get(0);
-        final UpdateElementPropertyValueCommand updatePropertyCommand = (UpdateElementPropertyValueCommand) commands.get(1);
-
         assertEquals(addNodeCommand.getCandidate(), diagramNode);
-        assertEquals(updatePropertyCommand.getElement(), diagramNode);
-        assertEquals(updatePropertyCommand.getPropertyId(), ADHOC_ID);
-        assertEquals(updatePropertyCommand.getValue(), true);
     }
 }
