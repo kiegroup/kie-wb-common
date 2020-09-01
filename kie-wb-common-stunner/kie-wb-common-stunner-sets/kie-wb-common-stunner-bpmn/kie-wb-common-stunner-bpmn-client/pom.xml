@@ -368,20 +368,16 @@
               <goal>copy-resources</goal>
             </goals>
             <configuration>
-              <outputDirectory>${project.build.outputDirectory}/org/uberfire/client/views/static/monaco-editor</outputDirectory>
+              <outputDirectory>${project.build.outputDirectory}/org/uberfire/client/views/static/monaco-editor/dev</outputDirectory>
               <resources>
                 <resource>
-                  <directory>${project.build.directory}/monaco-editor/META-INF/resources/webjars/monaco-editor/${version.org.webjars.npm.monaco-editor}/</directory>
+                  <directory>${project.build.directory}/monaco-editor/META-INF/resources/webjars/monaco-editor/${version.org.webjars.npm.monaco-editor}/min</directory>
                   <includes>
-                    <include>dev/vs/basic-languages/java/java.js</include>
-                    <include>dev/vs/basic-languages/javascript/javascript.js</include>
-                    <include>dev/vs/basic-languages/typescript/typescript.js</include>
-                    <include>dev/vs/language/typescript/tsMode.js</include>
-                    <include>dev/vs/language/typescript/tsWorker.js</include>
-                    <include>dev/vs/language/typescript/languageFeatures.js</include>
-                    <include>dev/vs/language/typescript/workerManager.js</include>
-                    <include>dev/vs/language/typescript/lib/typescriptServices.js</include>
-                    <include>dev/vs/language/typescript/lib/lib.js</include>
+                    <include>vs/basic-languages/java/java.js</include>
+                    <include>vs/basic-languages/javascript/javascript.js</include>
+                    <include>vs/basic-languages/typescript/typescript.js</include>
+                    <include>vs/language/typescript/tsMode.js</include>
+                    <include>vs/language/typescript/tsWorker.js</include>
                   </includes>
                 </resource>
               </resources>
