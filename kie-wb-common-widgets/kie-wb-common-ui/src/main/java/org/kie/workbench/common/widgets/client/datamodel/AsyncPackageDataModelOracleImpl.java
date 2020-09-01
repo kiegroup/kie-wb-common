@@ -310,14 +310,6 @@ public class AsyncPackageDataModelOracleImpl implements AsyncPackageDataModelOra
 
     /**
      * Check whether a given FactType is an Event for CEP purposes
-     *
-     *
-     *
-     * Class$Nested WORKS!
-     *
-     *
-     *
-     *
      * @param factType
      * @return
      */
@@ -393,11 +385,14 @@ public class AsyncPackageDataModelOracleImpl implements AsyncPackageDataModelOra
                              final Callback<String> callback) {
 
         getSuperTypes(factType,
-                      result -> {
-                          if (result != null) {
-                              callback.callback(result.get(0));
-                          } else {
-                              callback.callback(null);
+                      new Callback<List<String>>() {
+                          @Override
+                          public void callback(List<String> result) {
+                              if (result != null) {
+                                  callback.callback(result.get(0));
+                              } else {
+                                  callback.callback(null);
+                              }
                           }
                       });
     }
