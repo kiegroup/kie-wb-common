@@ -18,7 +18,6 @@ package org.kie.workbench.common.dmn.client.docks.navigator.factories;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import java.util.TreeSet;
 
 import com.google.gwtmockito.GwtMockitoTestRunner;
@@ -28,7 +27,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.dmn.api.definition.model.DMNDiagram;
 import org.kie.workbench.common.dmn.client.docks.navigator.DecisionNavigatorItem;
-import org.kie.workbench.common.dmn.client.docks.navigator.DecisionNavigatorPresenter;
+import org.kie.workbench.common.dmn.client.docks.navigator.DecisionNavigatorItemBuilder;
+import org.kie.workbench.common.dmn.client.graph.DMNGraphUtils;
 import org.kie.workbench.common.stunner.core.api.DefinitionManager;
 import org.kie.workbench.common.stunner.core.client.canvas.Canvas;
 import org.kie.workbench.common.stunner.core.client.canvas.CanvasHandler;
@@ -52,8 +52,8 @@ import org.uberfire.mvp.Command;
 
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
-import static java.util.Optional.empty;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.kie.workbench.common.dmn.client.docks.navigator.DecisionNavigatorItem.Type.ITEM;
 import static org.kie.workbench.common.dmn.client.resources.i18n.DMNEditorConstants.DecisionNavigatorBaseItemFactory_NoName;
 import static org.mockito.Mockito.doReturn;
@@ -69,7 +69,7 @@ public class DecisionNavigatorBaseItemFactoryTest {
     private DecisionNavigatorNestedItemFactory nestedItemFactory;
 
     @Mock
-    private DecisionNavigatorPresenter decisionNavigatorPresenter;
+    private DMNGraphUtils dmnGraphUtils;
 
     @Mock
     private TextPropertyProviderFactory textPropertyProviderFactory;
@@ -109,15 +109,13 @@ public class DecisionNavigatorBaseItemFactoryTest {
     @Before
     public void setup() {
         factory = spy(new DecisionNavigatorBaseItemFactory(nestedItemFactory,
-                                                           decisionNavigatorPresenter,
+                                                           dmnGraphUtils,
                                                            textPropertyProviderFactory,
                                                            canvasFocusedSelectionEvent,
                                                            canvasSelectionEvent,
                                                            definitionUtils,
                                                            translationService));
 
-        when(decisionNavigatorPresenter.getHandler()).thenReturn(canvasHandler);
-        when(decisionNavigatorPresenter.getDiagram()).thenReturn(diagram);
         when(canvasHandler.getDiagram()).thenReturn(diagram);
         when(diagram.getGraph()).thenReturn(graph);
     }
@@ -134,14 +132,13 @@ public class DecisionNavigatorBaseItemFactoryTest {
         final Node<Definition, Edge> diagramNode = mock(Node.class);
         final Definition diagramDefinition = mock(Definition.class);
         final DMNDiagram diagram = mock(DMNDiagram.class);
-        final DecisionNavigatorItem child = new DecisionNavigatorItem(childUUID);
+        final DecisionNavigatorItem child = new DecisionNavigatorItemBuilder().withUUID(childUUID).build();
         final List<DecisionNavigatorItem> nestedItems = singletonList(child);
 
         when(node.getUUID()).thenReturn(itemUUID);
         doReturn(label).when(factory).getLabel(node);
         doReturn(onClick).when(factory).makeOnClickCommand(node);
         doReturn(nestedItems).when(factory).makeNestedItems(node);
-        when(decisionNavigatorPresenter.getGraph()).thenReturn(Optional.of(graph));
 
         when(graph.nodes()).thenReturn(Collections.singletonList(diagramNode));
         when(diagramNode.getContent()).thenReturn(diagramDefinition);
@@ -152,40 +149,10 @@ public class DecisionNavigatorBaseItemFactoryTest {
 
         assertEquals(itemUUID, item.getUUID());
         assertEquals(label, item.getLabel());
-        assertEquals(onClick, item.getOnClick());
-        assertEquals(graphUUID, item.getParentUUID());
+        assertTrue(item.getOnClick().isPresent());
+        assertEquals(onClick, item.getOnClick().get());
         assertEquals(asTreeSet(child), item.getChildren());
-    }
-
-    @Test
-    @SuppressWarnings("unchecked")
-    public void testDiagramUUIDWhenGraphIsPresent() {
-
-        final String expectedUUID = "graphUUID";
-        final Node<Definition, Edge> diagramNode = mock(Node.class);
-        final Definition diagramDefinition = mock(Definition.class);
-        final DMNDiagram diagram = mock(DMNDiagram.class);
-
-        when(decisionNavigatorPresenter.getGraph()).thenReturn(Optional.of(graph));
-        when(graph.nodes()).thenReturn(Collections.singletonList(diagramNode));
-        when(diagramNode.getContent()).thenReturn(diagramDefinition);
-        when(diagramDefinition.getDefinition()).thenReturn(diagram);
-        when(diagramNode.getUUID()).thenReturn(expectedUUID);
-
-        final String actualUUID = factory.diagramUUID();
-
-        assertEquals(expectedUUID, actualUUID);
-    }
-
-    @Test
-    public void testDiagramUUIDWhenGraphIsNotPresent() {
-
-        when(decisionNavigatorPresenter.getGraph()).thenReturn(empty());
-
-        final String actualUUID = factory.diagramUUID();
-        final String expectedUUID = "";
-
-        assertEquals(expectedUUID, actualUUID);
+        assertEquals(itemUUID, child.getParentUUID());
     }
 
     @Test
@@ -198,7 +165,7 @@ public class DecisionNavigatorBaseItemFactoryTest {
         final CanvasFocusedShapeEvent canvasFocusedShape = new CanvasFocusedShapeEvent(canvasHandler, uuid);
 
         when(node.getUUID()).thenReturn(uuid);
-        when(decisionNavigatorPresenter.getHandler()).thenReturn(canvasHandler);
+        when(dmnGraphUtils.getCanvasHandler()).thenReturn(canvasHandler);
         doReturn(canvasSelection).when(factory).makeCanvasSelectionEvent(canvasHandler, uuid);
         doReturn(canvasFocusedShape).when(factory).makeCanvasFocusedShapeEvent(canvasHandler, uuid);
         doReturn(canvas).when(canvasHandler).getCanvas();

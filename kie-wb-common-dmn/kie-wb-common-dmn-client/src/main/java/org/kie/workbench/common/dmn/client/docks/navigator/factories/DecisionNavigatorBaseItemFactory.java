@@ -18,16 +18,15 @@ package org.kie.workbench.common.dmn.client.docks.navigator.factories;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.StreamSupport;
 
 import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
 import org.jboss.errai.ui.client.local.spi.TranslationService;
-import org.kie.workbench.common.dmn.api.definition.model.DMNDiagram;
 import org.kie.workbench.common.dmn.client.docks.navigator.DecisionNavigatorItem;
-import org.kie.workbench.common.dmn.client.docks.navigator.DecisionNavigatorPresenter;
+import org.kie.workbench.common.dmn.client.docks.navigator.DecisionNavigatorItemBuilder;
+import org.kie.workbench.common.dmn.client.graph.DMNGraphUtils;
 import org.kie.workbench.common.stunner.core.client.canvas.CanvasHandler;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.actions.TextPropertyProvider;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.actions.TextPropertyProviderFactory;
@@ -37,7 +36,6 @@ import org.kie.workbench.common.stunner.core.definition.adapter.AdapterManager;
 import org.kie.workbench.common.stunner.core.definition.adapter.DefinitionAdapter;
 import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Element;
-import org.kie.workbench.common.stunner.core.graph.Graph;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.definition.Definition;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
@@ -51,7 +49,7 @@ public class DecisionNavigatorBaseItemFactory {
 
     private final DecisionNavigatorNestedItemFactory nestedItemFactory;
 
-    private final DecisionNavigatorPresenter decisionNavigatorPresenter;
+    private final DMNGraphUtils dmnGraphUtils;
 
     private final TextPropertyProviderFactory textPropertyProviderFactory;
 
@@ -65,14 +63,14 @@ public class DecisionNavigatorBaseItemFactory {
 
     @Inject
     public DecisionNavigatorBaseItemFactory(final DecisionNavigatorNestedItemFactory nestedItemFactory,
-                                            final DecisionNavigatorPresenter decisionNavigatorPresenter,
+                                            final DMNGraphUtils dmnGraphUtils,
                                             final TextPropertyProviderFactory textPropertyProviderFactory,
                                             final Event<CanvasFocusedShapeEvent> canvasFocusedSelectionEvent,
                                             final Event<CanvasSelectionEvent> canvasSelectionEvent,
                                             final DefinitionUtils definitionUtils,
                                             final TranslationService translationService) {
         this.nestedItemFactory = nestedItemFactory;
-        this.decisionNavigatorPresenter = decisionNavigatorPresenter;
+        this.dmnGraphUtils = dmnGraphUtils;
         this.textPropertyProviderFactory = textPropertyProviderFactory;
         this.canvasFocusedSelectionEvent = canvasFocusedSelectionEvent;
         this.canvasSelectionEvent = canvasSelectionEvent;
@@ -87,37 +85,25 @@ public class DecisionNavigatorBaseItemFactory {
         final String label = getLabel(node);
         final Command onClick = makeOnClickCommand(node);
         final List<DecisionNavigatorItem> nestedItems = makeNestedItems(node);
-        final String diagramUUID = diagramUUID();
+        final DecisionNavigatorItem item = navigatorItemBuilder()
+                .withUUID(uuid)
+                .withLabel(label)
+                .withType(type)
+                .withOnClick(onClick)
+                .build();
 
-        final DecisionNavigatorItem item = new DecisionNavigatorItem(uuid, label, type, onClick, diagramUUID);
         nestedItems.forEach(item::addChild);
 
         return item;
     }
 
-    @SuppressWarnings("unchecked")
-    String diagramUUID() {
-        final String defaultUUID = "";
-        return decisionNavigatorPresenter
-                .getGraph()
-                .map(graph -> ((Graph<?, Node>) graph).nodes())
-                .map(nodes -> StreamSupport.stream(nodes.spliterator(), false))
-                .map(stream -> stream
-                        .filter(n -> n.getContent() instanceof Definition)
-                        .filter(n -> ((Definition) n.getContent()).getDefinition() instanceof DMNDiagram)
-                        .findFirst()
-                        .map(Node::getUUID)
-                        .orElse(defaultUUID)
-                )
-                .orElse(defaultUUID);
-    }
-
     Command makeOnClickCommand(final Node<View, Edge> node) {
 
-        final CanvasHandler canvasHandler = decisionNavigatorPresenter.getHandler();
-        final String uuid = node.getUUID();
-
         return () -> {
+
+            final CanvasHandler canvasHandler = dmnGraphUtils.getCanvasHandler();
+            final String uuid = node.getUUID();
+
             canvasSelectionEvent.fire(makeCanvasSelectionEvent(canvasHandler, uuid));
             canvasFocusedSelectionEvent.fire(makeCanvasFocusedShapeEvent(canvasHandler, uuid));
             if (canvasHandler != null && canvasHandler.getCanvas() != null) {
@@ -179,5 +165,9 @@ public class DecisionNavigatorBaseItemFactory {
 
     private boolean isNil(final String s) {
         return s == null || s.trim().isEmpty();
+    }
+
+    private DecisionNavigatorItemBuilder navigatorItemBuilder() {
+        return new DecisionNavigatorItemBuilder();
     }
 }
