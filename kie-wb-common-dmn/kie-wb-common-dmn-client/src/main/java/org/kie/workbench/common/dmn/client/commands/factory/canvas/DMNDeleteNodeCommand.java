@@ -19,20 +19,30 @@ package org.kie.workbench.common.dmn.client.commands.factory.canvas;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
 import org.kie.workbench.common.stunner.core.client.canvas.command.DeleteNodeCommand;
 import org.kie.workbench.common.stunner.core.command.Command;
+import org.kie.workbench.common.stunner.core.diagram.SelectedDiagramProvider;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.command.GraphCommandExecutionContext;
 import org.kie.workbench.common.stunner.core.rule.RuleViolation;
 
 public class DMNDeleteNodeCommand extends DeleteNodeCommand {
 
-    public DMNDeleteNodeCommand(final Node candidate) {
+    private final SelectedDiagramProvider selectedDiagramProvider;
+
+    public DMNDeleteNodeCommand(final Node candidate,
+                                final SelectedDiagramProvider selectedDiagramProvider) {
         super(candidate);
+        this.selectedDiagramProvider = selectedDiagramProvider;
+    }
+
+    public SelectedDiagramProvider getSelectedDiagramProvider() {
+        return selectedDiagramProvider;
     }
 
     @Override
     protected Command<GraphCommandExecutionContext, RuleViolation> newGraphCommand(final AbstractCanvasHandler context) {
         return new DMNSafeDeleteNodeCommand(candidate,
                                             deleteProcessor,
-                                            options);
+                                            options,
+                                            getSelectedDiagramProvider());
     }
 }

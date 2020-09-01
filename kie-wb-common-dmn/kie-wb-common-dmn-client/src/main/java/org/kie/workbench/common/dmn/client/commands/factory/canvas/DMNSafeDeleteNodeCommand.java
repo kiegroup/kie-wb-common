@@ -17,6 +17,7 @@
 package org.kie.workbench.common.dmn.client.commands.factory.canvas;
 
 import org.kie.workbench.common.dmn.api.definition.model.DecisionService;
+import org.kie.workbench.common.stunner.core.diagram.SelectedDiagramProvider;
 import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.command.impl.SafeDeleteNodeCommand;
@@ -25,14 +26,23 @@ import org.kie.workbench.common.stunner.core.util.DefinitionUtils;
 
 public class DMNSafeDeleteNodeCommand extends SafeDeleteNodeCommand {
 
+    private final SelectedDiagramProvider selectedDiagramProvider;
+
     public DMNSafeDeleteNodeCommand(final Node<?, Edge> node,
                                     final SafeDeleteNodeCommandCallback safeDeleteCallback,
-                                    final Options options) {
+                                    final Options options,
+                                    final SelectedDiagramProvider selectedDiagramProvider) {
         super(node, safeDeleteCallback, options);
+        this.selectedDiagramProvider = selectedDiagramProvider;
     }
 
     @Override
     public boolean shouldKeepChildren(final Node<Definition<?>, Edge> candidate) {
         return DefinitionUtils.getElementDefinition(candidate) instanceof DecisionService;
+    }
+
+    @Override
+    public SelectedDiagramProvider getSelectedDiagramProvider() {
+        return selectedDiagramProvider;
     }
 }
