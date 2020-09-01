@@ -34,6 +34,7 @@ import org.jboss.errai.common.client.ui.ElementWrapperWidget;
 import org.kie.workbench.common.dmn.api.qualifiers.DMNEditor;
 import org.kie.workbench.common.dmn.client.commands.general.NavigateToExpressionEditorCommand;
 import org.kie.workbench.common.dmn.client.docks.navigator.DecisionNavigatorDock;
+import org.kie.workbench.common.dmn.client.docks.navigator.drds.DMNDiagramsSession;
 import org.kie.workbench.common.dmn.client.editors.expressions.ExpressionEditorView;
 import org.kie.workbench.common.dmn.client.editors.included.IncludedModelsPage;
 import org.kie.workbench.common.dmn.client.editors.included.imports.IncludedModelsPageStateProviderImpl;
@@ -44,9 +45,11 @@ import org.kie.workbench.common.dmn.client.editors.types.DataTypePageTabActiveEv
 import org.kie.workbench.common.dmn.client.editors.types.DataTypesPage;
 import org.kie.workbench.common.dmn.client.editors.types.listview.common.DataTypeEditModeToggleEvent;
 import org.kie.workbench.common.dmn.client.events.EditExpressionEvent;
+import org.kie.workbench.common.dmn.client.marshaller.DMNMarshallerService;
 import org.kie.workbench.common.dmn.client.session.DMNSession;
 import org.kie.workbench.common.dmn.client.widgets.codecompletion.MonacoFEELInitializer;
 import org.kie.workbench.common.dmn.client.widgets.toolbar.DMNEditorToolbar;
+import org.kie.workbench.common.dmn.client.widgets.toolbar.DMNLayoutHelper;
 import org.kie.workbench.common.dmn.showcase.client.perspectives.AuthoringPerspective;
 import org.kie.workbench.common.dmn.showcase.client.services.DMNShowcaseDiagramService;
 import org.kie.workbench.common.dmn.webapp.common.client.docks.preview.PreviewDiagramDock;
@@ -84,6 +87,8 @@ import org.kie.workbench.common.stunner.forms.client.event.RefreshFormProperties
 import org.kie.workbench.common.stunner.kogito.client.docks.DiagramEditorPropertiesDock;
 import org.kie.workbench.common.widgets.client.search.component.SearchBarComponent;
 import org.kie.workbench.common.widgets.metadata.client.KieEditorWrapperView;
+import org.uberfire.backend.vfs.Path;
+import org.uberfire.backend.vfs.PathFactory;
 import org.uberfire.client.annotations.WorkbenchContextId;
 import org.uberfire.client.annotations.WorkbenchMenu;
 import org.uberfire.client.annotations.WorkbenchPartTitle;
@@ -108,8 +113,11 @@ public class DMNDiagramEditor implements KieEditorWrapperView.KieEditorWrapperPr
 
     public static final String EDITOR_ID = "DMNDiagramEditor";
 
+    private static final String ROOT = "default://master@system/stunner/diagrams";
+
     //Editor tabs: [0] Main editor, [1] Documentation, [2] Data-Types, [3] Imported Models
-    public static final int DATA_TYPES_PAGE_INDEX = 2;
+    static final int MAIN_EDITOR_PAGE_INDEX = 0;
+    static final int DATA_TYPES_PAGE_INDEX = 2;
 
     private static Logger LOGGER = Logger.getLogger(DMNDiagramEditor.class.getName());
 
@@ -142,10 +150,13 @@ public class DMNDiagramEditor implements KieEditorWrapperView.KieEditorWrapperPr
     private final ScreenErrorView screenErrorView;
     private final KieEditorWrapperView kieView;
     private final MonacoFEELInitializer feelInitializer;
+    private final DMNDiagramsSession dmnDiagramsSession;
+    private final DMNMarshallerService marshallerService;
 
     private PlaceRequest placeRequest;
     private String title = "Authoring Screen";
     private Menus menu = null;
+    private Metadata metadata = null;
 
     @Inject
     public DMNDiagramEditor(final SessionManager sessionManager,
@@ -157,7 +168,7 @@ public class DMNDiagramEditor implements KieEditorWrapperView.KieEditorWrapperPr
                             final DecisionNavigatorDock decisionNavigatorDock,
                             final DiagramEditorPropertiesDock diagramPropertiesDock,
                             final PreviewDiagramDock diagramPreviewAndExplorerDock,
-                            final LayoutHelper layoutHelper,
+                            final @DMNEditor DMNLayoutHelper layoutHelper,
                             final OpenDiagramLayoutExecutor layoutExecutor,
                             final DataTypesPage dataTypesPage,
                             final IncludedModelsPage includedModelsPage,
@@ -172,7 +183,9 @@ public class DMNDiagramEditor implements KieEditorWrapperView.KieEditorWrapperPr
                             final ScreenPanelView screenPanelView,
                             final ScreenErrorView screenErrorView,
                             final KieEditorWrapperView kieView,
-                            final MonacoFEELInitializer feelInitializer) {
+                            final MonacoFEELInitializer feelInitializer,
+                            final DMNDiagramsSession dmnDiagramsSession,
+                            final DMNMarshallerService marshallerService) {
         this.sessionManager = sessionManager;
         this.sessionCommandManager = sessionCommandManager;
         this.presenter = presenter;
@@ -202,6 +215,8 @@ public class DMNDiagramEditor implements KieEditorWrapperView.KieEditorWrapperPr
         this.screenErrorView = screenErrorView;
         this.kieView = kieView;
         this.feelInitializer = feelInitializer;
+        this.dmnDiagramsSession = dmnDiagramsSession;
+        this.marshallerService = marshallerService;
     }
 
     @PostConstruct
@@ -258,6 +273,7 @@ public class DMNDiagramEditor implements KieEditorWrapperView.KieEditorWrapperPr
         this.menu = makeMenuBar();
         final String name = placeRequest.getParameter("name",
                                                       "");
+
         final boolean isCreate = name == null || name.trim().length() == 0;
         final Command callback = getOnStartupDiagramEditorCallback();
         if (isCreate) {
@@ -375,11 +391,9 @@ public class DMNDiagramEditor implements KieEditorWrapperView.KieEditorWrapperPr
                                          new ServiceCallback<Diagram>() {
                                              @Override
                                              public void onSuccess(final Diagram diagram) {
-                                                 final Metadata metadata = diagram.getMetadata();
-                                                 metadata.setShapeSetId(shapeSetId);
-                                                 metadata.setTitle(title);
-                                                 open(diagram,
-                                                      callback);
+                                                 marshallerService.setOnDiagramLoad(onDiagramLoadCallback(callback));
+                                                 marshallerService.registerDiagramInstance(diagram, title, shapeSetId);
+                                                 open(diagram, callback);
                                              }
 
                                              @Override
@@ -390,14 +404,21 @@ public class DMNDiagramEditor implements KieEditorWrapperView.KieEditorWrapperPr
                                          });
     }
 
-    private Metadata buildMetadata(final String defSetId,
-                                   final String shapeSetId,
-                                   final String title) {
+    Metadata buildMetadata(final String defSetId,
+                           final String shapeSetId,
+                           final String title) {
+        final Path root = PathFactory.newPath(".", ROOT);
         return new MetadataImpl.MetadataImplBuilder(defSetId,
                                                     definitionManager)
                 .setTitle(title)
+                .setRoot(root)
+                .setPath(PathFactory.newPath(title, root.toURI() + "/" + uuid() + ".dmn"))
                 .setShapeSetId(shapeSetId)
                 .build();
+    }
+
+    String uuid() {
+        return UUID.uuid(8);
     }
 
     public void onMultiPageEditorSelectedPageEvent(final @Observes MultiPageEditorSelectedPageEvent event) {
@@ -411,20 +432,24 @@ public class DMNDiagramEditor implements KieEditorWrapperView.KieEditorWrapperPr
     private void load(final String name,
                       final Command callback) {
         BusyPopup.showMessage("Loading");
-        diagramService.loadByName(name,
-                                  new ServiceCallback<Diagram>() {
-                                      @Override
-                                      public void onSuccess(final Diagram diagram) {
-                                          open(diagram,
-                                               callback);
-                                      }
+        diagramService.loadByName(name, onDiagramLoadCallback(callback));
+    }
 
-                                      @Override
-                                      public void onError(final ClientRuntimeError error) {
-                                          showError(error);
-                                          callback.execute();
-                                      }
-                                  });
+    ServiceCallback<Diagram> onDiagramLoadCallback(final Command callback) {
+        return new ServiceCallback<Diagram>() {
+            @Override
+            public void onSuccess(final Diagram diagram) {
+                open(diagram, callback);
+                DMNDiagramEditor.this.metadata = diagram.getMetadata();
+                DMNDiagramEditor.this.kieView.getMultiPage().selectPage(MAIN_EDITOR_PAGE_INDEX);
+            }
+
+            @Override
+            public void onError(final ClientRuntimeError error) {
+                showError(error);
+                callback.execute();
+            }
+        };
     }
 
     void open(final Diagram diagram,
@@ -444,7 +469,7 @@ public class DMNDiagramEditor implements KieEditorWrapperView.KieEditorWrapperPr
                           dataTypesPage.reload();
                           dataTypesPage.enableShortcuts();
                           includedModelsPage.setup(importsPageProvider.withDiagram(diagram));
-                          setupCanvasHandler(presenter.getInstance());
+                          setupCanvasHandler();
                           openDock();
                           callback.execute();
                       }));
@@ -468,10 +493,15 @@ public class DMNDiagramEditor implements KieEditorWrapperView.KieEditorWrapperPr
         destroyDock();
         destroySession();
         dataTypesPage.disableShortcuts();
+        dmnDiagramsSession.destroyState(getMetadata());
     }
 
-    void setupCanvasHandler(final EditorSession session) {
-        decisionNavigatorDock.setupCanvasHandler(session.getCanvasHandler());
+    Metadata getMetadata() {
+        return metadata;
+    }
+
+    void setupCanvasHandler() {
+        decisionNavigatorDock.reload();
     }
 
     void openDock() {
@@ -550,7 +580,7 @@ public class DMNDiagramEditor implements KieEditorWrapperView.KieEditorWrapperPr
         return null != getCanvasHandler() ? getCanvasHandler().getDiagram() : null;
     }
 
-    private void showError(final ClientRuntimeError error) {
+    void showError(final ClientRuntimeError error) {
         screenErrorView.showError(error);
         screenPanelView.setWidget(screenErrorView.asWidget());
         log(Level.SEVERE,
