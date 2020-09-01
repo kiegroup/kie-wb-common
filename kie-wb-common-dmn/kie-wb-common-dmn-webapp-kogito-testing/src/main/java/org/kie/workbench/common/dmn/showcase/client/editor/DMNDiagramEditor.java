@@ -182,8 +182,9 @@ public class DMNDiagramEditor extends AbstractDMNDiagramEditor {
     @SuppressWarnings("unused")
     public void onStartup(final PlaceRequest place) {
         super.onStartup(place);
-
-        setContent("", place.getParameter(CONTENT_PARAMETER_NAME, ""));
+        final String path = getPlaceRequest().getParameter(DMNDiagramEditor.FILE_NAME_PARAMETER_NAME, "");
+        final String value = place.getParameter(CONTENT_PARAMETER_NAME, "");
+        setContent(path, value);
     }
 
     @Override
@@ -221,7 +222,7 @@ public class DMNDiagramEditor extends AbstractDMNDiagramEditor {
 
             final ExpressionEditorView.Presenter expressionEditor = ((DMNSession) sessionManager.getCurrentSession()).getExpressionEditor();
             expressionEditor.setToolbarStateHandler(new DMNProjectToolbarStateHandler(getMenuSessionItems()));
-            decisionNavigatorDock.setupCanvasHandler(c);
+            decisionNavigatorDock.reload();
             dataTypesPage.reload();
             includedModelsPage.setup(importsPageProvider.withDiagram(c.getDiagram()));
         });
