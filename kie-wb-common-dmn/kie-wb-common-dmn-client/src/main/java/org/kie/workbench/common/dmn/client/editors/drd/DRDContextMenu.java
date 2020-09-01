@@ -17,12 +17,14 @@
 package org.kie.workbench.common.dmn.client.editors.drd;
 
 import java.util.Collection;
+import java.util.List;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import elemental2.dom.DomGlobal;
 import elemental2.dom.HTMLElement;
+import org.kie.workbench.common.dmn.client.docks.navigator.drds.DMNDiagramTuple;
 import org.kie.workbench.common.dmn.client.editors.contextmenu.ContextMenu;
 import org.kie.workbench.common.stunner.core.client.i18n.ClientTranslationService;
 import org.kie.workbench.common.stunner.core.graph.Edge;
@@ -32,19 +34,23 @@ import org.kie.workbench.common.stunner.core.graph.content.definition.Definition
 @ApplicationScoped
 public class DRDContextMenu {
 
-    public static final String DRDACTIONS_CONTEXT_MENU_TITLE = "DRDActions.ContextMenu.Title";
-    public static final String DRDACTIONS_CONTEXT_MENU_ACTIONS_CREATE = "DRDActions.ContextMenu.Actions.Create";
-    public static final String DRDACTIONS_CONTEXT_MENU_ACTIONS_ADD_TO = "DRDActions.ContextMenu.Actions.AddTo";
-    public static final String DRDACTIONS_CONTEXT_MENU_ACTIONS_REMOVE = "DRDActions.ContextMenu.Actions.Remove";
-    public static final String HEADER_MENU_ICON_CLASS = "fa fa-share-alt";
+    static final String DRDACTIONS_CONTEXT_MENU_TITLE = "DRDActions.ContextMenu.Title";
+    static final String DRDACTIONS_CONTEXT_MENU_ACTIONS_CREATE = "DRDActions.ContextMenu.Actions.Create";
+    static final String DRDACTIONS_CONTEXT_MENU_ACTIONS_ADD_TO = "DRDActions.ContextMenu.Actions.AddTo";
+    static final String DRDACTIONS_CONTEXT_MENU_ACTIONS_REMOVE = "DRDActions.ContextMenu.Actions.Remove";
+    static final String HEADER_MENU_ICON_CLASS = "fa fa-share-alt";
 
     private final ClientTranslationService translationService;
     private final ContextMenu contextMenu;
+    private final DRDContextMenuService drdContextMenuService;
 
     @Inject
-    public DRDContextMenu(final ContextMenu contextMenu, final ClientTranslationService translationService) {
+    public DRDContextMenu(final ContextMenu contextMenu,
+                          final ClientTranslationService translationService,
+                          final DRDContextMenuService drdContextMenuService) {
         this.contextMenu = contextMenu;
         this.translationService = translationService;
+        this.drdContextMenuService = drdContextMenuService;
     }
 
     public String getTitle() {
@@ -68,13 +74,25 @@ public class DRDContextMenu {
         contextMenu.setHeaderMenu(translationService.getValue(DRDACTIONS_CONTEXT_MENU_TITLE).toUpperCase(), HEADER_MENU_ICON_CLASS);
         contextMenu.addTextMenuItem(translationService.getValue(DRDACTIONS_CONTEXT_MENU_ACTIONS_CREATE),
                                     true,
-                                    () -> DomGlobal.console.log("A", selectedNodes));
-        contextMenu.addTextMenuItem(translationService.getValue(DRDACTIONS_CONTEXT_MENU_ACTIONS_ADD_TO),
-                                    true,
-                                    () -> DomGlobal.console.log("B", selectedNodes));
+                                    () -> drdContextMenuService.addToNewDRD(selectedNodes));
+
+        getDiagrams().forEach(dmnDiagram -> {
+            contextMenu.addTextMenuItem(translationService.getValue(DRDACTIONS_CONTEXT_MENU_ACTIONS_ADD_TO) + " " + getDiagramName(dmnDiagram),
+                                        true,
+                                        () -> drdContextMenuService.addToExistingDRD(dmnDiagram, selectedNodes));
+        });
+
         contextMenu.addTextMenuItem(translationService.getValue(DRDACTIONS_CONTEXT_MENU_ACTIONS_REMOVE),
                                     true,
-                                    () -> DomGlobal.console.log("C", selectedNodes));
+                                    () -> drdContextMenuService.removeFromCurrentDRD(selectedNodes));
+    }
+
+    private String getDiagramName(final DMNDiagramTuple dmnDiagram) {
+        return dmnDiagram.getDMDNDiagram().getName().getValue();
+    }
+
+    private List<DMNDiagramTuple> getDiagrams() {
+        return drdContextMenuService.getDiagrams();
     }
 
     public HTMLElement getElement() {
