@@ -208,14 +208,14 @@ public class DMNMarshallerImportsHelperKogitoImplTest {
 
     @Test
     public void getPMMLDocumentsMetadataFromFiles() {
-        final PMMLDocumentMetadata documentMetadata = new PMMLDocumentMetadata(PMML_PATH,
+        final PMMLDocumentMetadata documentMetadata = new PMMLDocumentMetadata(PMML_FILE,
                                                                                PMML_FILE,
                                                                                DMNImportTypes.PMML.getDefaultNamespace(),
                                                                                Collections.emptyList());
         when(kogitoResourceContentServiceMock.getFilteredItems(eq(PMML_FILES_PATTERN), isA(ResourceListOptions.class))).thenReturn(promises.resolve(new String[]{PMML_PATH}));
         when(kogitoResourceContentServiceMock.loadFile(PMML_PATH)).thenReturn(promises.resolve(PMML_CONTENT));
         when(pmmlMarshallerServiceMock.getDocumentMetadata(PMML_PATH, PMML_CONTENT)).thenReturn(promises.resolve(documentMetadata));
-        dmnMarshallerImportsHelperKogitoImpl.getPMMLDocumentsMetadataFromFiles(Arrays.asList(PMML_PATH), serviceCallbackMock);
+        dmnMarshallerImportsHelperKogitoImpl.getPMMLDocumentsMetadataFromFiles(Arrays.asList(PMML_FILE), serviceCallbackMock);
         verify(serviceCallbackMock, times(1)).onSuccess(eq(Arrays.asList(documentMetadata)));
     }
 
