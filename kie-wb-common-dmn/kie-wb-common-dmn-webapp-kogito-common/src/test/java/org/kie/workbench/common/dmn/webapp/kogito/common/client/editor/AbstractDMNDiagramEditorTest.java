@@ -508,7 +508,7 @@ public abstract class AbstractDMNDiagramEditorTest {
     }
 
     protected void assertOnDiagramLoad() {
-        verify(decisionNavigatorDock).setupCanvasHandler(canvasHandler);
+        verify(decisionNavigatorDock).reload();
         verify(layoutHelper).applyLayout(eq(diagram), eq(layoutExecutor));
         verify(feelInitializer).initializeFEELEditor();
         verify(dataTypesPage).reload();
