@@ -65,4 +65,8 @@ public class CalledElementFormProvider implements SelectorDataProvider {
             requestProcessDataEventSingleton.fire(new RequestProcessDataEvent());
         }
     }
+
+    public static Event<RequestProcessDataEvent> getRequestProcessDataEventSingleton() {
+        return requestProcessDataEventSingleton;
+    }
 }
