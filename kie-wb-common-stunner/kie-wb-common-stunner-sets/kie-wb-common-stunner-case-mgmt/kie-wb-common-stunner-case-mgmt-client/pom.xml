@@ -182,6 +182,11 @@
       <artifactId>errai-data-binding</artifactId>
     </dependency>
 
+    <dependency>
+      <groupId>javax.annotation</groupId>
+      <artifactId>javax.annotation-api</artifactId>
+    </dependency>
+
     <!-- Lienzo -->
     <dependency>
       <groupId>org.kie</groupId>
