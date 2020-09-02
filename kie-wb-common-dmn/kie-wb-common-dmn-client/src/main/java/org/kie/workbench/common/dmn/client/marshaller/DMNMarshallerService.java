@@ -87,6 +87,8 @@ public class DMNMarshallerService {
 
     private ServiceCallback<Diagram> onDiagramLoad = emptyService();
 
+    private Metadata metadata;
+
     @Inject
     public DMNMarshallerService(final DMNUnmarshaller dmnUnmarshaller,
                                 final DMNMarshaller dmnMarshaller,
@@ -107,8 +109,7 @@ public class DMNMarshallerService {
     public void unmarshall(final Path path,
                            final String xml,
                            final ServiceCallback<Diagram> callback) {
-        final Metadata metadata = buildMetadataInstance(path);
-        unmarshall(metadata, xml, callback);
+        unmarshall(buildMetadataInstance(path), xml, callback);
     }
 
     public void unmarshall(final Metadata metadata,
@@ -116,20 +117,21 @@ public class DMNMarshallerService {
                            final ServiceCallback<Diagram> callback) {
 
         setOnDiagramLoad(callback);
+        setMetadata(metadata);
 
         try {
             final DMN12UnmarshallCallback jsCallback = dmn12 -> {
                 final JSITDefinitions definitions = Js.uncheckedCast(JsUtils.getUnwrappedElement(dmn12));
-                dmnUnmarshaller.unmarshall(metadata, definitions).then(graph -> {
-                    final String fileName = metadata.getPath().getFileName();
-                    onDiagramLoad(dmnDiagramFactory.build(fileName, metadata, graph));
+                dmnUnmarshaller.unmarshall(getMetadata(), definitions).then(graph -> {
+                    final String fileName = getMetadata().getPath().getFileName();
+                    onDiagramLoad(dmnDiagramFactory.build(fileName, getMetadata(), graph));
                     return promises.resolve();
                 });
             };
             MainJs.unmarshall(xml, "", jsCallback);
         } catch (final Exception e) {
             GWT.log(e.getMessage(), e);
-            callback.onError(new ClientRuntimeError(new DiagramParsingException(metadata, xml)));
+            callback.onError(new ClientRuntimeError(new DiagramParsingException(getMetadata(), xml)));
         }
     }
 
@@ -175,9 +177,7 @@ public class DMNMarshallerService {
                                         final String title,
                                         final String shapeSetId) {
 
-        final Metadata metadata = diagram.getMetadata();
-        metadata.setShapeSetId(shapeSetId);
-        metadata.setTitle(title);
+        registerMetadata(diagram, title, shapeSetId);
 
         final Node<?, ?> dmnDiagramRoot = DMNGraphUtils.findDMNDiagramRoot(diagram.getGraph());
         final DMNDiagram definition = ((View<DMNDiagram>) dmnDiagramRoot.getContent()).getDefinition();
@@ -191,7 +191,7 @@ public class DMNMarshallerService {
         diagramsByDiagramElementId.put(diagramId, diagram);
         dmnDiagramsByDiagramElementId.put(diagramId, drgDiagram);
 
-        dmnDiagramsSession.setState(metadata, diagramsByDiagramElementId, dmnDiagramsByDiagramElementId);
+        dmnDiagramsSession.setState(getMetadata(), diagramsByDiagramElementId, dmnDiagramsByDiagramElementId);
     }
 
     private JavaScriptObject createNamespaces(final Map<QName, String> otherAttributes,
@@ -216,9 +216,8 @@ public class DMNMarshallerService {
     public void onDiagramSelected(final @Observes DMNDiagramSelected selected) {
 
         final DMNDiagramElement dmnDiagramElement = selected.getDiagramElement();
-        final boolean belongsToCurrentSessionState = dmnDiagramsSession.belongsToCurrentSessionState(dmnDiagramElement);
 
-        if (belongsToCurrentSessionState) {
+        if (isActiveService()) {
 
             final String diagramId = dmnDiagramElement.getId().getValue();
             final Diagram stunnerDiagram = dmnDiagramsSession.getDiagram(diagramId);
@@ -228,6 +227,12 @@ public class DMNMarshallerService {
 
             onDiagramLoad(diagram);
         }
+    }
+
+    private boolean isActiveService() {
+        final String serviceKey = dmnDiagramsSession.getSessionKey(getMetadata());
+        final String currentKey = dmnDiagramsSession.getCurrentSessionKey();
+        return Objects.equals(serviceKey, currentKey);
     }
 
     private org.kie.workbench.common.stunner.core.diagram.Metadata buildMetadataInstance(final Path path) {
@@ -260,6 +265,25 @@ public class DMNMarshallerService {
                 metadata.setShapeSetId(shapeSetId);
             }
         }
+    }
+
+    private void registerMetadata(final Diagram diagram,
+                                  final String title,
+                                  final String shapeSetId) {
+
+        final Metadata metadata = diagram.getMetadata();
+        metadata.setShapeSetId(shapeSetId);
+        metadata.setTitle(title);
+
+        setMetadata(metadata);
+    }
+
+    private void setMetadata(final Metadata metadata) {
+        this.metadata = metadata;
+    }
+
+    private Metadata getMetadata() {
+        return metadata;
     }
 
     public void setOnDiagramLoad(final ServiceCallback<Diagram> onDiagramLoad) {
