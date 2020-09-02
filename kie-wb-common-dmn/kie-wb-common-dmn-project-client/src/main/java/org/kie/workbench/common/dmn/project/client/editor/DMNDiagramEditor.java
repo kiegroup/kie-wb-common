@@ -37,6 +37,7 @@ import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.kie.workbench.common.dmn.api.qualifiers.DMNEditor;
 import org.kie.workbench.common.dmn.client.commands.general.NavigateToExpressionEditorCommand;
 import org.kie.workbench.common.dmn.client.docks.navigator.DecisionNavigatorDock;
+import org.kie.workbench.common.dmn.client.editors.drd.DRDNameChanger;
 import org.kie.workbench.common.dmn.client.editors.expressions.ExpressionEditorView;
 import org.kie.workbench.common.dmn.client.editors.included.IncludedModelsPage;
 import org.kie.workbench.common.dmn.client.editors.included.imports.IncludedModelsPageStateProviderImpl;
@@ -133,6 +134,7 @@ public class DMNDiagramEditor extends AbstractProjectDiagramEditor<DMNDiagramRes
     private final SearchBarComponent<DMNSearchableElement> searchBarComponent;
     private final MonacoFEELInitializer feelInitializer;
     private final ReadOnlyProvider readOnlyProvider;
+    private final DRDNameChanger drdNameChanger;
 
     @Inject
     public DMNDiagramEditor(final View view,
@@ -163,7 +165,8 @@ public class DMNDiagramEditor extends AbstractProjectDiagramEditor<DMNDiagramRes
                             final DMNEditorSearchIndex editorSearchIndex,
                             final SearchBarComponent<DMNSearchableElement> searchBarComponent,
                             final MonacoFEELInitializer feelInitializer,
-                            final @DMNEditor ReadOnlyProvider readOnlyProvider) {
+                            final @DMNEditor ReadOnlyProvider readOnlyProvider,
+                            final DRDNameChanger drdNameChanger) {
         super(view,
               xmlEditorView,
               editorSessionPresenterInstances,
@@ -193,6 +196,7 @@ public class DMNDiagramEditor extends AbstractProjectDiagramEditor<DMNDiagramRes
         this.searchBarComponent = searchBarComponent;
         this.feelInitializer = feelInitializer;
         this.readOnlyProvider = readOnlyProvider;
+        this.drdNameChanger = drdNameChanger;
     }
 
     @Override
@@ -202,6 +206,12 @@ public class DMNDiagramEditor extends AbstractProjectDiagramEditor<DMNDiagramRes
         getMenuSessionItems().setErrorConsumer(e -> hideLoadingViews());
         editorSearchIndex.setCurrentAssetHashcodeSupplier(getGetCurrentContentHashSupplier());
         editorSearchIndex.setIsDataTypesTabActiveSupplier(getIsDataTypesTabActiveSupplier());
+        setupSessionHeaderContainer();
+    }
+
+    private void setupSessionHeaderContainer() {
+        drdNameChanger.setSessionPresenterView(getSessionPresenter().getView());
+        getSessionPresenter().getView().setSessionHeaderContainer(getWidget(drdNameChanger.getElement()));
     }
 
     @Override

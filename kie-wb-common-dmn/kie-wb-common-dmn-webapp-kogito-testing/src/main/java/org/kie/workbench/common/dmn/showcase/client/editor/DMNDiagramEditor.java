@@ -27,6 +27,7 @@ import org.appformer.client.context.EditorContextProvider;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.kie.workbench.common.dmn.api.qualifiers.DMNEditor;
 import org.kie.workbench.common.dmn.client.docks.navigator.DecisionNavigatorDock;
+import org.kie.workbench.common.dmn.client.editors.drd.DRDNameChanger;
 import org.kie.workbench.common.dmn.client.editors.expressions.ExpressionEditorView;
 import org.kie.workbench.common.dmn.client.editors.included.IncludedModelsPage;
 import org.kie.workbench.common.dmn.client.editors.included.imports.IncludedModelsPageStateProviderImpl;
@@ -137,7 +138,8 @@ public class DMNDiagramEditor extends AbstractDMNDiagramEditor {
                             final IncludedModelsPageStateProviderImpl importsPageProvider,
                             final EditorContextProvider contextProvider,
                             final GuidedTourBridgeInitializer guidedTourBridgeInitializer,
-                            final @DMNEditor ReadOnlyProvider readOnlyProvider) {
+                            final @DMNEditor ReadOnlyProvider readOnlyProvider,
+                            final DRDNameChanger drdNameChanger) {
         super(view,
               fileMenuBuilder,
               placeManager,
@@ -171,7 +173,8 @@ public class DMNDiagramEditor extends AbstractDMNDiagramEditor {
               includedModelsPage,
               importsPageProvider,
               contextProvider,
-              guidedTourBridgeInitializer);
+              guidedTourBridgeInitializer,
+              drdNameChanger);
         this.notificationEvent = notificationEvent;
         this.vfsService = vfsService;
         this.readOnlyProvider = readOnlyProvider;

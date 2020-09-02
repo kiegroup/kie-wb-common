@@ -25,6 +25,7 @@ import org.junit.runner.RunWith;
 import org.kie.workbench.common.dmn.api.DMNDefinitionSet;
 import org.kie.workbench.common.dmn.client.commands.general.NavigateToExpressionEditorCommand;
 import org.kie.workbench.common.dmn.client.docks.navigator.DecisionNavigatorDock;
+import org.kie.workbench.common.dmn.client.editors.drd.DRDNameChanger;
 import org.kie.workbench.common.dmn.client.editors.expressions.ExpressionEditorView;
 import org.kie.workbench.common.dmn.client.editors.included.IncludedModelsPage;
 import org.kie.workbench.common.dmn.client.editors.included.imports.IncludedModelsPageStateProviderImpl;
@@ -95,6 +96,7 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.reset;
@@ -258,6 +260,18 @@ public abstract class AbstractDMNDiagramEditorTest {
     @Mock
     protected ReadOnlyProvider readonlyProvider;
 
+    @Mock
+    protected DRDNameChanger drdNameChanger;
+
+    @Mock
+    private HTMLElement drdNameChangerElement;
+
+    @Mock
+    private ElementWrapperWidget drdNameWidget;
+
+    @Mock
+    private SessionPresenter.View sessionPresenterView;
+
     @Captor
     protected ArgumentCaptor<KogitoDiagramResourceImpl> kogitoDiagramResourceArgumentCaptor;
 
@@ -295,6 +309,9 @@ public abstract class AbstractDMNDiagramEditorTest {
         when(canvasHandler.getDiagram()).thenReturn(diagram);
         when(root.toURI()).thenReturn(ROOT);
 
+        when(editorPresenter.getView()).thenReturn(sessionPresenterView);
+        when(drdNameChanger.getElement()).thenReturn(drdNameChangerElement);
+
         doAnswer((invocation) -> {
             final Diagram diagram = (Diagram) invocation.getArguments()[0];
             final SessionPresenter.SessionPresenterCallback callback = (SessionPresenter.SessionPresenterCallback) invocation.getArguments()[1];
@@ -307,6 +324,8 @@ public abstract class AbstractDMNDiagramEditorTest {
                                       any(SessionPresenter.SessionPresenterCallback.class));
 
         editor = spy(getEditor());
+
+        doReturn(drdNameWidget).when(editor).getWidget(drdNameChangerElement);
     }
 
     protected abstract AbstractDMNDiagramEditor getEditor();

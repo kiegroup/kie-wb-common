@@ -31,6 +31,7 @@ import org.jboss.errai.common.client.ui.ElementWrapperWidget;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.kie.workbench.common.dmn.client.commands.general.NavigateToExpressionEditorCommand;
 import org.kie.workbench.common.dmn.client.docks.navigator.DecisionNavigatorDock;
+import org.kie.workbench.common.dmn.client.editors.drd.DRDNameChanger;
 import org.kie.workbench.common.dmn.client.editors.expressions.ExpressionEditorView;
 import org.kie.workbench.common.dmn.client.editors.included.IncludedModelsPage;
 import org.kie.workbench.common.dmn.client.editors.included.imports.IncludedModelsPageStateProviderImpl;
@@ -127,6 +128,7 @@ public abstract class AbstractDMNDiagramEditor extends AbstractDiagramEditor {
     protected final IncludedModelsPageStateProviderImpl importsPageProvider;
     protected final EditorContextProvider contextProvider;
     protected final GuidedTourBridgeInitializer guidedTourBridgeInitializer;
+    protected final DRDNameChanger drdNameChanger;
 
     public AbstractDMNDiagramEditor(final View view,
                                     final FileMenuBuilder fileMenuBuilder,
@@ -161,7 +163,8 @@ public abstract class AbstractDMNDiagramEditor extends AbstractDiagramEditor {
                                     final IncludedModelsPage includedModelsPage,
                                     final IncludedModelsPageStateProviderImpl importsPageProvider,
                                     final EditorContextProvider contextProvider,
-                                    final GuidedTourBridgeInitializer guidedTourBridgeInitializer) {
+                                    final GuidedTourBridgeInitializer guidedTourBridgeInitializer,
+                                    final DRDNameChanger drdNameChanger) {
         super(view,
               fileMenuBuilder,
               placeManager,
@@ -196,6 +199,7 @@ public abstract class AbstractDMNDiagramEditor extends AbstractDiagramEditor {
         this.importsPageProvider = importsPageProvider;
         this.contextProvider = contextProvider;
         this.guidedTourBridgeInitializer = guidedTourBridgeInitializer;
+        this.drdNameChanger = drdNameChanger;
     }
 
     @OnStartup
@@ -224,6 +228,12 @@ public abstract class AbstractDMNDiagramEditor extends AbstractDiagramEditor {
         }
         setupEditorSearchIndex();
         setupSearchComponent();
+        setupSessionHeaderContainer();
+    }
+
+    private void setupSessionHeaderContainer() {
+        drdNameChanger.setSessionPresenterView(getSessionPresenter().getView());
+        getSessionPresenter().getView().setSessionHeaderContainer(getWidget(drdNameChanger.getElement()));
     }
 
     private void setupEditorSearchIndex() {
