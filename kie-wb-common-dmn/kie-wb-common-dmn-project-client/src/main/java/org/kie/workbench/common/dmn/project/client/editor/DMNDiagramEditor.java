@@ -210,8 +210,10 @@ public class DMNDiagramEditor extends AbstractProjectDiagramEditor<DMNDiagramRes
     }
 
     private void setupSessionHeaderContainer() {
-        drdNameChanger.setSessionPresenterView(getSessionPresenter().getView());
-        getSessionPresenter().getView().setSessionHeaderContainer(getWidget(drdNameChanger.getElement()));
+        Optional.ofNullable(getSessionPresenter()).ifPresent(s -> {
+            drdNameChanger.setSessionPresenterView(s.getView());
+            s.getView().setSessionHeaderContainer(getWidget(drdNameChanger.getElement()));
+        });
     }
 
     @Override

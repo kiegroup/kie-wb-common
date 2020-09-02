@@ -27,6 +27,7 @@ import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.google.gwt.user.client.DOM;
+import elemental2.dom.DomGlobal;
 import elemental2.dom.HTMLAnchorElement;
 import org.gwtbootstrap3.client.ui.html.Span;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
@@ -80,14 +81,18 @@ public class DRDNameChangerView implements DRDNameChanger {
     }
 
     void onSettingCurrentDMNDiagramElement(final @Observes DMNDiagramSelected selected) {
-        if (dmnDiagramsSession.isGlobalGraphSelected()) {
-            DOM.getElementById("drd-name-changer").getStyle().setDisplay(NONE);
-        } else {
-            this.drdName.setText(selected.getDiagramElement().getName().getValue());
-            editMode.getStyle().setDisplay(NONE);
-            viewMode.getStyle().setDisplay(BLOCK);
-            DOM.getElementById("drd-name-changer").getStyle().setDisplay(BLOCK);
-            sessionPresenterView.onResize();
+        try {
+            if (dmnDiagramsSession.isGlobalGraphSelected()) {
+                DOM.getElementById("drd-name-changer").getStyle().setDisplay(NONE);
+            } else {
+                this.drdName.setText(selected.getDiagramElement().getName().getValue());
+                editMode.getStyle().setDisplay(NONE);
+                viewMode.getStyle().setDisplay(BLOCK);
+                DOM.getElementById("drd-name-changer").getStyle().setDisplay(BLOCK);
+                sessionPresenterView.onResize();
+            }
+        } catch (final Exception e) {
+            DomGlobal.console.error("[Error] DRDNameChangerView");
         }
     }
 

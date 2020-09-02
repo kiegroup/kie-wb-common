@@ -16,6 +16,7 @@
 package org.kie.workbench.common.dmn.webapp.kogito.common.client.editor;
 
 import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -232,8 +233,10 @@ public abstract class AbstractDMNDiagramEditor extends AbstractDiagramEditor {
     }
 
     private void setupSessionHeaderContainer() {
-        drdNameChanger.setSessionPresenterView(getSessionPresenter().getView());
-        getSessionPresenter().getView().setSessionHeaderContainer(getWidget(drdNameChanger.getElement()));
+        Optional.ofNullable(getSessionPresenter()).ifPresent(s -> {
+            drdNameChanger.setSessionPresenterView(s.getView());
+            s.getView().setSessionHeaderContainer(getWidget(drdNameChanger.getElement()));
+        });
     }
 
     private void setupEditorSearchIndex() {
