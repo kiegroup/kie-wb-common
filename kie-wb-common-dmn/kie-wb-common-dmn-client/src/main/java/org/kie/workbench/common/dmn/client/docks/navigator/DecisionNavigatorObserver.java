@@ -23,6 +23,7 @@ import javax.enterprise.event.Observes;
 
 import org.kie.workbench.common.dmn.api.definition.HasExpression;
 import org.kie.workbench.common.dmn.api.definition.model.Expression;
+import org.kie.workbench.common.dmn.client.docks.navigator.drds.DMNDiagramSelected;
 import org.kie.workbench.common.dmn.client.docks.navigator.tree.DecisionNavigatorTreePresenter;
 import org.kie.workbench.common.dmn.client.events.EditExpressionEvent;
 import org.kie.workbench.common.dmn.client.widgets.grid.model.ExpressionEditorChanged;
@@ -61,6 +62,10 @@ public class DecisionNavigatorObserver {
     }
 
     void onNestedElementAdded(final @Observes ExpressionEditorChanged event) {
+        getOptionalPresenter().ifPresent(DecisionNavigatorPresenter::refresh);
+    }
+
+    void onDMNDiagramSelected(final @Observes DMNDiagramSelected event) {
         getOptionalPresenter().ifPresent(DecisionNavigatorPresenter::refresh);
     }
 

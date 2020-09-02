@@ -27,6 +27,7 @@ import org.kie.workbench.common.dmn.api.definition.HasExpression;
 import org.kie.workbench.common.dmn.api.definition.HasName;
 import org.kie.workbench.common.dmn.api.definition.model.Expression;
 import org.kie.workbench.common.dmn.api.property.dmn.Id;
+import org.kie.workbench.common.dmn.client.docks.navigator.drds.DMNDiagramSelected;
 import org.kie.workbench.common.dmn.client.docks.navigator.tree.DecisionNavigatorTreePresenter;
 import org.kie.workbench.common.dmn.client.events.EditExpressionEvent;
 import org.kie.workbench.common.dmn.client.widgets.grid.model.ExpressionEditorChanged;
@@ -125,6 +126,13 @@ public class DecisionNavigatorObserverTest {
     public void testOnNestedElementAdded() {
         observer.init(presenter);
         observer.onNestedElementAdded(new ExpressionEditorChanged(uuid));
+        verify(presenter).refresh();
+    }
+
+    @Test
+    public void testOnDMNDiagramSelected() {
+        observer.init(presenter);
+        observer.onDMNDiagramSelected(new DMNDiagramSelected(null));
         verify(presenter).refresh();
     }
 
