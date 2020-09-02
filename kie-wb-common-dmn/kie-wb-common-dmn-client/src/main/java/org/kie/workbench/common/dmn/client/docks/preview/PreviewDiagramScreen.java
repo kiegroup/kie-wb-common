@@ -47,8 +47,6 @@ import org.uberfire.lifecycle.OnOpen;
 import org.uberfire.lifecycle.OnStartup;
 import org.uberfire.mvp.PlaceRequest;
 
-import static org.kie.soup.commons.validation.PortablePreconditions.checkNotNull;
-
 @Dependent
 @WorkbenchScreen(identifier = PreviewDiagramScreen.SCREEN_ID)
 public class PreviewDiagramScreen {
@@ -132,18 +130,15 @@ public class PreviewDiagramScreen {
     }
 
     void onCanvasSessionOpened(final @Observes SessionOpenedEvent sessionOpenedEvent) {
-        checkNotNull("sessionOpenedEvent", sessionOpenedEvent);
-        showPreview(sessionOpenedEvent.getSession());
+        // TODO {karreiro}: Fix mini diagram preview.
     }
 
     void onCanvasSessionDestroyed(final @Observes SessionDestroyedEvent sessionDestroyedEvent) {
-        checkNotNull("sessionDestroyedEvent", sessionDestroyedEvent);
-        closePreview();
+        // TODO {karreiro}: Fix mini diagram preview.
     }
 
     void onSessionDiagramOpenedEvent(final @Observes SessionDiagramOpenedEvent sessionDiagramOpenedEvent) {
-        checkNotNull("sessionDiagramOpenedEvent", sessionDiagramOpenedEvent);
-        showPreview(sessionDiagramOpenedEvent.getSession());
+        // TODO {karreiro}: Fix mini diagram preview.
     }
 
     void showPreview(final ClientSession session) {
