@@ -388,9 +388,7 @@ public class DMNDiagramEditorTest extends AbstractProjectDiagramEditorTest {
 
         open();
 
-        final InOrder inOrder = inOrder(decisionNavigatorDock);
-        inOrder.verify(decisionNavigatorDock).setupCanvasHandler(eq(canvasHandler));
-
+        verify(decisionNavigatorDock).reload();
         verify(expressionEditor).setToolbarStateHandler(any(DMNProjectToolbarStateHandler.class));
         verify(dataTypesPage).reload();
         verify(layoutHelper).applyLayout(diagram, layoutExecutor);
@@ -403,7 +401,7 @@ public class DMNDiagramEditorTest extends AbstractProjectDiagramEditorTest {
         diagramEditor.onDiagramLoad();
 
         verify(expressionEditor, never()).setToolbarStateHandler(any(DMNProjectToolbarStateHandler.class));
-        verify(decisionNavigatorDock, never()).setupCanvasHandler(any());
+        verify(decisionNavigatorDock, never()).reload();
         verify(decisionNavigatorDock, never()).open();
         verify(dataTypesPage, never()).reload();
         verify(includedModelsPage, never()).setup(any());
