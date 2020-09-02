@@ -25,7 +25,6 @@ import org.kie.workbench.common.dmn.api.editors.included.DMNImportTypes;
 import org.kie.workbench.common.dmn.api.editors.included.PMMLDocumentMetadata;
 import org.kie.workbench.common.dmn.api.editors.included.PMMLModelMetadata;
 import org.kie.workbench.common.dmn.api.editors.included.PMMLParameterMetadata;
-import org.kie.workbench.common.stunner.core.util.FileUtils;
 
 public class PMMLMarshallerConverter {
 
@@ -33,7 +32,8 @@ public class PMMLMarshallerConverter {
         // Utils class with static methods.
     }
 
-    public static PMMLDocumentMetadata fromJSInteropToMetadata(final String pmmlFilePath, final PMMLDocumentData pmmlDocumentData) {
+    public static PMMLDocumentMetadata fromJSInteropToMetadata(final String pmmlFilePath,
+                                                               final PMMLDocumentData pmmlDocumentData) {
         final List<PMMLModelMetadata> models = new ArrayList<>();
         pmmlDocumentData.getModels().stream().forEach(pmmlModelData -> {
             final String modelName = pmmlModelData.getModelName();
@@ -46,7 +46,6 @@ public class PMMLMarshallerConverter {
             models.add(new PMMLModelMetadata(modelName, fields));
         });
         return new PMMLDocumentMetadata(pmmlFilePath,
-                                        FileUtils.getFileName(pmmlFilePath),
                                         DMNImportTypes.PMML.getDefaultNamespace(),
                                         models);
     }

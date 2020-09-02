@@ -41,9 +41,10 @@ import static org.mockito.Mockito.when;
 @PrepareForTest(PMMLDocumentData.class)
 public class PMMLMarshallerServiceTest {
 
+    private static final String CONTENT = "<xml>content</xml>";
     private static final String FILENAME = "fileName.pmml";
     private static final String PATH = "test/" + FILENAME;
-    private static final String CONTENT = "<xml>content</xml>";
+    private static final String UNDEFINED = "undefined";
 
     @Mock
     private PMMLEditorMarshallerApi pmmlEditorMarshallerApiMock;
@@ -67,7 +68,7 @@ public class PMMLMarshallerServiceTest {
         returnPromise.then(pmmlDocumentMetadata -> {
             assertNotNull(pmmlDocumentMetadata);
             assertEquals("test/fileName.pmml", pmmlDocumentMetadata.getPath());
-            assertEquals("fileName.pmml", pmmlDocumentMetadata.getName());
+            assertEquals(UNDEFINED, pmmlDocumentMetadata.getName());
             assertEquals(DMNImportTypes.PMML.getDefaultNamespace(), pmmlDocumentMetadata.getImportType());
             assertEquals(0, pmmlDocumentMetadata.getModels().size());
             return promises.resolve();

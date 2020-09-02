@@ -37,6 +37,7 @@ public class PMMLMarshallerConverterTest {
 
     private static final String FILENAME = "fileName.pmml";
     private static final String PATH = "test/" + FILENAME;
+    private static final String UNDEFINED = "undefined";
 
     @Test
     public void fromJSInteropToMetadata_EmptyModels() {
@@ -44,7 +45,7 @@ public class PMMLMarshallerConverterTest {
         PowerMockito.when(pmmlDocumentDataMock.getModels()).thenReturn(Collections.emptyList());
         final PMMLDocumentMetadata metadata = PMMLMarshallerConverter.fromJSInteropToMetadata(PATH, pmmlDocumentDataMock);
         assertEquals(PATH, metadata.getPath());
-        assertEquals(FILENAME, metadata.getName());
+        assertEquals(UNDEFINED, metadata.getName());
         assertEquals(0, metadata.getModels().size());
     }
 
@@ -62,7 +63,7 @@ public class PMMLMarshallerConverterTest {
         PowerMockito.when(pmmlDocumentDataMock.getModels()).thenReturn(modelsData);
         PMMLDocumentMetadata metadata = PMMLMarshallerConverter.fromJSInteropToMetadata(PATH, pmmlDocumentDataMock);
         assertEquals(PATH, metadata.getPath());
-        assertEquals(FILENAME, metadata.getName());
+        assertEquals(UNDEFINED, metadata.getName());
         assertEquals(1, metadata.getModels().size());
         assertEquals(modelName, metadata.getModels().get(0).getName());
         assertEquals(fieldsNames.length, metadata.getModels().get(0).getInputParameters().size());

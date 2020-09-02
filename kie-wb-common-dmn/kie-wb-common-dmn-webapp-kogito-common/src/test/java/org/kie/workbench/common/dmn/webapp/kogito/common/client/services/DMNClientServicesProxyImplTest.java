@@ -107,7 +107,7 @@ public class DMNClientServicesProxyImplTest {
         final ServiceCallback<List<PMMLDocumentMetadata>> callback = newServiceCallback(actual -> assertThat(actual).isEmpty());
 
         service.loadPMMLDocumentsFromImports(path, includedModels, callback);
-        verify(importsHelperKogito, times(1)).getPMMLDocumentsMetadataFromFiles(eq(Arrays.asList("test.pmml")), eq(callback));
+        verify(importsHelperKogito, times(1)).getPMMLDocumentsMetadataFromFiles(eq(includedModels), eq(callback));
     }
 
     @Test

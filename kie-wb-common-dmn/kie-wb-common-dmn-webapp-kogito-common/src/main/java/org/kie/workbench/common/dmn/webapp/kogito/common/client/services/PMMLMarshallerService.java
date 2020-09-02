@@ -46,7 +46,8 @@ public class PMMLMarshallerService {
         this.pmmlEditorMarshallerApi = pmmlEditorMarshallerApi;
     }
 
-    public Promise<PMMLDocumentMetadata> getDocumentMetadata(final String pmmlFilePath, final String pmmlFileContent) {
+    public Promise<PMMLDocumentMetadata> getDocumentMetadata(final String pmmlFilePath,
+                                                             final String pmmlFileContent) {
         if (StringUtils.isEmpty(pmmlFilePath)) {
             return promises.reject("PMML file required to be marshalled is empty or null");
         }

@@ -18,7 +18,6 @@ package org.kie.workbench.common.dmn.webapp.kogito.common.client.services;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
@@ -66,8 +65,7 @@ public class DMNClientServicesProxyImpl implements DMNClientServicesProxy {
     public void loadPMMLDocumentsFromImports(final Path path,
                                              final List<PMMLIncludedModel> includedModels,
                                              final ServiceCallback<List<PMMLDocumentMetadata>> callback) {
-        final List<String> files = includedModels.stream().map(PMMLIncludedModel::getPath).collect(Collectors.toList());
-        kogitoImportsHelper.getPMMLDocumentsMetadataFromFiles(files, callback);
+        kogitoImportsHelper.getPMMLDocumentsMetadataFromFiles(includedModels, callback);
     }
 
     @Override

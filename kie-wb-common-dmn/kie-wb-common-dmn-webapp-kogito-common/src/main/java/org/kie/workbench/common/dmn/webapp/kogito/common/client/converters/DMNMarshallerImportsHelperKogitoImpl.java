@@ -309,7 +309,7 @@ public class DMNMarshallerImportsHelperKogitoImpl implements DMNMarshallerImport
 
                 for (final Map.Entry<String, PMMLDocumentMetadata> entry : otherDefinitions.entrySet()) {
                     final PMMLDocumentMetadata def = entry.getValue();
-                    findImportByPMMLDocument(def.getName(), imports).ifPresent(anImport -> {
+                    findImportByPMMLDocument(FileUtils.getFileName(def.getPath()), imports).ifPresent(anImport -> {
                         final JSITImport foundImported = Js.uncheckedCast(anImport);
                         importDefinitions.put(foundImported, def);
                     });
@@ -345,16 +345,20 @@ public class DMNMarshallerImportsHelperKogitoImpl implements DMNMarshallerImport
     }
 
     @Override
-    public void getPMMLDocumentsMetadataFromFiles(final List<String> files,
+    public void getPMMLDocumentsMetadataFromFiles(final List<PMMLIncludedModel> includedModels,
                                                   final ServiceCallback<List<PMMLDocumentMetadata>> callback) {
-        if (files == null || files.isEmpty()) {
+        if (includedModels == null || includedModels.isEmpty()) {
             callback.onSuccess(Collections.emptyList());
             return;
         }
         loadPMMLDefinitions().then(allDefinitions -> {
+            final Map<String, String> filesToNameMap = includedModels.stream().collect(Collectors.toMap(PMMLIncludedModel::getPath, PMMLIncludedModel::getModelName));
             final List<PMMLDocumentMetadata> pmmlDocumentMetadata = allDefinitions.entrySet().stream()
-                    .filter(entry -> files.contains(FileUtils.getFileName(entry.getKey())))
-                    .map(Map.Entry::getValue)
+                    .filter(entry -> filesToNameMap.keySet().contains(FileUtils.getFileName(entry.getKey())))
+                    .map(entry -> new PMMLDocumentMetadata(entry.getValue().getPath(),
+                                                           filesToNameMap.get(FileUtils.getFileName(entry.getKey())),
+                                                           entry.getValue().getImportType(),
+                                                           entry.getValue().getModels()))
                     .collect(Collectors.toList());
             pmmlDocumentMetadata.sort(Comparator.comparing(PMMLDocumentMetadata::getName));
             callback.onSuccess(pmmlDocumentMetadata);
