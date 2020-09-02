@@ -105,22 +105,22 @@ public class DRDNameChangerViewTest {
 
     @Test
     public void testOnSettingCurrentDMNDiagramWhenIsGlobal() {
-        when(dmnDiagramsSession.isGlobalGraph()).thenReturn(true);
+        when(dmnDiagramsSession.isGlobalGraphSelected()).thenReturn(true);
 
         drdNameChangerView.onSettingCurrentDMNDiagramElement(dmnDiagramSelected);
 
-        verify(dmnDiagramsSession, times(1)).isGlobalGraph();
+        verify(dmnDiagramsSession, times(1)).isGlobalGraphSelected();
     }
 
     @Test
     public void testOnSettingCurrentDMNDiagramWhenIsDRD() {
-        when(dmnDiagramsSession.isGlobalGraph()).thenReturn(false);
+        when(dmnDiagramsSession.isGlobalGraphSelected()).thenReturn(false);
         when(dmnDiagramSelected.getDiagramElement()).thenReturn(dmnDiagramElement);
         when(dmnDiagramElement.getName()).thenReturn(new Name());
 
         drdNameChangerView.onSettingCurrentDMNDiagramElement(dmnDiagramSelected);
 
-        verify(dmnDiagramsSession, times(1)).isGlobalGraph();
+        verify(dmnDiagramsSession, times(1)).isGlobalGraphSelected();
         verify(sessionPresenterView, times(1)).onResize();
     }
 

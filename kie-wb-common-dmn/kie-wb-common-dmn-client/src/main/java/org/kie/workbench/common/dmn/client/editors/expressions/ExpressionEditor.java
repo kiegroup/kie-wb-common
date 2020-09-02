@@ -56,7 +56,7 @@ public class ExpressionEditor implements ExpressionEditorView.Presenter {
     private final Supplier<String> returnToLinkTextSupplier = new Supplier<String>() {
         @Override
         public String get() {
-            if (dmnDiagramsSession.isGlobalGraph()) {
+            if (dmnDiagramsSession.isGlobalGraphSelected()) {
                 return extractReturnToLinkFromDefinitions();
             }
             return dmnDiagramsSession

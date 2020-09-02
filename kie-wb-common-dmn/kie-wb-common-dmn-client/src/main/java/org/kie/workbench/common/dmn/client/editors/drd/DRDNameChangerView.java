@@ -80,7 +80,7 @@ public class DRDNameChangerView implements DRDNameChanger {
     }
 
     void onSettingCurrentDMNDiagramElement(final @Observes DMNDiagramSelected selected) {
-        if (dmnDiagramsSession.isGlobalGraph()) {
+        if (dmnDiagramsSession.isGlobalGraphSelected()) {
             DOM.getElementById("drd-name-changer").getStyle().setDisplay(NONE);
         } else {
             this.drdName.setText(selected.getDiagramElement().getName().getValue());

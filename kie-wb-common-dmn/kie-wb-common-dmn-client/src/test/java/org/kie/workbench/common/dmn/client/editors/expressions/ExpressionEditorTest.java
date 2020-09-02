@@ -144,7 +144,7 @@ public class ExpressionEditorTest {
     @Test
     @SuppressWarnings("unchecked")
     public void testSetExpression() {
-        when(dmnDiagramsSession.isGlobalGraph()).thenReturn(true);
+        when(dmnDiagramsSession.isGlobalGraphSelected()).thenReturn(true);
 
         setupExpression(decision, decision, toolbarStateHandler, false);
 
@@ -159,7 +159,7 @@ public class ExpressionEditorTest {
     @Test
     @SuppressWarnings("unchecked")
     public void testSetExpressionWhenOnlyVisualChangeAllowed() {
-        when(dmnDiagramsSession.isGlobalGraph()).thenReturn(true);
+        when(dmnDiagramsSession.isGlobalGraphSelected()).thenReturn(true);
 
         setupExpression(decision, decision, toolbarStateHandler, true);
 
@@ -254,7 +254,7 @@ public class ExpressionEditorTest {
 
         when(node.getContent()).thenReturn(definition);
         when(definition.getDefinition()).thenReturn(definitions);
-        when(dmnDiagramsSession.isGlobalGraph()).thenReturn(true);
+        when(dmnDiagramsSession.isGlobalGraphSelected()).thenReturn(true);
 
         setupExpression(decision, decision, toolbarStateHandler, false);
 
@@ -320,7 +320,7 @@ public class ExpressionEditorTest {
     @Test
     public void testSetReturnToLinkTextWhenDrdIsSelected() {
         final String drdName = "DRD Name";
-        when(dmnDiagramsSession.isGlobalGraph()).thenReturn(false);
+        when(dmnDiagramsSession.isGlobalGraphSelected()).thenReturn(false);
         when(dmnDiagramElement.getName()).thenReturn(new Name(drdName));
         when(dmnDiagramsSession.getCurrentDMNDiagramElement()).thenReturn(Optional.of(dmnDiagramElement));
 
