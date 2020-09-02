@@ -35,6 +35,8 @@ import org.kie.workbench.common.stunner.core.diagram.Metadata;
 import org.kie.workbench.common.stunner.core.diagram.SelectedDiagramProvider;
 import org.uberfire.backend.vfs.Path;
 
+import static java.util.Collections.emptyList;
+
 @ApplicationScoped
 public class DMNDiagramsSession implements SelectedDiagramProvider {
 
@@ -157,11 +159,11 @@ public class DMNDiagramsSession implements SelectedDiagramProvider {
     }
 
     public List<DRGElement> getModelDRGElements() {
-        return getSessionState().getModelDRGElements();
+        return Optional.ofNullable(getSessionState()).map(DMNDiagramsSessionState::getModelDRGElements).orElse(emptyList());
     }
 
     public List<Import> getModelImports() {
-        return getSessionState().getModelImports();
+        return Optional.ofNullable(getSessionState()).map(DMNDiagramsSessionState::getModelImports).orElse(emptyList());
     }
 
     @Override
