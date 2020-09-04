@@ -180,9 +180,11 @@ public class DMNUnmarshaller {
             final Node<?, ?> dmnDiagramRoot = DMNGraphUtils.findDMNDiagramRoot(value.getGraph());
             ((View<DMNDiagram>) dmnDiagramRoot.getContent()).getDefinition().setDefinitions(wbDefinitions);
 
-            if (stunnerDiagramsById.size() == 1) {
-                nodeEntries.forEach(nodeEntry -> connectRootWithChild(dmnDiagramRoot, nodeEntry.getNode()));
-            }
+            nodeEntries.forEach(nodeEntry -> {
+                if (Objects.equals(stunnerDiagramsById.get(nodeEntry.getDiagramId()), value)) {
+                    connectRootWithChild(dmnDiagramRoot, nodeEntry.getNode());
+                }
+            });
         }
 
         //Only connect Nodes to the Diagram that are not referenced by DecisionServices
