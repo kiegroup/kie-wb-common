@@ -35,7 +35,7 @@ public class DMNDiagramTuple {
         return stunnerDiagram;
     }
 
-    public DMNDiagramElement getDMDNDiagram() {
+    public DMNDiagramElement getDMNDiagram() {
         return dmnDiagram;
     }
 }

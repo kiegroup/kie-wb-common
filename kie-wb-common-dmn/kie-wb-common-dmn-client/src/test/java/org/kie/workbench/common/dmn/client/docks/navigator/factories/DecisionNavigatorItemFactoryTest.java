@@ -183,7 +183,7 @@ public class DecisionNavigatorItemFactoryTest {
         final DMNDiagramElement drg = mock(DMNDiagramElement.class);
         final DecisionNavigatorItem item = mock(DecisionNavigatorItem.class);
 
-        when(dmnDiagramsSession.getDRGDMNDiagramElement()).thenReturn(drg);
+        when(dmnDiagramsSession.getDRGDiagramElement()).thenReturn(drg);
 
         factory.getOnRemove(dmnDiagramElement).accept(item);
 

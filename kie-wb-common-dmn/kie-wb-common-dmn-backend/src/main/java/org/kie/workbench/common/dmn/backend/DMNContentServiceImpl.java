@@ -149,26 +149,13 @@ public class DMNContentServiceImpl extends KieService<String> implements DMNCont
                                                   final String title) {
         final Package modulePackage = moduleService.resolvePackage(path);
         final KieModule kieModule = moduleService.resolveModule(path);
-        return buildProjectMetadataInstance(path,
-                                            title,
-                                            defSetId,
-                                            kieModule.getModuleName(),
-                                            modulePackage,
-                                            overviewLoader.loadOverview(path));
-    }
-
-    private ProjectMetadata buildProjectMetadataInstance(final Path path,
-                                                         final String name,
-                                                         final String defSetId,
-                                                         final String moduleName,
-                                                         final Package projPkg,
-                                                         final Overview overview) {
+        final Overview overview = overviewLoader.loadOverview(path);
         return new ProjectMetadataImpl.ProjectMetadataBuilder()
                 .forDefinitionSetId(defSetId)
-                .forModuleName(moduleName)
-                .forProjectPackage(projPkg)
+                .forModuleName(kieModule.getModuleName())
+                .forProjectPackage(modulePackage)
                 .forOverview(overview)
-                .forTitle(name)
+                .forTitle(title)
                 .forPath(path)
                 .build();
     }

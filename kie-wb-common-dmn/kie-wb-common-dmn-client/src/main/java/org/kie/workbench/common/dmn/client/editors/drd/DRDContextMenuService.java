@@ -130,7 +130,7 @@ public class DRDContextMenuService {
         return dmnDiagramsSession
                 .getDMNDiagrams()
                 .stream()
-                .map(e -> e.getDMDNDiagram().getName().getValue())
+                .map(e -> e.getDMNDiagram().getName().getValue())
                 .collect(Collectors.toList());
     }
 

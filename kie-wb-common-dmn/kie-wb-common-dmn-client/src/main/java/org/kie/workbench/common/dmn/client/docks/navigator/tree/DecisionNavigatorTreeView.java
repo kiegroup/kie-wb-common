@@ -218,7 +218,7 @@ public class DecisionNavigatorTreeView implements DecisionNavigatorTreePresenter
         }
 
         @EventHandler("input-text")
-        public void onInputTextBluer(final BlurEvent event) {
+        public void onInputTextBlur(final BlurEvent event) {
             save();
         }
 

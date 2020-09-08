@@ -71,7 +71,7 @@ public class DecisionNavigatorItemFactory {
 
     public DecisionNavigatorItem makeRoot(final DMNDiagramTuple diagramTuple) {
 
-        final DMNDiagramElement dmnDiagramElement = diagramTuple.getDMDNDiagram();
+        final DMNDiagramElement dmnDiagramElement = diagramTuple.getDMNDiagram();
         final String uuid = dmnDiagramElement.getId().getValue();
         final String diagramName = dmnDiagramElement.getName().getValue();
         final String label;
@@ -112,7 +112,7 @@ public class DecisionNavigatorItemFactory {
     Consumer<DecisionNavigatorItem> getOnRemove(final DMNDiagramElement dmnDiagramElement) {
         return (item) -> {
             dmnDiagramsSession.remove(dmnDiagramElement);
-            selectedEvent.fire(new DMNDiagramSelected(dmnDiagramsSession.getDRGDMNDiagramElement()));
+            selectedEvent.fire(new DMNDiagramSelected(dmnDiagramsSession.getDRGDiagramElement()));
         };
     }
 

@@ -61,8 +61,8 @@ public class DecisionNavigatorItemsProvider {
 
         dmnDiagramsSession.getDMNDiagrams().stream()
                 .sorted((e1, e2) -> {
-                    final String dmnElementName1 = e1.getDMDNDiagram().getName().getValue();
-                    final String dmnElementName2 = e2.getDMDNDiagram().getName().getValue();
+                    final String dmnElementName1 = e1.getDMNDiagram().getName().getValue();
+                    final String dmnElementName2 = e2.getDMNDiagram().getName().getValue();
                     return DRG.equals(dmnElementName1) ? -1 : DRG.equals(dmnElementName2) ? 1 : 0;
                 })
                 .forEach(diagramTuple -> {

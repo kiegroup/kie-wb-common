@@ -180,13 +180,11 @@ public class DecisionNavigatorPresenterTest {
 
         presenter.disableRefreshHandlers();
         presenter.refreshTreeView();
-        presenter.refreshTreeView();
 
         presenter.enableRefreshHandlers();
         presenter.refreshTreeView();
-        presenter.refreshTreeView();
 
-        verify(treePresenter, times(2)).setupItems(items);
+        verify(treePresenter).setupItems(items);
     }
 
     @Test

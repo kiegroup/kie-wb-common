@@ -120,14 +120,14 @@ public class DMNDiagramsSessionTest {
 
         assertEquals(dmnDiagram, dmnDiagramsSession.getDMNDiagramElement(diagramId));
         assertEquals(stunnerDiagram, dmnDiagramsSession.getDiagram(diagramId));
-        assertEquals(dmnDiagram, dmnDiagramsSession.getDiagramTuple(diagramId).getDMDNDiagram());
+        assertEquals(dmnDiagram, dmnDiagramsSession.getDiagramTuple(diagramId).getDMNDiagram());
         assertEquals(stunnerDiagram, dmnDiagramsSession.getDiagramTuple(diagramId).getStunnerDiagram());
 
         dmnDiagramsSession.remove(dmnDiagram);
 
         assertNull(dmnDiagramsSession.getDMNDiagramElement(diagramId));
         assertNull(dmnDiagramsSession.getDiagram(diagramId));
-        assertNull(dmnDiagramsSession.getDiagramTuple(diagramId).getDMDNDiagram());
+        assertNull(dmnDiagramsSession.getDiagramTuple(diagramId).getDMNDiagram());
         assertNull(dmnDiagramsSession.getDiagramTuple(diagramId).getStunnerDiagram());
     }
 
@@ -194,10 +194,10 @@ public class DMNDiagramsSessionTest {
     }
 
     @Test
-    public void testGetDRGDMNDiagramElement() {
+    public void testGetDRGDiagramElement() {
         final DMNDiagramElement expected = mock(DMNDiagramElement.class);
-        doReturn(expected).when(dmnDiagramsSessionState).getDRGDMNDiagramElement();
-        final DMNDiagramElement actual = dmnDiagramsSession.getDRGDMNDiagramElement();
+        doReturn(expected).when(dmnDiagramsSessionState).getDRGDiagramElement();
+        final DMNDiagramElement actual = dmnDiagramsSession.getDRGDiagramElement();
         assertEquals(expected, actual);
     }
 
@@ -214,14 +214,14 @@ public class DMNDiagramsSessionTest {
 
         assertEquals(dmnDiagram, dmnDiagramsSession.getDMNDiagramElement(diagramId));
         assertEquals(stunnerDiagram, dmnDiagramsSession.getDiagram(diagramId));
-        assertEquals(dmnDiagram, dmnDiagramsSession.getDiagramTuple(diagramId).getDMDNDiagram());
+        assertEquals(dmnDiagram, dmnDiagramsSession.getDiagramTuple(diagramId).getDMNDiagram());
         assertEquals(stunnerDiagram, dmnDiagramsSession.getDiagramTuple(diagramId).getStunnerDiagram());
 
         dmnDiagramsSession.clear();
 
         assertNull(dmnDiagramsSession.getDMNDiagramElement(diagramId));
         assertNull(dmnDiagramsSession.getDiagram(diagramId));
-        assertNull(dmnDiagramsSession.getDiagramTuple(diagramId).getDMDNDiagram());
+        assertNull(dmnDiagramsSession.getDiagramTuple(diagramId).getDMNDiagram());
         assertNull(dmnDiagramsSession.getDiagramTuple(diagramId).getStunnerDiagram());
     }
 

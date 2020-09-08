@@ -278,10 +278,10 @@ public class DecisionNavigatorTreeViewTest {
     }
 
     @Test
-    public void testOnInputTextBluer() {
+    public void testOnInputTextBlur() {
         final BlurEvent event = mock(BlurEvent.class);
         doNothing().when(treeItem).save();
-        treeItem.onInputTextBluer(event);
+        treeItem.onInputTextBlur(event);
         verify(treeItem).save();
     }
 

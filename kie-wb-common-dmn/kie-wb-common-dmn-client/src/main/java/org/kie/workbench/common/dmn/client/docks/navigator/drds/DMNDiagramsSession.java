@@ -151,8 +151,8 @@ public class DMNDiagramsSession implements GraphsProvider {
         return getSessionState().getDRGDiagram();
     }
 
-    public DMNDiagramElement getDRGDMNDiagramElement() {
-        return getSessionState().getDRGDMNDiagramElement();
+    public DMNDiagramElement getDRGDiagramElement() {
+        return getSessionState().getDRGDiagramElement();
     }
 
     private DMNDiagramTuple getDRGDiagramTuple() {

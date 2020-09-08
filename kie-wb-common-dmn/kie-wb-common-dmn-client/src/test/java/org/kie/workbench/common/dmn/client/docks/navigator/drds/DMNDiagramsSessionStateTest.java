@@ -115,7 +115,7 @@ public class DMNDiagramsSessionStateTest {
     @Test
     public void testGetDiagramTuple() {
         final DMNDiagramTuple tuple = sessionState.getDiagramTuple(id1);
-        assertEquals(dmnDiagram1, tuple.getDMDNDiagram());
+        assertEquals(dmnDiagram1, tuple.getDMNDiagram());
         assertEquals(stunnerDiagram1, tuple.getStunnerDiagram());
     }
 
@@ -125,7 +125,7 @@ public class DMNDiagramsSessionStateTest {
 
         assertEquals(3, tuples.size());
 
-        final List<DMNDiagramElement> dmnDiagrams = tuples.stream().map(DMNDiagramTuple::getDMDNDiagram).collect(Collectors.toList());
+        final List<DMNDiagramElement> dmnDiagrams = tuples.stream().map(DMNDiagramTuple::getDMNDiagram).collect(Collectors.toList());
         final List<Diagram> stunnerDiagrams = tuples.stream().map(DMNDiagramTuple::getStunnerDiagram).collect(Collectors.toList());
 
         assertTrue(dmnDiagrams.contains(dmnDiagram1));
@@ -172,14 +172,14 @@ public class DMNDiagramsSessionStateTest {
     }
 
     @Test
-    public void testGetDRGDMNDiagramElement() {
-        assertEquals(dmnDiagram1, sessionState.getDRGDMNDiagramElement());
+    public void testGetDRGDiagramElement() {
+        assertEquals(dmnDiagram1, sessionState.getDRGDiagramElement());
     }
 
     @Test
     public void testGetDRGDiagramTuple() {
         final DMNDiagramTuple tuple = sessionState.getDRGDiagramTuple();
-        assertEquals(dmnDiagram1, tuple.getDMDNDiagram());
+        assertEquals(dmnDiagram1, tuple.getDMNDiagram());
         assertEquals(stunnerDiagram1, tuple.getStunnerDiagram());
     }
 

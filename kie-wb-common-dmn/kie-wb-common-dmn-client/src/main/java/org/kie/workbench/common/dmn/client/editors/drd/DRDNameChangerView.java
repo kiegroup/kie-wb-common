@@ -99,7 +99,7 @@ public class DRDNameChangerView implements DRDNameChanger {
     @EventHandler("returnToDRG")
     void onClickReturnToDRG(final ClickEvent event) {
         DOM.getElementById("drd-name-changer").getStyle().setDisplay(NONE);
-        selectedEvent.fire(new DMNDiagramSelected(dmnDiagramsSession.getDRGDMNDiagramElement()));
+        selectedEvent.fire(new DMNDiagramSelected(dmnDiagramsSession.getDRGDiagramElement()));
     }
 
     @EventHandler("viewMode")

@@ -87,7 +87,7 @@ public class DMNDiagramsSessionState {
             return currentDMNDiagramElement;
         }
 
-        return Optional.ofNullable(getDRGDMNDiagramElement());
+        return Optional.ofNullable(getDRGDiagramElement());
     }
 
     Optional<Diagram> getCurrentDiagram() {
@@ -99,14 +99,14 @@ public class DMNDiagramsSessionState {
         return getDRGDiagramTuple().getStunnerDiagram();
     }
 
-    DMNDiagramElement getDRGDMNDiagramElement() {
-        return getDRGDiagramTuple().getDMDNDiagram();
+    DMNDiagramElement getDRGDiagramElement() {
+        return getDRGDiagramTuple().getDMNDiagram();
     }
 
     DMNDiagramTuple getDRGDiagramTuple() {
         return getDMNDiagrams()
                 .stream()
-                .filter(t -> DRGDiagramUtils.isDRG(t.getDMDNDiagram()))
+                .filter(t -> DRGDiagramUtils.isDRG(t.getDMNDiagram()))
                 .findFirst()
                 .orElse(null);
     }

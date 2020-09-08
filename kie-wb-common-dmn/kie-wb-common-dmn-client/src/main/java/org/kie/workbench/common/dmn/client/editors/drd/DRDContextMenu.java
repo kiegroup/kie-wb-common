@@ -88,7 +88,7 @@ public class DRDContextMenu {
     }
 
     private String getDiagramName(final DMNDiagramTuple dmnDiagram) {
-        return dmnDiagram.getDMDNDiagram().getName().getValue();
+        return dmnDiagram.getDMNDiagram().getName().getValue();
     }
 
     private List<DMNDiagramTuple> getDiagrams() {
