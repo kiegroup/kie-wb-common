@@ -26,7 +26,14 @@ public class BuildDialogView implements HasBusyIndicator {
 
     @Override
     public void showBusyIndicator(String message) {
-        BusyPopup.showMessage(message);
+        showBusyIndicator(message,
+                          false);
+    }
+
+    public void showBusyIndicator(final String message,
+                                   final boolean canClose) {
+        BusyPopup.showMessage(message,
+                              canClose);
     }
 
     @Override

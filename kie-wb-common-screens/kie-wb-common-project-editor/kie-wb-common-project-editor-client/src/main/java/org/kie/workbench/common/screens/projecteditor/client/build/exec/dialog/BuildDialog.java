@@ -51,6 +51,12 @@ public class BuildDialog {
         view.showBusyIndicator(message);
     }
 
+    public void showBusyIndicator(final String message,
+                                  final boolean canClose) {
+        view.showBusyIndicator(message,
+                               canClose);
+    }
+
     public void hideBusyIndicator() {
         view.hideBusyIndicator();
     }

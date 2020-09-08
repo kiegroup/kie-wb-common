@@ -25,7 +25,6 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -63,6 +62,28 @@ public class BuildDialogTest {
         Assertions.assertThatThrownBy(() -> dialog.startBuild())
                 .isInstanceOf(IllegalStateException.class)
                 .hasMessage("Build already running");
+    }
+
+    @Test
+    public void testShowBusyIndicator() {
+        dialog.showBusyIndicator("hello");
+        verify(view).showBusyIndicator("hello");
+    }
+
+    @Test
+    public void testShowBusyIndicatorAndAllowClosing() {
+        dialog.showBusyIndicator("hello",
+                                 true);
+        verify(view).showBusyIndicator("hello",
+                                       true);
+    }
+
+    @Test
+    public void testShowBusyIndicatorAndDoNotAllowClosing() {
+        dialog.showBusyIndicator("hello",
+                                 false);
+        verify(view).showBusyIndicator("hello",
+                                       false);
     }
 
     private void checkStartBuild() {

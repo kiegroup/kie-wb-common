@@ -44,7 +44,8 @@ public abstract class AbstractInstallExecutorTest<RUNNER extends AbstractInstall
 
         verify(buildDialog).startBuild();
 
-        verify(buildDialog).showBusyIndicator(CONSTANTS.Building());
+        verify(buildDialog).showBusyIndicator(CONSTANTS.Building(),
+                                              true);
 
         verifyNotification(ProjectEditorResources.CONSTANTS.BuildAndInstallSuccessful(), NotificationEvent.NotificationType.SUCCESS);
 
@@ -69,7 +70,8 @@ public abstract class AbstractInstallExecutorTest<RUNNER extends AbstractInstall
 
         verify(buildDialog).startBuild();
 
-        verify(buildDialog).showBusyIndicator(CONSTANTS.Building());
+        verify(buildDialog).showBusyIndicator(CONSTANTS.Building(),
+                                              true);
 
         verifyNotification(ProjectEditorResources.CONSTANTS.BuildFailed(), NotificationEvent.NotificationType.ERROR);
 
@@ -88,7 +90,8 @@ public abstract class AbstractInstallExecutorTest<RUNNER extends AbstractInstall
 
         verify(buildDialog).startBuild();
 
-        verify(buildDialog).showBusyIndicator(CONSTANTS.Building());
+        verify(buildDialog).showBusyIndicator(CONSTANTS.Building(),
+                                              true);
 
         verifyNotification(CONSTANTS.BuildFailed(), NotificationEvent.NotificationType.ERROR);
 

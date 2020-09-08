@@ -70,7 +70,8 @@ public class ProductionInstallExecutorTest extends AbstractInstallExecutorTest<P
 
         verify(buildDialog).startBuild();
 
-        verify(buildDialog).showBusyIndicator(CONSTANTS.Building());
+        verify(buildDialog).showBusyIndicator(CONSTANTS.Building(),
+                                              true);
 
         verify(buildDialog).hideBusyIndicator();
 

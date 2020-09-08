@@ -79,7 +79,8 @@ public class ProductionBuildAndDeployExecutorTest extends AbstractBuildAndDeploy
         runner.run(context);
 
         verify(buildDialog).startBuild();
-        verify(buildDialog).showBusyIndicator(CONSTANTS.Building());
+        verify(buildDialog).showBusyIndicator(CONSTANTS.Building(),
+                                              true);
 
         ArgumentCaptor<ContainerSpec> containerSpecArgumentCaptor = ArgumentCaptor.forClass(ContainerSpec.class);
         verify(specManagementServiceMock).saveContainerSpec(eq(serverTemplate.getId()), containerSpecArgumentCaptor.capture());
@@ -113,7 +114,8 @@ public class ProductionBuildAndDeployExecutorTest extends AbstractBuildAndDeploy
         runner.run(context);
 
         verify(buildDialog).startBuild();
-        verify(buildDialog).showBusyIndicator(CONSTANTS.Building());
+        verify(buildDialog).showBusyIndicator(CONSTANTS.Building(),
+                                              true);
 
         ArgumentCaptor<ContainerSpec> containerSpecArgumentCaptor = ArgumentCaptor.forClass(ContainerSpec.class);
         verify(specManagementServiceMock).saveContainerSpec(eq(serverTemplate.getId()), containerSpecArgumentCaptor.capture());
@@ -158,7 +160,8 @@ public class ProductionBuildAndDeployExecutorTest extends AbstractBuildAndDeploy
 
         driver.finish(context.getContainerId(), context.getContainerAlias(), SERVER_TEMPLATE_ID, true);
 
-        verify(buildDialog).showBusyIndicator(CONSTANTS.Building());
+        verify(buildDialog).showBusyIndicator(CONSTANTS.Building(),
+                                              true);
 
         verifyNotification(ProjectEditorResources.CONSTANTS.BuildSuccessful(), NotificationEvent.NotificationType.SUCCESS);
 
@@ -199,7 +202,8 @@ public class ProductionBuildAndDeployExecutorTest extends AbstractBuildAndDeploy
 
         driver.finish(context.getContainerId(), context.getContainerAlias(), SERVER_TEMPLATE_ID, true);
 
-        verify(buildDialog).showBusyIndicator(CONSTANTS.Building());
+        verify(buildDialog).showBusyIndicator(CONSTANTS.Building(),
+                                              true);
 
         verifyNotification(ProjectEditorResources.CONSTANTS.BuildSuccessful(), NotificationEvent.NotificationType.SUCCESS);
 
@@ -228,7 +232,8 @@ public class ProductionBuildAndDeployExecutorTest extends AbstractBuildAndDeploy
         runner.run(context);
 
         verify(buildDialog).startBuild();
-        verify(buildDialog).showBusyIndicator(CONSTANTS.Building());
+        verify(buildDialog).showBusyIndicator(CONSTANTS.Building(),
+                                              true);
 
         verify(conflictingRepositoriesPopup).show();
     }
@@ -247,7 +252,8 @@ public class ProductionBuildAndDeployExecutorTest extends AbstractBuildAndDeploy
         runner.run(context);
 
         verify(buildDialog).startBuild();
-        verify(buildDialog).showBusyIndicator(CONSTANTS.Building());
+        verify(buildDialog).showBusyIndicator(CONSTANTS.Building(),
+                                              true);
 
         verify(conflictingRepositoriesPopup, never()).show();
 
@@ -276,7 +282,8 @@ public class ProductionBuildAndDeployExecutorTest extends AbstractBuildAndDeploy
 
         driver.finish(context.getContainerId(), context.getContainerAlias(), SERVER_TEMPLATE_ID, true);
 
-        verify(buildDialog).showBusyIndicator(CONSTANTS.Building());
+        verify(buildDialog).showBusyIndicator(CONSTANTS.Building(),
+                                              true);
 
         verifyNotification(ProjectEditorResources.CONSTANTS.BuildSuccessful(), NotificationEvent.NotificationType.SUCCESS);
         verifyNotification(ProjectEditorResources.CONSTANTS.DeploySuccessfulAndContainerStarted(), NotificationEvent.NotificationType.SUCCESS);

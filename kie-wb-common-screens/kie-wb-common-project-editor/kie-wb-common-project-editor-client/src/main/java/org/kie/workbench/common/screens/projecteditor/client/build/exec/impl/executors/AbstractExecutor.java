@@ -58,7 +58,8 @@ public abstract class AbstractExecutor implements Executor {
     }
 
     protected void showBuildMessage() {
-        buildDialog.showBusyIndicator(CONSTANTS.Building());
+        buildDialog.showBusyIndicator(CONSTANTS.Building(),
+                                      true);
     }
 
     protected void finish() {

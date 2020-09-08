@@ -48,7 +48,8 @@ public abstract class AbstractBuildAndDeployExecutorTest<RUNNER extends Abstract
     public void testBuildAndDeployWithoutServerTemplate() {
         runner.run(context);
 
-        verify(buildDialog).showBusyIndicator(CONSTANTS.Building());
+        verify(buildDialog).showBusyIndicator(CONSTANTS.Building(),
+                                              true);
         verifyNotification(ProjectEditorResources.CONSTANTS.BuildSuccessful(), NotificationEvent.NotificationType.SUCCESS);
         verifyNotification(ProjectEditorResources.CONSTANTS.DeploymentSkippedDueToNoServerTemplateConfiguredForMode(getPreferredKieServerMode().name().toLowerCase()), NotificationEvent.NotificationType.WARNING);
         verify(notificationEvent, times(2)).fire(any(NotificationEvent.class));
@@ -69,7 +70,8 @@ public abstract class AbstractBuildAndDeployExecutorTest<RUNNER extends Abstract
         when(buildServiceMock.buildAndDeploy(any(), any(DeploymentMode.class))).thenReturn(results);
 
         runner.run(context);
-        verify(buildDialog).showBusyIndicator(CONSTANTS.Building());
+        verify(buildDialog).showBusyIndicator(CONSTANTS.Building(),
+                                              true);
         verifyNotification(ProjectEditorResources.CONSTANTS.BuildFailed(), NotificationEvent.NotificationType.ERROR);
         verify(buildDialog, atLeastOnce()).stopBuild();
     }
@@ -93,7 +95,8 @@ public abstract class AbstractBuildAndDeployExecutorTest<RUNNER extends Abstract
 
         runner.run(context);
 
-        verify(buildDialog, times(2)).showBusyIndicator(CONSTANTS.Building());
+        verify(buildDialog, times(2)).showBusyIndicator(CONSTANTS.Building(),
+                                                        true);
 
         verify(notificationEvent, times(2)).fire(any(NotificationEvent.class));
         verify(buildDialog, atLeastOnce()).stopBuild();
