@@ -17,6 +17,7 @@
 package org.kie.workbench.common.dmn.client.marshaller.included;
 
 import elemental2.promise.Promise;
+import org.kie.workbench.common.dmn.api.editors.included.PMMLDocumentMetadata;
 
 public interface DMNMarshallerImportsContentService {
 
@@ -27,4 +28,6 @@ public interface DMNMarshallerImportsContentService {
     Promise<String[]> getModelsDMNFilesURIs();
 
     Promise<String[]> getModelsPMMLFilesURIs();
+
+    Promise<PMMLDocumentMetadata> getPMMLDocumentMetadata(final String fileUri);
 }

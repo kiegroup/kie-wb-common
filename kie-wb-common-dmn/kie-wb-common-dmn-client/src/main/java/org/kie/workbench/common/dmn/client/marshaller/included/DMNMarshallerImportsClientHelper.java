@@ -71,7 +71,6 @@ public class DMNMarshallerImportsClientHelper implements DMNMarshallerImportsHel
     private final DMNMarshallerImportsContentService dmnImportsContentService;
     private final Promises promises;
     private final DMNIncludedNodeFactory includedModelFactory;
-    private final PMMLMarshallerService pmmlMarshallerService;
 
     private static final Logger LOGGER = Logger.getLogger(DMNMarshallerImportsClientHelper.class.getName());
 
@@ -79,13 +78,11 @@ public class DMNMarshallerImportsClientHelper implements DMNMarshallerImportsHel
     public DMNMarshallerImportsClientHelper(final DMNMarshallerImportsService dmnImportsService,
                                             final DMNMarshallerImportsContentService dmnImportsContentService,
                                             final Promises promises,
-                                            final DMNIncludedNodeFactory includedModelFactory,
-                                            final PMMLMarshallerService pmmlMarshallerService) {
+                                            final DMNIncludedNodeFactory includedModelFactory) {
         this.dmnImportsService = dmnImportsService;
         this.dmnImportsContentService = dmnImportsContentService;
         this.promises = promises;
         this.includedModelFactory = includedModelFactory;
-        this.pmmlMarshallerService = pmmlMarshallerService;
     }
 
     public Promise<Map<JSITImport, JSITDefinitions>> getImportDefinitionsAsync(final Metadata metadata,
@@ -202,16 +199,13 @@ public class DMNMarshallerImportsClientHelper implements DMNMarshallerImportsHel
 
                                     @Override
                                     public void onError(final ClientRuntimeError error) {
-                                        LOGGER.log(Level.SEVERE, error.getMessage());
-                                        failed.onInvoke(promises.reject(error.getMessage()));
+                                        //Swallow. Since it must try to load other paths.
+                                        success.onInvoke(promises.resolve());
                                     }
                                 })));
                     }
                     if (fileName.endsWith("." + DMNImportTypes.PMML.getFileExtension())) {
-                        return dmnImportsContentService.loadFile(file)
-                                .then(fileContent -> {
-                                    return pmmlMarshallerService.getDocumentMetadata(file, fileContent);
-                                })
+                        return dmnImportsContentService.getPMMLDocumentMetadata(file)
                                 .then(pmmlDocumentMetadata -> {
                                     int modelCount = pmmlDocumentMetadata.getModels() != null ? pmmlDocumentMetadata.getModels().size() : 0;
                                     models.add(new PMMLIncludedModel(fileName,
@@ -290,7 +284,7 @@ public class DMNMarshallerImportsClientHelper implements DMNMarshallerImportsHel
 
                 for (final Map.Entry<String, PMMLDocumentMetadata> entry : otherDefinitions.entrySet()) {
                     final PMMLDocumentMetadata def = entry.getValue();
-                    findImportByPMMLDocument(def.getName(), imports).ifPresent(anImport -> {
+                    findImportByPMMLDocument(FileUtils.getFileName(def.getPath()), imports).ifPresent(anImport -> {
                         final JSITImport foundImported = Js.uncheckedCast(anImport);
                         importDefinitions.put(foundImported, def);
                     });
@@ -317,8 +311,7 @@ public class DMNMarshallerImportsClientHelper implements DMNMarshallerImportsHel
 
     private Promise<Void> loadPMMLDefinitionFromFile(final String file,
                                                      final Map<String, PMMLDocumentMetadata> definitions) {
-        return dmnImportsContentService.loadFile(file)
-                .then(fileContent -> pmmlMarshallerService.getDocumentMetadata(file, fileContent))
+        return dmnImportsContentService.getPMMLDocumentMetadata(file)
                 .then(pmmlDocumentMetadata -> {
                     definitions.put(file, pmmlDocumentMetadata);
                     return promises.resolve();
@@ -439,6 +432,27 @@ public class DMNMarshallerImportsClientHelper implements DMNMarshallerImportsHel
             result.add(item);
         }
         return result;
+    }
+
+    public void getPMMLDocumentsMetadataFromFiles(final List<PMMLIncludedModel> includedModels,
+                                                  final ServiceCallback<List<PMMLDocumentMetadata>> callback) {
+        if (includedModels == null || includedModels.isEmpty()) {
+            callback.onSuccess(Collections.emptyList());
+            return;
+        }
+        loadPMMLDefinitions().then(allDefinitions -> {
+            final Map<String, String> filesToNameMap = includedModels.stream().collect(Collectors.toMap(PMMLIncludedModel::getPath, PMMLIncludedModel::getModelName));
+            final List<PMMLDocumentMetadata> pmmlDocumentMetadata = allDefinitions.entrySet().stream()
+                    .filter(entry -> filesToNameMap.keySet().contains(FileUtils.getFileName(entry.getKey())))
+                    .map(entry -> new PMMLDocumentMetadata(entry.getValue().getPath(),
+                                                           filesToNameMap.get(FileUtils.getFileName(entry.getKey())),
+                                                           entry.getValue().getImportType(),
+                                                           entry.getValue().getModels()))
+                    .collect(Collectors.toList());
+            pmmlDocumentMetadata.sort(Comparator.comparing(PMMLDocumentMetadata::getName));
+            callback.onSuccess(pmmlDocumentMetadata);
+            return promises.resolve();
+        });
     }
 
     public void getImportedItemDefinitionsByNamespaceAsync(final String modelName,

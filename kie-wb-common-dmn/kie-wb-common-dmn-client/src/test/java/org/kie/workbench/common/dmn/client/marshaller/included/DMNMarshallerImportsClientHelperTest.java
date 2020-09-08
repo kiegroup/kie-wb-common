@@ -17,6 +17,7 @@
 package org.kie.workbench.common.dmn.client.marshaller.included;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -26,7 +27,6 @@ import elemental2.promise.Promise;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.kie.workbench.common.dmn.api.editors.included.DMNImportTypes;
 import org.kie.workbench.common.dmn.api.editors.included.IncludedModel;
 import org.kie.workbench.common.dmn.api.editors.included.PMMLDocumentMetadata;
 import org.kie.workbench.common.dmn.api.editors.included.PMMLIncludedModel;
@@ -41,12 +41,16 @@ import org.uberfire.promise.SyncPromises;
 
 import static java.util.Collections.singletonList;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.kie.workbench.common.dmn.api.editors.included.DMNImportTypes.PMML;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -57,10 +61,10 @@ public class DMNMarshallerImportsClientHelperTest {
     private Metadata metadataMock;
 
     @Mock
-    private PMMLMarshallerService pmmlMarshallerServiceMock;
+    private ServiceCallback<List<IncludedModel>> includedModelServiceCallback;
 
     @Mock
-    private ServiceCallback<List<IncludedModel>> serviceCallbackMock;
+    private ServiceCallback<List<PMMLDocumentMetadata>> pmmlMetadataServiceCallback;
 
     @Mock
     private DMNMarshallerImportsService dmnImportsService;
@@ -74,10 +78,14 @@ public class DMNMarshallerImportsClientHelperTest {
     @Captor
     private ArgumentCaptor<List<IncludedModel>> modelsCapture;
 
+    @Captor
+    private ArgumentCaptor<List<PMMLDocumentMetadata>> pmmlDocumentMetadataArgumentCaptor;
+
     private static final String DMN_FILE = "test-dmn.dmn";
     private static final String DMN_PATH = "dmntest/" + DMN_FILE;
     private static final String DMN_CONTENT = "<xml> xml DMN content </xml>";
 
+    private static final String PMML_MODEL_NAME = "model-test";
     private static final String PMML_FILE = "test-pmml.pmml";
     private static final String PMML_PATH = "dmnpmml/" + PMML_FILE;
     private static final String PMML_CONTENT = "<xml> xml PMML content </xml>";
@@ -95,8 +103,7 @@ public class DMNMarshallerImportsClientHelperTest {
         importsHelper = new DMNMarshallerImportsClientHelper(dmnImportsService,
                                                              dmnImportsContentService,
                                                              promises,
-                                                             includedModelFactory,
-                                                             new PMMLMarshallerService(promises));
+                                                             includedModelFactory);
     }
 
     @Test
@@ -104,7 +111,7 @@ public class DMNMarshallerImportsClientHelperTest {
         when(dmnImportsContentService.getModelsURIs()).thenReturn(promises.resolve(new String[]{DMN_PATH}));
         when(dmnImportsContentService.loadFile(DMN_PATH)).thenReturn(promises.resolve(DMN_CONTENT));
 
-        importsHelper.loadModels(serviceCallbackMock);
+        importsHelper.loadModels(includedModelServiceCallback);
 
         verify(dmnImportsContentService).loadFile(eq(DMN_PATH));
     }
@@ -112,19 +119,23 @@ public class DMNMarshallerImportsClientHelperTest {
     @Test
     public void loadModelsPMMLFile() {
 
+        final PMMLDocumentMetadata pmmlDocumentMetadata = new PMMLDocumentMetadata(PMML_PATH,
+                                                                                   PMML_FILE,
+                                                                                   PMML.getDefaultNamespace(),
+                                                                                   Collections.emptyList());
+
         when(dmnImportsContentService.getModelsURIs()).thenReturn(promises.resolve(new String[]{PMML_PATH}));
         when(dmnImportsContentService.loadFile(PMML_PATH)).thenReturn(promises.resolve(PMML_CONTENT));
-        when(pmmlMarshallerServiceMock.getDocumentMetadata(PMML_PATH, PMML_CONTENT)).thenReturn(promises.resolve(new PMMLDocumentMetadata(PMML_PATH,
-                                                                                                                                          PMML_FILE,
-                                                                                                                                          DMNImportTypes.PMML.getDefaultNamespace(),
-                                                                                                                                          Collections.emptyList())));
-        importsHelper.loadModels(serviceCallbackMock);
+        when(dmnImportsContentService.loadFile(PMML_PATH)).thenReturn(promises.resolve(PMML_CONTENT));
+        doReturn(promises.resolve(pmmlDocumentMetadata)).when(dmnImportsContentService).getPMMLDocumentMetadata(PMML_PATH);
 
-        verify(serviceCallbackMock).onSuccess(modelsCapture.capture());
+        importsHelper.loadModels(includedModelServiceCallback);
+
+        verify(includedModelServiceCallback).onSuccess(modelsCapture.capture());
         assertEquals(1, modelsCapture.getValue().size());
         assertEquals(PMML_FILE, modelsCapture.getValue().get(0).getPath());
         assertEquals(PMML_FILE, modelsCapture.getValue().get(0).getModelName());
-        assertEquals(DMNImportTypes.PMML.getDefaultNamespace(), modelsCapture.getValue().get(0).getImportType());
+        assertEquals(PMML.getDefaultNamespace(), modelsCapture.getValue().get(0).getImportType());
         assertEquals(0, ((PMMLIncludedModel) modelsCapture.getValue().get(0)).getModelCount().intValue());
     }
 
@@ -132,10 +143,10 @@ public class DMNMarshallerImportsClientHelperTest {
     public void loadModelsInvalidFile() {
         when(dmnImportsContentService.getModelsURIs()).thenReturn(promises.resolve(new String[]{TEXT_PATH}));
 
-        importsHelper.loadModels(serviceCallbackMock);
+        importsHelper.loadModels(includedModelServiceCallback);
 
         verify(dmnImportsContentService, never()).loadFile(anyString());
-        verify(pmmlMarshallerServiceMock, never()).getDocumentMetadata(anyString(), anyString());
+        verify(dmnImportsContentService, never()).getPMMLDocumentMetadata(anyString());
         verify(dmnImportsService, never()).getWbDefinitions(anyString(), any());
     }
 
@@ -169,12 +180,16 @@ public class DMNMarshallerImportsClientHelperTest {
 
     @Test
     public void getPMMLDocumentsAsync() {
+
+        final PMMLDocumentMetadata pmmlDocumentMetadata = new PMMLDocumentMetadata(PMML_PATH,
+                                                                                   PMML_FILE,
+                                                                                   PMML.getDefaultNamespace(),
+                                                                                   Collections.emptyList());
+
         when(dmnImportsContentService.getModelsPMMLFilesURIs()).thenReturn(promises.resolve(new String[]{PMML_PATH}));
         when(dmnImportsContentService.loadFile(PMML_PATH)).thenReturn(promises.resolve(PMML_CONTENT));
-        when(pmmlMarshallerServiceMock.getDocumentMetadata(PMML_PATH, PMML_CONTENT)).thenReturn(promises.resolve(new PMMLDocumentMetadata(PMML_PATH,
-                                                                                                                                          PMML_FILE,
-                                                                                                                                          DMNImportTypes.PMML.getDefaultNamespace(),
-                                                                                                                                          Collections.emptyList())));
+
+        doReturn(promises.resolve(pmmlDocumentMetadata)).when(dmnImportsContentService).getPMMLDocumentMetadata(PMML_PATH);
 
         final List<JSITImport> imports = new ArrayList<>();
         final JSITImport jsImportMock = mock(JSITImport.class);
@@ -187,12 +202,37 @@ public class DMNMarshallerImportsClientHelperTest {
             assertEquals(1, def.size());
             assertEquals(PMML_PATH, def.get(jsImportMock).getPath());
             assertEquals(PMML_FILE, def.get(jsImportMock).getName());
-            assertEquals(DMNImportTypes.PMML.getDefaultNamespace(), def.get(jsImportMock).getImportType());
+            assertEquals(PMML.getDefaultNamespace(), def.get(jsImportMock).getImportType());
             assertEquals(0, def.get(jsImportMock).getModels().size());
             return promises.resolve();
         }).catch_(i -> {
             fail("Promise should've been resolved!");
             return promises.resolve();
         });
+    }
+
+    @Test
+    public void getPMMLDocumentsMetadataFromFilesEmptyFiles() {
+        importsHelper.getPMMLDocumentsMetadataFromFiles(Collections.emptyList(), pmmlMetadataServiceCallback);
+        importsHelper.getPMMLDocumentsMetadataFromFiles(null, pmmlMetadataServiceCallback);
+        verify(pmmlMetadataServiceCallback, times(2)).onSuccess(eq(Collections.emptyList()));
+    }
+
+    @Test
+    public void getPMMLDocumentsMetadataFromFiles() {
+        final PMMLDocumentMetadata documentMetadata = new PMMLDocumentMetadata(PMML_FILE,
+                                                                               PMML.getDefaultNamespace(),
+                                                                               Collections.emptyList());
+        final List<PMMLIncludedModel> includedModels = Arrays.asList(new PMMLIncludedModel(PMML_MODEL_NAME, "", PMML_FILE, PMML.getDefaultNamespace(), 0));
+        when(dmnImportsContentService.getModelsPMMLFilesURIs()).thenReturn(promises.resolve(new String[]{PMML_PATH}));
+        when(dmnImportsContentService.loadFile(PMML_PATH)).thenReturn(promises.resolve(PMML_CONTENT));
+        doReturn(promises.resolve(documentMetadata)).when(dmnImportsContentService).getPMMLDocumentMetadata(PMML_PATH);
+        importsHelper.getPMMLDocumentsMetadataFromFiles(includedModels, pmmlMetadataServiceCallback);
+        verify(pmmlMetadataServiceCallback, times(1)).onSuccess(pmmlDocumentMetadataArgumentCaptor.capture());
+        assertEquals(1, pmmlDocumentMetadataArgumentCaptor.getValue().size());
+        assertEquals(PMML_FILE, pmmlDocumentMetadataArgumentCaptor.getValue().get(0).getPath());
+        assertEquals(PMML_MODEL_NAME, pmmlDocumentMetadataArgumentCaptor.getValue().get(0).getName());
+        assertEquals(PMML.getDefaultNamespace(), pmmlDocumentMetadataArgumentCaptor.getValue().get(0).getImportType());
+        assertTrue(pmmlDocumentMetadataArgumentCaptor.getValue().get(0).getModels().isEmpty());
     }
 }

@@ -36,6 +36,7 @@ import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.callbacks.
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITDefinitions;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITImport;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.mapper.JsUtils;
+import org.kie.workbench.common.stunner.core.client.service.ClientRuntimeError;
 import org.kie.workbench.common.stunner.core.client.service.ServiceCallback;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.util.DefinitionUtils;
@@ -90,7 +91,11 @@ public class DMNMarshallerImportsService {
             callback.onSuccess(wbDefinitions);
         };
 
-        MainJs.unmarshall(dmnXml, "", jsCallback);
+        try {
+            MainJs.unmarshall(dmnXml, "", jsCallback);
+        } catch (final Exception e) {
+            callback.onError(new ClientRuntimeError(e.getMessage()));
+        }
     }
 
     private Optional<DRGElement> getDRGElement(final Node node) {

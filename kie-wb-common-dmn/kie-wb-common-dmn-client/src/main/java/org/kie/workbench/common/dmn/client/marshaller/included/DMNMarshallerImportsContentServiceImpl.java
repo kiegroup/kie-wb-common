@@ -27,6 +27,7 @@ import org.guvnor.common.services.project.model.WorkspaceProject;
 import org.jboss.errai.common.client.api.Caller;
 import org.jboss.errai.common.client.api.RemoteCallback;
 import org.kie.workbench.common.dmn.api.DMNContentService;
+import org.kie.workbench.common.dmn.api.editors.included.PMMLDocumentMetadata;
 import org.kie.workbench.common.stunner.core.client.service.ClientRuntimeError;
 import org.uberfire.backend.vfs.Path;
 import org.uberfire.backend.vfs.PathFactory;
@@ -58,7 +59,7 @@ public class DMNMarshallerImportsContentServiceImpl implements DMNMarshallerImpo
                     (message, throwable) -> {
                         failure.onInvoke(new ClientRuntimeError(throwable));
                         return false;
-                    }).getContent(PathFactory.newPath(".", fileUri));
+                    }).getContent(makePath(fileUri));
         });
     }
 
@@ -81,6 +82,22 @@ public class DMNMarshallerImportsContentServiceImpl implements DMNMarshallerImpo
         return promises.create((success, failure) -> {
             getContentServiceCaller(success, failure).getPMMLModelsPaths(getWorkspaceProject());
         });
+    }
+
+    @Override
+    public Promise<PMMLDocumentMetadata> getPMMLDocumentMetadata(final String fileUri) {
+        return promises.create((success, failure) -> {
+            dmnContentServiceCaller.call(
+                    (RemoteCallback<PMMLDocumentMetadata>) success::onInvoke,
+                    (message, throwable) -> {
+                        failure.onInvoke(new ClientRuntimeError(throwable));
+                        return false;
+                    }).loadPMMLDocumentMetadata(makePath(fileUri));
+        });
+    }
+
+    private Path makePath(final String fileUri) {
+        return PathFactory.newPath(".", fileUri);
     }
 
     private DMNContentService getContentServiceCaller(final Promise.PromiseExecutorCallbackFn.ResolveCallbackFn<String[]> success,

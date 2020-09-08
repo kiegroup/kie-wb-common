@@ -33,8 +33,10 @@ import org.guvnor.common.services.shared.metadata.model.Overview;
 import org.jboss.errai.bus.server.annotations.Service;
 import org.kie.workbench.common.dmn.api.DMNContentResource;
 import org.kie.workbench.common.dmn.api.DMNContentService;
+import org.kie.workbench.common.dmn.api.editors.included.PMMLDocumentMetadata;
 import org.kie.workbench.common.dmn.api.marshalling.DMNPathsHelper;
 import org.kie.workbench.common.dmn.backend.common.DMNIOHelper;
+import org.kie.workbench.common.dmn.backend.editors.common.PMMLIncludedDocumentFactory;
 import org.kie.workbench.common.services.backend.service.KieService;
 import org.kie.workbench.common.services.shared.project.KieModule;
 import org.kie.workbench.common.stunner.project.diagram.ProjectMetadata;
@@ -53,13 +55,17 @@ public class DMNContentServiceImpl extends KieService<String> implements DMNCont
 
     private final DMNPathsHelper pathsHelper;
 
+    private final PMMLIncludedDocumentFactory pmmlIncludedDocumentFactory;
+
     @Inject
     public DMNContentServiceImpl(final CommentedOptionFactory commentedOptionFactory,
                                  final DMNIOHelper dmnIOHelper,
-                                 final DMNPathsHelper pathsHelper) {
+                                 final DMNPathsHelper pathsHelper,
+                                 final PMMLIncludedDocumentFactory pmmlIncludedDocumentFactory) {
         this.commentedOptionFactory = commentedOptionFactory;
         this.dmnIOHelper = dmnIOHelper;
         this.pathsHelper = pathsHelper;
+        this.pmmlIncludedDocumentFactory = pmmlIncludedDocumentFactory;
     }
 
     @Override
@@ -108,6 +114,11 @@ public class DMNContentServiceImpl extends KieService<String> implements DMNCont
     @Override
     public List<Path> getPMMLModelsPaths(final WorkspaceProject workspaceProject) {
         return pathsHelper.getPMMLModelsPaths(workspaceProject);
+    }
+
+    @Override
+    public PMMLDocumentMetadata loadPMMLDocumentMetadata(final Path path) {
+        return pmmlIncludedDocumentFactory.getDocumentByPath(path);
     }
 
     @Override

@@ -21,6 +21,7 @@ import java.util.List;
 import org.guvnor.common.services.project.model.WorkspaceProject;
 import org.guvnor.common.services.shared.metadata.model.Metadata;
 import org.jboss.errai.bus.server.annotations.Remote;
+import org.kie.workbench.common.dmn.api.editors.included.PMMLDocumentMetadata;
 import org.uberfire.backend.vfs.Path;
 
 @Remote
@@ -74,4 +75,11 @@ public interface DMNContentService {
      * @return all PMML {@link Path}s from a given project.
      */
     List<Path> getPMMLModelsPaths(final WorkspaceProject workspaceProject);
+
+    /**
+     * This method loads a {@link PMMLDocumentMetadata} for a given path.
+     * @param path represents the path of the PMML model that will be loaded as a {@link PMMLDocumentMetadata}.
+     * @return the {@link PMMLDocumentMetadata} for a given path.
+     */
+    PMMLDocumentMetadata loadPMMLDocumentMetadata(final Path path);
 }

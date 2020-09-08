@@ -31,8 +31,10 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.dmn.api.DMNContentResource;
+import org.kie.workbench.common.dmn.api.editors.included.PMMLDocumentMetadata;
 import org.kie.workbench.common.dmn.api.marshalling.DMNPathsHelper;
 import org.kie.workbench.common.dmn.backend.common.DMNIOHelper;
+import org.kie.workbench.common.dmn.backend.editors.common.PMMLIncludedDocumentFactory;
 import org.kie.workbench.common.services.backend.service.KieServiceOverviewLoader;
 import org.kie.workbench.common.services.shared.project.KieModule;
 import org.kie.workbench.common.services.shared.project.KieModuleService;
@@ -64,6 +66,9 @@ public class DMNContentServiceImplTest {
     private DMNPathsHelper pathsHelper;
 
     @Mock
+    private PMMLIncludedDocumentFactory pmmlIncludedDocumentFactory;
+
+    @Mock
     private Path path;
 
     @Mock
@@ -91,7 +96,7 @@ public class DMNContentServiceImplTest {
     @Before
     public void setup() {
 
-        service = spy(new DMNContentServiceImpl(commentedOptionFactory, dmnIOHelper, pathsHelper) {{
+        service = spy(new DMNContentServiceImpl(commentedOptionFactory, dmnIOHelper, pathsHelper, pmmlIncludedDocumentFactory) {{
             this.moduleService = DMNContentServiceImplTest.this.moduleService;
             this.overviewLoader = DMNContentServiceImplTest.this.overviewLoader;
             this.ioService = DMNContentServiceImplTest.this.ioService;
@@ -225,5 +230,17 @@ public class DMNContentServiceImplTest {
         final String actualSource = service.getSource(path);
 
         assertEquals(expectedSource, actualSource);
+    }
+
+    @Test
+    public void testLoadPMMLDocumentMetadata() {
+
+        final PMMLDocumentMetadata expected = mock(PMMLDocumentMetadata.class);
+
+        when(pmmlIncludedDocumentFactory.getDocumentByPath(path)).thenReturn(expected);
+
+        final PMMLDocumentMetadata actual = service.loadPMMLDocumentMetadata(path);
+
+        assertEquals(expected, actual);
     }
 }
