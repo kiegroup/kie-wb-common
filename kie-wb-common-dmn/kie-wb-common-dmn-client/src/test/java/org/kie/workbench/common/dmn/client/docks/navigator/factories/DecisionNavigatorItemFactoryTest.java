@@ -16,6 +16,9 @@
 
 package org.kie.workbench.common.dmn.client.docks.navigator.factories;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.google.gwtmockito.GwtMockitoTestRunner;
 import org.junit.Before;
 import org.junit.Test;
@@ -23,6 +26,7 @@ import org.junit.runner.RunWith;
 import org.kie.workbench.common.dmn.api.definition.model.DMNDiagram;
 import org.kie.workbench.common.dmn.api.definition.model.DMNDiagramElement;
 import org.kie.workbench.common.dmn.api.definition.model.DecisionService;
+import org.kie.workbench.common.dmn.api.definition.model.Definitions;
 import org.kie.workbench.common.dmn.api.property.dmn.Id;
 import org.kie.workbench.common.dmn.api.property.dmn.Name;
 import org.kie.workbench.common.dmn.client.docks.navigator.DecisionNavigatorItem;
@@ -40,10 +44,13 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.uberfire.mocks.EventSourceMock;
 
+import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import static org.kie.workbench.common.dmn.client.docks.navigator.DecisionNavigatorItem.Type.DECISION_SERVICE;
 import static org.kie.workbench.common.dmn.client.docks.navigator.DecisionNavigatorItem.Type.ITEM;
 import static org.kie.workbench.common.dmn.client.docks.navigator.DecisionNavigatorItem.Type.ROOT;
@@ -179,17 +186,39 @@ public class DecisionNavigatorItemFactoryTest {
 
     @Test
     public void testGetOnRemove() {
-        final DMNDiagramElement dmnDiagramElement = mock(DMNDiagramElement.class);
-        final DMNDiagramElement drg = mock(DMNDiagramElement.class);
+
+        final DMNDiagramElement drgDiagramElement = new DMNDiagramElement();
+        final DMNDiagramElement drd1DiagramElement = new DMNDiagramElement();
+        final DMNDiagramElement drd2DiagramElement = new DMNDiagramElement();
+        final DMNDiagramElement drgElement = mock(DMNDiagramElement.class);
+        final Graph drgGraph = mock(Graph.class);
+        final Diagram drgDiagram = mock(Diagram.class);
         final DecisionNavigatorItem item = mock(DecisionNavigatorItem.class);
+        final Node node = mock(Node.class);
+        final Definition definition = mock(Definition.class);
+        final DMNDiagram dmnDiagram = mock(DMNDiagram.class);
+        final Definitions dmnDefinitions = mock(Definitions.class);
+        final List<DMNDiagramElement> diagramElements = new ArrayList<>(asList(drgDiagramElement, drd1DiagramElement, drd2DiagramElement));
+        final Iterable nodes = singletonList(node);
 
-        when(dmnDiagramsSession.getDRGDiagramElement()).thenReturn(drg);
+        when(dmnDiagramsSession.getDRGDiagramElement()).thenReturn(drgElement);
+        when(dmnDiagramsSession.getDRGDiagram()).thenReturn(drgDiagram);
+        when(drgDiagram.getGraph()).thenReturn(drgGraph);
+        when(drgGraph.nodes()).thenReturn(nodes);
+        when(node.getContent()).thenReturn(definition);
+        when(definition.getDefinition()).thenReturn(dmnDiagram);
+        when(dmnDiagram.getDefinitions()).thenReturn(dmnDefinitions);
+        when(dmnDefinitions.getDiagramElements()).thenReturn(diagramElements);
 
-        factory.getOnRemove(dmnDiagramElement).accept(item);
+        factory.getOnRemove(drd1DiagramElement).accept(item);
 
-        verify(dmnDiagramsSession).remove(dmnDiagramElement);
+        verify(dmnDiagramsSession).remove(drd1DiagramElement);
         verify(selectedEvent).fire(diagramSelectedArgumentCaptor.capture());
-        assertEquals(drg, diagramSelectedArgumentCaptor.getValue().getDiagramElement());
+        assertEquals(drgElement, diagramSelectedArgumentCaptor.getValue().getDiagramElement());
+        assertEquals(2, diagramElements.size());
+        assertTrue(diagramElements.contains(drgDiagramElement));
+        assertFalse(diagramElements.contains(drd1DiagramElement));
+        assertTrue(diagramElements.contains(drd2DiagramElement));
     }
 
     @Test

@@ -16,6 +16,7 @@
 
 package org.kie.workbench.common.dmn.client.docks.navigator.factories;
 
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
 
@@ -23,7 +24,9 @@ import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
+import org.kie.workbench.common.dmn.api.definition.model.DMNDiagram;
 import org.kie.workbench.common.dmn.api.definition.model.DMNDiagramElement;
+import org.kie.workbench.common.dmn.api.definition.model.Definitions;
 import org.kie.workbench.common.dmn.client.docks.navigator.DecisionNavigatorItem;
 import org.kie.workbench.common.dmn.client.docks.navigator.DecisionNavigatorItem.Type;
 import org.kie.workbench.common.dmn.client.docks.navigator.DecisionNavigatorItemBuilder;
@@ -111,9 +114,27 @@ public class DecisionNavigatorItemFactory {
 
     Consumer<DecisionNavigatorItem> getOnRemove(final DMNDiagramElement dmnDiagramElement) {
         return (item) -> {
-            dmnDiagramsSession.remove(dmnDiagramElement);
+            removeFromModel(dmnDiagramElement);
+            removeFromSession(dmnDiagramElement);
             selectedEvent.fire(new DMNDiagramSelected(dmnDiagramsSession.getDRGDiagramElement()));
         };
+    }
+
+    private void removeFromSession(final DMNDiagramElement dmnDiagramElement) {
+        dmnDiagramsSession.remove(dmnDiagramElement);
+    }
+
+    private void removeFromModel(final DMNDiagramElement dmnDiagramElement) {
+
+        final Graph graph = dmnDiagramsSession.getDRGDiagram().getGraph();
+        final Node<View<DMNDiagram>, ?> dmnDiagramRoot = (Node<View<DMNDiagram>, ?>) DMNGraphUtils.findDMNDiagramRoot(graph);
+        final Definitions definitions = ((DMNDiagram) DefinitionUtils.getElementDefinition(dmnDiagramRoot)).getDefinitions();
+
+        definitions.getDiagramElements().removeIf(e -> {
+            final String diagramId = e.getId().getValue();
+            final String removedDiagramId = dmnDiagramElement.getId().getValue();
+            return Objects.equals(diagramId, removedDiagramId);
+        });
     }
 
     public DecisionNavigatorItem makeSeparator(final String label) {
