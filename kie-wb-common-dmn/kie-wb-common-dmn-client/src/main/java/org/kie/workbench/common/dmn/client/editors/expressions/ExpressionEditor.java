@@ -27,6 +27,7 @@ import org.kie.workbench.common.dmn.api.definition.model.Definitions;
 import org.kie.workbench.common.dmn.api.property.dmn.Name;
 import org.kie.workbench.common.dmn.client.docks.navigator.DecisionNavigatorPresenter;
 import org.kie.workbench.common.dmn.client.docks.navigator.drds.DMNDiagramsSession;
+import org.kie.workbench.common.dmn.client.editors.drd.DRDNameChanger;
 import org.kie.workbench.common.dmn.client.editors.toolbar.ToolbarStateHandler;
 import org.kie.workbench.common.dmn.client.graph.DMNGraphUtils;
 import org.kie.workbench.common.dmn.client.session.DMNSession;
@@ -39,6 +40,8 @@ import org.uberfire.mvp.Command;
 public class ExpressionEditor implements ExpressionEditorView.Presenter {
 
     private DMNDiagramsSession dmnDiagramsSession;
+
+    private DRDNameChanger drdNameChanger;
 
     private ExpressionEditorView view;
 
@@ -59,6 +62,7 @@ public class ExpressionEditor implements ExpressionEditorView.Presenter {
             if (dmnDiagramsSession.isGlobalGraphSelected()) {
                 return extractReturnToLinkFromDefinitions();
             }
+            drdNameChanger.hideDRDNameChanger();
             return dmnDiagramsSession
                     .getCurrentDMNDiagramElement()
                     .map(DMNDiagramElement::getName)
@@ -83,11 +87,13 @@ public class ExpressionEditor implements ExpressionEditorView.Presenter {
     public ExpressionEditor(final ExpressionEditorView view,
                             final DecisionNavigatorPresenter decisionNavigator,
                             final DMNGraphUtils dmnGraphUtils,
-                            final DMNDiagramsSession dmnDiagramsSession) {
+                            final DMNDiagramsSession dmnDiagramsSession,
+                            final DRDNameChanger drdNameChanger) {
         this.view = view;
         this.decisionNavigator = decisionNavigator;
         this.dmnGraphUtils = dmnGraphUtils;
         this.dmnDiagramsSession = dmnDiagramsSession;
+        this.drdNameChanger = drdNameChanger;
 
         this.view.init(this);
     }
@@ -137,6 +143,9 @@ public class ExpressionEditor implements ExpressionEditorView.Presenter {
             toolbarStateHandler.ifPresent(ToolbarStateHandler::enterGraphView);
             command.execute();
             exitCommand = Optional.empty();
+            if (!dmnDiagramsSession.isGlobalGraphSelected()) {
+                drdNameChanger.showDRDNameChanger();
+            }
         });
     }
 

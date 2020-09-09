@@ -102,8 +102,14 @@ public abstract class DRGElement extends NamedElement implements DynamicReadOnly
         return dmnDiagramId;
     }
 
+    @Override
     public void setDiagramId(final String dmnDiagramId) {
         this.dmnDiagramId = dmnDiagramId;
+    }
+
+    @Override
+    public void setContentDefinitionId(final String contentDefinitionId) {
+        setId(new Id(contentDefinitionId));
     }
 
     protected boolean isReadonlyField(final String fieldName) {

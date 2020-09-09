@@ -24,6 +24,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.dmn.client.docks.navigator.DecisionNavigatorPresenter;
 import org.kie.workbench.common.dmn.client.docks.navigator.drds.DMNDiagramsSession;
+import org.kie.workbench.common.dmn.client.editors.drd.DRDNameChanger;
 import org.kie.workbench.common.dmn.client.graph.DMNGraphUtils;
 import org.kie.workbench.common.dmn.client.session.DMNSession;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
@@ -95,6 +96,9 @@ public class ExpressionEditorControlImplTest {
     @Mock
     private CanvasSelectionEvent event;
 
+    @Mock
+    private DRDNameChanger drdNameChanger;
+
     @Captor
     private ArgumentCaptor<CanvasDomainObjectListener> domainObjectListenerCaptor;
 
@@ -109,7 +113,8 @@ public class ExpressionEditorControlImplTest {
                                                            decisionNavigator,
                                                            dmnGraphUtils,
                                                            dmnDiagramsSession,
-                                                           canvasElementUpdatedEvent));
+                                                           canvasElementUpdatedEvent,
+                                                           drdNameChanger));
         doReturn(editor).when(control).makeExpressionEditor(any(ExpressionEditorView.class),
                                                             any(DecisionNavigatorPresenter.class),
                                                             any(DMNGraphUtils.class),

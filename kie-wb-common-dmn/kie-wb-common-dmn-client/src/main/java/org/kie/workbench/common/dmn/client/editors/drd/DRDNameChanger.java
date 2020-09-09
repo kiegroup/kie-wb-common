@@ -22,4 +22,8 @@ import org.kie.workbench.common.stunner.client.widgets.presenters.session.Sessio
 public interface DRDNameChanger extends IsElement {
 
     void setSessionPresenterView(SessionPresenter.View sessionPresenterView);
+
+    void showDRDNameChanger();
+
+    void hideDRDNameChanger();
 }

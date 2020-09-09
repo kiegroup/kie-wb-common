@@ -19,6 +19,7 @@ package org.kie.workbench.common.dmn.client.editors.drd;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Consumer;
 
 import com.google.gwtmockito.GwtMockitoTestRunner;
@@ -33,6 +34,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.dmn.api.definition.model.DMNDiagramElement;
 import org.kie.workbench.common.dmn.client.docks.navigator.drds.DMNDiagramTuple;
+import org.kie.workbench.common.dmn.client.docks.navigator.drds.DMNDiagramsSession;
 import org.kie.workbench.common.dmn.client.editors.contextmenu.ContextMenu;
 import org.kie.workbench.common.stunner.core.client.i18n.ClientTranslationService;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
@@ -83,9 +85,12 @@ public class DRDContextMenuTest {
     @Mock
     private HTMLBodyElement body;
 
+    @Mock
+    private DMNDiagramsSession dmnDiagramsSession;
+
     @Before
     public void setUp() {
-        drdContextMenu = new DRDContextMenu(contextMenu, translationService, drdContextMenuService);
+        drdContextMenu = new DRDContextMenu(contextMenu, translationService, drdContextMenuService, dmnDiagramsSession);
     }
 
     @Test
@@ -115,9 +120,12 @@ public class DRDContextMenuTest {
         final DMNDiagramTuple diagramTuple1 = new DMNDiagramTuple(mock(Diagram.class), new DMNDiagramElement());
         final DMNDiagramTuple diagramTuple2 = new DMNDiagramTuple(mock(Diagram.class), new DMNDiagramElement());
         final List<DMNDiagramTuple> diagrams = asList(diagramTuple1, diagramTuple2);
+        final DMNDiagramElement diagramElement = mock(DMNDiagramElement.class);
 
         when(translationService.getValue(anyString())).thenReturn(StringUtils.EMPTY);
         when(drdContextMenuService.getDiagrams()).thenReturn(diagrams);
+        when(dmnDiagramsSession.getDRGDiagramElement()).thenReturn(diagramElement);
+        when(dmnDiagramsSession.getCurrentDMNDiagramElement()).thenReturn(Optional.of(diagramElement));
 
         drdContextMenu.setDRDContextMenuHandler(contextMenu, Collections.singletonList(node));
 

@@ -194,6 +194,12 @@ public class TextAnnotation extends Artifact implements DMNViewDefinition<Genera
         return dmnDiagramId;
     }
 
+    @Override
+    public void setContentDefinitionId(final String contentDefinitionId) {
+        setId(new Id(contentDefinitionId));
+    }
+
+    @Override
     public void setDiagramId(final String dmnDiagramId) {
         this.dmnDiagramId = dmnDiagramId;
     }

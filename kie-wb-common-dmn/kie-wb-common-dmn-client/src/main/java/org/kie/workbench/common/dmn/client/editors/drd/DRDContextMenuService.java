@@ -18,6 +18,7 @@ package org.kie.workbench.common.dmn.client.editors.drd;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -25,8 +26,11 @@ import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
 import org.kie.workbench.common.dmn.api.DMNDefinitionSet;
+import org.kie.workbench.common.dmn.api.definition.HasName;
+import org.kie.workbench.common.dmn.api.definition.HasText;
 import org.kie.workbench.common.dmn.api.definition.model.DMNDiagramElement;
 import org.kie.workbench.common.dmn.api.graph.DMNDiagramUtils;
+import org.kie.workbench.common.dmn.client.commands.clone.DMNDeepCloneProcess;
 import org.kie.workbench.common.dmn.client.docks.navigator.drds.DMNDiagramSelected;
 import org.kie.workbench.common.dmn.client.docks.navigator.drds.DMNDiagramTuple;
 import org.kie.workbench.common.dmn.client.docks.navigator.drds.DMNDiagramsSession;
@@ -36,7 +40,14 @@ import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.kie.workbench.common.stunner.core.diagram.Metadata;
 import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Node;
+import org.kie.workbench.common.stunner.core.graph.content.Bound;
+import org.kie.workbench.common.stunner.core.graph.content.Bounds;
+import org.kie.workbench.common.stunner.core.graph.content.HasContentDefinitionId;
 import org.kie.workbench.common.stunner.core.graph.content.definition.Definition;
+import org.kie.workbench.common.stunner.core.graph.content.view.View;
+import org.kie.workbench.common.stunner.core.util.UUID;
+
+import static org.kie.workbench.common.stunner.core.definition.adapter.binding.BindableAdapterUtils.getDefinitionId;
 
 @ApplicationScoped
 public class DRDContextMenuService {
@@ -51,15 +62,19 @@ public class DRDContextMenuService {
 
     private final DMNDiagramUtils dmnDiagramUtils;
 
+    private final DMNDeepCloneProcess dmnDeepCloneProcess;
+
     @Inject
     public DRDContextMenuService(final DMNDiagramsSession dmnDiagramsSession,
                                  final FactoryManager factoryManager,
                                  final Event<DMNDiagramSelected> selectedEvent,
-                                 final DMNDiagramUtils dmnDiagramUtils) {
+                                 final DMNDiagramUtils dmnDiagramUtils,
+                                 final DMNDeepCloneProcess dmnDeepCloneProcess) {
         this.dmnDiagramsSession = dmnDiagramsSession;
         this.factoryManager = factoryManager;
         this.selectedEvent = selectedEvent;
         this.dmnDiagramUtils = dmnDiagramUtils;
+        this.dmnDeepCloneProcess = dmnDeepCloneProcess;
     }
 
     public List<DMNDiagramTuple> getDiagrams() {
@@ -67,12 +82,10 @@ public class DRDContextMenuService {
     }
 
     public void addToNewDRD(final Collection<Node<? extends Definition<?>, Edge>> selectedNodes) {
-
-        // TODO: https://issues.redhat.com/browse/KOGITO-2992
-        // This action must create a new DRD and add the selectedNodes into it. Currently, it just creates the DRD.
-
         final DMNDiagramElement dmnElement = makeDmnDiagramElement();
         final Diagram stunnerElement = buildStunnerElement(dmnElement);
+
+        selectedNodes.forEach(addNodesToDRD(dmnElement, stunnerElement));
 
         addDmnDiagramElementToDRG(dmnElement);
 
@@ -82,17 +95,71 @@ public class DRDContextMenuService {
 
     public void addToExistingDRD(final DMNDiagramTuple dmnDiagram,
                                  final Collection<Node<? extends Definition<?>, Edge>> selectedNodes) {
+        selectedNodes.forEach(addNodesToDRD(dmnDiagram.getDMNDiagram(), dmnDiagram.getStunnerDiagram()));
 
-        // TODO: https://issues.redhat.com/browse/KOGITO-2992
-        // This action must add the selectedNodes into the DRD.
+        selectedEvent.fire(new DMNDiagramSelected(dmnDiagram.getDMNDiagram()));
+    }
 
+    @SuppressWarnings("unchecked")
+    private Consumer<Node<? extends Definition<?>, Edge>> addNodesToDRD(final DMNDiagramElement dmnElement, final Diagram stunnerElement) {
+        return node -> {
+            final Definition<?> content = node.getContent();
+            final Object definition = ((View) content).getDefinition();
+            if (definition instanceof HasContentDefinitionId) {
+                stunnerElement
+                        .getGraph()
+                        .addNode(cloneNode(node, dmnElement));
+            }
+        };
+    }
+
+    @SuppressWarnings("unchecked")
+    private Node cloneNode(final Node nodeToClone, final DMNDiagramElement dmnElement) {
+        final View content = (View) nodeToClone.getContent();
+        final Bounds bounds = content.getBounds();
+        final Object definition = content.getDefinition();
+
+        final Node clonedNode = factoryManager.newElement(UUID.uuid(), getDefinitionId(definition.getClass())).asNode();
+        final View clonedContent = (View) clonedNode.getContent();
+        clonedContent.setDefinition(cloneDefinition(dmnElement, definition));
+        clonedContent.setBounds(cloneBounds(bounds));
+        return clonedNode;
+    }
+
+    private HasContentDefinitionId cloneDefinition(final DMNDiagramElement dmnElement, final Object definition) {
+        final HasContentDefinitionId originalDefinition = (HasContentDefinitionId) definition;
+        final HasContentDefinitionId clonedDefinition = dmnDeepCloneProcess.clone(originalDefinition);
+        clonedDefinition.setContentDefinitionId(originalDefinition.getContentDefinitionId());
+        clonedDefinition.setDiagramId(dmnElement.getId().getValue());
+
+        if (definition instanceof HasText && clonedDefinition instanceof HasText) {
+            HasText hasText = (HasText) definition;
+            ((HasText) clonedDefinition).setText(hasText.getText());
+        }
+
+        if (definition instanceof HasName && clonedDefinition instanceof HasName) {
+            HasName hasName = (HasName) definition;
+            ((HasName) clonedDefinition).setName(hasName.getValue());
+        }
+        return clonedDefinition;
+    }
+
+    private Bounds cloneBounds(final Bounds bounds) {
+        final Bound ul = bounds.getUpperLeft();
+        final Bound lr = bounds.getLowerRight();
+        return Bounds.create(ul.getX(), ul.getY(), lr.getX(), lr.getY());
     }
 
     public void removeFromCurrentDRD(final Collection<Node<? extends Definition<?>, Edge>> selectedNodes) {
+        final Diagram diagram = dmnDiagramsSession
+                .getCurrentDiagram()
+                .orElse(dmnDiagramsSession.getDRGDiagram());
 
-        // TODO: https://issues.redhat.com/browse/KOGITO-2992
-        // This action must remove the selectedNodes from the DRD.
+        selectedNodes.forEach(node -> diagram.getGraph().removeNode(node.getUUID()));
 
+        dmnDiagramsSession
+                .getCurrentDMNDiagramElement()
+                .ifPresent(dmnDiagramElement -> selectedEvent.fire(new DMNDiagramSelected(dmnDiagramElement)));
     }
 
     private void addDmnDiagramElementToDRG(final DMNDiagramElement dmnElement) {

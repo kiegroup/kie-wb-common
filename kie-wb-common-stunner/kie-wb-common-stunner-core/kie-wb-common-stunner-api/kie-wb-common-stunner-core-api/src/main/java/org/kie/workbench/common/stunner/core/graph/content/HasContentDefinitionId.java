@@ -21,4 +21,8 @@ public interface HasContentDefinitionId {
     String getContentDefinitionId();
 
     String getDiagramId();
+
+    void setContentDefinitionId(final String contentDefinitionId);
+
+    void setDiagramId(final String diagramId);
 }

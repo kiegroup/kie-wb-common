@@ -80,15 +80,25 @@ public class DRDNameChangerView implements DRDNameChanger {
         this.sessionPresenterView = sessionPresenterView;
     }
 
+    @Override
+    public void showDRDNameChanger() {
+        DOM.getElementById("drd-name-changer").getStyle().setDisplay(BLOCK);
+    }
+
+    @Override
+    public void hideDRDNameChanger() {
+        DOM.getElementById("drd-name-changer").getStyle().setDisplay(NONE);
+    }
+
     void onSettingCurrentDMNDiagramElement(final @Observes DMNDiagramSelected selected) {
         try {
             if (dmnDiagramsSession.isGlobalGraphSelected()) {
-                DOM.getElementById("drd-name-changer").getStyle().setDisplay(NONE);
+                hideDRDNameChanger();
             } else {
                 this.drdName.setText(selected.getDiagramElement().getName().getValue());
                 editMode.getStyle().setDisplay(NONE);
                 viewMode.getStyle().setDisplay(BLOCK);
-                DOM.getElementById("drd-name-changer").getStyle().setDisplay(BLOCK);
+                showDRDNameChanger();
                 sessionPresenterView.onResize();
             }
         } catch (final Exception e) {
@@ -98,7 +108,7 @@ public class DRDNameChangerView implements DRDNameChanger {
 
     @EventHandler("returnToDRG")
     void onClickReturnToDRG(final ClickEvent event) {
-        DOM.getElementById("drd-name-changer").getStyle().setDisplay(NONE);
+        hideDRDNameChanger();
         selectedEvent.fire(new DMNDiagramSelected(dmnDiagramsSession.getDRGDiagramElement()));
     }
 
