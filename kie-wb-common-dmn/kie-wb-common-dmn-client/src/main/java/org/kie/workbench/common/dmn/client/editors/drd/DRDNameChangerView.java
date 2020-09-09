@@ -16,6 +16,8 @@
 
 package org.kie.workbench.common.dmn.client.editors.drd;
 
+import java.util.Optional;
+
 import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
@@ -82,12 +84,12 @@ public class DRDNameChangerView implements DRDNameChanger {
 
     @Override
     public void showDRDNameChanger() {
-        DOM.getElementById("drd-name-changer").getStyle().setDisplay(BLOCK);
+        Optional.ofNullable(DOM.getElementById("drd-name-changer")).ifPresent(e -> e.getStyle().setDisplay(BLOCK));
     }
 
     @Override
     public void hideDRDNameChanger() {
-        DOM.getElementById("drd-name-changer").getStyle().setDisplay(NONE);
+        Optional.ofNullable(DOM.getElementById("drd-name-changer")).ifPresent(e -> e.getStyle().setDisplay(NONE));
     }
 
     void onSettingCurrentDMNDiagramElement(final @Observes DMNDiagramSelected selected) {
