@@ -54,6 +54,8 @@
   <inherits name="org.kie.workbench.common.stunner.bpmn.StunnerBpmnClient"/>
   <inherits name="org.kie.workbench.common.stunner.bpmn.StunnerBpmnMarshalling"/>
 
+  <inherits name="org.treblereel.gwt.jackson.Jackson"/>
+
   <!-- Only default locale support for kogito. -->
   <set-property name="locale" value="default"/>
 

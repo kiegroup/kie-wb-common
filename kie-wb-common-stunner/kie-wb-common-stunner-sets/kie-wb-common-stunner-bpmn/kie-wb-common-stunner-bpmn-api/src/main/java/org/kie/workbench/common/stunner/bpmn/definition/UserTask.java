@@ -16,7 +16,15 @@
 
 package org.kie.workbench.common.stunner.bpmn.definition;
 
+import java.util.List;
+
 import javax.validation.Valid;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementRef;
+import javax.xml.bind.annotation.XmlElementRefs;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 import org.jboss.errai.common.client.api.annotations.MapsTo;
 import org.jboss.errai.common.client.api.annotations.Portable;
@@ -25,6 +33,20 @@ import org.kie.workbench.common.forms.adf.definitions.annotations.FieldParam;
 import org.kie.workbench.common.forms.adf.definitions.annotations.FormDefinition;
 import org.kie.workbench.common.forms.adf.definitions.annotations.FormField;
 import org.kie.workbench.common.forms.adf.definitions.settings.FieldPolicy;
+import org.kie.workbench.common.stunner.bpmn.definition.dto.Data;
+import org.kie.workbench.common.stunner.bpmn.definition.dto.DataInput;
+import org.kie.workbench.common.stunner.bpmn.definition.dto.DataInputAssociation;
+import org.kie.workbench.common.stunner.bpmn.definition.dto.DataOutput;
+import org.kie.workbench.common.stunner.bpmn.definition.dto.DataOutputAssociation;
+import org.kie.workbench.common.stunner.bpmn.definition.dto.InputSet;
+import org.kie.workbench.common.stunner.bpmn.definition.dto.MultiInstanceLoopCharacteristics;
+import org.kie.workbench.common.stunner.bpmn.definition.dto.OutputSet;
+import org.kie.workbench.common.stunner.bpmn.definition.dto.PotentialOwner;
+import org.kie.workbench.common.stunner.bpmn.definition.dto.drools.ExtensionElement;
+import org.kie.workbench.common.stunner.bpmn.definition.dto.drools.Import;
+import org.kie.workbench.common.stunner.bpmn.definition.dto.drools.MetaData;
+import org.kie.workbench.common.stunner.bpmn.definition.dto.drools.OnEntryScript;
+import org.kie.workbench.common.stunner.bpmn.definition.dto.drools.OnExitScript;
 import org.kie.workbench.common.stunner.bpmn.definition.property.background.BackgroundSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dimensions.RectangleDimensionsSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.font.FontSet;
@@ -40,9 +62,10 @@ import org.kie.workbench.common.stunner.core.definition.annotation.Property;
 import org.kie.workbench.common.stunner.core.definition.annotation.morph.Morph;
 import org.kie.workbench.common.stunner.core.rule.annotation.CanDock;
 import org.kie.workbench.common.stunner.core.util.HashUtil;
+import org.treblereel.gwt.jackson.api.annotation.XmlUnwrappedCollection;
 
-import static org.kie.workbench.common.forms.adf.engine.shared.formGeneration.processing.fields.fieldInitializers.nestedForms.SubFormFieldInitializer.COLLAPSIBLE_CONTAINER;
-import static org.kie.workbench.common.forms.adf.engine.shared.formGeneration.processing.fields.fieldInitializers.nestedForms.SubFormFieldInitializer.FIELD_CONTAINER_PARAM;
+import static org.kie.workbench.common.forms.adf.engine.shared.formGeneration.processing.fields.fieldInitializers.nestedForms.AbstractEmbeddedFormsInitializer.COLLAPSIBLE_CONTAINER;
+import static org.kie.workbench.common.forms.adf.engine.shared.formGeneration.processing.fields.fieldInitializers.nestedForms.AbstractEmbeddedFormsInitializer.FIELD_CONTAINER_PARAM;
 
 @Portable
 @Bindable
@@ -54,6 +77,7 @@ import static org.kie.workbench.common.forms.adf.engine.shared.formGeneration.pr
         startElement = "general",
         defaultFieldSettings = {@FieldParam(name = FIELD_CONTAINER_PARAM, value = COLLAPSIBLE_CONTAINER)}
 )
+@XmlRootElement(name = "userTask", namespace = "http://www.omg.org/spec/BPMN/20100524/MODEL")
 public class UserTask extends BaseUserTask<UserTaskExecutionSet> {
 
     @Property
@@ -61,17 +85,49 @@ public class UserTask extends BaseUserTask<UserTaskExecutionSet> {
             afterElement = "general"
     )
     @Valid
+    @XmlTransient
     protected UserTaskExecutionSet executionSet;
+    @XmlAttribute
+    private String id;
+    @XmlAttribute
+    private String name;
+    private Documentation documentation;
+    @XmlElementRefs({
+            @XmlElementRef(name = "metaData", type = MetaData.class),
+            @XmlElementRef(name = "import", type = Import.class),
+            @XmlElementRef(name = "onEntry-script", type = OnEntryScript.class),
+            @XmlElementRef(name = "onExit-script", type = OnExitScript.class),
+    })
+    @XmlElement(name = "extensionElements", namespace = "http://www.omg.org/spec/BPMN/20100524/MODEL")
+    private List<ExtensionElement> extensionElements;
+    @XmlElementRefs({
+            @XmlElementRef(name = "dataInput", type = DataInput.class),
+            @XmlElementRef(name = "dataOutput", type = DataOutput.class),
+            @XmlElementRef(name = "inputSet", type = InputSet.class),
+            @XmlElementRef(name = "outputSet", type = OutputSet.class)
+    })
+    @XmlElement(name = "ioSpecification", namespace = "http://www.omg.org/spec/BPMN/20100524/MODEL")
+    private List<Data> ioSpecification;
+    @XmlElementRefs({
+            @XmlElementRef(name = "dataInputAssociation", type = DataInputAssociation.class),
+            @XmlElementRef(name = "dataOutputAssociation", type = DataOutputAssociation.class),
+            @XmlElementRef(name = "multiInstanceLoopCharacteristics", type = MultiInstanceLoopCharacteristics.class)
+    })
+    @XmlUnwrappedCollection
+    private List<BPMNProperty> bpmnProperties;
+
+    @XmlUnwrappedCollection
+    private List<PotentialOwner> potentialOwner;
 
     public UserTask() {
         this(new TaskGeneralSet(new Name("Task"),
-                                new Documentation("")),
-             new UserTaskExecutionSet(),
-             new BackgroundSet(),
-             new FontSet(),
-             new RectangleDimensionsSet(),
-             new SimulationSet(),
-             new TaskType(TaskTypes.USER));
+                new Documentation("")),
+                new UserTaskExecutionSet(),
+                new BackgroundSet(),
+                new FontSet(),
+                new RectangleDimensionsSet(),
+                new SimulationSet(),
+                new TaskType(TaskTypes.USER));
     }
 
     public UserTask(final @MapsTo("general") TaskGeneralSet general,
@@ -82,11 +138,11 @@ public class UserTask extends BaseUserTask<UserTaskExecutionSet> {
                     final @MapsTo("simulationSet") SimulationSet simulationSet,
                     final @MapsTo("taskType") TaskType taskType) {
         super(general,
-              backgroundSet,
-              fontSet,
-              dimensionsSet,
-              simulationSet,
-              taskType);
+                backgroundSet,
+                fontSet,
+                dimensionsSet,
+                simulationSet,
+                taskType);
         this.executionSet = executionSet;
     }
 
@@ -100,10 +156,26 @@ public class UserTask extends BaseUserTask<UserTaskExecutionSet> {
         this.executionSet = executionSet;
     }
 
+    public String getName() {
+        return general.getName().getValue();
+    }
+
+    public void setName(String name) {
+        general.getName().setValue(name);
+    }
+
+    public Documentation getDocumentation() {
+        return general.getDocumentation();
+    }
+
+    public void setDocumentation(Documentation documentation) {
+        general.setDocumentation(documentation);
+    }
+
     @Override
     public int hashCode() {
         return HashUtil.combineHashCodes(super.hashCode(),
-                                         executionSet.hashCode());
+                executionSet.hashCode());
     }
 
     @Override
@@ -114,5 +186,45 @@ public class UserTask extends BaseUserTask<UserTaskExecutionSet> {
                     executionSet.equals(other.executionSet);
         }
         return false;
+    }
+
+    public List<BPMNProperty> getBpmnProperties() {
+        return bpmnProperties;
+    }
+
+    public void setBpmnProperties(List<BPMNProperty> bpmnProperties) {
+        this.bpmnProperties = bpmnProperties;
+    }
+
+    public List<ExtensionElement> getExtensionElements() {
+        return extensionElements;
+    }
+
+    public void setExtensionElements(List<ExtensionElement> extensionElements) {
+        this.extensionElements = extensionElements;
+    }
+
+    public List<Data> getIoSpecification() {
+        return ioSpecification;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public void setIoSpecification(List<Data> ioSpecification) {
+        this.ioSpecification = ioSpecification;
+    }
+
+    public List<PotentialOwner> getPotentialOwner() {
+        return potentialOwner;
+    }
+
+    public void setPotentialOwner(List<PotentialOwner> potentialOwner) {
+        this.potentialOwner = potentialOwner;
     }
 }

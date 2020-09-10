@@ -16,9 +16,17 @@
 
 package org.kie.workbench.common.stunner.bpmn.definition.property.diagram;
 
+import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 import javax.validation.Valid;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementRef;
+import javax.xml.bind.annotation.XmlElementRefs;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 import org.jboss.errai.common.client.api.annotations.MapsTo;
 import org.jboss.errai.common.client.api.annotations.Portable;
@@ -30,6 +38,12 @@ import org.kie.workbench.common.forms.adf.definitions.annotations.field.selector
 import org.kie.workbench.common.forms.adf.definitions.settings.FieldPolicy;
 import org.kie.workbench.common.forms.fields.shared.fieldTypes.basic.selectors.listBox.type.ListBoxFieldType;
 import org.kie.workbench.common.forms.fields.shared.fieldTypes.basic.textArea.type.TextAreaFieldType;
+import org.kie.workbench.common.stunner.bpmn.definition.BPMNViewDefinition;
+import org.kie.workbench.common.stunner.bpmn.definition.UserTask;
+import org.kie.workbench.common.stunner.bpmn.definition.dto.drools.ExtensionElement;
+import org.kie.workbench.common.stunner.bpmn.definition.dto.drools.Global;
+import org.kie.workbench.common.stunner.bpmn.definition.dto.drools.Import;
+import org.kie.workbench.common.stunner.bpmn.definition.dto.drools.MetaData;
 import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.imports.Imports;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.Documentation;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.Name;
@@ -37,6 +51,7 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.general.SLADueD
 import org.kie.workbench.common.stunner.bpmn.forms.model.ImportsFieldType;
 import org.kie.workbench.common.stunner.core.definition.annotation.Property;
 import org.kie.workbench.common.stunner.core.util.HashUtil;
+import org.treblereel.gwt.jackson.api.annotation.XmlUnwrappedCollection;
 
 @Portable
 @Bindable
@@ -44,6 +59,7 @@ import org.kie.workbench.common.stunner.core.util.HashUtil;
         policy = FieldPolicy.ONLY_MARKED,
         startElement = "name"
 )
+@XmlRootElement(name = "process", namespace = "http://www.omg.org/spec/BPMN/20100524/MODEL")
 public class DiagramSet implements BaseDiagramSet {
 
     public static final String ADHOC = "adHoc";
@@ -73,6 +89,7 @@ public class DiagramSet implements BaseDiagramSet {
             afterElement = "id"
     )
     @Valid
+    @XmlAttribute(name = "drools:packageName")
     private Package packageProperty;
 
     @Property
@@ -93,6 +110,7 @@ public class DiagramSet implements BaseDiagramSet {
             afterElement = "processType"
     )
     @Valid
+    @XmlAttribute(name = "drools:version")
     private Version version;
 
     @Property
@@ -100,6 +118,7 @@ public class DiagramSet implements BaseDiagramSet {
             afterElement = "version"
     )
     @Valid
+    @XmlAttribute(name = "drools:adHoc")
     private AdHoc adHoc;
 
     @Property
@@ -107,6 +126,7 @@ public class DiagramSet implements BaseDiagramSet {
             afterElement = ADHOC
     )
     @Valid
+    @XmlTransient
     private ProcessInstanceDescription processInstanceDescription;
 
     @Property
@@ -115,30 +135,51 @@ public class DiagramSet implements BaseDiagramSet {
             type = ImportsFieldType.class
     )
     @Valid
+    @XmlTransient
     private Imports imports;
 
     @Property
     @FormField(
             afterElement = "imports"
     )
+    @XmlAttribute(name = "isExecutable")
     private Executable executable;
 
     @Property
     @FormField(afterElement = "executable")
+    @XmlTransient
     private SLADueDate slaDueDate;
+
+    @XmlElementRefs({
+            @XmlElementRef(name = "metaData", type = MetaData.class),
+            @XmlElementRef(name = "import", type = Import.class),
+            @XmlElementRef(name = "global", type = Global.class)
+    })
+    @XmlElement(name = "extensionElements", namespace = "http://www.omg.org/spec/BPMN/20100524/MODEL")
+    private Set<ExtensionElement> extensionElements;
+
+    @XmlUnwrappedCollection
+    @XmlElement(name = "property", namespace = "http://www.omg.org/spec/BPMN/20100524/MODEL")
+    private List<org.kie.workbench.common.stunner.bpmn.definition.dto.Property> properties;
+
+    @XmlElementRefs({
+            @XmlElementRef(name = "userTask", type = UserTask.class),
+    })
+    @XmlUnwrappedCollection
+    private List<BPMNViewDefinition> definitionList;
 
     public DiagramSet() {
         this(new Name(),
-             new Documentation(),
-             new Id(),
-             new Package(),
-             new ProcessType(),
-             new Version(),
-             new AdHoc(),
-             new ProcessInstanceDescription(),
-             new Imports(),
-             new Executable(),
-             new SLADueDate());
+                new Documentation(),
+                new Id(),
+                new Package(),
+                new ProcessType(),
+                new Version(),
+                new AdHoc(),
+                new ProcessInstanceDescription(),
+                new Imports(),
+                new Executable(),
+                new SLADueDate());
     }
 
     public DiagramSet(final @MapsTo("name") Name name,
@@ -167,16 +208,16 @@ public class DiagramSet implements BaseDiagramSet {
 
     public DiagramSet(final String name) {
         this(new Name(name),
-             new Documentation(),
-             new Id(),
-             new Package(),
-             new ProcessType(),
-             new Version(),
-             new AdHoc(),
-             new ProcessInstanceDescription(),
-             new Imports(),
-             new Executable(),
-             new SLADueDate());
+                new Documentation(),
+                new Id(),
+                new Package(),
+                new ProcessType(),
+                new Version(),
+                new AdHoc(),
+                new ProcessInstanceDescription(),
+                new Imports(),
+                new Executable(),
+                new SLADueDate());
     }
 
     @Override
@@ -207,6 +248,11 @@ public class DiagramSet implements BaseDiagramSet {
     }
 
     @Override
+    public AdHoc getAdHoc() {
+        return adHoc;
+    }
+
+    @Override
     public Package getPackageProperty() {
         return packageProperty;
     }
@@ -216,30 +262,17 @@ public class DiagramSet implements BaseDiagramSet {
     }
 
     @Override
+    public Version getVersion() {
+        return version;
+    }
+
+    @Override
     public ProcessType getProcessType() {
         return processType;
     }
 
     public void setProcessType(ProcessType processType) {
         this.processType = processType;
-    }
-
-    @Override
-    public Version getVersion() {
-        return version;
-    }
-
-    public void setVersion(final Version version) {
-        this.version = version;
-    }
-
-    @Override
-    public AdHoc getAdHoc() {
-        return adHoc;
-    }
-
-    public void setAdHoc(final AdHoc adHoc) {
-        this.adHoc = adHoc;
     }
 
     @Override
@@ -278,19 +311,52 @@ public class DiagramSet implements BaseDiagramSet {
         this.slaDueDate = slaDueDate;
     }
 
+    public void setVersion(final Version version) {
+        this.version = version;
+    }
+
+    public void setAdHoc(final AdHoc adHoc) {
+        this.adHoc = adHoc;
+    }
+
+    public List<org.kie.workbench.common.stunner.bpmn.definition.dto.Property> getProperties() {
+        return properties;
+    }
+
+    public void setProperties(List<org.kie.workbench.common.stunner.bpmn.definition.dto.Property> properties) {
+        this.properties = properties;
+    }
+
+
+    public List<BPMNViewDefinition> getDefinitionList() {
+        return definitionList;
+    }
+
+    public void setDefinitionList(List<BPMNViewDefinition> definitionList) {
+        this.definitionList = definitionList;
+    }
+
+    public Set<ExtensionElement> getExtensionElements() {
+        return extensionElements;
+    }
+
+    public void setExtensionElements(Set<ExtensionElement> extensionElements) {
+        this.extensionElements = extensionElements;
+    }
+
     @Override
     public int hashCode() {
         return HashUtil.combineHashCodes(Objects.hashCode(name),
-                                         Objects.hashCode(documentation),
-                                         Objects.hashCode(id),
-                                         Objects.hashCode(packageProperty),
-                                         Objects.hashCode(processType),
-                                         Objects.hashCode(version),
-                                         Objects.hashCode(adHoc),
-                                         Objects.hashCode(processInstanceDescription),
-                                         Objects.hashCode(imports),
-                                         Objects.hashCode(executable),
-                                         Objects.hashCode(slaDueDate));
+                Objects.hashCode(documentation),
+                Objects.hashCode(id),
+                Objects.hashCode(packageProperty),
+                Objects.hashCode(processType),
+                Objects.hashCode(version),
+                Objects.hashCode(adHoc),
+                Objects.hashCode(processInstanceDescription),
+                Objects.hashCode(imports),
+                Objects.hashCode(executable),
+                Objects.hashCode(slaDueDate));
     }
 
     @Override

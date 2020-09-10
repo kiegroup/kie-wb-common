@@ -36,6 +36,7 @@
       <!-- Version 2.0.1.Final which is coming from kie-parent is not compatible with appformer validation components -->
     <version.javax.validation>1.0.0.GA</version.javax.validation>
     <spotbugs.failOnViolation>true</spotbugs.failOnViolation>
+    <version.xml.marshalling>0.1-SNAPSHOT</version.xml.marshalling>
     <checkstyle.header.template><![CDATA[
 ^\/\*$\n^
 \* Copyright \d\d\d\d Red Hat, Inc\. and\/or its affiliates\.$\n^
@@ -131,6 +132,28 @@
         <type>pom</type>
         <scope>import</scope>
       </dependency>
+
+      <dependency>
+        <groupId>org.treblereel.gwt.jackson</groupId>
+        <artifactId>gwt-backend</artifactId>
+        <version>${version.xml.marshalling}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.treblereel.gwt.jackson</groupId>
+        <artifactId>jre-backend</artifactId>
+        <version>${version.xml.marshalling}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.treblereel.gwt.jackson</groupId>
+        <artifactId>api</artifactId>
+        <version>${version.xml.marshalling}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.treblereel.gwt.jackson</groupId>
+        <artifactId>processor</artifactId>
+        <version>${version.xml.marshalling}</version>
+      </dependency>
+
     </dependencies>
   </dependencyManagement>
 
@@ -229,6 +252,15 @@
             </goals>
           </execution>
         </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <classpathDependencyExcludes>
+            <classpathDependencyExclude>org.treblereel.gwt.jackson:gwt-backend</classpathDependencyExclude>
+          </classpathDependencyExcludes>
+        </configuration>
       </plugin>
     </plugins>
 

@@ -27,15 +27,22 @@ import org.kie.workbench.common.forms.adf.definitions.annotations.metaModel.Fiel
 import org.kie.workbench.common.forms.adf.definitions.annotations.metaModel.FieldValue;
 import org.kie.workbench.common.forms.adf.definitions.annotations.metaModel.I18nMode;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNProperty;
+import org.kie.workbench.common.stunner.bpmn.definition.dto.handler.NameDemarshaller;
+import org.kie.workbench.common.stunner.bpmn.definition.dto.handler.NameMarshaller;
 import org.kie.workbench.common.stunner.core.definition.annotation.Property;
 import org.kie.workbench.common.stunner.core.definition.annotation.property.Value;
 import org.kie.workbench.common.stunner.core.definition.property.PropertyMetaTypes;
 import org.kie.workbench.common.stunner.core.util.HashUtil;
+import org.treblereel.gwt.jackson.api.annotation.XmlTypeAdapter;
 
 @Portable
 @Bindable
 @FieldDefinition(i18nMode = I18nMode.OVERRIDE_I18N_KEY)
 @Property(meta = PropertyMetaTypes.NAME)
+@XmlTypeAdapter(
+        serializer = NameMarshaller.class,
+        deserializer = NameDemarshaller.class,
+        isAttribute = true)
 public class Name implements BPMNProperty {
 
     @Value

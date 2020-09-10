@@ -27,7 +27,11 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
 import com.google.gwt.user.client.ui.IsWidget;
+import elemental2.dom.DomGlobal;
 import elemental2.promise.Promise;
+import jsinterop.annotations.JsFunction;
+import jsinterop.base.Js;
+import org.jboss.errai.ioc.client.api.AfterInitialization;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.kie.workbench.common.kogito.client.editor.MultiPageEditorContainerView;
 import org.kie.workbench.common.stunner.client.widgets.presenters.Viewer;
@@ -49,6 +53,7 @@ import org.kie.workbench.common.stunner.core.client.session.impl.EditorSession;
 import org.kie.workbench.common.stunner.core.client.session.impl.ViewerSession;
 import org.kie.workbench.common.stunner.core.client.validation.canvas.CanvasDiagramValidator;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
+import org.kie.workbench.common.stunner.core.diagram.DiagramImpl;
 import org.kie.workbench.common.stunner.core.diagram.Metadata;
 import org.kie.workbench.common.stunner.core.documentation.DocumentationView;
 import org.kie.workbench.common.stunner.core.rule.RuleViolation;
@@ -59,6 +64,8 @@ import org.kie.workbench.common.stunner.forms.client.widgets.FormsFlushManager;
 import org.kie.workbench.common.stunner.kogito.client.docks.DiagramEditorPreviewAndExplorerDock;
 import org.kie.workbench.common.stunner.kogito.client.docks.DiagramEditorPropertiesDock;
 import org.kie.workbench.common.stunner.kogito.client.editor.event.OnDiagramFocusEvent;
+import org.kie.workbench.common.stunner.kogito.client.marshalling.fromstunner.DiagramToXmlFactory;
+import org.kie.workbench.common.stunner.kogito.client.marshalling.tostunner.XmlToDiagramFactory;
 import org.kie.workbench.common.stunner.kogito.client.menus.BPMNStandaloneEditorMenuSessionItems;
 import org.kie.workbench.common.stunner.kogito.client.perspectives.AuthoringPerspective;
 import org.kie.workbench.common.stunner.kogito.client.service.AbstractKogitoClientDiagramService;
@@ -165,6 +172,12 @@ public class BPMNDiagramEditor extends AbstractDiagramEditor {
         superDoStartUp(place);
         initDocks();
         getWidget().init(this);
+    }
+
+    @AfterInitialization
+    public void initMarshalling() {
+        Js.asPropertyMap(DomGlobal.window).set("serialize", (Serialize) () -> getXML());
+        Js.asPropertyMap(DomGlobal.window).set("deserialize", (Deserialize) xml -> setXML(xml));
     }
 
     void superDoStartUp(final PlaceRequest place) {
@@ -379,5 +392,65 @@ public class BPMNDiagramEditor extends AbstractDiagramEditor {
             ClientSession session = getSessionPresenter().getInstance();
             formsFlushManager.flush(session, formElementUUID);
         }
+    }
+
+    private DiagramImpl convert(final Diagram diagram) {
+        return new DiagramImpl(diagram.getName(),
+                               diagram.getGraph(),
+                               diagram.getMetadata());
+    }
+
+    private String getXML() {
+       flush();
+       validateDiagram(getCanvasHandler());
+       return new DiagramToXmlFactory(convert(getEditor()
+                                 .getEditorProxy()
+                                 .getContentSupplier()
+                                 .get()
+                                 .projectDiagram()
+                                 .get())).toXml();
+    }
+        private Promise setXML(String xml) {
+            Promise<Void> promise =
+                promises.create((success, failure) -> {
+                    superOnClose();
+                    diagramServices.transform("default",
+                           "",
+                           new ServiceCallback<Diagram>() {
+                           @Override
+                           public void onSuccess(final Diagram diagram) {
+                              new XmlToDiagramFactory(xml, diagram).process();
+                              getEditor().open(diagram,
+                                      new Viewer.Callback() {
+                                      @Override
+                                      public void onSuccess() {
+                                          success.onInvoke((Void) null);
+                                      }
+                                      @Override
+                                      public void onError(ClientRuntimeError error) {
+                                          BPMNDiagramEditor.this.getEditor().onLoadError(error);
+                                          failure.onInvoke(error);
+                                      }
+                              });
+                           }
+                           @Override
+                           public void onError(final ClientRuntimeError error) {
+                               BPMNDiagramEditor.this.getEditor().onLoadError(error);
+                               failure.onInvoke(error);
+                           }
+                    });
+                });
+                return promise;
+            }
+    @FunctionalInterface
+    @JsFunction
+    public interface Serialize {
+        String onInvoke();
+    }
+
+    @FunctionalInterface
+    @JsFunction
+    public interface Deserialize {
+        void onInvoke(String xml);
     }
 }

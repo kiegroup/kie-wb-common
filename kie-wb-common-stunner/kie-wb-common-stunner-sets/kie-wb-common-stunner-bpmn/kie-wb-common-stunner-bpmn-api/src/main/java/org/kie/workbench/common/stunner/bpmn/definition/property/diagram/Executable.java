@@ -22,13 +22,20 @@ import org.kie.workbench.common.forms.adf.definitions.annotations.metaModel.Fiel
 import org.kie.workbench.common.forms.adf.definitions.annotations.metaModel.FieldValue;
 import org.kie.workbench.common.forms.adf.definitions.annotations.metaModel.I18nMode;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNProperty;
+import org.kie.workbench.common.stunner.bpmn.definition.dto.handler.ExecutableDemarshaller;
+import org.kie.workbench.common.stunner.bpmn.definition.dto.handler.ExecutableMarshaller;
 import org.kie.workbench.common.stunner.core.definition.annotation.Property;
 import org.kie.workbench.common.stunner.core.definition.annotation.property.Value;
+import org.treblereel.gwt.jackson.api.annotation.XmlTypeAdapter;
 
 @Portable
 @Bindable
 @Property
 @FieldDefinition(i18nMode = I18nMode.OVERRIDE_I18N_KEY)
+@XmlTypeAdapter(
+        serializer = ExecutableMarshaller.class,
+        deserializer = ExecutableDemarshaller.class,
+        isAttribute = true)
 public class Executable implements BPMNProperty {
 
     @Value

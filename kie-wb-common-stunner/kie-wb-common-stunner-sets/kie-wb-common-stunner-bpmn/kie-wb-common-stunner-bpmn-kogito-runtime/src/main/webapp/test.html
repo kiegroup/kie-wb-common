@@ -25,6 +25,14 @@
             var path = "somePath";
             window.frames.editorFrame.contentWindow.gwtEditorBeans.get("BPMNDiagramEditor").get().setContent(path, diagram);
             document.getElementById("download_btn").disabled = false;
+            document.getElementById("download_btn2").disabled = false;
+        }
+
+        function loadDiagram2(diagram) {
+            var path = "somePath";
+            window.frames.editorFrame.contentWindow.deserialize(diagram)
+            document.getElementById("download_btn").disabled = false;
+            document.getElementById("download_btn2").disabled = false;
         }
 
         function download() {
@@ -42,6 +50,10 @@
                 );
         }
 
+        function download2() {
+            asFile(window.frames.editorFrame.contentWindow.serialize())
+        }
+
         var openFile = function (event) {
             var input = event.target;
             var reader = new FileReader();
@@ -52,6 +64,29 @@
 
             reader.readAsText(input.files[0]);
         };
+
+        var openFile2 = function (event) {
+            var input = event.target;
+            var reader = new FileReader();
+            reader.onload = function () {
+                var diagram = reader.result;
+                loadDiagram2(diagram)
+            };
+
+            reader.readAsText(input.files[0]);
+        };
+
+        function  asFile(process) {
+            var d = document.createElement('a');
+            d.setAttribute('href', 'data:text/xml;charset=utf-8,' + encodeURIComponent(process));
+            d.setAttribute('download', "process.bpmn");
+            d.style.display = 'none';
+
+            document.body.appendChild(d);
+            d.click();
+            document.body.removeChild(d);
+        }
+
     </script>
 
 </head>
@@ -64,6 +99,11 @@
     <input type="file" onchange="openFile(event)" value="Choose BPMN2 file" accept="bpmn,bpmn2,txt"/>
     When you are ready you can
     <input type="button" id="download_btn" value="Download the process" onclick="download()" disabled/>
+    <input type="button" id="download_btn2" value="Download the process using Next step marshalling" style="background-color: darksalmon;" onclick="download2()" disabled/>
+
+    <button onclick="document.getElementById('fileUpload').click()" style="background-color: darksalmon;">load the process using Next step demarshalling</button>
+    <input type="file" id="fileUpload" name="files" style="display:none" onchange="openFile2(event)" accept="bpmn,bpmn2,txt"/ />
+
 </div>
 
 <iframe id="editorFrame" src="index.html" width="100%" height="880px" frameBorder="0" scrolling="no"></iframe>

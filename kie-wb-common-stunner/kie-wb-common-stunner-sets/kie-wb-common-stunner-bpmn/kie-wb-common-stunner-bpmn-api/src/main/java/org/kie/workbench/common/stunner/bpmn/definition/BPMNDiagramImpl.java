@@ -18,6 +18,9 @@ package org.kie.workbench.common.stunner.bpmn.definition;
 import java.util.Set;
 
 import javax.validation.Valid;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 import org.jboss.errai.common.client.api.annotations.MapsTo;
 import org.jboss.errai.common.client.api.annotations.Portable;
@@ -27,6 +30,7 @@ import org.kie.workbench.common.forms.adf.definitions.annotations.FieldParam;
 import org.kie.workbench.common.forms.adf.definitions.annotations.FormDefinition;
 import org.kie.workbench.common.forms.adf.definitions.annotations.FormField;
 import org.kie.workbench.common.forms.adf.definitions.settings.FieldPolicy;
+import org.kie.workbench.common.stunner.bpmn.definition.dto.bpmndi.BPMNPlane;
 import org.kie.workbench.common.stunner.bpmn.definition.property.background.BackgroundSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.cm.CaseManagementSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.DiagramSet;
@@ -40,6 +44,7 @@ import org.kie.workbench.common.stunner.core.definition.annotation.definition.Ca
 import org.kie.workbench.common.stunner.core.definition.annotation.definition.Labels;
 import org.kie.workbench.common.stunner.core.rule.annotation.CanContain;
 import org.kie.workbench.common.stunner.core.util.HashUtil;
+import org.treblereel.gwt.jackson.api.annotation.XMLMapper;
 
 import static org.kie.workbench.common.forms.adf.engine.shared.formGeneration.processing.fields.fieldInitializers.nestedForms.SubFormFieldInitializer.COLLAPSIBLE_CONTAINER;
 import static org.kie.workbench.common.forms.adf.engine.shared.formGeneration.processing.fields.fieldInitializers.nestedForms.SubFormFieldInitializer.FIELD_CONTAINER_PARAM;
@@ -53,6 +58,8 @@ import static org.kie.workbench.common.forms.adf.engine.shared.formGeneration.pr
         policy = FieldPolicy.ONLY_MARKED,
         defaultFieldSettings = {@FieldParam(name = FIELD_CONTAINER_PARAM, value = COLLAPSIBLE_CONTAINER)}
 )
+@XMLMapper
+@XmlRootElement(name = "BPMNDiagram", namespace = "http://www.omg.org/spec/BPMN/20100524/DI")
 public class BPMNDiagramImpl implements BPMNDiagram<DiagramSet, ProcessData, AdvancedData> {
 
     @Category
@@ -65,6 +72,7 @@ public class BPMNDiagramImpl implements BPMNDiagram<DiagramSet, ProcessData, Adv
     @Property
     @FormField
     @Valid
+    @XmlTransient
     private DiagramSet diagramSet;
 
     @Property
@@ -72,6 +80,7 @@ public class BPMNDiagramImpl implements BPMNDiagram<DiagramSet, ProcessData, Adv
             afterElement = DIAGRAM_SET
     )
     @Valid
+    @XmlTransient
     protected ProcessData processData;
 
     @Property
@@ -79,21 +88,26 @@ public class BPMNDiagramImpl implements BPMNDiagram<DiagramSet, ProcessData, Adv
             afterElement = PROCESS_DATA
     )
     @Valid
+    @XmlTransient
     protected AdvancedData advancedData;
 
     @Property
     @FormField(
             afterElement = ADVANCED_DATA
     )
+    @XmlTransient
     protected CaseManagementSet caseManagementSet;
 
     @Property
+    @XmlTransient
     private BackgroundSet backgroundSet;
 
     @Property
+    @XmlTransient
     private FontSet fontSet;
 
     @Property
+    @XmlTransient
     protected RectangleDimensionsSet dimensionsSet;
 
     @Labels
@@ -104,6 +118,9 @@ public class BPMNDiagramImpl implements BPMNDiagram<DiagramSet, ProcessData, Adv
 
     public static final Double WIDTH = 950d;
     public static final Double HEIGHT = 950d;
+
+    @XmlElement(name = "BPMNPlane")
+    private BPMNPlane plane;
 
     public BPMNDiagramImpl() {
         this(new DiagramSet(),
@@ -237,5 +254,13 @@ public class BPMNDiagramImpl implements BPMNDiagram<DiagramSet, ProcessData, Adv
                     advancedData.equals(other.advancedData);
         }
         return false;
+    }
+
+    public BPMNPlane getPlane() {
+        return plane;
+    }
+
+    public void setPlane(BPMNPlane plane) {
+        this.plane = plane;
     }
 }

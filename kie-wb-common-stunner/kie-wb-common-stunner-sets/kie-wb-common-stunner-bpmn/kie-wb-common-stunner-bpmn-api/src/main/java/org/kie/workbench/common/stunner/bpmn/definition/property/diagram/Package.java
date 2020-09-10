@@ -26,14 +26,21 @@ import org.jboss.errai.databinding.client.api.Bindable;
 import org.kie.workbench.common.forms.adf.definitions.annotations.metaModel.FieldDefinition;
 import org.kie.workbench.common.forms.adf.definitions.annotations.metaModel.FieldValue;
 import org.kie.workbench.common.forms.adf.definitions.annotations.metaModel.I18nMode;
+import org.kie.workbench.common.stunner.bpmn.definition.dto.handler.PackageDemarshaller;
+import org.kie.workbench.common.stunner.bpmn.definition.dto.handler.PackageMarshaller;
 import org.kie.workbench.common.stunner.core.definition.annotation.Property;
 import org.kie.workbench.common.stunner.core.definition.annotation.property.Value;
 import org.kie.workbench.common.stunner.core.util.HashUtil;
+import org.treblereel.gwt.jackson.api.annotation.XmlTypeAdapter;
 
 @Portable
 @Bindable
 @Property
 @FieldDefinition(i18nMode = I18nMode.OVERRIDE_I18N_KEY)
+@XmlTypeAdapter(
+        serializer = PackageMarshaller.class,
+        deserializer = PackageDemarshaller.class,
+        isAttribute = true)
 public class Package implements BasePackage {
 
     public static final String DEFAULT_PACKAGE = "org.jbpm";
