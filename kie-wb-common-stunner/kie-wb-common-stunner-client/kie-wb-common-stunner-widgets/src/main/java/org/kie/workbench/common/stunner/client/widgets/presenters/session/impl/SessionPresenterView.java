@@ -51,6 +51,8 @@ import org.kie.workbench.common.stunner.core.client.canvas.event.selection.Canva
 import org.kie.workbench.common.stunner.core.client.components.palette.PaletteDefinition;
 import org.uberfire.client.workbench.widgets.listbar.ResizeFlowPanel;
 
+import static com.google.gwt.dom.client.Style.Display.BLOCK;
+import static com.google.gwt.dom.client.Style.Display.NONE;
 import static org.kie.workbench.common.stunner.client.widgets.resources.i18n.StunnerWidgetsConstants.SessionPresenterView_Error;
 import static org.kie.workbench.common.stunner.client.widgets.resources.i18n.StunnerWidgetsConstants.SessionPresenterView_Info;
 import static org.kie.workbench.common.stunner.client.widgets.resources.i18n.StunnerWidgetsConstants.SessionPresenterView_Warning;
@@ -98,6 +100,7 @@ public class SessionPresenterView extends Composite
     private double paletteInitialLeft;
     private double headerInitialTop;
     private double headerInitialLeft;
+    private double sessionHeaderHeight;
     private HandlerRegistration handlerRegistration;
     private final AtomicBoolean notifying = new AtomicBoolean(false);
 
@@ -135,8 +138,6 @@ public class SessionPresenterView extends Composite
 
     @EventHandler("sessionContainer")
     protected void onScroll(@ForEvent("scroll") ScrollEvent e) {
-        final int sessionHeaderHeight = sessionHeaderContainer.getElement().getOffsetHeight();
-
         // on the editor scroll recalculate palette and header positions to be fixed on the screen
         palettePanel.getElement().getStyle().setTop(paletteInitialTop + e.getRelativeElement().getScrollTop() + sessionHeaderHeight,
                                                     Style.Unit.PX);
@@ -232,6 +233,20 @@ public class SessionPresenterView extends Composite
     }
 
     @Override
+    public void showSessionHeaderContainer(final int sessionHeaderHeight) {
+        this.sessionHeaderHeight = sessionHeaderHeight;
+        sessionHeaderContainer.getElement().getStyle().setDisplay(BLOCK);
+        onResize();
+    }
+
+    @Override
+    public void hideSessionHeaderContainer() {
+        this.sessionHeaderHeight = 0;
+        sessionHeaderContainer.getElement().getStyle().setDisplay(NONE);
+        onResize();
+    }
+
+    @Override
     public SessionPresenter.View showWarning(final String message) {
         singleNotify(() -> {
             getSettings().setType(kieNotificationCssClass(NotifyType.WARNING));
@@ -283,8 +298,6 @@ public class SessionPresenterView extends Composite
 
     @Override
     public void onResize() {
-        final int sessionHeaderHeight = sessionHeaderContainer.getElement().getOffsetHeight();
-
         palettePanel.getElement().getStyle().setTop(paletteInitialTop + sessionContainer.getElement().getScrollTop() + sessionHeaderHeight,
                                                     Style.Unit.PX);
         palettePanel.getElement().getStyle().setLeft(paletteInitialLeft + sessionContainer.getElement().getScrollLeft(),

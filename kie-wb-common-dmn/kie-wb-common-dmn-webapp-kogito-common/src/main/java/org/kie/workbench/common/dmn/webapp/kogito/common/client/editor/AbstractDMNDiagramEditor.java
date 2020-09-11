@@ -225,7 +225,6 @@ public abstract class AbstractDMNDiagramEditor extends AbstractDiagramEditor {
         }
         setupEditorSearchIndex();
         setupSearchComponent();
-        setupSessionHeaderContainer();
     }
 
     private void setupSessionHeaderContainer() {
@@ -276,7 +275,18 @@ public abstract class AbstractDMNDiagramEditor extends AbstractDiagramEditor {
                      final Viewer.Callback callback) {
         this.layoutHelper.applyLayout(diagram, openDiagramLayoutExecutor);
         feelInitializer.initializeFEELEditor();
-        super.open(diagram, callback);
+        super.open(diagram, new Viewer.Callback() {
+            @Override
+            public void onSuccess() {
+                setupSessionHeaderContainer();
+                callback.onSuccess();
+            }
+
+            @Override
+            public void onError(ClientRuntimeError error) {
+                callback.onError(error);
+            }
+        });
     }
 
     @OnOpen

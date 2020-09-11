@@ -109,7 +109,7 @@ public class DRDNameChangerViewTest {
 
         drdNameChangerView.onSettingCurrentDMNDiagramElement(dmnDiagramSelected);
 
-        verify(dmnDiagramsSession, times(1)).isGlobalGraphSelected();
+        verify(dmnDiagramsSession, times(2)).isGlobalGraphSelected();
     }
 
     @Test
@@ -120,8 +120,7 @@ public class DRDNameChangerViewTest {
 
         drdNameChangerView.onSettingCurrentDMNDiagramElement(dmnDiagramSelected);
 
-        verify(dmnDiagramsSession, times(1)).isGlobalGraphSelected();
-        verify(sessionPresenterView, times(1)).onResize();
+        verify(dmnDiagramsSession, times(2)).isGlobalGraphSelected();
     }
 
     @Test

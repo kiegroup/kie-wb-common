@@ -16,8 +16,7 @@
 
 package org.kie.workbench.common.dmn.client.editors.drd;
 
-import java.util.Optional;
-
+import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
@@ -28,8 +27,6 @@ import com.google.gwt.dom.client.InputElement;
 import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.KeyDownEvent;
-import com.google.gwt.user.client.DOM;
-import elemental2.dom.DomGlobal;
 import elemental2.dom.HTMLAnchorElement;
 import org.gwtbootstrap3.client.ui.html.Span;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
@@ -44,8 +41,10 @@ import static com.google.gwt.dom.client.Style.Display.BLOCK;
 import static com.google.gwt.dom.client.Style.Display.NONE;
 
 @Templated
-@Dependent
+@ApplicationScoped
 public class DRDNameChangerView implements DRDNameChanger {
+
+    private static final int SESSION_HEADER_HEIGHT = 50;
 
     private final DMNDiagramsSession dmnDiagramsSession;
     private final Event<DMNDiagramSelected> selectedEvent;
@@ -80,31 +79,31 @@ public class DRDNameChangerView implements DRDNameChanger {
     @Override
     public void setSessionPresenterView(SessionPresenter.View sessionPresenterView) {
         this.sessionPresenterView = sessionPresenterView;
+        if (dmnDiagramsSession.isGlobalGraphSelected()) {
+            hideDRDNameChanger();
+        } else {
+            showDRDNameChanger();
+        }
     }
 
     @Override
     public void showDRDNameChanger() {
-        Optional.ofNullable(DOM.getElementById("drd-name-changer")).ifPresent(e -> e.getStyle().setDisplay(BLOCK));
+        sessionPresenterView.showSessionHeaderContainer(SESSION_HEADER_HEIGHT);
     }
 
     @Override
     public void hideDRDNameChanger() {
-        Optional.ofNullable(DOM.getElementById("drd-name-changer")).ifPresent(e -> e.getStyle().setDisplay(NONE));
+        sessionPresenterView.hideSessionHeaderContainer();
     }
 
     void onSettingCurrentDMNDiagramElement(final @Observes DMNDiagramSelected selected) {
-        try {
-            if (dmnDiagramsSession.isGlobalGraphSelected()) {
-                hideDRDNameChanger();
-            } else {
-                this.drdName.setText(selected.getDiagramElement().getName().getValue());
-                editMode.getStyle().setDisplay(NONE);
-                viewMode.getStyle().setDisplay(BLOCK);
-                showDRDNameChanger();
-                sessionPresenterView.onResize();
-            }
-        } catch (final Exception e) {
-            DomGlobal.console.error("[Error] DRDNameChangerView");
+        if (dmnDiagramsSession.isGlobalGraphSelected()) {
+            hideDRDNameChanger();
+        } else {
+            this.drdName.setText(selected.getDiagramElement().getName().getValue());
+            editMode.getStyle().setDisplay(NONE);
+            viewMode.getStyle().setDisplay(BLOCK);
+            showDRDNameChanger();
         }
     }
 

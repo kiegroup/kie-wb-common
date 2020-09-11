@@ -234,7 +234,6 @@ public class DMNDiagramEditor implements KieEditorWrapperView.KieEditorWrapperPr
 
         setupEditorSearchIndex();
         setupSearchComponent();
-        setupSessionHeaderContainer();
     }
 
     private void setupSessionHeaderContainer() {
@@ -477,6 +476,7 @@ public class DMNDiagramEditor implements KieEditorWrapperView.KieEditorWrapperPr
                           includedModelsPage.reload();
                           setupCanvasHandler();
                           openDock();
+                          setupSessionHeaderContainer();
                           callback.execute();
                       }));
     }

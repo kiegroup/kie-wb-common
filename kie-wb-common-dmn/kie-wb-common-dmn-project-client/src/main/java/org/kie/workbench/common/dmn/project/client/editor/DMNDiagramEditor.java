@@ -64,6 +64,7 @@ import org.kie.workbench.common.stunner.core.client.components.layout.LayoutHelp
 import org.kie.workbench.common.stunner.core.client.components.layout.OpenDiagramLayoutExecutor;
 import org.kie.workbench.common.stunner.core.client.error.DiagramClientErrorHandler;
 import org.kie.workbench.common.stunner.core.client.i18n.ClientTranslationService;
+import org.kie.workbench.common.stunner.core.client.service.ClientRuntimeError;
 import org.kie.workbench.common.stunner.core.client.session.command.ClientSessionCommand;
 import org.kie.workbench.common.stunner.core.client.session.impl.EditorSession;
 import org.kie.workbench.common.stunner.core.client.session.impl.ViewerSession;
@@ -202,7 +203,6 @@ public class DMNDiagramEditor extends AbstractProjectDiagramEditor<DMNDiagramRes
         getMenuSessionItems().setErrorConsumer(e -> hideLoadingViews());
         editorSearchIndex.setCurrentAssetHashcodeSupplier(getGetCurrentContentHashSupplier());
         editorSearchIndex.setIsDataTypesTabActiveSupplier(getIsDataTypesTabActiveSupplier());
-        setupSessionHeaderContainer();
     }
 
     private void setupSessionHeaderContainer() {
@@ -365,7 +365,18 @@ public class DMNDiagramEditor extends AbstractProjectDiagramEditor<DMNDiagramRes
 
         feelInitializer.initializeFEELEditor();
 
-        super.open(diagram, callback);
+        super.open(diagram, new Viewer.Callback() {
+            @Override
+            public void onSuccess() {
+                setupSessionHeaderContainer();
+                callback.onSuccess();
+            }
+
+            @Override
+            public void onError(ClientRuntimeError error) {
+                callback.onError(error);
+            }
+        });
     }
 
     @OnOpen

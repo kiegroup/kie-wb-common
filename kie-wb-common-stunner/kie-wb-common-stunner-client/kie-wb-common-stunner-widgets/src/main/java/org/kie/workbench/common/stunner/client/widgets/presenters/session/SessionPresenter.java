@@ -96,6 +96,10 @@ public interface SessionPresenter<S extends ClientSession, H extends CanvasHandl
 
         View showError(final String message);
 
+        void showSessionHeaderContainer(final int sessionHeaderHeight);
+
+        void hideSessionHeaderContainer();
+
         void destroy();
 
         enum ScrollType {
