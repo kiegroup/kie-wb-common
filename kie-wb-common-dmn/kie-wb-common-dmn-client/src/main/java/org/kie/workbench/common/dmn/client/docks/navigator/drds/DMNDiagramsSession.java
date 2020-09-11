@@ -20,12 +20,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Observes;
+import javax.enterprise.inject.Default;
 import javax.inject.Inject;
 
 import org.jboss.errai.ioc.client.api.ManagedInstance;
@@ -46,6 +48,7 @@ import org.uberfire.backend.vfs.Path;
 import static java.util.Collections.emptyList;
 
 @ApplicationScoped
+@Default
 public class DMNDiagramsSession implements GraphsProvider {
 
     private static Diagram NO_DIAGRAM = null;
@@ -124,6 +127,17 @@ public class DMNDiagramsSession implements GraphsProvider {
     @Override
     public Diagram getDiagram(final String dmnDiagramElementId) {
         return getSessionState().getDiagram(dmnDiagramElementId);
+    }
+
+    @Override
+    public String getCurrentDiagramId() {
+        if (!Objects.isNull(getSessionState())) {
+            final Optional<DMNDiagramElement> current = getCurrentDMNDiagramElement();
+            if (current.isPresent()) {
+                return current.get().getId().getValue();
+            }
+        }
+        return null;
     }
 
     public DMNDiagramElement getDMNDiagramElement(final String dmnDiagramElementId) {

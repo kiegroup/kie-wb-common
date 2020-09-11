@@ -269,4 +269,23 @@ public class DMNDiagramsSessionTest {
         dmnDiagramsSession.onDMNDiagramSelected(new DMNDiagramSelected(diagramElement));
         assertFalse(dmnDiagramsSession.isGlobalGraphSelected());
     }
+
+    @Test
+    public void testGetCurrentDiagramId() {
+        final DMNDiagramElement diagramElement = mock(DMNDiagramElement.class);
+        final Diagram stunnerDiagram = mock(Diagram.class);
+        final DMNDiagramSelected selectedDiagram = new DMNDiagramSelected(diagramElement);
+        final Id id = mock(Id.class);
+        final String expectedId = "value";
+
+        when(id.getValue()).thenReturn(expectedId);
+        when(diagramElement.getId()).thenReturn(id);
+
+        dmnDiagramsSession.add(diagramElement, stunnerDiagram);
+        dmnDiagramsSession.onDMNDiagramSelected(selectedDiagram);
+
+        final String actualId = dmnDiagramsSession.getCurrentDiagramId();
+
+        assertEquals(expectedId, actualId);
+    }
 }

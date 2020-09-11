@@ -1,3 +1,4 @@
+
 /*
  * Copyright 2017 Red Hat, Inc. and/or its affiliates.
  *
@@ -23,6 +24,7 @@ import javax.inject.Inject;
 
 import org.appformer.client.stateControl.registry.Registry;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
+import org.kie.workbench.common.stunner.core.client.canvas.event.registration.CurrentRegistryChangedEvent;
 import org.kie.workbench.common.stunner.core.client.canvas.event.registration.RegisterChangedEvent;
 import org.kie.workbench.common.stunner.core.client.command.CanvasViolation;
 import org.kie.workbench.common.stunner.core.client.command.SessionCommandManager;
@@ -108,7 +110,11 @@ public class UndoSessionCommand extends AbstractClientSessionCommand<EditorSessi
         }
     }
 
-    private void checkState() {
+    void onCurrentRegistryChanged(final @Observes CurrentRegistryChangedEvent currentRegistryChangedEvent) {
+        checkState();
+    }
+
+    void checkState() {
         if (getSession() != null) {
             setEnabled(!getSession().getCommandRegistry().getHistory().isEmpty());
             fire();

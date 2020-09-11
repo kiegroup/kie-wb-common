@@ -14,19 +14,10 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.stunner.core.diagram;
+package org.kie.workbench.common.stunner.core.client.canvas.event.registration;
 
-import java.util.List;
+import org.uberfire.workbench.events.UberFireEvent;
 
-import org.kie.workbench.common.stunner.core.graph.Graph;
+public class CurrentRegistryChangedEvent implements UberFireEvent {
 
-public interface GraphsProvider {
-
-    boolean isGlobalGraphSelected();
-
-    List<Graph> getGraphs();
-
-    Diagram getDiagram(final String diagramId);
-
-    String getCurrentDiagramId();
 }
