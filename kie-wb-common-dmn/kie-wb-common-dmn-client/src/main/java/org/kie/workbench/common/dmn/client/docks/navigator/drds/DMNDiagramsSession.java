@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -31,7 +32,10 @@ import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.kie.workbench.common.dmn.api.definition.model.DMNDiagramElement;
 import org.kie.workbench.common.dmn.api.definition.model.DRGElement;
 import org.kie.workbench.common.dmn.api.definition.model.Import;
-import org.kie.workbench.common.dmn.client.graph.DMNGraphUtils;
+import org.kie.workbench.common.dmn.api.graph.DMNDiagramUtils;
+import org.kie.workbench.common.stunner.core.client.api.SessionManager;
+import org.kie.workbench.common.stunner.core.client.canvas.CanvasHandler;
+import org.kie.workbench.common.stunner.core.client.session.ClientSession;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.kie.workbench.common.stunner.core.diagram.GraphsProvider;
 import org.kie.workbench.common.stunner.core.diagram.Metadata;
@@ -44,9 +48,13 @@ import static java.util.Collections.emptyList;
 @ApplicationScoped
 public class DMNDiagramsSession implements GraphsProvider {
 
+    private static Diagram NO_DIAGRAM = null;
+
     private ManagedInstance<DMNDiagramsSessionState> dmnDiagramsSessionStates;
 
-    private DMNGraphUtils dmnGraphUtils;
+    private SessionManager sessionManager;
+
+    private DMNDiagramUtils dmnDiagramUtils;
 
     private Map<String, DMNDiagramsSessionState> dmnSessionStatesByPathURI = new HashMap<>();
 
@@ -56,9 +64,11 @@ public class DMNDiagramsSession implements GraphsProvider {
 
     @Inject
     public DMNDiagramsSession(final ManagedInstance<DMNDiagramsSessionState> dmnDiagramsSessionStates,
-                              final DMNGraphUtils dmnGraphUtils) {
+                              final SessionManager sessionManager,
+                              final DMNDiagramUtils dmnDiagramUtils) {
         this.dmnDiagramsSessionStates = dmnDiagramsSessionStates;
-        this.dmnGraphUtils = dmnGraphUtils;
+        this.sessionManager = sessionManager;
+        this.dmnDiagramUtils = dmnDiagramUtils;
     }
 
     public void destroyState(final Metadata metadata) {
@@ -85,7 +95,7 @@ public class DMNDiagramsSession implements GraphsProvider {
 
     public String getCurrentSessionKey() {
         return Optional
-                .ofNullable(dmnGraphUtils.getDiagram())
+                .ofNullable(getCurrentGraphDiagram())
                 .map(diagram -> getSessionKey(diagram.getMetadata()))
                 .orElse("");
     }
@@ -148,15 +158,15 @@ public class DMNDiagramsSession implements GraphsProvider {
     }
 
     public Diagram getDRGDiagram() {
-        return getSessionState().getDRGDiagram();
+        return Optional.ofNullable(getSessionState()).map(DMNDiagramsSessionState::getDRGDiagram).orElse(null);
     }
 
     public DMNDiagramElement getDRGDiagramElement() {
-        return getSessionState().getDRGDiagramElement();
+        return Optional.ofNullable(getSessionState()).map(DMNDiagramsSessionState::getDRGDiagramElement).orElse(null);
     }
 
     private DMNDiagramTuple getDRGDiagramTuple() {
-        return getSessionState().getDRGDiagramTuple();
+        return Optional.ofNullable(getSessionState()).map(DMNDiagramsSessionState::getDRGDiagramTuple).orElse(null);
     }
 
     public void clear() {
@@ -188,8 +198,26 @@ public class DMNDiagramsSession implements GraphsProvider {
         final List<Node> result = new ArrayList<>();
         for (final DMNDiagramTuple tuple : getDMNDiagrams()) {
             final Diagram diagram = tuple.getStunnerDiagram();
-            result.addAll(dmnGraphUtils.getNodeStream(diagram).collect(Collectors.toList()));
+            result.addAll(dmnDiagramUtils.getNodeStream(diagram).collect(Collectors.toList()));
         }
         return result;
+    }
+
+    public Diagram getCurrentGraphDiagram() {
+        return getCurrentSession()
+                .map(clientSession -> {
+                    return getCanvasHandler(clientSession)
+                            .map((Function<CanvasHandler, Diagram>) CanvasHandler::getDiagram)
+                            .orElse(NO_DIAGRAM);
+                })
+                .orElse(NO_DIAGRAM);
+    }
+
+    private Optional<ClientSession> getCurrentSession() {
+        return Optional.ofNullable(sessionManager.getCurrentSession());
+    }
+
+    private Optional<CanvasHandler> getCanvasHandler(final ClientSession session) {
+        return Optional.ofNullable(session.getCanvasHandler());
     }
 }

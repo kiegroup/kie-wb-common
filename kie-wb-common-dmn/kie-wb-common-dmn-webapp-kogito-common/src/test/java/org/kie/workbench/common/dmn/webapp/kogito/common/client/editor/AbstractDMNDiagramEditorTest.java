@@ -28,7 +28,6 @@ import org.kie.workbench.common.dmn.client.docks.navigator.DecisionNavigatorDock
 import org.kie.workbench.common.dmn.client.editors.drd.DRDNameChanger;
 import org.kie.workbench.common.dmn.client.editors.expressions.ExpressionEditorView;
 import org.kie.workbench.common.dmn.client.editors.included.IncludedModelsPage;
-import org.kie.workbench.common.dmn.client.editors.included.imports.IncludedModelsPageStateProviderImpl;
 import org.kie.workbench.common.dmn.client.editors.search.DMNEditorSearchIndex;
 import org.kie.workbench.common.dmn.client.editors.search.DMNSearchableElement;
 import org.kie.workbench.common.dmn.client.editors.types.DataTypePageTabActiveEvent;
@@ -250,9 +249,6 @@ public abstract class AbstractDMNDiagramEditorTest {
 
     @Mock
     protected IncludedModelsPage includedModelsPage;
-
-    @Mock
-    protected IncludedModelsPageStateProviderImpl importsPageProvider;
 
     @Mock
     protected EditorContextProvider contextProvider;

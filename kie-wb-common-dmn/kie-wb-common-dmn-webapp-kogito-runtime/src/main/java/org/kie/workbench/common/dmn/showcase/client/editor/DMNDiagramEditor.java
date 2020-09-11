@@ -32,7 +32,6 @@ import org.kie.workbench.common.dmn.client.docks.navigator.DecisionNavigatorDock
 import org.kie.workbench.common.dmn.client.editors.drd.DRDNameChanger;
 import org.kie.workbench.common.dmn.client.editors.expressions.ExpressionEditorView;
 import org.kie.workbench.common.dmn.client.editors.included.IncludedModelsPage;
-import org.kie.workbench.common.dmn.client.editors.included.imports.IncludedModelsPageStateProviderImpl;
 import org.kie.workbench.common.dmn.client.editors.search.DMNEditorSearchIndex;
 import org.kie.workbench.common.dmn.client.editors.search.DMNSearchableElement;
 import org.kie.workbench.common.dmn.client.editors.types.DataTypePageTabActiveEvent;
@@ -126,7 +125,6 @@ public class DMNDiagramEditor extends AbstractDMNDiagramEditor implements Kogito
                             final CanvasFileExport canvasFileExport,
                             final Promises promises,
                             final IncludedModelsPage includedModelsPage,
-                            final IncludedModelsPageStateProviderImpl importsPageProvider,
                             final EditorContextProvider contextProvider,
                             final GuidedTourBridgeInitializer guidedTourBridgeInitializer,
                             final @DMNEditor ReadOnlyProvider readOnlyProvider,
@@ -162,7 +160,6 @@ public class DMNDiagramEditor extends AbstractDMNDiagramEditor implements Kogito
               canvasFileExport,
               promises,
               includedModelsPage,
-              importsPageProvider,
               contextProvider,
               guidedTourBridgeInitializer,
               drdNameChanger);
@@ -185,7 +182,7 @@ public class DMNDiagramEditor extends AbstractDMNDiagramEditor implements Kogito
             dataTypesPage.reload();
             final Channel channel = contextProvider.getChannel();
             if (Objects.equals(channel, DEFAULT) || Objects.equals(channel, VSCODE)) {
-                includedModelsPage.setup(importsPageProvider.withDiagram(c.getDiagram()));
+                includedModelsPage.reload();
             }
         });
     }

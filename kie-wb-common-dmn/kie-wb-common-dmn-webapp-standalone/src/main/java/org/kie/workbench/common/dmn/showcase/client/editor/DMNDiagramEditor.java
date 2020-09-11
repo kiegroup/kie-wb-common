@@ -38,7 +38,6 @@ import org.kie.workbench.common.dmn.client.docks.navigator.drds.DMNDiagramsSessi
 import org.kie.workbench.common.dmn.client.editors.drd.DRDNameChanger;
 import org.kie.workbench.common.dmn.client.editors.expressions.ExpressionEditorView;
 import org.kie.workbench.common.dmn.client.editors.included.IncludedModelsPage;
-import org.kie.workbench.common.dmn.client.editors.included.imports.IncludedModelsPageStateProviderImpl;
 import org.kie.workbench.common.dmn.client.editors.search.DMNEditorSearchIndex;
 import org.kie.workbench.common.dmn.client.editors.search.DMNSearchableElement;
 import org.kie.workbench.common.dmn.client.editors.toolbar.ToolbarStateHandler;
@@ -138,7 +137,6 @@ public class DMNDiagramEditor implements KieEditorWrapperView.KieEditorWrapperPr
 
     private final DataTypesPage dataTypesPage;
     private final IncludedModelsPage includedModelsPage;
-    private final IncludedModelsPageStateProviderImpl importsPageProvider;
     private final DocumentationView<Diagram> documentationView;
     private final DMNEditorSearchIndex editorSearchIndex;
     private final SearchBarComponent<DMNSearchableElement> searchBarComponent;
@@ -174,7 +172,6 @@ public class DMNDiagramEditor implements KieEditorWrapperView.KieEditorWrapperPr
                             final OpenDiagramLayoutExecutor layoutExecutor,
                             final DataTypesPage dataTypesPage,
                             final IncludedModelsPage includedModelsPage,
-                            final IncludedModelsPageStateProviderImpl importsPageProvider,
                             final @DMNEditor DocumentationView<Diagram> documentationView,
                             final DMNEditorSearchIndex editorSearchIndex,
                             final SearchBarComponent<DMNSearchableElement> searchBarComponent,
@@ -205,7 +202,6 @@ public class DMNDiagramEditor implements KieEditorWrapperView.KieEditorWrapperPr
 
         this.dataTypesPage = dataTypesPage;
         this.includedModelsPage = includedModelsPage;
-        this.importsPageProvider = importsPageProvider;
         this.documentationView = documentationView;
         this.editorSearchIndex = editorSearchIndex;
         this.searchBarComponent = searchBarComponent;
@@ -478,7 +474,7 @@ public class DMNDiagramEditor implements KieEditorWrapperView.KieEditorWrapperPr
                           expressionEditor.setToolbarStateHandler(toolbarStateHandler);
                           dataTypesPage.reload();
                           dataTypesPage.enableShortcuts();
-                          includedModelsPage.setup(importsPageProvider.withDiagram(diagram));
+                          includedModelsPage.reload();
                           setupCanvasHandler();
                           openDock();
                           callback.execute();

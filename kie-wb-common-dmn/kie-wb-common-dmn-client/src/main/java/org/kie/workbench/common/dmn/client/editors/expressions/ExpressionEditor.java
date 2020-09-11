@@ -74,7 +74,7 @@ public class ExpressionEditor implements ExpressionEditorView.Presenter {
             if (Objects.isNull(dmnGraphUtils)) {
                 return "";
             }
-            final Definitions definitions = dmnGraphUtils.getDefinitions();
+            final Definitions definitions = dmnGraphUtils.getModelDefinitions();
             if (Objects.isNull(definitions)) {
                 return "";
             }
@@ -155,7 +155,7 @@ public class ExpressionEditor implements ExpressionEditorView.Presenter {
         if ((element instanceof Node)) {
             if (element.getContent() instanceof Definition) {
                 final Definition definition = (Definition) element.getContent();
-                final Optional<Definitions> definitions = Optional.ofNullable(dmnGraphUtils.getDefinitions());
+                final Optional<Definitions> definitions = Optional.ofNullable(dmnGraphUtils.getModelDefinitions());
                 definitions.ifPresent(d -> {
                     if (Objects.equals(d, definition.getDefinition())) {
                         view.setReturnToLinkText(returnToLinkTextSupplier.get());

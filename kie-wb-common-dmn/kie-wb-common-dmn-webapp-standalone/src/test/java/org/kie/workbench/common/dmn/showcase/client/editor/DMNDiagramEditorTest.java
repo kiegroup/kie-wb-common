@@ -32,7 +32,6 @@ import org.kie.workbench.common.dmn.client.docks.navigator.drds.DMNDiagramsSessi
 import org.kie.workbench.common.dmn.client.editors.drd.DRDNameChanger;
 import org.kie.workbench.common.dmn.client.editors.expressions.ExpressionEditorView;
 import org.kie.workbench.common.dmn.client.editors.included.IncludedModelsPage;
-import org.kie.workbench.common.dmn.client.editors.included.imports.IncludedModelsPageStateProviderImpl;
 import org.kie.workbench.common.dmn.client.editors.search.DMNEditorSearchIndex;
 import org.kie.workbench.common.dmn.client.editors.search.DMNSearchableElement;
 import org.kie.workbench.common.dmn.client.editors.types.DataTypePageTabActiveEvent;
@@ -124,9 +123,6 @@ public class DMNDiagramEditorTest {
     private IncludedModelsPage includedModelsPage;
 
     @Mock
-    private IncludedModelsPageStateProviderImpl importsPageProvider;
-
-    @Mock
     private DocumentationView<Diagram> documentationView;
 
     @Mock
@@ -216,7 +212,6 @@ public class DMNDiagramEditorTest {
                                           layoutExecutor,
                                           dataTypesPage,
                                           includedModelsPage,
-                                          importsPageProvider,
                                           documentationView,
                                           editorSearchIndex,
                                           searchBarComponent,
@@ -323,7 +318,6 @@ public class DMNDiagramEditorTest {
         final Metadata metadata = mock(Metadata.class);
         final AbstractCanvasHandler canvasHandler = mock(AbstractCanvasHandler.class);
 
-        when(importsPageProvider.withDiagram(diagram)).thenReturn(importsPageProvider);
         when(session.getCanvasHandler()).thenReturn(canvasHandler);
         when(diagram.getMetadata()).thenReturn(metadata);
 
@@ -340,7 +334,7 @@ public class DMNDiagramEditorTest {
 
         verify(dataTypesPage).reload();
         verify(dataTypesPage).enableShortcuts();
-        verify(includedModelsPage).setup(importsPageProvider);
+        verify(includedModelsPage).reload();
     }
 
     @Test

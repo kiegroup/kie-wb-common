@@ -37,7 +37,6 @@ import org.kie.workbench.common.dmn.client.graph.DMNGraphUtils;
 import org.kie.workbench.common.dmn.client.session.DMNSession;
 import org.kie.workbench.common.dmn.client.widgets.grid.ExpressionGridCache;
 import org.kie.workbench.common.dmn.client.widgets.grid.ExpressionGridCacheImpl;
-import org.kie.workbench.common.stunner.client.widgets.presenters.session.SessionPresenter;
 import org.kie.workbench.common.stunner.core.client.canvas.CanvasHandler;
 import org.kie.workbench.common.stunner.core.client.canvas.event.registration.CanvasElementUpdatedEvent;
 import org.kie.workbench.common.stunner.core.client.session.impl.ManagedSession;
@@ -69,9 +68,6 @@ public class ExpressionEditorTest {
 
     @Mock
     private ExpressionEditorView view;
-
-    @Mock
-    private SessionPresenter sessionPresenter;
 
     @Mock
     private DecisionNavigatorPresenter decisionNavigator;
@@ -136,7 +132,7 @@ public class ExpressionEditorTest {
         testedEditor.bind(dmnSession);
 
         when(session.getCanvasControl(eq(ExpressionGridCache.class))).thenReturn(expressionGridCache);
-        when(dmnGraphUtils.getDefinitions()).thenReturn(definitions);
+        when(dmnGraphUtils.getModelDefinitions()).thenReturn(definitions);
         when(dmnDiagramsSession.getCurrentDMNDiagramElement()).thenReturn(Optional.of(dmnDiagramElement));
     }
 

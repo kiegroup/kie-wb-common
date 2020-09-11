@@ -74,7 +74,6 @@ public class DMNDiagramEditorTest extends AbstractDMNDiagramEditorTest {
                                     canvasFileExport,
                                     new SyncPromises(),
                                     includedModelsPage,
-                                    importsPageProvider,
                                     contextProvider,
                                     guidedTourBridgeInitializer,
                                     readonlyProvider,

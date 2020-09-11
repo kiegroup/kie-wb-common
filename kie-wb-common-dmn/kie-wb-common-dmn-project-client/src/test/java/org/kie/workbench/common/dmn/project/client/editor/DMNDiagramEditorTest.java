@@ -38,7 +38,6 @@ import org.kie.workbench.common.dmn.client.docks.navigator.DecisionNavigatorDock
 import org.kie.workbench.common.dmn.client.editors.drd.DRDNameChanger;
 import org.kie.workbench.common.dmn.client.editors.expressions.ExpressionEditorView;
 import org.kie.workbench.common.dmn.client.editors.included.IncludedModelsPage;
-import org.kie.workbench.common.dmn.client.editors.included.imports.IncludedModelsPageStateProviderImpl;
 import org.kie.workbench.common.dmn.client.editors.search.DMNEditorSearchIndex;
 import org.kie.workbench.common.dmn.client.editors.search.DMNSearchableElement;
 import org.kie.workbench.common.dmn.client.editors.types.DataTypePageTabActiveEvent;
@@ -159,9 +158,6 @@ public class DMNDiagramEditorTest extends AbstractProjectDiagramEditorTest {
     private IncludedModelsPage includedModelsPage;
 
     @Mock
-    private IncludedModelsPageStateProviderImpl importsPageProvider;
-
-    @Mock
     private MultiPageEditor multiPage;
 
     private DMNDiagramEditor diagramEditor;
@@ -256,7 +252,6 @@ public class DMNDiagramEditorTest extends AbstractProjectDiagramEditorTest {
                                                  layoutExecutor,
                                                  dataTypesPage,
                                                  includedModelsPage,
-                                                 importsPageProvider,
                                                  editorSearchIndex,
                                                  searchBarComponent,
                                                  feelInitializer,
@@ -404,7 +399,6 @@ public class DMNDiagramEditorTest extends AbstractProjectDiagramEditorTest {
         when(sessionManager.getCurrentSession()).thenReturn(dmnEditorSession);
         when(dmnEditorSession.getCanvasHandler()).thenReturn(canvasHandler);
         when(canvasHandler.getDiagram()).thenReturn(diagram);
-        when(importsPageProvider.withDiagram(diagram)).thenReturn(importsPageProvider);
 
         open();
 
@@ -412,7 +406,7 @@ public class DMNDiagramEditorTest extends AbstractProjectDiagramEditorTest {
         verify(expressionEditor).setToolbarStateHandler(any(DMNProjectToolbarStateHandler.class));
         verify(dataTypesPage).reload();
         verify(layoutHelper).applyLayout(diagram, layoutExecutor);
-        verify(includedModelsPage).setup(importsPageProvider);
+        verify(includedModelsPage).reload();
     }
 
     @Test
@@ -424,7 +418,7 @@ public class DMNDiagramEditorTest extends AbstractProjectDiagramEditorTest {
         verify(decisionNavigatorDock, never()).reload();
         verify(decisionNavigatorDock, never()).open();
         verify(dataTypesPage, never()).reload();
-        verify(includedModelsPage, never()).setup(any());
+        verify(includedModelsPage, never()).reload();
     }
 
     @Test

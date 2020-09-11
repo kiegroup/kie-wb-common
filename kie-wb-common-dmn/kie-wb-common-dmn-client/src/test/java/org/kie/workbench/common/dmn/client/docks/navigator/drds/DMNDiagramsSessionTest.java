@@ -32,7 +32,9 @@ import org.kie.workbench.common.dmn.api.definition.model.Import;
 import org.kie.workbench.common.dmn.api.graph.DMNDiagramUtils;
 import org.kie.workbench.common.dmn.api.property.dmn.Id;
 import org.kie.workbench.common.dmn.api.property.dmn.Name;
-import org.kie.workbench.common.dmn.client.graph.DMNGraphUtils;
+import org.kie.workbench.common.stunner.core.client.api.SessionManager;
+import org.kie.workbench.common.stunner.core.client.canvas.CanvasHandler;
+import org.kie.workbench.common.stunner.core.client.session.ClientSession;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.kie.workbench.common.stunner.core.diagram.Metadata;
 import org.mockito.Mock;
@@ -57,10 +59,16 @@ public class DMNDiagramsSessionTest {
     private ManagedInstance<DMNDiagramsSessionState> dmnDiagramsSessionStates;
 
     @Mock
-    private DMNGraphUtils dmnGraphUtils;
+    private SessionManager sessionManager;
 
     @Mock
     private DMNDiagramUtils dmnDiagramUtils;
+
+    @Mock
+    private ClientSession clientSession;
+
+    @Mock
+    private CanvasHandler canvasHandler;
 
     @Mock
     private Metadata metadata;
@@ -78,17 +86,20 @@ public class DMNDiagramsSessionTest {
     private Map<String, DMNDiagramElement> dmnDiagramsByDiagramElementId = new HashMap<>();
 
     private DMNDiagramsSession dmnDiagramsSession;
+
     private DMNDiagramsSessionState dmnDiagramsSessionState;
 
     @Before
     public void setup() {
 
         dmnDiagramsSessionState = spy(new DMNDiagramsSessionState(dmnDiagramUtils));
-        dmnDiagramsSession = new DMNDiagramsSession(dmnDiagramsSessionStates, dmnGraphUtils);
+        dmnDiagramsSession = new DMNDiagramsSession(dmnDiagramsSessionStates, sessionManager, dmnDiagramUtils);
 
+        when(canvasHandler.getDiagram()).thenReturn(diagram);
+        when(clientSession.getCanvasHandler()).thenReturn(canvasHandler);
+        when(sessionManager.getCurrentSession()).thenReturn(clientSession);
         when(metadata.getPath()).thenReturn(path);
         when(path.toURI()).thenReturn(uri);
-        when(dmnGraphUtils.getDiagram()).thenReturn(diagram);
         when(diagram.getMetadata()).thenReturn(metadata);
         when(dmnDiagramsSessionStates.get()).thenReturn(dmnDiagramsSessionState);
 

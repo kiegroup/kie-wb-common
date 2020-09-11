@@ -40,7 +40,6 @@ import org.kie.workbench.common.dmn.client.docks.navigator.DecisionNavigatorDock
 import org.kie.workbench.common.dmn.client.editors.drd.DRDNameChanger;
 import org.kie.workbench.common.dmn.client.editors.expressions.ExpressionEditorView;
 import org.kie.workbench.common.dmn.client.editors.included.IncludedModelsPage;
-import org.kie.workbench.common.dmn.client.editors.included.imports.IncludedModelsPageStateProviderImpl;
 import org.kie.workbench.common.dmn.client.editors.search.DMNEditorSearchIndex;
 import org.kie.workbench.common.dmn.client.editors.search.DMNSearchableElement;
 import org.kie.workbench.common.dmn.client.editors.types.DataTypePageTabActiveEvent;
@@ -129,7 +128,6 @@ public class DMNDiagramEditor extends AbstractProjectDiagramEditor<DMNDiagramRes
     private final OpenDiagramLayoutExecutor openDiagramLayoutExecutor;
     private final DataTypesPage dataTypesPage;
     private final IncludedModelsPage includedModelsPage;
-    private final IncludedModelsPageStateProviderImpl importsPageProvider;
     private final DMNEditorSearchIndex editorSearchIndex;
     private final SearchBarComponent<DMNSearchableElement> searchBarComponent;
     private final MonacoFEELInitializer feelInitializer;
@@ -161,7 +159,6 @@ public class DMNDiagramEditor extends AbstractProjectDiagramEditor<DMNDiagramRes
                             final OpenDiagramLayoutExecutor openDiagramLayoutExecutor,
                             final DataTypesPage dataTypesPage,
                             final IncludedModelsPage includedModelsPage,
-                            final IncludedModelsPageStateProviderImpl importsPageProvider,
                             final DMNEditorSearchIndex editorSearchIndex,
                             final SearchBarComponent<DMNSearchableElement> searchBarComponent,
                             final MonacoFEELInitializer feelInitializer,
@@ -191,7 +188,6 @@ public class DMNDiagramEditor extends AbstractProjectDiagramEditor<DMNDiagramRes
         this.openDiagramLayoutExecutor = openDiagramLayoutExecutor;
         this.dataTypesPage = dataTypesPage;
         this.includedModelsPage = includedModelsPage;
-        this.importsPageProvider = importsPageProvider;
         this.editorSearchIndex = editorSearchIndex;
         this.searchBarComponent = searchBarComponent;
         this.feelInitializer = feelInitializer;
@@ -394,7 +390,7 @@ public class DMNDiagramEditor extends AbstractProjectDiagramEditor<DMNDiagramRes
             expressionEditor.setToolbarStateHandler(new DMNProjectToolbarStateHandler(getMenuSessionItems()));
             decisionNavigatorDock.reload();
             dataTypesPage.reload();
-            includedModelsPage.setup(importsPageProvider.withDiagram(c.getDiagram()));
+            includedModelsPage.reload();
         });
     }
 

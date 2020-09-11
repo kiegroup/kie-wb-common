@@ -35,7 +35,6 @@ import org.kie.workbench.common.dmn.client.docks.navigator.DecisionNavigatorDock
 import org.kie.workbench.common.dmn.client.editors.drd.DRDNameChanger;
 import org.kie.workbench.common.dmn.client.editors.expressions.ExpressionEditorView;
 import org.kie.workbench.common.dmn.client.editors.included.IncludedModelsPage;
-import org.kie.workbench.common.dmn.client.editors.included.imports.IncludedModelsPageStateProviderImpl;
 import org.kie.workbench.common.dmn.client.editors.search.DMNEditorSearchIndex;
 import org.kie.workbench.common.dmn.client.editors.search.DMNSearchableElement;
 import org.kie.workbench.common.dmn.client.editors.types.DataTypePageTabActiveEvent;
@@ -126,7 +125,6 @@ public abstract class AbstractDMNDiagramEditor extends AbstractDiagramEditor {
     protected final CanvasFileExport canvasFileExport;
     protected final Promises promises;
     protected final IncludedModelsPage includedModelsPage;
-    protected final IncludedModelsPageStateProviderImpl importsPageProvider;
     protected final EditorContextProvider contextProvider;
     protected final GuidedTourBridgeInitializer guidedTourBridgeInitializer;
     protected final DRDNameChanger drdNameChanger;
@@ -162,7 +160,6 @@ public abstract class AbstractDMNDiagramEditor extends AbstractDiagramEditor {
                                     final CanvasFileExport canvasFileExport,
                                     final Promises promises,
                                     final IncludedModelsPage includedModelsPage,
-                                    final IncludedModelsPageStateProviderImpl importsPageProvider,
                                     final EditorContextProvider contextProvider,
                                     final GuidedTourBridgeInitializer guidedTourBridgeInitializer,
                                     final DRDNameChanger drdNameChanger) {
@@ -197,7 +194,6 @@ public abstract class AbstractDMNDiagramEditor extends AbstractDiagramEditor {
         this.canvasFileExport = canvasFileExport;
         this.promises = promises;
         this.includedModelsPage = includedModelsPage;
-        this.importsPageProvider = importsPageProvider;
         this.contextProvider = contextProvider;
         this.guidedTourBridgeInitializer = guidedTourBridgeInitializer;
         this.drdNameChanger = drdNameChanger;
