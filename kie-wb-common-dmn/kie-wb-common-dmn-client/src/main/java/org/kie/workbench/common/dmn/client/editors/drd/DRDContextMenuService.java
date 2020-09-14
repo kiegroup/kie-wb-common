@@ -28,12 +28,17 @@ import javax.inject.Inject;
 import org.kie.workbench.common.dmn.api.DMNDefinitionSet;
 import org.kie.workbench.common.dmn.api.definition.HasName;
 import org.kie.workbench.common.dmn.api.definition.HasText;
+import org.kie.workbench.common.dmn.api.definition.model.DMNDiagram;
 import org.kie.workbench.common.dmn.api.definition.model.DMNDiagramElement;
+import org.kie.workbench.common.dmn.api.definition.model.DMNModelInstrumentedBase;
+import org.kie.workbench.common.dmn.api.definition.model.Definitions;
 import org.kie.workbench.common.dmn.api.graph.DMNDiagramUtils;
 import org.kie.workbench.common.dmn.client.commands.clone.DMNDeepCloneProcess;
 import org.kie.workbench.common.dmn.client.docks.navigator.drds.DMNDiagramSelected;
 import org.kie.workbench.common.dmn.client.docks.navigator.drds.DMNDiagramTuple;
 import org.kie.workbench.common.dmn.client.docks.navigator.drds.DMNDiagramsSession;
+import org.kie.workbench.common.dmn.client.marshaller.common.DMNGraphUtils;
+import org.kie.workbench.common.dmn.client.marshaller.unmarshall.DMNUnmarshaller;
 import org.kie.workbench.common.stunner.core.api.FactoryManager;
 import org.kie.workbench.common.stunner.core.definition.adapter.binding.BindableAdapterUtils;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
@@ -44,7 +49,9 @@ import org.kie.workbench.common.stunner.core.graph.content.Bound;
 import org.kie.workbench.common.stunner.core.graph.content.Bounds;
 import org.kie.workbench.common.stunner.core.graph.content.HasContentDefinitionId;
 import org.kie.workbench.common.stunner.core.graph.content.definition.Definition;
+import org.kie.workbench.common.stunner.core.graph.content.relationship.Child;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
+import org.kie.workbench.common.stunner.core.graph.impl.EdgeImpl;
 import org.kie.workbench.common.stunner.core.util.UUID;
 
 import static org.kie.workbench.common.stunner.core.definition.adapter.binding.BindableAdapterUtils.getDefinitionId;
@@ -64,17 +71,21 @@ public class DRDContextMenuService {
 
     private final DMNDeepCloneProcess dmnDeepCloneProcess;
 
+    private final DMNUnmarshaller dmnUnmarshaller;
+
     @Inject
     public DRDContextMenuService(final DMNDiagramsSession dmnDiagramsSession,
                                  final FactoryManager factoryManager,
                                  final Event<DMNDiagramSelected> selectedEvent,
                                  final DMNDiagramUtils dmnDiagramUtils,
-                                 final DMNDeepCloneProcess dmnDeepCloneProcess) {
+                                 final DMNDeepCloneProcess dmnDeepCloneProcess,
+                                 final DMNUnmarshaller dmnUnmarshaller) {
         this.dmnDiagramsSession = dmnDiagramsSession;
         this.factoryManager = factoryManager;
         this.selectedEvent = selectedEvent;
         this.dmnDiagramUtils = dmnDiagramUtils;
         this.dmnDeepCloneProcess = dmnDeepCloneProcess;
+        this.dmnUnmarshaller = dmnUnmarshaller;
     }
 
     public List<DMNDiagramTuple> getDiagrams() {
@@ -101,16 +112,42 @@ public class DRDContextMenuService {
     }
 
     @SuppressWarnings("unchecked")
-    private Consumer<Node<? extends Definition<?>, Edge>> addNodesToDRD(final DMNDiagramElement dmnElement, final Diagram stunnerElement) {
+    private Consumer<Node<? extends Definition<?>, Edge>> addNodesToDRD(final DMNDiagramElement dmnElement,
+                                                                        final Diagram stunnerElement) {
         return node -> {
             final Definition<?> content = node.getContent();
             final Object definition = ((View) content).getDefinition();
             if (definition instanceof HasContentDefinitionId) {
+                final Node<?, ?> dmnDiagramRoot = DMNGraphUtils.findDMNDiagramRoot(stunnerElement.getGraph());
+                final Node clone = cloneNode(node, dmnElement);
+
+                connectRootWithChild(dmnDiagramRoot, clone);
+
                 stunnerElement
                         .getGraph()
-                        .addNode(cloneNode(node, dmnElement));
+                        .addNode(clone);
             }
         };
+    }
+
+    private void connectRootWithChild(final Node dmnDiagramRoot,
+                                      final Node child) {
+        final String uuid = UUID.uuid();
+        final Edge<Child, Node> edge = new EdgeImpl<>(uuid);
+        edge.setContent(new Child());
+        connectEdge(edge, dmnDiagramRoot, child);
+        final Definitions definitions = ((DMNDiagram) ((View) dmnDiagramRoot.getContent()).getDefinition()).getDefinitions();
+        final DMNModelInstrumentedBase childDRG = (DMNModelInstrumentedBase) ((View) child.getContent()).getDefinition();
+        childDRG.setParent(definitions);
+    }
+
+    private void connectEdge(final Edge edge,
+                             final Node source,
+                             final Node target) {
+        edge.setSourceNode(source);
+        edge.setTargetNode(target);
+        source.getOutEdges().add(edge);
+        target.getInEdges().add(edge);
     }
 
     @SuppressWarnings("unchecked")

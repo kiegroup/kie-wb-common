@@ -17,7 +17,6 @@
 package org.kie.workbench.common.dmn.client.editors.drd;
 
 import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
@@ -141,5 +140,4 @@ public class DRDNameChangerView implements DRDNameChanger {
         dmnDiagramElement.getName().setValue(drdNameInput.getValue());
         selectedEvent.fire(new DMNDiagramSelected(dmnDiagramElement));
     }
-
 }

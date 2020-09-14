@@ -16,6 +16,7 @@
 
 package org.kie.workbench.common.dmn.client.editors.drd;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -26,6 +27,7 @@ import javax.enterprise.event.Event;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.kie.workbench.common.dmn.api.definition.model.DMNDiagram;
 import org.kie.workbench.common.dmn.api.definition.model.DMNDiagramElement;
 import org.kie.workbench.common.dmn.api.definition.model.Definitions;
 import org.kie.workbench.common.dmn.api.definition.model.InputData;
@@ -35,6 +37,7 @@ import org.kie.workbench.common.dmn.client.commands.clone.DMNDeepCloneProcess;
 import org.kie.workbench.common.dmn.client.docks.navigator.drds.DMNDiagramSelected;
 import org.kie.workbench.common.dmn.client.docks.navigator.drds.DMNDiagramTuple;
 import org.kie.workbench.common.dmn.client.docks.navigator.drds.DMNDiagramsSession;
+import org.kie.workbench.common.dmn.client.marshaller.unmarshall.DMNUnmarshaller;
 import org.kie.workbench.common.stunner.core.api.FactoryManager;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.kie.workbench.common.stunner.core.graph.Edge;
@@ -47,10 +50,13 @@ import org.kie.workbench.common.stunner.core.graph.content.view.View;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import static java.util.Collections.singleton;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -78,13 +84,17 @@ public class DRDContextMenuServiceTest {
     @Mock
     private Graph graph;
 
+    @Mock
+    private DMNUnmarshaller dmnUnmarshaller;
+
     @Before
     public void setUp() {
         drdContextMenuService = new DRDContextMenuService(dmnDiagramsSession,
                                                           factoryManager,
                                                           selectedEvent,
                                                           dmnDiagramUtils,
-                                                          dmnDeepCloneProcess);
+                                                          dmnDeepCloneProcess,
+                                                          dmnUnmarshaller);
     }
 
     @Test
@@ -117,9 +127,24 @@ public class DRDContextMenuServiceTest {
 
     @Test
     public void testAddToExistingDRD() {
-        drdContextMenuService.addToExistingDRD(mockDmnDiagramTuple(), mockNodes());
 
-        verify(graph, times(1)).addNode(any(Node.class));
+        final DMNDiagramTuple diagramTuple = mockDmnDiagramTuple();
+        final Diagram diagram = mock(Diagram.class);
+        final Node graphNode = mock(Node.class);
+        final View graphNodeDefinition = mock(View.class);
+        final DMNDiagram dmnDiagram = spy(new DMNDiagram());
+        final Collection<Node<? extends Definition<?>, Edge>> selectedNodes = mockNodes();
+        selectedNodes.add(graphNode);
+
+        when(diagramTuple.getStunnerDiagram()).thenReturn(diagram);
+        when(diagram.getGraph()).thenReturn(graph);
+        when(graph.nodes()).thenReturn(selectedNodes);
+        when(graphNode.getContent()).thenReturn(graphNodeDefinition);
+        when(graphNodeDefinition.getDefinition()).thenReturn(dmnDiagram);
+
+        drdContextMenuService.addToExistingDRD(diagramTuple, selectedNodes);
+
+        verify(graph).addNode(any(Node.class));
         verify(selectedEvent, times(1)).fire(any(DMNDiagramSelected.class));
     }
 
@@ -134,23 +159,25 @@ public class DRDContextMenuServiceTest {
         when(dmnDiagramsSession.getCurrentDMNDiagramElement()).thenReturn(Optional.of(dmnDiagram));
         when(diagram.getGraph()).thenReturn(graph);
 
-        drdContextMenuService.removeFromCurrentDRD(Collections.singleton(node));
+        drdContextMenuService.removeFromCurrentDRD(singleton(node));
 
         verify(graph, times(1)).removeNode(nodeUUID);
         verify(selectedEvent, times(1)).fire(any(DMNDiagramSelected.class));
     }
 
     private Collection<Node<? extends Definition<?>, Edge>> mockNodes() {
-        final View content = mock(View.class);
-        final InputData inputData = mock(InputData.class);
+
+        final Node node = mock(Node.class);
         final Node clonedNode = mock(Node.class);
+        final View content = mock(View.class);
         final View clonedContent = mock(View.class);
         final Bounds bounds = mock(Bounds.class);
         final Bound upperLeft = mock(Bound.class);
         final Bound lowerRight = mock(Bound.class);
-        final InputData clonedInputData = mock(InputData.class);
-        final Node node = mock(Node.class);
-        final Collection<Node<? extends Definition<?>, Edge>> nodes = Collections.singleton(node);
+        final InputData inputData = spy(new InputData());
+        final InputData clonedInputData = spy(new InputData());
+        final Collection<Node<? extends Definition<?>, Edge>> nodes = new ArrayList<>();
+
         when(node.getContent()).thenReturn(content);
         when(content.getDefinition()).thenReturn(inputData);
         when(content.getBounds()).thenReturn(bounds);
@@ -159,7 +186,10 @@ public class DRDContextMenuServiceTest {
         when(factoryManager.newElement(anyString(), anyString())).thenReturn(clonedNode);
         when(clonedNode.asNode()).thenReturn(clonedNode);
         when(clonedNode.getContent()).thenReturn(clonedContent);
-        when(dmnDeepCloneProcess.clone(inputData)).thenReturn(clonedInputData);
+        when(clonedContent.getDefinition()).thenReturn(clonedInputData);
+        when(dmnDeepCloneProcess.clone(eq(inputData))).thenReturn(clonedInputData);
+
+        nodes.add(node);
         return nodes;
     }
 
