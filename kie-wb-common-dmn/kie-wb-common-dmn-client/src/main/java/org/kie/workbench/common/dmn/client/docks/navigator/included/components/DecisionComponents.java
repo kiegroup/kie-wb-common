@@ -61,6 +61,7 @@ public class DecisionComponents {
 
     public DecisionComponents() {
         this(null, null, null, null, null);
+        // CDI proxy
     }
 
     @Inject
