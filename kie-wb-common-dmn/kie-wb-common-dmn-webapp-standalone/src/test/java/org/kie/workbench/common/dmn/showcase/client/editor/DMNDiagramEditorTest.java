@@ -28,6 +28,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.dmn.client.docks.navigator.DecisionNavigatorDock;
+import org.kie.workbench.common.dmn.client.docks.navigator.common.LazyCanvasFocusUtils;
 import org.kie.workbench.common.dmn.client.docks.navigator.drds.DMNDiagramsSession;
 import org.kie.workbench.common.dmn.client.editors.drd.DRDNameChanger;
 import org.kie.workbench.common.dmn.client.editors.expressions.ExpressionEditorView;
@@ -168,6 +169,9 @@ public class DMNDiagramEditorTest {
     private DRDNameChanger drdNameChanger;
 
     @Mock
+    private LazyCanvasFocusUtils lazyCanvasFocusUtils;
+
+    @Mock
     private ElementWrapperWidget drdNameWidget;
 
     @Mock
@@ -225,7 +229,8 @@ public class DMNDiagramEditorTest {
                                           feelInitializer,
                                           dmnDiagramsSession,
                                           marshallerService,
-                                          drdNameChanger));
+                                          drdNameChanger,
+                                          lazyCanvasFocusUtils));
 
         doReturn(searchBarComponentWidget).when(editor).getWidget(searchBarComponentViewElement);
         doReturn(drdNameWidget).when(editor).getWidget(drdNameChangerElement);
@@ -335,6 +340,7 @@ public class DMNDiagramEditorTest {
         verify(dataTypesPage).reload();
         verify(dataTypesPage).enableShortcuts();
         verify(includedModelsPage).reload();
+        verify(lazyCanvasFocusUtils).releaseFocus();
     }
 
     @Test

@@ -25,6 +25,7 @@ import org.junit.runner.RunWith;
 import org.kie.workbench.common.dmn.api.DMNDefinitionSet;
 import org.kie.workbench.common.dmn.client.commands.general.NavigateToExpressionEditorCommand;
 import org.kie.workbench.common.dmn.client.docks.navigator.DecisionNavigatorDock;
+import org.kie.workbench.common.dmn.client.docks.navigator.common.LazyCanvasFocusUtils;
 import org.kie.workbench.common.dmn.client.editors.drd.DRDNameChanger;
 import org.kie.workbench.common.dmn.client.editors.expressions.ExpressionEditorView;
 import org.kie.workbench.common.dmn.client.editors.included.IncludedModelsPage;
@@ -94,6 +95,7 @@ import static org.kie.workbench.common.dmn.webapp.kogito.common.client.editor.Ab
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -258,6 +260,9 @@ public abstract class AbstractDMNDiagramEditorTest {
 
     @Mock
     protected DRDNameChanger drdNameChanger;
+
+    @Mock
+    protected LazyCanvasFocusUtils lazyCanvasFocusUtils;
 
     @Mock
     private HTMLElement drdNameChangerElement;
@@ -527,6 +532,7 @@ public abstract class AbstractDMNDiagramEditorTest {
         verify(layoutHelper).applyLayout(eq(diagram), eq(layoutExecutor));
         verify(feelInitializer).initializeFEELEditor();
         verify(dataTypesPage).reload();
+        verify(lazyCanvasFocusUtils, atLeastOnce()).releaseFocus();
     }
 
     @Test

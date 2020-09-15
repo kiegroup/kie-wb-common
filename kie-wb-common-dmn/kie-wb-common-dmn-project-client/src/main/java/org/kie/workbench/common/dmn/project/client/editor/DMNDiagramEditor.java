@@ -37,6 +37,7 @@ import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.kie.workbench.common.dmn.api.qualifiers.DMNEditor;
 import org.kie.workbench.common.dmn.client.commands.general.NavigateToExpressionEditorCommand;
 import org.kie.workbench.common.dmn.client.docks.navigator.DecisionNavigatorDock;
+import org.kie.workbench.common.dmn.client.docks.navigator.common.LazyCanvasFocusUtils;
 import org.kie.workbench.common.dmn.client.editors.drd.DRDNameChanger;
 import org.kie.workbench.common.dmn.client.editors.expressions.ExpressionEditorView;
 import org.kie.workbench.common.dmn.client.editors.included.IncludedModelsPage;
@@ -134,6 +135,7 @@ public class DMNDiagramEditor extends AbstractProjectDiagramEditor<DMNDiagramRes
     private final MonacoFEELInitializer feelInitializer;
     private final ReadOnlyProvider readOnlyProvider;
     private final DRDNameChanger drdNameChanger;
+    private final LazyCanvasFocusUtils lazyCanvasFocusUtils;
 
     @Inject
     public DMNDiagramEditor(final View view,
@@ -164,7 +166,7 @@ public class DMNDiagramEditor extends AbstractProjectDiagramEditor<DMNDiagramRes
                             final SearchBarComponent<DMNSearchableElement> searchBarComponent,
                             final MonacoFEELInitializer feelInitializer,
                             final @DMNEditor ReadOnlyProvider readOnlyProvider,
-                            final DRDNameChanger drdNameChanger) {
+                            final DRDNameChanger drdNameChanger, final LazyCanvasFocusUtils lazyCanvasFocusUtils) {
         super(view,
               xmlEditorView,
               editorSessionPresenterInstances,
@@ -194,6 +196,7 @@ public class DMNDiagramEditor extends AbstractProjectDiagramEditor<DMNDiagramRes
         this.feelInitializer = feelInitializer;
         this.readOnlyProvider = readOnlyProvider;
         this.drdNameChanger = drdNameChanger;
+        this.lazyCanvasFocusUtils = lazyCanvasFocusUtils;
     }
 
     @Override
@@ -402,6 +405,7 @@ public class DMNDiagramEditor extends AbstractProjectDiagramEditor<DMNDiagramRes
             decisionNavigatorDock.reload();
             dataTypesPage.reload();
             includedModelsPage.reload();
+            lazyCanvasFocusUtils.releaseFocus();
         });
     }
 

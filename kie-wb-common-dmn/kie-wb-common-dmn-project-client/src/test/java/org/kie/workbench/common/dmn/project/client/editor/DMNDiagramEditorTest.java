@@ -35,6 +35,7 @@ import org.junit.runner.RunWith;
 import org.kie.workbench.common.dmn.api.qualifiers.DMNEditor;
 import org.kie.workbench.common.dmn.client.commands.general.NavigateToExpressionEditorCommand;
 import org.kie.workbench.common.dmn.client.docks.navigator.DecisionNavigatorDock;
+import org.kie.workbench.common.dmn.client.docks.navigator.common.LazyCanvasFocusUtils;
 import org.kie.workbench.common.dmn.client.editors.drd.DRDNameChanger;
 import org.kie.workbench.common.dmn.client.editors.expressions.ExpressionEditorView;
 import org.kie.workbench.common.dmn.client.editors.included.IncludedModelsPage;
@@ -193,6 +194,9 @@ public class DMNDiagramEditorTest extends AbstractProjectDiagramEditorTest {
     private DRDNameChanger drdNameChanger;
 
     @Mock
+    private LazyCanvasFocusUtils lazyCanvasFocusUtils;
+
+    @Mock
     private ElementWrapperWidget drdNameWidget;
 
     @Captor
@@ -256,7 +260,8 @@ public class DMNDiagramEditorTest extends AbstractProjectDiagramEditorTest {
                                                  searchBarComponent,
                                                  feelInitializer,
                                                  readOnlyProvider,
-                                                 drdNameChanger) {
+                                                 drdNameChanger,
+                                                 lazyCanvasFocusUtils) {
             {
                 docks = DMNDiagramEditorTest.this.docks;
                 fileMenuBuilder = DMNDiagramEditorTest.this.fileMenuBuilder;
@@ -407,6 +412,7 @@ public class DMNDiagramEditorTest extends AbstractProjectDiagramEditorTest {
         verify(dataTypesPage).reload();
         verify(layoutHelper).applyLayout(diagram, layoutExecutor);
         verify(includedModelsPage).reload();
+        verify(lazyCanvasFocusUtils).releaseFocus();
     }
 
     @Test
@@ -419,6 +425,7 @@ public class DMNDiagramEditorTest extends AbstractProjectDiagramEditorTest {
         verify(decisionNavigatorDock, never()).open();
         verify(dataTypesPage, never()).reload();
         verify(includedModelsPage, never()).reload();
+        verify(lazyCanvasFocusUtils, never()).releaseFocus();
     }
 
     @Test

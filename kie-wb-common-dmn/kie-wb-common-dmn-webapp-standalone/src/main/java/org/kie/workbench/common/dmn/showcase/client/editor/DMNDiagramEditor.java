@@ -34,6 +34,7 @@ import org.jboss.errai.common.client.ui.ElementWrapperWidget;
 import org.kie.workbench.common.dmn.api.qualifiers.DMNEditor;
 import org.kie.workbench.common.dmn.client.commands.general.NavigateToExpressionEditorCommand;
 import org.kie.workbench.common.dmn.client.docks.navigator.DecisionNavigatorDock;
+import org.kie.workbench.common.dmn.client.docks.navigator.common.LazyCanvasFocusUtils;
 import org.kie.workbench.common.dmn.client.docks.navigator.drds.DMNDiagramsSession;
 import org.kie.workbench.common.dmn.client.editors.drd.DRDNameChanger;
 import org.kie.workbench.common.dmn.client.editors.expressions.ExpressionEditorView;
@@ -152,6 +153,7 @@ public class DMNDiagramEditor implements KieEditorWrapperView.KieEditorWrapperPr
     private final DMNDiagramsSession dmnDiagramsSession;
     private final DMNMarshallerService marshallerService;
     private final DRDNameChanger drdNameChanger;
+    private final LazyCanvasFocusUtils lazyCanvasFocusUtils;
 
     private PlaceRequest placeRequest;
     private String title = "Authoring Screen";
@@ -185,7 +187,8 @@ public class DMNDiagramEditor implements KieEditorWrapperView.KieEditorWrapperPr
                             final MonacoFEELInitializer feelInitializer,
                             final DMNDiagramsSession dmnDiagramsSession,
                             final DMNMarshallerService marshallerService,
-                            final DRDNameChanger drdNameChanger) {
+                            final DRDNameChanger drdNameChanger,
+                            final LazyCanvasFocusUtils lazyCanvasFocusUtils) {
         this.sessionManager = sessionManager;
         this.sessionCommandManager = sessionCommandManager;
         this.presenter = presenter;
@@ -217,6 +220,7 @@ public class DMNDiagramEditor implements KieEditorWrapperView.KieEditorWrapperPr
         this.dmnDiagramsSession = dmnDiagramsSession;
         this.marshallerService = marshallerService;
         this.drdNameChanger = drdNameChanger;
+        this.lazyCanvasFocusUtils = lazyCanvasFocusUtils;
     }
 
     @PostConstruct
@@ -474,6 +478,7 @@ public class DMNDiagramEditor implements KieEditorWrapperView.KieEditorWrapperPr
                           dataTypesPage.reload();
                           dataTypesPage.enableShortcuts();
                           includedModelsPage.reload();
+                          lazyCanvasFocusUtils.releaseFocus();
                           setupCanvasHandler();
                           openDock();
                           setupSessionHeaderContainer();

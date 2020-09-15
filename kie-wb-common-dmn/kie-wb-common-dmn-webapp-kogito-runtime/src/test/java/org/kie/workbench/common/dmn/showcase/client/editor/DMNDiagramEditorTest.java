@@ -77,7 +77,8 @@ public class DMNDiagramEditorTest extends AbstractDMNDiagramEditorTest {
                                     contextProvider,
                                     guidedTourBridgeInitializer,
                                     readonlyProvider,
-                                    drdNameChanger) {
+                                    drdNameChanger,
+                                    lazyCanvasFocusUtils) {
             @Override
             protected ElementWrapperWidget<?> getWidget(final HTMLElement element) {
                 return searchBarComponentWidget;

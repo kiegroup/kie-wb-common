@@ -157,7 +157,8 @@ public class DMNDiagramEditorTest extends AbstractDMNDiagramEditorTest {
                                     contextProvider,
                                     guidedTourBridgeInitializer,
                                     readonlyProvider,
-                                    drdNameChanger) {
+                                    drdNameChanger,
+                                    lazyCanvasFocusUtils) {
 
             @Override
             protected PlaceRequest getPlaceRequest() {

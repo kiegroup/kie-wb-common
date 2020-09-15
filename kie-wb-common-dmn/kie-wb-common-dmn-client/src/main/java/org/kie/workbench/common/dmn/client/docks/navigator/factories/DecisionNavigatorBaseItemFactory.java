@@ -18,6 +18,7 @@ package org.kie.workbench.common.dmn.client.docks.navigator.factories;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Event;
@@ -26,17 +27,18 @@ import javax.inject.Inject;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.kie.workbench.common.dmn.client.docks.navigator.DecisionNavigatorItem;
 import org.kie.workbench.common.dmn.client.docks.navigator.DecisionNavigatorItemBuilder;
-import org.kie.workbench.common.dmn.client.graph.DMNGraphUtils;
-import org.kie.workbench.common.stunner.core.client.canvas.CanvasHandler;
+import org.kie.workbench.common.dmn.client.docks.navigator.common.CanvasFocusUtils;
+import org.kie.workbench.common.dmn.client.docks.navigator.common.LazyCanvasFocusUtils;
+import org.kie.workbench.common.dmn.client.docks.navigator.drds.DMNDiagramSelected;
+import org.kie.workbench.common.dmn.client.docks.navigator.drds.DMNDiagramsSession;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.actions.TextPropertyProvider;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.actions.TextPropertyProviderFactory;
-import org.kie.workbench.common.stunner.core.client.canvas.event.selection.CanvasFocusedShapeEvent;
-import org.kie.workbench.common.stunner.core.client.canvas.event.selection.CanvasSelectionEvent;
 import org.kie.workbench.common.stunner.core.definition.adapter.AdapterManager;
 import org.kie.workbench.common.stunner.core.definition.adapter.DefinitionAdapter;
 import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Element;
 import org.kie.workbench.common.stunner.core.graph.Node;
+import org.kie.workbench.common.stunner.core.graph.content.HasContentDefinitionId;
 import org.kie.workbench.common.stunner.core.graph.content.definition.Definition;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
 import org.kie.workbench.common.stunner.core.util.DefinitionUtils;
@@ -49,33 +51,37 @@ public class DecisionNavigatorBaseItemFactory {
 
     private final DecisionNavigatorNestedItemFactory nestedItemFactory;
 
-    private final DMNGraphUtils dmnGraphUtils;
-
     private final TextPropertyProviderFactory textPropertyProviderFactory;
 
-    private final Event<CanvasFocusedShapeEvent> canvasFocusedSelectionEvent;
-
-    private final Event<CanvasSelectionEvent> canvasSelectionEvent;
+    private final CanvasFocusUtils canvasFocusUtils;
 
     private final DefinitionUtils definitionUtils;
 
     private final TranslationService translationService;
 
+    private final DMNDiagramsSession dmnDiagramsSession;
+
+    private final LazyCanvasFocusUtils lazyCanvasFocusUtils;
+
+    private final Event<DMNDiagramSelected> selectedEvent;
+
     @Inject
     public DecisionNavigatorBaseItemFactory(final DecisionNavigatorNestedItemFactory nestedItemFactory,
-                                            final DMNGraphUtils dmnGraphUtils,
                                             final TextPropertyProviderFactory textPropertyProviderFactory,
-                                            final Event<CanvasFocusedShapeEvent> canvasFocusedSelectionEvent,
-                                            final Event<CanvasSelectionEvent> canvasSelectionEvent,
+                                            final CanvasFocusUtils canvasFocusUtils,
                                             final DefinitionUtils definitionUtils,
-                                            final TranslationService translationService) {
+                                            final TranslationService translationService,
+                                            final DMNDiagramsSession dmnDiagramsSession,
+                                            final LazyCanvasFocusUtils lazyCanvasFocusUtils,
+                                            final Event<DMNDiagramSelected> selectedEvent) {
         this.nestedItemFactory = nestedItemFactory;
-        this.dmnGraphUtils = dmnGraphUtils;
         this.textPropertyProviderFactory = textPropertyProviderFactory;
-        this.canvasFocusedSelectionEvent = canvasFocusedSelectionEvent;
-        this.canvasSelectionEvent = canvasSelectionEvent;
+        this.canvasFocusUtils = canvasFocusUtils;
         this.definitionUtils = definitionUtils;
         this.translationService = translationService;
+        this.dmnDiagramsSession = dmnDiagramsSession;
+        this.lazyCanvasFocusUtils = lazyCanvasFocusUtils;
+        this.selectedEvent = selectedEvent;
     }
 
     public DecisionNavigatorItem makeItem(final Node<View, Edge> node,
@@ -101,15 +107,35 @@ public class DecisionNavigatorBaseItemFactory {
 
         return () -> {
 
-            final CanvasHandler canvasHandler = dmnGraphUtils.getCanvasHandler();
-            final String uuid = node.getUUID();
+            final String nodeDiagramId = getDiagramId(node);
+            final String nodeUUID = node.getUUID();
 
-            canvasSelectionEvent.fire(makeCanvasSelectionEvent(canvasHandler, uuid));
-            canvasFocusedSelectionEvent.fire(makeCanvasFocusedShapeEvent(canvasHandler, uuid));
-            if (canvasHandler != null && canvasHandler.getCanvas() != null) {
-                canvasHandler.getCanvas().focus();
+            if (isCurrentDiagram(nodeDiagramId)) {
+                canvasFocusUtils.focus(nodeUUID);
+            } else {
+                lazyCanvasFocusUtils.lazyFocus(nodeUUID);
+                selectedEvent.fire(new DMNDiagramSelected(dmnDiagramsSession.getDMNDiagramElement(nodeDiagramId)));
             }
         };
+    }
+
+    private Boolean isCurrentDiagram(final String nodeDiagramId) {
+        return dmnDiagramsSession
+                .getCurrentDMNDiagramElement()
+                .map(dmnDiagramElement -> {
+                    final String diagramId = dmnDiagramElement.getId().getValue();
+                    return Objects.equals(diagramId, nodeDiagramId);
+                })
+                .orElse(false);
+    }
+
+    private String getDiagramId(final Node<View, Edge> node) {
+        final View content = node.getContent();
+        final Object definition = content.getDefinition();
+        if (definition instanceof HasContentDefinitionId) {
+            return ((HasContentDefinitionId) definition).getDiagramId();
+        }
+        return "";
     }
 
     String getLabel(final Element<View> element) {
@@ -143,16 +169,6 @@ public class DecisionNavigatorBaseItemFactory {
             nestedItems.add(nestedItemFactory.makeItem(node));
         }
         return nestedItems;
-    }
-
-    CanvasSelectionEvent makeCanvasSelectionEvent(final CanvasHandler canvas,
-                                                  final String uuid) {
-        return new CanvasSelectionEvent(canvas, uuid);
-    }
-
-    CanvasFocusedShapeEvent makeCanvasFocusedShapeEvent(final CanvasHandler canvas,
-                                                        final String uuid) {
-        return new CanvasFocusedShapeEvent(canvas, uuid);
     }
 
     private String getDefaultName() {

@@ -29,6 +29,7 @@ import org.appformer.client.context.EditorContextProvider;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.kie.workbench.common.dmn.api.qualifiers.DMNEditor;
 import org.kie.workbench.common.dmn.client.docks.navigator.DecisionNavigatorDock;
+import org.kie.workbench.common.dmn.client.docks.navigator.common.LazyCanvasFocusUtils;
 import org.kie.workbench.common.dmn.client.editors.drd.DRDNameChanger;
 import org.kie.workbench.common.dmn.client.editors.expressions.ExpressionEditorView;
 import org.kie.workbench.common.dmn.client.editors.included.IncludedModelsPage;
@@ -92,6 +93,7 @@ public class DMNDiagramEditor extends AbstractDMNDiagramEditor implements Kogito
 
     private static final PlaceRequest DMN_KOGITO_RUNTIME_SCREEN_DEFAULT_REQUEST = new DefaultPlaceRequest(AbstractDMNDiagramEditor.EDITOR_ID);
     private final ReadOnlyProvider readOnlyProvider;
+    private final LazyCanvasFocusUtils lazyCanvasFocusUtils;
 
     @Inject
     public DMNDiagramEditor(final View view,
@@ -128,7 +130,8 @@ public class DMNDiagramEditor extends AbstractDMNDiagramEditor implements Kogito
                             final EditorContextProvider contextProvider,
                             final GuidedTourBridgeInitializer guidedTourBridgeInitializer,
                             final @DMNEditor ReadOnlyProvider readOnlyProvider,
-                            final DRDNameChanger drdNameChanger) {
+                            final DRDNameChanger drdNameChanger,
+                            final LazyCanvasFocusUtils lazyCanvasFocusUtils) {
         super(view,
               fileMenuBuilder,
               placeManager,
@@ -164,6 +167,7 @@ public class DMNDiagramEditor extends AbstractDMNDiagramEditor implements Kogito
               guidedTourBridgeInitializer,
               drdNameChanger);
         this.readOnlyProvider = readOnlyProvider;
+        this.lazyCanvasFocusUtils = lazyCanvasFocusUtils;
     }
 
     @Override
@@ -180,6 +184,7 @@ public class DMNDiagramEditor extends AbstractDMNDiagramEditor implements Kogito
             expressionEditor.setToolbarStateHandler(new DMNProjectToolbarStateHandler(getMenuSessionItems()));
             decisionNavigatorDock.reload();
             dataTypesPage.reload();
+            lazyCanvasFocusUtils.releaseFocus();
             final Channel channel = contextProvider.getChannel();
             if (Objects.equals(channel, DEFAULT) || Objects.equals(channel, VSCODE)) {
                 includedModelsPage.reload();
