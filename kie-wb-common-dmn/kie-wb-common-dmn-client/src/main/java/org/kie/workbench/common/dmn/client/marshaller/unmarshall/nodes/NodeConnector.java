@@ -96,6 +96,7 @@ public class NodeConnector {
 
         final Map<String, List<NodeEntry>> entriesById = makeNodeIndex(nodeEntries);
         final String diagramId = dmnDiagram.getId();
+        final List<JSIDMNEdge> pendingEdges = new ArrayList<>(edges);
 
         for (final NodeEntry nodeEntry : nodeEntries) {
 
@@ -118,6 +119,7 @@ public class NodeConnector {
                                        entriesById,
                                        diagramId,
                                        edges,
+                                       pendingEdges,
                                        node);
                     connectEdgeToNodes(INFO_REQ_ID,
                                        ir,
@@ -125,6 +127,7 @@ public class NodeConnector {
                                        entriesById,
                                        diagramId,
                                        edges,
+                                       pendingEdges,
                                        node);
                 }
                 final List<JSITKnowledgeRequirement> jsiKnowledgeRequirements = decision.getKnowledgeRequirement();
@@ -136,6 +139,7 @@ public class NodeConnector {
                                        entriesById,
                                        diagramId,
                                        edges,
+                                       pendingEdges,
                                        node);
                 }
                 final List<JSITAuthorityRequirement> jsiAuthorityRequirements = decision.getAuthorityRequirement();
@@ -147,6 +151,7 @@ public class NodeConnector {
                                        entriesById,
                                        diagramId,
                                        edges,
+                                       pendingEdges,
                                        node);
                 }
                 continue;
@@ -163,6 +168,7 @@ public class NodeConnector {
                                        entriesById,
                                        diagramId,
                                        edges,
+                                       pendingEdges,
                                        node);
                 }
                 final List<JSITAuthorityRequirement> jsiAuthorityRequirements = bkm.getAuthorityRequirement();
@@ -174,6 +180,7 @@ public class NodeConnector {
                                        entriesById,
                                        diagramId,
                                        edges,
+                                       pendingEdges,
                                        node);
                 }
                 continue;
@@ -190,6 +197,7 @@ public class NodeConnector {
                                        entriesById,
                                        diagramId,
                                        edges,
+                                       pendingEdges,
                                        node);
                     connectEdgeToNodes(AUTH_REQ_ID,
                                        ar,
@@ -197,6 +205,7 @@ public class NodeConnector {
                                        entriesById,
                                        diagramId,
                                        edges,
+                                       pendingEdges,
                                        node);
                     connectEdgeToNodes(AUTH_REQ_ID,
                                        ar,
@@ -204,6 +213,7 @@ public class NodeConnector {
                                        entriesById,
                                        diagramId,
                                        edges,
+                                       pendingEdges,
                                        node);
                 }
                 continue;
@@ -248,7 +258,7 @@ public class NodeConnector {
                 final Node targetNode = targetEntry.getNode();
 
                 @SuppressWarnings("unchecked")
-                final Edge<View<Association>, ?> myEdge = (Edge<View<Association>, ?>) factoryManager.newElement(diagramId + "#" + association.getId(), // or build id
+                final Edge<View<Association>, ?> myEdge = (Edge<View<Association>, ?>) factoryManager.newElement(diagramId + "#" + association.getId(),
                                                                                                                  ASSOCIATION_ID).asEdge();
 
                 final ViewConnector connectionContent = (ViewConnector) myEdge.getContent();
@@ -339,9 +349,10 @@ public class NodeConnector {
                                     final Map<String, List<NodeEntry>> entriesById,
                                     final String diagramId,
                                     final List<JSIDMNEdge> edges,
+                                    final List<JSIDMNEdge> pendingEdges,
                                     final Node currentNode) {
 
-        if (Objects.nonNull(jsiDMNElementReference)) {
+        if (Objects.nonNull(jsiDMNElementReference) && !edges.isEmpty()) {
             final String reqInputID = getId(jsiDMNElementReference);
             final List<NodeEntry> nodeEntries = entriesById.get(reqInputID);
             final Optional<JSIDMNEdge> dmnEdgeOpt = edges.stream()
@@ -361,7 +372,8 @@ public class NodeConnector {
                     dmnEdge = Js.uncheckedCast(dmnEdgeOpt.get());
                     requiredNode = getNode(dmnEdge, nodeEntries);
                     id = dmnEdge.getDmnElementRef().getLocalPart();
-                } else {
+                    pendingEdges.remove(dmnEdge);
+                } else if (edges.isEmpty()) {
                     dmnEdge = new JSIDMNEdge();
                     final JSIPoint point = new JSIPoint();
                     point.setX(0);
@@ -370,6 +382,8 @@ public class NodeConnector {
                     final NodeEntry nodeEntry = nodeEntries.get(0);
                     requiredNode = nodeEntry.getNode();
                     id = nodeEntry.getDmnElement().getId();
+                } else {
+                    return;
                 }
 
                 final Edge myEdge = factoryManager.newElement(IdUtils.getPrefixedId(diagramId, id),

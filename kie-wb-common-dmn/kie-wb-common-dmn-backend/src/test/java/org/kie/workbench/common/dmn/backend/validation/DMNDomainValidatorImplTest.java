@@ -75,7 +75,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class DMNDomainValidatorTest {
+public class DMNDomainValidatorImplTest {
 
     private static final String DMN_XML = "<Some XML/>";
 
@@ -121,17 +121,17 @@ public class DMNDomainValidatorTest {
 
     private List<DMNMessage> validationMessages;
 
-    private DMNDomainValidator domainValidator;
+    private DMNDomainValidatorImpl domainValidator;
 
     @Before
     @SuppressWarnings("unchecked")
     public void setup() throws IOException {
         this.definitions = new Definitions();
         this.validationMessages = new ArrayList<>();
-        this.domainValidator = spy(new DMNDomainValidator(dmnMarshaller,
-                                                          dmnDiagramUtils,
-                                                          importsHelper,
-                                                          dmnIOHelper));
+        this.domainValidator = spy(new DMNDomainValidatorImpl(dmnMarshaller,
+                                                              dmnDiagramUtils,
+                                                              importsHelper,
+                                                              dmnIOHelper));
 
         doReturn(dmnValidator).when(domainValidator).getDMNValidator();
         domainValidator.setupValidator();
@@ -283,7 +283,7 @@ public class DMNDomainValidatorTest {
         final DomainViolation domainViolation0 = domainViolationIterator.next();
         assertThat(domainViolation0.getViolationType()).isEqualTo(Violation.Type.ERROR);
         assertThat(domainViolation0.getMessage()).contains("error");
-        assertThat(domainViolation0.getUUID()).isEqualTo(DMNDomainValidator.DEFAULT_UUID);
+        assertThat(domainViolation0.getUUID()).isEqualTo(DMNDomainValidatorImpl.DEFAULT_UUID);
 
         final DomainViolation domainViolation1 = domainViolationIterator.next();
         assertThat(domainViolation1.getViolationType()).isEqualTo(Violation.Type.WARNING);

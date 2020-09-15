@@ -32,6 +32,7 @@ import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
+import org.jboss.errai.bus.server.annotations.Service;
 import org.kie.api.builder.Message;
 import org.kie.dmn.api.core.DMNMessage;
 import org.kie.dmn.model.api.DMNElement;
@@ -41,6 +42,7 @@ import org.kie.workbench.common.dmn.api.DMNDefinitionSet;
 import org.kie.workbench.common.dmn.api.definition.model.Definitions;
 import org.kie.workbench.common.dmn.api.definition.model.Import;
 import org.kie.workbench.common.dmn.api.graph.DMNDiagramUtils;
+import org.kie.workbench.common.dmn.api.validation.DMNDomainValidator;
 import org.kie.workbench.common.dmn.backend.DMNMarshallerStandalone;
 import org.kie.workbench.common.dmn.backend.common.DMNIOHelper;
 import org.kie.workbench.common.dmn.backend.common.DMNMarshallerImportsHelperStandalone;
@@ -49,14 +51,14 @@ import org.kie.workbench.common.stunner.core.definition.adapter.binding.Bindable
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.kie.workbench.common.stunner.core.diagram.Metadata;
 import org.kie.workbench.common.stunner.core.marshaller.MarshallingMessage;
-import org.kie.workbench.common.stunner.core.validation.DomainValidator;
 import org.kie.workbench.common.stunner.core.validation.DomainViolation;
 import org.kie.workbench.common.stunner.core.validation.Violation;
 import org.uberfire.backend.vfs.Path;
 import org.uberfire.java.nio.file.Paths;
 
+@Service
 @ApplicationScoped
-public class DMNDomainValidator implements DomainValidator {
+public class DMNDomainValidatorImpl implements DMNDomainValidator {
 
     static final String DEFAULT_UUID = "uuid";
 
@@ -68,10 +70,10 @@ public class DMNDomainValidator implements DomainValidator {
     private final DMNIOHelper dmnIOHelper;
 
     @Inject
-    public DMNDomainValidator(final DMNMarshallerStandalone dmnMarshaller,
-                              final DMNDiagramUtils dmnDiagramUtils,
-                              final DMNMarshallerImportsHelperStandalone importsHelper,
-                              final DMNIOHelper dmnIOHelper) {
+    public DMNDomainValidatorImpl(final DMNMarshallerStandalone dmnMarshaller,
+                                  final DMNDiagramUtils dmnDiagramUtils,
+                                  final DMNMarshallerImportsHelperStandalone importsHelper,
+                                  final DMNIOHelper dmnIOHelper) {
         this.dmnMarshaller = dmnMarshaller;
         this.dmnDiagramUtils = dmnDiagramUtils;
         this.importsHelper = importsHelper;
@@ -96,13 +98,21 @@ public class DMNDomainValidator implements DomainValidator {
     @SuppressWarnings("unchecked")
     public void validate(final Diagram diagram,
                          final Consumer<Collection<DomainViolation>> resultConsumer) {
+
+        // The Definitions contained within the diagram do not contain DRGElements therefore marshall
+        // the diagram to XML that then builds a fully enriched representation of the DMN model.
+        final String diagramXml = dmnMarshaller.marshall(diagram);
+        final Collection<DomainViolation> messages = validate(diagram, diagramXml);
+
+        resultConsumer.accept(messages);
+    }
+
+    @Override
+    public Collection<DomainViolation> validate(final Diagram diagram,
+                                                final String diagramXml) {
         final List<Reader> dmnXMLReaders = new ArrayList<>();
         try {
-
-            // The Definitions contained within the diagram do not contain DRGElements therefore marshall
-            // the diagram to XML that then builds a fully enriched representation of the DMN model.
-            final String uiDiagramXML = dmnMarshaller.marshall(diagram);
-            dmnXMLReaders.add(getStringReader(uiDiagramXML));
+            dmnXMLReaders.add(getStringReader(diagramXml));
 
             // Load Readers for all other imported DMN models.
             final Definitions uiDefinitions = dmnDiagramUtils.getDefinitions(diagram);
@@ -121,7 +131,7 @@ public class DMNDomainValidator implements DomainValidator {
                     .usingImports(getValidatorImportReaderResolver(metadata))
                     .theseModels(dmnXMLReaders.toArray(aDMNXMLReaders));
 
-            resultConsumer.accept(convert(messages));
+            return convert(messages);
         } finally {
             dmnXMLReaders.forEach(reader -> {
                 try {

@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -58,13 +59,16 @@ import org.kie.workbench.common.dmn.client.marshaller.converters.dd.PointUtils;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.MainJs;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.di.JSIDiagramElement;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITAssociation;
+import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITAuthorityRequirement;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITBusinessKnowledgeModel;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITDMNElement;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITDRGElement;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITDecision;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITDecisionService;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITDefinitions;
+import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITInformationRequirement;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITInputData;
+import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITKnowledgeRequirement;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITKnowledgeSource;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITTextAnnotation;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmndi12.JSIDMNDiagram;
@@ -241,26 +245,8 @@ public class DMNMarshaller {
                 connect(diagram, dmnDiagramElementIds, definitionsStunnerPojo, dmnEdges, node, view);
             }
 
-            nodes.values().forEach(n -> {
-                JSINodeLocalPartName localPart = JSINodeLocalPartName.UNKNOWN;
-                if (JSITBusinessKnowledgeModel.instanceOf(n)) {
-                    localPart = JSINodeLocalPartName.BUSINESS_KNOWLEDGE_MODEL;
-                } else if (JSITDecision.instanceOf(n)) {
-                    localPart = JSINodeLocalPartName.DECISION;
-                } else if (JSITDecisionService.instanceOf(n)) {
-                    localPart = JSINodeLocalPartName.DECISION_SERVICE;
-                } else if (JSITInputData.instanceOf(n)) {
-                    localPart = JSINodeLocalPartName.INPUT_DATA;
-                } else if (JSITKnowledgeSource.instanceOf(n)) {
-                    localPart = JSINodeLocalPartName.KNOWLEDGE_SOURCE;
-                }
-                final JSITDRGElement toAdd = WrapperUtils.getWrappedJSITDRGElement(n, PREFIX, localPart.getLocalPart());
-
-                final boolean exists = anyMatch(definitions.getDrgElement(),
-                                                jsitdrgElement -> Objects.equals(jsitdrgElement.getId(), n.getId()));
-                if (!exists) {
-                    definitions.addDrgElement(toAdd);
-                }
+            nodes.values().forEach(node -> {
+                mergeOrAddNodeToDefinitions(node, definitions);
             });
 
             textAnnotations.values().forEach(text -> {
@@ -277,6 +263,111 @@ public class DMNMarshaller {
         });
 
         return definitions;
+    }
+
+    void mergeOrAddNodeToDefinitions(final JSITDRGElement node,
+                                     final JSITDefinitions definitions) {
+
+        final Optional<JSITDRGElement> existingNode = getExistingNode(definitions, node);
+
+        if (existingNode.isPresent()) {
+            final JSITDRGElement existingDRGElement = Js.uncheckedCast(existingNode.get());
+            mergeNodeRequirements(node, existingDRGElement);
+        } else {
+            addNodeToDefinitions(node, definitions);
+        }
+    }
+
+    private void addNodeToDefinitions(final JSITDRGElement node,
+                                      final JSITDefinitions definitions) {
+
+        final JSINodeLocalPartName localPart = getLocalPart(node);
+        final JSITDRGElement toAdd = getWrappedJSITDRGElement(node, localPart);
+
+        definitions.addDrgElement(toAdd);
+    }
+
+    JSITDRGElement getWrappedJSITDRGElement(final JSITDRGElement node,
+                                            final JSINodeLocalPartName localPart) {
+        return WrapperUtils.getWrappedJSITDRGElement(node, PREFIX, localPart.getLocalPart());
+    }
+
+    private void mergeNodeRequirements(final JSITDRGElement node,
+                                       final JSITDRGElement existingDRGElement) {
+
+        if (instanceOfBusinessKnowledgeModel(node)) {
+
+            final JSITBusinessKnowledgeModel existingBkm = Js.uncheckedCast(existingDRGElement);
+            final JSITBusinessKnowledgeModel nodeBkm = Js.uncheckedCast(node);
+
+            final List<JSITAuthorityRequirement> authorityRequirement = nodeBkm.getAuthorityRequirement();
+            final List<JSITKnowledgeRequirement> knowledgeRequirement = nodeBkm.getKnowledgeRequirement();
+
+            existingBkm.addAllAuthorityRequirement(authorityRequirement.toArray(new JSITAuthorityRequirement[0]));
+            existingBkm.addAllKnowledgeRequirement(knowledgeRequirement.toArray(new JSITKnowledgeRequirement[0]));
+        } else if (instanceOfDecision(node)) {
+
+            final JSITDecision existingDecision = Js.uncheckedCast(existingDRGElement);
+            final JSITDecision nodeDecision = Js.uncheckedCast(node);
+
+            final List<JSITAuthorityRequirement> authorityRequirement = nodeDecision.getAuthorityRequirement();
+            final List<JSITInformationRequirement> informationRequirement = nodeDecision.getInformationRequirement();
+            final List<JSITKnowledgeRequirement> knowledgeRequirement = nodeDecision.getKnowledgeRequirement();
+
+            existingDecision.addAllAuthorityRequirement(authorityRequirement.toArray(new JSITAuthorityRequirement[0]));
+            existingDecision.addAllInformationRequirement(informationRequirement.toArray(new JSITInformationRequirement[0]));
+            existingDecision.addAllKnowledgeRequirement(knowledgeRequirement.toArray(new JSITKnowledgeRequirement[0]));
+        } else if (instanceOfKnowledgeSource(node)) {
+
+            final JSITKnowledgeSource existingKnowledgeSource = Js.uncheckedCast(existingDRGElement);
+            final JSITKnowledgeSource nodeKnowledgeSource = Js.uncheckedCast(node);
+
+            final List<JSITAuthorityRequirement> authorityRequirement = nodeKnowledgeSource.getAuthorityRequirement();
+            existingKnowledgeSource.addAllAuthorityRequirement(authorityRequirement.toArray(new JSITAuthorityRequirement[0]));
+        }
+    }
+
+    boolean instanceOfBusinessKnowledgeModel(final JSITDRGElement node) {
+        return JSITBusinessKnowledgeModel.instanceOf(node);
+    }
+
+    boolean instanceOfDecision(final JSITDRGElement node) {
+        return JSITDecision.instanceOf(node);
+    }
+
+    boolean instanceOfKnowledgeSource(final JSITDRGElement node) {
+        return JSITKnowledgeSource.instanceOf(node);
+    }
+
+    Optional<JSITDRGElement> getExistingNode(final JSITDefinitions definitions,
+                                             final JSITDRGElement node) {
+        final JSITDRGElement[] existingDRGElement = new JSITDRGElement[1];
+
+        forEach(definitions.getDrgElement(),
+                drgElement -> {
+                    if (Objects.equals(drgElement.getId(), node.getId())) {
+                        existingDRGElement[0] = drgElement;
+                    }
+                });
+
+        final JSITDRGElement value = Js.uncheckedCast(existingDRGElement[0]);
+        return Optional.ofNullable(value);
+    }
+
+    private JSINodeLocalPartName getLocalPart(final JSITDRGElement node) {
+        if (JSITBusinessKnowledgeModel.instanceOf(node)) {
+            return JSINodeLocalPartName.BUSINESS_KNOWLEDGE_MODEL;
+        } else if (JSITDecision.instanceOf(node)) {
+            return JSINodeLocalPartName.DECISION;
+        } else if (JSITDecisionService.instanceOf(node)) {
+            return JSINodeLocalPartName.DECISION_SERVICE;
+        } else if (JSITInputData.instanceOf(node)) {
+            return JSINodeLocalPartName.INPUT_DATA;
+        } else if (JSITKnowledgeSource.instanceOf(node)) {
+            return JSINodeLocalPartName.KNOWLEDGE_SOURCE;
+        } else {
+            return JSINodeLocalPartName.UNKNOWN;
+        }
     }
 
     public List<Node> getNodeStream(final Diagram diagram) {

@@ -17,6 +17,8 @@
 
 package org.kie.workbench.common.stunner.core.client.session.command.impl;
 
+import java.util.Objects;
+
 import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Observes;
 import javax.enterprise.inject.Default;
@@ -105,7 +107,8 @@ public class UndoSessionCommand extends AbstractClientSessionCommand<EditorSessi
     void onCommandAdded(final @Observes RegisterChangedEvent registerChangedEvent) {
         checkNotNull("registerChangedEvent",
                      registerChangedEvent);
-        if (registerChangedEvent.getCanvasHandler().equals(getCanvasHandler())) {
+        if (!Objects.isNull(getSession())
+                && Objects.equals(registerChangedEvent.getCanvasHandler(), getCanvasHandler())) {
             checkState();
         }
     }
