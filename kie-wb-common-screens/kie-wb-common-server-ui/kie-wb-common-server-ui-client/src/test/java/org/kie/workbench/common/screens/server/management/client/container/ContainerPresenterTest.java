@@ -197,6 +197,7 @@ public class ContainerPresenterTest {
     public void testStartContainer() {
         presenter.loadContainers(containerSpecData);
 
+
         presenter.startContainer();
 
         verify(view).setContainerStartState(State.ENABLED);
@@ -299,8 +300,7 @@ public class ContainerPresenterTest {
     public void testLoadContainersEmpty() {
         presenter.loadContainers(containerSpecData);
 
-        verifyLoad(true,
-                   1);
+        verifyLoad(true, 1, false);
     }
 
     @Test
@@ -315,14 +315,12 @@ public class ContainerPresenterTest {
         presenter.setContainerSpec(containerSpec1);
         presenter.loadContainers(containerSpecData);
 
-        verifyLoad(true,
-                   0);
+        verifyLoad(true, 0, false);
 
         presenter.setContainerSpec(containerSpec);
         presenter.loadContainers(containerSpecData);
 
-        verifyLoad(true,
-                   1);
+        verifyLoad(true, 1, false);
 
     }
 
@@ -336,8 +334,7 @@ public class ContainerPresenterTest {
         presenter.loadContainers(containerSpecData);
         presenter.refresh();
 
-        verifyLoad(true,
-                   2);
+        verifyLoad(true, 2, false);
     }
 
     @Test
@@ -351,8 +348,7 @@ public class ContainerPresenterTest {
         containerSpecData.getContainers().add(container);
         presenter.loadContainers(containerSpecData);
 
-        verifyLoad(true,
-                   1);
+        verifyLoad(true, 1, false);
     }
 
     @Test
@@ -367,12 +363,29 @@ public class ContainerPresenterTest {
         containerSpecData.getContainers().add(container);
         presenter.loadContainers(containerSpecData);
 
-        verifyLoad(false,
-                   1);
+        verifyLoad(false, 1, false);
     }
 
-    private void verifyLoad(boolean empty,
-                            int times) {
+    @Test
+    public void testLoadContainersHasFailed() {
+        final Container container = new Container("containerSpecId",
+                                                  "containerName",
+                                                  new ServerInstanceKey(),
+                                                  Collections.<Message>emptyList(),
+                                                  null,
+                                                  null);
+        container.setStatus(KieContainerStatus.FAILED);
+        containerSpecData.getContainers().add(container);
+        assertNull(container.getResolvedReleasedId());
+        presenter.loadContainers(containerSpecData);
+
+        assertEquals(KieContainerStatus.FAILED, containerSpecData.getContainerSpec().getStatus());
+        assertNotNull(container.getResolvedReleasedId());
+
+        verifyLoad(false, 1, true);
+    }
+
+    private void verifyLoad(boolean empty, int times, boolean hasFailed) {
         verify(containerStatusEmptyPresenter,
                times(times)).setup(containerSpec);
         verify(containerRemoteStatusPresenter,
@@ -406,8 +419,11 @@ public class ContainerPresenterTest {
 
         verify(view,
                times(times)).setContainerStartState(State.DISABLED);
-        verify(view,
-               times(times)).setContainerStopState(State.ENABLED);
+        if (!hasFailed) {
+            verify(view, times(times)).setContainerStopState(State.ENABLED);
+        } else {
+            verify(view, times(times)).setContainerStopState(State.DISABLED);
+        }
 
         verify(containerProcessConfigPresenter,
                times(times)).setup(containerSpec,
@@ -425,8 +441,7 @@ public class ContainerPresenterTest {
 
         presenter.load(new ContainerSpecSelected(containerSpec));
 
-        verifyLoad(true,
-                   1);
+        verifyLoad(true, 1, false);
     }
 
     @Test
@@ -499,8 +514,7 @@ public class ContainerPresenterTest {
 
         presenter.onRefresh(new RefreshRemoteServers(containerSpec));
 
-        verifyLoad(true,
-                   1);
+        verifyLoad(true, 1, false);
     }
 
     @Test
@@ -584,7 +598,7 @@ public class ContainerPresenterTest {
 
         verify(view).enableRemoveButton();
         verify(view).setContainerStartState(State.DISABLED);
-        verify(view).setContainerStopState(State.ENABLED);
+        verify(view).setContainerStopState(State.DISABLED);
         verify(view).disableToggleActivationButton();
     }
 
