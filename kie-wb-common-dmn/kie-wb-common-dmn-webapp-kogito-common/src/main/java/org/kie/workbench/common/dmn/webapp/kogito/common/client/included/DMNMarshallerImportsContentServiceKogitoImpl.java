@@ -78,7 +78,7 @@ public class DMNMarshallerImportsContentServiceKogitoImpl implements DMNMarshall
     public Promise<PMMLDocumentMetadata> getPMMLDocumentMetadata(final String pmmlFilePath) {
 
         if (StringUtils.isEmpty(pmmlFilePath)) {
-            return promises.reject("PMML file required to be marshalled is empty or null");
+            return promises.reject("PMML file path cannot be empty or null");
         }
 
         return loadFile(pmmlFilePath)

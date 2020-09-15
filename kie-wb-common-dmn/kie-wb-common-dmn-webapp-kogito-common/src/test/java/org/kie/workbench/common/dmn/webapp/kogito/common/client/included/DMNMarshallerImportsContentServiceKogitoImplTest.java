@@ -124,12 +124,12 @@ public class DMNMarshallerImportsContentServiceKogitoImplTest {
 
     @Test
     public void testGetDocumentMetadataNullFile() {
-        getDocumentMetadataInvalidContent(null, CONTENT, "PMML file required to be marshalled is empty or null");
+        getDocumentMetadataInvalidContent(null, CONTENT, "PMML file path cannot be empty or null");
     }
 
     @Test
     public void testGetDocumentMetadataEmptyFile() {
-        getDocumentMetadataInvalidContent("", CONTENT, "PMML file required to be marshalled is empty or null");
+        getDocumentMetadataInvalidContent("", CONTENT, "PMML file path cannot be empty or null");
     }
 
     @Test
