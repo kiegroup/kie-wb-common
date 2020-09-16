@@ -1,4 +1,3 @@
-
 /*
  * Copyright 2017 Red Hat, Inc. and/or its affiliates.
  *
