@@ -58,7 +58,8 @@ public abstract class AbstractCanvasInlineTextEditorControl
         implements CanvasInlineTextEditorControl<AbstractCanvasHandler, EditorSession, Element> {
 
     public static final double SHAPE_EDIT_ALPHA = 0.2d;
-    public static final double SHAPE_NOT_EDIT_ALPHA = 1.0d;
+    public static final double TITLE_EDIT_ALPHA = 0.0d;
+    public static final double NOT_EDIT_ALPHA = 1.0d;
     public static final String ALIGN_MIDDLE = "MIDDLE";
     public static final String ALIGN_LEFT = "LEFT";
     public static final String ALIGN_TOP = "TOP";
@@ -531,9 +532,10 @@ public abstract class AbstractCanvasInlineTextEditorControl
         final Shape<?> shape = getShape(this.uuid);
         if (null != shape) {
             final HasTitle hasTitle = (HasTitle) shape.getShapeView();
-            final double alpha = editMode ? SHAPE_EDIT_ALPHA : SHAPE_NOT_EDIT_ALPHA;
+            final double alpha = editMode ? SHAPE_EDIT_ALPHA : NOT_EDIT_ALPHA;
+            final double titleAlpha = editMode ? TITLE_EDIT_ALPHA : NOT_EDIT_ALPHA;
             shape.getShapeView().setFillAlpha(alpha);
-            hasTitle.setTitleAlpha(alpha);
+            hasTitle.setTitleAlpha(titleAlpha);
             return true;
         }
         return false;

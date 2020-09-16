@@ -44,6 +44,9 @@ import static org.mockito.Mockito.when;
 public class InlineTextEditorBoxViewImplTest {
 
     public static final String NAME = "MyComponent";
+    public static final String CONTENT = "Content\nContent";
+    public static final String NAME_BR = "MyComponent<br>";
+    public static final String CONTENT_BR = "Content<br>Content";
     public static final double BOX_WIDTH = 50d;
     public static final double BOX_HEIGHT = 50d;
     public static final String FONT_FAMILY = "verdana";
@@ -107,8 +110,6 @@ public class InlineTextEditorBoxViewImplTest {
         tested.onChangeName(event);
 
         verify(presenter,
-               times(1)).onChangeName(anyString());
-        verify(presenter,
                times(1)).onSave();
     }
 
@@ -131,8 +132,6 @@ public class InlineTextEditorBoxViewImplTest {
         tested.onChangeName(event);
 
         verify(presenter,
-               times(1)).onChangeName(anyString());
-        verify(presenter,
                times(1)).onSave();
     }
 
@@ -148,13 +147,44 @@ public class InlineTextEditorBoxViewImplTest {
     }
 
     @Test
-    public void testOnKeyPressEnterEvent() {
-        when(event.getTypeInt()).thenReturn(Event.ONKEYPRESS);
+    public void testOnKeyDownEnterEvent() {
+        when(event.getTypeInt()).thenReturn(Event.ONKEYDOWN);
         when(event.getKeyCode()).thenReturn(KeyCodes.KEY_ENTER);
         when(event.getShiftKey()).thenReturn(false);
+        when(nameField.getInnerHTML()).thenReturn(NAME);
         doAnswer(i -> true).when(tested).isVisible();
         tested.onChangeName(event);
 
+        verify(presenter,
+               times(1)).onSave();
+    }
+
+    @Test
+    public void testOnKeyDownEnterEventFirefoxEndsWithBR() {
+        when(event.getTypeInt()).thenReturn(Event.ONKEYDOWN);
+        when(event.getKeyCode()).thenReturn(KeyCodes.KEY_ENTER);
+        when(event.getShiftKey()).thenReturn(false);
+        when(nameField.getInnerHTML()).thenReturn(NAME_BR);
+        doAnswer(i -> true).when(tested).isVisible();
+        tested.onChangeName(event);
+
+        verify(presenter,
+               times(1)).onChangeName(NAME);
+        verify(presenter,
+               times(1)).onSave();
+    }
+
+    @Test
+    public void testOnKeyDownEnterEventFirefoxContentBR() {
+        when(event.getTypeInt()).thenReturn(Event.ONKEYDOWN);
+        when(event.getKeyCode()).thenReturn(KeyCodes.KEY_ENTER);
+        when(event.getShiftKey()).thenReturn(false);
+        when(nameField.getInnerHTML()).thenReturn(CONTENT_BR);
+        doAnswer(i -> true).when(tested).isVisible();
+        tested.onChangeName(event);
+
+        verify(presenter,
+               times(1)).onChangeName(CONTENT);
         verify(presenter,
                times(1)).onSave();
     }
@@ -197,18 +227,6 @@ public class InlineTextEditorBoxViewImplTest {
 
         verify(presenter,
                never()).onChangeName(NAME);
-    }
-
-    @Test
-    public void testOnKeyPressValidKeyEvent() {
-        when(nameField.getTextContent()).thenReturn(NAME);
-        when(event.getTypeInt()).thenReturn(Event.ONKEYPRESS);
-        when(event.getKeyCode()).thenReturn(KeyCodes.KEY_A);
-        doAnswer(i -> true).when(tested).isVisible();
-        tested.onChangeName(event);
-
-        verify(presenter,
-               times(1)).onChangeName(NAME);
     }
 
     @Test

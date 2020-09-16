@@ -498,7 +498,7 @@ public abstract class AbstractCanvasInlineTextEditorControlTest<C extends Abstra
 
     private void assertShow(final boolean multiline, final String textBoxAlignment, final String position) {
         verify(testShapeView).setFillAlpha(eq(AbstractCanvasInlineTextEditorControl.SHAPE_EDIT_ALPHA));
-        verify(testShapeView).setTitleAlpha(eq(AbstractCanvasInlineTextEditorControl.SHAPE_EDIT_ALPHA));
+        verify(testShapeView).setTitleAlpha(eq(AbstractCanvasInlineTextEditorControl.TITLE_EDIT_ALPHA));
         verify(textEditorBox).show(eq(element), anyDouble(), anyDouble());
         verify(textEditorBox).setFontFamily(FONT_FAMILY);
         verify(textEditorBox).setFontSize(FONT_SIZE);
@@ -524,8 +524,8 @@ public abstract class AbstractCanvasInlineTextEditorControlTest<C extends Abstra
     }
 
     private void assertHide(final int t) {
-        verify(testShapeView, times(t)).setFillAlpha(eq(AbstractCanvasInlineTextEditorControl.SHAPE_NOT_EDIT_ALPHA));
-        verify(testShapeView, times(t)).setTitleAlpha(eq(AbstractCanvasInlineTextEditorControl.SHAPE_NOT_EDIT_ALPHA));
+        verify(testShapeView, times(t)).setFillAlpha(eq(AbstractCanvasInlineTextEditorControl.NOT_EDIT_ALPHA));
+        verify(testShapeView, times(t)).setTitleAlpha(eq(AbstractCanvasInlineTextEditorControl.NOT_EDIT_ALPHA));
         verify(textEditorBox, times(t)).hide();
         verify(floatingView, times(t)).hide();
     }

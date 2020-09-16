@@ -43,9 +43,9 @@ public class InlineTextEditorBoxViewImpl
     @DataField
     private Div nameField;
 
+    public static final String CARET_RETURN = "<br>";
     public static final String TEXT_ALIGN_CENTER = "text-align: center;";
     public static final String TEXT_ALIGN_LEFT = "text-align: left;";
-
     public static final String ALIGN_MIDDLE_STYLE = "margin: 0;" +
             "top: 50%;" +
             TEXT_ALIGN_CENTER +
@@ -56,7 +56,6 @@ public class InlineTextEditorBoxViewImpl
             TEXT_ALIGN_LEFT +
             "-ms-transform: translateY(-50%);" +
             "transform: translateY(-50%);";
-
     public static final String ALIGN_MIDDLE = "MIDDLE";
     public static final String ALIGN_LEFT = "LEFT";
     public static final String ALIGN_TOP = "TOP";
@@ -68,7 +67,6 @@ public class InlineTextEditorBoxViewImpl
     private String fontFamily;
     private boolean isMultiline;
     private double fontSize;
-    private String currentName;
 
     @Inject
     public InlineTextEditorBoxViewImpl(final TranslationService translationService) {
@@ -131,15 +129,13 @@ public class InlineTextEditorBoxViewImpl
     public void show(final String name, final double width, final double height) {
         editNameBox.getStyle().setCssText("width: " + width + "px;" +
                                                   "height: " + height + "px;");
-        nameField.getStyle().setCssText(buildStyle(width, height));
-        currentName = name;
-        presenter.onChangeName("");
+        nameField.setAttribute("style", buildStyle(width, height));
+        presenter.onChangeName(name);
         presenter.flush();
         nameField.setTextContent(name);
         nameField.setAttribute("data-text", placeholder);
 
         setVisible();
-
         scheduleDeferredCommand(() -> nameField.focus());
     }
 
@@ -164,18 +160,18 @@ public class InlineTextEditorBoxViewImpl
     }
 
     @EventHandler("nameField")
-    @SinkNative(Event.ONKEYDOWN | Event.ONBLUR | Event.ONKEYPRESS)
+    @SinkNative(Event.ONKEYDOWN | Event.ONBLUR)
     void onChangeName(Event e) {
         if (isVisible()) {
             if (e.getTypeInt() == Event.ONBLUR) {
                 rollback();
-            } else if (e.getTypeInt() == Event.ONKEYPRESS) {
-                presenter.onChangeName(nameField.getTextContent());
-                if (e.getKeyCode() == KeyCodes.KEY_ENTER && !e.getShiftKey()) {
-                    scheduleDeferredCommand(() -> presenter.onSave());
-                }
             } else if (e.getTypeInt() == Event.ONKEYDOWN) {
-                if ((!isMultiline && e.getKeyCode() == KeyCodes.KEY_ENTER && e.getShiftKey()) ||
+                if (e.getKeyCode() == KeyCodes.KEY_ENTER && !e.getShiftKey()) {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    scheduleDeferredCommand(() -> presenter.onChangeName(getTextContent()));
+                    scheduleDeferredCommand(() -> presenter.onSave());
+                } else if ((!isMultiline && e.getKeyCode() == KeyCodes.KEY_ENTER && e.getShiftKey()) ||
                         e.getKeyCode() == KeyCodes.KEY_TAB) {
                     e.stopPropagation();
                     e.preventDefault();
@@ -186,9 +182,21 @@ public class InlineTextEditorBoxViewImpl
         }
     }
 
+    private String getTextContent() {
+        String text = nameField.getInnerHTML();
+
+        // Handle specific browser caret return <br> (e.g. Firefox)
+        if (text.contains(CARET_RETURN)) {
+            if (text.endsWith(CARET_RETURN)) {
+                text = text.substring(0, text.length() - CARET_RETURN.length());
+            }
+            return text.replace(CARET_RETURN, "\n");
+        }
+        return nameField.getTextContent();
+    }
+
     @Override
     public void rollback() {
-        presenter.onChangeName(currentName);
         scheduleDeferredCommand(() -> presenter.onSave());
     }
 }
