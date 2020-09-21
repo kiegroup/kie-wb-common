@@ -18,6 +18,7 @@ package org.kie.workbench.common.dmn.client.editors.drd;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -115,19 +116,27 @@ public class DRDContextMenuService {
     private Consumer<Node<? extends Definition<?>, Edge>> addNodesToDRD(final DMNDiagramElement dmnElement,
                                                                         final Diagram stunnerElement) {
         return node -> {
-            final Definition<?> content = node.getContent();
-            final Object definition = ((View) content).getDefinition();
-            if (definition instanceof HasContentDefinitionId) {
-                final Node<?, ?> dmnDiagramRoot = DMNGraphUtils.findDMNDiagramRoot(stunnerElement.getGraph());
-                final Node clone = cloneNode(node, dmnElement);
-
-                connectRootWithChild(dmnDiagramRoot, clone);
-
-                stunnerElement
-                        .getGraph()
-                        .addNode(clone);
-            }
+            addNode(dmnElement, stunnerElement, node, Optional.empty());
         };
+    }
+
+    public void addNode(final DMNDiagramElement dmnElement,
+                        final Diagram stunnerElement,
+                        final Node<? extends Definition<?>, Edge> node,
+                        final Optional<Bounds> bounds) {
+
+        final Definition<?> content = node.getContent();
+        final Object definition = ((View) content).getDefinition();
+        if (definition instanceof HasContentDefinitionId) {
+            final Node<?, ?> dmnDiagramRoot = DMNGraphUtils.findDMNDiagramRoot(stunnerElement.getGraph());
+            final Node clone = cloneNode(node, dmnElement, bounds);
+
+            connectRootWithChild(dmnDiagramRoot, clone);
+
+            stunnerElement
+                    .getGraph()
+                    .addNode(clone);
+        }
     }
 
     private void connectRootWithChild(final Node dmnDiagramRoot,
@@ -151,19 +160,31 @@ public class DRDContextMenuService {
     }
 
     @SuppressWarnings("unchecked")
-    private Node cloneNode(final Node nodeToClone, final DMNDiagramElement dmnElement) {
+    Node cloneNode(final Node nodeToClone,
+                   final DMNDiagramElement dmnElement,
+                   final Optional<Bounds> bounds) {
         final View content = (View) nodeToClone.getContent();
-        final Bounds bounds = content.getBounds();
         final Object definition = content.getDefinition();
 
         final Node clonedNode = factoryManager.newElement(UUID.uuid(), getDefinitionId(definition.getClass())).asNode();
         final View clonedContent = (View) clonedNode.getContent();
         clonedContent.setDefinition(cloneDefinition(dmnElement, definition));
-        clonedContent.setBounds(cloneBounds(bounds));
+        clonedContent.setBounds(getBounds(bounds, content));
         return clonedNode;
     }
 
-    private HasContentDefinitionId cloneDefinition(final DMNDiagramElement dmnElement, final Object definition) {
+    Bounds getBounds(final Optional<Bounds> bounds,
+                     final View content) {
+        final Bounds newBounds;
+        if (bounds.isPresent()) {
+            newBounds = bounds.get();
+        } else {
+            newBounds = cloneBounds(content.getBounds());
+        }
+        return newBounds;
+    }
+
+    HasContentDefinitionId cloneDefinition(final DMNDiagramElement dmnElement, final Object definition) {
         final HasContentDefinitionId originalDefinition = (HasContentDefinitionId) definition;
         final HasContentDefinitionId clonedDefinition = dmnDeepCloneProcess.clone(originalDefinition);
         clonedDefinition.setContentDefinitionId(originalDefinition.getContentDefinitionId());
@@ -181,7 +202,7 @@ public class DRDContextMenuService {
         return clonedDefinition;
     }
 
-    private Bounds cloneBounds(final Bounds bounds) {
+    Bounds cloneBounds(final Bounds bounds) {
         final Bound ul = bounds.getUpperLeft();
         final Bound lr = bounds.getLowerRight();
         return Bounds.create(ul.getX(), ul.getY(), lr.getX(), lr.getY());

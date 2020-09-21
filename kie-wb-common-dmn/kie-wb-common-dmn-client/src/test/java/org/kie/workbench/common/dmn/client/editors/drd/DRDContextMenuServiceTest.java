@@ -41,10 +41,12 @@ import org.kie.workbench.common.dmn.client.marshaller.unmarshall.DMNUnmarshaller
 import org.kie.workbench.common.stunner.core.api.FactoryManager;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.kie.workbench.common.stunner.core.graph.Edge;
+import org.kie.workbench.common.stunner.core.graph.Element;
 import org.kie.workbench.common.stunner.core.graph.Graph;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.Bound;
 import org.kie.workbench.common.stunner.core.graph.content.Bounds;
+import org.kie.workbench.common.stunner.core.graph.content.HasContentDefinitionId;
 import org.kie.workbench.common.stunner.core.graph.content.definition.Definition;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
 import org.mockito.Mock;
@@ -52,10 +54,13 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import static java.util.Collections.singleton;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -89,12 +94,12 @@ public class DRDContextMenuServiceTest {
 
     @Before
     public void setUp() {
-        drdContextMenuService = new DRDContextMenuService(dmnDiagramsSession,
-                                                          factoryManager,
-                                                          selectedEvent,
-                                                          dmnDiagramUtils,
-                                                          dmnDeepCloneProcess,
-                                                          dmnUnmarshaller);
+        drdContextMenuService = spy(new DRDContextMenuService(dmnDiagramsSession,
+                                                              factoryManager,
+                                                              selectedEvent,
+                                                              dmnDiagramUtils,
+                                                              dmnDeepCloneProcess,
+                                                              dmnUnmarshaller));
     }
 
     @Test
@@ -163,6 +168,84 @@ public class DRDContextMenuServiceTest {
 
         verify(graph, times(1)).removeNode(nodeUUID);
         verify(selectedEvent, times(1)).fire(any(DMNDiagramSelected.class));
+    }
+
+    @Test
+    public void testCloneNode() {
+        final Node nodeToClone = mock(Node.class);
+        final DMNDiagramElement dmnElement = mock(DMNDiagramElement.class);
+        final Bounds bounds = mock(Bounds.class);
+        final Optional<Bounds> optionalBounds = Optional.of(bounds);
+        final View content = mock(View.class);
+        final Object definition = mock(Object.class);
+        final Node clonedNode = mock(Node.class);
+        final View clonedContent = mock(View.class);
+        final HasContentDefinitionId clonedDefinition = mock(HasContentDefinitionId.class);
+        final Bounds clonedBounds = mock(Bounds.class);
+        final Element clonedElement = mock(Element.class);
+
+        when(content.getDefinition()).thenReturn(definition);
+        when(nodeToClone.getContent()).thenReturn(content);
+        when(clonedNode.getContent()).thenReturn(clonedContent);
+        when(clonedElement.asNode()).thenReturn(clonedNode);
+        when(factoryManager.newElement(any(), any())).thenReturn(clonedElement);
+
+        doReturn(clonedDefinition).when(drdContextMenuService).cloneDefinition(dmnElement, definition);
+        doReturn(clonedBounds).when(drdContextMenuService).getBounds(optionalBounds, content);
+
+        final Node result = drdContextMenuService.cloneNode(nodeToClone, dmnElement, optionalBounds);
+
+        verify(clonedContent).setDefinition(clonedDefinition);
+        verify(clonedContent).setBounds(clonedBounds);
+        assertEquals(clonedNode, result);
+    }
+
+    @Test
+    public void testGetBoundsWhenBoundsIsNotPresent() {
+
+        final View content = mock(View.class);
+        final Bounds bounds = mock(Bounds.class);
+        final Bounds clonedBounds = mock(Bounds.class);
+
+        when(content.getBounds()).thenReturn(bounds);
+        doReturn(clonedBounds).when(drdContextMenuService).cloneBounds(bounds);
+
+        final Bounds result = drdContextMenuService.getBounds(Optional.empty(), content);
+
+        verify(drdContextMenuService).cloneBounds(bounds);
+        assertEquals(clonedBounds, result);
+    }
+
+    @Test
+    public void testGetBoundsWhenBoundsIsPresent() {
+
+        final View content = mock(View.class);
+        final Bounds bounds = mock(Bounds.class);
+        final Bounds existingBounds = mock(Bounds.class);
+
+        when(content.getBounds()).thenReturn(bounds);
+
+        final Bounds result = drdContextMenuService.getBounds(Optional.of(existingBounds), content);
+
+        verify(drdContextMenuService, never()).cloneBounds(bounds);
+        assertEquals(existingBounds, result);
+    }
+
+    @Test
+    public void testCloneBounds() {
+
+        final double x1 = 100;
+        final double y1 = 150;
+        final double x2 = 377;
+        final double y2 = 455;
+
+        final Bounds bounds = Bounds.create(x1, y1, x2, y2);
+        final Bounds cloned = drdContextMenuService.cloneBounds(bounds);
+
+        assertEquals(x1, cloned.getUpperLeft().getX(), 0.001d);
+        assertEquals(y1, cloned.getUpperLeft().getY(), 0.001d);
+        assertEquals(x2, cloned.getLowerRight().getX(), 0.001d);
+        assertEquals(y2, cloned.getLowerRight().getY(), 0.001d);
     }
 
     private Collection<Node<? extends Definition<?>, Edge>> mockNodes() {

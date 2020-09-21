@@ -232,6 +232,7 @@ public abstract class AbstractElementBuilderControl extends AbstractCanvasHandle
                                              @Override
                                              public void onSuccess(final Element element) {
                                                  updateElementFromDefinition(element, definition);
+                                                 onElementCreated(element, x, y);
                                                  getElementCommands(element,
                                                                     parent,
                                                                     getParentAssignment(parent, definition),
@@ -257,6 +258,10 @@ public abstract class AbstractElementBuilderControl extends AbstractCanvasHandle
                                                  commandsCallback.onError(error);
                                              }
                                          });
+    }
+
+    protected void onElementCreated(final Element element, final double x, final double y){
+        // Nothing for now
     }
 
     protected void updateElementFromDefinition(final Element element, final Object definition) {
