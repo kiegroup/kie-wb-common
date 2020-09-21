@@ -17,6 +17,7 @@ package org.kie.workbench.common.dmn.api.definition.model;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import org.jboss.errai.common.client.api.annotations.Portable;
@@ -33,11 +34,10 @@ import org.kie.workbench.common.forms.adf.definitions.annotations.FormField;
 import org.kie.workbench.common.forms.adf.definitions.annotations.i18n.I18nSettings;
 import org.kie.workbench.common.forms.adf.definitions.settings.FieldPolicy;
 import org.kie.workbench.common.stunner.core.definition.annotation.Definition;
-import org.kie.workbench.common.stunner.core.definition.annotation.PropertySet;
+import org.kie.workbench.common.stunner.core.definition.annotation.Property;
 import org.kie.workbench.common.stunner.core.definition.annotation.definition.Category;
 import org.kie.workbench.common.stunner.core.definition.annotation.definition.Labels;
 import org.kie.workbench.common.stunner.core.domainobject.DomainObject;
-import org.kie.workbench.common.stunner.core.factory.graph.NodeFactory;
 import org.kie.workbench.common.stunner.core.util.HashUtil;
 
 import static java.util.Collections.singletonList;
@@ -47,7 +47,7 @@ import static org.kie.workbench.common.forms.adf.engine.shared.formGeneration.pr
 
 @Portable
 @Bindable
-@Definition(graphFactory = NodeFactory.class)
+@Definition
 @FormDefinition(policy = FieldPolicy.ONLY_MARKED,
         defaultFieldSettings = {@FieldParam(name = FIELD_CONTAINER_PARAM, value = COLLAPSIBLE_CONTAINER)},
         i18n = @I18nSettings(keyPreffix = "org.kie.workbench.common.dmn.api.definition.model.OutputClause"),
@@ -61,11 +61,11 @@ public class OutputClause extends DMNElement implements HasTypeRef,
     @Labels
     private static final Set<String> stunnerLabels = new Sets.Builder<String>().build();
 
-    @PropertySet
+    @Property
     @FormField(afterElement = "description", labelKey = "outputValues")
     protected OutputClauseUnaryTests outputValues;
 
-    @PropertySet
+    @Property
     @FormField(afterElement = "outputValues", labelKey = "defaultOutputEntry")
     protected OutputClauseLiteralExpression defaultOutputEntry;
 
@@ -98,11 +98,11 @@ public class OutputClause extends DMNElement implements HasTypeRef,
     public OutputClause copy() {
         return new OutputClause(
                 new Id(),
-                description.copy(),
-                outputValues.copy(),
-                defaultOutputEntry.copy(),
+                Optional.ofNullable(description).map(Description::copy).orElse(null),
+                Optional.ofNullable(outputValues).map(OutputClauseUnaryTests::copy).orElse(null),
+                Optional.ofNullable(defaultOutputEntry).map(OutputClauseLiteralExpression::copy).orElse(null),
                 name,
-                typeRef.copy()
+                Optional.ofNullable(typeRef).map(QName::copy).orElse(null)
         );
     }
 

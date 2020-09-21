@@ -17,6 +17,7 @@ package org.kie.workbench.common.dmn.api.definition.model;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import javax.validation.Valid;
@@ -29,6 +30,7 @@ import org.kie.workbench.common.dmn.api.property.DMNPropertySet;
 import org.kie.workbench.common.dmn.api.property.dmn.Description;
 import org.kie.workbench.common.dmn.api.property.dmn.Id;
 import org.kie.workbench.common.dmn.api.property.dmn.Name;
+import org.kie.workbench.common.dmn.api.property.dmn.NameHolder;
 import org.kie.workbench.common.dmn.api.property.dmn.QName;
 import org.kie.workbench.common.dmn.api.property.dmn.QNameFieldType;
 import org.kie.workbench.common.dmn.api.property.dmn.QNameHolder;
@@ -38,18 +40,15 @@ import org.kie.workbench.common.forms.adf.definitions.annotations.FormField;
 import org.kie.workbench.common.forms.adf.definitions.settings.FieldPolicy;
 import org.kie.workbench.common.stunner.core.definition.annotation.Definition;
 import org.kie.workbench.common.stunner.core.definition.annotation.Property;
-import org.kie.workbench.common.stunner.core.definition.annotation.PropertySet;
 import org.kie.workbench.common.stunner.core.definition.annotation.definition.Category;
 import org.kie.workbench.common.stunner.core.definition.annotation.definition.Labels;
-import org.kie.workbench.common.stunner.core.factory.graph.NodeFactory;
 import org.kie.workbench.common.stunner.core.util.HashUtil;
 
 import static java.util.Collections.singletonList;
 
 @Portable
 @Bindable
-@PropertySet
-@Definition(graphFactory = NodeFactory.class)
+@Definition
 @FormDefinition(policy = FieldPolicy.ONLY_MARKED, startElement = "id")
 public class InformationItem extends NamedElement implements DMNPropertySet,
                                                              IsInformationItem {
@@ -103,11 +102,11 @@ public class InformationItem extends NamedElement implements DMNPropertySet,
 
     public InformationItem copy() {
         final InformationItem clonedInformationItem = new InformationItem();
-        clonedInformationItem.description = description.copy();
-        clonedInformationItem.name = name.copy();
-        clonedInformationItem.nameHolder = nameHolder.copy();
-        clonedInformationItem.typeRef = typeRef.copy();
-        clonedInformationItem.typeRefHolder = typeRefHolder.copy();
+        clonedInformationItem.description = Optional.ofNullable(description).map(Description::copy).orElse(null);
+        clonedInformationItem.name = Optional.ofNullable(name).map(Name::copy).orElse(null);
+        clonedInformationItem.nameHolder = Optional.ofNullable(nameHolder).map(NameHolder::copy).orElse(null);
+        clonedInformationItem.typeRef = Optional.ofNullable(typeRef).map(QName::copy).orElse(null);
+        clonedInformationItem.typeRefHolder = Optional.ofNullable(typeRefHolder).map(QNameHolder::copy).orElse(null);
         return clonedInformationItem;
     }
 

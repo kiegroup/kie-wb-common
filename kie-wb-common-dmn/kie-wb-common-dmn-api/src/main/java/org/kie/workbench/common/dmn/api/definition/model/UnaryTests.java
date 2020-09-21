@@ -15,6 +15,7 @@
  */
 package org.kie.workbench.common.dmn.api.definition.model;
 
+import java.util.Optional;
 import java.util.Set;
 
 import org.jboss.errai.common.client.api.annotations.Portable;
@@ -35,7 +36,6 @@ import org.kie.workbench.common.stunner.core.definition.annotation.Property;
 import org.kie.workbench.common.stunner.core.definition.annotation.definition.Category;
 import org.kie.workbench.common.stunner.core.definition.annotation.definition.Labels;
 import org.kie.workbench.common.stunner.core.domainobject.DomainObject;
-import org.kie.workbench.common.stunner.core.factory.graph.NodeFactory;
 import org.kie.workbench.common.stunner.core.util.HashUtil;
 
 import static org.kie.workbench.common.dmn.api.definition.model.ConstraintType.NONE;
@@ -44,7 +44,7 @@ import static org.kie.workbench.common.forms.adf.engine.shared.formGeneration.pr
 
 @Portable
 @Bindable
-@Definition(graphFactory = NodeFactory.class)
+@Definition
 @FormDefinition(policy = FieldPolicy.ONLY_MARKED,
         defaultFieldSettings = {@FieldParam(name = FIELD_CONTAINER_PARAM, value = COLLAPSIBLE_CONTAINER)},
         startElement = "id")
@@ -89,9 +89,9 @@ public class UnaryTests extends DMNElement implements IsUnaryTests,
     public UnaryTests copy() {
         return new UnaryTests(
                 new Id(),
-                description.copy(),
-                text.copy(),
-                expressionLanguage.copy(),
+                Optional.ofNullable(description).map(Description::copy).orElse(null),
+                Optional.ofNullable(text).map(Text::copy).orElse(null),
+                Optional.ofNullable(expressionLanguage).map(ExpressionLanguage::copy).orElse(null),
                 constraintType
         );
     }

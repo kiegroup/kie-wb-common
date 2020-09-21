@@ -32,11 +32,9 @@ import org.kie.workbench.common.forms.adf.definitions.annotations.FormField;
 import org.kie.workbench.common.forms.adf.definitions.settings.FieldPolicy;
 import org.kie.workbench.common.stunner.core.definition.annotation.Definition;
 import org.kie.workbench.common.stunner.core.definition.annotation.Property;
-import org.kie.workbench.common.stunner.core.definition.annotation.PropertySet;
 import org.kie.workbench.common.stunner.core.definition.annotation.definition.Category;
 import org.kie.workbench.common.stunner.core.definition.annotation.definition.Labels;
 import org.kie.workbench.common.stunner.core.domainobject.DomainObject;
-import org.kie.workbench.common.stunner.core.factory.graph.NodeFactory;
 import org.kie.workbench.common.stunner.core.util.HashUtil;
 
 import static org.kie.workbench.common.forms.adf.engine.shared.formGeneration.processing.fields.fieldInitializers.nestedForms.AbstractEmbeddedFormsInitializer.COLLAPSIBLE_CONTAINER;
@@ -44,8 +42,7 @@ import static org.kie.workbench.common.forms.adf.engine.shared.formGeneration.pr
 
 @Portable
 @Bindable
-@PropertySet
-@Definition(graphFactory = NodeFactory.class)
+@Definition
 @FormDefinition(policy = FieldPolicy.ONLY_MARKED,
         defaultFieldSettings = {@FieldParam(name = FIELD_CONTAINER_PARAM, value = COLLAPSIBLE_CONTAINER)},
         startElement = "id")
@@ -90,7 +87,7 @@ public class ImportedValues extends Import implements DMNPropertySet,
         ImportedValues clonedImportedValues = new ImportedValues();
         clonedImportedValues.id = new Id();
         clonedImportedValues.namespace = namespace;
-        clonedImportedValues.locationURI = locationURI.copy();
+        clonedImportedValues.locationURI = Optional.ofNullable(locationURI).map(LocationURI::copy).orElse(null);
         clonedImportedValues.importType = importType;
         clonedImportedValues.importedElement = importedElement;
         clonedImportedValues.expressionLanguage = Optional.ofNullable(expressionLanguage).map(ExpressionLanguage::copy).orElse(null);
