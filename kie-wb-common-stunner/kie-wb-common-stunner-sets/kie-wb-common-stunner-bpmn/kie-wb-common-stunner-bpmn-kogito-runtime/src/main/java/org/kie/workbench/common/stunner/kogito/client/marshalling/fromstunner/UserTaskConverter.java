@@ -85,153 +85,21 @@ public class UserTaskConverter {
     }
 
     private void initActions() {
-        actions.add(() -> {
-            extensionElements.add(new MetaData("elementname", userTask.getName()));
-        });
-
-        actions.add(() -> {
-            definitions.getItemDefinitions().add(new ItemDefinition(Ids.dataInputItem(userTask.getId(), "Skippable")));
-
-            DataInputAssociation inputAssociation = new DataInputAssociation()
-                    .setTargetRef(new TargetRef(Ids.dataInput(userTask.getId(), "Skippable"), false));
-
-            inputAssociation.setAssignment(new Assignment().from(userTask.getExecutionSet()
-                                                                         .getSkippable().getValue().toString())
-                                                   .to(Ids.dataInput(userTask.getId(), "Skippable")));
-            userTask.getBpmnProperties().add(inputAssociation);
-
-            ioSpecification.add(new DataInput().setId(Ids.dataInput(userTask.getId(), "Skippable"))
-                                        .setItemSubjectRef(Ids.dataInputItem(userTask.getId(), "Skippable"))
-                                        .setName("Skippable")
-                                        .setDtype("Object")
-            );
-            dataInputRefs.add(new StringValue(userTask.getId() + "_SkippableInputX"));
-        });
-
-        actions.add(() -> {
-            definitions.getItemDefinitions().add(new ItemDefinition(Ids.dataInputItem(userTask.getId(), "Priority")));
-            if (!executionSet.getPriority().getValue().isEmpty()) {
-                userTask.getBpmnProperties().add(new DataInputAssociation(userTask, userTask.getExecutionSet()
-                        .getPriority().getValue(), "PriorityInputX"));
-                ioSpecification.add(new DataInput(userTask.getId(), "PriorityInputX", "Priority"));
-                dataInputRefs.add(new StringValue(userTask.getId() + "_PriorityInputX"));
-            }
-        });
-        actions.add(() -> {
-            definitions.getItemDefinitions().add(new ItemDefinition(Ids.dataInputItem(userTask.getId(), "Comment")));
-            if (!executionSet.getSubject().getValue().isEmpty()) {
-                dataInputRefs.add(new StringValue(userTask.getId() + "_CommentInputX"));
-                ioSpecification.add(new DataInput(userTask.getId(), "CommentInputX", "Comment"));
-                userTask.getBpmnProperties().add(new DataInputAssociation(userTask, userTask.getExecutionSet()
-                        .getSubject().getValue(), "CommentInputX"));
-            }
-        });
-        actions.add(() -> {
-            definitions.getItemDefinitions().add(new ItemDefinition(Ids.dataInputItem(userTask.getId(), "Description")));
-            if (!executionSet.getDescription().getValue().isEmpty()) {
-                userTask.getBpmnProperties().add(new DataInputAssociation(userTask, userTask.getExecutionSet()
-                        .getDescription().getValue(), "DescriptionInputX"));
-                ioSpecification.add(new DataInput(userTask.getId(), "DescriptionInputX", "Description"));
-                dataInputRefs.add(new StringValue(userTask.getId() + "_DescriptionInputX"));
-            }
-        });
-        actions.add(() -> {
-            definitions.getItemDefinitions().add(new ItemDefinition(Ids.dataInputItem(userTask.getId(), "CreatedBy")));
-            if (!executionSet.getCreatedBy().getValue().isEmpty()) {
-                userTask.getBpmnProperties().add(new DataInputAssociation(userTask,
-                                                                          userTask.getExecutionSet()
-                                                                                  .getCreatedBy().getValue(),
-                                                                          "CreatedByInputX"));
-
-                ioSpecification.add(new DataInput(userTask.getId(), "CreatedByInputX", "CreatedBy"));
-
-                dataInputRefs.add(new StringValue(userTask.getId() + "_CreatedByInputX"));
-            }
-        });
-
-        actions.add(() -> {
-            if (!executionSet.getTaskName().getValue().isEmpty()) {
-                definitions.getItemDefinitions().add(new ItemDefinition(Ids.dataInputItem(userTask.getId(), "TaskName")));
-
-                DataInputAssociation inputAssociation = new DataInputAssociation().setTargetRef(new TargetRef(Ids.dataInput(userTask.getId(), "TaskName"), false));
-                inputAssociation.setAssignment(new Assignment().from(userTask.getExecutionSet()
-                                                                             .getTaskName().getValue())
-                                                       .to(Ids.dataInput(userTask.getId(), "TaskName")));
-
-                userTask.getBpmnProperties().add(inputAssociation);
-
-                ioSpecification.add(new DataInput().setId(Ids.dataInput(userTask.getId(), "TaskName"))
-                                            .setItemSubjectRef(Ids.dataInputItem(userTask.getId(), "TaskName"))
-                                            .setName("TaskName")
-                                            .setDtype("Object"));
-                dataInputRefs.add(new StringValue(userTask.getId() + "_TaskNameInputX"));
-            }
-        });
-
-        actions.add(() -> {
-            definitions.getItemDefinitions().add(new ItemDefinition(Ids.dataInputItem(userTask.getId(), "GroupId")));
-            if (!executionSet.getGroupid().getValue().isEmpty()) {
-                userTask.getBpmnProperties().add(new DataInputAssociation(userTask, userTask.getExecutionSet()
-                        .getGroupid().getValue(), "GroupIdInputX"));
-                ioSpecification.add(new DataInput(userTask.getId(), "GroupIdInputX", "GroupId"));
-                dataInputRefs.add(new StringValue(userTask.getId() + "_GroupIdInputX"));
-            }
-        });
-        actions.add(() -> {
-            definitions.getItemDefinitions().add(new ItemDefinition(Ids.dataInputItem(userTask.getId(), "Content")));
-            if (!executionSet.getContent().getValue().isEmpty()) {
-                ioSpecification.add(new DataInput(userTask.getId(), "ContentInputX", "Content"));
-                dataInputRefs.add(new StringValue(userTask.getId() + "_ContentInputX"));
-                userTask.getBpmnProperties().add(new DataInputAssociation(userTask, userTask.getExecutionSet()
-                        .getContent().getValue(), "ContentInputX"));
-            }
-        });
-
-        actions.add(() -> {
-            if (userTask.getExecutionSet()
-                    .getIsAsync().getValue()) {
-                extensionElements.add(new MetaData("customAsync", userTask.getExecutionSet()
-                        .getIsAsync().getValue().toString()));
-            }
-        });
-        actions.add(() -> {
-            if (userTask.getExecutionSet()
-                    .getAdHocAutostart().getValue()) {
-                extensionElements.add(new MetaData("customAutoStart", userTask.getExecutionSet()
-                        .getAdHocAutostart().getValue().toString()));
-            }
-        });
-        actions.add(() -> {
-            if (!userTask.getExecutionSet()
-                    .getSlaDueDate().getValue().isEmpty()) {
-                extensionElements.add(new MetaData("customSLADueDate", userTask.getExecutionSet()
-                        .getSlaDueDate().getValue()));
-            }
-        });
-        actions.add(() -> {
-            for (ScriptTypeValue value : userTask.getExecutionSet().getOnExitAction().getValue().getValues()) {
-                if (!value.getScript().isEmpty()) {
-                    extensionElements.add(new OnExitScript(value.getScript(), value.getLanguage()));
-                }
-            }
-        });
-        actions.add(() -> {
-            for (ScriptTypeValue value : userTask.getExecutionSet().getOnEntryAction().getValue().getValues()) {
-                if (!value.getScript().isEmpty()) {
-                    extensionElements.add(new OnEntryScript(value.getScript(), value.getLanguage()));
-                }
-            }
-        });
-        actions.add(() -> {
-            if (!executionSet.getActors().getValue().isEmpty()) {
-                fromActorString(executionSet.getActors().getValue())
-                        .stream()
-                        .map(actor -> new PotentialOwner(UUID.generate(),
-                                                         new ResourceAssignmentExpression(UUID.generate(), actor)))
-                        .forEach(actor -> potentialOwners.add(actor));
-            }
-        });
-
+        actions.add(this::elementname);
+        actions.add(this::skippable);
+        actions.add(this::priority);
+        actions.add(this::comment);
+        actions.add(this::description);
+        actions.add(this::createdBy);
+        actions.add(this::taskName);
+        actions.add(this::groupId);
+        actions.add(this::content);
+        actions.add(this::customAsync);
+        actions.add(this::customAutoStart);
+        actions.add(this::customSLADueDate);
+        actions.add(this::onExitAction);
+        actions.add(this::onEntryAction);
+        actions.add(this::actors);
         actions.add(this::doReassign);
         actions.add(this::doNotify);
         actions.add(this::multipleInstance);
@@ -239,12 +107,157 @@ public class UserTaskConverter {
         actions.add(this::setCollections);
     }
 
-    private List<String> fromActorString(String delimitedActors) {
-        String[] split = delimitedActors.split(",");
-        if (split.length == 1 && split[0].isEmpty()) {
-            return Collections.emptyList();
-        } else {
-            return Arrays.asList(split);
+    private void elementname() {
+        extensionElements.add(new MetaData("elementname", userTask.getName()));
+    }
+
+    private void skippable() {
+        definitions.getItemDefinitions().add(new ItemDefinition(Ids.dataInputItem(userTask.getId(), "Skippable")));
+
+        DataInputAssociation inputAssociation = new DataInputAssociation()
+                .setTargetRef(new TargetRef(Ids.dataInput(userTask.getId(), "Skippable"), false));
+
+        inputAssociation.setAssignment(new Assignment().from(userTask.getExecutionSet()
+                                                                     .getSkippable().getValue().toString())
+                                               .to(Ids.dataInput(userTask.getId(), "Skippable")));
+        userTask.getBpmnProperties().add(inputAssociation);
+
+        ioSpecification.add(new DataInput().setId(Ids.dataInput(userTask.getId(), "Skippable"))
+                                    .setItemSubjectRef(Ids.dataInputItem(userTask.getId(), "Skippable"))
+                                    .setName("Skippable")
+                                    .setDtype("Object")
+        );
+        dataInputRefs.add(new StringValue(userTask.getId() + "_SkippableInputX"));
+    }
+
+    private void priority() {
+        definitions.getItemDefinitions().add(new ItemDefinition(Ids.dataInputItem(userTask.getId(), "Priority")));
+        if (!executionSet.getPriority().getValue().isEmpty()) {
+            userTask.getBpmnProperties().add(new DataInputAssociation(userTask, userTask.getExecutionSet()
+                    .getPriority().getValue(), "PriorityInputX"));
+            ioSpecification.add(new DataInput(userTask.getId(), "PriorityInputX", "Priority"));
+            dataInputRefs.add(new StringValue(userTask.getId() + "_PriorityInputX"));
+        }
+    }
+
+    private void comment() {
+        definitions.getItemDefinitions().add(new ItemDefinition(Ids.dataInputItem(userTask.getId(), "Comment")));
+        if (!executionSet.getSubject().getValue().isEmpty()) {
+            dataInputRefs.add(new StringValue(userTask.getId() + "_CommentInputX"));
+            ioSpecification.add(new DataInput(userTask.getId(), "CommentInputX", "Comment"));
+            userTask.getBpmnProperties().add(new DataInputAssociation(userTask, userTask.getExecutionSet()
+                    .getSubject().getValue(), "CommentInputX"));
+        }
+    }
+
+    private void description() {
+        definitions.getItemDefinitions().add(new ItemDefinition(Ids.dataInputItem(userTask.getId(), "Description")));
+        if (!executionSet.getDescription().getValue().isEmpty()) {
+            userTask.getBpmnProperties().add(new DataInputAssociation(userTask, userTask.getExecutionSet()
+                    .getDescription().getValue(), "DescriptionInputX"));
+            ioSpecification.add(new DataInput(userTask.getId(), "DescriptionInputX", "Description"));
+            dataInputRefs.add(new StringValue(userTask.getId() + "_DescriptionInputX"));
+        }
+    }
+
+    private void createdBy() {
+        definitions.getItemDefinitions().add(new ItemDefinition(Ids.dataInputItem(userTask.getId(), "CreatedBy")));
+        if (!executionSet.getCreatedBy().getValue().isEmpty()) {
+            userTask.getBpmnProperties().add(new DataInputAssociation(userTask,
+                                                                      userTask.getExecutionSet()
+                                                                              .getCreatedBy().getValue(),
+                                                                      "CreatedByInputX"));
+
+            ioSpecification.add(new DataInput(userTask.getId(), "CreatedByInputX", "CreatedBy"));
+            dataInputRefs.add(new StringValue(userTask.getId() + "_CreatedByInputX"));
+        }
+    }
+
+    private void taskName() {
+        if (!executionSet.getTaskName().getValue().isEmpty()) {
+            definitions.getItemDefinitions().add(new ItemDefinition(Ids.dataInputItem(userTask.getId(), "TaskName")));
+
+            DataInputAssociation inputAssociation = new DataInputAssociation().setTargetRef(new TargetRef(Ids.dataInput(userTask.getId(), "TaskName"), false));
+            inputAssociation.setAssignment(new Assignment().from(userTask.getExecutionSet()
+                                                                         .getTaskName().getValue())
+                                                   .to(Ids.dataInput(userTask.getId(), "TaskName")));
+            userTask.getBpmnProperties().add(inputAssociation);
+
+            ioSpecification.add(new DataInput().setId(Ids.dataInput(userTask.getId(), "TaskName"))
+                                        .setItemSubjectRef(Ids.dataInputItem(userTask.getId(), "TaskName"))
+                                        .setName("TaskName")
+                                        .setDtype("Object"));
+            dataInputRefs.add(new StringValue(userTask.getId() + "_TaskNameInputX"));
+        }
+    }
+
+    private void groupId() {
+        definitions.getItemDefinitions().add(new ItemDefinition(Ids.dataInputItem(userTask.getId(), "GroupId")));
+        if (!executionSet.getGroupid().getValue().isEmpty()) {
+            userTask.getBpmnProperties().add(new DataInputAssociation(userTask, userTask.getExecutionSet()
+                    .getGroupid().getValue(), "GroupIdInputX"));
+            ioSpecification.add(new DataInput(userTask.getId(), "GroupIdInputX", "GroupId"));
+            dataInputRefs.add(new StringValue(userTask.getId() + "_GroupIdInputX"));
+        }
+    }
+
+    private void content() {
+        definitions.getItemDefinitions().add(new ItemDefinition(Ids.dataInputItem(userTask.getId(), "Content")));
+        if (!executionSet.getContent().getValue().isEmpty()) {
+            ioSpecification.add(new DataInput(userTask.getId(), "ContentInputX", "Content"));
+            dataInputRefs.add(new StringValue(userTask.getId() + "_ContentInputX"));
+            userTask.getBpmnProperties().add(new DataInputAssociation(userTask, userTask.getExecutionSet()
+                    .getContent().getValue(), "ContentInputX"));
+        }
+    }
+
+    private void customAsync() {
+        if (userTask.getExecutionSet()
+                .getIsAsync().getValue()) {
+            extensionElements.add(new MetaData("customAsync", userTask.getExecutionSet()
+                    .getIsAsync().getValue().toString()));
+        }
+    }
+
+    private void customAutoStart() {
+        if (userTask.getExecutionSet()
+                .getAdHocAutostart().getValue()) {
+            extensionElements.add(new MetaData("customAutoStart", userTask.getExecutionSet()
+                    .getAdHocAutostart().getValue().toString()));
+        }
+    }
+
+    private void customSLADueDate() {
+        if (!userTask.getExecutionSet()
+                .getSlaDueDate().getValue().isEmpty()) {
+            extensionElements.add(new MetaData("customSLADueDate", userTask.getExecutionSet()
+                    .getSlaDueDate().getValue()));
+        }
+    }
+
+    private void onExitAction() {
+        for (ScriptTypeValue value : userTask.getExecutionSet().getOnExitAction().getValue().getValues()) {
+            if (!value.getScript().isEmpty()) {
+                extensionElements.add(new OnExitScript(value.getScript(), value.getLanguage()));
+            }
+        }
+    }
+
+    private void onEntryAction() {
+        for (ScriptTypeValue value : userTask.getExecutionSet().getOnEntryAction().getValue().getValues()) {
+            if (!value.getScript().isEmpty()) {
+                extensionElements.add(new OnEntryScript(value.getScript(), value.getLanguage()));
+            }
+        }
+    }
+
+    private void actors() {
+        if (!executionSet.getActors().getValue().isEmpty()) {
+            fromActorString(executionSet.getActors().getValue())
+                    .stream()
+                    .map(actor -> new PotentialOwner(UUID.generate(),
+                                                     new ResourceAssignmentExpression(UUID.generate(), actor)))
+                    .forEach(actor -> potentialOwners.add(actor));
         }
     }
 
@@ -459,6 +472,15 @@ public class UserTaskConverter {
         userTask.setPotentialOwner(potentialOwners);
     }
 
+    private List<String> fromActorString(String delimitedActors) {
+        String[] split = delimitedActors.split(",");
+        if (split.length == 1 && split[0].isEmpty()) {
+            return Collections.emptyList();
+        } else {
+            return Arrays.asList(split);
+        }
+    }
+
     private void addAssignments(ParsedAssignmentsInfo parsedAssignmentsInfo,
                                 AssociationDeclaration associationDeclaration) {
         boolean input = associationDeclaration.getDirection()
@@ -495,7 +517,6 @@ public class UserTaskConverter {
             data = new DataOutput();
             dataOutputRefs.add(new StringValue(id));
             if (associationDeclaration.getTarget() != null) {
-
                 dataAssociation = new DataOutputAssociation();
                 dataAssociation.setSourceRef(new SourceRef(id, false));
                 if (associationDeclaration.getType().equals(AssociationDeclaration.Type.FromTo)) {
@@ -519,6 +540,8 @@ public class UserTaskConverter {
     }
 
     void convert() {
-        actions.forEach(command -> command.execute());
+        for (Command command : actions) {
+            command.execute();
+        }
     }
 }

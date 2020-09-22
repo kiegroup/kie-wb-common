@@ -30,7 +30,7 @@ public class DocumentationMarshaller extends CustomXMLSerializer<Documentation> 
     protected void doSerialize(
             XMLWriter writer, Documentation value, XMLSerializationContext ctx, XMLSerializerParameters params)
             throws XMLStreamException {
-        if (value.getValue() != null) {
+        if (value.getValue() != null && !value.getValue().isEmpty()) {
             writer.beginObject("bpmn2:documentation");
             writer.writeCData(value.getValue());
             writer.endObject();
