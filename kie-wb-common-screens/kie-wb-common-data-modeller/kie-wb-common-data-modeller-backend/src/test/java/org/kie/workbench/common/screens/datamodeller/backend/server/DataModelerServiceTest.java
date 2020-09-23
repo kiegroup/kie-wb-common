@@ -167,6 +167,8 @@ public class DataModelerServiceTest {
                                            "file:///src");
         Package packageMock = mock(Package.class);
         when(packageMock.getPackageMainSrcPath()).thenReturn(srcPath);
+        when(moduleService.resolvePackage(dataObjectPath)).thenReturn(packageMock);
+        when(packageMock.getPackageName()).thenReturn("dataobjects");
         when(serviceHelper.ensurePackageStructure(any(Module.class),
                                                   anyString())).thenReturn(packageMock);
 
