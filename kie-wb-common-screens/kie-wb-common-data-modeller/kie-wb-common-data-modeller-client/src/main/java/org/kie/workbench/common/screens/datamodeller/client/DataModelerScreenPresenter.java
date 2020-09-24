@@ -591,7 +591,7 @@ public class DataModelerScreenPresenter
                     /* when DataObject editor or source is changed we
                      * need to send the DataObject to the server  in order
                      *  to let the source to be updated prior to save.
-                    * */
+                     */
                     modifiedDataObject[0] = context.getDataObject();
                 }
                 view.showSaving();
@@ -619,7 +619,7 @@ public class DataModelerScreenPresenter
         };
     }
 
-    private RemoteCallback<GenerationResult> getSaveSuccessCallback( final Path currentPath) {
+    private RemoteCallback<GenerationResult> getSaveSuccessCallback(final Path currentPath) {
         return new RemoteCallback<GenerationResult>() {
 
             @Override

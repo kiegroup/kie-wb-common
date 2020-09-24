@@ -568,8 +568,8 @@ public class DataModelerServiceImpl
             }
             
             /* Modify data object with updated fileName and packageName
-             * before resolving source to handle inconsistencies in
-             * source code and data object
+             * or by resolving from @path before resolving source to handle
+             * inconsistencies in source code and data object
              * */
             if  (dataObject  != null) {
                 dataObject.setName(targetName.replace(".java", ""));
