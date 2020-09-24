@@ -36,7 +36,7 @@ import org.kie.workbench.common.stunner.core.validation.Violation;
 
 public abstract class BPMNDataObjectValidator implements DomainValidator {
 
-    private static final String ALLOWED_CHARS = "^[a-zA-Z0-9\\-\\_\\ \\+\\/\\*\\?\\'\\.]*$";
+    private static final String ALLOWED_CHARS = "^[a-zA-Z0-9\\-\\n\\_\\ \\+\\/\\*\\?\\'\\.]*$";
     private static final String ILLEGAL_CHARS = ".*[#:\" ]+.*";
 
     @Override
