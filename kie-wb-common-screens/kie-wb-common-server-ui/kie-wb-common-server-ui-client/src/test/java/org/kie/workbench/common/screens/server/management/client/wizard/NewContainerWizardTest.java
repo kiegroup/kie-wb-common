@@ -180,6 +180,8 @@ public class NewContainerWizardTest {
         verify( processConfigPagePresenter ).buildProcessConfig();
         verify( newContainerFormPresenter ).buildContainerSpec( eq( serverTemplate.getId() ), anyMap() );
 
+        verify(newContainerFormPresenter).showBusyIndicator(containerSpec.getReleasedId().toString());
+        verify(newContainerFormPresenter).hideBusyIndicator();
         final ArgumentCaptor<NotificationEvent> eventCaptor = ArgumentCaptor.forClass( NotificationEvent.class );
         verify( notification ).fire( eventCaptor.capture() );
         final NotificationEvent event = eventCaptor.getValue();
@@ -335,6 +337,19 @@ public class NewContainerWizardTest {
 
         newContainerWizard.pageSelected(1);
 
+        verify(dependencyPathSelectedEvent, never()).fire(any());
+        verify(notification, never()).fire(any());
+    }
+
+    @Test
+    public void testPageSelectedWithSamePageIndex() {
+        newContainerWizard.pages.add(mock(WizardPage.class));
+        newContainerWizard.pages.add(mock(WizardPage.class));
+        newContainerWizard.setCurrentPageIndex(1);
+        newContainerWizard.pageSelected(1);
+
+        verify(newContainerFormPresenter, never()).getCurrentGAV();
+        verify(m2RepoService, never()).listArtifacts(any());
         verify(dependencyPathSelectedEvent, never()).fire(any());
         verify(notification, never()).fire(any());
     }

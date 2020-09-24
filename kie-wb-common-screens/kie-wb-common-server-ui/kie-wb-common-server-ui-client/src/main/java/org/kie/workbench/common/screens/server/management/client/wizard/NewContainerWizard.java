@@ -154,6 +154,7 @@ public class NewContainerWizard extends AbstractMultiPageWizard {
     }
 
     protected void saveContainerSpec(final ContainerSpec newContainer) {
+        newContainerFormPresenter.showBusyIndicator(newContainer.getReleasedId().toString());
         specManagementService.call(new RemoteCallback<Void>() {
             @Override
             public void callback(final Void o) {
@@ -161,11 +162,13 @@ public class NewContainerWizard extends AbstractMultiPageWizard {
                 clear();
                 NewContainerWizard.super.complete();
                 serverTemplateSelectedEvent.fire(new ServerTemplateSelected(serverTemplate, newContainer.getId()));
+                newContainerFormPresenter.hideBusyIndicator();
             }
         }, new ErrorCallback<Object>() {
             @Override
             public boolean error(final Object o,
                                  final Throwable throwable) {
+                newContainerFormPresenter.hideBusyIndicator();
                 notification.fire(new NotificationEvent(newContainerFormPresenter.getView().getNewContainerWizardSaveError(), NotificationEvent.NotificationType.ERROR));
                 NewContainerWizard.this.pageSelected(0);
                 NewContainerWizard.this.start();
@@ -180,6 +183,10 @@ public class NewContainerWizard extends AbstractMultiPageWizard {
 
     @Override
     public void pageSelected(final int pageNumber) {
+        if (this.getSelectedPage() == pageNumber) {
+            return;
+        }
+
         if (pageNumber == 1 && !isSelected) {
             GAV gav = newContainerFormPresenter.getCurrentGAV();
             JarListPageRequest request = new JarListPageRequest(0, Integer.MAX_VALUE, null, Arrays.asList("jar"), null, false);
@@ -198,5 +205,9 @@ public class NewContainerWizard extends AbstractMultiPageWizard {
             }).listArtifacts(request);
         }
         super.pageSelected(pageNumber);
+    }
+
+    protected void setCurrentPageIndex(final int index) {
+        super.pageSelected(index);
     }
 }
