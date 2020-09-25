@@ -74,7 +74,8 @@ public class DataModelerScreenPresenterTest
     private ArgumentCaptor<Path> pathArgumentCaptor;
     private ArgumentCaptor<Validator> validatorArgumentCaptor;
     private ArgumentCaptor<CommandWithFileNameAndCommitMessage> commandWithFileNameArgumentCaptor;
-    private ArgumentCaptor<Command> saveCommandCaptor;
+    private ArgumentCaptor<Command> yesCommandCaptor;
+    private ArgumentCaptor<Command> noCommandCaptor;
     private ArgumentCaptor<ParameterizedCommand> parameterizedCommandCaptor;
     
     @Mock
@@ -87,7 +88,8 @@ public class DataModelerScreenPresenterTest
         pathArgumentCaptor = ArgumentCaptor.forClass(Path.class);
         validatorArgumentCaptor = ArgumentCaptor.forClass(Validator.class);
         commandWithFileNameArgumentCaptor = ArgumentCaptor.forClass(CommandWithFileNameAndCommitMessage.class);
-        saveCommandCaptor = ArgumentCaptor.forClass(Command.class);
+        yesCommandCaptor = ArgumentCaptor.forClass(Command.class);
+        noCommandCaptor = ArgumentCaptor.forClass(Command.class);
         parameterizedCommandCaptor = ArgumentCaptor.forClass(ParameterizedCommand.class);
     }
 
@@ -444,8 +446,82 @@ public class DataModelerScreenPresenterTest
     }
     
     @Test
-    public void onSaveWithSuccessCallback() {
+    public void testSaveSuccessCallbackWithPathChange() {
         final String commitMessage = "testCommitMessage";
+        final GenerationResult result = setupSave();
+        when(modelerService.saveSource(eq("testSource"),
+                                       any(Path.class),
+                                       eq(testObject1),
+                                       any(Metadata.class),
+                                       eq(commitMessage),
+                                       any(String.class),
+                                       any(String.class))).thenReturn(result);
+        
+        presenter.save();
+        
+        /* when package or file name is changed YesNoCancel Popup should show up
+         */
+        verify(view).showYesNoCancelPopup(anyString(),
+                                          anyString(),
+                                          yesCommandCaptor.capture(),
+                                          anyString(),
+                                          eq(ButtonType.PRIMARY),
+                                          any(Command.class),
+                                          anyString(),
+                                          eq(ButtonType.DANGER));
+        
+        /* Execute command when package or file name changed
+         */
+        yesCommandCaptor.getValue().execute();
+        verify(savePopUpPresenter).show(any(Path.class),
+                                        parameterizedCommandCaptor.capture());
+        
+        /* Execute saveCommand at save with comment pop up
+         */
+        parameterizedCommandCaptor.getValue().execute(commitMessage);
+        verify(dataModelerEvent, times(2))
+                .fire(any(DataModelStatusChangeEvent.class));
+        verify(versionRecordManager).reloadVersions(any(Path.class));
+    }
+    
+    @Test
+    public void testSaveSuccessCallbackRejectingPathChange() {
+        final String commitMessage = "testCommitMessage";
+        final GenerationResult result = setupSave();
+        when(modelerService.saveSource(eq("testSource"),
+                                       any(Path.class),
+                                       eq(testObject1),
+                                       any(Metadata.class),
+                                       eq(commitMessage))).thenReturn(result);
+        
+        presenter.save();
+        
+        /* when package or file name is changed YesNoCancel Popup should show up
+         */
+        verify(view).showYesNoCancelPopup(anyString(),
+                                          anyString(),
+                                          any(Command.class),
+                                          anyString(),
+                                          eq(ButtonType.PRIMARY),
+                                          noCommandCaptor.capture(),
+                                          anyString(),
+                                          eq(ButtonType.DANGER));
+ 
+        /* Execute command when package or file name change rejected
+         */
+        noCommandCaptor.getValue().execute();
+        verify(savePopUpPresenter).show(any(Path.class),
+                                        parameterizedCommandCaptor.capture());
+        
+        /* Execute saveCommand at save with comment pop up
+         */
+        parameterizedCommandCaptor.getValue().execute(commitMessage);
+        verify(dataModelerEvent, times(2))
+                .fire(any(DataModelStatusChangeEvent.class));
+        verify(versionRecordManager).reloadVersions(any(Path.class));
+    }
+    
+    private GenerationResult setupSave() {
         presenter.context = mock(DataModelerContext.class);
         
         when(validationService.validateForSave(any(Path.class),
@@ -464,42 +540,9 @@ public class DataModelerScreenPresenterTest
         when(result.hasErrors()).thenReturn(false);
         
         when(presenter.getSource()).thenReturn("testSource");
-        
-        when(modelerService.saveSource(eq("testSource"),
-                                       any(Path.class),
-                                       eq(testObject1),
-                                       any(Metadata.class),
-                                       eq(commitMessage),
-                                       any(String.class),
-                                       any(String.class))).thenReturn(result);
-        
-        presenter.save();
-        
-        /* when package or file name is changed YesNoCancel Popup should show up
-         */
-        verify(view).showYesNoCancelPopup(anyString(),
-                                          anyString(),
-                                          saveCommandCaptor.capture(),
-                                          anyString(),
-                                          eq(ButtonType.PRIMARY),
-                                          any(Command.class),
-                                          anyString(),
-                                          eq(ButtonType.DANGER));
-        
-        /* Capture the saveCommand and execute the callback
-         */
-        saveCommandCaptor.getValue().execute();
-        verify(savePopUpPresenter).show(any(Path.class),
-                                        parameterizedCommandCaptor.capture());
-        
-        /* Execute saveCommand at save with comment pop up
-         */
-        parameterizedCommandCaptor.getValue().execute(commitMessage);
-        verify(dataModelerEvent, times(2))
-                .fire(any(DataModelStatusChangeEvent.class));
-        verify(versionRecordManager).reloadVersions(any(Path.class));
+        return result;
     }
-
+    
     @Test
     public void onSafeDeleteWithOriginalClassName() {
         loadFileSuccessfulTest(false);
