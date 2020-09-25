@@ -167,9 +167,9 @@ public class DecisionComponents {
 
     private boolean isDRGElementAdded(final DecisionComponent decisionComponent) {
         return getDecisionComponentsItems().stream().anyMatch(item -> {
-            final String decisionComponentItemName = item.getDecisionComponent().getName();
-            final String decisionComponentName = decisionComponent.getName();
-            return Objects.equals(decisionComponentItemName, decisionComponentName);
+            final String decisionComponentItemId = item.getDecisionComponent().getDrgElement().getId().getValue();
+            final String decisionComponentId = decisionComponent.getDrgElement().getId().getValue();
+            return Objects.equals(decisionComponentItemId, decisionComponentId);
         });
     }
 

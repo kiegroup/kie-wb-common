@@ -36,11 +36,14 @@ import org.kie.workbench.common.dmn.api.definition.model.ImportPMML;
 import org.kie.workbench.common.dmn.api.editors.included.DMNImportTypes;
 import org.kie.workbench.common.dmn.api.editors.included.DMNIncludedModel;
 import org.kie.workbench.common.dmn.api.editors.included.DMNIncludedNode;
+import org.kie.workbench.common.dmn.api.property.dmn.Id;
 import org.kie.workbench.common.dmn.api.property.dmn.LocationURI;
 import org.kie.workbench.common.dmn.api.property.dmn.Name;
 import org.kie.workbench.common.dmn.client.api.included.legacy.DMNIncludeModelsClient;
 import org.kie.workbench.common.dmn.client.docks.navigator.drds.DMNDiagramsSession;
 import org.kie.workbench.common.dmn.client.graph.DMNGraphUtils;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.Mock;
 
 import static java.util.Arrays.asList;
@@ -78,6 +81,12 @@ public class DecisionComponentsTest {
 
     @Mock
     private DMNGraphUtils dmnGraphUtils;
+
+    @Mock
+    private DecisionComponentsItem.View decisionComponentsItemView;
+
+    @Captor
+    private ArgumentCaptor<DecisionComponent> decisionComponentArgumentCaptor;
 
     private DecisionComponents decisionComponents;
 
@@ -435,15 +444,48 @@ public class DecisionComponentsTest {
         verify(view).addListItem(htmlElement);
     }
 
+    @Test
+    public void testCreateDecisionComponentItems() {
+
+        final List<DecisionComponent> decisionComponentsItems = new ArrayList<>();
+        decisionComponentsItems.add(makeDecisionComponent("Decision-1", "uuid1", "ModelName", false));
+        decisionComponentsItems.add(makeDecisionComponent("Decision-1", "uuid1", "ModelName", false));
+        decisionComponentsItems.add(makeDecisionComponent("Decision-1", "uuid2", "ModelName", false));
+        decisionComponentsItems.add(makeDecisionComponent("included.Decision-2", "uuidA", "included.dmn", true));
+        decisionComponentsItems.add(makeDecisionComponent("included.Decision-2", "uuidA", "included.dmn", true));
+        decisionComponentsItems.add(makeDecisionComponent("included.Decision-2", "uuidB", "included.dmn", true));
+
+        when(itemManagedInstance.get()).then((e) -> new DecisionComponentsItem(decisionComponentsItemView));
+
+        decisionComponents.createDecisionComponentItems(decisionComponentsItems);
+
+        verify(decisionComponents, times(4)).createDecisionComponentItem(decisionComponentArgumentCaptor.capture());
+
+        final List<DecisionComponent> createdDecisionComponents = decisionComponentArgumentCaptor.getAllValues();
+        assertEquals("uuid1", createdDecisionComponents.get(0).getDrgElement().getId().getValue());
+        assertEquals("uuid2", createdDecisionComponents.get(1).getDrgElement().getId().getValue());
+        assertEquals("uuidA", createdDecisionComponents.get(2).getDrgElement().getId().getValue());
+        assertEquals("uuidB", createdDecisionComponents.get(3).getDrgElement().getId().getValue());
+    }
+
     private DMNIncludedModel makeDMNIncludedModel(final String namespace) {
         return new DMNIncludedModel("", "", "", namespace, "", 0, 0);
     }
 
     private DecisionComponent makeDecisionComponent(final String name,
+                                                    final String drgElementId,
                                                     final String fileName,
                                                     final boolean imported) {
         final Decision decision = new Decision();
         decision.setName(new Name(name));
+        decision.setId(new Id(drgElementId));
         return new DecisionComponent(fileName, decision, imported);
+    }
+
+    private DecisionComponent makeDecisionComponent(final String name,
+                                                    final String fileName,
+                                                    final boolean imported) {
+        final String drgElementId = new Id().getValue();
+        return makeDecisionComponent(name, drgElementId, fileName, imported);
     }
 }
