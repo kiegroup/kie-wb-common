@@ -60,7 +60,7 @@ public class KogitoResourceContentService {
      */
     public void loadFile(final String fileUri,
                          final RemoteCallback<String> callback,
-                         final ErrorCallback<Object> errorCallback) {
+                         final ErrorCallback<String> errorCallback) {
         resourceContentService.get(fileUri).then((IThenable.ThenOnFulfilledCallbackFn<String, Void>) fileContent -> {
             callback.callback(fileContent);
             return promises.resolve();
