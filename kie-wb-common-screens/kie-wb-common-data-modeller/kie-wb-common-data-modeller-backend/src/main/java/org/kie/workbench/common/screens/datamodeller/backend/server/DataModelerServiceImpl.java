@@ -571,7 +571,7 @@ public class DataModelerServiceImpl
              * or by resolving from @path before resolving source to handle
              * inconsistencies in source code and data object
              * */
-            if  (dataObject  != null) {
+            if (dataObject != null) {
                 dataObject.setName(targetName.replace(".java", ""));
                 dataObject.setPackageName(targetPackage.getPackageName());
             }
