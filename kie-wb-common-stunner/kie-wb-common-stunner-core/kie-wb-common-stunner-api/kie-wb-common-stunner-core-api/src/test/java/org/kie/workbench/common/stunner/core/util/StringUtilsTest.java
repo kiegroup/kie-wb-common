@@ -30,8 +30,6 @@ public class StringUtilsTest {
 
     private final String ENCODED_VALUE = "&lt; Valid &quot;&amp;&quot; Symbols &gt;";
     private final String DECODED_VALUE = "< Valid \"&\" Symbols >";
-
-    private final String ENCODED_VALUE_DATA_OBJECT_NEWLINE = "DATA&#10;OBJECT";
     private final String DECODED_VALUE_DATA_OBJECT_NEWLINE = "DATA\nOBJECT";
 
     private final String EMPTY_STRING = "";
@@ -173,11 +171,7 @@ public class StringUtilsTest {
 
     @Test
     public void testReplaceIllegalCharsDataObject() {
-        assertEquals("DATA&#10;OBJECT", replaceIllegalCharsForDataObjects(DECODED_VALUE_DATA_OBJECT_NEWLINE));
+        assertEquals("DATAOBJECT", replaceIllegalCharsForDataObjects(DECODED_VALUE_DATA_OBJECT_NEWLINE));
     }
 
-    @Test
-    public void testRevertIllegalCharsDataObject() {
-        assertEquals("DATA\nOBJECT", revertIllegalCharsAttribute(ENCODED_VALUE_DATA_OBJECT_NEWLINE));
-    }
 }
