@@ -131,6 +131,9 @@ public class StringUtils {
                 case ' ':
                     sb.append("-");
                     break;
+                case '\n':
+                    sb.append("&#10;");
+                    break;
                 default:
                     sb.append(c);
                     break;
@@ -152,7 +155,8 @@ public class StringUtils {
         return value.replace("&lt;", "<")
                 .replace("&gt;", ">")
                 .replace("&amp;", "&")
-                .replace("&quot;", "\"");
+                .replace("&quot;", "\"")
+                .replace("&#10;", "\n");
     }
 
     /**
