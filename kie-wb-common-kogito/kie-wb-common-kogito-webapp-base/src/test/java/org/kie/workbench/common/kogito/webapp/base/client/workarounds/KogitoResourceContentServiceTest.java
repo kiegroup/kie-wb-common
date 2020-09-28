@@ -88,10 +88,13 @@ public class KogitoResourceContentServiceTest {
 
     @Test
     public void loadFileException() {
-        ErrorCallback<String> testingCallbackSpy = spy((message, throwable) -> {
+        ErrorCallback<String> testingCallbackSpy = spy(new ErrorCallback<String>() {
+            @Override
+            public boolean error(String message, Throwable throwable) {
                 assertEquals("Error " + REJECT_OBJECT, message);
                 assertEquals("Failed to load file "+ UNKNOWN_FILE, throwable.getMessage());
                 return false;
+            }
         });
         kogitoResourceContentService.loadFile(UNKNOWN_FILE, mock(RemoteCallback.class), testingCallbackSpy);
         verify(resourceContentServiceMock, times(1)).get(eq(UNKNOWN_FILE));
