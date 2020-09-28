@@ -99,7 +99,6 @@ public class KogitoResourceContentServiceTest {
         kogitoResourceContentService.loadFile(UNKNOWN_FILE, mock(RemoteCallback.class), testingCallbackSpy);
         verify(resourceContentServiceMock, times(1)).get(eq(UNKNOWN_FILE));
         verify(testingCallbackSpy, times(1)).error(isA(String.class), isA(Throwable.class));
-
     }
 
     @Test
