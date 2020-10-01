@@ -81,7 +81,7 @@ public class KogitoResourceContentService {
      * @see ResourceContentService#list(String)
      */
     public void getAllItems(final RemoteCallback<List<String>> callback,
-                            final ErrorCallback<Object> errorCallback) {
+                            final ErrorCallback<String> errorCallback) {
         getFilteredItems("*", callback, errorCallback);
     }
 
@@ -96,7 +96,7 @@ public class KogitoResourceContentService {
      */
     public void getFilteredItems(final String pattern,
                                  final RemoteCallback<List<String>> callback,
-                                 final ErrorCallback<Object> errorCallback) {
+                                 final ErrorCallback<String> errorCallback) {
         resourceContentService.list(pattern).then(fileList -> {
             callback.callback(Arrays.asList(fileList));
             return promises.resolve();

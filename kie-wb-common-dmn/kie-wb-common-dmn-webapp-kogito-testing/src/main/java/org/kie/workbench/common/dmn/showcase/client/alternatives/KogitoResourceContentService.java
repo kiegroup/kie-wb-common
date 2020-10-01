@@ -44,7 +44,7 @@ public class KogitoResourceContentService extends org.kie.workbench.common.kogit
     @Override
     public void getFilteredItems(final String pattern,
                                  final RemoteCallback<List<String>> successCallback,
-                                 final ErrorCallback<Object> errorCallback) {
+                                 final ErrorCallback<String> errorCallback) {
 
         successCallback.callback(Arrays.asList(BASE_MODEL, MODEL_WITH_IMPORTS));
     }

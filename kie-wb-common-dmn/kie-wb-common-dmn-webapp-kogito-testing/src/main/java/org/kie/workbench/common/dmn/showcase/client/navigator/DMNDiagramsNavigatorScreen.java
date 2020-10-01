@@ -109,7 +109,7 @@ public class DMNDiagramsNavigatorScreen extends BaseDMNDiagramsNavigatorScreen i
         contentService.getFilteredItems("**/*.dmn", getItems(), getErrorCallback());
     }
 
-    private ErrorCallback<Object> getErrorCallback() {
+    private ErrorCallback<String> getErrorCallback() {
         return null;
     }
 
