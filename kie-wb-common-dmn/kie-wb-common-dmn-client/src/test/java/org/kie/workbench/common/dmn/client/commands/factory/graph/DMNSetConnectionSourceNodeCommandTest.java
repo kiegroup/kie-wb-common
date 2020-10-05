@@ -196,6 +196,14 @@ public class DMNSetConnectionSourceNodeCommandTest {
         assertEquals(graph, actualGraph);
     }
 
+    @Test(expected=IllegalStateException.class)
+    public void testGetEdgesGraphWhenDiagramIdIsNotSet() {
+
+        doReturn(Optional.empty()).when(command).getDiagramId();
+
+        command.getEdgesGraph();
+    }
+
     private Node createNode(final String diagramId) {
 
         final Node node = mock(Node.class);

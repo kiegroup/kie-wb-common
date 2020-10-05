@@ -28,6 +28,9 @@ import org.kie.workbench.common.stunner.core.graph.content.view.View;
 
 public class ContentDefinitionIdUtils {
 
+    private ContentDefinitionIdUtils() {
+    }
+
     public static boolean belongsToCurrentGraph(final Node node,
                                                 final GraphsProvider graphsProvider) {
         return isTheCurrentDiagram(getDiagramId(node), graphsProvider);
@@ -39,7 +42,7 @@ public class ContentDefinitionIdUtils {
     }
 
     public static boolean isTheCurrentDiagram(final Optional<String> diagramId,
-                                               final GraphsProvider graphsProvider) {
+                                              final GraphsProvider graphsProvider) {
         return diagramId.isPresent() &&
                 Objects.equals(diagramId.get(), graphsProvider.getCurrentDiagramId());
     }

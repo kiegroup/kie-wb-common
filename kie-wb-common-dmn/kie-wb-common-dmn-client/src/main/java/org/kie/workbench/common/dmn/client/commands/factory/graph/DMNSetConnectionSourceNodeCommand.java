@@ -97,6 +97,9 @@ public class DMNSetConnectionSourceNodeCommand extends SetConnectionSourceNodeCo
     }
 
     Graph getEdgesGraph() {
-        return graphsProvider.getDiagram(getDiagramId().get()).getGraph();
+        if (getDiagramId().isPresent()) {
+            return graphsProvider.getDiagram(getDiagramId().get()).getGraph();
+        }
+        throw new IllegalStateException("Unable to get the edges graph. The diagramId is not set.");
     }
 }
