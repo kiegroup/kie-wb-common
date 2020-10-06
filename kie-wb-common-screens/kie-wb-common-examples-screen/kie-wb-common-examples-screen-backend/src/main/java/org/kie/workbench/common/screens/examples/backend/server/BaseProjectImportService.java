@@ -325,6 +325,9 @@ public abstract class BaseProjectImportService implements ImportService {
         // Signal creation of new Project (Creation of OU and Repository, if applicable,
         // are already handled in the corresponding services).
         WorkspaceProject project = projectService.resolveProject(importedRepo);
+
+        // delete the transient repo created in system folder
+        ioService.deleteIfExists(rootPath.getFileSystem().getPath(null));
         return project;
     }
 
