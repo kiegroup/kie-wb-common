@@ -51,7 +51,6 @@ import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.Bounds;
 import org.kie.workbench.common.stunner.core.graph.content.HasBounds;
 import org.kie.workbench.common.stunner.core.graph.content.HasContentDefinitionId;
-import org.kie.workbench.common.stunner.core.graph.content.HasContentDefinitionId;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
 import org.kie.workbench.common.stunner.core.graph.processing.index.bounds.GraphBoundsIndexer;
 import org.kie.workbench.common.stunner.core.graph.util.GraphUtils;
