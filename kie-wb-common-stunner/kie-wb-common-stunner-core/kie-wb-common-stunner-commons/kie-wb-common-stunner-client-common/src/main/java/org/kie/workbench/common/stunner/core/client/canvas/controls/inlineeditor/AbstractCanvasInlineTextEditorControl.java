@@ -29,12 +29,10 @@ import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler
 import org.kie.workbench.common.stunner.core.client.canvas.Canvas;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.AbstractCanvasHandlerRegistrationControl;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.CanvasInlineTextEditorControl;
-import org.kie.workbench.common.stunner.core.client.canvas.controls.keyboard.KeyboardControl;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.keyboard.KeyboardControl.KogitoKeyPress;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.keyboard.KeysMatcher;
 import org.kie.workbench.common.stunner.core.client.components.views.FloatingView;
 import org.kie.workbench.common.stunner.core.client.event.keyboard.KeyboardEvent.Key;
-import org.kie.workbench.common.stunner.core.client.session.ClientSession;
 import org.kie.workbench.common.stunner.core.client.session.impl.EditorSession;
 import org.kie.workbench.common.stunner.core.client.shape.Shape;
 import org.kie.workbench.common.stunner.core.client.shape.view.HasEventHandlers;
@@ -79,7 +77,6 @@ public abstract class AbstractCanvasInlineTextEditorControl
     private double zoomFactor;
     private BoxType boxType;
     private HandlerRegistration mouseWheelHandler;
-    private KeyboardControl<AbstractCanvas, ClientSession> keyboardControl;
     private String fontFamily;
     private double fontSize;
     private double marginX;
@@ -112,9 +109,8 @@ public abstract class AbstractCanvasInlineTextEditorControl
 
     @Override
     public void bind(final EditorSession session) {
-        keyboardControl = session.getKeyboardControl();
-        keyboardControl.addKeyShortcutCallback(new KogitoKeyPress(new Key[]{ESC}, "Edit | Hide", this::hide));
-        keyboardControl.addKeyShortcutCallback(this::onKeyDownEvent);
+        session.getKeyboardControl().addKeyShortcutCallback(new KogitoKeyPress(new Key[]{ESC}, "Edit | Hide", this::hide));
+        session.getKeyboardControl().addKeyShortcutCallback(this::onKeyDownEvent);
     }
 
     @Override
@@ -263,9 +259,6 @@ public abstract class AbstractCanvasInlineTextEditorControl
                                     fixBoundaryX(editorBoxWidth, floatingViewPositionX),
                                     fixBoundaryY(editorBoxHeight, floatingViewPositionY));
             getFloatingView().show();
-
-            // Disable canvas shortcuts while typing
-            keyboardControl.setKeyEventHandlerEnabled(false);
         }
 
         return this;
@@ -587,10 +580,6 @@ public abstract class AbstractCanvasInlineTextEditorControl
         if (isVisible()) {
             getTextEditorBox().rollback();
         }
-
-        // Enable canvas shortcuts again after closing
-        keyboardControl.setKeyEventHandlerEnabled(true);
-
         return this;
     }
 
@@ -602,9 +591,6 @@ public abstract class AbstractCanvasInlineTextEditorControl
             getTextEditorBox().hide();
             getFloatingView().hide();
         }
-
-        // Enable canvas shortcuts again after closing
-        keyboardControl.setKeyEventHandlerEnabled(true);
         return this;
     }
 

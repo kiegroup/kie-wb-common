@@ -150,6 +150,45 @@ public class InlineTextEditorBoxViewImplTest {
     }
 
     @Test
+    public void testNonKeyDownEventPropagation() {
+        when(event.getTypeInt()).thenReturn(Event.ONKEYDOWN);
+        when(event.getKeyCode()).thenReturn(KeyCodes.KEY_A);
+        when(event.getShiftKey()).thenReturn(false);
+        when(nameField.getInnerHTML()).thenReturn(NAME);
+        doAnswer(i -> true).when(tested).isVisible();
+        tested.onChangeName(event);
+
+        verify(event,
+               times(1)).stopPropagation();
+    }
+
+    @Test
+    public void testNonKeyUpEventPropagation() {
+        when(event.getTypeInt()).thenReturn(Event.ONKEYUP);
+        when(event.getKeyCode()).thenReturn(KeyCodes.KEY_A);
+        when(event.getShiftKey()).thenReturn(false);
+        when(nameField.getInnerHTML()).thenReturn(NAME);
+        doAnswer(i -> true).when(tested).isVisible();
+        tested.onChangeName(event);
+
+        verify(event,
+               times(1)).stopPropagation();
+    }
+
+    @Test
+    public void testNonKeyPressEventPropagation() {
+        when(event.getTypeInt()).thenReturn(Event.ONKEYPRESS);
+        when(event.getKeyCode()).thenReturn(KeyCodes.KEY_A);
+        when(event.getShiftKey()).thenReturn(false);
+        when(nameField.getInnerHTML()).thenReturn(NAME);
+        doAnswer(i -> true).when(tested).isVisible();
+        tested.onChangeName(event);
+
+        verify(event,
+               times(1)).stopPropagation();
+    }
+
+    @Test
     public void testOnKeyDownEnterEvent() {
         when(event.getTypeInt()).thenReturn(Event.ONKEYDOWN);
         when(event.getKeyCode()).thenReturn(KeyCodes.KEY_ENTER);
