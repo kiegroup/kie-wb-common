@@ -114,6 +114,7 @@ public class UserTask extends BaseUserTask<UserTaskExecutionSet> {
             @XmlElementRef(name = "multiInstanceLoopCharacteristics", type = MultiInstanceLoopCharacteristics.class)
     })
     @XmlUnwrappedCollection
+    @XmlElement(namespace = "http://www.omg.org/spec/BPMN/20100524/MODEL")
     private List<BPMNProperty> bpmnProperties;
 
     @XmlUnwrappedCollection

@@ -18,21 +18,23 @@ package org.kie.workbench.common.stunner.bpmn.definition.dto;
 
 import java.util.List;
 
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.treblereel.gwt.jackson.api.annotation.XmlUnwrappedCollection;
 
 @XmlRootElement(name = "inputSet", namespace = "http://www.omg.org/spec/BPMN/20100524/MODEL")
-public class InputSet extends Data {
+public class InputSet extends Data<InputSet> {
 
     @XmlUnwrappedCollection
-    private List<StringValue> dataInputRefs;
+    @XmlElement(namespace = "http://www.omg.org/spec/BPMN/20100524/MODEL")
+    private List<String> dataInputRefs;
 
-    public List<StringValue> getDataInputRefs() {
+    public List<String> getDataInputRefs() {
         return dataInputRefs;
     }
 
-    public void setDataInputRefs(List<StringValue> dataInputRefs) {
+    public void setDataInputRefs(List<String> dataInputRefs) {
         this.dataInputRefs = dataInputRefs;
     }
 }

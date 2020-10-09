@@ -37,17 +37,19 @@ public class Relationship {
     @XmlElement(name = "BPSimData", namespace = "http://www.bpsim.org/schemas/1.0")
     private List<BPSimData> extensionElements;
 
-    private StringValue source;
+    @XmlElement(namespace = "http://www.omg.org/spec/BPMN/20100524/MODEL")
+    private String source;
 
-    private StringValue target;
+    @XmlElement(namespace = "http://www.omg.org/spec/BPMN/20100524/MODEL")
+    private String target;
 
     public Relationship() {
 
     }
 
     public Relationship(String id) {
-        this.source = new StringValue(id);
-        this.target = new StringValue(id);
+        this.source = id;
+        this.target = id;
     }
 
     @Override
@@ -108,48 +110,41 @@ public class Relationship {
         this.extensionElements = extensionElements;
     }
 
-    public StringValue getSource() {
+    public String getSource() {
         return source;
     }
 
-    public void setSource(StringValue source) {
+    public void setSource(String source) {
         this.source = source;
     }
 
-    public StringValue getTarget() {
+    public String getTarget() {
         return target;
     }
 
-    public void setTarget(StringValue target) {
+    public void setTarget(String target) {
         this.target = target;
-    }
-
-    public void setSource(String id) {
-        this.source = new StringValue(id);
-    }
-
-    public void setTarget(String id) {
-        this.target = new StringValue(id);
     }
 
     @XmlRootElement(name = "target", namespace = "http://www.omg.org/spec/BPMN/20100524/MODEL")
     public static class Target {
 
-        private StringValue value;
+        @XmlElement(namespace = "http://www.omg.org/spec/BPMN/20100524/MODEL")
+        private String value;
 
         public Target() {
 
         }
 
         public Target(String value) {
-            this.value = new StringValue(value);
+            this.value = value;
         }
 
-        public StringValue getValue() {
+        public String getValue() {
             return value;
         }
 
-        public void setValue(StringValue value) {
+        public void setValue(String value) {
             this.value = value;
         }
     }
@@ -157,21 +152,22 @@ public class Relationship {
     @XmlRootElement(name = "source", namespace = "http://www.omg.org/spec/BPMN/20100524/MODEL")
     public static class Source {
 
-        private StringValue value;
+        @XmlElement(namespace = "http://www.omg.org/spec/BPMN/20100524/MODEL")
+        private String value;
 
         public Source() {
 
         }
 
         public Source(String value) {
-            this.value = new StringValue(value);
+            this.value = value;
         }
 
-        public StringValue getValue() {
+        public String getValue() {
             return value;
         }
 
-        public void setValue(StringValue value) {
+        public void setValue(String value) {
             this.value = value;
         }
     }

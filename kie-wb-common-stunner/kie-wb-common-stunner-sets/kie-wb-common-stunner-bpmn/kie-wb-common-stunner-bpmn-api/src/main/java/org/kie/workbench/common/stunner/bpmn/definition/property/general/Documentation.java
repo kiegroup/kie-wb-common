@@ -17,6 +17,7 @@
 package org.kie.workbench.common.stunner.bpmn.definition.property.general;
 
 import javax.xml.bind.annotation.XmlCData;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.jboss.errai.common.client.api.annotations.Portable;
@@ -25,25 +26,20 @@ import org.kie.workbench.common.forms.adf.definitions.annotations.metaModel.Fiel
 import org.kie.workbench.common.forms.adf.definitions.annotations.metaModel.FieldValue;
 import org.kie.workbench.common.forms.adf.definitions.annotations.metaModel.I18nMode;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNProperty;
-import org.kie.workbench.common.stunner.bpmn.definition.dto.handler.DocumentationDemarshaller;
-import org.kie.workbench.common.stunner.bpmn.definition.dto.handler.DocumentationMarshaller;
 import org.kie.workbench.common.stunner.core.definition.annotation.Property;
 import org.kie.workbench.common.stunner.core.definition.annotation.property.Value;
-import org.treblereel.gwt.jackson.api.annotation.XmlTypeAdapter;
 
 @Portable
 @Bindable
 @Property
 @FieldDefinition(i18nMode = I18nMode.OVERRIDE_I18N_KEY)
 @XmlRootElement(name = "documentation", namespace = "http://www.omg.org/spec/BPMN/20100524/MODEL")
-@XmlTypeAdapter(
-        serializer = DocumentationMarshaller.class,
-        deserializer = DocumentationDemarshaller.class)
 public class Documentation implements BPMNProperty {
 
     @Value
     @FieldValue
-    @XmlCData
+    @XmlCData(value = false)
+    @XmlElement(namespace = "http://www.omg.org/spec/BPMN/20100524/MODEL")
     private String value;
 
     public Documentation() {

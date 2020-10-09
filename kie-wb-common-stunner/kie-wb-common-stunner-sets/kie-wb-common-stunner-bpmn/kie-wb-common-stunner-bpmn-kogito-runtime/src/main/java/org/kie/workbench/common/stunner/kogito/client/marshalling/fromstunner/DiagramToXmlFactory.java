@@ -29,7 +29,7 @@ import org.kie.workbench.common.stunner.bpmn.definition.BPMNDiagramImpl;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNViewDefinition;
 import org.kie.workbench.common.stunner.bpmn.definition.UserTask;
 import org.kie.workbench.common.stunner.bpmn.definition.dto.Definitions;
-import org.kie.workbench.common.stunner.bpmn.definition.dto.Definitions_MapperImpl;
+import org.kie.workbench.common.stunner.bpmn.definition.dto.Definitions_XMLMapperImpl;
 import org.kie.workbench.common.stunner.bpmn.definition.dto.Import;
 import org.kie.workbench.common.stunner.bpmn.definition.dto.ItemDefinition;
 import org.kie.workbench.common.stunner.bpmn.definition.dto.Property;
@@ -113,7 +113,7 @@ public class DiagramToXmlFactory {
                     .serializeNulls(false)
                     .writeEmptyXMLArrays(false).build();
 
-            return Definitions_MapperImpl.INSTANCE.write(definitions, context);
+            return Definitions_XMLMapperImpl.INSTANCE.write(definitions, context);
         } catch (XMLStreamException e) {
             e.printStackTrace();
             return "";

@@ -17,6 +17,7 @@
 package org.kie.workbench.common.stunner.bpmn.definition.dto;
 
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNProperty;
@@ -27,8 +28,10 @@ public class MultiInstanceLoopCharacteristics implements BPMNProperty {
     @XmlAttribute
     private boolean isSequential;
 
-    private StringValue loopDataInputRef;
-    private StringValue loopDataOutputRef;
+    @XmlElement(namespace = "http://www.omg.org/spec/BPMN/20100524/MODEL")
+    private String loopDataInputRef;
+    @XmlElement(namespace = "http://www.omg.org/spec/BPMN/20100524/MODEL")
+    private String loopDataOutputRef;
 
     private DataInput inputDataItem;
     private DataOutput outputDataItem;
@@ -43,19 +46,19 @@ public class MultiInstanceLoopCharacteristics implements BPMNProperty {
         isSequential = sequential;
     }
 
-    public StringValue getLoopDataInputRef() {
+    public String getLoopDataInputRef() {
         return loopDataInputRef;
     }
 
-    public void setLoopDataInputRef(StringValue loopDataInputRef) {
+    public void setLoopDataInputRef(String loopDataInputRef) {
         this.loopDataInputRef = loopDataInputRef;
     }
 
-    public StringValue getLoopDataOutputRef() {
+    public String getLoopDataOutputRef() {
         return loopDataOutputRef;
     }
 
-    public void setLoopDataOutputRef(StringValue loopDataOutputRef) {
+    public void setLoopDataOutputRef(String loopDataOutputRef) {
         this.loopDataOutputRef = loopDataOutputRef;
     }
 

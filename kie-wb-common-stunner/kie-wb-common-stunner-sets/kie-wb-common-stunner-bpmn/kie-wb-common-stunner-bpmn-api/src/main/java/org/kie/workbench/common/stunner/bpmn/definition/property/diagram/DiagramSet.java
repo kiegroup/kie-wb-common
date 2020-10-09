@@ -89,7 +89,6 @@ public class DiagramSet implements BaseDiagramSet {
             afterElement = "id"
     )
     @Valid
-    @XmlAttribute(name = "drools:packageName")
     private Package packageProperty;
 
     @Property
@@ -110,7 +109,6 @@ public class DiagramSet implements BaseDiagramSet {
             afterElement = "processType"
     )
     @Valid
-    @XmlAttribute(name = "drools:version")
     private Version version;
 
     @Property
@@ -118,7 +116,6 @@ public class DiagramSet implements BaseDiagramSet {
             afterElement = "version"
     )
     @Valid
-    @XmlAttribute(name = "drools:adHoc")
     private AdHoc adHoc;
 
     @Property

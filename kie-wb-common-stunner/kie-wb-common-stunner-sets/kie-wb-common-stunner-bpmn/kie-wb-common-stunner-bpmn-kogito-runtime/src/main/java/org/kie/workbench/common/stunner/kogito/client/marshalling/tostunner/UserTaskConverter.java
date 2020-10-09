@@ -107,14 +107,14 @@ public class UserTaskConverter {
                 ScriptTypeValue value = userTask.getExecutionSet().getOnExitAction()
                         .getValue().getValues().get(0);
 
-                value.setScript(metaData.getScript().getScript());
+                value.setScript(metaData.getScript());
                 value.setLanguage(Scripts.scriptLanguageFromUri(metaData.getScriptFormat()));
             } else if (elm instanceof OnEntryScript) {
                 OnEntryScript metaData = (OnEntryScript) elm;
                 ScriptTypeValue value = userTask.getExecutionSet().getOnEntryAction()
                         .getValue().getValues().get(0);
 
-                value.setScript(metaData.getScript().getScript());
+                value.setScript(metaData.getScript());
                 value.setLanguage(Scripts.scriptLanguageFromUri(metaData.getScriptFormat()));
             }
         }
@@ -280,7 +280,7 @@ public class UserTaskConverter {
                 userTask.getBpmnProperties().stream().filter(elm -> elm instanceof DataInputAssociation)
                         .map(elm -> (DataInputAssociation) elm)
                         .filter(dia -> dia.getTargetRef() != null)
-                        .filter(dia -> dia.getTargetRef().getValue().equals(instance.getLoopDataInputRef().getValue()))
+                        .filter(dia -> dia.getTargetRef().getValue().equals(instance.getLoopDataInputRef()))
                         .findFirst()
                         .ifPresent(dataInputAssociation -> {
                             userTask.getExecutionSet()
@@ -295,8 +295,7 @@ public class UserTaskConverter {
                         .map(elm -> (DataOutputAssociation) elm)
                         .filter(dia -> dia.getSourceRef() != null)
                         .filter(dia -> dia.getSourceRef()
-                                .getValue().equals(instance.getLoopDataOutputRef()
-                                                           .getValue()))
+                                .getValue().equals(instance.getLoopDataOutputRef()))
                         .findFirst()
                         .ifPresent(dataOutputAssociation -> {
                             userTask.getExecutionSet()

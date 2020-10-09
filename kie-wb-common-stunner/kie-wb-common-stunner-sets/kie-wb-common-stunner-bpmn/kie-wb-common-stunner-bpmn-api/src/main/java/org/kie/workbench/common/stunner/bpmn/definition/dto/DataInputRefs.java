@@ -16,26 +16,28 @@
 
 package org.kie.workbench.common.stunner.bpmn.definition.dto;
 
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement(name = "dataInputRefs", namespace = "http://www.omg.org/spec/BPMN/20100524/MODEL")
 public class DataInputRefs {
 
-    private StringValue value;
+    @XmlElement(namespace = "http://www.omg.org/spec/BPMN/20100524/MODEL")
+    private String value;
 
     public DataInputRefs() {
 
     }
 
     public DataInputRefs(String value) {
-        this.value = new StringValue(value);
+        this.value = value;
     }
 
-    public StringValue getValue() {
+    public String getValue() {
         return value;
     }
 
-    public void setValue(StringValue value) {
+    public void setValue(String value) {
         this.value = value;
     }
 

@@ -23,7 +23,7 @@ import javax.xml.stream.XMLStreamException;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNDiagramImpl;
 import org.kie.workbench.common.stunner.bpmn.definition.UserTask;
 import org.kie.workbench.common.stunner.bpmn.definition.dto.Definitions;
-import org.kie.workbench.common.stunner.bpmn.definition.dto.Definitions_MapperImpl;
+import org.kie.workbench.common.stunner.bpmn.definition.dto.Definitions_XMLMapperImpl;
 import org.kie.workbench.common.stunner.bpmn.definition.dto.ItemDefinition;
 import org.kie.workbench.common.stunner.bpmn.definition.dto.bpmndi.BPMNPlaneElement;
 import org.kie.workbench.common.stunner.bpmn.definition.dto.bpmndi.BPMNShape;
@@ -62,7 +62,7 @@ public class XmlToDiagramFactory {
         this.diagram = diagram;
         try {
             XMLDeserializationContext context = DefaultXMLDeserializationContext.builder().failOnUnknownProperties(false).build();
-            definitions = Definitions_MapperImpl.INSTANCE.read(xml, context);
+            definitions = Definitions_XMLMapperImpl.INSTANCE.read(xml, context);
         } catch (XMLStreamException e) {
             throw new Error("Unable to process xml \n" + xml);
         }

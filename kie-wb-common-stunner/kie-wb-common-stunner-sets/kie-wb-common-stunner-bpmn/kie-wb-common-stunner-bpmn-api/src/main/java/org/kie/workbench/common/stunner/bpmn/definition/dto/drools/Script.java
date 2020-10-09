@@ -18,13 +18,15 @@ package org.kie.workbench.common.stunner.bpmn.definition.dto.drools;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlCData;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement(name = "onEntry-script", namespace = "http://www.jboss.org/drools")
 public class Script extends ExtensionElement {
 
     @XmlCData
-    private ScriptValue script;
+    @XmlElement(name = "script", namespace = "http://www.jboss.org/drools")
+    private String script;
 
     @XmlAttribute
     private String scriptFormat;
@@ -34,7 +36,7 @@ public class Script extends ExtensionElement {
     }
 
     public Script(String script, String scriptFormat) {
-        this.script = new ScriptValue(script);
+        this.script = script;
         this.scriptFormat = LANGUAGE.scriptLanguageToUri(scriptFormat);
     }
 
@@ -46,11 +48,11 @@ public class Script extends ExtensionElement {
         this.scriptFormat = scriptFormat;
     }
 
-    public ScriptValue getScript() {
+    public String getScript() {
         return script;
     }
 
-    public void setScript(ScriptValue script) {
+    public void setScript(String script) {
         this.script = script;
     }
 
@@ -96,26 +98,4 @@ public class Script extends ExtensionElement {
         }
     }
 
-    @XmlRootElement(name = "script", namespace = "http://www.jboss.org/drools")
-    public static class ScriptValue {
-
-        @XmlCData(value = false)
-        private String script;
-
-        public ScriptValue() {
-
-        }
-
-        public ScriptValue(String script) {
-            this.script = script;
-        }
-
-        public String getScript() {
-            return script;
-        }
-
-        public void setScript(String script) {
-            this.script = script;
-        }
-    }
 }

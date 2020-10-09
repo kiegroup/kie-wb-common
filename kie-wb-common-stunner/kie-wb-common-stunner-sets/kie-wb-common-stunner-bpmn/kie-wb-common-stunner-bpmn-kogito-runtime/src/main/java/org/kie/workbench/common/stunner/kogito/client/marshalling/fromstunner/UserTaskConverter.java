@@ -41,7 +41,6 @@ import org.kie.workbench.common.stunner.bpmn.definition.dto.OutputSet;
 import org.kie.workbench.common.stunner.bpmn.definition.dto.PotentialOwner;
 import org.kie.workbench.common.stunner.bpmn.definition.dto.ResourceAssignmentExpression;
 import org.kie.workbench.common.stunner.bpmn.definition.dto.SourceRef;
-import org.kie.workbench.common.stunner.bpmn.definition.dto.StringValue;
 import org.kie.workbench.common.stunner.bpmn.definition.dto.TargetRef;
 import org.kie.workbench.common.stunner.bpmn.definition.dto.drools.ExtensionElement;
 import org.kie.workbench.common.stunner.bpmn.definition.dto.drools.MetaData;
@@ -66,8 +65,8 @@ public class UserTaskConverter {
     private final List<Data> ioSpecification = new LinkedList<>();
     private final InputSet inputSet = new InputSet();
     private final OutputSet outputSet = new OutputSet();
-    private final List<StringValue> dataInputRefs = new ArrayList<>();
-    private final List<StringValue> dataOutputRefs = new ArrayList<>();
+    private final List<String> dataInputRefs = new ArrayList<>();
+    private final List<String> dataOutputRefs = new ArrayList<>();
 
     UserTaskConverter(UserTask userTask, Definitions definitions) {
         this.userTask = userTask;
@@ -127,7 +126,7 @@ public class UserTaskConverter {
                                     .setName("Skippable")
                                     .setDtype("Object")
         );
-        dataInputRefs.add(new StringValue(userTask.getId() + "_SkippableInputX"));
+        dataInputRefs.add(userTask.getId() + "_SkippableInputX");
     }
 
     private void priority() {
@@ -136,14 +135,14 @@ public class UserTaskConverter {
             userTask.getBpmnProperties().add(new DataInputAssociation(userTask, userTask.getExecutionSet()
                     .getPriority().getValue(), "PriorityInputX"));
             ioSpecification.add(new DataInput(userTask.getId(), "PriorityInputX", "Priority"));
-            dataInputRefs.add(new StringValue(userTask.getId() + "_PriorityInputX"));
+            dataInputRefs.add(userTask.getId() + "_PriorityInputX");
         }
     }
 
     private void comment() {
         definitions.getItemDefinitions().add(new ItemDefinition(Ids.dataInputItem(userTask.getId(), "Comment")));
         if (!executionSet.getSubject().getValue().isEmpty()) {
-            dataInputRefs.add(new StringValue(userTask.getId() + "_CommentInputX"));
+            dataInputRefs.add(userTask.getId() + "_CommentInputX");
             ioSpecification.add(new DataInput(userTask.getId(), "CommentInputX", "Comment"));
             userTask.getBpmnProperties().add(new DataInputAssociation(userTask, userTask.getExecutionSet()
                     .getSubject().getValue(), "CommentInputX"));
@@ -156,7 +155,7 @@ public class UserTaskConverter {
             userTask.getBpmnProperties().add(new DataInputAssociation(userTask, userTask.getExecutionSet()
                     .getDescription().getValue(), "DescriptionInputX"));
             ioSpecification.add(new DataInput(userTask.getId(), "DescriptionInputX", "Description"));
-            dataInputRefs.add(new StringValue(userTask.getId() + "_DescriptionInputX"));
+            dataInputRefs.add(userTask.getId() + "_DescriptionInputX");
         }
     }
 
@@ -169,7 +168,7 @@ public class UserTaskConverter {
                                                                       "CreatedByInputX"));
 
             ioSpecification.add(new DataInput(userTask.getId(), "CreatedByInputX", "CreatedBy"));
-            dataInputRefs.add(new StringValue(userTask.getId() + "_CreatedByInputX"));
+            dataInputRefs.add(userTask.getId() + "_CreatedByInputX");
         }
     }
 
@@ -187,7 +186,7 @@ public class UserTaskConverter {
                                         .setItemSubjectRef(Ids.dataInputItem(userTask.getId(), "TaskName"))
                                         .setName("TaskName")
                                         .setDtype("Object"));
-            dataInputRefs.add(new StringValue(userTask.getId() + "_TaskNameInputX"));
+            dataInputRefs.add(userTask.getId() + "_TaskNameInputX");
         }
     }
 
@@ -197,7 +196,7 @@ public class UserTaskConverter {
             userTask.getBpmnProperties().add(new DataInputAssociation(userTask, userTask.getExecutionSet()
                     .getGroupid().getValue(), "GroupIdInputX"));
             ioSpecification.add(new DataInput(userTask.getId(), "GroupIdInputX", "GroupId"));
-            dataInputRefs.add(new StringValue(userTask.getId() + "_GroupIdInputX"));
+            dataInputRefs.add(userTask.getId() + "_GroupIdInputX");
         }
     }
 
@@ -205,7 +204,7 @@ public class UserTaskConverter {
         definitions.getItemDefinitions().add(new ItemDefinition(Ids.dataInputItem(userTask.getId(), "Content")));
         if (!executionSet.getContent().getValue().isEmpty()) {
             ioSpecification.add(new DataInput(userTask.getId(), "ContentInputX", "Content"));
-            dataInputRefs.add(new StringValue(userTask.getId() + "_ContentInputX"));
+            dataInputRefs.add(userTask.getId() + "_ContentInputX");
             userTask.getBpmnProperties().add(new DataInputAssociation(userTask, userTask.getExecutionSet()
                     .getContent().getValue(), "ContentInputX"));
         }
@@ -274,7 +273,7 @@ public class UserTaskConverter {
                 ioSpecification.add(new DataInput().setId(Ids.dataInput(userTask.getId(), type))
                                             .setItemSubjectRef(Ids.dataInputItem(userTask.getId(), type))
                                             .setName(type));
-                dataInputRefs.add(new StringValue(Ids.dataInput(userTask.getId(), type)));
+                dataInputRefs.add(Ids.dataInput(userTask.getId(), type));
             });
 
             String notStartedReassign = executionSet.getReassignmentsInfo()
@@ -322,7 +321,7 @@ public class UserTaskConverter {
                 ioSpecification.add(new DataInput().setId(Ids.dataInput(userTask.getId(), type))
                                             .setItemSubjectRef(Ids.dataInputItem(userTask.getId(), type))
                                             .setName(type));
-                dataInputRefs.add(new StringValue(Ids.dataInput(userTask.getId(), type)));
+                dataInputRefs.add(Ids.dataInput(userTask.getId(), type));
             });
 
             String notStartedNotify = executionSet.getNotificationsInfo()
@@ -379,7 +378,7 @@ public class UserTaskConverter {
                         .setName(value[0]);
                 ioSpecification.add(dataInput);
 
-                dataInputRefs.add(new StringValue(Ids.dataInput(userTask.getId(), value[0])));
+                dataInputRefs.add(Ids.dataInput(userTask.getId(), value[0]));
 
                 DataInput inputDataItem = new DataInput().setId(value[0])
                         .setItemSubjectRef(Ids.multiInstanceItemType(userTask.getId(), value[0]))
@@ -404,7 +403,7 @@ public class UserTaskConverter {
                         .setName(value[0]);
                 ioSpecification.add(dataOutput);
 
-                dataOutputRefs.add(new StringValue(Ids.dataOutput(userTask.getId(), value[0])));
+                dataOutputRefs.add(Ids.dataOutput(userTask.getId(), value[0]));
 
                 DataOutput outputDataItem = new DataOutput().setId(value[0])
                         .setItemSubjectRef(Ids.multiInstanceItemType(userTask.getId(), value[0]))
@@ -423,12 +422,12 @@ public class UserTaskConverter {
                 userTask.getBpmnProperties().add(new DataInputAssociation()
                                                          .setSourceRef(new SourceRef(executionSet.getMultipleInstanceCollectionInput().getValue()))
                                                          .setTargetRef(new TargetRef(id, false)));
-                dataInputRefs.add(new StringValue(id));
+                dataInputRefs.add(id);
                 Data dataInput = new DataInput().setId(id)
                         .setItemSubjectRef("_" + executionSet.getMultipleInstanceCollectionInput().getValue() + "Item")
                         .setName("IN_COLLECTION");
                 ioSpecification.add(dataInput);
-                multiInstanceLoopCharacteristics.setLoopDataInputRef(new StringValue(id));
+                multiInstanceLoopCharacteristics.setLoopDataInputRef(id);
             }
 
             if (executionSet.getMultipleInstanceCollectionOutput().getValue() != null) {
@@ -437,12 +436,12 @@ public class UserTaskConverter {
                                                          .setSourceRef(new SourceRef(id))
                                                          .setTargetRef(new TargetRef(executionSet.getMultipleInstanceCollectionOutput()
                                                                                              .getValue(), false)));
-                dataOutputRefs.add(new StringValue(id));
+                dataOutputRefs.add(id);
                 Data dataInput = new DataOutput().setId(id)
                         .setItemSubjectRef("_" + executionSet.getMultipleInstanceCollectionOutput().getValue() + "Item")
                         .setName("OUT_COLLECTION");
                 ioSpecification.add(dataInput);
-                multiInstanceLoopCharacteristics.setLoopDataOutputRef(new StringValue(id));
+                multiInstanceLoopCharacteristics.setLoopDataOutputRef(id);
             }
             userTask.getBpmnProperties().add(multiInstanceLoopCharacteristics);
         }
@@ -500,7 +499,7 @@ public class UserTaskConverter {
         DataAssociation dataAssociation = null;
         if (input) {
             data = new DataInput();
-            dataInputRefs.add(new StringValue(id));
+            dataInputRefs.add(id);
             if (associationDeclaration.getSource() != null) {
                 dataAssociation = new DataInputAssociation();
                 dataAssociation.setTargetRef(new TargetRef(id, false));
@@ -515,7 +514,7 @@ public class UserTaskConverter {
             }
         } else {
             data = new DataOutput();
-            dataOutputRefs.add(new StringValue(id));
+            dataOutputRefs.add(id);
             if (associationDeclaration.getTarget() != null) {
                 dataAssociation = new DataOutputAssociation();
                 dataAssociation.setSourceRef(new SourceRef(id, false));
