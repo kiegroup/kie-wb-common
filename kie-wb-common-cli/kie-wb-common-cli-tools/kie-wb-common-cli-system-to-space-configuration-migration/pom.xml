@@ -33,6 +33,12 @@
     <dependency>
       <groupId>org.uberfire</groupId>
       <artifactId>uberfire-project-api</artifactId>
+      <exclusions>
+        <exclusion>
+          <groupId>org.jboss.errai</groupId>
+          <artifactId>errai-javax-enterprise</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.uberfire</groupId>
@@ -77,6 +83,10 @@
         <exclusion>
           <groupId>org.uberfire</groupId>
           <artifactId>uberfire-servlet-security</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.jboss.errai</groupId>
+          <artifactId>errai-javax-enterprise</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -197,6 +207,12 @@
     <dependency>
       <groupId>org.uberfire</groupId>
       <artifactId>uberfire-layout-editor-api</artifactId>
+      <exclusions>
+        <exclusion>
+          <groupId>org.jboss.errai</groupId>
+          <artifactId>errai-javax-enterprise</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <!-- test -->
