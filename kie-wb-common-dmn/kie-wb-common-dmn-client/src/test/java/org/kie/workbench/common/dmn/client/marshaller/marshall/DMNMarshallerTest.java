@@ -44,6 +44,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -65,6 +66,12 @@ public class DMNMarshallerTest {
 
         final JSITDefinitions definitions = spy(new JSITDefinitions());
         final List<JSITDRGElement> definitionsDRGElements = new ArrayList<>(singletonList(existingNode1));
+        final JSITAuthorityRequirement authorityRequirement = new JSITAuthorityRequirement();
+        final JSITInformationRequirement informationRequirement = new JSITInformationRequirement();
+        final JSITKnowledgeRequirement knowledgeRequirement = new JSITKnowledgeRequirement();
+        final List<JSITAuthorityRequirement> existingAuthorityRequirement = new ArrayList<>();
+        final List<JSITInformationRequirement> existingInformationRequirement = new ArrayList<>();
+        final List<JSITKnowledgeRequirement> existingKnowledgeRequirement = new ArrayList<>();
 
         doReturn(node1).when(dmnMarshaller).getWrappedJSITDRGElement(eq(node1), any());
         doReturn(node2).when(dmnMarshaller).getWrappedJSITDRGElement(eq(node2), any());
@@ -72,16 +79,32 @@ public class DMNMarshallerTest {
         doReturn(true).when(dmnMarshaller).instanceOfDecision(eq(node1));
         doReturn(true).when(dmnMarshaller).instanceOfBusinessKnowledgeModel(eq(node2));
         doReturn(true).when(dmnMarshaller).instanceOfKnowledgeSource(eq(node3));
+
+        // Mock native arrays
         doReturn(definitionsDRGElements).when(definitions).getDrgElement();
+        doReturn(existingAuthorityRequirement).when(existingNode1).getAuthorityRequirement();
+        doReturn(existingInformationRequirement).when(existingNode1).getInformationRequirement();
+        doReturn(existingKnowledgeRequirement).when(existingNode1).getKnowledgeRequirement();
 
-        final List<JSITAuthorityRequirement> authorityRequirement = new ArrayList<>(singletonList(new JSITAuthorityRequirement()));
-        final List<JSITInformationRequirement> informationRequirement = new ArrayList<>(singletonList(new JSITInformationRequirement()));
-        final List<JSITKnowledgeRequirement> knowledgeRequirement = new ArrayList<>(singletonList(new JSITKnowledgeRequirement()));
+        // Mock native arrays addition
+        doAnswer((e) -> definitionsDRGElements.add((JSITDRGElement) e.getArguments()[0])).when(definitions).addDrgElement(any());
+        doAnswer((e) -> existingAuthorityRequirement.add((JSITAuthorityRequirement) e.getArguments()[0])).when(existingNode1).addAuthorityRequirement(any());
+        doAnswer((e) -> existingInformationRequirement.add((JSITInformationRequirement) e.getArguments()[0])).when(existingNode1).addInformationRequirement(any());
+        doAnswer((e) -> existingKnowledgeRequirement.add((JSITKnowledgeRequirement) e.getArguments()[0])).when(existingNode1).addKnowledgeRequirement(any());
 
-        doReturn(authorityRequirement).when(node1).getAuthorityRequirement();
-        doReturn(informationRequirement).when(node1).getInformationRequirement();
-        doReturn(knowledgeRequirement).when(node1).getKnowledgeRequirement();
+        final List<JSITAuthorityRequirement> authorityRequirements = new ArrayList<>(singletonList(authorityRequirement));
+        final List<JSITInformationRequirement> informationRequirements = new ArrayList<>(singletonList(informationRequirement));
+        final List<JSITKnowledgeRequirement> knowledgeRequirements = new ArrayList<>(singletonList(knowledgeRequirement));
 
+        doReturn(authorityRequirements).when(node1).getAuthorityRequirement();
+        doReturn(informationRequirements).when(node1).getInformationRequirement();
+        doReturn(knowledgeRequirements).when(node1).getKnowledgeRequirement();
+
+        dmnMarshaller.mergeOrAddNodeToDefinitions(node1, definitions);
+        dmnMarshaller.mergeOrAddNodeToDefinitions(node2, definitions);
+        dmnMarshaller.mergeOrAddNodeToDefinitions(node3, definitions);
+
+        // Merge twice. But the values must be added once.
         dmnMarshaller.mergeOrAddNodeToDefinitions(node1, definitions);
         dmnMarshaller.mergeOrAddNodeToDefinitions(node2, definitions);
         dmnMarshaller.mergeOrAddNodeToDefinitions(node3, definitions);
@@ -89,9 +112,10 @@ public class DMNMarshallerTest {
         verify(definitions, never()).addDrgElement(node1);
         verify(definitions).addDrgElement(node2);
         verify(definitions).addDrgElement(node3);
-        verify(existingNode1).addAllAuthorityRequirement(authorityRequirement.toArray(new JSITAuthorityRequirement[0]));
-        verify(existingNode1).addAllInformationRequirement(informationRequirement.toArray(new JSITInformationRequirement[0]));
-        verify(existingNode1).addAllKnowledgeRequirement(knowledgeRequirement.toArray(new JSITKnowledgeRequirement[0]));
+
+        verify(existingNode1).addAuthorityRequirement(authorityRequirement);
+        verify(existingNode1).addInformationRequirement(informationRequirement);
+        verify(existingNode1).addKnowledgeRequirement(knowledgeRequirement);
     }
 
     @Test
