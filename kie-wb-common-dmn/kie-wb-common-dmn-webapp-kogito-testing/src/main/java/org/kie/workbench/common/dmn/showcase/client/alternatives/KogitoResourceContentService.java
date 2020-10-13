@@ -32,8 +32,8 @@ import org.uberfire.client.promise.Promises;
 @Alternative
 public class KogitoResourceContentService extends org.kie.workbench.common.kogito.webapp.base.client.workarounds.KogitoResourceContentService {
 
-    static final String BASE_MODEL = "Base Model.dmn";
-    static final String MODEL_WITH_IMPORTS = "Model With Imports.dmn";
+    final static String BASE_MODEL = "Base Model.dmn";
+    final static String MODEL_WITH_IMPORTS = "Model With Imports.dmn";
 
     @Inject
     public KogitoResourceContentService(final ResourceContentService resourceContentService,
@@ -44,7 +44,7 @@ public class KogitoResourceContentService extends org.kie.workbench.common.kogit
     @Override
     public void getFilteredItems(final String pattern,
                                  final RemoteCallback<List<String>> successCallback,
-                                 final ErrorCallback<String> errorCallback) {
+                                 final ErrorCallback<Object> errorCallback) {
 
         successCallback.callback(Arrays.asList(BASE_MODEL, MODEL_WITH_IMPORTS));
     }
@@ -52,7 +52,7 @@ public class KogitoResourceContentService extends org.kie.workbench.common.kogit
     @Override
     public void loadFile(final String fileUri,
                          final RemoteCallback<String> callback,
-                         final ErrorCallback<String> errorCallback) {
+                         final ErrorCallback<Object> errorCallback) {
         if (BASE_MODEL.equals(fileUri)) {
             callback.callback(DMNClientModels.BASE_FILE);
         } else if (MODEL_WITH_IMPORTS.equals(fileUri)) {
