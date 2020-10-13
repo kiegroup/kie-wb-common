@@ -123,7 +123,7 @@ public class InlineTextEditorBoxViewImplTest {
         tested.onChangeName(event);
 
         verify(presenter,
-               never()).onClose();
+               never()).onSave();
     }
 
     @Test
@@ -135,7 +135,7 @@ public class InlineTextEditorBoxViewImplTest {
         tested.onChangeName(event);
 
         verify(presenter,
-               times(1)).onSave();
+               times(1)).onClose();
     }
 
     @Test

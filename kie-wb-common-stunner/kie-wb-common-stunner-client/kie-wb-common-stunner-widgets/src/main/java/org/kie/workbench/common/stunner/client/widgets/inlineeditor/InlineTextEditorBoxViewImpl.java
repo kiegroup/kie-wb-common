@@ -181,8 +181,8 @@ public class InlineTextEditorBoxViewImpl
     }
 
     private void saveChanges() {
-        scheduleDeferredCommand(() -> presenter.onChangeName(getTextContent()));
-        scheduleDeferredCommand(() -> presenter.onSave());
+        presenter.onChangeName(getTextContent());
+        presenter.onSave();
     }
 
     private String getTextContent() {
@@ -200,6 +200,6 @@ public class InlineTextEditorBoxViewImpl
 
     @Override
     public void rollback() {
-        scheduleDeferredCommand(() -> presenter.onSave());
+        presenter.onClose();
     }
 }
