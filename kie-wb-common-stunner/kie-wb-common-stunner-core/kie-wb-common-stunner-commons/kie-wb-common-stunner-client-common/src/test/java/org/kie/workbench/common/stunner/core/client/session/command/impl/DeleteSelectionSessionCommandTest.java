@@ -25,6 +25,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.stunner.core.client.api.SessionManager;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
+import org.kie.workbench.common.stunner.core.client.canvas.controls.DeleteNodeConfirmation;
 import org.kie.workbench.common.stunner.core.client.canvas.event.selection.CanvasClearSelectionEvent;
 import org.kie.workbench.common.stunner.core.client.command.CanvasCommandFactory;
 import org.kie.workbench.common.stunner.core.client.event.keyboard.KeyboardEvent;
@@ -65,6 +66,9 @@ public class DeleteSelectionSessionCommandTest extends BaseSessionCommandKeyboar
     @Mock
     private ManagedInstance<CanvasCommandFactory<AbstractCanvasHandler>> canvasCommandFactoryInstance;
 
+    @Mock
+    private DeleteNodeConfirmation deleteNodeConfirmation;
+
     @Override
     public void setup() {
         when(sessionManager.getCurrentSession()).thenReturn(session);
@@ -79,10 +83,13 @@ public class DeleteSelectionSessionCommandTest extends BaseSessionCommandKeyboar
 
     @Override
     protected AbstractClientSessionCommand<EditorSession> getCommand() {
+
         return DeleteSelectionSessionCommand.getInstance(sessionCommandManager,
                                                          canvasCommandFactoryInstance,
                                                          canvasClearSelectionEventEvent,
-                                                         definitionUtils, sessionManager);
+                                                         definitionUtils,
+                                                         sessionManager,
+                                                         deleteNodeConfirmation);
     }
 
     @Test
