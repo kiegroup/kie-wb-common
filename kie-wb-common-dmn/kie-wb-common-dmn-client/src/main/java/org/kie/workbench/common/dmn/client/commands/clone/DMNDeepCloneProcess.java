@@ -209,6 +209,8 @@ public class DMNDeepCloneProcess extends DeepCloneProcess implements IDeepCloneP
     }
 
     private void cloneBusinessKnowledgeModel(final BusinessKnowledgeModel source, final BusinessKnowledgeModel target) {
-        target.setEncapsulatedLogic(source.getEncapsulatedLogic().copy());
+        if (!Objects.isNull(source.getEncapsulatedLogic())) {
+            target.setEncapsulatedLogic(source.getEncapsulatedLogic().copy());
+        }
     }
 }
