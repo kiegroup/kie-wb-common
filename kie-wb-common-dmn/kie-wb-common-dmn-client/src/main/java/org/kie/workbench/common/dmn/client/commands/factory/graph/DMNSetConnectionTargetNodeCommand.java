@@ -92,13 +92,18 @@ public class DMNSetConnectionTargetNodeCommand extends SetConnectionTargetNodeCo
 
     boolean commandBelongsToAnotherGraph() {
         return getDiagramId().isPresent()
-                && !isTheCurrentDiagram(getDiagramId(), graphsProvider);
+                && !isTheCurrentDiagram(getDiagramId(), getGraphsProvider());
     }
 
     Graph getEdgesGraph() {
-        if (getDiagramId().isPresent()) {
-            return graphsProvider.getDiagram(getDiagramId().get()).getGraph();
+        final Optional<String> id = getDiagramId();
+        if (id.isPresent()) {
+            return getGraphsProvider().getDiagram(id.get()).getGraph();
         }
         throw new IllegalStateException("Unable to get the edges graph. The diagramId is not set.");
+    }
+
+    GraphsProvider getGraphsProvider() {
+        return graphsProvider;
     }
 }

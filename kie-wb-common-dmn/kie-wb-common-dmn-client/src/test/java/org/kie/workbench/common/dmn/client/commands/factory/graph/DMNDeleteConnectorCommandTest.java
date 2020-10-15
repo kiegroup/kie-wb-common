@@ -29,6 +29,8 @@ import org.kie.workbench.common.stunner.core.graph.content.view.View;
 import org.kie.workbench.common.stunner.core.graph.content.view.ViewConnector;
 import org.mockito.Mock;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -60,6 +62,9 @@ public class DMNDeleteConnectorCommandTest {
         final SetConnectionSourceNodeCommand setConnectionSourceCommand = command.getSetConnectionSourceCommand(edgeParameter);
 
         assertTrue(setConnectionSourceCommand instanceof DMNSetConnectionSourceNodeCommand);
+        assertNull(setConnectionSourceCommand.getSourceNode());
+        assertEquals(edgeParameter, setConnectionSourceCommand.getEdge());
+        assertEquals(graphsProvider, ((DMNSetConnectionSourceNodeCommand) setConnectionSourceCommand).getGraphsProvider());
     }
 
     @Test
@@ -68,5 +73,8 @@ public class DMNDeleteConnectorCommandTest {
         final SetConnectionTargetNodeCommand setConnectionTargetCommand = command.getSetConnectionTargetCommand(edgeParameter);
 
         assertTrue(setConnectionTargetCommand instanceof DMNSetConnectionTargetNodeCommand);
+        assertNull(setConnectionTargetCommand.getSourceNode());
+        assertEquals(edgeParameter, setConnectionTargetCommand.getEdge());
+        assertEquals(graphsProvider, ((DMNSetConnectionTargetNodeCommand) setConnectionTargetCommand).getGraphsProvider());
     }
 }

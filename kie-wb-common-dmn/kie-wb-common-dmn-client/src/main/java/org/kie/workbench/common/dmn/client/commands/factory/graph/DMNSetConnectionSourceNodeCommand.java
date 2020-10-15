@@ -30,7 +30,6 @@ import org.kie.workbench.common.stunner.core.graph.content.view.Connection;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
 import org.kie.workbench.common.stunner.core.rule.RuleViolation;
 
-import static org.kie.workbench.common.dmn.client.commands.util.ContentDefinitionIdUtils.getDiagramId;
 import static org.kie.workbench.common.dmn.client.commands.util.ContentDefinitionIdUtils.isTheCurrentDiagram;
 
 public class DMNSetConnectionSourceNodeCommand extends SetConnectionSourceNodeCommand {
@@ -93,13 +92,18 @@ public class DMNSetConnectionSourceNodeCommand extends SetConnectionSourceNodeCo
 
     boolean commandBelongsToAnotherGraph() {
         return getDiagramId().isPresent()
-                && !isTheCurrentDiagram(getDiagramId(), graphsProvider);
+                && !isTheCurrentDiagram(getDiagramId(), getGraphsProvider());
     }
 
     Graph getEdgesGraph() {
-        if (getDiagramId().isPresent()) {
-            return graphsProvider.getDiagram(getDiagramId().get()).getGraph();
+        final Optional<String> id = getDiagramId();
+        if (id.isPresent()) {
+            return getGraphsProvider().getDiagram(id.get()).getGraph();
         }
         throw new IllegalStateException("Unable to get the edges graph. The diagramId is not set.");
+    }
+
+    public GraphsProvider getGraphsProvider() {
+        return graphsProvider;
     }
 }
