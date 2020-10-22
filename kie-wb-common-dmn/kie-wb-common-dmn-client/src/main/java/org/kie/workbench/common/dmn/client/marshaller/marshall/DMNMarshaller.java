@@ -23,6 +23,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import javax.annotation.PostConstruct;
@@ -61,16 +62,13 @@ import org.kie.workbench.common.dmn.client.marshaller.converters.dd.PointUtils;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.MainJs;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.di.JSIDiagramElement;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITAssociation;
-import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITAuthorityRequirement;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITBusinessKnowledgeModel;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITDMNElement;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITDRGElement;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITDecision;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITDecisionService;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITDefinitions;
-import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITInformationRequirement;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITInputData;
-import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITKnowledgeRequirement;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITKnowledgeSource;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITTextAnnotation;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmndi12.JSIDMNDiagram;
@@ -260,7 +258,17 @@ public class DMNMarshaller {
             });
 
             forEach(dmnEdges, dmnEdge -> {
-                diagram.addDMNDiagramElement(WrapperUtils.getWrappedJSIDMNEdge(Js.uncheckedCast(dmnEdge)));
+                final boolean exists = anyMatch(diagram.getDMNDiagramElement(),
+                                                diagramElement -> {
+                                                    if (JSIDMNEdge.instanceOf(diagramElement)) {
+                                                        final JSIDMNEdge jsidmnEdge = Js.uncheckedCast(diagramElement);
+                                                        return Objects.equals(jsidmnEdge.getDmnElementRef(), dmnEdge.getDmnElementRef());
+                                                    }
+                                                    return false;
+                                                });
+                if (!exists) {
+                    diagram.addDMNDiagramElement(WrapperUtils.getWrappedJSIDMNEdge(Js.uncheckedCast(dmnEdge)));
+                }
             });
 
             //Convert absolute positioning to relative
@@ -355,31 +363,36 @@ public class DMNMarshaller {
             final JSITBusinessKnowledgeModel existingBkm = Js.uncheckedCast(existingDRGElement);
             final JSITBusinessKnowledgeModel nodeBkm = Js.uncheckedCast(node);
 
-            final List<JSITAuthorityRequirement> authorityRequirement = nodeBkm.getAuthorityRequirement();
-            final List<JSITKnowledgeRequirement> knowledgeRequirement = nodeBkm.getKnowledgeRequirement();
-
-            existingBkm.addAllAuthorityRequirement(authorityRequirement.toArray(new JSITAuthorityRequirement[0]));
-            existingBkm.addAllKnowledgeRequirement(knowledgeRequirement.toArray(new JSITKnowledgeRequirement[0]));
+            existingBkm.setAuthorityRequirement(distinct(nodeBkm.getAuthorityRequirement(), existingBkm.getAuthorityRequirement()));
+            existingBkm.setKnowledgeRequirement(distinct(nodeBkm.getKnowledgeRequirement(), existingBkm.getKnowledgeRequirement()));
         } else if (instanceOfDecision(node)) {
 
             final JSITDecision existingDecision = Js.uncheckedCast(existingDRGElement);
             final JSITDecision nodeDecision = Js.uncheckedCast(node);
 
-            final List<JSITAuthorityRequirement> authorityRequirement = nodeDecision.getAuthorityRequirement();
-            final List<JSITInformationRequirement> informationRequirement = nodeDecision.getInformationRequirement();
-            final List<JSITKnowledgeRequirement> knowledgeRequirement = nodeDecision.getKnowledgeRequirement();
-
-            existingDecision.addAllAuthorityRequirement(authorityRequirement.toArray(new JSITAuthorityRequirement[0]));
-            existingDecision.addAllInformationRequirement(informationRequirement.toArray(new JSITInformationRequirement[0]));
-            existingDecision.addAllKnowledgeRequirement(knowledgeRequirement.toArray(new JSITKnowledgeRequirement[0]));
+            existingDecision.setAuthorityRequirement(distinct(nodeDecision.getAuthorityRequirement(), existingDecision.getAuthorityRequirement()));
+            existingDecision.setInformationRequirement(distinct(nodeDecision.getInformationRequirement(), existingDecision.getInformationRequirement()));
+            existingDecision.setKnowledgeRequirement(distinct(nodeDecision.getKnowledgeRequirement(), existingDecision.getKnowledgeRequirement()));
         } else if (instanceOfKnowledgeSource(node)) {
 
             final JSITKnowledgeSource existingKnowledgeSource = Js.uncheckedCast(existingDRGElement);
             final JSITKnowledgeSource nodeKnowledgeSource = Js.uncheckedCast(node);
 
-            final List<JSITAuthorityRequirement> authorityRequirement = nodeKnowledgeSource.getAuthorityRequirement();
-            existingKnowledgeSource.addAllAuthorityRequirement(authorityRequirement.toArray(new JSITAuthorityRequirement[0]));
+            existingKnowledgeSource.setAuthorityRequirement(distinct(nodeKnowledgeSource.getAuthorityRequirement(), existingKnowledgeSource.getAuthorityRequirement()));
         }
+    }
+
+    private <T extends JSITDMNElement> List<T> distinct(final List<T> list1,
+                                                        final List<T> list2) {
+
+        final List<T> combined = Stream.concat(list1.stream(), list2.stream()).collect(Collectors.toList());
+        final Map<String, T> map = new HashMap<>();
+
+        forEach(combined, item -> {
+            map.putIfAbsent(item.getId(), Js.uncheckedCast(item));
+        });
+
+        return new ArrayList<>(map.values());
     }
 
     boolean instanceOfBusinessKnowledgeModel(final JSITDRGElement node) {
