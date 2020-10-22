@@ -61,13 +61,16 @@ import org.kie.workbench.common.dmn.client.marshaller.converters.dd.PointUtils;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.MainJs;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.di.JSIDiagramElement;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITAssociation;
+import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITAuthorityRequirement;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITBusinessKnowledgeModel;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITDMNElement;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITDRGElement;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITDecision;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITDecisionService;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITDefinitions;
+import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITInformationRequirement;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITInputData;
+import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITKnowledgeRequirement;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITKnowledgeSource;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITTextAnnotation;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmndi12.JSIDMNDiagram;
@@ -257,7 +260,17 @@ public class DMNMarshaller {
             });
 
             forEach(dmnEdges, dmnEdge -> {
-                diagram.addDMNDiagramElement(WrapperUtils.getWrappedJSIDMNEdge(Js.uncheckedCast(dmnEdge)));
+                final boolean exists = anyMatch(diagram.getDMNDiagramElement(),
+                                                diagramElement -> {
+                                                    if (JSIDMNEdge.instanceOf(diagramElement)) {
+                                                        final JSIDMNEdge jsidmnEdge = Js.uncheckedCast(diagramElement);
+                                                        return Objects.equals(jsidmnEdge.getDmnElementRef(), dmnEdge.getDmnElementRef());
+                                                    }
+                                                    return false;
+                                                });
+                if (!exists) {
+                    diagram.addDMNDiagramElement(WrapperUtils.getWrappedJSIDMNEdge(Js.uncheckedCast(dmnEdge)));
+                }
             });
 
             //Convert absolute positioning to relative
@@ -352,56 +365,39 @@ public class DMNMarshaller {
             final JSITBusinessKnowledgeModel existingBkm = Js.uncheckedCast(existingDRGElement);
             final JSITBusinessKnowledgeModel nodeBkm = Js.uncheckedCast(node);
 
-            forEach(nodeBkm.getAuthorityRequirement(),
-                    authorityRequirement -> {
-                        if (!existingBkm.getAuthorityRequirement().contains(authorityRequirement)) {
-                            existingBkm.addAuthorityRequirement(authorityRequirement);
-                        }
-                    });
+            existingBkm.addAllAuthorityRequirement(nodeBkm.getAuthorityRequirement().toArray(new JSITAuthorityRequirement[0]));
+            existingBkm.addAllKnowledgeRequirement(nodeBkm.getKnowledgeRequirement().toArray(new JSITKnowledgeRequirement[0]));
 
-            forEach(nodeBkm.getKnowledgeRequirement(),
-                    knowledgeRequirement -> {
-                        if (!existingBkm.getKnowledgeRequirement().contains(knowledgeRequirement)) {
-                            existingBkm.addKnowledgeRequirement(knowledgeRequirement);
-                        }
-                    });
+            existingBkm.setAuthorityRequirement(distinct(existingBkm.getAuthorityRequirement()));
+            existingBkm.setKnowledgeRequirement(distinct(existingBkm.getKnowledgeRequirement()));
         } else if (instanceOfDecision(node)) {
 
             final JSITDecision existingDecision = Js.uncheckedCast(existingDRGElement);
             final JSITDecision nodeDecision = Js.uncheckedCast(node);
 
-            forEach(nodeDecision.getAuthorityRequirement(),
-                    authorityRequirement -> {
-                        if (!existingDecision.getAuthorityRequirement().contains(authorityRequirement)) {
-                            existingDecision.addAuthorityRequirement(authorityRequirement);
-                        }
-                    });
+            existingDecision.addAllAuthorityRequirement(nodeDecision.getAuthorityRequirement().toArray(new JSITAuthorityRequirement[0]));
+            existingDecision.addAllInformationRequirement(nodeDecision.getInformationRequirement().toArray(new JSITInformationRequirement[0]));
+            existingDecision.addAllKnowledgeRequirement(nodeDecision.getKnowledgeRequirement().toArray(new JSITKnowledgeRequirement[0]));
 
-            forEach(nodeDecision.getInformationRequirement(),
-                    informationRequirement -> {
-                        if (!existingDecision.getInformationRequirement().contains(informationRequirement)) {
-                            existingDecision.addInformationRequirement(informationRequirement);
-                        }
-                    });
-
-            forEach(nodeDecision.getKnowledgeRequirement(),
-                    knowledgeRequirement -> {
-                        if (!existingDecision.getKnowledgeRequirement().contains(knowledgeRequirement)) {
-                            existingDecision.addKnowledgeRequirement(knowledgeRequirement);
-                        }
-                    });
+            existingDecision.setAuthorityRequirement(distinct(existingDecision.getAuthorityRequirement()));
+            existingDecision.setInformationRequirement(distinct(existingDecision.getInformationRequirement()));
+            existingDecision.setKnowledgeRequirement(distinct(existingDecision.getKnowledgeRequirement()));
         } else if (instanceOfKnowledgeSource(node)) {
 
             final JSITKnowledgeSource existingKnowledgeSource = Js.uncheckedCast(existingDRGElement);
             final JSITKnowledgeSource nodeKnowledgeSource = Js.uncheckedCast(node);
 
-            forEach(nodeKnowledgeSource.getAuthorityRequirement(),
-                    authorityRequirement -> {
-                        if (!existingKnowledgeSource.getAuthorityRequirement().contains(authorityRequirement)) {
-                            existingKnowledgeSource.addAuthorityRequirement(authorityRequirement);
-                        }
-                    });
+            existingKnowledgeSource.addAllAuthorityRequirement(nodeKnowledgeSource.getAuthorityRequirement().toArray(new JSITAuthorityRequirement[0]));
+            existingKnowledgeSource.setAuthorityRequirement(distinct(existingKnowledgeSource.getAuthorityRequirement()));
         }
+    }
+
+    private <T extends JSITDMNElement> List<T> distinct(final List<T> list) {
+        final Map<String, T> map = new HashMap<>();
+        forEach(list, item -> {
+            map.putIfAbsent(item.getId(), Js.uncheckedCast(item));
+        });
+        return new ArrayList<>(map.values());
     }
 
     boolean instanceOfBusinessKnowledgeModel(final JSITDRGElement node) {
