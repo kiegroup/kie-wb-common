@@ -103,7 +103,6 @@ public class InformationItem extends NamedElement implements DMNPropertySet,
     public InformationItem copy() {
         final InformationItem clonedInformationItem = new InformationItem();
         clonedInformationItem.description = Optional.ofNullable(description).map(Description::copy).orElse(null);
-      //  clonedInformationItem.nameHolder = Optional.ofNullable(name).map(Name::copy).orElse(null);
         clonedInformationItem.nameHolder = Optional.ofNullable(nameHolder).map(NameHolder::copy).orElse(null);
         clonedInformationItem.typeRef = Optional.ofNullable(typeRef).map(QName::copy).orElse(null);
         clonedInformationItem.typeRefHolder = Optional.ofNullable(typeRefHolder).map(QNameHolder::copy).orElse(null);
