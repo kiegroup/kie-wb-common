@@ -21,6 +21,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.TreeSet;
 
+import javax.enterprise.event.Event;
+
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -42,10 +44,13 @@ import org.junit.runner.RunWith;
 import org.kie.workbench.common.dmn.client.docks.navigator.DecisionNavigatorItem;
 import org.kie.workbench.common.dmn.client.docks.navigator.DecisionNavigatorItemBuilder;
 import org.mockito.Mock;
+import org.uberfire.client.mvp.LockRequiredEvent;
+import org.uberfire.mocks.EventSourceMock;
 import org.uberfire.mvp.Command;
 
 import static org.junit.Assert.assertEquals;
 import static org.kie.workbench.common.dmn.client.docks.navigator.DecisionNavigatorItem.Type.CONTEXT;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -90,6 +95,9 @@ public class DecisionNavigatorTreeViewTest {
     @Mock
     private HTMLUListElement subItems;
 
+    @Mock
+    private EventSourceMock<LockRequiredEvent> locker;
+
     private DecisionNavigatorTreeView treeView;
 
     private DecisionNavigatorTreeView.TreeItem treeItem;
@@ -97,7 +105,7 @@ public class DecisionNavigatorTreeViewTest {
     @Before
     public void setup() {
         treeView = spy(new DecisionNavigatorTreeView(view, items, managedInstance, util));
-        treeItem = spy(new DecisionNavigatorTreeView.TreeItem(textContent, inputText, icon, subItems, save, edit, remove));
+        treeItem = spy(new DecisionNavigatorTreeView.TreeItem(textContent, inputText, icon, subItems, save, edit, remove, locker));
     }
 
     @Test
@@ -323,6 +331,7 @@ public class DecisionNavigatorTreeViewTest {
         treeItem.onRemoveClick(event);
 
         verify(item).onRemove();
+        verify(locker).fire(any());
     }
 
     @Test
@@ -343,6 +352,7 @@ public class DecisionNavigatorTreeViewTest {
         verify(tokenList).remove("editing");
         verify(treeItem).updateLabel();
         verify(item).onUpdate();
+        verify(locker).fire(any());
     }
 
     @Test
