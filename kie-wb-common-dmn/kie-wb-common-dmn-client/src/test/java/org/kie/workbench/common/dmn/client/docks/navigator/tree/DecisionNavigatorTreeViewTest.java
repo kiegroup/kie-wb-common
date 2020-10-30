@@ -21,6 +21,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.TreeSet;
 
+import javax.enterprise.event.Event;
+
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
