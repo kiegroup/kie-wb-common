@@ -21,7 +21,7 @@
   <parent>
     <artifactId>kie-wb-common</artifactId>
     <groupId>org.kie.workbench</groupId>
-    <version>7.43.0-SNAPSHOT</version>
+    <version>7.46.0-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
@@ -38,7 +38,6 @@
     <module>kie-wb-common-stunner-backend</module>
     <module>kie-wb-common-stunner-client</module>
     <module>kie-wb-common-stunner-sets</module>
-    <module>kie-wb-common-stunner-showcase</module>
   </modules>
 
   <properties>

@@ -5,7 +5,7 @@
   <parent>
     <groupId>org.kie.workbench.widgets</groupId>
     <artifactId>kie-wb-common-widgets</artifactId>
-    <version>7.43.0-SNAPSHOT</version>
+    <version>7.46.0-SNAPSHOT</version>
   </parent>
 
   <artifactId>kie-wb-common-ui</artifactId>
@@ -200,6 +200,11 @@
         <exclusion>
           <groupId>javax.el</groupId>
           <artifactId>el-api</artifactId>
+        </exclusion>
+        <!-- collides with javax.inject:javax.inject:jar:1:compile -->
+        <exclusion>
+          <groupId>jakarta.enterprise</groupId>
+          <artifactId>jakarta.enterprise.cdi-api</artifactId>
         </exclusion>
       </exclusions>
     </dependency>

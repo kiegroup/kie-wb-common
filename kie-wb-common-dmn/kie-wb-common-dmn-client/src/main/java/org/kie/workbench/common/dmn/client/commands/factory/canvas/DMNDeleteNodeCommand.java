@@ -17,22 +17,59 @@
 package org.kie.workbench.common.dmn.client.commands.factory.canvas;
 
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
+import org.kie.workbench.common.stunner.core.client.canvas.command.DeleteCanvasConnectorCommand;
 import org.kie.workbench.common.stunner.core.client.canvas.command.DeleteNodeCommand;
 import org.kie.workbench.common.stunner.core.command.Command;
+import org.kie.workbench.common.stunner.core.diagram.GraphsProvider;
+import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.command.GraphCommandExecutionContext;
+import org.kie.workbench.common.stunner.core.graph.command.impl.SafeDeleteNodeCommand;
+import org.kie.workbench.common.stunner.core.graph.content.view.View;
 import org.kie.workbench.common.stunner.core.rule.RuleViolation;
 
 public class DMNDeleteNodeCommand extends DeleteNodeCommand {
 
-    public DMNDeleteNodeCommand(final Node candidate) {
-        super(candidate);
+    private final GraphsProvider graphsProvider;
+
+    public DMNDeleteNodeCommand(final Node candidate,
+                                final GraphsProvider graphsProvider) {
+        super(candidate,
+              SafeDeleteNodeCommand.Options.defaults(),
+              new DMNCanvasDeleteProcessor(SafeDeleteNodeCommand.Options.defaults(), graphsProvider));
+        this.graphsProvider = graphsProvider;
+    }
+
+    public GraphsProvider getGraphsProvider() {
+        return graphsProvider;
     }
 
     @Override
     protected Command<GraphCommandExecutionContext, RuleViolation> newGraphCommand(final AbstractCanvasHandler context) {
         return new DMNSafeDeleteNodeCommand(candidate,
                                             deleteProcessor,
-                                            options);
+                                            options,
+                                            getGraphsProvider());
+    }
+
+    public static class DMNCanvasDeleteProcessor extends CanvasDeleteProcessor {
+
+        private final GraphsProvider graphsProvider;
+
+        public DMNCanvasDeleteProcessor(final SafeDeleteNodeCommand.Options options,
+                                        final GraphsProvider graphsProvider) {
+            super(options);
+            this.graphsProvider = graphsProvider;
+        }
+
+        @Override
+        protected DeleteCanvasConnectorCommand createDeleteCanvasConnectorNodeCommand(final Edge<? extends View<?>, Node> connector) {
+            return new DMNDeleteCanvasConnectorNodeCommand(connector, graphsProvider);
+        }
+
+        @Override
+        protected DMNDeleteCanvasNodeCommand createDeleteCanvasNodeCommand(final Node<?, Edge> node) {
+            return new DMNDeleteCanvasNodeCommand(node, graphsProvider);
+        }
     }
 }

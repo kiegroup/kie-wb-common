@@ -26,6 +26,7 @@ import org.kie.workbench.common.stunner.core.client.shape.TextWrapperStrategy;
 import org.kie.workbench.common.stunner.core.client.shape.view.BoundingBox;
 import org.kie.workbench.common.stunner.core.client.shape.view.event.ViewEventType;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.verify;
 
@@ -64,6 +65,13 @@ public class WiresShapeViewExtTest extends AbstractWiresShapeViewText {
         tested.setTitleYOffsetPosition(10.0);
 
         verify(textDecorator).setTitleYOffsetPosition(10.0);
+    }
+
+    @Test
+    public void testBatch() {
+        tested.getTextViewDecorator().batch();
+
+        verify(textDecorator).batch();
     }
 
     @Test
@@ -115,5 +123,40 @@ public class WiresShapeViewExtTest extends AbstractWiresShapeViewText {
     private void testSetTextWrapperStrategy(final TextWrapperStrategy wrapperStrategy) {
         tested.setTextWrapper(wrapperStrategy);
         verify(textDecorator).setTextWrapper(wrapperStrategy);
+    }
+
+    @Test
+    public void testGetTitleFontFamily() {
+        assertEquals(null, tested.getTitleFontFamily());
+    }
+
+    @Test
+    public void testGetTitleFontSize() {
+        assertEquals(0.0, tested.getTitleFontSize(), 0.001);
+    }
+
+    @Test
+    public void testGetTitlePosition() {
+        assertEquals("INSIDE", tested.getTitlePosition());
+    }
+
+    @Test
+    public void testGetOrientation() {
+        assertEquals("HORIZONTAL", tested.getOrientation());
+    }
+
+    @Test
+    public void testGetMarginX() {
+        assertEquals(0.0, tested.getMarginX(), 0.001);
+    }
+
+    @Test
+    public void testGetFontPosition() {
+        assertEquals("INSIDE", tested.getFontPosition());
+    }
+
+    @Test
+    public void testGetFontAlignment() {
+        assertEquals("MIDDLE", tested.getFontAlignment());
     }
 }

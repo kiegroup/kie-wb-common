@@ -15,7 +15,6 @@
  */
 package org.kie.workbench.common.dmn.showcase.client.editor;
 
-import java.util.Objects;
 import java.util.Optional;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -24,14 +23,14 @@ import javax.enterprise.event.Observes;
 import javax.enterprise.inject.Default;
 import javax.inject.Inject;
 
-import org.appformer.client.context.Channel;
-import org.appformer.client.context.EditorContextProvider;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.kie.workbench.common.dmn.api.qualifiers.DMNEditor;
 import org.kie.workbench.common.dmn.client.docks.navigator.DecisionNavigatorDock;
+import org.kie.workbench.common.dmn.client.docks.navigator.common.LazyCanvasFocusUtils;
+import org.kie.workbench.common.dmn.client.editors.drd.DRDNameChanger;
 import org.kie.workbench.common.dmn.client.editors.expressions.ExpressionEditorView;
 import org.kie.workbench.common.dmn.client.editors.included.IncludedModelsPage;
-import org.kie.workbench.common.dmn.client.editors.included.imports.IncludedModelsPageStateProviderImpl;
+import org.kie.workbench.common.dmn.client.editors.included.common.IncludedModelsContext;
 import org.kie.workbench.common.dmn.client.editors.search.DMNEditorSearchIndex;
 import org.kie.workbench.common.dmn.client.editors.search.DMNSearchableElement;
 import org.kie.workbench.common.dmn.client.editors.types.DataTypePageTabActiveEvent;
@@ -81,9 +80,6 @@ import org.uberfire.mvp.PlaceRequest;
 import org.uberfire.mvp.impl.DefaultPlaceRequest;
 import org.uberfire.workbench.events.NotificationEvent;
 
-import static org.appformer.client.context.Channel.DEFAULT;
-import static org.appformer.client.context.Channel.VSCODE;
-
 @DiagramEditor
 @ApplicationScoped
 @WorkbenchClientEditor(identifier = AbstractDMNDiagramEditor.EDITOR_ID)
@@ -92,6 +88,7 @@ public class DMNDiagramEditor extends AbstractDMNDiagramEditor implements Kogito
 
     private static final PlaceRequest DMN_KOGITO_RUNTIME_SCREEN_DEFAULT_REQUEST = new DefaultPlaceRequest(AbstractDMNDiagramEditor.EDITOR_ID);
     private final ReadOnlyProvider readOnlyProvider;
+    private final LazyCanvasFocusUtils lazyCanvasFocusUtils;
 
     @Inject
     public DMNDiagramEditor(final View view,
@@ -125,10 +122,11 @@ public class DMNDiagramEditor extends AbstractDMNDiagramEditor implements Kogito
                             final CanvasFileExport canvasFileExport,
                             final Promises promises,
                             final IncludedModelsPage includedModelsPage,
-                            final IncludedModelsPageStateProviderImpl importsPageProvider,
-                            final EditorContextProvider contextProvider,
+                            final IncludedModelsContext includedModelContext,
                             final GuidedTourBridgeInitializer guidedTourBridgeInitializer,
-                            final @DMNEditor ReadOnlyProvider readOnlyProvider) {
+                            final @DMNEditor ReadOnlyProvider readOnlyProvider,
+                            final DRDNameChanger drdNameChanger,
+                            final LazyCanvasFocusUtils lazyCanvasFocusUtils) {
         super(view,
               fileMenuBuilder,
               placeManager,
@@ -160,10 +158,11 @@ public class DMNDiagramEditor extends AbstractDMNDiagramEditor implements Kogito
               canvasFileExport,
               promises,
               includedModelsPage,
-              importsPageProvider,
-              contextProvider,
-              guidedTourBridgeInitializer);
+              includedModelContext,
+              guidedTourBridgeInitializer,
+              drdNameChanger);
         this.readOnlyProvider = readOnlyProvider;
+        this.lazyCanvasFocusUtils = lazyCanvasFocusUtils;
     }
 
     @Override
@@ -178,11 +177,11 @@ public class DMNDiagramEditor extends AbstractDMNDiagramEditor implements Kogito
         canvasHandler.ifPresent(c -> {
             final ExpressionEditorView.Presenter expressionEditor = ((DMNSession) sessionManager.getCurrentSession()).getExpressionEditor();
             expressionEditor.setToolbarStateHandler(new DMNProjectToolbarStateHandler(getMenuSessionItems()));
-            decisionNavigatorDock.setupCanvasHandler(c);
+            decisionNavigatorDock.reload();
             dataTypesPage.reload();
-            final Channel channel = contextProvider.getChannel();
-            if (Objects.equals(channel, DEFAULT) || Objects.equals(channel, VSCODE)) {
-                includedModelsPage.setup(importsPageProvider.withDiagram(c.getDiagram()));
+            lazyCanvasFocusUtils.releaseFocus();
+            if (includedModelContext.isIncludedModelChannel()) {
+                includedModelsPage.reload();
             }
         });
     }

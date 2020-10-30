@@ -22,6 +22,7 @@ import javax.inject.Inject;
 
 import org.appformer.client.stateControl.registry.Registry;
 import org.kie.workbench.common.dmn.api.qualifiers.DMNEditor;
+import org.kie.workbench.common.dmn.client.canvas.controls.inlineeditor.DMNCanvasInlineTextEditorControl;
 import org.kie.workbench.common.dmn.client.canvas.controls.resize.DecisionServiceMoveDividerControl;
 import org.kie.workbench.common.dmn.client.editors.expressions.ExpressionEditorControl;
 import org.kie.workbench.common.dmn.client.editors.expressions.ExpressionEditorView;
@@ -42,8 +43,6 @@ import org.kie.workbench.common.stunner.core.client.canvas.controls.MediatorsCon
 import org.kie.workbench.common.stunner.core.client.canvas.controls.ResizeControl;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.SelectionControl;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.ToolboxControl;
-import org.kie.workbench.common.stunner.core.client.canvas.controls.actions.CanvasInPlaceTextEditorControl;
-import org.kie.workbench.common.stunner.core.client.canvas.controls.actions.SingleLineTextEditorBox;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.builder.EdgeBuilderControl;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.builder.ElementBuilderControl;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.builder.NodeBuilderControl;
@@ -65,17 +64,27 @@ import org.uberfire.mvp.Command;
 @DMNEditor
 public class DMNEditorSession extends DefaultEditorSession implements DMNSession {
 
+    private final RegistryProvider registryProvider;
+
     @Inject
     public DMNEditorSession(final ManagedSession session,
                             final CanvasCommandManager<AbstractCanvasHandler> canvasCommandManager,
                             final SessionCommandManager<AbstractCanvasHandler> sessionCommandManager,
                             final Registry<org.kie.workbench.common.stunner.core.command.Command<AbstractCanvasHandler, CanvasViolation>> commandRegistry,
-                            final Event<RegisterChangedEvent> registerChangedEvent) {
+                            final Event<RegisterChangedEvent> registerChangedEvent,
+                            final RegistryProvider registryProvider) {
         super(session,
               canvasCommandManager,
               sessionCommandManager,
               commandRegistry,
               registerChangedEvent);
+        this.registryProvider = registryProvider;
+        this.registryProvider.setRegistryChangeListener(() -> fireRegistryChangedEvent());
+    }
+
+    @Override
+    public Registry<org.kie.workbench.common.stunner.core.command.Command<AbstractCanvasHandler, CanvasViolation>> getCommandRegistry() {
+        return registryProvider.getCurrentCommandRegistry();
     }
 
     @Override
@@ -94,8 +103,7 @@ public class DMNEditorSession extends DefaultEditorSession implements DMNSession
                            .registerCanvasHandlerControl(ConnectionAcceptorControl.class)
                            .registerCanvasHandlerControl(ContainmentAcceptorControl.class)
                            .registerCanvasHandlerControl(DockingAcceptorControl.class)
-                           .registerCanvasHandlerControl(CanvasInPlaceTextEditorControl.class,
-                                                         SingleLineTextEditorBox.class)
+                           .registerCanvasHandlerControl(DMNCanvasInlineTextEditorControl.class)
                            .registerCanvasHandlerControl(LocationControl.class)
                            .registerCanvasHandlerControl(ToolboxControl.class)
                            .registerCanvasHandlerControl(ElementBuilderControl.class,

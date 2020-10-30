@@ -74,10 +74,11 @@ public class DMNDiagramEditorTest extends AbstractDMNDiagramEditorTest {
                                     canvasFileExport,
                                     new SyncPromises(),
                                     includedModelsPage,
-                                    importsPageProvider,
-                                    contextProvider,
+                                    includedModelContext,
                                     guidedTourBridgeInitializer,
-                                    readonlyProvider) {
+                                    readonlyProvider,
+                                    drdNameChanger,
+                                    lazyCanvasFocusUtils) {
             @Override
             protected ElementWrapperWidget<?> getWidget(final HTMLElement element) {
                 return searchBarComponentWidget;

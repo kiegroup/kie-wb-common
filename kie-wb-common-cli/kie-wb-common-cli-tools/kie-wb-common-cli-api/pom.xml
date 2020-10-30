@@ -5,7 +5,7 @@
   <parent>
     <artifactId>kie-wb-common-cli-tools</artifactId>
     <groupId>org.kie.workbench</groupId>
-    <version>7.43.0-SNAPSHOT</version>
+    <version>7.46.0-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
@@ -130,6 +130,13 @@
     <dependency>
       <groupId>org.jboss.weld.se</groupId>
       <artifactId>weld-se-core</artifactId>
+      <exclusions>
+        <!-- collides with javax.inject:javax.inject:jar:1:compile -->
+        <exclusion>
+          <groupId>jakarta.enterprise</groupId>
+          <artifactId>jakarta.enterprise.cdi-api</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.jboss.spec.javax.servlet</groupId>

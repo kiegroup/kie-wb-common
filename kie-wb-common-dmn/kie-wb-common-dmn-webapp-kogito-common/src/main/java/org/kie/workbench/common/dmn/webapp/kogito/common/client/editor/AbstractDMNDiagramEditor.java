@@ -15,7 +15,7 @@
  */
 package org.kie.workbench.common.dmn.webapp.kogito.common.client.editor;
 
-import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -25,15 +25,14 @@ import com.google.gwt.user.client.ui.IsWidget;
 import elemental2.dom.DomGlobal;
 import elemental2.dom.HTMLElement;
 import elemental2.promise.Promise;
-import org.appformer.client.context.Channel;
-import org.appformer.client.context.EditorContextProvider;
 import org.jboss.errai.common.client.ui.ElementWrapperWidget;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.kie.workbench.common.dmn.client.commands.general.NavigateToExpressionEditorCommand;
 import org.kie.workbench.common.dmn.client.docks.navigator.DecisionNavigatorDock;
+import org.kie.workbench.common.dmn.client.editors.drd.DRDNameChanger;
 import org.kie.workbench.common.dmn.client.editors.expressions.ExpressionEditorView;
 import org.kie.workbench.common.dmn.client.editors.included.IncludedModelsPage;
-import org.kie.workbench.common.dmn.client.editors.included.imports.IncludedModelsPageStateProviderImpl;
+import org.kie.workbench.common.dmn.client.editors.included.common.IncludedModelsContext;
 import org.kie.workbench.common.dmn.client.editors.search.DMNEditorSearchIndex;
 import org.kie.workbench.common.dmn.client.editors.search.DMNSearchableElement;
 import org.kie.workbench.common.dmn.client.editors.types.DataTypePageTabActiveEvent;
@@ -96,8 +95,6 @@ import org.uberfire.workbench.events.NotificationEvent;
 import org.uberfire.workbench.model.menu.Menus;
 
 import static elemental2.dom.DomGlobal.setTimeout;
-import static org.appformer.client.context.Channel.DEFAULT;
-import static org.appformer.client.context.Channel.VSCODE;
 
 public abstract class AbstractDMNDiagramEditor extends AbstractDiagramEditor {
 
@@ -124,9 +121,9 @@ public abstract class AbstractDMNDiagramEditor extends AbstractDiagramEditor {
     protected final CanvasFileExport canvasFileExport;
     protected final Promises promises;
     protected final IncludedModelsPage includedModelsPage;
-    protected final IncludedModelsPageStateProviderImpl importsPageProvider;
-    protected final EditorContextProvider contextProvider;
+    protected final IncludedModelsContext includedModelContext;
     protected final GuidedTourBridgeInitializer guidedTourBridgeInitializer;
+    protected final DRDNameChanger drdNameChanger;
 
     public AbstractDMNDiagramEditor(final View view,
                                     final FileMenuBuilder fileMenuBuilder,
@@ -159,9 +156,9 @@ public abstract class AbstractDMNDiagramEditor extends AbstractDiagramEditor {
                                     final CanvasFileExport canvasFileExport,
                                     final Promises promises,
                                     final IncludedModelsPage includedModelsPage,
-                                    final IncludedModelsPageStateProviderImpl importsPageProvider,
-                                    final EditorContextProvider contextProvider,
-                                    final GuidedTourBridgeInitializer guidedTourBridgeInitializer) {
+                                    final IncludedModelsContext includedModelContext,
+                                    final GuidedTourBridgeInitializer guidedTourBridgeInitializer,
+                                    final DRDNameChanger drdNameChanger) {
         super(view,
               fileMenuBuilder,
               placeManager,
@@ -193,9 +190,9 @@ public abstract class AbstractDMNDiagramEditor extends AbstractDiagramEditor {
         this.canvasFileExport = canvasFileExport;
         this.promises = promises;
         this.includedModelsPage = includedModelsPage;
-        this.importsPageProvider = importsPageProvider;
-        this.contextProvider = contextProvider;
+        this.includedModelContext = includedModelContext;
         this.guidedTourBridgeInitializer = guidedTourBridgeInitializer;
+        this.drdNameChanger = drdNameChanger;
     }
 
     @OnStartup
@@ -218,12 +215,18 @@ public abstract class AbstractDMNDiagramEditor extends AbstractDiagramEditor {
         superInitialiseKieEditorForSession(diagram);
 
         getWidget().getMultiPage().addPage(dataTypesPage);
-        final Channel channel = contextProvider.getChannel();
-        if (Objects.equals(channel, DEFAULT) || Objects.equals(channel, VSCODE)) {
+        if (includedModelContext.isIncludedModelChannel()) {
             getWidget().getMultiPage().addPage(includedModelsPage);
         }
         setupEditorSearchIndex();
         setupSearchComponent();
+    }
+
+    private void setupSessionHeaderContainer() {
+        Optional.ofNullable(getSessionPresenter()).ifPresent(s -> {
+            drdNameChanger.setSessionPresenterView(s.getView());
+            s.getView().setSessionHeaderContainer(getWidget(drdNameChanger.getElement()));
+        });
     }
 
     private void setupEditorSearchIndex() {
@@ -267,7 +270,18 @@ public abstract class AbstractDMNDiagramEditor extends AbstractDiagramEditor {
                      final Viewer.Callback callback) {
         this.layoutHelper.applyLayout(diagram, openDiagramLayoutExecutor);
         feelInitializer.initializeFEELEditor();
-        super.open(diagram, callback);
+        super.open(diagram, new Viewer.Callback() {
+            @Override
+            public void onSuccess() {
+                setupSessionHeaderContainer();
+                callback.onSuccess();
+            }
+
+            @Override
+            public void onError(ClientRuntimeError error) {
+                callback.onError(error);
+            }
+        });
     }
 
     @OnOpen

@@ -154,10 +154,11 @@ public class DMNDiagramEditorTest extends AbstractDMNDiagramEditorTest {
                                     feelInitializer,
                                     canvasFileExport,
                                     includedModelsPage,
-                                    importsPageProvider,
-                                    contextProvider,
+                                    includedModelContext,
                                     guidedTourBridgeInitializer,
-                                    readonlyProvider) {
+                                    readonlyProvider,
+                                    drdNameChanger,
+                                    lazyCanvasFocusUtils) {
 
             @Override
             protected PlaceRequest getPlaceRequest() {
