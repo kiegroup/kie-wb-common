@@ -392,6 +392,17 @@ public class DMNDiagramEditorTest extends AbstractProjectDiagramEditorTest {
     }
 
     @Test
+    public void testInitialiseKieEditorForSessionWhenInitializingKieEditorForSessionThenDiagramAlreadyLoaded() {
+        doNothing().when(diagramEditor).superInitialiseKieEditorForSession(any());
+        final InOrder inOrder = inOrder(diagramEditor);
+
+        diagramEditor.initialiseKieEditorForSession(diagram);
+
+        inOrder.verify(diagramEditor).onDiagramLoad();
+        inOrder.verify(diagramEditor).superInitialiseKieEditorForSession(any());
+    }
+
+    @Test
     public void testSetupSearchComponent() {
 
         diagramEditor.setupSearchComponent();
