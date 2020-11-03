@@ -1,0 +1,24 @@
+[
+    [
+        "name" : "WebService",
+        "displayName" : "WebService",
+        "category" : "jbpm-workitems-webservice",
+        "description" : "",
+        "defaultHandler" : "mvel: new org.jbpm.process.workitem.webservice.WebServiceWorkItemHandler()",
+        "documentation" : "jbpm-workitems-webservice/index.html",
+        "icon" : "WebService.png",
+
+        "parameters" : [
+            "Endpoint" : new StringDataType(),
+            "Mode" : new StringDataType(),
+            "Parameter" : new StringDataType(),
+            "Operation" : new StringDataType(),
+            "Url" : new StringDataType(),
+            "Namespace" : new StringDataType(),
+            "Interface" : new StringDataType()
+        ],
+        "results" : [
+             "Result" : new StringDataType()
+        ]
+    ]
+]

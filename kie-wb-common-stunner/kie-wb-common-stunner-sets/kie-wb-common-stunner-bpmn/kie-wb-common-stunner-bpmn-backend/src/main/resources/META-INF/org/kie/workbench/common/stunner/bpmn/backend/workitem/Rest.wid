@@ -1,0 +1,34 @@
+[
+    [
+        "name" : "Rest",
+        "displayName" : "Rest",
+        "category" : "jbpm-workitems-rest",
+        "description" : "",
+        "defaultHandler" : "mvel: new org.jbpm.process.workitem.rest.RESTWorkItemHandler()",
+        "documentation" : "jbpm-workitems-rest/index.html",
+        "icon" : "Rest.png",
+
+        "parameters" : [
+            "ConnectTimeout" : new StringDataType(),
+            "ResultClass" : new StringDataType(),
+            "ContentType" : new StringDataType(),
+            "AcceptCharset" : new StringDataType(),
+            "Headers" : new StringDataType(),
+            "AuthUrl" : new StringDataType(),
+            "Method" : new StringDataType(),
+            "ReadTimeout" : new StringDataType(),
+            "Url" : new StringDataType(),
+            "ContentTypeCharset" : new StringDataType(),
+            "HandleResponseErrors" : new StringDataType(),
+            "ContentData" : new StringDataType(),
+            "Username" : new StringDataType(),
+            "Content" : new StringDataType(),
+            "AcceptHeader" : new StringDataType(),
+            "AuthType" : new StringDataType(),
+            "Password" : new StringDataType()
+        ],
+        "results" : [
+            "Result" : new StringDataType()
+        ]
+    ]
+]
