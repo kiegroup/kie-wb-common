@@ -1,0 +1,8 @@
+**/node_modules
+dist
+yarn-error.log
+stats.json
+.DS_Store
+.idea
+/src/app/__snapshots__/
+/coverage/
