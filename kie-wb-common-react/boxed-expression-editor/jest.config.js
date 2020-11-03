@@ -19,8 +19,8 @@ module.exports = {
 
   // A map from regular expressions to module names that allow to stub out resources with a single module
   moduleNameMapper: {
-    '\\.(css|less)$': '<rootDir>/.test-setup/styleMock.js',
-    "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/.test-setup/fileMock.js",
+    '\\.(css|less)$': '<rootDir>/test-setup/styleMock.js',
+    "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/test-setup/fileMock.js",
     "@app/(.*)": '<rootDir>/src/app/$1'
   },
 
@@ -28,7 +28,7 @@ module.exports = {
   preset: "ts-jest/presets/js-with-ts",
 
   // The path to a module that runs some code to configure or set up the testing framework before each test
-  setupFilesAfterEnv: ['<rootDir>/.test-setup/test-setup.js'],
+  setupFilesAfterEnv: ['<rootDir>/test-setup/test-setup.js'],
 
   // The test environment that will be used for testing.
   testEnvironment: "jsdom",
