@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import javax.enterprise.context.RequestScoped;
 import javax.enterprise.context.SessionScoped;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
@@ -71,7 +70,7 @@ public class SafeIdentityProvider implements IdentityProvider, Serializable {
     
     @Override
     public List<String> getRoles() {
-        List<String> roles = new ArrayList<String>();
+        List<String> roles = new ArrayList<>();
         if( identityInstance.isUnsatisfied() ) { 
             // TODO: retrieve roles via info in servlet request and JAAS?
             return roles;

@@ -40,7 +40,7 @@ public class SafeSessionInfoProvider implements SessionInfoProvider, Serializabl
     /** Generated serial version UID */
     private static final long serialVersionUID = 8510219062936244657L;
 
-    private static final Logger logger = LoggerFactory.getLogger( SafeIdentityProvider.class );
+    private static final Logger logger = LoggerFactory.getLogger( SafeSessionInfoProvider.class );
             
     @Inject
     private Instance<SessionInfo> delegate;
@@ -79,7 +79,7 @@ public class SafeSessionInfoProvider implements SessionInfoProvider, Serializabl
     
     private User getUserFromIdentityProvider() { 
         List<String> roleStrList = identityProvider.getRoles();
-        List<Role> roles = new ArrayList<Role>(roleStrList.size());
+        List<Role> roles = new ArrayList<>(roleStrList.size());
         for( String roleStr : roleStrList ) { 
             roles.add( new RoleImpl(roleStr));
         }
