@@ -29,12 +29,17 @@ public class KieServerStandaloneControllerProducerTest {
     }
 
     @Test
+    public void testSecureWebSocketProtocol() {
+        validateProtocol("wss://localhost:8443/controller");
+    }
+
+    @Test
     public void testUnsupportedProtocol() {
         try {
             validateProtocol("http://localhost:8080/controller");
             fail("Unsupported protocol should throw exception");
         } catch (Exception ex) {
-            assertEquals("Invalid protocol for connecting with remote standalone controller, only Web Socket connections are supported",
+            assertEquals("Invalid protocol for connecting with remote standalone controller, only Web Socket or Secure Web Socket connections are supported",
                          ex.getMessage());
         }
     }
