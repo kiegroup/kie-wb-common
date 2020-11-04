@@ -100,14 +100,18 @@ public class MonacoEditorDOMElement extends BaseDOMElement<String, MonacoEditorW
                         PCT);
 
         final MonacoPropertiesFactory properties = makeMonacoPropertiesFactory();
-        final MonacoStandaloneCodeEditor codeEditor = MonacoEditor.get().create(uncheckedCast(widget.getElement()),
-                                                                                properties.getConstructionOptions());
+        final MonacoStandaloneCodeEditor codeEditor = getMonacoEditor().create(uncheckedCast(widget.getElement()),
+                                                                               properties.getConstructionOptions());
 
         codeEditor.onKeyDown(getOnKeyDown(codeEditor));
         codeEditor.onDidBlurEditorWidget(getWidgetTrigger(getBlurEvent()));
 
         widget.setCodeEditor(codeEditor);
         widget.setFocus(true);
+    }
+
+    MonacoEditor getMonacoEditor() {
+        return MonacoEditor.get();
     }
 
     MonacoStandaloneCodeEditor.CallbackFunction getOnKeyDown(final MonacoStandaloneCodeEditor codeEditor) {
