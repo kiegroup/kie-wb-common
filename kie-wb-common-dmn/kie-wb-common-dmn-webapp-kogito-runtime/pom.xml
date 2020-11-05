@@ -200,7 +200,7 @@
     <dependency>
       <groupId>org.kie</groupId>
       <artifactId>kie-dmn-feel-gwt</artifactId>
-      <version>7.44.0-SNAPSHOT</version>
+<!--      <version>7.44.0-SNAPSHOT</version>-->
       <classifier>sources</classifier>
       <scope>provided</scope>
     </dependency>
