@@ -15,21 +15,13 @@
  */
 
 import * as React from "react";
-import * as ReactDOM from "react-dom";
-import {App} from "./app";
+import {shallow} from "enzyme";
+import {App} from "../app";
 
-if (process.env.NODE_ENV !== "production") {
-  const config = {
-    rules: [
-      {
-        id: 'color-contrast',
-        enabled: false
-      }
-    ]
-  };
-  // eslint-disable-next-line @typescript-eslint/no-var-requires, no-undef
-  const axe = require("react-axe");
-  axe(React, ReactDOM, 1000, config);
-}
+describe('App tests', () => {
+  test('should render default App component', () => {
+    const view = shallow(<App/>);
+    expect(view).toMatchSnapshot();
+  });
+});
 
-ReactDOM.render(<App />, document.getElementById("root") as HTMLElement);
