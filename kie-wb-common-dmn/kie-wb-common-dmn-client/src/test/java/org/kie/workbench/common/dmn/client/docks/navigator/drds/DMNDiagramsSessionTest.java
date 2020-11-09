@@ -39,6 +39,7 @@ import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.kie.workbench.common.stunner.core.diagram.Metadata;
 import org.mockito.Mock;
 import org.uberfire.backend.vfs.Path;
+import org.uberfire.mocks.EventSourceMock;
 
 import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
@@ -46,6 +47,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
@@ -79,6 +81,9 @@ public class DMNDiagramsSessionTest {
     @Mock
     private Diagram diagram;
 
+    @Mock
+    private EventSourceMock locker;
+
     private String uri = "://cyber/v.dmn";
 
     private Map<String, Diagram> diagramsByDiagramElementId = new HashMap<>();
@@ -93,7 +98,7 @@ public class DMNDiagramsSessionTest {
     public void setup() {
 
         dmnDiagramsSessionState = spy(new DMNDiagramsSessionState(dmnDiagramUtils));
-        dmnDiagramsSession = spy(new DMNDiagramsSession(dmnDiagramsSessionStates, sessionManager, dmnDiagramUtils));
+        dmnDiagramsSession = spy(new DMNDiagramsSession(dmnDiagramsSessionStates, sessionManager, dmnDiagramUtils, locker));
 
         when(canvasHandler.getDiagram()).thenReturn(diagram);
         when(clientSession.getCanvasHandler()).thenReturn(canvasHandler);
