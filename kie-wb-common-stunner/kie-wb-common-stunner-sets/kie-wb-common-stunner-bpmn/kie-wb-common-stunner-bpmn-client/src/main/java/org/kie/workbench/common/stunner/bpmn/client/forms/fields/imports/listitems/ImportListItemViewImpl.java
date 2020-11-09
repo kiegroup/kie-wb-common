@@ -21,6 +21,7 @@ import javax.annotation.PostConstruct;
 import com.google.gwt.user.client.ui.Composite;
 import elemental2.dom.HTMLTableRowElement;
 import org.gwtbootstrap3.client.ui.Button;
+import org.gwtbootstrap3.client.ui.constants.ValidationState;
 import org.jboss.errai.databinding.client.api.DataBinder;
 import org.kie.workbench.common.stunner.bpmn.client.forms.fields.i18n.StunnerFormsClientFieldsConstants;
 import org.kie.workbench.common.stunner.bpmn.client.forms.fields.imports.editors.ImportsEditorView;
@@ -62,5 +63,15 @@ public abstract class ImportListItemViewImpl<T> extends Composite
         customDataTypeTextBox.setRegExp(StringUtils.JAVA_IDENTIFIER_REGEXP,
                                         StunnerFormsClientFieldsConstants.CONSTANTS.Removed_invalid_characters_from_name(),
                                         StunnerFormsClientFieldsConstants.CONSTANTS.Invalid_character_in_name());
+
+        customDataTypeTextBox.addChangeHandler(changeEvent -> {
+            if (customDataTypeTextBox.getValue().isEmpty()) {
+                customDataTypeTextBox.getParent().setStyleName(ValidationState.ERROR.getCssName(), true);
+            } else {
+                if (customDataTypeTextBox.getParent().getStyleName().contains(ValidationState.ERROR.getCssName())) {
+                    customDataTypeTextBox.getParent().removeStyleName(ValidationState.ERROR.getCssName());
+                }
+            }
+        });
     }
 }
