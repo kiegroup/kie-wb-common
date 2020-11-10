@@ -16,7 +16,7 @@
 
 import * as React from "react";
 import * as ReactDOM from "react-dom";
-import {App} from "./app/App";
+import {BoxedExpressionEditor} from "./components/BoxedExpressionEditor";
 
 if (process.env.NODE_ENV !== "production") {
   const config = {
@@ -32,4 +32,4 @@ if (process.env.NODE_ENV !== "production") {
   axe(React, ReactDOM, 1000, config);
 }
 
-ReactDOM.render(<App />, document.getElementById("root") as HTMLElement);
+ReactDOM.render(<BoxedExpressionEditor />, document.getElementById("root") as HTMLElement);

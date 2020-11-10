@@ -16,11 +16,11 @@
 
 import * as React from "react";
 import {shallow} from "enzyme";
-import {App} from "../app/App";
+import {BoxedExpressionEditor} from "../../components/BoxedExpressionEditor";
 
-describe('App tests', () => {
-  test('should render default App component', () => {
-    const view = shallow(<App/>);
+describe('BoxedExpressionEditor tests', () => {
+  test('should render BoxedExpressionEditor component', () => {
+    const view = shallow(<BoxedExpressionEditor/>);
     expect(view).toMatchSnapshot();
   });
 });
