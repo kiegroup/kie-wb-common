@@ -16,7 +16,7 @@
 
 import * as React from "react";
 import {shallow} from "enzyme";
-import {App} from "../app";
+import {App} from "../app/App";
 
 describe('App tests', () => {
   test('should render default App component', () => {
