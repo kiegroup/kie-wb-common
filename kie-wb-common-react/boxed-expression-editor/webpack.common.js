@@ -16,18 +16,12 @@
 
 /* eslint-disable @typescript-eslint/no-var-requires */
 const path = require('path');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
-const CopyPlugin = require('copy-webpack-plugin');
 const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
-const Dotenv = require('dotenv-webpack');
 const BG_IMAGES_DIRNAME = 'bgimages';
 const ASSET_PATH = process.env.ASSET_PATH || '/';
 module.exports = env => {
 
   return {
-    entry: {
-      app: path.resolve(__dirname, 'src', 'index.tsx')
-    },
     module: {
       rules: [
         {
@@ -56,7 +50,7 @@ module.exports = env => {
           use: {
             loader: 'file-loader',
             options: {
-              // Limit at 50k. larger files emited into separate files
+              // Limit at 50k. larger files emitted into separate files
               limit: 5000,
               outputPath: 'fonts',
               name: '[name].[ext]',
@@ -132,20 +126,6 @@ module.exports = env => {
       path: path.resolve(__dirname, 'dist'),
       publicPath: ASSET_PATH
     },
-    plugins: [
-      new HtmlWebpackPlugin({
-        template: path.resolve(__dirname, 'src', 'index.html')
-      }),
-      new Dotenv({
-        systemvars: true,
-        silent: true
-      }),
-      new CopyPlugin({
-        patterns: [
-          { from: './src/favicon.png', to: 'images' },
-        ]
-      })
-    ],
     resolve: {
       extensions: ['.js', '.ts', '.tsx', '.jsx'],
       plugins: [

@@ -17,12 +17,12 @@
 import * as React from 'react';
 import '@patternfly/react-core/dist/styles/base.css';
 import {I18nDictionariesProvider} from "@kogito-tooling/i18n/dist/react-components";
-import {ExpressionContainer} from "./ExpressionContainer/ExpressionContainer";
+import {ExpressionContainer} from "../ExpressionContainer";
 import {
   boxedExpressionEditorDictionaries,
   BoxedExpressionEditorI18nContext,
   boxedExpressionEditorI18nDefaults
-} from "../i18n";
+} from "../../i18n";
 
 const BoxedExpressionEditor: React.FunctionComponent = () => (
   <I18nDictionariesProvider

@@ -6,3 +6,4 @@ stats.json
 .idea
 **/__snapshots__/
 /coverage/
+react-app-env.d.ts
