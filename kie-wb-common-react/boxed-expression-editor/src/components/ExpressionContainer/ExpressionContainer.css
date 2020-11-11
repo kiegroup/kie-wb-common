@@ -1,0 +1,21 @@
+.expression-container .container-box {
+  width: 170px;
+  height: 50px;
+  border-style: ridge;
+  border-color: #39A5DC;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  display: -webkit-box;
+  display: -moz-box;
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  cursor: pointer;
+}
+
+.expression-container .container-box p,
+#expression-type {
+  font-size: smaller;
+  font-style: italic;
+  color: gray;
+}

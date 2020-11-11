@@ -31,7 +31,7 @@ const BoxedExpressionEditor: React.FunctionComponent = () => (
     initialLocale={navigator.language}
     ctx={BoxedExpressionEditorI18nContext}
   >
-    <ExpressionContainer/>
+    <ExpressionContainer name="TEST"/>
   </I18nDictionariesProvider>
 );
 
