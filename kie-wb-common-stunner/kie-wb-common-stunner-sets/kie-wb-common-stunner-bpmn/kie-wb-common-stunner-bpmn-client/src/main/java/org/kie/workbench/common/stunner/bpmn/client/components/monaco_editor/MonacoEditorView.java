@@ -107,8 +107,7 @@ public class MonacoEditorView implements UberElement<MonacoEditorPresenter> {
         return languageSelector.getValue();
     }
 
-    public void load(String[] modules,
-                     MonacoEditorOptions options,
+    public void load(MonacoEditorOptions options,
                      Runnable callback) {
         load(MonacoEditor.get().create(Js.uncheckedCast(this.monacoEditor),
                                        options.toJavaScriptObject()),
