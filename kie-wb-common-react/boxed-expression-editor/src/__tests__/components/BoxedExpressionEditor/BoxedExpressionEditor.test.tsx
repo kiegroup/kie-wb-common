@@ -15,21 +15,13 @@
  */
 
 import * as React from "react";
-import * as ReactDOM from "react-dom";
-import {BoxedExpressionEditor} from "./components/BoxedExpressionEditor";
+import {shallow} from "enzyme";
+import {BoxedExpressionEditor} from "../../../components/BoxedExpressionEditor";
 
-if (process.env.NODE_ENV !== "production") {
-  const config = {
-    rules: [
-      {
-        id: 'color-contrast',
-        enabled: false
-      }
-    ]
-  };
-  // eslint-disable-next-line @typescript-eslint/no-var-requires, no-undef
-  const axe = require("react-axe");
-  axe(React, ReactDOM, 1000, config);
-}
+describe('BoxedExpressionEditor tests', () => {
+  test('should render BoxedExpressionEditor component', () => {
+    const view = shallow(<BoxedExpressionEditor/>);
+    expect(view).toMatchSnapshot();
+  });
+});
 
-ReactDOM.render(<BoxedExpressionEditor />, document.getElementById("root") as HTMLElement);

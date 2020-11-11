@@ -13,6 +13,7 @@
     "experimentalDecorators": true,
     "downlevelIteration": true,
     "jsx": "react",
-    "outDir": "dist"
+    "outDir": "dist",
+    "skipLibCheck": true
   }
 }

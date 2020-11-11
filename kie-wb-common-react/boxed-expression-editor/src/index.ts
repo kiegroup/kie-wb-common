@@ -14,18 +14,4 @@
  * limitations under the License.
  */
 
-module.exports = {
-  reporters: ["default"],
-  moduleDirectories: ["node_modules", "src", "<rootDir>"],
-  moduleFileExtensions: ["js", "jsx", "ts", "tsx"],
-  modulePathIgnorePatterns: ["<rootDir>/showcase/"],
-  testRegex: "/__tests__/.*\\.test\\.(jsx?|tsx?)$",
-  setupFilesAfterEnv: ["./__mocks__/test-setup.js"],
-  transform: {
-    "^.+\\.jsx?$": "babel-jest",
-    "^.+\\.tsx?$": "ts-jest"
-  },
-  moduleNameMapper: {
-    "\\.(css|less|sass|scss)$": "identity-obj-proxy"
-  }
-};
+export * from './components';
