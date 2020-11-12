@@ -21,7 +21,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.apache.commons.io.IOUtils;
@@ -83,24 +85,18 @@ public class DMNDesignerBaseIT {
 
     @Before
     public void openDMNDesigner() {
-
-        final FirefoxOptions firefoxOptions = new FirefoxOptions();
-        firefoxOptions.setHeadless(HEADLESS);
-        driver = new FirefoxDriver(firefoxOptions);
+        driver = new FirefoxDriver(getFirefoxOptions());
+        driver.get(INDEX_HTML_PATH);
         driver.manage().window().maximize();
 
-        driver.get(INDEX_HTML_PATH);
-
-        decisionNavigatorExpandButton = waitOperation()
-                .withMessage("Presence of decision navigator expand button is prerequisite for all tests")
-                .until(visibilityOfElementLocated(className(DECISION_NAVIGATOR_EXPAND)));
-
-        propertiesPanel = waitOperation()
-                .withMessage("Presence of properties panel expand button is prerequisite for all tests")
-                .until(visibilityOfElementLocated(className(PROPERTIES_PANEL)));
+        waitDMNDesignerElements();
     }
 
-    private final File screenshotDirectory = initScreenshotDirectory();
+    private FirefoxOptions getFirefoxOptions() {
+        final FirefoxOptions firefoxOptions = new FirefoxOptions();
+        firefoxOptions.setHeadless(HEADLESS);
+        return firefoxOptions;
+    }
 
     @Rule
     public TestWatcher takeScreenShotAndCleanUp = new TestWatcher() {
@@ -112,11 +108,34 @@ public class DMNDesignerBaseIT {
 
         @Override
         protected void finished(final Description description) {
-            if (driver != null) {
-                driver.quit();
-            }
+            quitDriver();
         }
     };
+
+    protected void resetPage() {
+        quitDriver();
+        openDMNDesigner();
+    }
+
+    private void quitDriver() {
+        getDriver().ifPresent(WebDriver::quit);
+    }
+
+    private Optional<WebDriver> getDriver() {
+        return Optional.ofNullable(driver);
+    }
+
+    private void waitDMNDesignerElements() {
+        decisionNavigatorExpandButton = waitOperation()
+                .withMessage("Presence of decision navigator expand button is prerequisite for all tests")
+                .until(visibilityOfElementLocated(className(DECISION_NAVIGATOR_EXPAND)));
+
+        propertiesPanel = waitOperation()
+                .withMessage("Presence of properties panel expand button is prerequisite for all tests")
+                .until(visibilityOfElementLocated(className(PROPERTIES_PANEL)));
+    }
+
+    private final File screenshotDirectory = initScreenshotDirectory();
 
     /**
      * Use this for loading DMN model placed in src/test/resources
@@ -146,9 +165,11 @@ public class DMNDesignerBaseIT {
     }
 
     protected void executeDMNTestCase(final String directory,
-                                      final String file) throws IOException {
+                                      final String file,
+                                      final String logMessage) throws IOException {
         final List<String> ignoredAttributes = asList("id", "dmnElementRef");
 
+        LOG.trace(logMessage);
         setContent(loadResource(directory + "/" + file));
 
         final String actual = getContent();
@@ -163,18 +184,23 @@ public class DMNDesignerBaseIT {
                 .areSimilar();
     }
 
-    private void saveScreenShot(final Description description) {
+    protected void saveScreenShot(final String... prefixes) {
 
         final File screenshotFile = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
-        final String testClassName = description.getTestClass().getSimpleName();
-        final String testMethodName = description.getMethodName();
-        final String filename = testClassName + "_" + testMethodName;
+        final List<String> fileNameParts = new ArrayList<>(asList(prefixes));
+        final String filename = String.join("_", fileNameParts);
 
         try {
             copyFile(screenshotFile, new File(screenshotDirectory, filename + ".png"));
         } catch (IOException ioe) {
             LOG.error("Unable to take screenshot", ioe);
         }
+    }
+
+    private void saveScreenShot(final Description description) {
+        final String testClassName = description.getTestClass().getSimpleName();
+        final String testMethodName = description.getMethodName();
+        saveScreenShot(testClassName, testMethodName);
     }
 
     private File initScreenshotDirectory() {
