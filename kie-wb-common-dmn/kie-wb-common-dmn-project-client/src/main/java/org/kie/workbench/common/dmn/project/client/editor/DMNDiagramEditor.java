@@ -73,9 +73,7 @@ import org.kie.workbench.common.stunner.core.client.session.command.ClientSessio
 import org.kie.workbench.common.stunner.core.client.session.impl.EditorSession;
 import org.kie.workbench.common.stunner.core.client.session.impl.ViewerSession;
 import org.kie.workbench.common.stunner.core.diagram.DiagramParsingException;
-import org.kie.workbench.common.stunner.core.diagram.GraphsProvider;
 import org.kie.workbench.common.stunner.core.documentation.DocumentationView;
-import org.kie.workbench.common.stunner.core.graph.Graph;
 import org.kie.workbench.common.stunner.core.rule.RuleViolation;
 import org.kie.workbench.common.stunner.core.util.HashUtil;
 import org.kie.workbench.common.stunner.core.validation.DiagramElementViolation;
