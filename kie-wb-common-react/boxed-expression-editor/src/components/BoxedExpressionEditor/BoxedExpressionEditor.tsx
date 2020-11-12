@@ -17,21 +17,26 @@
 import * as React from 'react';
 import '@patternfly/react-core/dist/styles/base.css';
 import {I18nDictionariesProvider} from "@kogito-tooling/i18n/dist/react-components";
-import {ExpressionContainer} from "../ExpressionContainer";
+import {ExpressionContainer, ExpressionContainerProps} from "../ExpressionContainer";
 import {
   boxedExpressionEditorDictionaries,
   BoxedExpressionEditorI18nContext,
   boxedExpressionEditorI18nDefaults
 } from "../../i18n";
 
-const BoxedExpressionEditor: React.FunctionComponent = () => (
+export interface BoxedExpressionEditorProps {
+  /** All expression properties used to define it */
+  expressionDefinition: ExpressionContainerProps
+}
+
+const BoxedExpressionEditor: (props: BoxedExpressionEditorProps) => JSX.Element = (props: BoxedExpressionEditorProps) => (
   <I18nDictionariesProvider
     defaults={boxedExpressionEditorI18nDefaults}
     dictionaries={boxedExpressionEditorDictionaries}
     initialLocale={navigator.language}
     ctx={BoxedExpressionEditorI18nContext}
   >
-    <ExpressionContainer name="TEST"/>
+    <ExpressionContainer {...props.expressionDefinition} />
   </I18nDictionariesProvider>
 );
 

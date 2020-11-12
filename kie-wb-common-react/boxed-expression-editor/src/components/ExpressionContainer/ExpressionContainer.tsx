@@ -30,7 +30,7 @@ const ExpressionContainer: (props: ExpressionContainerProps) => JSX.Element = (p
   return (
     <div className="expression-container">
       <span id="expression-title">
-        {props.name}
+        {props.name || ''}
       </span>
       <span id="expression-type">
           ({props.type ?? '<Undefined>'})
