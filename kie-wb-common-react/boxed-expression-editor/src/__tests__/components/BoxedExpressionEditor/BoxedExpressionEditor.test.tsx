@@ -17,10 +17,12 @@
 import * as React from "react";
 import {shallow} from "enzyme";
 import {BoxedExpressionEditor} from "../../../components/BoxedExpressionEditor";
+import {ExpressionContainerProps} from "../../../components/ExpressionContainer";
 
 describe('BoxedExpressionEditor tests', () => {
   test('should render BoxedExpressionEditor component', () => {
-    const view = shallow(<BoxedExpressionEditor/>);
+    const expressionDefinition: ExpressionContainerProps = {'name': 'Expression Name'};
+    const view = shallow(<BoxedExpressionEditor expressionDefinition={expressionDefinition}/>);
     expect(view).toMatchSnapshot();
   });
 });
