@@ -106,6 +106,10 @@ public class BPMNStaticResourceContentService implements ResourceContentService 
             new HashMap<String, String>() {{
                 put("default.wid", DEFAULT_DECLARATIONS);
                 put("another.wid", ANOTHER_DECLARATION);
+                put("test_empty_wid.wid", "[ [] ]");
+                put("test_empty_wids.wid", "[[ ] ,[ ]]");
+                put("test_empty_file.wid", "");
+                put("test_empty_list.wid", "[]");
             }};
     private static final Map<String, String> ICON_ENTRIES =
             new HashMap<String, String>() {{

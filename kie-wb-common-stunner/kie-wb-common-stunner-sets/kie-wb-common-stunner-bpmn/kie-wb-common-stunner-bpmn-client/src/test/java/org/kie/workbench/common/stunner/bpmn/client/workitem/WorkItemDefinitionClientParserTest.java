@@ -34,13 +34,29 @@ public class WorkItemDefinitionClientParserTest {
             "    [\n" +
             "      \"name\" : \"Email\",\n" +
             "      \"parameters\" : [\n" +
-            "        \"From\" : new StringDataType(),\n" +
+            "        \"From\" : new StringDataType()   ,   \n" +
             "        \"To\" : new StringDataType(),\n" +
-            "        \"Subject\" : new StringDataType(),\n" +
-            "        \"Body\" : new StringDataType()\n" +
+            "        \"Subject\" :\n new StringDataType()  , \n" +
+            "        \"Body\"\n : new StringDataType()\n" +
             "      ],\n" +
-            "      \"displayName\" : \"Email\",\n" +
-            "      \"icon\" : \"defaultemailicon.gif\"\n" +
+            "      \"displayName\" : \"Email\"  ,  \n" +
+            "      \"documentation\" : \"Some documentation\"  ,  \n" +
+            "      \"icon\" : \"defaultemailicon.gif\"   \n" +
+            "    ]\n" +
+            "    ,\n" +
+            "   \n" +
+            "\n" +
+            "\n  " +
+            "    [\n" +
+            "      \"name\" : \"IncidentPriorityService\",\n" +
+            "      \"parameters\" : [   \n" +
+            "        \"Incident\" : new ObjectDataType()\n" +
+            "      ],     \n  " +
+            "      \"results\" :  [  \n " +
+            "          \"IncidentPriority\" : new ObjectDataType()  ,  \n" +
+            "      ],\n" +
+            "      \"displayName\" : \"Incident Priority Service\" ,  \n" +
+            "      \"icon\" : \"incidentpriorityicon.png\"\n" +
             "    ],\n" +
             "    [\n" +
             "      \"name\" : \"Rest\",\n" +
@@ -49,7 +65,7 @@ public class WorkItemDefinitionClientParserTest {
             "          \"Url\" : new StringDataType(),\n" +
             "          \"Method\" : new StringDataType(),\n" +
             "          \"ConnectTimeout\" : new StringDataType(),\n" +
-            "          \"ReadTimeout\" : new StringDataType(),\n" +
+            "          \"ReadTimeout\" : new StringDataType()   ,   \n" +
             "          \"Username\" : new StringDataType(),\n" +
             "          \"Password\" : new StringDataType()\n" +
             "      ],\n" +
@@ -65,15 +81,23 @@ public class WorkItemDefinitionClientParserTest {
             "          \"Condition\" : new StringDataType()\n" +
             "      ],\n" +
             "      \"displayName\" : \"Milestone\",\n" +
-            "      \"icon\" : \"defaultmilestoneicon.png\",\n" +
+            "      \"icon\" : \"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAgAAAAIACAYAAAD0eNT6AAAYK0lEQVR4nO3de9z1+Vzv8dcMcxCjDMMwjHMOUw5D52ypFMmmaJuaKFTa6YBSm+hgt4lIOmt33nJKg8gWiYrHVDpK2zk1coxhNDOYw93+Y/VoYua+5z5c1/VZa/2ez8fj9b+xfuv9Xfd1rev3KwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA23rWrU6qTqxOr42f/5wAAR+rY6ubV3apvrn6o+uXqFdWbqwuqf7uCLqk+VL21em31gurp1fdUX13dojp67/4zAIBPdUx1p+ph1dOq367+rHpvta8rPuB3oo9Vf1E9s/qW6jbVUbv83woAi3WL6huqn6rObnUQ79Yhf6h9oHpuq582XHeX/vsBYOud1OpH7k+oXt7qx/LTh/zBdmn1J9V35cMAABzQcdW9Wv2e/p3NH+I71cXVi//9v813BwCgukb1gFY\",\n" +
             "      \"category\" : \"Milestone\"\n" +
             "      ]\n" +
             "  ]";
 
     final static String EMAIL_WID_EXTRACTED_PARAMETERS = "|Body:String,From:String,Subject:String,To:String|";
 
+    final static String INCIDENT_WID_EXTRACTED_PARAMETERS = "|Incident:java.lang.Object|";
+
+    final static String INCIDENT_WID_EXTRACTED_RETURN_PARAMETERS = "|IncidentPriority:java.lang.Object|";
+
     final static String REST_WID_EXTRACTED_PARAMETERS = "|ConnectTimeout:String,ContentData:String,Method:String," +
             "Password:String,ReadTimeout:String,Url:String,Username:String|";
+
+    final static String REST_WID_RETURN_EXTRACTED_PARAMETERS = "|Result:java.lang.Object|";
+
+    final static private String ICON_64 = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAgAAAAIACAYAAAD0eNT6AAAYK0lEQVR4nO3de9z1+Vzv8dcMcxCjDMMwjHMOUw5D52ypFMmmaJuaKFTa6YBSm+hgt4lIOmt33nJKg8gWiYrHVDpK2zk1coxhNDOYw93+Y/VoYua+5z5c1/VZa/2ez8fj9b+xfuv9Xfd1rev3KwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA23rWrU6qTqxOr42f/5wAAR+rY6ubV3apvrn6o+uXqFdWbqwuqf7uCLqk+VL21em31gurp1fdUX13dojp67/4zAIBPdUx1p+ph1dOq367+rHpvta8rPuB3oo9Vf1E9s/qW6jbVUbv83woAi3WL6huqn6rObnUQ79Yhf6h9oHpuq582XHeX/vsBYOud1OpH7k+oXt7qx/LTh/zBdmn1J9V35cMAABzQcdW9Wv2e/p3NH+I71cXVi//9v813BwCgukb1gFY";
 
     @Test
     public void emptyWidsTest() {
@@ -84,6 +108,8 @@ public class WorkItemDefinitionClientParserTest {
         defs = WorkItemDefinitionClientParser.parse("[\n]");
         assertTrue(defs.isEmpty());
         defs = WorkItemDefinitionClientParser.parse(null);
+        assertTrue(defs.isEmpty());
+        defs = WorkItemDefinitionClientParser.parse("");
         assertTrue(defs.isEmpty());
     }
 
@@ -104,30 +130,40 @@ public class WorkItemDefinitionClientParserTest {
 
     private void testWidParse(final String wid) {
         List<WorkItemDefinition> defs = WorkItemDefinitionClientParser.parse(wid);
-        assertEquals(3, defs.size());
+        assertEquals(4, defs.size());
         WorkItemDefinition wid1 = defs.get(0);
         assertEquals("Email", wid1.getName());
         assertEquals("Email", wid1.getDisplayName());
         assertEquals("defaultemailicon.gif", wid1.getIconDefinition().getUri());
         assertEquals(BPMNCategories.CUSTOM_TASKS, wid1.getCategory());
+        assertEquals("Some documentation", wid1.getDocumentation());
         assertTrue(wid1.getResults().isEmpty());
         assertEquals(EMAIL_WID_EXTRACTED_PARAMETERS, wid1.getParameters());
 
         WorkItemDefinition wid2 = defs.get(1);
-        assertEquals("Rest", wid2.getName());
-        assertEquals("REST", wid2.getDisplayName());
-        assertEquals("defaultservicenodeicon.png", wid2.getIconDefinition().getUri());
-        assertTrue(wid1.getResults().isEmpty());
-
-        assertEquals(REST_WID_EXTRACTED_PARAMETERS, wid2.getParameters());
-        assertEquals("|Result:java.lang.Object|", wid2.getResults());
+        assertEquals("IncidentPriorityService", wid2.getName());
+        assertEquals("Incident Priority Service", wid2.getDisplayName());
+        assertEquals("incidentpriorityicon.png", wid2.getIconDefinition().getUri());
+        assertEquals(BPMNCategories.CUSTOM_TASKS, wid2.getCategory());
+        assertEquals(INCIDENT_WID_EXTRACTED_RETURN_PARAMETERS, wid2.getResults());
+        assertEquals(INCIDENT_WID_EXTRACTED_PARAMETERS, wid2.getParameters());
 
         WorkItemDefinition wid3 = defs.get(2);
+        assertEquals("Rest", wid3.getName());
+        assertEquals("REST", wid3.getDisplayName());
+        assertEquals("defaultservicenodeicon.png", wid3.getIconDefinition().getUri());
+        assertEquals(REST_WID_RETURN_EXTRACTED_PARAMETERS, wid3.getResults());
 
-        assertEquals("Milestone", wid3.getName());
-        assertEquals("Milestone", wid3.getDisplayName());
-        assertEquals("defaultmilestoneicon.png", wid3.getIconDefinition().getUri());
-        assertEquals("|Condition:String|", wid3.getParameters());
-        assertEquals("Milestone", wid3.getCategory());
+        assertEquals(REST_WID_EXTRACTED_PARAMETERS, wid3.getParameters());
+        assertEquals("|Result:java.lang.Object|", wid3.getResults());
+
+        WorkItemDefinition wid4 = defs.get(3);
+
+        assertEquals("Milestone", wid4.getName());
+        assertEquals("Milestone", wid4.getDisplayName());
+        assertEquals(ICON_64, wid4.getIconDefinition().getUri());
+        assertEquals(ICON_64, wid4.getIconDefinition().getIconData());
+        assertEquals("|Condition:String|", wid4.getParameters());
+        assertEquals("Milestone", wid4.getCategory());
     }
 }

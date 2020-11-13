@@ -16,7 +16,9 @@
 
 package org.kie.workbench.common.stunner.kogito.client.services;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -27,6 +29,7 @@ import javax.enterprise.inject.Default;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 
+import elemental2.dom.DomGlobal;
 import elemental2.promise.Promise;
 import org.appformer.kogito.bridge.client.resource.ResourceContentService;
 import org.appformer.kogito.bridge.client.resource.interop.ResourceListOptions;
@@ -48,6 +51,7 @@ import static org.kie.workbench.common.stunner.core.util.StringUtils.nonEmpty;
 public class WorkItemDefinitionStandaloneClientService implements WorkItemDefinitionClientService {
 
     private static final String RESOURCE_ALL_WID_PATTERN = "*.wid";
+    private static final String RESOURCE_GLOBAL_DIRECTORY_WID_PATTERN = "global/*.wid";
     private static final String MILESTONE_ICON = "defaultmilestoneicon.png";
     private static final String MILESTONE_NAME = "Milestone";
 
@@ -100,36 +104,46 @@ public class WorkItemDefinitionStandaloneClientService implements WorkItemDefini
             registry.clear();
             final List<WorkItemDefinition> loaded = new LinkedList<>();
             resourceContentService
-                    .list(RESOURCE_ALL_WID_PATTERN, ResourceListOptions.assetFolder())
-                    .then(paths -> {
-                        if (paths.length > 0) {
-                            promises.all(asList(paths),
-                                         path -> workItemsLoader(path, loaded))
-                                    .then(wids -> {
-                                        wids.forEach(registry::register);
-                                        success.onInvoke(wids);
-                                        return null;
-                                    })
-                                    .catch_(error -> {
-                                        failure.onInvoke(error);
-                                        return null;
-                                    });
-                        } else {
-                            promises.all(presetWorkItemsLoader(loaded)).then(wids -> {
-                                wids.forEach(registry::register);
-                                success.onInvoke(wids);
-                                return null;
-                            }).catch_(error -> {
-                                failure.onInvoke(error);
-                                return null;
-                            });
-                        }
+                    .list(RESOURCE_GLOBAL_DIRECTORY_WID_PATTERN, ResourceListOptions.traversal())
+                    .then(paths1 -> {
+                        resourceContentService
+                                .list(RESOURCE_ALL_WID_PATTERN, ResourceListOptions.assetFolder())
+                                .then(paths2 -> {
+                                    String[] paths = mergeTwoArrays(paths1, paths2);
+                                    if (paths.length > 0) {
+                                        promises.all(asList(paths),
+                                                     path -> workItemsLoader(path, loaded))
+                                                .then(wids -> {
+                                                    wids.forEach(registry::register);
+                                                    success.onInvoke(wids);
+                                                    return null;
+                                                })
+                                                .catch_(error -> {
+                                                    failure.onInvoke(error);
+                                                    return null;
+                                                });
+                                    } else {
+                                        promises.all(presetWorkItemsLoader(loaded)).then(wids -> {
+                                            wids.forEach(registry::register);
+                                            success.onInvoke(wids);
+                                            return null;
+                                        }).catch_(error -> {
+                                            failure.onInvoke(error);
+                                            return null;
+                                        });
+                                    }
+                                    return promises.resolve();
+                                });
                         return promises.resolve();
-                    }).catch_(error -> {
-                failure.onInvoke(error);
-                return null;
-            });
+                    });
         });
+    }
+
+    private String[] mergeTwoArrays(String[] paths1, String[] paths2) {
+        List<String> both = new ArrayList<>(paths1.length + paths2.length);
+        Collections.addAll(both, paths1);
+        Collections.addAll(both, paths2);
+        return both.toArray(new String[0]);
     }
 
     private Promise<Collection<WorkItemDefinition>> presetWorkItemsLoader(final Collection<WorkItemDefinition> preset) {
@@ -137,9 +151,9 @@ public class WorkItemDefinitionStandaloneClientService implements WorkItemDefini
         return getPromises(wids, preset);
     }
 
-    @SuppressWarnings("unchecked")
     private Promise<Collection<WorkItemDefinition>> workItemsLoader(final String path,
                                                                     final Collection<WorkItemDefinition> loaded) {
+        DomGlobal.console.info("There is path: " + path);
         if (nonEmpty(path)) {
             return resourceContentService
                     .get(path)
@@ -153,13 +167,10 @@ public class WorkItemDefinitionStandaloneClientService implements WorkItemDefini
         if (null != presets && presets.startsWith("[")) {
             List<WorkItemDefinition> presetWids = parse(presets);
 
-            if (wids.stream().filter(wid -> wid.getName().equals(MILESTONE_NAME)).count() == 0) {
-                WorkItemDefinition workItemDefinition = presetWids.stream()
+            if (wids.stream().noneMatch(wid -> wid.getName().equals(MILESTONE_NAME))) {
+                presetWids.stream()
                         .filter(wid -> wid.getName().equals(MILESTONE_NAME))
-                        .findFirst().orElse(null);
-                if (null != workItemDefinition) {
-                    wids.add(workItemDefinition);
-                }
+                        .findFirst().ifPresent(wids::add);
             }
         }
         return wids;

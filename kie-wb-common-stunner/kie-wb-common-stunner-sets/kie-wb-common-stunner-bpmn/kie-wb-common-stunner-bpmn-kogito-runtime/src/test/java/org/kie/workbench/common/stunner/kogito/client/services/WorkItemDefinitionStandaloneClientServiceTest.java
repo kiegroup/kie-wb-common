@@ -132,7 +132,7 @@ public class WorkItemDefinitionStandaloneClientServiceTest {
                                                                },
                                                                new WorkItemIconCacheImpl(new BPMNStaticResourceContentService(promises)));
         call();
-        assertEquals(1, registry.items().size());
+        assertEquals(0, registry.items().size());
     }
 
     @Test
@@ -164,7 +164,7 @@ public class WorkItemDefinitionStandaloneClientServiceTest {
                                                                },
                                                                new WorkItemIconCacheImpl(new BPMNStaticResourceContentService(promises)));
         call();
-        assertEquals(1, registry.items().size());
+        assertEquals(0, registry.items().size());
     }
 
     @Test
