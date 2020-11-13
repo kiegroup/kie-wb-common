@@ -45,10 +45,9 @@ const ExpressionContainer: (props: ExpressionContainerProps) => JSX.Element = (p
   const [actionDropdownIsOpen, isActionDropdownOpen] = useState(false);
 
   const hideSelectorMenuPopover = () => {
-    _.forEach(document.getElementsByClassName('pf-c-button'), (elem: Element) => {
-      const button: HTMLButtonElement = elem as HTMLButtonElement;
-      return button.click();
-    });
+    const elem = document.querySelector('.selector-menu .pf-c-button');
+    const button: HTMLButtonElement = elem as HTMLButtonElement;
+    return button.click();
   };
 
   const onLogicTypeSelect = (currentItem: React.RefObject<HTMLButtonElement>, currentItemProps: SimpleListItemProps) => {
