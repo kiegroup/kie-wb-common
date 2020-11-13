@@ -15,30 +15,118 @@
  */
 
 import * as React from "react";
+import {useState} from "react";
+import * as _ from "lodash";
 import "./ExpressionContainer.css"
 import {useBoxedExpressionEditorI18n} from "../../i18n";
+import {
+  Dropdown,
+  DropdownItem,
+  KebabToggle,
+  Popover,
+  SimpleList,
+  SimpleListItem,
+  SimpleListItemProps
+} from "@patternfly/react-core";
 
 export interface ExpressionContainerProps {
   /** The name of the expression */
   name: string,
   /** The type of the expression */
-  type?: string
+  type?: string,
+  /** Selected expression is already present */
+  selectedExpression?: string
 }
 
 const ExpressionContainer: (props: ExpressionContainerProps) => JSX.Element = (props: ExpressionContainerProps) => {
   const {i18n} = useBoxedExpressionEditorI18n();
+
+  const [expressionIsPresent, isExpressionSet] = useState(!_.isEmpty(props.selectedExpression));
+  const [actionDropdownIsOpen, isActionDropdownOpen] = useState(false);
+
+  const hideSelectorMenuPopover = () => {
+    _.forEach(document.getElementsByClassName('pf-c-button'), (elem: Element) => {
+      const button: HTMLButtonElement = elem as HTMLButtonElement;
+      return button.click();
+    });
+  };
+
+  const onLogicTypeSelect = (currentItem: React.RefObject<HTMLButtonElement>, currentItemProps: SimpleListItemProps) => {
+    isExpressionSet(true);
+    document.getElementById("expression-container-box")!.innerHTML = currentItemProps.children as string;
+    hideSelectorMenuPopover();
+  };
+
+  const executeClearAction = () => {
+    isExpressionSet(false);
+    document.getElementById("expression-container-box")!.innerHTML = i18n.selectExpression;
+  };
+
+  const renderExpressionActionDropdown = () => {
+    return <Dropdown
+      onSelect={() => isActionDropdownOpen(!actionDropdownIsOpen)}
+      toggle={<KebabToggle onToggle={isOpen => isActionDropdownOpen(isOpen)} id="expression-actions-toggle"/>}
+      isOpen={actionDropdownIsOpen}
+      isPlain
+      dropdownItems={[
+        <DropdownItem key="clear" onClick={executeClearAction} isDisabled={!expressionIsPresent}>
+          {i18n.clear}
+        </DropdownItem>
+      ]}
+    />;
+  };
+
+  const buildLogicSelectorMenu = () => {
+    return <Popover
+      className="selector-menu"
+      position="bottom"
+      distance={0}
+      reference={() => document.getElementById("expression-container-box")!}
+      isVisible={false}
+      shouldOpen={(showFunction = _.identity) => {
+        if (!expressionIsPresent) {
+          showFunction();
+        }
+      }}
+      shouldClose={(tip, hideFunction = _.identity) => hideFunction()}
+      headerContent={<div className="selector-menu-title">{i18n.selectLogicType}</div>}
+      bodyContent={
+        <SimpleList onSelect={onLogicTypeSelect}>
+          {renderLogicTypeItems()}
+        </SimpleList>
+      }
+    />;
+  };
+
+  const renderLogicTypeItems = () => {
+    return _.map([
+      i18n.literalExpression,
+      i18n.context,
+      i18n.decisionTable,
+      i18n.relation,
+      i18n.function,
+      i18n.invocation,
+      i18n.list,
+    ], key => <SimpleListItem key={key}>{key}</SimpleListItem>)
+  };
+
   return (
     <div className="expression-container">
       <span id="expression-title">
         {props.name || ''}
       </span>
       <span id="expression-type">
-          ({props.type ?? '<Undefined>'})
+        ({props.type ?? '<Undefined>'})
+      </span>
+      <span id="expression-actions">
+        {renderExpressionActionDropdown()}
       </span>
 
-      <div className="container-box">
-        <p>{i18n.selectExpression}</p>
+      <div id="expression-container-box">
+        {props.selectedExpression || i18n.selectExpression}
       </div>
+
+      {buildLogicSelectorMenu()}
     </div>
   );
 }

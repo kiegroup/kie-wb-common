@@ -19,5 +19,14 @@ import { en as en_common } from "@kogito-tooling/i18n-common-dictionary";
 
 export const en: BoxedExpressionEditorI18n = {
   ...en_common,
-  selectExpression: "Select expression"
+  selectExpression: "Select expression",
+  selectLogicType: "Select logic type",
+  literalExpression: "Literal expression",
+  context: "Context",
+  decisionTable: "Decision Table",
+  relation: "Relation",
+  function: "Function",
+  invocation: "Invocation",
+  list: "List",
+  clear: "Clear"
 };
