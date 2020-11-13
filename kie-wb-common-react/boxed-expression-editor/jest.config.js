@@ -18,7 +18,7 @@ module.exports = {
   reporters: ["default"],
   moduleDirectories: ["node_modules", "src", "<rootDir>"],
   moduleFileExtensions: ["js", "jsx", "ts", "tsx"],
-  modulePathIgnorePatterns: ["<rootDir>/showcase/"],
+  modulePathIgnorePatterns: ["<rootDir>/showcase/", "<rootDir>/dist/"],
   testRegex: "/__tests__/.*\\.test\\.(jsx?|tsx?)$",
   setupFilesAfterEnv: ["./__mocks__/test-setup.js"],
   transform: {
