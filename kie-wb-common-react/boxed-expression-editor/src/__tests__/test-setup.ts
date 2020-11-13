@@ -14,5 +14,5 @@
  * limitations under the License.
  */
 
-require("jest-webextension-mock");
+import "jest-webextension-mock";
 

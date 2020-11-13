@@ -41,7 +41,7 @@ export interface ExpressionContainerProps {
 const ExpressionContainer: (props: ExpressionContainerProps) => JSX.Element = (props: ExpressionContainerProps) => {
   const {i18n} = useBoxedExpressionEditorI18n();
 
-  const [expressionIsPresent, isExpressionSet] = useState(!_.isEmpty(props.selectedExpression));
+  const [logicTypeIsPresent, isLogicTypeSet] = useState(!_.isEmpty(props.selectedExpression));
   const [actionDropdownIsOpen, isActionDropdownOpen] = useState(false);
 
   const hideSelectorMenuPopover = () => {
@@ -51,24 +51,24 @@ const ExpressionContainer: (props: ExpressionContainerProps) => JSX.Element = (p
   };
 
   const onLogicTypeSelect = (currentItem: React.RefObject<HTMLButtonElement>, currentItemProps: SimpleListItemProps) => {
-    isExpressionSet(true);
+    isLogicTypeSet(true);
     document.getElementById("expression-container-box")!.innerHTML = currentItemProps.children as string;
     hideSelectorMenuPopover();
   };
 
   const executeClearAction = () => {
-    isExpressionSet(false);
+    isLogicTypeSet(false);
     document.getElementById("expression-container-box")!.innerHTML = i18n.selectExpression;
   };
 
-  const renderExpressionActionDropdown = () => {
+  const renderExpressionActionsDropdown = () => {
     return <Dropdown
       onSelect={() => isActionDropdownOpen(!actionDropdownIsOpen)}
       toggle={<KebabToggle onToggle={isOpen => isActionDropdownOpen(isOpen)} id="expression-actions-toggle"/>}
       isOpen={actionDropdownIsOpen}
       isPlain
       dropdownItems={[
-        <DropdownItem key="clear" onClick={executeClearAction} isDisabled={!expressionIsPresent}>
+        <DropdownItem key="clear" onClick={executeClearAction} isDisabled={!logicTypeIsPresent}>
           {i18n.clear}
         </DropdownItem>
       ]}
@@ -83,7 +83,7 @@ const ExpressionContainer: (props: ExpressionContainerProps) => JSX.Element = (p
       reference={() => document.getElementById("expression-container-box")!}
       isVisible={false}
       shouldOpen={(showFunction = _.identity) => {
-        if (!expressionIsPresent) {
+        if (!logicTypeIsPresent) {
           showFunction();
         }
       }}
@@ -118,7 +118,7 @@ const ExpressionContainer: (props: ExpressionContainerProps) => JSX.Element = (p
         ({props.type ?? '<Undefined>'})
       </span>
       <span id="expression-actions">
-        {renderExpressionActionDropdown()}
+        {renderExpressionActionsDropdown()}
       </span>
 
       <div id="expression-container-box">
