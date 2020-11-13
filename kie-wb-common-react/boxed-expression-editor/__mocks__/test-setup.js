@@ -14,7 +14,5 @@
  * limitations under the License.
  */
 
-const enzyme = require('enzyme');
-const Adapter = require('enzyme-adapter-react-16');
+require("jest-webextension-mock");
 
-enzyme.configure({ adapter: new Adapter() });
