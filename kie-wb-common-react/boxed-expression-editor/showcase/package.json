@@ -1,10 +1,8 @@
 {
   "name": "boxed-expression-editor-showcase",
-  "main": "server.js",
   "private": true,
   "scripts": {
     "start": "react-app-rewired start",
-    "start:prod": "node server.js",
     "build": "react-app-rewired build",
     "eject": "react-scripts eject"
   },
