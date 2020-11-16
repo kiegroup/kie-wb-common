@@ -150,7 +150,6 @@ MainJs = {
 
         function patchObjectNamespaceValuesToDMN12(obj, property) {
             if (typeof obj[property] === "string") {
-                console.log(">> " + obj[property]);
                 obj[property] = obj[property]
                         .replace(
                                 "http://www.omg.org/spec/DMN/20151101/dmn.xsd",
@@ -197,7 +196,7 @@ MainJs = {
     marshall: function (value, namespacesValues, callback) {
         // Create Jsonix context
         var context = new Jsonix.Context(this.mappings(), {
-            namespacePrefixes: namespacesValues,
+            namespacePrefixes: namespacesValues
         });
 
         // Create marshaller
@@ -211,5 +210,5 @@ MainJs = {
             var toReturn = s.serializeToString(xmlDocument);
             callback(toReturn);
         }
-    },
+    }
 };
