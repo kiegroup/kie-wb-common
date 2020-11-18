@@ -41,8 +41,9 @@ export interface ExpressionContainerProps {
 const ExpressionContainer: (props: ExpressionContainerProps) => JSX.Element = (props: ExpressionContainerProps) => {
   const {i18n} = useBoxedExpressionEditorI18n();
 
-  const [logicTypeIsPresent, isLogicTypeSet] = useState(!_.isEmpty(props.selectedExpression));
-  const [actionDropdownIsOpen, isActionDropdownOpen] = useState(false);
+  const [logicTypeIsPresent, setLogicTypeSelected] = useState(!_.isEmpty(props.selectedExpression));
+  const [actionDropdownIsOpen, setActionDropDownOpen] = useState(false);
+  const [selectedExpression, setSelectedExpression] = useState(props.selectedExpression || i18n.selectExpression);
 
   const hideSelectorMenuPopover = () => {
     const elem = document.querySelector('.expression-selector-menu .pf-c-button');
@@ -51,20 +52,20 @@ const ExpressionContainer: (props: ExpressionContainerProps) => JSX.Element = (p
   };
 
   const onLogicTypeSelect = (currentItem: React.RefObject<HTMLButtonElement>, currentItemProps: SimpleListItemProps) => {
-    isLogicTypeSet(true);
-    document.getElementById("expression-container-box")!.innerHTML = currentItemProps.children as string;
+    setLogicTypeSelected(true);
+    setSelectedExpression(currentItemProps.children as string);
     hideSelectorMenuPopover();
   };
 
   const executeClearAction = () => {
-    isLogicTypeSet(false);
-    document.getElementById("expression-container-box")!.innerHTML = i18n.selectExpression;
+    setLogicTypeSelected(false);
+    setSelectedExpression(i18n.selectExpression);
   };
 
   const renderExpressionActionsDropdown = () => {
     return <Dropdown
-      onSelect={() => isActionDropdownOpen(!actionDropdownIsOpen)}
-      toggle={<KebabToggle onToggle={isOpen => isActionDropdownOpen(isOpen)} id="expression-actions-toggle"/>}
+      onSelect={() => setActionDropDownOpen(!actionDropdownIsOpen)}
+      toggle={<KebabToggle onToggle={isOpen => setActionDropDownOpen(isOpen)} id="expression-actions-toggle"/>}
       isOpen={actionDropdownIsOpen}
       isPlain
       dropdownItems={[
@@ -121,8 +122,8 @@ const ExpressionContainer: (props: ExpressionContainerProps) => JSX.Element = (p
         {renderExpressionActionsDropdown()}
       </span>
 
-      <div id="expression-container-box">
-        {props.selectedExpression || i18n.selectExpression}
+      <div id="expression-container-box" className={logicTypeIsPresent ? 'logic-type-selected' : 'logic-type-not-present'}>
+        {selectedExpression}
       </div>
 
       {buildLogicSelectorMenu()}
