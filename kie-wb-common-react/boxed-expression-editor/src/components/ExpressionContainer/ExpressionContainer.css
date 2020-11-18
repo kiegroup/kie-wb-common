@@ -29,6 +29,10 @@
   cursor: pointer;
 }
 
+.expression-container #expression-container-box.logic-type-selected {
+  pointer-events: none;
+}
+
 .expression-container #expression-container-box,
 .expression-container #expression-type {
   font-size: smaller;
