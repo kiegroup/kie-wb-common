@@ -45,7 +45,7 @@ const ExpressionContainer: (props: ExpressionContainerProps) => JSX.Element = (p
   const [actionDropdownIsOpen, isActionDropdownOpen] = useState(false);
 
   const hideSelectorMenuPopover = () => {
-    const elem = document.querySelector('.selector-menu .pf-c-button');
+    const elem = document.querySelector('.expression-selector-menu .pf-c-button');
     const button: HTMLButtonElement = elem as HTMLButtonElement;
     return button.click();
   };
@@ -77,7 +77,7 @@ const ExpressionContainer: (props: ExpressionContainerProps) => JSX.Element = (p
 
   const buildLogicSelectorMenu = () => {
     return <Popover
-      className="selector-menu"
+      className="expression-selector-menu"
       position="bottom"
       distance={0}
       reference={() => document.getElementById("expression-container-box")!}
