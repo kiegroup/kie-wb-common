@@ -15,7 +15,7 @@
  */
 
 import * as React from "react";
-import {useState} from "react";
+import {useCallback, useState} from "react";
 import * as _ from "lodash";
 import "./ExpressionContainer.css"
 import {useBoxedExpressionEditorI18n} from "../../i18n";
@@ -45,22 +45,22 @@ const ExpressionContainer: (props: ExpressionContainerProps) => JSX.Element = (p
   const [actionDropdownIsOpen, setActionDropDownOpen] = useState(false);
   const [selectedExpression, setSelectedExpression] = useState(props.selectedExpression || i18n.selectExpression);
 
-  const hideSelectorMenuPopover = () => {
+  const hideSelectorMenuPopover = useCallback(() => {
     const elem = document.querySelector('.expression-selector-menu .pf-c-button');
     const button: HTMLButtonElement = elem as HTMLButtonElement;
     return button.click();
-  };
+  }, []);
 
-  const onLogicTypeSelect = (currentItem: React.RefObject<HTMLButtonElement>, currentItemProps: SimpleListItemProps) => {
+  const onLogicTypeSelect = useCallback((currentItem: React.RefObject<HTMLButtonElement>, currentItemProps: SimpleListItemProps) => {
     setLogicTypeSelected(true);
     setSelectedExpression(currentItemProps.children as string);
     hideSelectorMenuPopover();
-  };
+  }, [hideSelectorMenuPopover]);
 
-  const executeClearAction = () => {
+  const executeClearAction = useCallback(() => {
     setLogicTypeSelected(false);
     setSelectedExpression(i18n.selectExpression);
-  };
+  }, [i18n.selectExpression]);
 
   const renderExpressionActionsDropdown = () => {
     return <Dropdown
