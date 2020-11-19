@@ -268,6 +268,10 @@ public class DMNDiagramEditor extends AbstractProjectDiagramEditor<DMNDiagramRes
 
             @Override
             protected int getDiagramHashCode() {
+                if (Objects.isNull(dmnDiagramsSession.getDMNDiagrams()) ||
+                        dmnDiagramsSession.getDMNDiagrams().isEmpty()) {
+                    return super.getDiagramHashCode();
+                }
                 int hash = 0;
                 for (final DMNDiagramTuple dmnDiagram : dmnDiagramsSession.getDMNDiagrams()) {
                     hash = HashUtil.combineHashCodes(hash,

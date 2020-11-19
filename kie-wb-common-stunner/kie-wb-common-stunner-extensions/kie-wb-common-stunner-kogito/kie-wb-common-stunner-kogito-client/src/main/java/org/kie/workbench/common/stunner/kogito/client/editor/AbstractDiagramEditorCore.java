@@ -18,6 +18,7 @@ package org.kie.workbench.common.stunner.kogito.client.editor;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -129,7 +130,10 @@ public abstract class AbstractDiagramEditorCore<M extends Metadata, D extends Di
         return proxy;
     }
 
-    protected int getHashCodeSupplier(){
+    protected int getHashCodeSupplier() {
+        if (Objects.equals(getShapesHashCode(), 0)) {
+            return getDiagramHashCode();
+        }
         return HashUtil.combineHashCodes(getDiagramHashCode(), getShapesHashCode());
     }
 
