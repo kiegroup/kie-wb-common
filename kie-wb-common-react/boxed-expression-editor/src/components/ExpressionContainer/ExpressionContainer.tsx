@@ -23,11 +23,11 @@ import {
   Dropdown,
   DropdownItem,
   KebabToggle,
-  Popover,
   SimpleList,
   SimpleListItem,
   SimpleListItemProps
 } from "@patternfly/react-core";
+import {PopoverMenu} from "../PopoverMenu";
 
 export interface ExpressionContainerProps {
   /** The name of the expression */
@@ -38,24 +38,17 @@ export interface ExpressionContainerProps {
   selectedExpression?: string
 }
 
-const ExpressionContainer: (props: ExpressionContainerProps) => JSX.Element = (props: ExpressionContainerProps) => {
+export const ExpressionContainer: (props: ExpressionContainerProps) => JSX.Element = (props: ExpressionContainerProps) => {
   const {i18n} = useBoxedExpressionEditorI18n();
 
   const [logicTypeIsPresent, setLogicTypeSelected] = useState(!_.isEmpty(props.selectedExpression));
   const [actionDropdownIsOpen, setActionDropDownOpen] = useState(false);
   const [selectedExpression, setSelectedExpression] = useState(props.selectedExpression || i18n.selectExpression);
 
-  const hideSelectorMenuPopover = useCallback(() => {
-    const elem = document.querySelector('.expression-selector-menu .pf-c-button');
-    const button: HTMLButtonElement = elem as HTMLButtonElement;
-    return button.click();
-  }, []);
-
   const onLogicTypeSelect = useCallback((currentItem: React.RefObject<HTMLButtonElement>, currentItemProps: SimpleListItemProps) => {
     setLogicTypeSelected(true);
     setSelectedExpression(currentItemProps.children as string);
-    hideSelectorMenuPopover();
-  }, [hideSelectorMenuPopover]);
+  }, []);
 
   const executeClearAction = useCallback(() => {
     setLogicTypeSelected(false);
@@ -77,20 +70,10 @@ const ExpressionContainer: (props: ExpressionContainerProps) => JSX.Element = (p
   };
 
   const buildLogicSelectorMenu = () => {
-    return <Popover
-      className="expression-selector-menu"
-      position="bottom"
-      distance={0}
-      reference={() => document.getElementById("expression-container-box")!}
-      isVisible={false}
-      shouldOpen={(showFunction = _.identity) => {
-        if (!logicTypeIsPresent) {
-          showFunction();
-        }
-      }}
-      shouldClose={(tip, hideFunction = _.identity) => hideFunction()}
-      headerContent={<div className="selector-menu-title">{i18n.selectLogicType}</div>}
-      bodyContent={
+    return <PopoverMenu
+      title={i18n.selectLogicType}
+      arrowPlacement={() => document.getElementById("expression-container-box")!}
+      body={
         <SimpleList onSelect={onLogicTypeSelect}>
           {renderLogicTypeItems()}
         </SimpleList>
@@ -126,9 +109,7 @@ const ExpressionContainer: (props: ExpressionContainerProps) => JSX.Element = (p
         {selectedExpression}
       </div>
 
-      {buildLogicSelectorMenu()}
+      { !logicTypeIsPresent ? buildLogicSelectorMenu() : null }
     </div>
   );
-}
-
-export {ExpressionContainer};
+};

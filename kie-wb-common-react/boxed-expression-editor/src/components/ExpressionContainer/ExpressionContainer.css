@@ -40,35 +40,11 @@
   color: gray;
 }
 
-.expression-selector-menu .pf-c-button {
-  display: none;
-}
-
-.expression-selector-menu .pf-c-popover__content,
-.expression-selector-menu .pf-c-title,
-.expression-selector-menu .pf-c-popover__content > .pf-c-button + *,
 #expression-actions .pf-c-dropdown .pf-c-dropdown__menu,
 #expression-actions-toggle {
   padding: 0;
 }
 
-.expression-selector-menu .pf-c-title .selector-menu-title {
-  border-bottom: none;
-  border-radius: 0;
-  color: #4d5258;
-  font-weight: 700;
-  min-height: 34px;
-  margin: 0;
-  padding: 8px 14px;
-}
-
-.expression-selector-menu .pf-c-title .selector-menu-title,
-.expression-selector-menu .pf-c-popover__arrow {
-  background-color: #f5f5f5;
-}
-
-.expression-selector-menu .pf-c-title .selector-menu-title,
-.expression-selector-menu .pf-c-simple-list button,
 #expression-actions .pf-c-dropdown a {
   font-size: 13px;
 }
