@@ -5,6 +5,5 @@ yarn-error.log
 stats.json
 .DS_Store
 .idea
-**/__snapshots__/
 /coverage/
 react-app-env.d.ts
