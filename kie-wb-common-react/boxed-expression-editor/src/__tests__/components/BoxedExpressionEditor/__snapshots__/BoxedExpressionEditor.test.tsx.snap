@@ -1,0 +1,61 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`BoxedExpressionEditor tests should render BoxedExpressionEditor component 1`] = `
+<div>
+  <div
+    class="expression-container"
+  >
+    <span
+      id="expression-title"
+    >
+      Expression Name
+    </span>
+    <span
+      id="expression-type"
+    >
+      (
+      &lt;Undefined&gt;
+      )
+    </span>
+    <span
+      id="expression-actions"
+    >
+      <div
+        class="pf-c-dropdown"
+        data-ouia-component-id="OUIA-Generated-Dropdown-1"
+        data-ouia-component-type="PF4/Dropdown"
+        data-ouia-safe="true"
+      >
+        <button
+          aria-expanded="false"
+          aria-haspopup="true"
+          aria-label="Actions"
+          class="pf-c-dropdown__toggle pf-m-plain"
+          id="expression-actions-toggle"
+          type="button"
+        >
+          <svg
+            aria-hidden="true"
+            fill="currentColor"
+            height="1em"
+            role="img"
+            style="vertical-align: -0.125em;"
+            viewBox="0 0 192 512"
+            width="1em"
+          >
+            <path
+              d="M96 184c39.8 0 72 32.2 72 72s-32.2 72-72 72-72-32.2-72-72 32.2-72 72-72zM24 80c0 39.8 32.2 72 72 72s72-32.2 72-72S135.8 8 96 8 24 40.2 24 80zm0 352c0 39.8 32.2 72 72 72s72-32.2 72-72-32.2-72-72-72-72 32.2-72 72z"
+            />
+          </svg>
+        </button>
+      </div>
+    </span>
+    <div
+      class="logic-type-not-present"
+      id="expression-container-box"
+    >
+      Select expression
+    </div>
+  </div>
+</div>
+`;
