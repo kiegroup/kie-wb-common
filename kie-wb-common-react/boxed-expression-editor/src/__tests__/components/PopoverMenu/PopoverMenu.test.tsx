@@ -29,6 +29,7 @@ describe('PopoverMenu tests', () => {
       <div>
         <div id="container">Popover</div>
         <PopoverMenu arrowPlacement={() => document.getElementById("container")!}
+                     appendTo={() => document.getElementById("container")!}
                      body={null}
                      title="title"/>
       </div>
@@ -46,6 +47,7 @@ describe('PopoverMenu tests', () => {
       <div>
         <div id="container">Popover</div>
         <PopoverMenu arrowPlacement={() => document.getElementById("container")!}
+                     appendTo={() => document.getElementById("container")!}
                      body={null}
                      title={title}/>
       </div>

@@ -25,12 +25,15 @@ export interface PopoverMenuProps {
   arrowPlacement: () => HTMLElement;
   /** The content of the popover itself */
   body: React.ReactNode;
+  /** The node where to append the popover content */
+  appendTo?: HTMLElement | ((ref?: HTMLElement) => HTMLElement);
 }
 
 export const PopoverMenu: React.FunctionComponent<PopoverMenuProps> = ({
   arrowPlacement,
   body,
-  title
+  title,
+  appendTo
 }: PopoverMenuProps) => {
   return <Popover
     className="popover-menu-selector"
@@ -38,7 +41,7 @@ export const PopoverMenu: React.FunctionComponent<PopoverMenuProps> = ({
     distance={0}
     id="menu-selector"
     reference={arrowPlacement}
-    appendTo={arrowPlacement}
+    appendTo={appendTo}
     headerContent={<div className="selector-menu-title">{title}</div>}
     bodyContent={body}/>;
 };
