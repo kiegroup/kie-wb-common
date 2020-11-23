@@ -17,7 +17,6 @@
 package org.kie.workbench.common.dmn.client.marshaller.unmarshall.nodes;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
