@@ -17,6 +17,8 @@
 package org.kie.workbench.common.stunner.core.client.session.command.impl;
 
 import java.lang.annotation.Annotation;
+import java.util.Collection;
+import java.util.Collections;
 
 import javax.enterprise.event.Event;
 
@@ -32,6 +34,8 @@ import org.kie.workbench.common.stunner.core.client.event.keyboard.KeyboardEvent
 import org.kie.workbench.common.stunner.core.client.session.command.AbstractClientSessionCommand;
 import org.kie.workbench.common.stunner.core.client.session.command.ClientSessionCommand;
 import org.kie.workbench.common.stunner.core.client.session.impl.EditorSession;
+import org.kie.workbench.common.stunner.core.graph.Element;
+import org.kie.workbench.common.stunner.core.graph.processing.index.Index;
 import org.kie.workbench.common.stunner.core.util.DefinitionUtils;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -39,6 +43,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -96,6 +101,13 @@ public class DeleteSelectionSessionCommandTest extends BaseSessionCommandKeyboar
     public void testClearSessionInvoked() {
         DeleteSelectionSessionCommand deleteCommand = (DeleteSelectionSessionCommand) this.command;
 
+        final String element = "element";
+        final Collection<String> elements = Collections.singleton(element);
+        final Index graphIndex = mock(Index.class);
+        final Element theElement = mock(Element.class);
+        when(graphIndex.get(element)).thenReturn(theElement);
+        when(canvasHandler.getGraphIndex()).thenReturn(graphIndex);
+        when(selectionControl.getSelectedItems()).thenReturn(elements);
         when(definitionUtils.getQualifier(anyString())).thenReturn(qualifier);
 
         deleteCommand.bind(session);
@@ -122,7 +134,7 @@ public class DeleteSelectionSessionCommandTest extends BaseSessionCommandKeyboar
 
     @Test
     public void testExecuteBackSpaceKeys() {
-       this.checkRespondsToExpectedKeysMatch(new KeyboardEvent.Key[]{KeyboardEvent.Key.KEY_BACKSPACE});
+        this.checkRespondsToExpectedKeysMatch(new KeyboardEvent.Key[]{KeyboardEvent.Key.KEY_BACKSPACE});
     }
 
     @Test(expected = IllegalStateException.class)
