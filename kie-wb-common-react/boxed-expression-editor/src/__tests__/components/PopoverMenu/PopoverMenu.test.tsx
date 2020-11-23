@@ -62,7 +62,7 @@ describe('PopoverMenu tests', () => {
 
 });
 
-async function activatePopover(container: HTMLElement) {
+export async function activatePopover(container: HTMLElement): Promise<void> {
   await act(async () => {
     const popoverContainer = container.querySelector("#container")! as HTMLElement;
     popoverContainer.click();
