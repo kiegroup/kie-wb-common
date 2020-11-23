@@ -46,7 +46,7 @@
 }
 
 #expression-actions .pf-c-dropdown a {
-  font-size: 13px;
+  font-size: var(--small-font-size);
 }
 
 .expression-container #expression-actions .pf-c-dropdown button:focus {
