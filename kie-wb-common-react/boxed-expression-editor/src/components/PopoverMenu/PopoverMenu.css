@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-.popover-menu-selector .pf-c-button {
+.pf-c-popover__content > .pf-c-button {
   display: none;
 }
 
@@ -41,6 +41,6 @@
 
 .popover-menu-selector .pf-c-title .selector-menu-title,
 .popover-menu-selector .pf-c-simple-list button {
-  font-size: 13px;
+  font-size: var(--small-font-size);
   font-style: normal;
 }
