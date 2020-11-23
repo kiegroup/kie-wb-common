@@ -18,16 +18,20 @@ import { ReferenceDictionary } from "@kogito-tooling/i18n/dist/core";
 import { CommonI18n } from "@kogito-tooling/i18n-common-dictionary";
 
 interface BoxedExpressionEditorDictionary extends ReferenceDictionary<BoxedExpressionEditorDictionary> {
-  selectExpression: string;
-  selectLogicType: string;
+  choose: string;
   clear: string;
-  literalExpression: string;
   context: string;
+  dataType: string;
   decisionTable: string;
-  relation: string;
+  editExpression: string;
   function: string;
   invocation: string;
   list: string;
+  literalExpression: string;
+  name: string;
+  relation: string;
+  selectExpression: string;
+  selectLogicType: string;
 }
 
 export interface BoxedExpressionEditorI18n extends BoxedExpressionEditorDictionary, CommonI18n {}
