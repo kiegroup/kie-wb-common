@@ -15,6 +15,6 @@
  */
 
 export interface ExpressionProps {
-  expressionName: string | undefined,
+  expressionName?: string,
   dataType: string
 }
