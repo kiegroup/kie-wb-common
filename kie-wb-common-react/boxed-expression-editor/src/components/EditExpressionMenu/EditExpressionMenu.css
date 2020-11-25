@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#edit-expression-menu {
+.edit-expression-menu {
   display: flex;
   flex-direction: column;
   padding-left: 14px;
@@ -22,10 +22,10 @@
   padding-bottom: 10px;
 }
 
-#edit-expression-menu > .expression-data-type {
+.edit-expression-menu > .expression-data-type {
   padding-top: 10px;
 }
 
-#edit-expression-menu * {
+.edit-expression-menu * {
   font-size: var(--small-font-size);
 }

@@ -103,7 +103,7 @@ export const EditExpressionMenu: React.FunctionComponent<EditExpressionMenuProps
     arrowPlacement={arrowPlacement}
     appendTo={appendTo}
     body={
-      <div id="edit-expression-menu">
+      <div className="edit-expression-menu">
         <div className="expression-name">
           <label>{nameField}</label>
           <input type="text" id="expression-name" value={chosenExpressionName}
