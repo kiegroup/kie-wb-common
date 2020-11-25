@@ -14,26 +14,29 @@
  * limitations under the License.
  */
 
-import {render} from "@testing-library/react";
-import {usingTestingBoxedExpressionI18nContext} from "../test-utils";
+import { render } from "@testing-library/react";
+import { usingTestingBoxedExpressionI18nContext } from "../test-utils";
 import * as React from "react";
-import {PopoverMenu} from "../../../components/PopoverMenu";
-import {act} from "react-dom/test-utils";
+import { PopoverMenu } from "../../../components/PopoverMenu";
+import { act } from "react-dom/test-utils";
 
 jest.useFakeTimers();
 const flushPromises = () => new Promise((resolve) => process.nextTick(resolve));
 
-describe('PopoverMenu tests', () => {
-  test('should render PopoverMenu component', async () => {
-    const {container} = render(usingTestingBoxedExpressionI18nContext(
-      <div>
-        <div id="container">Popover</div>
-        <PopoverMenu arrowPlacement={() => document.getElementById("container")!}
-                     appendTo={() => document.getElementById("container")!}
-                     body={null}
-                     title="title"/>
-      </div>
-     ).wrapper
+describe("PopoverMenu tests", () => {
+  test("should render PopoverMenu component", async () => {
+    const { container } = render(
+      usingTestingBoxedExpressionI18nContext(
+        <div>
+          <div id="container">Popover</div>
+          <PopoverMenu
+            arrowPlacement={() => document.getElementById("container")!}
+            appendTo={() => document.getElementById("container")!}
+            body={null}
+            title="title"
+          />
+        </div>
+      ).wrapper
     );
 
     await activatePopover(container);
@@ -41,25 +44,27 @@ describe('PopoverMenu tests', () => {
     expect(container).toMatchSnapshot();
   });
 
-  test('should render popover menu title, when title props is passed', async () => {
+  test("should render popover menu title, when title props is passed", async () => {
     const title = "title";
-    const {container} = render(usingTestingBoxedExpressionI18nContext(
-      <div>
-        <div id="container">Popover</div>
-        <PopoverMenu arrowPlacement={() => document.getElementById("container")!}
-                     appendTo={() => document.getElementById("container")!}
-                     body={null}
-                     title={title}/>
-      </div>
-     ).wrapper
+    const { container } = render(
+      usingTestingBoxedExpressionI18nContext(
+        <div>
+          <div id="container">Popover</div>
+          <PopoverMenu
+            arrowPlacement={() => document.getElementById("container")!}
+            appendTo={() => document.getElementById("container")!}
+            body={null}
+            title={title}
+          />
+        </div>
+      ).wrapper
     );
 
     await activatePopover(container);
 
-    expect(container.querySelector(".selector-menu-title")).toBeTruthy()
+    expect(container.querySelector(".selector-menu-title")).toBeTruthy();
     expect(container.querySelector(".selector-menu-title")!.innerHTML).toBe(title);
   });
-
 });
 
 export async function activatePopover(container: HTMLElement): Promise<void> {

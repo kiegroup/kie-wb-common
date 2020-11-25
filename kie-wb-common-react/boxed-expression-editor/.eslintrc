@@ -14,7 +14,8 @@
   "extends": [
     "eslint:recommended",
     "plugin:react/recommended",
-    "plugin:@typescript-eslint/recommended"
+    "plugin:@typescript-eslint/recommended",
+    "prettier"
   ],
   "globals": {
     "window": "readonly",
@@ -34,7 +35,8 @@
   "plugins": [
     "@typescript-eslint",
     "react-hooks",
-    "eslint-plugin-react-hooks"
+    "eslint-plugin-react-hooks",
+    "prettier"
   ],
   "rules": {
     "@typescript-eslint/explicit-function-return-type": "off",
@@ -42,7 +44,7 @@
     "react-hooks/rules-of-hooks": "error",
     "react-hooks/exhaustive-deps": "warn",
     "@typescript-eslint/interface-name-prefix": "off",
-    "prettier/prettier": "off",
+    "prettier/prettier": "error",
     "import/no-unresolved": "off",
     "import/extensions": "off",
     "react/prop-types": "off"

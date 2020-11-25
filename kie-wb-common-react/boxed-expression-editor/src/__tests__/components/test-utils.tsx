@@ -15,15 +15,12 @@
  */
 
 import * as React from "react";
-import {
-  I18nDictionariesProvider,
-  I18nDictionariesProviderProps
-} from "@kogito-tooling/i18n/dist/react-components";
+import { I18nDictionariesProvider, I18nDictionariesProviderProps } from "@kogito-tooling/i18n/dist/react-components";
 import {
   boxedExpressionEditorDictionaries,
   BoxedExpressionEditorI18n,
   BoxedExpressionEditorI18nContext,
-  boxedExpressionEditorI18nDefaults
+  boxedExpressionEditorI18nDefaults,
 } from "../../i18n";
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
@@ -36,7 +33,7 @@ export function usingTestingBoxedExpressionI18nContext(
     dictionaries: boxedExpressionEditorDictionaries,
     ctx: BoxedExpressionEditorI18nContext,
     children,
-    ...ctx
+    ...ctx,
   };
   return {
     ctx: usedCtx,
@@ -44,6 +41,6 @@ export function usingTestingBoxedExpressionI18nContext(
       <I18nDictionariesProvider defaults={usedCtx.defaults} dictionaries={usedCtx.dictionaries} ctx={usedCtx.ctx}>
         {usedCtx.children}
       </I18nDictionariesProvider>
-    )
+    ),
   };
 }

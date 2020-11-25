@@ -15,14 +15,14 @@
  */
 
 import * as React from "react";
-import {render} from "@testing-library/react";
-import {BoxedExpressionEditor} from "../../../components/BoxedExpressionEditor";
-import {ExpressionContainerProps} from "../../../components/ExpressionContainer";
+import { render } from "@testing-library/react";
+import { BoxedExpressionEditor } from "../../../components/BoxedExpressionEditor";
+import { ExpressionContainerProps } from "../../../components/ExpressionContainer";
 
-describe('BoxedExpressionEditor tests', () => {
-  test('should render BoxedExpressionEditor component', () => {
-    const expressionDefinition: ExpressionContainerProps = {'name': 'Expression Name'};
-    const { container } = render(<BoxedExpressionEditor expressionDefinition={expressionDefinition}/>);
+describe("BoxedExpressionEditor tests", () => {
+  test("should render BoxedExpressionEditor component", () => {
+    const expressionDefinition: ExpressionContainerProps = { name: "Expression Name" };
+    const { container } = render(<BoxedExpressionEditor expressionDefinition={expressionDefinition} />);
     expect(container).toMatchSnapshot();
   });
 });

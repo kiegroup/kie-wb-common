@@ -15,8 +15,8 @@
  */
 
 import * as React from "react";
-import {Popover} from "@patternfly/react-core";
-import "./PopoverMenu.css"
+import { Popover } from "@patternfly/react-core";
+import "./PopoverMenu.css";
 
 export interface PopoverMenuProps {
   /** Title of the popover menu */
@@ -33,15 +33,18 @@ export const PopoverMenu: React.FunctionComponent<PopoverMenuProps> = ({
   arrowPlacement,
   body,
   title,
-  appendTo
+  appendTo,
 }: PopoverMenuProps) => {
-  return <Popover
-    className="popover-menu-selector"
-    position="bottom"
-    distance={0}
-    id="menu-selector"
-    reference={arrowPlacement}
-    appendTo={appendTo}
-    headerContent={<div className="selector-menu-title">{title}</div>}
-    bodyContent={body}/>;
+  return (
+    <Popover
+      className="popover-menu-selector"
+      position="bottom"
+      distance={0}
+      id="menu-selector"
+      reference={arrowPlacement}
+      appendTo={appendTo}
+      headerContent={<div className="selector-menu-title">{title}</div>}
+      bodyContent={body}
+    />
+  );
 };

@@ -14,22 +14,24 @@
  * limitations under the License.
  */
 
-import * as React from 'react';
-import '@patternfly/react-core/dist/styles/base.css';
-import {I18nDictionariesProvider} from "@kogito-tooling/i18n/dist/react-components";
-import {ExpressionContainer, ExpressionContainerProps} from "../ExpressionContainer";
+import * as React from "react";
+import "@patternfly/react-core/dist/styles/base.css";
+import { I18nDictionariesProvider } from "@kogito-tooling/i18n/dist/react-components";
+import { ExpressionContainer, ExpressionContainerProps } from "../ExpressionContainer";
 import {
   boxedExpressionEditorDictionaries,
   BoxedExpressionEditorI18nContext,
-  boxedExpressionEditorI18nDefaults
+  boxedExpressionEditorI18nDefaults,
 } from "../../i18n";
 
 export interface BoxedExpressionEditorProps {
   /** All expression properties used to define it */
-  expressionDefinition: ExpressionContainerProps
+  expressionDefinition: ExpressionContainerProps;
 }
 
-const BoxedExpressionEditor: (props: BoxedExpressionEditorProps) => JSX.Element = (props: BoxedExpressionEditorProps) => (
+const BoxedExpressionEditor: (props: BoxedExpressionEditorProps) => JSX.Element = (
+  props: BoxedExpressionEditorProps
+) => (
   <I18nDictionariesProvider
     defaults={boxedExpressionEditorI18nDefaults}
     dictionaries={boxedExpressionEditorDictionaries}
@@ -40,4 +42,4 @@ const BoxedExpressionEditor: (props: BoxedExpressionEditorProps) => JSX.Element 
   </I18nDictionariesProvider>
 );
 
-export {BoxedExpressionEditor};
+export { BoxedExpressionEditor };

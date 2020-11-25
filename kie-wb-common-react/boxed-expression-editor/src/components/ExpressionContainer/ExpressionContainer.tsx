@@ -15,40 +15,45 @@
  */
 
 import * as React from "react";
-import {useCallback, useState} from "react";
+import { useCallback, useState } from "react";
 import * as _ from "lodash";
-import "./ExpressionContainer.css"
-import {useBoxedExpressionEditorI18n} from "../../i18n";
+import "./ExpressionContainer.css";
+import { useBoxedExpressionEditorI18n } from "../../i18n";
 import {
   Dropdown,
   DropdownItem,
   KebabToggle,
   SimpleList,
   SimpleListItem,
-  SimpleListItemProps
+  SimpleListItemProps,
 } from "@patternfly/react-core";
-import {PopoverMenu} from "../PopoverMenu";
+import { PopoverMenu } from "../PopoverMenu";
 
 export interface ExpressionContainerProps {
   /** The name of the expression */
-  name: string,
+  name: string;
   /** The type of the expression */
-  type?: string,
+  type?: string;
   /** Selected expression is already present */
-  selectedExpression?: string
+  selectedExpression?: string;
 }
 
-export const ExpressionContainer: (props: ExpressionContainerProps) => JSX.Element = (props: ExpressionContainerProps) => {
-  const {i18n} = useBoxedExpressionEditorI18n();
+export const ExpressionContainer: (props: ExpressionContainerProps) => JSX.Element = (
+  props: ExpressionContainerProps
+) => {
+  const { i18n } = useBoxedExpressionEditorI18n();
 
   const [logicTypeIsPresent, setLogicTypeSelected] = useState(!_.isEmpty(props.selectedExpression));
   const [actionDropdownIsOpen, setActionDropDownOpen] = useState(false);
   const [selectedExpression, setSelectedExpression] = useState(props.selectedExpression || i18n.selectExpression);
 
-  const onLogicTypeSelect = useCallback((currentItem: React.RefObject<HTMLButtonElement>, currentItemProps: SimpleListItemProps) => {
-    setLogicTypeSelected(true);
-    setSelectedExpression(currentItemProps.children as string);
-  }, []);
+  const onLogicTypeSelect = useCallback(
+    (currentItem: React.RefObject<HTMLButtonElement>, currentItemProps: SimpleListItemProps) => {
+      setLogicTypeSelected(true);
+      setSelectedExpression(currentItemProps.children as string);
+    },
+    []
+  );
 
   const executeClearAction = useCallback(() => {
     setLogicTypeSelected(false);
@@ -56,60 +61,60 @@ export const ExpressionContainer: (props: ExpressionContainerProps) => JSX.Eleme
   }, [i18n.selectExpression]);
 
   const renderExpressionActionsDropdown = () => {
-    return <Dropdown
-      onSelect={() => setActionDropDownOpen(!actionDropdownIsOpen)}
-      toggle={<KebabToggle onToggle={isOpen => setActionDropDownOpen(isOpen)} id="expression-actions-toggle"/>}
-      isOpen={actionDropdownIsOpen}
-      isPlain
-      dropdownItems={[
-        <DropdownItem key="clear" onClick={executeClearAction} isDisabled={!logicTypeIsPresent}>
-          {i18n.clear}
-        </DropdownItem>
-      ]}
-    />;
+    return (
+      <Dropdown
+        onSelect={() => setActionDropDownOpen(!actionDropdownIsOpen)}
+        toggle={<KebabToggle onToggle={(isOpen) => setActionDropDownOpen(isOpen)} id="expression-actions-toggle" />}
+        isOpen={actionDropdownIsOpen}
+        isPlain
+        dropdownItems={[
+          <DropdownItem key="clear" onClick={executeClearAction} isDisabled={!logicTypeIsPresent}>
+            {i18n.clear}
+          </DropdownItem>,
+        ]}
+      />
+    );
   };
 
   const buildLogicSelectorMenu = () => {
-    return <PopoverMenu
-      title={i18n.selectLogicType}
-      arrowPlacement={() => document.getElementById("expression-container-box")!}
-      body={
-        <SimpleList onSelect={onLogicTypeSelect}>
-          {renderLogicTypeItems()}
-        </SimpleList>
-      }
-    />;
+    return (
+      <PopoverMenu
+        title={i18n.selectLogicType}
+        arrowPlacement={() => document.getElementById("expression-container-box")!}
+        body={<SimpleList onSelect={onLogicTypeSelect}>{renderLogicTypeItems()}</SimpleList>}
+      />
+    );
   };
 
   const renderLogicTypeItems = () => {
-    return _.map([
-      i18n.literalExpression,
-      i18n.context,
-      i18n.decisionTable,
-      i18n.relation,
-      i18n.function,
-      i18n.invocation,
-      i18n.list,
-    ], key => <SimpleListItem key={key}>{key}</SimpleListItem>)
+    return _.map(
+      [
+        i18n.literalExpression,
+        i18n.context,
+        i18n.decisionTable,
+        i18n.relation,
+        i18n.function,
+        i18n.invocation,
+        i18n.list,
+      ],
+      (key) => <SimpleListItem key={key}>{key}</SimpleListItem>
+    );
   };
 
   return (
     <div className="expression-container">
-      <span id="expression-title">
-        {props.name || ''}
-      </span>
-      <span id="expression-type">
-        ({props.type ?? '<Undefined>'})
-      </span>
-      <span id="expression-actions">
-        {renderExpressionActionsDropdown()}
-      </span>
+      <span id="expression-title">{props.name || ""}</span>
+      <span id="expression-type">({props.type ?? "<Undefined>"})</span>
+      <span id="expression-actions">{renderExpressionActionsDropdown()}</span>
 
-      <div id="expression-container-box" className={logicTypeIsPresent ? 'logic-type-selected' : 'logic-type-not-present'}>
+      <div
+        id="expression-container-box"
+        className={logicTypeIsPresent ? "logic-type-selected" : "logic-type-not-present"}
+      >
         {selectedExpression}
       </div>
 
-      { !logicTypeIsPresent ? buildLogicSelectorMenu() : null }
+      {!logicTypeIsPresent ? buildLogicSelectorMenu() : null}
     </div>
   );
 };

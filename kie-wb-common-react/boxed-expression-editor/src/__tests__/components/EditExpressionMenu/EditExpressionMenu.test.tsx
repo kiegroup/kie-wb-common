@@ -14,174 +14,210 @@
  * limitations under the License.
  */
 
-import {render} from "@testing-library/react";
-import {usingTestingBoxedExpressionI18nContext} from "../test-utils";
+import { render } from "@testing-library/react";
+import { usingTestingBoxedExpressionI18nContext } from "../test-utils";
 import * as React from "react";
-import {EditExpressionMenu} from "../../../components/EditExpressionMenu";
-import {activatePopover} from "../PopoverMenu/PopoverMenu.test";
-import {DataType, ExpressionProps} from "../../../api";
+import { EditExpressionMenu } from "../../../components/EditExpressionMenu";
+import { activatePopover } from "../PopoverMenu/PopoverMenu.test";
+import { DataType, ExpressionProps } from "../../../api";
 import * as _ from "lodash";
 
 jest.useFakeTimers();
 
-describe('EditExpressionMenu tests', () => {
-  test('should render Edit Expression title', async () => {
+describe("EditExpressionMenu tests", () => {
+  test("should render Edit Expression title", async () => {
     const title = "Edit Expression";
-    const {container} = render(usingTestingBoxedExpressionI18nContext(
-      <div>
-        <div id="container">Popover</div>
-        <EditExpressionMenu title={title}
-                            arrowPlacement={() => document.getElementById("container")!}
-                            appendTo={() => document.getElementById("container")!}
-                            onExpressionUpdate={(expression) => {console.log(expression)}}/>
-      </div>
+    const { container } = render(
+      usingTestingBoxedExpressionI18nContext(
+        <div>
+          <div id="container">Popover</div>
+          <EditExpressionMenu
+            title={title}
+            arrowPlacement={() => document.getElementById("container")!}
+            appendTo={() => document.getElementById("container")!}
+            onExpressionUpdate={(expression) => {
+              console.log(expression);
+            }}
+          />
+        </div>
       ).wrapper
     );
 
     await activatePopover(container);
 
-    expect(container.querySelector(".selector-menu-title")).toBeTruthy()
+    expect(container.querySelector(".selector-menu-title")).toBeTruthy();
     expect(container.querySelector(".selector-menu-title")!.innerHTML).toBe(title);
   });
 
-  test('should render custom name field label', async () => {
+  test("should render custom name field label", async () => {
     const nameFieldLabel = "custom name field label";
-    const {container} = render(usingTestingBoxedExpressionI18nContext(
-      <div>
-        <div id="container">Popover</div>
-        <EditExpressionMenu nameField={nameFieldLabel}
-                            arrowPlacement={() => document.getElementById("container")!}
-                            appendTo={() => document.getElementById("container")!}
-                            onExpressionUpdate={(expression) => {console.log(expression)}}/>
-      </div>
+    const { container } = render(
+      usingTestingBoxedExpressionI18nContext(
+        <div>
+          <div id="container">Popover</div>
+          <EditExpressionMenu
+            nameField={nameFieldLabel}
+            arrowPlacement={() => document.getElementById("container")!}
+            appendTo={() => document.getElementById("container")!}
+            onExpressionUpdate={(expression) => {
+              console.log(expression);
+            }}
+          />
+        </div>
       ).wrapper
     );
 
     await activatePopover(container);
 
-    expect(container.querySelector(".expression-name label")).toBeTruthy()
+    expect(container.querySelector(".expression-name label")).toBeTruthy();
     expect(container.querySelector(".expression-name label")!.innerHTML).toBe(nameFieldLabel);
   });
 
-  test('should render custom data type field label', async () => {
+  test("should render custom data type field label", async () => {
     const dataTypeFieldLabel = "custom data type field label";
-    const {container} = render(usingTestingBoxedExpressionI18nContext(
-      <div>
-        <div id="container">Popover</div>
-        <EditExpressionMenu dataTypeField={dataTypeFieldLabel}
-                            arrowPlacement={() => document.getElementById("container")!}
-                            appendTo={() => document.getElementById("container")!}
-                            onExpressionUpdate={(expression) => {console.log(expression)}}/>
-      </div>
+    const { container } = render(
+      usingTestingBoxedExpressionI18nContext(
+        <div>
+          <div id="container">Popover</div>
+          <EditExpressionMenu
+            dataTypeField={dataTypeFieldLabel}
+            arrowPlacement={() => document.getElementById("container")!}
+            appendTo={() => document.getElementById("container")!}
+            onExpressionUpdate={(expression) => {
+              console.log(expression);
+            }}
+          />
+        </div>
       ).wrapper
     );
 
     await activatePopover(container);
 
-    expect(container.querySelector(".expression-data-type label")).toBeTruthy()
+    expect(container.querySelector(".expression-data-type label")).toBeTruthy();
     expect(container.querySelector(".expression-data-type label")!.innerHTML).toBe(dataTypeFieldLabel);
   });
 
-  test('should render undefined as data type, when it is not pre-selected', async () => {
-    const {container} = render(usingTestingBoxedExpressionI18nContext(
-      <div>
-        <div id="container">Popover</div>
-        <EditExpressionMenu arrowPlacement={() => document.getElementById("container")!}
-                            appendTo={() => document.getElementById("container")!}
-                            onExpressionUpdate={(expression) => {console.log(expression)}}/>
-      </div>
+  test("should render undefined as data type, when it is not pre-selected", async () => {
+    const { container } = render(
+      usingTestingBoxedExpressionI18nContext(
+        <div>
+          <div id="container">Popover</div>
+          <EditExpressionMenu
+            arrowPlacement={() => document.getElementById("container")!}
+            appendTo={() => document.getElementById("container")!}
+            onExpressionUpdate={(expression) => {
+              console.log(expression);
+            }}
+          />
+        </div>
       ).wrapper
     );
 
     await activatePopover(container);
 
-    expect(container.querySelector("[id^='pf-select-toggle-id-']")).toBeTruthy()
-    expect((container.querySelector("[id^='pf-select-toggle-id-']")! as HTMLInputElement).value)
-      .toBe("<Undefined>");
+    expect(container.querySelector("[id^='pf-select-toggle-id-']")).toBeTruthy();
+    expect((container.querySelector("[id^='pf-select-toggle-id-']")! as HTMLInputElement).value).toBe("<Undefined>");
   });
 
-  test('should render passed data type, when it is pre-selected', async () => {
+  test("should render passed data type, when it is pre-selected", async () => {
     const selectedDataType = DataType.Date;
-    const {container} = render(usingTestingBoxedExpressionI18nContext(
-      <div>
-        <div id="container">Popover</div>
-        <EditExpressionMenu selectedDataType={selectedDataType}
-                            arrowPlacement={() => document.getElementById("container")!}
-                            appendTo={() => document.getElementById("container")!}
-                            onExpressionUpdate={(expression) => {console.log(expression)}}/>
-      </div>
+    const { container } = render(
+      usingTestingBoxedExpressionI18nContext(
+        <div>
+          <div id="container">Popover</div>
+          <EditExpressionMenu
+            selectedDataType={selectedDataType}
+            arrowPlacement={() => document.getElementById("container")!}
+            appendTo={() => document.getElementById("container")!}
+            onExpressionUpdate={(expression) => {
+              console.log(expression);
+            }}
+          />
+        </div>
       ).wrapper
     );
 
     await activatePopover(container);
 
-    expect(container.querySelector("[id^='pf-select-toggle-id-']")).toBeTruthy()
-    expect((container.querySelector("[id^='pf-select-toggle-id-']")! as HTMLInputElement).value)
-      .toBe(selectedDataType);
+    expect(container.querySelector("[id^='pf-select-toggle-id-']")).toBeTruthy();
+    expect((container.querySelector("[id^='pf-select-toggle-id-']")! as HTMLInputElement).value).toBe(selectedDataType);
   });
 
-  test('should render empty expression name, when it is not pre-selected', async () => {
-    const {container} = render(usingTestingBoxedExpressionI18nContext(
-      <div>
-        <div id="container">Popover</div>
-        <EditExpressionMenu arrowPlacement={() => document.getElementById("container")!}
-                            appendTo={() => document.getElementById("container")!}
-                            onExpressionUpdate={(expression) => {console.log(expression)}}/>
-      </div>
+  test("should render empty expression name, when it is not pre-selected", async () => {
+    const { container } = render(
+      usingTestingBoxedExpressionI18nContext(
+        <div>
+          <div id="container">Popover</div>
+          <EditExpressionMenu
+            arrowPlacement={() => document.getElementById("container")!}
+            appendTo={() => document.getElementById("container")!}
+            onExpressionUpdate={(expression) => {
+              console.log(expression);
+            }}
+          />
+        </div>
       ).wrapper
     );
 
     await activatePopover(container);
 
-    expect(container.querySelector("#expression-name")).toBeTruthy()
-    expect((container.querySelector("#expression-name")! as HTMLInputElement).value)
-      .toBe('');
+    expect(container.querySelector("#expression-name")).toBeTruthy();
+    expect((container.querySelector("#expression-name")! as HTMLInputElement).value).toBe("");
   });
 
-  test('should render passed expression name, when it is pre-selected', async () => {
+  test("should render passed expression name, when it is pre-selected", async () => {
     const expressionName = "a name";
-    const {container} = render(usingTestingBoxedExpressionI18nContext(
-      <div>
-        <div id="container">Popover</div>
-        <EditExpressionMenu selectedExpressionName={expressionName}
-                            arrowPlacement={() => document.getElementById("container")!}
-                            appendTo={() => document.getElementById("container")!}
-                            onExpressionUpdate={(expression) => {console.log(expression)}}/>
-      </div>
+    const { container } = render(
+      usingTestingBoxedExpressionI18nContext(
+        <div>
+          <div id="container">Popover</div>
+          <EditExpressionMenu
+            selectedExpressionName={expressionName}
+            arrowPlacement={() => document.getElementById("container")!}
+            appendTo={() => document.getElementById("container")!}
+            onExpressionUpdate={(expression) => {
+              console.log(expression);
+            }}
+          />
+        </div>
       ).wrapper
     );
 
     await activatePopover(container);
 
-    expect(container.querySelector("#expression-name")).toBeTruthy()
-    expect((container.querySelector("#expression-name")! as HTMLInputElement).value)
-      .toBe(expressionName);
+    expect(container.querySelector("#expression-name")).toBeTruthy();
+    expect((container.querySelector("#expression-name")! as HTMLInputElement).value).toBe(expressionName);
   });
 
-  test('should trigger the onExpressionUpdate callback when the expression name is changed', async () => {
-    const onExpressionUpdate = (expression: ExpressionProps) => {_.identity(expression)};
+  test("should trigger the onExpressionUpdate callback when the expression name is changed", async () => {
+    const onExpressionUpdate = (expression: ExpressionProps) => {
+      _.identity(expression);
+    };
     const mockedOnExpressionUpdate = jest.fn(onExpressionUpdate);
-    const {container} = render(usingTestingBoxedExpressionI18nContext(
-      <div>
-        <div id="container">Popover</div>
-        <EditExpressionMenu selectedExpressionName="init"
-                            arrowPlacement={() => document.getElementById("container")!}
-                            appendTo={() => document.getElementById("container")!}
-                            onExpressionUpdate={mockedOnExpressionUpdate}/>
-      </div>
+    const { container } = render(
+      usingTestingBoxedExpressionI18nContext(
+        <div>
+          <div id="container">Popover</div>
+          <EditExpressionMenu
+            selectedExpressionName="init"
+            arrowPlacement={() => document.getElementById("container")!}
+            appendTo={() => document.getElementById("container")!}
+            onExpressionUpdate={mockedOnExpressionUpdate}
+          />
+        </div>
       ).wrapper
     );
 
     await activatePopover(container);
 
     (container.querySelector("#expression-name") as HTMLInputElement)!.value = "changed";
-    (container.querySelector("#expression-name") as HTMLInputElement)!.dispatchEvent(new Event('change'));
-    (container.querySelector("#expression-name") as HTMLInputElement)!.dispatchEvent(new Event('blur'));
+    (container.querySelector("#expression-name") as HTMLInputElement)!.dispatchEvent(new Event("change"));
+    (container.querySelector("#expression-name") as HTMLInputElement)!.dispatchEvent(new Event("blur"));
 
     expect(mockedOnExpressionUpdate).toHaveBeenCalled();
     expect(mockedOnExpressionUpdate).toHaveBeenCalledWith({
       expressionName: "changed",
-      dataType: DataType.Undefined
+      dataType: DataType.Undefined,
     });
   });
 });
