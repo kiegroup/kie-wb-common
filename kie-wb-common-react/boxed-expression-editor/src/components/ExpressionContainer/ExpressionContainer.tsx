@@ -86,13 +86,17 @@ export const ExpressionContainer: ({ name, selectedExpression }: ExpressionConta
   };
 
   const renderLogicTypeItems = () => {
-    return _.map(Object.values(LogicType), (key) => <SimpleListItem key={key}>{key}</SimpleListItem>);
+    return _.map(getLogicTypesWithoutUndefined(), (key) => <SimpleListItem key={key}>{key}</SimpleListItem>);
+  };
+
+  const getLogicTypesWithoutUndefined = () => {
+    return Object.values(LogicType).filter((logicType) => logicType != LogicType.Undefined);
   };
 
   return (
     <div className="expression-container">
       <span id="expression-title">{props.name || ""}</span>
-      <span id="expression-type">({selectedExpression || "<Undefined>"})</span>
+      <span id="expression-type">({selectedExpression || LogicType.Undefined})</span>
       <span id="expression-actions">{renderExpressionActionsDropdown()}</span>
 
       <div
