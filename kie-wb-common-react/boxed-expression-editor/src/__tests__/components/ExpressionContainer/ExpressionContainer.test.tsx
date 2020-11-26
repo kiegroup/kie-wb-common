@@ -38,7 +38,7 @@ describe("ExpressionContainer tests", () => {
   test("should render expression type, when type prop is passed", () => {
     const type = "TYPE";
     const { container } = render(
-      usingTestingBoxedExpressionI18nContext(<ExpressionContainer name="Test" type={type} />).wrapper
+      usingTestingBoxedExpressionI18nContext(<ExpressionContainer name="Test" selectedExpression={type} />).wrapper
     );
 
     expect(container.querySelector("#expression-type")).toBeTruthy();
