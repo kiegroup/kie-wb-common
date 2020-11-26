@@ -15,6 +15,7 @@
  */
 
 export enum LogicType {
+  Undefined = "<Undefined>",
   LiteralExpression = "Literal expression",
   Context = "Context",
   DecisionTable = "Decision Table",

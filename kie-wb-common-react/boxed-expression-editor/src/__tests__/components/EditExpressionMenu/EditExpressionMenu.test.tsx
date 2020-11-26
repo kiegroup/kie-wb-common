@@ -21,6 +21,7 @@ import { EditExpressionMenu } from "../../../components/EditExpressionMenu";
 import { activatePopover } from "../PopoverMenu/PopoverMenu.test";
 import { DataType, ExpressionProps } from "../../../api";
 import * as _ from "lodash";
+import { LogicType } from "../../../api/LogicType";
 
 jest.useFakeTimers();
 
@@ -116,7 +117,9 @@ describe("EditExpressionMenu tests", () => {
     await activatePopover(container);
 
     expect(container.querySelector("[id^='pf-select-toggle-id-']")).toBeTruthy();
-    expect((container.querySelector("[id^='pf-select-toggle-id-']")! as HTMLInputElement).value).toBe("<Undefined>");
+    expect((container.querySelector("[id^='pf-select-toggle-id-']")! as HTMLInputElement).value).toBe(
+      LogicType.Undefined
+    );
   });
 
   test("should render passed data type, when it is pre-selected", async () => {
