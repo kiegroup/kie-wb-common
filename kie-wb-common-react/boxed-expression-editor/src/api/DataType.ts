@@ -25,5 +25,5 @@ export enum DataType {
   Number = "number",
   String = "string",
   Time = "time",
-  YearsMonthsDuration = "years and months duration"
+  YearsMonthsDuration = "years and months duration",
 }

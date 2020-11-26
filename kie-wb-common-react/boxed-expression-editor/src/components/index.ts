@@ -14,6 +14,6 @@
  * limitations under the License.
  */
 
-import './index.css';
-export * from './BoxedExpressionEditor';
-export * from './ExpressionContainer';
+import "./index.css";
+export * from "./BoxedExpressionEditor";
+export * from "./ExpressionContainer";

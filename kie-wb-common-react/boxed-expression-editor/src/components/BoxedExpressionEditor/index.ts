@@ -14,4 +14,4 @@
  * limitations under the License.
  */
 
-export * from './BoxedExpressionEditor';
+export * from "./BoxedExpressionEditor";
