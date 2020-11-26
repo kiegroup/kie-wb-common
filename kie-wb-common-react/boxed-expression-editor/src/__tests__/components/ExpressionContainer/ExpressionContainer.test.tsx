@@ -18,6 +18,7 @@ import { ExpressionContainer } from "../../../components/ExpressionContainer";
 import { render } from "@testing-library/react";
 import * as React from "react";
 import { usingTestingBoxedExpressionI18nContext } from "../test-utils";
+import { LogicType } from "../../../api/LogicType";
 
 describe("ExpressionContainer tests", () => {
   test("should render ExpressionContainer component", () => {
@@ -36,7 +37,7 @@ describe("ExpressionContainer tests", () => {
   });
 
   test("should render expression type, when type prop is passed", () => {
-    const type = "TYPE";
+    const type = LogicType.Context;
     const { container } = render(
       usingTestingBoxedExpressionI18nContext(<ExpressionContainer name="Test" selectedExpression={type} />).wrapper
     );
@@ -66,7 +67,7 @@ describe("ExpressionContainer tests", () => {
     test("should have the clear action enabled, when logic type is selected", () => {
       const { container } = render(
         usingTestingBoxedExpressionI18nContext(
-          <ExpressionContainer name="Test" selectedExpression="Literal expression" />
+          <ExpressionContainer name="Test" selectedExpression={LogicType.LiteralExpression} />
         ).wrapper
       );
 
@@ -82,7 +83,7 @@ describe("ExpressionContainer tests", () => {
 
   describe("Logic type selection", () => {
     test("should show the pre-selection, when logic type prop is passed", () => {
-      const expressionBoxContent = "Literal expression";
+      const expressionBoxContent = LogicType.LiteralExpression;
       const { container } = render(
         usingTestingBoxedExpressionI18nContext(
           <ExpressionContainer name="Test" selectedExpression={expressionBoxContent} />
@@ -94,7 +95,7 @@ describe("ExpressionContainer tests", () => {
     });
 
     test("should reset the selection, when logic type is selected and clear button gets clicked", () => {
-      const expressionBoxContent = "Literal expression";
+      const expressionBoxContent = LogicType.LiteralExpression;
       const { container } = render(
         usingTestingBoxedExpressionI18nContext(
           <ExpressionContainer name="Test" selectedExpression={expressionBoxContent} />
