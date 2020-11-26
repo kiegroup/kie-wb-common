@@ -19,7 +19,7 @@ import { usingTestingBoxedExpressionI18nContext } from "../test-utils";
 import * as React from "react";
 import { EditExpressionMenu } from "../../../components/EditExpressionMenu";
 import { activatePopover } from "../PopoverMenu/PopoverMenu.test";
-import { DataType, ExpressionProps } from "../../../api";
+import { DataType, Expression } from "../../../api";
 import * as _ from "lodash";
 import { LogicType } from "../../../api/LogicType";
 
@@ -33,6 +33,7 @@ describe("EditExpressionMenu tests", () => {
         <div>
           <div id="container">Popover</div>
           <EditExpressionMenu
+            selectedExpressionName="Expression Name"
             title={title}
             arrowPlacement={() => document.getElementById("container")!}
             appendTo={() => document.getElementById("container")!}
@@ -57,6 +58,7 @@ describe("EditExpressionMenu tests", () => {
         <div>
           <div id="container">Popover</div>
           <EditExpressionMenu
+            selectedExpressionName="Expression Name"
             nameField={nameFieldLabel}
             arrowPlacement={() => document.getElementById("container")!}
             appendTo={() => document.getElementById("container")!}
@@ -81,6 +83,7 @@ describe("EditExpressionMenu tests", () => {
         <div>
           <div id="container">Popover</div>
           <EditExpressionMenu
+            selectedExpressionName="Expression Name"
             dataTypeField={dataTypeFieldLabel}
             arrowPlacement={() => document.getElementById("container")!}
             appendTo={() => document.getElementById("container")!}
@@ -104,6 +107,7 @@ describe("EditExpressionMenu tests", () => {
         <div>
           <div id="container">Popover</div>
           <EditExpressionMenu
+            selectedExpressionName="Expression Name"
             arrowPlacement={() => document.getElementById("container")!}
             appendTo={() => document.getElementById("container")!}
             onExpressionUpdate={(expression) => {
@@ -129,6 +133,7 @@ describe("EditExpressionMenu tests", () => {
         <div>
           <div id="container">Popover</div>
           <EditExpressionMenu
+            selectedExpressionName="Expression Name"
             selectedDataType={selectedDataType}
             arrowPlacement={() => document.getElementById("container")!}
             appendTo={() => document.getElementById("container")!}
@@ -144,28 +149,6 @@ describe("EditExpressionMenu tests", () => {
 
     expect(container.querySelector("[id^='pf-select-toggle-id-']")).toBeTruthy();
     expect((container.querySelector("[id^='pf-select-toggle-id-']")! as HTMLInputElement).value).toBe(selectedDataType);
-  });
-
-  test("should render empty expression name, when it is not pre-selected", async () => {
-    const { container } = render(
-      usingTestingBoxedExpressionI18nContext(
-        <div>
-          <div id="container">Popover</div>
-          <EditExpressionMenu
-            arrowPlacement={() => document.getElementById("container")!}
-            appendTo={() => document.getElementById("container")!}
-            onExpressionUpdate={(expression) => {
-              console.log(expression);
-            }}
-          />
-        </div>
-      ).wrapper
-    );
-
-    await activatePopover(container);
-
-    expect(container.querySelector("#expression-name")).toBeTruthy();
-    expect((container.querySelector("#expression-name")! as HTMLInputElement).value).toBe("");
   });
 
   test("should render passed expression name, when it is pre-selected", async () => {
@@ -193,7 +176,7 @@ describe("EditExpressionMenu tests", () => {
   });
 
   test("should trigger the onExpressionUpdate callback when the expression name is changed", async () => {
-    const onExpressionUpdate = (expression: ExpressionProps) => {
+    const onExpressionUpdate = (expression: Expression) => {
       _.identity(expression);
     };
     const mockedOnExpressionUpdate = jest.fn(onExpressionUpdate);
@@ -219,7 +202,7 @@ describe("EditExpressionMenu tests", () => {
 
     expect(mockedOnExpressionUpdate).toHaveBeenCalled();
     expect(mockedOnExpressionUpdate).toHaveBeenCalledWith({
-      expressionName: "changed",
+      name: "changed",
       dataType: DataType.Undefined,
     });
   });
