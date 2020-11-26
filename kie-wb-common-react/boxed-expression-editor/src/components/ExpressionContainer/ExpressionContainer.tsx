@@ -32,20 +32,18 @@ import { PopoverMenu } from "../PopoverMenu";
 export interface ExpressionContainerProps {
   /** The name of the expression */
   name: string;
-  /** The type of the expression */
-  type?: string;
   /** Selected expression is already present */
   selectedExpression?: string;
 }
 
-export const ExpressionContainer: (props: ExpressionContainerProps) => JSX.Element = (
+export const ExpressionContainer: ({ name, selectedExpression }: ExpressionContainerProps) => JSX.Element = (
   props: ExpressionContainerProps
 ) => {
   const { i18n } = useBoxedExpressionEditorI18n();
 
   const [logicTypeIsPresent, setLogicTypeSelected] = useState(!_.isEmpty(props.selectedExpression));
   const [actionDropdownIsOpen, setActionDropDownOpen] = useState(false);
-  const [selectedExpression, setSelectedExpression] = useState(props.selectedExpression || i18n.selectExpression);
+  const [selectedExpression, setSelectedExpression] = useState(props.selectedExpression);
 
   const onLogicTypeSelect = useCallback(
     (currentItem: React.RefObject<HTMLButtonElement>, currentItemProps: SimpleListItemProps) => {
@@ -57,8 +55,8 @@ export const ExpressionContainer: (props: ExpressionContainerProps) => JSX.Eleme
 
   const executeClearAction = useCallback(() => {
     setLogicTypeSelected(false);
-    setSelectedExpression(i18n.selectExpression);
-  }, [i18n.selectExpression]);
+    setSelectedExpression("");
+  }, []);
 
   const renderExpressionActionsDropdown = () => {
     return (
@@ -104,14 +102,14 @@ export const ExpressionContainer: (props: ExpressionContainerProps) => JSX.Eleme
   return (
     <div className="expression-container">
       <span id="expression-title">{props.name || ""}</span>
-      <span id="expression-type">({props.type ?? "<Undefined>"})</span>
+      <span id="expression-type">({selectedExpression || "<Undefined>"})</span>
       <span id="expression-actions">{renderExpressionActionsDropdown()}</span>
 
       <div
         id="expression-container-box"
         className={logicTypeIsPresent ? "logic-type-selected" : "logic-type-not-present"}
       >
-        {selectedExpression}
+        {selectedExpression || i18n.selectExpression}
       </div>
 
       {!logicTypeIsPresent ? buildLogicSelectorMenu() : null}
