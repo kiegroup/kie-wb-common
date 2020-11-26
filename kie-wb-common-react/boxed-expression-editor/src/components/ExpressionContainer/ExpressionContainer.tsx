@@ -59,7 +59,7 @@ export const ExpressionContainer: ({ name, selectedExpression }: ExpressionConta
     setSelectedExpression(undefined);
   }, []);
 
-  const renderExpressionActionsDropdown = () => {
+  const renderExpressionActionsDropdown = useCallback(() => {
     return (
       <Dropdown
         onSelect={() => setActionDropDownOpen(!actionDropdownIsOpen)}
@@ -73,9 +73,17 @@ export const ExpressionContainer: ({ name, selectedExpression }: ExpressionConta
         ]}
       />
     );
-  };
+  }, [i18n.clear, actionDropdownIsOpen, logicTypeIsPresent, executeClearAction]);
 
-  const buildLogicSelectorMenu = () => {
+  const getLogicTypesWithoutUndefined = useCallback(() => {
+    return Object.values(LogicType).filter((logicType) => logicType !== LogicType.Undefined);
+  }, []);
+
+  const renderLogicTypeItems = useCallback(() => {
+    return _.map(getLogicTypesWithoutUndefined(), (key) => <SimpleListItem key={key}>{key}</SimpleListItem>);
+  }, [getLogicTypesWithoutUndefined]);
+
+  const buildLogicSelectorMenu = useCallback(() => {
     return (
       <PopoverMenu
         title={i18n.selectLogicType}
@@ -83,15 +91,7 @@ export const ExpressionContainer: ({ name, selectedExpression }: ExpressionConta
         body={<SimpleList onSelect={onLogicTypeSelect}>{renderLogicTypeItems()}</SimpleList>}
       />
     );
-  };
-
-  const renderLogicTypeItems = () => {
-    return _.map(getLogicTypesWithoutUndefined(), (key) => <SimpleListItem key={key}>{key}</SimpleListItem>);
-  };
-
-  const getLogicTypesWithoutUndefined = () => {
-    return Object.values(LogicType).filter((logicType) => logicType != LogicType.Undefined);
-  };
+  }, [i18n.selectLogicType, onLogicTypeSelect, renderLogicTypeItems]);
 
   return (
     <div className="expression-container">
