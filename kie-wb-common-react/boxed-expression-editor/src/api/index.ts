@@ -15,4 +15,4 @@
  */
 
 export * from "./ExpressionProps";
-export * from './DataType';
+export * from "./DataType";

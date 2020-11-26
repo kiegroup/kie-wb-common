@@ -15,6 +15,6 @@
  */
 
 export interface ExpressionProps {
-  expressionName?: string,
-  dataType: string
+  expressionName?: string;
+  dataType: string;
 }

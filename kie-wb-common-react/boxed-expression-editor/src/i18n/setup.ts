@@ -21,9 +21,14 @@ import { I18nContextType } from "@kogito-tooling/i18n/dist/react-components";
 import { BoxedExpressionEditorI18n } from "./BoxedExpressionEditorI18n";
 import { I18nDefaults, I18nDictionaries } from "@kogito-tooling/i18n/dist/core";
 
-export const boxedExpressionEditorI18nDefaults: I18nDefaults<BoxedExpressionEditorI18n> = { locale: "en", dictionary: en };
+export const boxedExpressionEditorI18nDefaults: I18nDefaults<BoxedExpressionEditorI18n> = {
+  locale: "en",
+  dictionary: en,
+};
 export const boxedExpressionEditorDictionaries: I18nDictionaries<BoxedExpressionEditorI18n> = new Map([["en", en]]);
-export const BoxedExpressionEditorI18nContext = React.createContext<I18nContextType<BoxedExpressionEditorI18n>>({} as never);
+export const BoxedExpressionEditorI18nContext = React.createContext<I18nContextType<BoxedExpressionEditorI18n>>(
+  {} as never
+);
 
 export function useBoxedExpressionEditorI18n(): I18nContextType<BoxedExpressionEditorI18n> {
   return useContext(BoxedExpressionEditorI18nContext);

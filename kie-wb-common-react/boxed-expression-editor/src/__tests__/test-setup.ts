@@ -15,4 +15,3 @@
  */
 
 import "jest-webextension-mock";
-

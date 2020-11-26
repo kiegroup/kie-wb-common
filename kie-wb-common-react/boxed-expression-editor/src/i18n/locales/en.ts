@@ -32,5 +32,5 @@ export const en: BoxedExpressionEditorI18n = {
   function: "Function",
   invocation: "Invocation",
   list: "List",
-  clear: "Clear"
+  clear: "Clear",
 };
