@@ -28,12 +28,13 @@ import {
   SimpleListItemProps,
 } from "@patternfly/react-core";
 import { PopoverMenu } from "../PopoverMenu";
+import { LogicType } from "../../api/LogicType";
 
 export interface ExpressionContainerProps {
   /** The name of the expression */
   name: string;
   /** Selected expression is already present */
-  selectedExpression?: string;
+  selectedExpression?: LogicType;
 }
 
 export const ExpressionContainer: ({ name, selectedExpression }: ExpressionContainerProps) => JSX.Element = (
@@ -48,14 +49,14 @@ export const ExpressionContainer: ({ name, selectedExpression }: ExpressionConta
   const onLogicTypeSelect = useCallback(
     (currentItem: React.RefObject<HTMLButtonElement>, currentItemProps: SimpleListItemProps) => {
       setLogicTypeSelected(true);
-      setSelectedExpression(currentItemProps.children as string);
+      setSelectedExpression(currentItemProps.children as LogicType);
     },
     []
   );
 
   const executeClearAction = useCallback(() => {
     setLogicTypeSelected(false);
-    setSelectedExpression("");
+    setSelectedExpression(undefined);
   }, []);
 
   const renderExpressionActionsDropdown = () => {
@@ -85,18 +86,7 @@ export const ExpressionContainer: ({ name, selectedExpression }: ExpressionConta
   };
 
   const renderLogicTypeItems = () => {
-    return _.map(
-      [
-        i18n.literalExpression,
-        i18n.context,
-        i18n.decisionTable,
-        i18n.relation,
-        i18n.function,
-        i18n.invocation,
-        i18n.list,
-      ],
-      (key) => <SimpleListItem key={key}>{key}</SimpleListItem>
-    );
+    return _.map(Object.values(LogicType), (key) => <SimpleListItem key={key}>{key}</SimpleListItem>);
   };
 
   return (
