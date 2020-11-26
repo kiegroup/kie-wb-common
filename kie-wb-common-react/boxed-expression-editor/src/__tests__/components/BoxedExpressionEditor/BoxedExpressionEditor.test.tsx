@@ -21,7 +21,7 @@ import { ExpressionContainerProps } from "../../../components/ExpressionContaine
 
 describe("BoxedExpressionEditor tests", () => {
   test("should render BoxedExpressionEditor component", () => {
-    const expressionDefinition: ExpressionContainerProps = { name: "Expression Name" };
+    const expressionDefinition: ExpressionContainerProps = { decisionName: "Expression Name" };
     const { container } = render(<BoxedExpressionEditor expressionDefinition={expressionDefinition} />);
     expect(container).toMatchSnapshot();
   });

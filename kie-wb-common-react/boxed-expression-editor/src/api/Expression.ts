@@ -14,7 +14,11 @@
  * limitations under the License.
  */
 
-export interface ExpressionProps {
-  expressionName?: string;
-  dataType: string;
+import { LogicType } from "./LogicType";
+import { DataType } from "./DataType";
+
+export interface Expression {
+  name: string;
+  dataType?: DataType;
+  logicType?: LogicType;
 }

@@ -14,5 +14,5 @@
  * limitations under the License.
  */
 
-export * from "./ExpressionProps";
+export * from "./Expression";
 export * from "./DataType";

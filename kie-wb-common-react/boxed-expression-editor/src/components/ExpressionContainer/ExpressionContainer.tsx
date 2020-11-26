@@ -29,19 +29,23 @@ import {
 } from "@patternfly/react-core";
 import { PopoverMenu } from "../PopoverMenu";
 import { LogicType } from "../../api/LogicType";
+import { DataType, Expression } from "../../api";
+import { LiteralExpression } from "../LiteralExpression";
 
 export interface ExpressionContainerProps {
-  /** The name of the expression */
-  name: string;
-  /** Selected expression is already present */
-  selectedExpression?: LogicType;
+  /** Outer decision name */
+  decisionName: string;
+  /** Expression properties */
+  selectedExpression?: Expression;
 }
 
-export const ExpressionContainer: ({ name, selectedExpression }: ExpressionContainerProps) => JSX.Element = (
+export const ExpressionContainer: ({ decisionName, selectedExpression }: ExpressionContainerProps) => JSX.Element = (
   props: ExpressionContainerProps
 ) => {
   const { i18n } = useBoxedExpressionEditorI18n();
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [decisionName, setDecisionName] = useState(props.decisionName);
   const [logicTypeIsPresent, setLogicTypeSelected] = useState(!_.isEmpty(props.selectedExpression));
   const [actionDropdownIsOpen, setActionDropDownOpen] = useState(false);
   const [selectedExpression, setSelectedExpression] = useState(props.selectedExpression);
@@ -49,9 +53,14 @@ export const ExpressionContainer: ({ name, selectedExpression }: ExpressionConta
   const onLogicTypeSelect = useCallback(
     (currentItem: React.RefObject<HTMLButtonElement>, currentItemProps: SimpleListItemProps) => {
       setLogicTypeSelected(true);
-      setSelectedExpression(currentItemProps.children as LogicType);
+      const selectedLogicType = currentItemProps.children as LogicType;
+      setSelectedExpression({
+        name: selectedExpression?.name ?? props.decisionName,
+        dataType: selectedExpression?.dataType ?? DataType.Undefined,
+        logicType: selectedLogicType,
+      });
     },
-    []
+    [props.decisionName, selectedExpression]
   );
 
   const executeClearAction = useCallback(() => {
@@ -93,17 +102,32 @@ export const ExpressionContainer: ({ name, selectedExpression }: ExpressionConta
     );
   }, [i18n.selectLogicType, onLogicTypeSelect, renderLogicTypeItems]);
 
+  const renderSelectedExpression = useCallback((selectedExpression: Expression) => {
+    switch (selectedExpression.logicType) {
+      case LogicType.LiteralExpression:
+        return <LiteralExpression />;
+      case LogicType.Context:
+      case LogicType.DecisionTable:
+      case LogicType.Relation:
+      case LogicType.Function:
+      case LogicType.Invocation:
+      case LogicType.List:
+      default:
+        return selectedExpression.logicType;
+    }
+  }, []);
+
   return (
     <div className="expression-container">
-      <span id="expression-title">{props.name || ""}</span>
-      <span id="expression-type">({selectedExpression || LogicType.Undefined})</span>
+      <span id="expression-title">{decisionName}</span>
+      <span id="expression-type">({selectedExpression?.logicType || LogicType.Undefined})</span>
       <span id="expression-actions">{renderExpressionActionsDropdown()}</span>
 
       <div
         id="expression-container-box"
         className={logicTypeIsPresent ? "logic-type-selected" : "logic-type-not-present"}
       >
-        {selectedExpression || i18n.selectExpression}
+        {selectedExpression ? renderSelectedExpression(selectedExpression) : i18n.selectExpression}
       </div>
 
       {!logicTypeIsPresent ? buildLogicSelectorMenu() : null}

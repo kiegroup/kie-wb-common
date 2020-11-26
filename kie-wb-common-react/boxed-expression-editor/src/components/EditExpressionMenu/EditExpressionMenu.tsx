@@ -19,7 +19,7 @@ import * as React from "react";
 import { useCallback, useState } from "react";
 import { PopoverMenu } from "../PopoverMenu";
 import { useBoxedExpressionEditorI18n } from "../../i18n";
-import { DataType, ExpressionProps } from "../../api";
+import { DataType, Expression } from "../../api";
 import { Select, SelectOption, SelectVariant } from "@patternfly/react-core";
 import * as _ from "lodash";
 
@@ -37,9 +37,9 @@ export interface EditExpressionMenuProps {
   /** The pre-selected data type */
   selectedDataType?: DataType;
   /** The pre-selected expression name */
-  selectedExpressionName?: string;
+  selectedExpressionName: string;
   /** Function to be called when the expression gets updated, passing the most updated version of it */
-  onExpressionUpdate: (expression: ExpressionProps) => void;
+  onExpressionUpdate: (expression: Expression) => void;
 }
 
 export const EditExpressionMenu: React.FunctionComponent<EditExpressionMenuProps> = ({
@@ -66,7 +66,7 @@ export const EditExpressionMenu: React.FunctionComponent<EditExpressionMenuProps
       setExpressionName(event.target.value);
       if (event.type === "blur") {
         onExpressionUpdate({
-          expressionName: event.target.value,
+          name: event.target.value,
           dataType: chosenDataType,
         });
       }
@@ -79,7 +79,7 @@ export const EditExpressionMenu: React.FunctionComponent<EditExpressionMenuProps
       setDataTypeSelectOpen(false);
       setDataType(selection);
       onExpressionUpdate({
-        expressionName: chosenExpressionName,
+        name: chosenExpressionName,
         dataType: selection,
       });
     },

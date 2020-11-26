@@ -22,7 +22,9 @@ import { LogicType } from "../../../api/LogicType";
 
 describe("ExpressionContainer tests", () => {
   test("should render ExpressionContainer component", () => {
-    const { container } = render(usingTestingBoxedExpressionI18nContext(<ExpressionContainer name="Test" />).wrapper);
+    const { container } = render(
+      usingTestingBoxedExpressionI18nContext(<ExpressionContainer decisionName="Test" />).wrapper
+    );
 
     expect(container).toMatchSnapshot();
   });
@@ -30,31 +32,37 @@ describe("ExpressionContainer tests", () => {
   test("should render expression title, when name prop is passed", () => {
     const expressionTitle = "Test";
     const { container } = render(
-      usingTestingBoxedExpressionI18nContext(<ExpressionContainer name={expressionTitle} />).wrapper
+      usingTestingBoxedExpressionI18nContext(<ExpressionContainer decisionName={expressionTitle} />).wrapper
     );
     expect(container.querySelector("#expression-title")).toBeTruthy();
     expect(container.querySelector("#expression-title")!.innerHTML).toBe(expressionTitle);
   });
 
   test("should render expression type, when type prop is passed", () => {
-    const type = LogicType.Context;
+    const expression = { name: "Test", logicType: LogicType.Context };
     const { container } = render(
-      usingTestingBoxedExpressionI18nContext(<ExpressionContainer name="Test" selectedExpression={type} />).wrapper
+      usingTestingBoxedExpressionI18nContext(
+        <ExpressionContainer decisionName="Test" selectedExpression={expression} />
+      ).wrapper
     );
 
     expect(container.querySelector("#expression-type")).toBeTruthy();
-    expect(container.querySelector("#expression-type")!.innerHTML).toBe("(" + type + ")");
+    expect(container.querySelector("#expression-type")!.innerHTML).toBe("(" + LogicType.Context + ")");
   });
 
   test("should render expression type as undefined, when type prop is not passed", () => {
-    const { container } = render(usingTestingBoxedExpressionI18nContext(<ExpressionContainer name="Test" />).wrapper);
+    const { container } = render(
+      usingTestingBoxedExpressionI18nContext(<ExpressionContainer decisionName="Test" />).wrapper
+    );
     expect(container.querySelector("#expression-type")).toBeTruthy();
     expect(container.querySelector("#expression-type")!.innerHTML).toBe("(&lt;Undefined&gt;)");
   });
 
   describe("Expression Actions dropdown", () => {
     test("should have the clear action disabled on startup", () => {
-      const { container } = render(usingTestingBoxedExpressionI18nContext(<ExpressionContainer name="Test" />).wrapper);
+      const { container } = render(
+        usingTestingBoxedExpressionI18nContext(<ExpressionContainer decisionName="Test" />).wrapper
+      );
 
       const actionsToggleElement = container.querySelector("#expression-actions-toggle")!;
       const actionsToggleButton = actionsToggleElement as HTMLButtonElement;
@@ -65,9 +73,11 @@ describe("ExpressionContainer tests", () => {
     });
 
     test("should have the clear action enabled, when logic type is selected", () => {
+      const expression = { name: "Test", logicType: LogicType.LiteralExpression };
+
       const { container } = render(
         usingTestingBoxedExpressionI18nContext(
-          <ExpressionContainer name="Test" selectedExpression={LogicType.LiteralExpression} />
+          <ExpressionContainer decisionName="Test" selectedExpression={expression} />
         ).wrapper
       );
 
@@ -83,22 +93,24 @@ describe("ExpressionContainer tests", () => {
 
   describe("Logic type selection", () => {
     test("should show the pre-selection, when logic type prop is passed", () => {
-      const expressionBoxContent = LogicType.LiteralExpression;
+      const expression = { name: "Test", logicType: LogicType.Context };
+
       const { container } = render(
         usingTestingBoxedExpressionI18nContext(
-          <ExpressionContainer name="Test" selectedExpression={expressionBoxContent} />
+          <ExpressionContainer decisionName="Test" selectedExpression={expression} />
         ).wrapper
       );
 
       expect(container.querySelector("#expression-container-box")).toBeTruthy();
-      expect(container.querySelector("#expression-container-box")!.innerHTML).toBe(expressionBoxContent);
+      expect(container.querySelector("#expression-container-box")!.innerHTML).toBe(expression.logicType);
     });
 
     test("should reset the selection, when logic type is selected and clear button gets clicked", () => {
-      const expressionBoxContent = LogicType.LiteralExpression;
+      const expression = { name: "Test", logicType: LogicType.LiteralExpression };
+
       const { container } = render(
         usingTestingBoxedExpressionI18nContext(
-          <ExpressionContainer name="Test" selectedExpression={expressionBoxContent} />
+          <ExpressionContainer decisionName="Test" selectedExpression={expression} />
         ).wrapper
       );
 
@@ -111,7 +123,7 @@ describe("ExpressionContainer tests", () => {
       clearAnchor.click();
 
       expect(container.querySelector("#expression-container-box")).toBeTruthy();
-      expect(container.querySelector("#expression-container-box")!.innerHTML).not.toBe(expressionBoxContent);
+      expect(container.querySelector("#expression-container-box")!.innerHTML).not.toBe(expression.logicType);
     });
   });
 });
