@@ -26,6 +26,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.enterprise.inject.Default;
 import javax.inject.Inject;
@@ -39,17 +40,18 @@ import org.kie.workbench.common.stunner.core.client.api.SessionManager;
 import org.kie.workbench.common.stunner.core.client.canvas.CanvasHandler;
 import org.kie.workbench.common.stunner.core.client.session.ClientSession;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
-import org.kie.workbench.common.stunner.core.diagram.GraphsProvider;
 import org.kie.workbench.common.stunner.core.diagram.Metadata;
 import org.kie.workbench.common.stunner.core.graph.Graph;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.uberfire.backend.vfs.Path;
+import org.uberfire.client.mvp.LockRequiredEvent;
 
 import static java.util.Collections.emptyList;
+import static org.kie.workbench.common.dmn.client.docks.navigator.drds.DRGDiagramUtils.isDRG;
 
 @ApplicationScoped
 @Default
-public class DMNDiagramsSession implements GraphsProvider {
+public class DMNDiagramsSession {
 
     private static Diagram NO_DIAGRAM = null;
 
@@ -61,6 +63,8 @@ public class DMNDiagramsSession implements GraphsProvider {
 
     private Map<String, DMNDiagramsSessionState> dmnSessionStatesByPathURI = new HashMap<>();
 
+    private Event<LockRequiredEvent> locker;
+
     public DMNDiagramsSession() {
         // CDI
     }
@@ -68,10 +72,12 @@ public class DMNDiagramsSession implements GraphsProvider {
     @Inject
     public DMNDiagramsSession(final ManagedInstance<DMNDiagramsSessionState> dmnDiagramsSessionStates,
                               final SessionManager sessionManager,
-                              final DMNDiagramUtils dmnDiagramUtils) {
+                              final DMNDiagramUtils dmnDiagramUtils,
+                              final Event<LockRequiredEvent> locker) {
         this.dmnDiagramsSessionStates = dmnDiagramsSessionStates;
         this.sessionManager = sessionManager;
         this.dmnDiagramUtils = dmnDiagramUtils;
+        this.locker = locker;
     }
 
     public void destroyState(final Metadata metadata) {
@@ -120,20 +126,20 @@ public class DMNDiagramsSession implements GraphsProvider {
         final String diagramId = dmnDiagram.getId().getValue();
         getSessionState().getDiagramsByDiagramId().put(diagramId, stunnerDiagram);
         getSessionState().getDMNDiagramsByDiagramId().put(diagramId, dmnDiagram);
+        locker.fire(new LockRequiredEvent());
     }
 
     public void remove(final DMNDiagramElement dmnDiagram) {
         final String diagramId = dmnDiagram.getId().getValue();
         getSessionState().getDiagramsByDiagramId().remove(diagramId);
         getSessionState().getDMNDiagramsByDiagramId().remove(diagramId);
+        locker.fire(new LockRequiredEvent());
     }
 
-    @Override
     public Diagram getDiagram(final String dmnDiagramElementId) {
         return getSessionState().getDiagram(dmnDiagramElementId);
     }
 
-    @Override
     public String getCurrentDiagramId() {
         if (!Objects.isNull(getSessionState())) {
             final Optional<DMNDiagramElement> current = getCurrentDMNDiagramElement();
@@ -183,10 +189,6 @@ public class DMNDiagramsSession implements GraphsProvider {
         return Optional.ofNullable(getSessionState()).map(DMNDiagramsSessionState::getDRGDiagramElement).orElse(null);
     }
 
-    private DMNDiagramTuple getDRGDiagramTuple() {
-        return Optional.ofNullable(getSessionState()).map(DMNDiagramsSessionState::getDRGDiagramTuple).orElse(null);
-    }
-
     public void clear() {
         getSessionState().clear();
     }
@@ -199,12 +201,10 @@ public class DMNDiagramsSession implements GraphsProvider {
         return Optional.ofNullable(getSessionState()).map(DMNDiagramsSessionState::getModelImports).orElse(emptyList());
     }
 
-    @Override
     public boolean isGlobalGraphSelected() {
         return getCurrentDMNDiagramElement().map(DRGDiagramUtils::isDRG).orElse(false);
     }
 
-    @Override
     public List<Graph> getGraphs() {
         return getDMNDiagrams()
                 .stream()
@@ -229,6 +229,14 @@ public class DMNDiagramsSession implements GraphsProvider {
                             .orElse(NO_DIAGRAM);
                 })
                 .orElse(NO_DIAGRAM);
+    }
+
+    public List<Graph> getNonGlobalGraphs() {
+        return getDMNDiagrams()
+                .stream()
+                .filter(dmnDiagramTuple -> !isDRG(dmnDiagramTuple.getDMNDiagram()))
+                .map(tuple -> tuple.getStunnerDiagram().getGraph())
+                .collect(Collectors.toList());
     }
 
     private Optional<ClientSession> getCurrentSession() {
