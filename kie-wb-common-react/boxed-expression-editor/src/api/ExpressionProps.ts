@@ -17,8 +17,12 @@
 import { LogicType } from "./LogicType";
 import { DataType } from "./DataType";
 
-export interface Expression {
+export interface ExpressionProps {
   name: string;
   dataType?: DataType;
   logicType?: LogicType;
+}
+
+export interface LiteralExpressionProps extends ExpressionProps {
+  content?: string;
 }
