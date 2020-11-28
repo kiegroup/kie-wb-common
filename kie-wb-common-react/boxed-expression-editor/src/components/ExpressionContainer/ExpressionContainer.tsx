@@ -62,7 +62,8 @@ export const ExpressionContainer: ({ selectedExpression }: ExpressionContainerPr
   const executeClearAction = useCallback(() => {
     setLogicTypeSelected(false);
     setSelectedExpression({
-      ...selectedExpression,
+      name: selectedExpression.name,
+      dataType: selectedExpression.dataType,
       logicType: LogicType.Undefined,
     });
   }, [selectedExpression]);
@@ -101,20 +102,36 @@ export const ExpressionContainer: ({ selectedExpression }: ExpressionContainerPr
     );
   }, [i18n.selectLogicType, onLogicTypeSelect, renderLogicTypeItems]);
 
-  const renderSelectedExpression = useCallback((selectedExpression: ExpressionProps) => {
-    switch (selectedExpression.logicType) {
-      case LogicType.LiteralExpression:
-        return <LiteralExpression {...(selectedExpression as LiteralExpressionProps)} />;
-      case LogicType.Context:
-      case LogicType.DecisionTable:
-      case LogicType.Relation:
-      case LogicType.Function:
-      case LogicType.Invocation:
-      case LogicType.List:
-      default:
-        return selectedExpression.logicType;
-    }
-  }, []);
+  const updateNameAndDataType = useCallback(
+    (updatedName, updatedDataType) => {
+      setSelectedExpression({
+        ...selectedExpression,
+        name: updatedName,
+        dataType: updatedDataType,
+      });
+    },
+    [selectedExpression]
+  );
+
+  const renderSelectedExpression = useCallback(
+    (selectedExpression: ExpressionProps) => {
+      selectedExpression.updateNameAndDataTypeCallback = updateNameAndDataType;
+
+      switch (selectedExpression.logicType) {
+        case LogicType.LiteralExpression:
+          return <LiteralExpression {...(selectedExpression as LiteralExpressionProps)} />;
+        case LogicType.Context:
+        case LogicType.DecisionTable:
+        case LogicType.Relation:
+        case LogicType.Function:
+        case LogicType.Invocation:
+        case LogicType.List:
+        default:
+          return selectedExpression.logicType;
+      }
+    },
+    [updateNameAndDataType]
+  );
 
   return (
     <div className="expression-container">

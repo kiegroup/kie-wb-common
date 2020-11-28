@@ -14,15 +14,57 @@
  * limitations under the License.
  */
 
+import "./LiteralExpression.css";
 import * as React from "react";
-import { LiteralExpressionProps } from "../../api";
+import { useCallback, useState } from "react";
+import { ExpressionProps, LiteralExpressionProps } from "../../api";
+import { TextArea } from "@patternfly/react-core";
+import { EditExpressionMenu } from "../EditExpressionMenu";
 
 export const LiteralExpression: React.FunctionComponent<LiteralExpressionProps> = ({
   content,
   dataType,
-  logicType,
   name,
+  updateNameAndDataTypeCallback,
 }: LiteralExpressionProps) => {
-  console.log("content", content);
-  return <div>Literal Expression</div>;
+  const [expressionName, setExpressionName] = useState(name);
+  const [expressionDataType, setExpressionDataType] = useState(dataType);
+  const [literalExpressionContent, setLiteralExpressionContent] = useState(content);
+
+  const onExpressionUpdate = useCallback(
+    ({ dataType, name }: ExpressionProps) => {
+      setExpressionName(name);
+      setExpressionDataType(dataType);
+      if (updateNameAndDataTypeCallback && dataType) {
+        updateNameAndDataTypeCallback(name, dataType);
+      }
+    },
+    [updateNameAndDataTypeCallback]
+  );
+
+  const onContentChange = useCallback((updatedContent) => {
+    setLiteralExpressionContent(updatedContent);
+  }, []);
+
+  return (
+    <div className="literal-expression">
+      <div className="literal-expression-header">
+        <p className="expression-name">{expressionName}</p>
+        <p className="expression-data-type">({expressionDataType})</p>
+      </div>
+      <div className="literal-expression-body">
+        <TextArea
+          defaultValue={literalExpressionContent}
+          onChange={onContentChange}
+          aria-label="literal-expression-content"
+        />
+      </div>
+      <EditExpressionMenu
+        arrowPlacement={() => document.querySelector(".literal-expression-header")! as HTMLElement}
+        selectedExpressionName={expressionName}
+        selectedDataType={expressionDataType}
+        onExpressionUpdate={onExpressionUpdate}
+      />
+    </div>
+  );
 };

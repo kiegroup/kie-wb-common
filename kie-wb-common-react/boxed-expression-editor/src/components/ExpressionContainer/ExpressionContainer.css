@@ -15,8 +15,8 @@
  */
 
 .expression-container #expression-container-box {
-  width: 170px;
-  height: 50px;
+  min-width: 170px;
+  min-height: 50px;
   border-style: ridge;
   border-color: #39A5DC;
   display: flex;
@@ -26,14 +26,17 @@
   display: -moz-box;
   display: -ms-flexbox;
   display: -webkit-flex;
+}
+
+.expression-container > #expression-container-box.logic-type-not-present {
   cursor: pointer;
 }
 
-.expression-container #expression-container-box.logic-type-selected {
-  pointer-events: none;
+.expression-container > #expression-container-box.logic-type-selected {
+  cursor: default;
 }
 
-.expression-container #expression-container-box,
+.expression-container > #expression-container-box,
 .expression-container #expression-type {
   font-size: smaller;
   font-style: italic;
