@@ -18,11 +18,19 @@ import { LogicType } from "./LogicType";
 import { DataType } from "./DataType";
 
 export interface ExpressionProps {
+  /** Expression name (which, in DMN world, is equal to the Decision node's name) */
   name: string;
+  /** Optional callback executed to update expression's name and data type */
+  updateNameAndDataTypeCallback?: (updatedName: string, updatedDataType: DataType) => void;
+  /** Optional data type */
   dataType?: DataType;
+  /** Logic type should not be defined at this stage */
   logicType?: LogicType;
 }
 
 export interface LiteralExpressionProps extends ExpressionProps {
+  /** Logic type must be LiteralExpression */
+  logicType: LogicType.LiteralExpression;
+  /** Optional content to display for this literal expression */
   content?: string;
 }
