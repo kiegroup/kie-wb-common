@@ -18,11 +18,11 @@ import * as React from "react";
 import { render } from "@testing-library/react";
 import { BoxedExpressionEditor } from "../../../components/BoxedExpressionEditor";
 import { ExpressionContainerProps } from "../../../components/ExpressionContainer";
-import { ExpressionProps } from "../../../api";
+import { DataType, ExpressionProps } from "../../../api";
 
 describe("BoxedExpressionEditor tests", () => {
   test("should render BoxedExpressionEditor component", () => {
-    const selectedExpression: ExpressionProps = { name: "Expression Name" };
+    const selectedExpression: ExpressionProps = { name: "Expression Name", dataType: DataType.Undefined };
     const expressionDefinition: ExpressionContainerProps = { selectedExpression: selectedExpression };
 
     const { container } = render(<BoxedExpressionEditor expressionDefinition={expressionDefinition} />);

@@ -20,10 +20,10 @@ import { DataType } from "./DataType";
 export interface ExpressionProps {
   /** Expression name (which, in DMN world, is equal to the Decision node's name) */
   name: string;
+  /** Expression data type */
+  dataType: DataType;
   /** Optional callback executed to update expression's name and data type */
   updateNameAndDataTypeCallback?: (updatedName: string, updatedDataType: DataType) => void;
-  /** Optional data type */
-  dataType?: DataType;
   /** Logic type should not be defined at this stage */
   logicType?: LogicType;
 }

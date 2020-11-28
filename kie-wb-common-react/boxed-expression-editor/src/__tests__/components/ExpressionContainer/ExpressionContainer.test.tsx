@@ -18,11 +18,11 @@ import { ExpressionContainer } from "../../../components/ExpressionContainer";
 import { render } from "@testing-library/react";
 import * as React from "react";
 import { usingTestingBoxedExpressionI18nContext } from "../test-utils";
-import { LogicType } from "../../../api";
+import { DataType, LogicType } from "../../../api";
 
 describe("ExpressionContainer tests", () => {
   test("should render ExpressionContainer component", () => {
-    const expression = { name: "Test" };
+    const expression = { name: "Test", dataType: DataType.Undefined };
 
     const { container } = render(
       usingTestingBoxedExpressionI18nContext(<ExpressionContainer selectedExpression={expression} />).wrapper
@@ -33,7 +33,7 @@ describe("ExpressionContainer tests", () => {
 
   test("should render expression title, when name prop is passed", () => {
     const expressionTitle = "Test";
-    const expression = { name: expressionTitle };
+    const expression = { name: expressionTitle, dataType: DataType.Undefined };
 
     const { container } = render(
       usingTestingBoxedExpressionI18nContext(<ExpressionContainer selectedExpression={expression} />).wrapper
@@ -43,7 +43,7 @@ describe("ExpressionContainer tests", () => {
   });
 
   test("should render expression type, when type prop is passed", () => {
-    const expression = { name: "Test", logicType: LogicType.Context };
+    const expression = { name: "Test", logicType: LogicType.Context, dataType: DataType.Undefined };
     const { container } = render(
       usingTestingBoxedExpressionI18nContext(<ExpressionContainer selectedExpression={expression} />).wrapper
     );
@@ -53,7 +53,7 @@ describe("ExpressionContainer tests", () => {
   });
 
   test("should render expression type as undefined, when type prop is not passed", () => {
-    const expression = { name: "Test" };
+    const expression = { name: "Test", dataType: DataType.Undefined };
 
     const { container } = render(
       usingTestingBoxedExpressionI18nContext(<ExpressionContainer selectedExpression={expression} />).wrapper
@@ -64,7 +64,7 @@ describe("ExpressionContainer tests", () => {
 
   describe("Expression Actions dropdown", () => {
     test("should have the clear action disabled on startup", () => {
-      const expression = { name: "Test" };
+      const expression = { name: "Test", dataType: DataType.Undefined };
 
       const { container } = render(
         usingTestingBoxedExpressionI18nContext(<ExpressionContainer selectedExpression={expression} />).wrapper
@@ -79,7 +79,7 @@ describe("ExpressionContainer tests", () => {
     });
 
     test("should have the clear action enabled, when logic type is selected", () => {
-      const expression = { name: "Test", logicType: LogicType.LiteralExpression };
+      const expression = { name: "Test", logicType: LogicType.LiteralExpression, dataType: DataType.Undefined };
 
       const { container } = render(
         usingTestingBoxedExpressionI18nContext(<ExpressionContainer selectedExpression={expression} />).wrapper
@@ -97,7 +97,7 @@ describe("ExpressionContainer tests", () => {
 
   describe("Logic type selection", () => {
     test("should show the pre-selection, when logic type prop is passed", () => {
-      const expression = { name: "Test", logicType: LogicType.Context };
+      const expression = { name: "Test", logicType: LogicType.Context, dataType: DataType.Undefined };
 
       const { container } = render(
         usingTestingBoxedExpressionI18nContext(<ExpressionContainer selectedExpression={expression} />).wrapper
@@ -108,7 +108,7 @@ describe("ExpressionContainer tests", () => {
     });
 
     test("should reset the selection, when logic type is selected and clear button gets clicked", () => {
-      const expression = { name: "Test", logicType: LogicType.LiteralExpression };
+      const expression = { name: "Test", logicType: LogicType.LiteralExpression, dataType: DataType.Undefined };
 
       const { container } = render(
         usingTestingBoxedExpressionI18nContext(<ExpressionContainer selectedExpression={expression} />).wrapper
