@@ -17,8 +17,12 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 import './index.css';
-import {BoxedExpressionEditor, ExpressionContainerProps} from "./boxed_expression_editor";
+import { BoxedExpressionEditor, DataType, ExpressionContainerProps } from "./boxed_expression_editor";
 
-const expressionDefinition: ExpressionContainerProps = {'decisionName': 'Expression Name'};
+const selectedExpression = {
+  'name': 'Expression Name',
+  'dataType': DataType.Undefined,
+};
+const expressionDefinition: ExpressionContainerProps = {'selectedExpression': selectedExpression};
 
 ReactDOM.render(<BoxedExpressionEditor expressionDefinition={expressionDefinition}/>, document.getElementById('root'));
