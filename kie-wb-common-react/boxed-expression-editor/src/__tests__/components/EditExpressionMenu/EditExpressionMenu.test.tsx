@@ -19,9 +19,8 @@ import { usingTestingBoxedExpressionI18nContext } from "../test-utils";
 import * as React from "react";
 import { EditExpressionMenu } from "../../../components/EditExpressionMenu";
 import { activatePopover } from "../PopoverMenu/PopoverMenu.test";
-import { DataType, Expression } from "../../../api";
+import { DataType, ExpressionProps, LogicType } from "../../../api";
 import * as _ from "lodash";
-import { LogicType } from "../../../api/LogicType";
 
 jest.useFakeTimers();
 
@@ -176,7 +175,7 @@ describe("EditExpressionMenu tests", () => {
   });
 
   test("should trigger the onExpressionUpdate callback when the expression name is changed", async () => {
-    const onExpressionUpdate = (expression: Expression) => {
+    const onExpressionUpdate = (expression: ExpressionProps) => {
       _.identity(expression);
     };
     const mockedOnExpressionUpdate = jest.fn(onExpressionUpdate);

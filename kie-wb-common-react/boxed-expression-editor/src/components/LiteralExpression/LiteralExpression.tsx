@@ -15,12 +15,14 @@
  */
 
 import * as React from "react";
+import { LiteralExpressionProps } from "../../api";
 
-export interface LiteralExpressionProps {
-  /** Title of the popover menu */
-  title?: string;
-}
-
-export const LiteralExpression: React.FunctionComponent<LiteralExpressionProps> = () => {
+export const LiteralExpression: React.FunctionComponent<LiteralExpressionProps> = ({
+  content,
+  dataType,
+  logicType,
+  name,
+}: LiteralExpressionProps) => {
+  console.log("content", content);
   return <div>Literal Expression</div>;
 };

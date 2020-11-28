@@ -19,7 +19,7 @@ import * as React from "react";
 import { useCallback, useState } from "react";
 import { PopoverMenu } from "../PopoverMenu";
 import { useBoxedExpressionEditorI18n } from "../../i18n";
-import { DataType, Expression } from "../../api";
+import { DataType, ExpressionProps } from "../../api";
 import { Select, SelectOption, SelectVariant } from "@patternfly/react-core";
 import * as _ from "lodash";
 
@@ -39,7 +39,7 @@ export interface EditExpressionMenuProps {
   /** The pre-selected expression name */
   selectedExpressionName: string;
   /** Function to be called when the expression gets updated, passing the most updated version of it */
-  onExpressionUpdate: (expression: Expression) => void;
+  onExpressionUpdate: (expression: ExpressionProps) => void;
 }
 
 export const EditExpressionMenu: React.FunctionComponent<EditExpressionMenuProps> = ({
