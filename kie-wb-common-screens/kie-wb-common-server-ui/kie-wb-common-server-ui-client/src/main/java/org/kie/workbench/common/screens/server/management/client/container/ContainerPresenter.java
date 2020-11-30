@@ -18,8 +18,10 @@ package org.kie.workbench.common.screens.server.management.client.container;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.Dependent;
@@ -33,6 +35,8 @@ import org.jboss.errai.common.client.api.RemoteCallback;
 import org.kie.server.api.model.KieContainerStatus;
 import org.kie.server.api.model.Message;
 import org.kie.server.api.model.Severity;
+import org.kie.server.controller.api.model.events.ServerInstanceDeleted;
+import org.kie.server.controller.api.model.events.ServerInstanceDisconnected;
 import org.kie.server.controller.api.model.events.ServerInstanceUpdated;
 import org.kie.server.controller.api.model.runtime.Container;
 import org.kie.server.controller.api.model.spec.Capability;
@@ -78,6 +82,9 @@ public class ContainerPresenter {
     private final Event<ServerTemplateSelected> serverTemplateSelectedEvent;
     private final Event<NotificationEvent> notification;
     private ContainerSpec containerSpec;
+    private Boolean isEmpty = null;
+    private Set<String> serverInstances = new HashSet<>();
+    
 
     @Inject
     public ContainerPresenter(final Logger logger,
@@ -105,7 +112,7 @@ public class ContainerPresenter {
     @PostConstruct
     public void init() {
         view.init(this);
-        view.setStatus(containerRemoteStatusPresenter.getView());
+        view.setStatus(containerStatusEmptyPresenter.getView());
         view.setRulesConfig(containerRulesConfigPresenter.getView());
         view.setProcessConfig(containerProcessConfigPresenter.getView());
     }
@@ -120,44 +127,47 @@ public class ContainerPresenter {
 
     public void onRefresh(@Observes final RefreshRemoteServers refresh) {
         if (refresh != null && refresh.getContainerSpecKey() != null) {
-            load(refresh.getContainerSpecKey());
+            runtimeManagementService.call((RemoteCallback<ContainerSpecData>) content -> {
+                logger.info("onRefresh {}", content);
+                checkNotNull("content", content);
+                updateContainerStatusView(content.getContainerSpec(), content.getContainers());
+            }).getContainersByContainerSpec(refresh.getContainerSpecKey().getServerTemplateKey().getId(),
+                                            refresh.getContainerSpecKey().getId());
         } else {
-            logger.warn("Illegal event argument.");
+            logger.warn("Illegal event argument RefreshRemoteServers {}", refresh);
         }
     }
 
-    public void load(@Observes final ContainerSpecSelected containerSpecSelected) {
+    public void onSelectContainerSpec(@Observes final ContainerSpecSelected containerSpecSelected) {
         if (containerSpecSelected != null &&
                 containerSpecSelected.getContainerSpecKey() != null) {
+            logger.info("onSelectContainerSpec {}", containerSpecSelected);
             load(containerSpecSelected.getContainerSpecKey());
         } else {
-            logger.warn("Illegal event argument.");
+            logger.warn("Illegal event argument ContainerSpecSelected {}", containerSpecSelected);
         }
     }
 
-    public void onInstanceUpdated(@Observes ServerInstanceUpdated instanceUpdated) {
-        if (instanceUpdated != null && containerSpec != null && containerSpec.getServerTemplateKey().getId().equals(instanceUpdated.getServerInstance().getServerTemplateId())) {
-            load(containerSpec);
-        }
-    }
-
-    public void loadContainers(@Observes final ContainerSpecData content) {
+    public void onChangeContainerSpecData(@Observes final ContainerSpecData content) {
         if (content != null &&
                 content.getContainerSpec() != null &&
                 content.getContainers() != null &&
                 containerSpec != null &&
                 containerSpec.getId() != null &&
                 containerSpec.getId().equals(content.getContainerSpec().getId())) {
+
             resetReleaseIdForFailedContainers(content.getContainers(), content.getContainerSpec());
             if (isFailedContainerSpec(content.getContainers(), content.getContainerSpec())) {
                 content.getContainerSpec().setStatus(KieContainerStatus.FAILED);
             }
+
             setup(content.getContainerSpec(),
                   content.getContainers());
         } else {
             logger.warn("Illegal event argument.");
         }
     }
+
 
     private void resetReleaseIdForFailedContainers(Collection<Container> containers, ContainerSpec containerSpec) {
         containers.forEach(container -> {
@@ -176,7 +186,8 @@ public class ContainerPresenter {
         return false;
     }
 
-    public void refreshOnContainerUpdateEvent(@Observes final ContainerUpdateEvent updateEvent) {
+    public void onUpdateContainerSpec(@Observes final ContainerUpdateEvent updateEvent) {
+
         final ContainerRuntimeOperation runtimeOperation = updateEvent.getContainerRuntimeOperation();
 
         if (updateEvent.getContainerSpec().equals(containerSpec) && runtimeOperation != STOP_CONTAINER) {
@@ -191,46 +202,49 @@ public class ContainerPresenter {
     public void load(final ContainerSpecKey containerSpecKey) {
         checkNotNull("containerSpecKey", containerSpecKey);
         runtimeManagementService.call((RemoteCallback<ContainerSpecData>) content -> {
+            logger.debug("load {}", content);
             checkNotNull("content", content);
-            setContainerSpec(content.getContainerSpec());
-            loadContainers(content);
+            if(content.getContainerSpec() != null && content.getContainers() != null) {
+                setup(content.getContainerSpec(), content.getContainers());
+            }
         }).getContainersByContainerSpec(containerSpecKey.getServerTemplateKey().getId(),
                                         containerSpecKey.getId());
+
     }
 
     private void setup(final ContainerSpec containerSpec,
                        final Collection<Container> containers) {
-        this.containerSpec = checkNotNull("containerSpec",
-                                          containerSpec);
-        updateView(containers);
+        this.containerSpec = checkNotNull("containerSpec", containerSpec);
+        updateView(containerSpec, containers);
     }
 
-    private void updateView(final Collection<Container> containers) {
-        containerStatusEmptyPresenter.setup(containerSpec);
-        containerRemoteStatusPresenter.setup(containerSpec,
-                                             containers);
-        view.clear();
-        if (isEmpty(containers)) {
-            view.setStatus(containerStatusEmptyPresenter.getView());
-        } else {
-            view.setStatus(containerRemoteStatusPresenter.getView());
-        }
+    private void updateView(final ContainerSpec containerSpecKey, final Collection<Container> containers) {
+        containerStatusEmptyPresenter.setup(containerSpecKey);
+        containerRemoteStatusPresenter.setup(containerSpecKey, containers);
 
-        view.setContainerName(containerSpec.getContainerName());
-        view.setGroupIp(containerSpec.getReleasedId().getGroupId());
-        view.setArtifactId(containerSpec.getReleasedId().getArtifactId());
-        containerRulesConfigPresenter.setVersion(containerSpec.getReleasedId().getVersion());
-        containerProcessConfigPresenter.disable();
+        updateContainerView(containerSpecKey, containers);
+        updateContainerStatusView(containerSpecKey, containers);
 
         updateStatus(containerSpec.getStatus() != null ? containerSpec.getStatus() : KieContainerStatus.STOPPED, containers);
+    }
 
-        for (Map.Entry<Capability, ContainerConfig> entry : containerSpec.getConfigs().entrySet()) {
+    private void updateContainerView(ContainerSpec updatedContainerSpec, Collection<Container> containers) {
+        view.setContainerName(updatedContainerSpec.getContainerName());
+        view.setGroupIp(updatedContainerSpec.getReleasedId().getGroupId());
+        view.setArtifactId(updatedContainerSpec.getReleasedId().getArtifactId());
+        containerRulesConfigPresenter.setVersion(updatedContainerSpec.getReleasedId().getVersion());
+        containerProcessConfigPresenter.disable();
+
+        for (Map.Entry<Capability, ContainerConfig> entry : updatedContainerSpec.getConfigs().entrySet()) {
             switch (entry.getKey()) {
                 case RULE:
                     setupRuleConfig((RuleConfig) entry.getValue());
                     break;
                 case PROCESS:
                     setupProcessConfig((ProcessConfig) entry.getValue());
+                    break;
+                case PLANNING:
+                    // do nothing
                     break;
             }
         }
@@ -243,6 +257,64 @@ public class ContainerPresenter {
             }
         }
         return true;
+    }
+
+    public void onServerInstanceUpdated( @Observes final ServerInstanceUpdated serverInstanceUpdated ) {
+        if(this.containerSpec == null) {
+            return;
+        }
+        if ( serverInstanceUpdated != null && serverInstanceUpdated.getServerInstance() != null ) {
+            serverInstanceUpdated.getServerInstance().getContainers().stream()
+                                                                     .filter(c -> !KieContainerStatus.STOPPED.equals(c.getStatus()))
+                                                                     .filter(c -> this.containerSpec.getId().equals(c.getContainerSpecId()))
+                                                                     .filter(c -> this.containerSpec.getServerTemplateKey().getId().equals(c.getServerTemplateId()))
+                                                                     .forEach(c -> serverInstances.add(c.getServerInstanceId()));
+            updateContainerStatusView();
+        } else {
+            logger.warn( "Illegal event argument ServerInstanceUpdated {}",  serverInstanceUpdated);
+        }
+    }
+
+    public void onServerInstanceDisconnect( @Observes final ServerInstanceDisconnected serverInstanceDisconnected ) {
+        if ( serverInstanceDisconnected != null &&
+                serverInstanceDisconnected.getServerInstanceId() != null ) {
+            if(serverInstances.remove(serverInstanceDisconnected.getServerInstanceId())) {
+                updateContainerStatusView();
+            }
+        } else {
+            logger.warn( "Illegal event argument ServerInstanceDisconnected {}",  serverInstanceDisconnected);
+        }
+    }
+
+    public void onServerInstanceDelete( @Observes final ServerInstanceDeleted serverInstanceDeleted ) {
+        if ( serverInstanceDeleted != null &&
+                serverInstanceDeleted.getServerInstanceId() != null ) {
+
+            if(serverInstances.remove(serverInstanceDeleted.getServerInstanceId())) {
+                updateContainerStatusView();
+            }
+        } else {
+            logger.warn( "Illegal event argument ServerInstanceDeleted {}", serverInstanceDeleted);
+        }
+    }
+
+    private void updateContainerStatusView(ContainerSpecKey containerSpecUpdated, Collection<Container> containers) {
+        logger.debug( "updateContainerStatusView {} with number of containers {}", containerSpecUpdated, containers.size());
+        serverInstances.clear();
+        containers.stream().filter(c -> !KieContainerStatus.STOPPED.equals(c.getStatus())).forEach(c -> serverInstances.add(c.getServerInstanceId()));
+        updateContainerStatusView();
+    }
+    
+    private void updateContainerStatusView() {
+        logger.debug( "updateContainerStatusView with number of containers {}", serverInstances);
+        // switch from empty -> not empty. Avoid the blink
+        if ((isEmpty== null && serverInstances.isEmpty()) || (serverInstances.isEmpty() && !isEmpty)) {
+            view.setStatus(containerStatusEmptyPresenter.getView());
+            isEmpty = true;
+        } else if ((isEmpty == null && !serverInstances.isEmpty()) || (!serverInstances.isEmpty() && isEmpty)) {
+            view.setStatus(containerRemoteStatusPresenter.getView());
+            isEmpty = false;
+        }
     }
 
     protected void updateStatus(final KieContainerStatus status, final Collection<Container> containers) {

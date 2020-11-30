@@ -16,6 +16,7 @@
 
 package org.kie.workbench.common.screens.server.management.client.remote;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.Dependent;
@@ -26,6 +27,7 @@ import javax.inject.Inject;
 import org.jboss.errai.common.client.api.Caller;
 import org.jboss.errai.common.client.api.ErrorCallback;
 import org.jboss.errai.common.client.api.RemoteCallback;
+import org.kie.server.api.model.KieContainerStatus;
 import org.kie.server.controller.api.model.events.ServerInstanceUpdated;
 import org.kie.server.controller.api.model.runtime.Container;
 import org.kie.server.controller.api.model.runtime.ServerInstanceKey;
@@ -68,6 +70,7 @@ public class RemotePresenter {
     private final Event<NotificationEvent> notification;
 
     private ServerInstanceKey serverInstanceKey;
+    private Boolean isEmpty = null;
 
     @Inject
     public RemotePresenter( final Logger logger,
@@ -150,13 +153,25 @@ public class RemotePresenter {
 
     private void loadContent( final Collection<Container> containers ) {
 
-        view.clear();
+        Collection<Container> nonStoppedContainers = new ArrayList<>();
+        for (Container container : containers) {
+            if(!KieContainerStatus.STOPPED.equals(container.getStatus())) {
+                nonStoppedContainers.add(container);
+            }
+        }
+
+        if(isEmpty == null) {
+            isEmpty = !nonStoppedContainers.isEmpty();
+        }
+
+        remoteStatusPresenter.setup( nonStoppedContainers );
         view.setServerName( serverInstanceKey.getServerName() );
         view.setServerURL( serverInstanceKey.getUrl() );
-        if ( containers.isEmpty() ) {
+        if ((nonStoppedContainers.isEmpty() && isEmpty == null) || (nonStoppedContainers.isEmpty() && !isEmpty)) {
+            isEmpty = true;
             view.setEmptyView( remoteEmptyPresenter.getView() );
-        } else {
-            remoteStatusPresenter.setup( containers );
+        } else if ((!nonStoppedContainers.isEmpty() && isEmpty == null) || (!nonStoppedContainers.isEmpty() && isEmpty)){
+            isEmpty = false;
             view.setStatusPresenter( remoteStatusPresenter.getView() );
         }
     }

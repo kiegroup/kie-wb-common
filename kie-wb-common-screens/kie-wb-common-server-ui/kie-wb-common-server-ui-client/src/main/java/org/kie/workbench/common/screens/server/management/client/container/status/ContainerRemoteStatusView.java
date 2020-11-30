@@ -38,8 +38,12 @@ public class ContainerRemoteStatusView extends Composite
 
     @Override
     public void addCard(final IsWidget widget) {
-        cardContainer.add(checkNotNull("widget",
-                                       widget));
+        cardContainer.add(checkNotNull("widget",  widget));
+    }
+
+    @Override
+    public void removeCard(final IsWidget widget) {
+        cardContainer.remove(checkNotNull("widget",  widget));
     }
 
     @Override
