@@ -38,8 +38,8 @@ describe("ExpressionContainer tests", () => {
     const { container } = render(
       usingTestingBoxedExpressionI18nContext(<ExpressionContainer selectedExpression={expression} />).wrapper
     );
-    expect(container.querySelector("#expression-title")).toBeTruthy();
-    expect(container.querySelector("#expression-title")!.innerHTML).toBe(expressionTitle);
+    expect(container.querySelector(".expression-title")).toBeTruthy();
+    expect(container.querySelector(".expression-title")!.innerHTML).toBe(expressionTitle);
   });
 
   test("should render expression type, when type prop is passed", () => {
@@ -48,8 +48,8 @@ describe("ExpressionContainer tests", () => {
       usingTestingBoxedExpressionI18nContext(<ExpressionContainer selectedExpression={expression} />).wrapper
     );
 
-    expect(container.querySelector("#expression-type")).toBeTruthy();
-    expect(container.querySelector("#expression-type")!.innerHTML).toBe("(" + LogicType.Context + ")");
+    expect(container.querySelector(".expression-type")).toBeTruthy();
+    expect(container.querySelector(".expression-type")!.innerHTML).toBe("(" + LogicType.Context + ")");
   });
 
   test("should render expression type as undefined, when type prop is not passed", () => {
@@ -58,8 +58,8 @@ describe("ExpressionContainer tests", () => {
     const { container } = render(
       usingTestingBoxedExpressionI18nContext(<ExpressionContainer selectedExpression={expression} />).wrapper
     );
-    expect(container.querySelector("#expression-type")).toBeTruthy();
-    expect(container.querySelector("#expression-type")!.innerHTML).toBe("(&lt;Undefined&gt;)");
+    expect(container.querySelector(".expression-type")).toBeTruthy();
+    expect(container.querySelector(".expression-type")!.innerHTML).toBe("(&lt;Undefined&gt;)");
   });
 
   describe("Expression Actions dropdown", () => {
@@ -70,7 +70,7 @@ describe("ExpressionContainer tests", () => {
         usingTestingBoxedExpressionI18nContext(<ExpressionContainer selectedExpression={expression} />).wrapper
       );
 
-      const actionsToggleElement = container.querySelector("#expression-actions-toggle")!;
+      const actionsToggleElement = container.querySelector(".expression-actions-toggle")!;
       const actionsToggleButton = actionsToggleElement as HTMLButtonElement;
       actionsToggleButton.click();
 
@@ -85,7 +85,7 @@ describe("ExpressionContainer tests", () => {
         usingTestingBoxedExpressionI18nContext(<ExpressionContainer selectedExpression={expression} />).wrapper
       );
 
-      const actionsToggleElement = container.querySelector("#expression-actions-toggle")!;
+      const actionsToggleElement = container.querySelector(".expression-actions-toggle")!;
       const actionsToggleButton = actionsToggleElement as HTMLButtonElement;
       actionsToggleButton.click();
 
@@ -103,8 +103,8 @@ describe("ExpressionContainer tests", () => {
         usingTestingBoxedExpressionI18nContext(<ExpressionContainer selectedExpression={expression} />).wrapper
       );
 
-      expect(container.querySelector("#expression-container-box")).toBeTruthy();
-      expect(container.querySelector("#expression-container-box")!.innerHTML).toBe(expression.logicType);
+      expect(container.querySelector(".expression-container-box")).toBeTruthy();
+      expect(container.querySelector(".expression-container-box")!.innerHTML).toBe(expression.logicType);
     });
 
     test("should reset the selection, when logic type is selected and clear button gets clicked", () => {
@@ -114,7 +114,7 @@ describe("ExpressionContainer tests", () => {
         usingTestingBoxedExpressionI18nContext(<ExpressionContainer selectedExpression={expression} />).wrapper
       );
 
-      const actionsToggleElement = container.querySelector("#expression-actions-toggle")!;
+      const actionsToggleElement = container.querySelector(".expression-actions-toggle")!;
       const actionsToggleButton = actionsToggleElement as HTMLButtonElement;
       actionsToggleButton.click();
 
@@ -122,8 +122,8 @@ describe("ExpressionContainer tests", () => {
       const clearAnchor = clearElement as HTMLAnchorElement;
       clearAnchor.click();
 
-      expect(container.querySelector("#expression-container-box")).toBeTruthy();
-      expect(container.querySelector("#expression-container-box")!.innerHTML).not.toBe(expression.logicType);
+      expect(container.querySelector(".expression-container-box")).toBeTruthy();
+      expect(container.querySelector(".expression-container-box")!.innerHTML).not.toBe(expression.logicType);
     });
   });
 });

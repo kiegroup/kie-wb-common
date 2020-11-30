@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-.expression-container #expression-container-box {
+.expression-container .expression-container-box {
   min-width: 170px;
   min-height: 50px;
   border-style: ridge;
@@ -28,30 +28,30 @@
   display: -webkit-flex;
 }
 
-.expression-container > #expression-container-box.logic-type-not-present {
+.expression-container > .expression-container-box.logic-type-not-present {
   cursor: pointer;
 }
 
-.expression-container > #expression-container-box.logic-type-selected {
+.expression-container > .expression-container-box.logic-type-selected {
   cursor: default;
 }
 
-.expression-container > #expression-container-box,
-.expression-container #expression-type {
+.expression-container > .expression-container-box,
+.expression-container .expression-type {
   font-size: smaller;
   font-style: italic;
   color: gray;
 }
 
-#expression-actions .pf-c-dropdown .pf-c-dropdown__menu,
-#expression-actions-toggle {
+.expression-actions .pf-c-dropdown .pf-c-dropdown__menu,
+.expression-actions-toggle {
   padding: 0;
 }
 
-#expression-actions .pf-c-dropdown a {
+.expression-actions .pf-c-dropdown a {
   font-size: var(--small-font-size);
 }
 
-.expression-container #expression-actions .pf-c-dropdown button:focus {
+.expression-container .expression-actions .pf-c-dropdown button:focus {
   outline-width: 0;
 }

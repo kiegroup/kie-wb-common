@@ -6,19 +6,19 @@ exports[`BoxedExpressionEditor tests should render BoxedExpressionEditor compone
     class="expression-container"
   >
     <span
-      id="expression-title"
+      class="expression-title"
     >
       Expression Name
     </span>
     <span
-      id="expression-type"
+      class="expression-type"
     >
       (
       &lt;Undefined&gt;
       )
     </span>
     <span
-      id="expression-actions"
+      class="expression-actions"
     >
       <div
         class="pf-c-dropdown"
@@ -30,8 +30,8 @@ exports[`BoxedExpressionEditor tests should render BoxedExpressionEditor compone
           aria-expanded="false"
           aria-haspopup="true"
           aria-label="Actions"
-          class="pf-c-dropdown__toggle pf-m-plain"
-          id="expression-actions-toggle"
+          class="pf-c-dropdown__toggle pf-m-plain expression-actions-toggle"
+          id="pf-dropdown-toggle-id-0"
           type="button"
         >
           <svg
@@ -51,8 +51,7 @@ exports[`BoxedExpressionEditor tests should render BoxedExpressionEditor compone
       </div>
     </span>
     <div
-      class="logic-type-not-present"
-      id="expression-container-box"
+      class="expression-container-box logic-type-not-present"
     >
       Select expression
     </div>

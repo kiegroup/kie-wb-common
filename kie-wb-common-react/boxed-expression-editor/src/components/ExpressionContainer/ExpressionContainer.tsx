@@ -72,7 +72,9 @@ export const ExpressionContainer: ({ selectedExpression }: ExpressionContainerPr
     return (
       <Dropdown
         onSelect={() => setActionDropDownOpen(!actionDropdownIsOpen)}
-        toggle={<KebabToggle onToggle={(isOpen) => setActionDropDownOpen(isOpen)} id="expression-actions-toggle" />}
+        toggle={
+          <KebabToggle onToggle={(isOpen) => setActionDropDownOpen(isOpen)} className="expression-actions-toggle" />
+        }
         isOpen={actionDropdownIsOpen}
         isPlain
         dropdownItems={[
@@ -96,7 +98,7 @@ export const ExpressionContainer: ({ selectedExpression }: ExpressionContainerPr
     return (
       <PopoverMenu
         title={i18n.selectLogicType}
-        arrowPlacement={() => document.getElementById("expression-container-box")!}
+        arrowPlacement={() => document.querySelector(".expression-container-box")! as HTMLElement}
         body={<SimpleList onSelect={onLogicTypeSelect}>{renderLogicTypeItems()}</SimpleList>}
       />
     );
@@ -135,13 +137,12 @@ export const ExpressionContainer: ({ selectedExpression }: ExpressionContainerPr
 
   return (
     <div className="expression-container">
-      <span id="expression-title">{selectedExpression.name}</span>
-      <span id="expression-type">({selectedExpression.logicType || LogicType.Undefined})</span>
-      <span id="expression-actions">{renderExpressionActionsDropdown()}</span>
+      <span className="expression-title">{selectedExpression.name}</span>
+      <span className="expression-type">({selectedExpression.logicType || LogicType.Undefined})</span>
+      <span className="expression-actions">{renderExpressionActionsDropdown()}</span>
 
       <div
-        id="expression-container-box"
-        className={logicTypeIsPresent ? "logic-type-selected" : "logic-type-not-present"}
+        className={`expression-container-box ${logicTypeIsPresent ? "logic-type-selected" : "logic-type-not-present"}`}
       >
         {selectedExpression.logicType ? renderSelectedExpression(selectedExpression) : i18n.selectExpression}
       </div>
