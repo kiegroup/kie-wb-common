@@ -15,7 +15,7 @@
  */
 
 import * as React from "react";
-import { useCallback, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import * as _ from "lodash";
 import "./ExpressionContainer.css";
 import { useBoxedExpressionEditorI18n } from "../../i18n";
@@ -51,30 +51,37 @@ export const ExpressionContainer: ({ selectedExpression }: ExpressionContainerPr
     (currentItem: React.RefObject<HTMLButtonElement>, currentItemProps: SimpleListItemProps) => {
       setLogicTypeSelected(true);
       const selectedLogicType = currentItemProps.children as LogicType;
-      setSelectedExpression({
-        ...selectedExpression,
+      setSelectedExpression((previousSelectedExpression: ExpressionProps) => ({
+        ...previousSelectedExpression,
         logicType: selectedLogicType,
-      });
+      }));
     },
-    [selectedExpression]
+    []
   );
 
   const executeClearAction = useCallback(() => {
     setLogicTypeSelected(false);
-    setSelectedExpression({
-      name: selectedExpression.name,
-      dataType: selectedExpression.dataType,
+    setSelectedExpression((previousSelectedExpression: ExpressionProps) => ({
+      name: previousSelectedExpression.name,
+      dataType: previousSelectedExpression.dataType,
       logicType: LogicType.Undefined,
-    });
-  }, [selectedExpression]);
+    }));
+  }, []);
+
+  const onDropdownToggle = useCallback((isOpen) => {
+    return setActionDropDownOpen(isOpen);
+  }, []);
+
+  const onExpressionActionDropdownSelect = useCallback(
+    (actionDropdownIsOpen) => setActionDropDownOpen(!actionDropdownIsOpen),
+    []
+  );
 
   const renderExpressionActionsDropdown = useCallback(() => {
     return (
       <Dropdown
-        onSelect={() => setActionDropDownOpen(!actionDropdownIsOpen)}
-        toggle={
-          <KebabToggle onToggle={(isOpen) => setActionDropDownOpen(isOpen)} className="expression-actions-toggle" />
-        }
+        onSelect={onExpressionActionDropdownSelect}
+        toggle={<KebabToggle onToggle={onDropdownToggle} className="expression-actions-toggle" />}
         isOpen={actionDropdownIsOpen}
         isPlain
         dropdownItems={[
@@ -84,7 +91,14 @@ export const ExpressionContainer: ({ selectedExpression }: ExpressionContainerPr
         ]}
       />
     );
-  }, [i18n.clear, actionDropdownIsOpen, logicTypeIsPresent, executeClearAction]);
+  }, [
+    i18n.clear,
+    onExpressionActionDropdownSelect,
+    onDropdownToggle,
+    actionDropdownIsOpen,
+    logicTypeIsPresent,
+    executeClearAction,
+  ]);
 
   const getLogicTypesWithoutUndefined = useCallback(() => {
     return Object.values(LogicType).filter((logicType) => logicType !== LogicType.Undefined);
@@ -94,46 +108,48 @@ export const ExpressionContainer: ({ selectedExpression }: ExpressionContainerPr
     return _.map(getLogicTypesWithoutUndefined(), (key) => <SimpleListItem key={key}>{key}</SimpleListItem>);
   }, [getLogicTypesWithoutUndefined]);
 
+  const getLogicSelectionArrowPlacement = useCallback(
+    () => document.querySelector(".expression-container-box")! as HTMLElement,
+    []
+  );
+
   const buildLogicSelectorMenu = useCallback(() => {
     return (
       <PopoverMenu
         title={i18n.selectLogicType}
-        arrowPlacement={() => document.querySelector(".expression-container-box")! as HTMLElement}
+        arrowPlacement={getLogicSelectionArrowPlacement}
         body={<SimpleList onSelect={onLogicTypeSelect}>{renderLogicTypeItems()}</SimpleList>}
       />
     );
-  }, [i18n.selectLogicType, onLogicTypeSelect, renderLogicTypeItems]);
+  }, [i18n.selectLogicType, getLogicSelectionArrowPlacement, onLogicTypeSelect, renderLogicTypeItems]);
 
-  const updateNameAndDataType = useCallback(
-    (updatedName, updatedDataType) => {
-      setSelectedExpression({
-        ...selectedExpression,
-        name: updatedName,
-        dataType: updatedDataType,
-      });
-    },
-    [selectedExpression]
-  );
+  const updateNameAndDataType = useCallback((updatedName, updatedDataType) => {
+    setSelectedExpression((previousSelectedExpression: ExpressionProps) => ({
+      ...previousSelectedExpression,
+      name: updatedName,
+      dataType: updatedDataType,
+    }));
+  }, []);
 
-  const renderSelectedExpression = useCallback(
-    (selectedExpression: ExpressionProps) => {
-      selectedExpression.updateNameAndDataTypeCallback = updateNameAndDataType;
-
-      switch (selectedExpression.logicType) {
-        case LogicType.LiteralExpression:
-          return <LiteralExpression {...(selectedExpression as LiteralExpressionProps)} />;
-        case LogicType.Context:
-        case LogicType.DecisionTable:
-        case LogicType.Relation:
-        case LogicType.Function:
-        case LogicType.Invocation:
-        case LogicType.List:
-        default:
-          return selectedExpression.logicType;
-      }
-    },
-    [updateNameAndDataType]
-  );
+  const renderSelectedExpression = useMemo(() => {
+    switch (selectedExpression.logicType) {
+      case LogicType.LiteralExpression:
+        return (
+          <LiteralExpression
+            updateNameAndDataTypeCallback={updateNameAndDataType}
+            {...(selectedExpression as LiteralExpressionProps)}
+          />
+        );
+      case LogicType.Context:
+      case LogicType.DecisionTable:
+      case LogicType.Relation:
+      case LogicType.Function:
+      case LogicType.Invocation:
+      case LogicType.List:
+      default:
+        return selectedExpression.logicType;
+    }
+  }, [selectedExpression, updateNameAndDataType]);
 
   return (
     <div className="expression-container">
@@ -144,7 +160,7 @@ export const ExpressionContainer: ({ selectedExpression }: ExpressionContainerPr
       <div
         className={`expression-container-box ${logicTypeIsPresent ? "logic-type-selected" : "logic-type-not-present"}`}
       >
-        {selectedExpression.logicType ? renderSelectedExpression(selectedExpression) : i18n.selectExpression}
+        {selectedExpression.logicType ? renderSelectedExpression : i18n.selectExpression}
       </div>
 
       {!logicTypeIsPresent ? buildLogicSelectorMenu() : null}
