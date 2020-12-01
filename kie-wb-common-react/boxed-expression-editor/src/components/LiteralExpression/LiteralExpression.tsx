@@ -46,6 +46,11 @@ export const LiteralExpression: React.FunctionComponent<LiteralExpressionProps> 
     setLiteralExpressionContent(updatedContent);
   }, []);
 
+  const getEditExpressionMenuArrowPlacement = useCallback(
+    () => document.querySelector(".literal-expression-header")! as HTMLElement,
+    []
+  );
+
   return (
     <div className="literal-expression">
       <div className="literal-expression-header">
@@ -60,7 +65,7 @@ export const LiteralExpression: React.FunctionComponent<LiteralExpressionProps> 
         />
       </div>
       <EditExpressionMenu
-        arrowPlacement={() => document.querySelector(".literal-expression-header")! as HTMLElement}
+        arrowPlacement={getEditExpressionMenuArrowPlacement}
         selectedExpressionName={expressionName}
         selectedDataType={expressionDataType}
         onExpressionUpdate={onExpressionUpdate}
