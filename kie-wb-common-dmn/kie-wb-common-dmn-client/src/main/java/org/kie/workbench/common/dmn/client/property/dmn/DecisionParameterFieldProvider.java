@@ -18,8 +18,8 @@ package org.kie.workbench.common.dmn.client.property.dmn;
 
 import javax.enterprise.context.Dependent;
 
-import org.kie.workbench.common.dmn.api.property.dmn.DecisionServiceParametersList;
 import org.kie.workbench.common.dmn.api.property.dmn.DecisionParametersListFieldType;
+import org.kie.workbench.common.dmn.api.property.dmn.DecisionServiceParametersList;
 import org.kie.workbench.common.forms.fields.shared.fieldTypes.basic.BasicTypeFieldProvider;
 import org.kie.workbench.common.forms.model.TypeInfo;
 

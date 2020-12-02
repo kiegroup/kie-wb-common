@@ -74,7 +74,7 @@ public class DecisionServiceParametersListWidget extends Composite implements Ha
 
     private final ParameterGroup groupInputs;
 
-    @DataField("widget-container")
+    @DataField("decision-service-parameters-widget-container")
     private final HTMLDivElement container;
 
     private boolean enabled;
@@ -259,15 +259,11 @@ public class DecisionServiceParametersListWidget extends Composite implements Ha
 
     Node getElementWithContentId(final String contentDefinitionId,
                                  final Stream<Node> stream) {
-        final Optional<Node> result = stream
+        return stream
                 .filter(node -> definitionContainsDRGElement(node)
                         && Objects.equals(getDRGElementFromContentDefinition(node).getContentDefinitionId(), contentDefinitionId))
-                .findFirst();
-        if (result.isPresent()) {
-            return result.get();
-        } else {
-            throw new IllegalStateException("Decision Service for contentDefinitionId '" + contentDefinitionId + "' not found.");
-        }
+                .findFirst()
+                .orElseThrow(() -> new IllegalStateException("Decision Service for contentDefinitionId '" + contentDefinitionId + "' not found."));
     }
 
     private boolean definitionContainsDRGElement(final Node node) {

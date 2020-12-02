@@ -45,14 +45,14 @@ public class DecisionServiceParametersListSet implements DMNPropertySet {
     private static final Set<String> stunnerLabels = new Sets.Builder<String>()
             .build();
 
-    public DecisionServiceParametersListSet() {
-        value = new DecisionServiceParametersListHolder();
-    }
-
     @Property
     @FormField(type = DecisionParametersListFieldType.class)
     @Valid
     private DecisionServiceParametersListHolder value;
+
+    public DecisionServiceParametersListSet() {
+        value = new DecisionServiceParametersListHolder();
+    }
 
     public DecisionServiceParametersListHolder getValue() {
         return value;

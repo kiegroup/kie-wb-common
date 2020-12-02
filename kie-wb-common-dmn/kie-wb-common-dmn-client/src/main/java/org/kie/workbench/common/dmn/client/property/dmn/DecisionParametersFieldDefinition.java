@@ -18,8 +18,8 @@ package org.kie.workbench.common.dmn.client.property.dmn;
 
 import org.jboss.errai.common.client.api.annotations.Portable;
 import org.jboss.errai.databinding.client.api.Bindable;
-import org.kie.workbench.common.dmn.api.property.dmn.DecisionServiceParametersList;
 import org.kie.workbench.common.dmn.api.property.dmn.DecisionParametersListFieldType;
+import org.kie.workbench.common.dmn.api.property.dmn.DecisionServiceParametersList;
 import org.kie.workbench.common.forms.fields.shared.AbstractFieldDefinition;
 import org.kie.workbench.common.forms.model.FieldDefinition;
 
