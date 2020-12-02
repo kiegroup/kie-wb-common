@@ -25,7 +25,7 @@ export const LiteralExpression: React.FunctionComponent<LiteralExpressionProps> 
   content,
   dataType,
   name,
-  updateNameAndDataTypeCallback,
+  onUpdatingNameAndDataType,
 }: LiteralExpressionProps) => {
   const [expressionName, setExpressionName] = useState(name);
   const [expressionDataType, setExpressionDataType] = useState(dataType);
@@ -35,11 +35,11 @@ export const LiteralExpression: React.FunctionComponent<LiteralExpressionProps> 
     ({ dataType, name }: ExpressionProps) => {
       setExpressionName(name);
       setExpressionDataType(dataType);
-      if (updateNameAndDataTypeCallback && dataType) {
-        updateNameAndDataTypeCallback(name, dataType);
+      if (onUpdatingNameAndDataType) {
+        onUpdatingNameAndDataType(name, dataType);
       }
     },
-    [updateNameAndDataTypeCallback]
+    [onUpdatingNameAndDataType]
   );
 
   const onContentChange = useCallback((updatedContent) => {

@@ -23,7 +23,7 @@ export interface ExpressionProps {
   /** Expression data type */
   dataType: DataType;
   /** Optional callback executed to update expression's name and data type */
-  updateNameAndDataTypeCallback?: (updatedName: string, updatedDataType: DataType) => void;
+  onUpdatingNameAndDataType?: (updatedName: string, updatedDataType: DataType) => void;
   /** Logic type should not be defined at this stage */
   logicType?: LogicType;
 }
