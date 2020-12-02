@@ -136,7 +136,7 @@ export const ExpressionContainer: ({ selectedExpression }: ExpressionContainerPr
       case LogicType.LiteralExpression:
         return (
           <LiteralExpression
-            updateNameAndDataTypeCallback={updateNameAndDataType}
+            onUpdatingNameAndDataType={updateNameAndDataType}
             {...(selectedExpression as LiteralExpressionProps)}
           />
         );
