@@ -16,8 +16,8 @@
 
 import "./LiteralExpression.css";
 import * as React from "react";
-import { useCallback, useState } from "react";
-import { ExpressionProps, LiteralExpressionProps } from "../../api";
+import { useCallback, useEffect, useState } from "react";
+import { ExpressionProps, LiteralExpressionProps, LogicType } from "../../api";
 import { TextArea } from "@patternfly/react-core";
 import { EditExpressionMenu } from "../EditExpressionMenu";
 
@@ -31,6 +31,17 @@ export const LiteralExpression: React.FunctionComponent<LiteralExpressionProps> 
   const [expressionDataType, setExpressionDataType] = useState(dataType);
   const [literalExpressionContent, setLiteralExpressionContent] = useState(content);
 
+  useEffect(() => {
+    if (window.beeApi?.broadcastLiteralExpressionDefinition) {
+      window.beeApi.broadcastLiteralExpressionDefinition({
+        name: expressionName,
+        dataType: expressionDataType,
+        logicType: LogicType.LiteralExpression,
+        content: literalExpressionContent,
+      });
+    }
+  });
+
   const onExpressionUpdate = useCallback(
     ({ dataType, name }: ExpressionProps) => {
       setExpressionName(name);
@@ -42,7 +53,8 @@ export const LiteralExpression: React.FunctionComponent<LiteralExpressionProps> 
     [onUpdatingNameAndDataType]
   );
 
-  const onContentChange = useCallback((updatedContent) => {
+  const onContentChange = useCallback((event) => {
+    const updatedContent = event.target.value;
     setLiteralExpressionContent(updatedContent);
   }, []);
 
@@ -60,7 +72,7 @@ export const LiteralExpression: React.FunctionComponent<LiteralExpressionProps> 
       <div className="literal-expression-body">
         <TextArea
           defaultValue={literalExpressionContent}
-          onChange={onContentChange}
+          onBlur={onContentChange}
           aria-label="literal-expression-content"
         />
       </div>
