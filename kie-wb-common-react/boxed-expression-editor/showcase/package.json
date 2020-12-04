@@ -1,9 +1,12 @@
 {
+  "homepage": "http://vpellegrino.github.io/kie-wb-common/",
   "name": "boxed-expression-editor-showcase",
   "private": true,
   "scripts": {
     "start": "react-app-rewired start",
-    "build": "react-app-rewired build"
+    "build": "react-app-rewired build",
+    "predeploy": "yarn build",
+    "deploy": "gh-pages -d build"
   },
   "dependencies": {
     "@types/node": "12.11.6",
@@ -15,6 +18,7 @@
     "typescript": "3.7.3"
   },
   "devDependencies": {
+    "gh-pages": "^3.1.0",
     "node-sass": "^4.13.0"
   },
   "peerDependencies": {

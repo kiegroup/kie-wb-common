@@ -2,6 +2,9 @@
 
 This editor provides the possibility to edit the expression related to a Decision Node, or to a Business Knowledge Model's function.
 
+##Static deployed showcase
+[There](https://cutt.ly/boxed-expression-editor) you can access to the static deployed version of the showcase application for this editor. It will be manually updated as soon as new features will be added.
+
 ##Structure
 The main component is `src/components/BoxedExpressionEditor/BoxedExpressionEditor.tsx`.
 It represents the entry point for using the editor.
