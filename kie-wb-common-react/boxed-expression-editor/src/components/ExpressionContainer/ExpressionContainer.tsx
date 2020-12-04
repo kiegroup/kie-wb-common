@@ -61,11 +61,17 @@ export const ExpressionContainer: ({ selectedExpression }: ExpressionContainerPr
 
   const executeClearAction = useCallback(() => {
     setLogicTypeSelected(false);
-    setSelectedExpression((previousSelectedExpression: ExpressionProps) => ({
-      name: previousSelectedExpression.name,
-      dataType: previousSelectedExpression.dataType,
-      logicType: LogicType.Undefined,
-    }));
+    setSelectedExpression((previousSelectedExpression: ExpressionProps) => {
+      const updatedExpression = {
+        name: previousSelectedExpression.name,
+        dataType: previousSelectedExpression.dataType,
+        logicType: LogicType.Undefined,
+      };
+      if (window.beeApi?.resetExpressionDefinition) {
+        window.beeApi.resetExpressionDefinition(updatedExpression);
+      }
+      return updatedExpression;
+    });
   }, []);
 
   const onDropdownToggle = useCallback((isOpen) => {
