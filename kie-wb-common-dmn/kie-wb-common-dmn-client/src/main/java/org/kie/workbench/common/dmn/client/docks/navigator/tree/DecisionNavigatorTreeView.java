@@ -293,10 +293,10 @@ public class DecisionNavigatorTreeView implements DecisionNavigatorTreePresenter
         }
 
         private String componentType() {
-            if (getItem() != null && !getItem().getChildren().isEmpty()) {
-                return "dmn-graph-navigator-node";
+            if (getItem() != null) {
+                return "dmn-graph-navigator-" + getItem().getType().name().toLowerCase();
             } else {
-                return "dmn-graph-navigator-expression";
+                throw new IllegalStateException("Decision Navigator item can not be null");
             }
         }
 

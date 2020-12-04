@@ -195,7 +195,6 @@ public class TreeExplorerView extends Composite implements TreeExplorer.View {
                                            icon);
         item.setUserObject(uuid);
         item.getElement().getStyle().setCursor(Style.Cursor.POINTER);
-        item.initOuiaComponentAttributes();
         return item;
     }
 

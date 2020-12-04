@@ -23,10 +23,11 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.uberfire.client.workbench.ouia.OuiaComponentTypeAttribute;
+import org.uberfire.client.workbench.ouia.OuiaComponentIdAttribute;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 
@@ -48,9 +49,12 @@ public class ListSelectorTextItemViewImplTest {
 
     @Test
     public void testSetText() {
+        reset(listItem); // We have interacted with listItem during ListSelectorTextItemViewImpl setUp phase
+        doReturn("abc").when(text).getTextContent();
+
         textItemView.setText("abc");
         verify(text).setTextContent("abc");
-        verify(textItemView).initOuiaComponentAttributes();
+        verify(listItem).setAttribute(OuiaComponentIdAttribute.COMPONENT_ID, "dmn-grid-context-menu-item-abc");
     }
 
     @Test
@@ -62,12 +66,5 @@ public class ListSelectorTextItemViewImplTest {
     public void testOuiaComponentIdAttribute() {
         doReturn("xyz").when(text).getTextContent();
         assertEquals("dmn-grid-context-menu-item-xyz", textItemView.ouiaComponentId().getValue());
-    }
-
-    @Test
-    public void testOuiaAttributeRenderer() {
-        final OuiaComponentTypeAttribute componentTypeAttribute = textItemView.ouiaComponentType();
-        textItemView.ouiaAttributeRenderer().accept(componentTypeAttribute);
-        verify(listItem).setAttribute(componentTypeAttribute.getName(), componentTypeAttribute.getValue());
     }
 }

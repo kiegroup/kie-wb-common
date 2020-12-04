@@ -53,12 +53,13 @@ public class ListSelectorTextItemViewImpl implements ListSelectorTextItemView {
                                         final Span text) {
         this.item = item;
         this.text = text;
+        initOuiaComponentAttributes();
     }
 
     @Override
     public void setText(final String text) {
         this.text.setTextContent(text);
-        initOuiaComponentAttributes();
+        ouiaAttributeRenderer().accept(ouiaComponentId());
     }
 
     @Override
