@@ -15,13 +15,20 @@
 
 package org.kie.workbench.common.screens.library.client.perspective;
 
+import java.util.List;
+import java.util.Map;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
+import com.google.gwt.user.client.Window;
 import org.guvnor.common.services.project.context.WorkspaceProjectContextChangeEvent;
+import org.jboss.errai.common.client.api.Caller;
+import org.jboss.errai.common.client.api.RemoteCallback;
 import org.kie.workbench.common.screens.library.client.util.LibraryPlaces;
+import org.uberfire.backend.vfs.Path;
+import org.uberfire.backend.vfs.VFSService;
 import org.uberfire.client.annotations.Perspective;
 import org.uberfire.client.annotations.WorkbenchPerspective;
 import org.uberfire.client.workbench.events.PerspectiveChange;
@@ -41,17 +48,24 @@ public class LibraryPerspective {
 
     private Event<WorkspaceProjectContextChangeEvent> projectContextChangeEvent;
 
+    private Caller<VFSService> vfsServices;
+
     private PerspectiveDefinition perspectiveDefinition;
+
     private boolean refresh = true;
+
+    private String projectPath;
 
     public LibraryPerspective() {
     }
 
     @Inject
     public LibraryPerspective(final LibraryPlaces libraryPlaces,
-                              final Event<WorkspaceProjectContextChangeEvent> projectContextChangeEvent) {
+                              final Event<WorkspaceProjectContextChangeEvent> projectContextChangeEvent,
+                              final Caller<VFSService> vfsServices) {
         this.libraryPlaces = libraryPlaces;
         this.projectContextChangeEvent = projectContextChangeEvent;
+        this.vfsServices = vfsServices;
     }
 
     @Perspective
@@ -66,6 +80,7 @@ public class LibraryPerspective {
 
     @OnStartup
     public void onStartup(final PlaceRequest placeRequest) {
+        this.projectPath = (((getWindowParameterMap().containsKey("path")) ? getWindowParameterMap().get("path").get(0) : "")).trim();
         this.refresh = Boolean.parseBoolean(placeRequest.getParameter("refresh", "true"));
         this.libraryPlaces.init(this);
     }
@@ -73,11 +88,21 @@ public class LibraryPerspective {
     public void perspectiveChangeEvent(@Observes PerspectiveChange event) {
         if (event.getIdentifier().equals(LibraryPlaces.LIBRARY_PERSPECTIVE)) {
             if (refresh) {
-                libraryPlaces.refresh(() -> {
-                    if (getRootPanel() != null) {
-                        libraryPlaces.goToLibrary();
-                    }
-                });
+                if (projectPath != null && !projectPath.isEmpty()) {
+                    libraryPlaces.refresh(() -> {
+                        if (getRootPanel() != null) {
+                            vfsServices.call((RemoteCallback<Path>) path -> {
+                                libraryPlaces.goToProject(path);
+                            }).get(projectPath);
+                        }
+                    });
+                } else {
+                    libraryPlaces.refresh(() -> {
+                        if (getRootPanel() != null) {
+                            libraryPlaces.goToLibrary();
+                        }
+                    });
+                }
             } else {
                 libraryPlaces.refresh(() -> {
                 });
@@ -88,6 +113,10 @@ public class LibraryPerspective {
     @OnClose
     public void onClose() {
         projectContextChangeEvent.fire(new WorkspaceProjectContextChangeEvent());
+    }
+
+    Map<String, List<String>> getWindowParameterMap() {
+        return Window.Location.getParameterMap();
     }
 
     public PanelDefinition getRootPanel() {

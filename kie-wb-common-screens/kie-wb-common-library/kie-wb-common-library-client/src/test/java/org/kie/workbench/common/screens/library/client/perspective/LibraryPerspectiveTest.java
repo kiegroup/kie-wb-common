@@ -15,6 +15,8 @@
  */
 package org.kie.workbench.common.screens.library.client.perspective;
 
+import java.util.Collections;
+
 import com.google.gwtmockito.GwtMockitoTestRunner;
 import org.guvnor.common.services.project.context.WorkspaceProjectContextChangeEvent;
 import org.junit.Before;
@@ -24,10 +26,14 @@ import org.kie.workbench.common.screens.library.client.util.LibraryPlaces;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
+import org.uberfire.backend.vfs.Path;
+import org.uberfire.backend.vfs.VFSService;
 import org.uberfire.client.workbench.events.PerspectiveChange;
+import org.uberfire.mocks.CallerMock;
 import org.uberfire.mocks.EventSourceMock;
 import org.uberfire.mvp.Command;
 import org.uberfire.mvp.PlaceRequest;
+import org.uberfire.mvp.impl.DefaultPlaceRequest;
 import org.uberfire.workbench.model.PanelDefinition;
 
 import static org.mockito.Mockito.*;
@@ -41,6 +47,10 @@ public class LibraryPerspectiveTest {
     @Mock
     private EventSourceMock<WorkspaceProjectContextChangeEvent> projectContextChangeEvent;
 
+    @Mock
+    private VFSService vfsService;
+    private CallerMock<VFSService> vfsServiceCaller;
+
     @Captor
     private ArgumentCaptor<Command> commandCaptor;
 
@@ -51,8 +61,10 @@ public class LibraryPerspectiveTest {
 
     @Before
     public void setup() {
+        vfsServiceCaller = new CallerMock<>(vfsService);
         perspective = spy(new LibraryPerspective(libraryPlaces,
-                                                 projectContextChangeEvent));
+                                                 projectContextChangeEvent,
+                                                 vfsServiceCaller));
         when(perspectiveChangeEvent.getIdentifier()).thenReturn(LibraryPlaces.LIBRARY_PERSPECTIVE);
     }
 
@@ -73,6 +85,24 @@ public class LibraryPerspectiveTest {
         commandCaptor.getValue().execute();
 
         verify(libraryPlaces).goToLibrary();
+    }
+
+    @Test
+    public void libraryOpensProjectFromPathOnPerspectiveChangeEventWithRootPanelTest() {
+        final Path projectPath = mock(Path.class);
+
+        doReturn(mock(PanelDefinition.class)).when(perspective).getRootPanel();
+        doReturn(Collections.singletonMap("path", Collections.singletonList("projectPath"))).when(perspective).getWindowParameterMap();
+        doReturn(projectPath).when(vfsService).get("projectPath");
+
+        perspective.onStartup(new DefaultPlaceRequest(LibraryPlaces.LIBRARY_PERSPECTIVE));
+        perspective.perspectiveChangeEvent(perspectiveChangeEvent);
+
+        verify(libraryPlaces).refresh(commandCaptor.capture());
+
+        commandCaptor.getValue().execute();
+
+        verify(libraryPlaces).goToProject(projectPath);
     }
 
     @Test
