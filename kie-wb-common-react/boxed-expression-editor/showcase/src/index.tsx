@@ -15,14 +15,45 @@
  */
 
 import * as React from "react";
+import { useState } from "react";
 import * as ReactDOM from "react-dom";
 import './index.css';
-import { BoxedExpressionEditor, DataType, ExpressionContainerProps } from "./boxed_expression_editor";
+import {
+  BoxedExpressionEditor,
+  DataType,
+  ExpressionContainerProps,
+  ExpressionProps,
+  LiteralExpressionProps
+} from "./boxed_expression_editor";
 
-const selectedExpression = {
-  'name': 'Expression Name',
-  'dataType': DataType.Undefined,
+export const App: React.FunctionComponent = () => {
+  //This definition comes directly from the decision node
+  const selectedExpression = {
+    'name': 'Expression Name',
+    'dataType': DataType.Undefined,
+  };
+
+  const [updatedExpression, setExpression] = useState(selectedExpression);
+
+  const expressionDefinition: ExpressionContainerProps = { 'selectedExpression': selectedExpression };
+
+  //Defining global function that will be available in the Window namespace and used by the BoxedExpressionEditor component
+  window.beeApi = {
+    resetExpressionDefinition : (definition: ExpressionProps) => setExpression(definition),
+    broadcastLiteralExpressionDefinition : (definition: LiteralExpressionProps) => setExpression(definition)
+  };
+
+  return (
+    <div className="showcase">
+      <div className="boxed-expression">
+        <BoxedExpressionEditor expressionDefinition={expressionDefinition} />
+      </div>
+      <div className="updated-json">
+        <p>⚠ Currently, JSON gets updated only for literal expression logic type</p>
+        <pre>{JSON.stringify(updatedExpression, null, 2)}</pre>
+      </div>
+    </div>
+  );
 };
-const expressionDefinition: ExpressionContainerProps = {'selectedExpression': selectedExpression};
 
-ReactDOM.render(<BoxedExpressionEditor expressionDefinition={expressionDefinition}/>, document.getElementById('root'));
+ReactDOM.render(<App />, document.getElementById('root'));

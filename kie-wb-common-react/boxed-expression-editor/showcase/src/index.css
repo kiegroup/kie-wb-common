@@ -24,3 +24,14 @@ body {
   display: -ms-flexbox;
   display: -webkit-flex;
 }
+
+.showcase {
+  display: flex;
+  justify-content: space-between;
+}
+
+.showcase .updated-json {
+  margin-left: 5em;
+  border-style: inset;
+  padding: 1em;
+}
