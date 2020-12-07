@@ -546,8 +546,8 @@ public class LibraryPlaces implements WorkspaceProjectContextChangeHandler {
         projectService.call((RemoteCallback<WorkspaceProject>) project -> {
             goToProject(project, project.getBranch());
         }, (o, throwable) -> {
-            logger.info("Project " + projectPath + " not found.");
-            goToOrganizationalUnits();
+            notificationEvent.fire(new NotificationEvent(ts.format(LibraryConstants.InvalidProjectPath),
+                                                         NotificationEvent.NotificationType.ERROR));
             return false;
         }).resolveProject(projectPath);
     }

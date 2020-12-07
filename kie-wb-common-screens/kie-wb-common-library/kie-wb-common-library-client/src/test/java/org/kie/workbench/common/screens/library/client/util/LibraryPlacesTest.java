@@ -935,7 +935,8 @@ public class LibraryPlacesTest {
 
         libraryPlaces.goToProject(projectPath);
 
-        verify(libraryPlaces).goToOrganizationalUnits();
+        verify(libraryPlaces, never()).goToProject(any(), any());
+        verify(notificationEvent).fire(any());
     }
 
     @Test

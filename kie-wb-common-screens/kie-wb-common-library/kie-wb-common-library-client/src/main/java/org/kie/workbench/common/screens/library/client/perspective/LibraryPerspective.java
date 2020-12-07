@@ -26,6 +26,8 @@ import com.google.gwt.user.client.Window;
 import org.guvnor.common.services.project.context.WorkspaceProjectContextChangeEvent;
 import org.jboss.errai.common.client.api.Caller;
 import org.jboss.errai.common.client.api.RemoteCallback;
+import org.jboss.errai.ui.client.local.spi.TranslationService;
+import org.kie.workbench.common.screens.library.client.resources.i18n.LibraryConstants;
 import org.kie.workbench.common.screens.library.client.util.LibraryPlaces;
 import org.uberfire.backend.vfs.Path;
 import org.uberfire.backend.vfs.VFSService;
@@ -36,6 +38,7 @@ import org.uberfire.client.workbench.panels.impl.MultiListWorkbenchPanelPresente
 import org.uberfire.lifecycle.OnClose;
 import org.uberfire.lifecycle.OnStartup;
 import org.uberfire.mvp.PlaceRequest;
+import org.uberfire.workbench.events.NotificationEvent;
 import org.uberfire.workbench.model.PanelDefinition;
 import org.uberfire.workbench.model.PerspectiveDefinition;
 import org.uberfire.workbench.model.impl.PerspectiveDefinitionImpl;
@@ -50,6 +53,10 @@ public class LibraryPerspective {
 
     private Caller<VFSService> vfsServices;
 
+    private Event<NotificationEvent> notificationEvent;
+
+    private TranslationService ts;
+
     private PerspectiveDefinition perspectiveDefinition;
 
     private boolean refresh = true;
@@ -62,10 +69,14 @@ public class LibraryPerspective {
     @Inject
     public LibraryPerspective(final LibraryPlaces libraryPlaces,
                               final Event<WorkspaceProjectContextChangeEvent> projectContextChangeEvent,
-                              final Caller<VFSService> vfsServices) {
+                              final Caller<VFSService> vfsServices,
+                              final Event<NotificationEvent> notificationEvent,
+                              final TranslationService ts) {
         this.libraryPlaces = libraryPlaces;
         this.projectContextChangeEvent = projectContextChangeEvent;
         this.vfsServices = vfsServices;
+        this.notificationEvent = notificationEvent;
+        this.ts = ts;
     }
 
     @Perspective
@@ -93,6 +104,10 @@ public class LibraryPerspective {
                         if (getRootPanel() != null) {
                             vfsServices.call((RemoteCallback<Path>) path -> {
                                 libraryPlaces.goToProject(path);
+                            }, (o, throwable) -> {
+                                notificationEvent.fire(new NotificationEvent(ts.format(LibraryConstants.InvalidProjectPath),
+                                                                             NotificationEvent.NotificationType.ERROR));
+                                return false;
                             }).get(projectPath);
                         }
                     });
