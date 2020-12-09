@@ -91,7 +91,7 @@ public class LibraryPerspective {
 
     @OnStartup
     public void onStartup(final PlaceRequest placeRequest) {
-        this.projectPath = (((getWindowParameterMap().containsKey("path")) ? getWindowParameterMap().get("path").get(0) : "")).trim();
+        this.projectPath = (getWindowParameterMap().containsKey("path") ? getWindowParameterMap().get("path").get(0) : "").trim();
         this.refresh = Boolean.parseBoolean(placeRequest.getParameter("refresh", "true"));
         this.libraryPlaces.init(this);
     }
