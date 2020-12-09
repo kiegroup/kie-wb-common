@@ -52,6 +52,33 @@ describe("LiteralExpression tests", () => {
       expect(container.querySelector(".expression-data-type")!.innerHTML).toBe("(" + dataType + ")");
     });
 
+    test("should render no header section, when isHeadless property is passed", () => {
+      const { container } = render(
+        usingTestingBoxedExpressionI18nContext(
+          <LiteralExpression
+            isHeadless={true}
+            logicType={LogicType.LiteralExpression}
+            name={"expressionName"}
+            dataType={DataType.Undefined}
+          />
+        ).wrapper
+      );
+      expect(container.querySelector(".literal-expression-header")).toBeFalsy();
+    });
+
+    test("should render header section, when isHeadless property is not passed or it is false", () => {
+      const { container } = render(
+        usingTestingBoxedExpressionI18nContext(
+          <LiteralExpression
+            logicType={LogicType.LiteralExpression}
+            name={"expressionName"}
+            dataType={DataType.Undefined}
+          />
+        ).wrapper
+      );
+      expect(container.querySelector(".literal-expression-header")).toBeTruthy();
+    });
+
     test("should render edit expression menu, when header is clicked", async () => {
       const { container } = render(
         usingTestingBoxedExpressionI18nContext(

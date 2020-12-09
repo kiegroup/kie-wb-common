@@ -33,4 +33,6 @@ export interface LiteralExpressionProps extends ExpressionProps {
   logicType: LogicType.LiteralExpression;
   /** Optional content to display for this literal expression */
   content?: string;
+  /** True to have no header for this specific literal expression */
+  isHeadless?: boolean;
 }

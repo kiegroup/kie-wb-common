@@ -26,6 +26,7 @@ export const LiteralExpression: React.FunctionComponent<LiteralExpressionProps> 
   dataType,
   name,
   onUpdatingNameAndDataType,
+  isHeadless = false,
 }: LiteralExpressionProps) => {
   const [expressionName, setExpressionName] = useState(name);
   const [expressionDataType, setExpressionDataType] = useState(dataType);
@@ -63,12 +64,19 @@ export const LiteralExpression: React.FunctionComponent<LiteralExpressionProps> 
     []
   );
 
-  return (
-    <div className="literal-expression">
+  const renderLiteralExpressionHeader = useCallback(
+    () => (
       <div className="literal-expression-header">
         <p className="expression-name">{expressionName}</p>
         <p className="expression-data-type">({expressionDataType})</p>
       </div>
+    ),
+    [expressionDataType, expressionName]
+  );
+
+  return (
+    <div className="literal-expression">
+      {!isHeadless ? renderLiteralExpressionHeader() : null}
       <div className="literal-expression-body">
         <TextArea
           defaultValue={literalExpressionContent}
