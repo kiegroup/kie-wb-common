@@ -22,9 +22,11 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.kie.workbench.common.stunner.core.client.api.SessionManager;
 import org.kie.workbench.common.stunner.core.client.i18n.ClientTranslationService;
 import org.kie.workbench.common.stunner.core.diagram.GraphsProvider;
 import org.kie.workbench.common.stunner.core.graph.Element;
@@ -33,6 +35,7 @@ import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.HasContentDefinitionId;
 import org.kie.workbench.common.stunner.core.graph.content.HasStringName;
 import org.kie.workbench.common.stunner.core.graph.content.definition.Definition;
+import org.kie.workbench.common.stunner.core.util.DefinitionUtils;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.uberfire.mvp.Command;
@@ -63,13 +66,25 @@ public class DeleteNodeConfirmationImplTest {
     @Mock
     private ClientTranslationService translationService;
 
+    @Mock
+    private ManagedInstance<GraphsProvider> graphsProviderInstances;
+
+    @Mock
+    private DefinitionUtils definitionUtils;
+
+    @Mock
+    private SessionManager sessionManager;
+
     private DeleteNodeConfirmationImpl confirmation;
 
     @Before
     public void setup() {
-        confirmation = spy(new DeleteNodeConfirmationImpl(graphsProvider,
+        confirmation = spy(new DeleteNodeConfirmationImpl(graphsProviderInstances,
                                                           confirmationDialog,
-                                                          translationService));
+                                                          translationService,
+                                                          definitionUtils,
+                                                          sessionManager));
+        doReturn(graphsProvider).when(confirmation).getGraphsProvider();
     }
 
     @Test
