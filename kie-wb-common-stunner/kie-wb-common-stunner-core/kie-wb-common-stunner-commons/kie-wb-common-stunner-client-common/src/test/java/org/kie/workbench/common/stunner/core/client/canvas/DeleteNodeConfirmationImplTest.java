@@ -16,6 +16,7 @@
 
 package org.kie.workbench.common.stunner.core.client.canvas;
 
+import java.lang.annotation.Annotation;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -28,7 +29,11 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.stunner.core.client.api.SessionManager;
 import org.kie.workbench.common.stunner.core.client.i18n.ClientTranslationService;
+import org.kie.workbench.common.stunner.core.client.session.ClientSession;
+import org.kie.workbench.common.stunner.core.client.session.impl.InstanceUtils;
+import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.kie.workbench.common.stunner.core.diagram.GraphsProvider;
+import org.kie.workbench.common.stunner.core.diagram.Metadata;
 import org.kie.workbench.common.stunner.core.graph.Element;
 import org.kie.workbench.common.stunner.core.graph.Graph;
 import org.kie.workbench.common.stunner.core.graph.Node;
@@ -48,6 +53,7 @@ import static org.kie.workbench.common.stunner.core.client.canvas.DeleteNodeConf
 import static org.kie.workbench.common.stunner.core.client.canvas.resources.StunnerClientCommonConstants.DeleteNodeConfirmationImpl_ConfirmationDescription;
 import static org.kie.workbench.common.stunner.core.client.canvas.resources.StunnerClientCommonConstants.DeleteNodeConfirmationImpl_Question;
 import static org.kie.workbench.common.stunner.core.client.canvas.resources.StunnerClientCommonConstants.DeleteNodeConfirmationImpl_Title;
+import static org.mockito.Mockito.doCallRealMethod;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
@@ -84,7 +90,6 @@ public class DeleteNodeConfirmationImplTest {
                                                           translationService,
                                                           definitionUtils,
                                                           sessionManager));
-        doReturn(graphsProvider).when(confirmation).getGraphsProvider();
     }
 
     @Test
@@ -96,6 +101,7 @@ public class DeleteNodeConfirmationImplTest {
         when(graphsProvider.isGlobalGraphSelected()).thenReturn(true);
         when(graphsProvider.getNonGlobalGraphs()).thenReturn(list);
         doReturn(true).when(confirmation).isReferredInAnotherGraph(elements);
+        doReturn(graphsProvider).when(confirmation).getGraphsProvider();
 
         assertTrue(confirmation.requiresDeletionConfirmation(elements));
     }
@@ -239,6 +245,7 @@ public class DeleteNodeConfirmationImplTest {
         doReturn(true).when(confirmation).containsNodeWithContentId(graph3, contentId);
         doReturn(false).when(confirmation).containsNodeWithContentId(graph1, contentId);
         doReturn(false).when(confirmation).containsNodeWithContentId(graph2, contentId);
+        doReturn(graphsProvider).when(confirmation).getGraphsProvider();
 
         final boolean isReferred = confirmation.isReferredInAnotherGraph(element);
 
@@ -260,6 +267,7 @@ public class DeleteNodeConfirmationImplTest {
         final Graph graph3 = mock(Graph.class);
         final List<Graph> graphs = Arrays.asList(graph1, graph2, graph3);
         when(graphsProvider.getNonGlobalGraphs()).thenReturn(graphs);
+        doReturn(graphsProvider).when(confirmation).getGraphsProvider();
         doReturn(false).when(confirmation).containsNodeWithContentId(graph3, contentId);
         doReturn(false).when(confirmation).containsNodeWithContentId(graph1, contentId);
         doReturn(false).when(confirmation).containsNodeWithContentId(graph2, contentId);
@@ -337,6 +345,43 @@ public class DeleteNodeConfirmationImplTest {
         verify(confirmation).isReferredInAnotherGraph(e1);
         verify(confirmation).isReferredInAnotherGraph(e2);
         verify(confirmation).isReferredInAnotherGraph(e3);
+    }
+
+    @Test
+    public void testDestroy() {
+
+        confirmation.destroy();
+
+        verify(graphsProviderInstances).destroyAll();
+    }
+
+    @Test
+    public void testInit() {
+
+        final ClientSession session = mock(ClientSession.class);
+        final CanvasHandler canvasHandler = mock(CanvasHandler.class);
+        final Diagram diagram = mock(Diagram.class);
+        final Metadata metadata = mock(Metadata.class);
+        final String definitionId = "definitionId";
+        final Annotation qualifier = mock(Annotation.class);
+        final ManagedInstance<GraphsProvider> foundInstances = mock(ManagedInstance.class);
+        final GraphsProvider foundInstance = mock(GraphsProvider.class);
+
+        when(foundInstances.isUnsatisfied()).thenReturn(false);
+        when(foundInstances.get()).thenReturn(foundInstance);
+        when(graphsProviderInstances.select(GraphsProvider.class, qualifier)).thenReturn(foundInstances);
+        when(definitionUtils.getQualifier(definitionId)).thenReturn(qualifier);
+        when(metadata.getDefinitionSetId()).thenReturn(definitionId);
+        when(diagram.getMetadata()).thenReturn(metadata);
+        when(canvasHandler.getDiagram()).thenReturn(diagram);
+        when(session.getCanvasHandler()).thenReturn(canvasHandler);
+        when(sessionManager.getCurrentSession()).thenReturn(session);
+
+        confirmation.init();
+
+        final GraphsProvider actualProvider = confirmation.getGraphsProvider();
+
+        assertEquals(actualProvider, foundInstance);
     }
 
     private String buildExpected(final String... names) {
