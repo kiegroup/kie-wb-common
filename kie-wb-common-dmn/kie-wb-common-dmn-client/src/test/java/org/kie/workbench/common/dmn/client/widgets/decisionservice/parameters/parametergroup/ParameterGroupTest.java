@@ -17,6 +17,7 @@
 package org.kie.workbench.common.dmn.client.widgets.decisionservice.parameters.parametergroup;
 
 import com.google.gwtmockito.GwtMockitoTestRunner;
+import elemental2.dom.DOMTokenList;
 import elemental2.dom.HTMLDivElement;
 import elemental2.dom.HTMLUListElement;
 import org.jboss.errai.common.client.dom.HTMLElement;
@@ -59,6 +60,7 @@ public class ParameterGroupTest {
     @Before
     public void setup() {
 
+        none.classList = new DOMTokenList();
         parameterGroup = spy(new ParameterGroup(groupHeader,
                                                 parameters,
                                                 parameterItems,
