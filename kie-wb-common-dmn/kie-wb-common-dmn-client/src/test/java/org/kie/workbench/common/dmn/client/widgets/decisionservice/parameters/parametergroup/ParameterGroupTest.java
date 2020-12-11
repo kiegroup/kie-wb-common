@@ -31,6 +31,7 @@ import org.mockito.Mock;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.kie.workbench.common.dmn.client.editors.types.common.HiddenHelper.HIDDEN_CSS_CLASS;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
@@ -55,12 +56,15 @@ public class ParameterGroupTest {
     @Mock
     private HTMLDivElement none;
 
+    @Mock
+    private DOMTokenList classList;
+
     private ParameterGroup parameterGroup;
 
     @Before
     public void setup() {
 
-        none.classList = new DOMTokenList();
+        none.classList = classList;
         parameterGroup = spy(new ParameterGroup(groupHeader,
                                                 parameters,
                                                 parameterItems,
@@ -95,6 +99,23 @@ public class ParameterGroupTest {
 
         verify(util).asHTMLElement(htmlElement);
         verify(parameters).appendChild(element);
+        verify(parameterGroup).refreshNone();
         assertFalse(parameterGroup.isEmpty());
+    }
+
+    @Test
+    public void testRefreshNone() {
+
+        doReturn(true).when(parameterGroup).isEmpty();
+
+        parameterGroup.refreshNone();
+
+        verify(classList).remove(HIDDEN_CSS_CLASS);
+
+        doReturn(false).when(parameterGroup).isEmpty();
+
+        parameterGroup.refreshNone();
+
+        verify(classList).add(HIDDEN_CSS_CLASS);
     }
 }

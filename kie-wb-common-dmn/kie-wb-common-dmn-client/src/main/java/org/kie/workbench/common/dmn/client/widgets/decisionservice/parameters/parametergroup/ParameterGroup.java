@@ -85,10 +85,10 @@ public class ParameterGroup implements IsElement {
     }
 
     void refreshNone() {
-        if (!isEmpty()) {
-            HiddenHelper.hide(none);
-        } else {
+        if (isEmpty()) {
             HiddenHelper.show(none);
+        } else {
+            HiddenHelper.hide(none);
         }
     }
 

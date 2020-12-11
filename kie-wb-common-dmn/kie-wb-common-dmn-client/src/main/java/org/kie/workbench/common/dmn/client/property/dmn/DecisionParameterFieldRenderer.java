@@ -27,6 +27,8 @@ import org.kie.workbench.common.forms.dynamic.client.rendering.formGroups.FormGr
 import org.kie.workbench.common.forms.dynamic.client.rendering.formGroups.impl.def.DefaultFormGroup;
 import org.kie.workbench.common.forms.dynamic.service.shared.RenderMode;
 
+import static org.kie.workbench.common.dmn.client.property.dmn.DecisionParametersFieldDefinition.FIELD_TYPE;
+
 @Dependent
 @Renderer(type = DecisionParametersListFieldType.class)
 public class DecisionParameterFieldRenderer extends FieldRenderer<DecisionParametersFieldDefinition, DefaultFormGroup> {
@@ -59,7 +61,7 @@ public class DecisionParameterFieldRenderer extends FieldRenderer<DecisionParame
 
     @Override
     public String getName() {
-        return DecisionParametersFieldDefinition.FIELD_TYPE.getTypeName();
+        return FIELD_TYPE.getTypeName();
     }
 
     @Override
