@@ -36,3 +36,17 @@ export interface LiteralExpressionProps extends ExpressionProps {
   /** True to have no header for this specific literal expression */
   isHeadless?: boolean;
 }
+
+export interface RelationProps extends ExpressionProps {
+  /** Logic type must be Relation */
+  logicType: LogicType.Relation;
+  /** Each column has a name and a data type. Their order is from left to right */
+  columns?: {
+    /** Relation's column name */
+    name: string;
+    /** Relation's column data type */
+    dataType: DataType;
+  }[];
+  /** Rows order is from top to bottom. Each row has a collection of cells, one for each column */
+  rows?: string[][];
+}

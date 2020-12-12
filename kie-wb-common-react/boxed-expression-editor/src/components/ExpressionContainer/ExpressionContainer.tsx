@@ -21,9 +21,10 @@ import "./ExpressionContainer.css";
 import { useBoxedExpressionEditorI18n } from "../../i18n";
 import { Button, ButtonVariant, SimpleList, SimpleListItem, SimpleListItemProps } from "@patternfly/react-core";
 import { PopoverMenu } from "../PopoverMenu";
-import { ExpressionProps, LiteralExpressionProps, LogicType } from "../../api";
+import { ExpressionProps, LiteralExpressionProps, LogicType, RelationProps } from "../../api";
 import { LiteralExpression } from "../LiteralExpression";
 import { useContextMenuHandler } from "../../hooks";
+import { RelationExpression } from "../RelationExpression";
 
 export interface ExpressionContainerProps {
   /** Expression properties */
@@ -114,9 +115,10 @@ export const ExpressionContainer: ({ selectedExpression }: ExpressionContainerPr
             {...(selectedExpression as LiteralExpressionProps)}
           />
         );
+      case LogicType.Relation:
+        return <RelationExpression {...(selectedExpression as RelationProps)} />;
       case LogicType.Context:
       case LogicType.DecisionTable:
-      case LogicType.Relation:
       case LogicType.Function:
       case LogicType.Invocation:
       case LogicType.List:
