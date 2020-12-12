@@ -34,6 +34,7 @@
 
 .expression-container > .expression-container-box.logic-type-selected {
   cursor: default;
+  padding: 10px;
 }
 
 .expression-container > .expression-container-box,
