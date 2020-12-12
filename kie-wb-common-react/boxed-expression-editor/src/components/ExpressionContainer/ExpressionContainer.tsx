@@ -19,17 +19,11 @@ import { useCallback, useMemo, useState } from "react";
 import * as _ from "lodash";
 import "./ExpressionContainer.css";
 import { useBoxedExpressionEditorI18n } from "../../i18n";
-import {
-  Dropdown,
-  DropdownItem,
-  KebabToggle,
-  SimpleList,
-  SimpleListItem,
-  SimpleListItemProps,
-} from "@patternfly/react-core";
+import { Button, ButtonVariant, SimpleList, SimpleListItem, SimpleListItemProps } from "@patternfly/react-core";
 import { PopoverMenu } from "../PopoverMenu";
 import { ExpressionProps, LiteralExpressionProps, LogicType } from "../../api";
 import { LiteralExpression } from "../LiteralExpression";
+import { useContextMenuHandler } from "../../hooks";
 
 export interface ExpressionContainerProps {
   /** Expression properties */
@@ -44,8 +38,15 @@ export const ExpressionContainer: ({ selectedExpression }: ExpressionContainerPr
   const [logicTypeIsPresent, setLogicTypeSelected] = useState(
     !_.isEmpty(props.selectedExpression.logicType) || props.selectedExpression.logicType === LogicType.Undefined
   );
-  const [actionDropdownIsOpen, setActionDropDownOpen] = useState(false);
   const [selectedExpression, setSelectedExpression] = useState(props.selectedExpression);
+
+  const [
+    contextMenuRef,
+    contextMenuXPos,
+    contextMenuYPos,
+    contextMenuIsVisible,
+    setContextMenuVisibility,
+  ] = useContextMenuHandler();
 
   const onLogicTypeSelect = useCallback(
     (currentItem: React.RefObject<HTMLButtonElement>, currentItemProps: SimpleListItemProps) => {
@@ -61,6 +62,7 @@ export const ExpressionContainer: ({ selectedExpression }: ExpressionContainerPr
 
   const executeClearAction = useCallback(() => {
     setLogicTypeSelected(false);
+    setContextMenuVisibility(false);
     setSelectedExpression((previousSelectedExpression: ExpressionProps) => {
       const updatedExpression = {
         name: previousSelectedExpression.name,
@@ -72,39 +74,7 @@ export const ExpressionContainer: ({ selectedExpression }: ExpressionContainerPr
       }
       return updatedExpression;
     });
-  }, []);
-
-  const onDropdownToggle = useCallback((isOpen) => {
-    return setActionDropDownOpen(isOpen);
-  }, []);
-
-  const onExpressionActionDropdownSelect = useCallback(
-    (actionDropdownIsOpen) => setActionDropDownOpen(!actionDropdownIsOpen),
-    []
-  );
-
-  const renderExpressionActionsDropdown = useCallback(() => {
-    return (
-      <Dropdown
-        onSelect={onExpressionActionDropdownSelect}
-        toggle={<KebabToggle onToggle={onDropdownToggle} className="expression-actions-toggle" />}
-        isOpen={actionDropdownIsOpen}
-        isPlain
-        dropdownItems={[
-          <DropdownItem key="clear" onClick={executeClearAction} isDisabled={!logicTypeIsPresent}>
-            {i18n.clear}
-          </DropdownItem>,
-        ]}
-      />
-    );
-  }, [
-    i18n.clear,
-    onExpressionActionDropdownSelect,
-    onDropdownToggle,
-    actionDropdownIsOpen,
-    logicTypeIsPresent,
-    executeClearAction,
-  ]);
+  }, [setContextMenuVisibility]);
 
   const getLogicTypesWithoutUndefined = useCallback(() => {
     return Object.values(LogicType).filter((logicType) => logicType !== LogicType.Undefined);
@@ -157,19 +127,41 @@ export const ExpressionContainer: ({ selectedExpression }: ExpressionContainerPr
     }
   }, [selectedExpression, updateNameAndDataType]);
 
+  const buildContextMenu = useCallback(() => {
+    return (
+      <div
+        className="context-menu-container"
+        style={{
+          top: contextMenuYPos,
+          left: contextMenuXPos,
+        }}
+      >
+        <Button
+          isDisabled={!logicTypeIsPresent}
+          isSmall={true}
+          variant={ButtonVariant.primary}
+          onClick={executeClearAction}
+        >
+          {i18n.clear}
+        </Button>
+      </div>
+    );
+  }, [logicTypeIsPresent, contextMenuXPos, contextMenuYPos, executeClearAction, i18n.clear]);
+
   return (
     <div className="expression-container">
       <span className="expression-title">{selectedExpression.name}</span>
       <span className="expression-type">({selectedExpression.logicType || LogicType.Undefined})</span>
-      <span className="expression-actions">{renderExpressionActionsDropdown()}</span>
 
       <div
         className={`expression-container-box ${logicTypeIsPresent ? "logic-type-selected" : "logic-type-not-present"}`}
+        ref={contextMenuRef}
       >
         {selectedExpression.logicType ? renderSelectedExpression : i18n.selectExpression}
       </div>
 
       {!logicTypeIsPresent ? buildLogicSelectorMenu() : null}
+      {contextMenuIsVisible ? buildContextMenu() : null}
     </div>
   );
 };
