@@ -28,6 +28,10 @@
   display: -webkit-flex;
 }
 
+.expression-container .context-menu-container {
+  position: absolute;
+}
+
 .expression-container > .expression-container-box.logic-type-not-present {
   cursor: pointer;
 }
@@ -42,17 +46,4 @@
   font-size: smaller;
   font-style: italic;
   color: gray;
-}
-
-.expression-actions .pf-c-dropdown .pf-c-dropdown__menu,
-.expression-actions-toggle {
-  padding: 0;
-}
-
-.expression-actions .pf-c-dropdown a {
-  font-size: var(--small-font-size);
-}
-
-.expression-container .expression-actions .pf-c-dropdown button:focus {
-  outline-width: 0;
 }

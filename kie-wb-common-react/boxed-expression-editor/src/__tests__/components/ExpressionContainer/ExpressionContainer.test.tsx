@@ -19,6 +19,10 @@ import { render } from "@testing-library/react";
 import * as React from "react";
 import { usingTestingBoxedExpressionI18nContext } from "../test-utils";
 import { DataType, LogicType } from "../../../api";
+import { act } from "react-dom/test-utils";
+
+jest.useFakeTimers();
+const flushPromises = () => new Promise((resolve) => process.nextTick(resolve));
 
 describe("ExpressionContainer tests", () => {
   test("should render ExpressionContainer component", () => {
@@ -63,35 +67,31 @@ describe("ExpressionContainer tests", () => {
   });
 
   describe("Expression Actions dropdown", () => {
-    test("should have the clear action disabled on startup", () => {
+    test("should have the clear action disabled on startup", async () => {
       const expression = { name: "Test", dataType: DataType.Undefined };
 
       const { container } = render(
         usingTestingBoxedExpressionI18nContext(<ExpressionContainer selectedExpression={expression} />).wrapper
       );
 
-      const actionsToggleElement = container.querySelector(".expression-actions-toggle")!;
-      const actionsToggleButton = actionsToggleElement as HTMLButtonElement;
-      actionsToggleButton.click();
+      await triggerContextMenu(container, ".expression-container-box");
 
-      expect(container.querySelector(".pf-m-disabled.pf-c-dropdown__menu-item")).toBeTruthy();
-      expect(container.querySelector(".pf-m-disabled.pf-c-dropdown__menu-item")!.innerHTML).toBe("Clear");
+      expect(container.querySelector(".context-menu-container button.pf-m-disabled")).toBeTruthy();
+      expect(container.querySelector(".context-menu-container button.pf-m-disabled")!.innerHTML).toBe("Clear");
     });
 
-    test("should have the clear action enabled, when logic type is selected", () => {
+    test("should have the clear action enabled, when logic type is selected", async () => {
       const expression = { name: "Test", logicType: LogicType.LiteralExpression, dataType: DataType.Undefined };
 
       const { container } = render(
         usingTestingBoxedExpressionI18nContext(<ExpressionContainer selectedExpression={expression} />).wrapper
       );
 
-      const actionsToggleElement = container.querySelector(".expression-actions-toggle")!;
-      const actionsToggleButton = actionsToggleElement as HTMLButtonElement;
-      actionsToggleButton.click();
+      await triggerContextMenu(container, ".expression-container-box");
 
-      expect(container.querySelector(".pf-m-disabled.pf-c-dropdown__menu-item")).toBeFalsy();
-      expect(container.querySelector(".pf-c-dropdown__menu-item")).toBeTruthy();
-      expect(container.querySelector(".pf-c-dropdown__menu-item")!.innerHTML).toBe("Clear");
+      expect(container.querySelector(".context-menu-container button.pf-m-disabled")).toBeFalsy();
+      expect(container.querySelector(".context-menu-container button")).toBeTruthy();
+      expect(container.querySelector(".context-menu-container button")!.innerHTML).toBe("Clear");
     });
   });
 
@@ -107,23 +107,44 @@ describe("ExpressionContainer tests", () => {
       expect(container.querySelector(".expression-container-box")!.innerHTML).toBe(expression.logicType);
     });
 
-    test("should reset the selection, when logic type is selected and clear button gets clicked", () => {
+    test("should reset the selection, when logic type is selected and clear button gets clicked", async () => {
       const expression = { name: "Test", logicType: LogicType.LiteralExpression, dataType: DataType.Undefined };
 
       const { container } = render(
         usingTestingBoxedExpressionI18nContext(<ExpressionContainer selectedExpression={expression} />).wrapper
       );
 
-      const actionsToggleElement = container.querySelector(".expression-actions-toggle")!;
-      const actionsToggleButton = actionsToggleElement as HTMLButtonElement;
-      actionsToggleButton.click();
+      await triggerContextMenu(container, ".expression-container-box");
 
-      const clearElement = container.querySelector(".pf-c-dropdown__menu-item");
-      const clearAnchor = clearElement as HTMLAnchorElement;
-      clearAnchor.click();
+      act(() => {
+        const clearButtonElement = container.querySelector(".context-menu-container button")!;
+        const clearButton = clearButtonElement as HTMLButtonElement;
+        clearButton.click();
+      });
 
       expect(container.querySelector(".expression-container-box")).toBeTruthy();
       expect(container.querySelector(".expression-container-box")!.innerHTML).not.toBe(expression.logicType);
     });
   });
 });
+
+const triggerContextMenu = async (container: HTMLElement, selector: string) => {
+  await act(async () => {
+    const element = container.querySelector(selector)!;
+
+    element.dispatchEvent(
+      new MouseEvent("contextmenu", {
+        bubbles: true,
+        cancelable: false,
+        view: window,
+        button: 2,
+        buttons: 0,
+        clientX: element.getBoundingClientRect().x,
+        clientY: element.getBoundingClientRect().y,
+      })
+    );
+
+    await flushPromises();
+    jest.runAllTimers();
+  });
+};
