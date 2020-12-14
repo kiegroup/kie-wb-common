@@ -29,18 +29,18 @@ import {
 export const App: React.FunctionComponent = () => {
   //This definition comes directly from the decision node
   const selectedExpression = {
-    'name': 'Expression Name',
-    'dataType': DataType.Undefined,
+    name: 'Expression Name',
+    dataType: DataType.Undefined,
   };
 
-  const [updatedExpression, setExpression] = useState(selectedExpression);
+  const [updatedExpression, setUpdatedExpression] = useState(selectedExpression);
 
   const expressionDefinition: ExpressionContainerProps = { 'selectedExpression': selectedExpression };
 
   //Defining global function that will be available in the Window namespace and used by the BoxedExpressionEditor component
   window.beeApi = {
-    resetExpressionDefinition : (definition: ExpressionProps) => setExpression(definition),
-    broadcastLiteralExpressionDefinition : (definition: LiteralExpressionProps) => setExpression(definition)
+    resetExpressionDefinition : (definition: ExpressionProps) => setUpdatedExpression(definition),
+    broadcastLiteralExpressionDefinition : (definition: LiteralExpressionProps) => setUpdatedExpression(definition)
   };
 
   return (
