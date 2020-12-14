@@ -33,7 +33,7 @@ export const LiteralExpression: React.FunctionComponent<LiteralExpressionProps> 
   const [literalExpressionContent, setLiteralExpressionContent] = useState(content);
 
   useEffect(() => {
-    window.beeApi.broadcastLiteralExpressionDefinition?.({
+    window.beeApi?.broadcastLiteralExpressionDefinition?.({
       name: expressionName,
       dataType: expressionDataType,
       logicType: LogicType.LiteralExpression,
