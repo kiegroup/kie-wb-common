@@ -67,9 +67,7 @@ export const ExpressionContainer: ({ selectedExpression }: ExpressionContainerPr
         dataType: previousSelectedExpression.dataType,
         logicType: LogicType.Undefined,
       };
-      if (window.beeApi?.resetExpressionDefinition) {
-        window.beeApi.resetExpressionDefinition(updatedExpression);
-      }
+      window.beeApi?.resetExpressionDefinition?.(updatedExpression);
       return updatedExpression;
     });
   }, []);
