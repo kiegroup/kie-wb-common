@@ -57,9 +57,9 @@ export const EditExpressionMenu: React.FunctionComponent<EditExpressionMenuProps
   nameField = nameField ?? i18n.name;
   dataTypeField = dataTypeField ?? i18n.dataType;
 
-  const [dataTypeSelectIsOpen, setDataTypeSelectOpen] = useState(false);
-  const [chosenDataType, setDataType] = useState(selectedDataType);
-  const [chosenExpressionName, setExpressionName] = useState(selectedExpressionName);
+  const [dataTypeSelectOpen, setDataTypeSelectOpen] = useState(false);
+  const [dataType, setDataType] = useState(selectedDataType);
+  const [expressionName, setExpressionName] = useState(selectedExpressionName);
 
   const onExpressionNameChange = useCallback(
     (event) => {
@@ -67,11 +67,11 @@ export const EditExpressionMenu: React.FunctionComponent<EditExpressionMenuProps
       if (event.type === "blur") {
         onExpressionUpdate({
           name: event.target.value,
-          dataType: chosenDataType,
+          dataType,
         });
       }
     },
-    [chosenDataType, onExpressionUpdate]
+    [dataType, onExpressionUpdate]
   );
 
   const onDataTypeSelect = useCallback(
@@ -79,11 +79,11 @@ export const EditExpressionMenu: React.FunctionComponent<EditExpressionMenuProps
       setDataTypeSelectOpen(false);
       setDataType(selection);
       onExpressionUpdate({
-        name: chosenExpressionName,
+        name: expressionName,
         dataType: selection,
       });
     },
-    [chosenExpressionName, onExpressionUpdate]
+    [expressionName, onExpressionUpdate]
   );
 
   const getDataTypes = useCallback(() => {
@@ -121,7 +121,7 @@ export const EditExpressionMenu: React.FunctionComponent<EditExpressionMenuProps
             <input
               type="text"
               id="expression-name"
-              value={chosenExpressionName}
+              value={expressionName}
               onChange={onExpressionNameChange}
               onBlur={onExpressionNameChange}
               className="form-control pf-c-form-control"
@@ -136,8 +136,8 @@ export const EditExpressionMenu: React.FunctionComponent<EditExpressionMenuProps
               onToggle={onDataTypeSelectToggle}
               onSelect={onDataTypeSelect}
               onFilter={onDataTypeFilter}
-              isOpen={dataTypeSelectIsOpen}
-              selections={chosenDataType}
+              isOpen={dataTypeSelectOpen}
+              selections={dataType}
               hasInlineFilter
               inlineFilterPlaceholderText={i18n.choose}
             >
