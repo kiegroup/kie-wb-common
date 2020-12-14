@@ -39,7 +39,7 @@ export const LiteralExpression: React.FunctionComponent<LiteralExpressionProps> 
       logicType: LogicType.LiteralExpression,
       content: literalExpressionContent,
     });
-  });
+  }, [expressionName, expressionDataType, literalExpressionContent]);
 
   const onExpressionUpdate = useCallback(
     ({ dataType, name }: ExpressionProps) => {
