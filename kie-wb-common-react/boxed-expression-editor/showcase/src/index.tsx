@@ -17,7 +17,7 @@
 import * as React from "react";
 import { useState } from "react";
 import * as ReactDOM from "react-dom";
-import './index.css';
+import "./index.css";
 import {
   BoxedExpressionEditor,
   DataType,
@@ -29,13 +29,13 @@ import {
 export const App: React.FunctionComponent = () => {
   //This definition comes directly from the decision node
   const selectedExpression = {
-    name: 'Expression Name',
+    name: "Expression Name",
     dataType: DataType.Undefined,
   };
 
   const [updatedExpression, setUpdatedExpression] = useState(selectedExpression);
 
-  const expressionDefinition: ExpressionContainerProps = { 'selectedExpression': selectedExpression };
+  const expressionDefinition: ExpressionContainerProps = { selectedExpression };
 
   //Defining global function that will be available in the Window namespace and used by the BoxedExpressionEditor component
   window.beeApi = {
@@ -56,4 +56,4 @@ export const App: React.FunctionComponent = () => {
   );
 };
 
-ReactDOM.render(<App />, document.getElementById('root'));
+ReactDOM.render(<App />, document.getElementById("root"));
