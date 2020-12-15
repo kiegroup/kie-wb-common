@@ -30,7 +30,6 @@ import org.junit.runner.RunWith;
 import org.kie.workbench.common.stunner.core.client.api.SessionManager;
 import org.kie.workbench.common.stunner.core.client.i18n.ClientTranslationService;
 import org.kie.workbench.common.stunner.core.client.session.ClientSession;
-import org.kie.workbench.common.stunner.core.client.session.impl.InstanceUtils;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.kie.workbench.common.stunner.core.diagram.GraphsProvider;
 import org.kie.workbench.common.stunner.core.diagram.Metadata;
@@ -53,7 +52,6 @@ import static org.kie.workbench.common.stunner.core.client.canvas.DeleteNodeConf
 import static org.kie.workbench.common.stunner.core.client.canvas.resources.StunnerClientCommonConstants.DeleteNodeConfirmationImpl_ConfirmationDescription;
 import static org.kie.workbench.common.stunner.core.client.canvas.resources.StunnerClientCommonConstants.DeleteNodeConfirmationImpl_Question;
 import static org.kie.workbench.common.stunner.core.client.canvas.resources.StunnerClientCommonConstants.DeleteNodeConfirmationImpl_Title;
-import static org.mockito.Mockito.doCallRealMethod;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
