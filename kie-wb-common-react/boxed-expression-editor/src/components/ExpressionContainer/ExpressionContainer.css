@@ -30,6 +30,7 @@
 
 .expression-container .context-menu-container {
   position: absolute;
+  z-index: 10000;
 }
 
 .expression-container > .expression-container-box.logic-type-not-present {
