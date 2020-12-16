@@ -27,11 +27,11 @@ export function useContextMenuHandler(): [
 
   const [xPos, setXPos] = useState("0px");
   const [yPos, setYPos] = useState("0px");
-  const [contextMenuIsVisible, setContextMenuVisibility] = useState(false);
+  const [contextMenuVisible, setContextMenuVisible] = useState(false);
 
   const hideContextMenu = useCallback(() => {
-    contextMenuIsVisible && setContextMenuVisibility(false);
-  }, [contextMenuIsVisible]);
+    contextMenuVisible && setContextMenuVisible(false);
+  }, [contextMenuVisible]);
 
   const showContextMenu = useCallback(
     (event: MouseEvent) => {
@@ -39,7 +39,7 @@ export function useContextMenuHandler(): [
         event.preventDefault();
         setXPos(`${event.pageX}px`);
         setYPos(`${event.pageY}px`);
-        setContextMenuVisibility(true);
+        setContextMenuVisible(true);
       }
     },
     [setXPos, setYPos]
@@ -54,5 +54,5 @@ export function useContextMenuHandler(): [
     };
   });
 
-  return [wrapperRef, xPos, yPos, contextMenuIsVisible, setContextMenuVisibility];
+  return [wrapperRef, xPos, yPos, contextMenuVisible, setContextMenuVisible];
 }
