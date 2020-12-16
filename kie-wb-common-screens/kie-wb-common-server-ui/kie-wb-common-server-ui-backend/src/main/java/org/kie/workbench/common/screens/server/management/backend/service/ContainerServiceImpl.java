@@ -16,6 +16,7 @@
 package org.kie.workbench.common.screens.server.management.backend.service;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -23,7 +24,9 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Any;
 import javax.inject.Inject;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.jboss.errai.bus.server.annotations.Service;
+import org.kie.server.api.model.definition.ProcessDefinition;
 import org.kie.server.api.model.instance.ProcessInstance;
 import org.kie.server.client.KieServicesClient;
 import org.kie.server.client.QueryServicesClient;
@@ -52,11 +55,23 @@ public class ContainerServiceImpl implements ContainerService {
             KieServicesClient client = kieServerInstanceManager.getClient(serverInstanceKey.getUrl());
 
             QueryServicesClient queryServicesClient = client.getServicesClient(QueryServicesClient.class);
-            List<ProcessInstance> processInstances = queryServicesClient.findProcessInstancesByContainerId(containerSpec.getId(), Arrays.asList(0, 1, 4), 0, 100);
+            Collection<ProcessDefinition> processDefinitions = null;
+            try {
+                processDefinitions = queryServicesClient.findProcessesByContainerId(containerSpec.getId(), 0, 10);
+            } catch (Exception e) {
+                if (e.getMessage().contains("org.jbpm.services.api.DeploymentNotFoundException")) {
+                    atomicBoolean.set(false);
+                } else {
+                    throw e;
+                }
+            }
+            if (!CollectionUtils.isEmpty(processDefinitions)) {
+                List<ProcessInstance> processInstances = queryServicesClient.findProcessInstancesByContainerId(containerSpec.getId(), Arrays.asList(0, 1, 4), 0, 100);
 
-            if (!processInstances.isEmpty()) {
-                atomicBoolean.set(true);
-                break;
+                if (!processInstances.isEmpty()) {
+                    atomicBoolean.set(true);
+                    break;
+                }
             }
         }
 
