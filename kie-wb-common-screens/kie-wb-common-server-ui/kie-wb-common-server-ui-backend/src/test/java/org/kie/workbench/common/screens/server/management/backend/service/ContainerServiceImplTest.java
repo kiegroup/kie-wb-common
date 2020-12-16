@@ -17,10 +17,13 @@ package org.kie.workbench.common.screens.server.management.backend.service;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.kie.server.api.exception.KieServicesHttpException;
+import org.kie.server.api.model.definition.ProcessDefinition;
 import org.kie.server.api.model.instance.ProcessInstance;
 import org.kie.server.client.KieServicesClient;
 import org.kie.server.client.QueryServicesClient;
@@ -68,15 +71,31 @@ public class ContainerServiceImplTest {
 
         QueryServicesClient queryServicesClient = mock(QueryServicesClient.class);
         KieServicesClient client = mock(KieServicesClient.class);
+        KieServicesHttpException exception = mock(KieServicesHttpException.class);
         when(kieServerInstanceManager.getClient(any())).thenReturn(client);
         when(client.getServicesClient(QueryServicesClient.class)).thenReturn(queryServicesClient);
+        when(queryServicesClient.findProcessesByContainerId("test",0,10)).thenReturn(makeProcessDefinition());
         when(queryServicesClient.findProcessInstancesByContainerId("test", Arrays.asList(0, 1, 4), 0, 100)).thenReturn(Arrays.asList(new ProcessInstance()));
         boolean runningResult = containerService.isRunningContainer(new ContainerSpec("test", "", new ServerTemplateKey("1", "test"), null, null, null));
 
         assertEquals(true, runningResult);
 
+        when(queryServicesClient.findProcessesByContainerId("test",0,10)).thenReturn(makeProcessDefinition());
         when(queryServicesClient.findProcessInstancesByContainerId("test", Arrays.asList(0, 1, 4), 0, 100)).thenReturn(Collections.emptyList());
         boolean result = containerService.isRunningContainer(new ContainerSpec("test", "", new ServerTemplateKey("1", "test"), null, null, null));
         assertEquals(false, result);
+
+        when(queryServicesClient.findProcessesByContainerId("test",0,10)).thenThrow(exception);
+
+        when(exception.getMessage()).thenReturn("org.jbpm.services.api.DeploymentNotFoundException");
+        when(queryServicesClient.findProcessInstancesByContainerId("test", Arrays.asList(0, 1, 4), 0, 100)).thenReturn(Collections.emptyList());
+        boolean resultWithDeploymentNotFoundException = containerService.isRunningContainer(new ContainerSpec("test", "", new ServerTemplateKey("1", "test"), null, null, null));
+        assertEquals(false, resultWithDeploymentNotFoundException);
+    }
+
+    private List<ProcessDefinition> makeProcessDefinition() {
+        ProcessDefinition processDefinition = new ProcessDefinition();
+        processDefinition.setContainerId("test");
+        return Arrays.asList(processDefinition);
     }
 }
