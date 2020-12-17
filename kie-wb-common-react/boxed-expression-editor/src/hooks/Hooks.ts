@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-import { Dispatch, RefObject, SetStateAction, useCallback, useEffect, useRef, useState } from "react";
+import { RefObject, useCallback, useEffect, useRef, useState } from "react";
 
-export function useContextMenuHandler(): [
-  RefObject<HTMLDivElement>,
-  string,
-  string,
-  boolean,
-  Dispatch<SetStateAction<boolean>>
-] {
+export function useContextMenuHandler(): {
+  contextMenuRef: RefObject<HTMLDivElement>;
+  contextMenuXPos: string;
+  contextMenuYPos: string;
+  contextMenuVisibility: boolean;
+  setContextMenuVisibility: (value: ((prevState: boolean) => boolean) | boolean) => void;
+} {
   const wrapperRef = useRef<HTMLDivElement>(null);
 
   const [xPos, setXPos] = useState("0px");
@@ -54,5 +54,11 @@ export function useContextMenuHandler(): [
     };
   });
 
-  return [wrapperRef, xPos, yPos, contextMenuVisible, setContextMenuVisible];
+  return {
+    contextMenuRef: wrapperRef,
+    contextMenuXPos: xPos,
+    contextMenuYPos: yPos,
+    contextMenuVisibility: contextMenuVisible,
+    setContextMenuVisibility: setContextMenuVisible,
+  };
 }
