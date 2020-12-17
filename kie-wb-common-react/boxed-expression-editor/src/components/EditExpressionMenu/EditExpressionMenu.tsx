@@ -24,10 +24,12 @@ import { Select, SelectOption, SelectVariant } from "@patternfly/react-core";
 import * as _ from "lodash";
 
 export interface EditExpressionMenuProps {
+  /** Optional children element to be considered for triggering the edit expression menu */
+  children?: React.ReactElement;
   /** The node where to append the popover content */
   appendTo?: HTMLElement | ((ref?: HTMLElement) => HTMLElement);
   /** A function which returns the HTMLElement where the popover's arrow should be placed */
-  arrowPlacement: () => HTMLElement;
+  arrowPlacement?: () => HTMLElement;
   /** The label for the field 'Name' */
   nameField?: string;
   /** The label for the field 'Data Type' */
@@ -43,6 +45,7 @@ export interface EditExpressionMenuProps {
 }
 
 export const EditExpressionMenu: React.FunctionComponent<EditExpressionMenuProps> = ({
+  children,
   appendTo,
   arrowPlacement,
   title,
@@ -146,6 +149,8 @@ export const EditExpressionMenu: React.FunctionComponent<EditExpressionMenuProps
           </div>
         </div>
       }
-    />
+    >
+      {children}
+    </PopoverMenu>
   );
 };
