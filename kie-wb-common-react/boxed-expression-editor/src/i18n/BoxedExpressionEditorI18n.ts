@@ -24,6 +24,7 @@ interface BoxedExpressionEditorDictionary extends ReferenceDictionary<BoxedExpre
   dataType: string;
   decisionTable: string;
   editExpression: string;
+  editRelation: string;
   function: string;
   invocation: string;
   list: string;
