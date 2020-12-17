@@ -16,6 +16,8 @@
 
 .relation-expression table th {
   position: relative;
+  border-style: ridge;
+  font-style: normal;
   cursor: pointer;
   /** Due to a glitch when resizing column, disabling user selection for header's cells */
   user-select: none;
@@ -23,6 +25,19 @@
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
+}
+
+.relation-expression table tbody td {
+  border-style: ridge;
+}
+
+.relation-expression table th:not(:first-child) {
+  text-align: center;
+  background-color: #DEF3FF;
+}
+
+.relation-expression table .pf-c-drawer__splitter {
+  background-color: #DEF3FF;
 }
 
 .relation-expression table .pf-c-drawer {

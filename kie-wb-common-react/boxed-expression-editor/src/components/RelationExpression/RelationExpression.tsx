@@ -32,7 +32,7 @@ export const RelationExpression: React.FunctionComponent<RelationProps> = ({
   const { i18n } = useBoxedExpressionEditorI18n();
 
   const [tableColumns, setTableColumns] = useState([
-    { Header: "#", accessor: "#", disableResizing: true },
+    { Header: "#", accessor: "#", disableResizing: true, width: 60 },
     ..._.map(
       columns,
       (column) =>
@@ -45,21 +45,22 @@ export const RelationExpression: React.FunctionComponent<RelationProps> = ({
   ]);
 
   const [tableCells, setTableCells] = useState([
-    { "#": "1" },
-    ..._.map(rows, (row) =>
+    ..._.map(rows, (row, rowIndex) =>
       _.reduce(
         row,
-        (partialRow, cell, index) => {
-          const columnName = tableColumns[index].accessor?.toString();
+        (partialRow, cell, columnIndex) => {
+          const columnName = tableColumns[columnIndex + 1].accessor?.toString();
           if (columnName) {
             Object.defineProperty(partialRow, columnName, { value: cell });
           }
           return partialRow;
         },
-        {}
+        { "#": "" + (rowIndex + 1) }
       )
     ),
   ]);
+
+  console.log(tableCells);
 
   const tableInstance = useTable(
     {
