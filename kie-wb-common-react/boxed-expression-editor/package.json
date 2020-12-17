@@ -15,9 +15,10 @@
     "@types/jest": "^26.0.14",
     "@types/lodash": "^4.14.165",
     "@types/node": "12.11.6",
-    "@types/react": "16.9.9",
+    "@types/react": "16.9.12",
     "@types/react-dom": "16.9.2",
     "@types/react-router-dom": "^5.1.6",
+    "@types/react-table": "^7.0.25",
     "@typescript-eslint/eslint-plugin": "^4.4.1",
     "@typescript-eslint/parser": "^4.4.1",
     "copy-webpack-plugin": "^6.2.1",
@@ -67,7 +68,9 @@
     "@patternfly/react-core": "^4.63.3",
     "@patternfly/react-icons": "^4.7.11",
     "@patternfly/react-styles": "^4.7.8",
-    "lodash": "^4.17.20"
+    "@patternfly/react-table": "^4.19.45",
+    "lodash": "^4.17.20",
+    "react-table": "^7.6.2"
   },
   "peerDependencies": {
     "react": "16.12.0",
