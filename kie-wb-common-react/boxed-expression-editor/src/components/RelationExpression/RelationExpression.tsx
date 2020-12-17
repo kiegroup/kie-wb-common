@@ -16,11 +16,108 @@
 
 import "./RelationExpression.css";
 import * as React from "react";
-import { RelationProps } from "../../api";
+import { useState } from "react";
+import "@patternfly/patternfly/utilities/Text/text.css";
+import { DataType, RelationProps } from "../../api";
+import { Column, useBlockLayout, useResizeColumns, useTable } from "react-table";
+import { TableComposable, Tbody, Td, Th, Thead, Tr } from "@patternfly/react-table";
+import * as _ from "lodash";
+import { EditExpressionMenu } from "../EditExpressionMenu";
+import { useBoxedExpressionEditorI18n } from "../../i18n";
 
 export const RelationExpression: React.FunctionComponent<RelationProps> = ({
-  columns = [],
-  rows = [[]],
+  columns = [{ name: "column-1", dataType: DataType.Undefined }],
+  rows = [[""]],
 }: RelationProps) => {
-  return <div className="relation-expression">Relation Expression</div>;
+  const { i18n } = useBoxedExpressionEditorI18n();
+
+  const [tableColumns, setTableColumns] = useState([
+    { Header: "#", accessor: "#", disableResizing: true },
+    ..._.map(
+      columns,
+      (column) =>
+        ({
+          Header: column.name,
+          accessor: column.name,
+          dataType: column.dataType,
+        } as Column)
+    ),
+  ]);
+
+  const [tableCells, setTableCells] = useState([
+    { "#": "1" },
+    ..._.map(rows, (row) =>
+      _.reduce(
+        row,
+        (partialRow, cell, index) => {
+          const columnName = tableColumns[index].accessor?.toString();
+          if (columnName) {
+            Object.defineProperty(partialRow, columnName, { value: cell });
+          }
+          return partialRow;
+        },
+        {}
+      )
+    ),
+  ]);
+
+  const tableInstance = useTable(
+    {
+      columns: tableColumns,
+      data: tableCells,
+    },
+    useBlockLayout,
+    useResizeColumns
+  );
+
+  return (
+    <div className="relation-expression">
+      <TableComposable variant="compact" {...tableInstance.getTableProps()}>
+        <Thead noWrap>
+          <tr>
+            {tableInstance.headers.map((column) => {
+              return (
+                <Th {...column.getHeaderProps()} key={column.id}>
+                  <EditExpressionMenu
+                    title={i18n.editRelation}
+                    selectedExpressionName={column.id}
+                    selectedDataType={column.dataType}
+                    onExpressionUpdate={(expression) => console.log("updated", expression)}
+                  >
+                    <div>
+                      <div className="pf-u-text-truncate">{column.render("Header")}</div>
+                      {column.canResize && (
+                        <div className="pf-c-drawer" {...column.getResizerProps()}>
+                          <div className="pf-c-drawer__splitter pf-m-vertical">
+                            <div className="pf-c-drawer__splitter-handle" />
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </EditExpressionMenu>
+                </Th>
+              );
+            })}
+          </tr>
+        </Thead>
+
+        <Tbody {...tableInstance.getTableBodyProps()}>
+          {tableInstance.rows.map((row, i) => {
+            tableInstance.prepareRow(row);
+            return (
+              <Tr {...row.getRowProps()} key={i}>
+                {row.cells.map((cell, j) => {
+                  return (
+                    <Td {...cell.getCellProps()} key={j}>
+                      {cell.render("Cell")}
+                    </Td>
+                  );
+                })}
+              </Tr>
+            );
+          })}
+        </Tbody>
+      </TableComposable>
+    </div>
+  );
 };
