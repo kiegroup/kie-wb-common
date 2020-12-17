@@ -79,23 +79,28 @@ export const RelationExpression: React.FunctionComponent<RelationProps> = ({
             {tableInstance.headers.map((column) => {
               return (
                 <Th {...column.getHeaderProps()} key={column.id}>
-                  <EditExpressionMenu
-                    title={i18n.editRelation}
-                    selectedExpressionName={column.id}
-                    selectedDataType={column.dataType}
-                    onExpressionUpdate={(expression) => console.log("updated", expression)}
-                  >
-                    <div>
-                      <div className="pf-u-text-truncate">{column.render("Header")}</div>
-                      {column.canResize && (
+                  {column.canResize ? (
+                    <EditExpressionMenu
+                      title={i18n.editRelation}
+                      selectedExpressionName={column.id}
+                      selectedDataType={column.dataType}
+                      onExpressionUpdate={(expression) => console.log("updated", expression)}
+                    >
+                      <div className="header-cell">
+                        <div>
+                          <p className="pf-u-text-truncate">{column.render("Header")}</p>
+                          <p className="pf-u-text-truncate data-type">({column.dataType})</p>
+                        </div>
                         <div className="pf-c-drawer" {...column.getResizerProps()}>
                           <div className="pf-c-drawer__splitter pf-m-vertical">
                             <div className="pf-c-drawer__splitter-handle" />
                           </div>
                         </div>
-                      )}
-                    </div>
-                  </EditExpressionMenu>
+                      </div>
+                    </EditExpressionMenu>
+                  ) : (
+                    <div className="header-cell">{column.render("Header")}</div>
+                  )}
                 </Th>
               );
             })}
