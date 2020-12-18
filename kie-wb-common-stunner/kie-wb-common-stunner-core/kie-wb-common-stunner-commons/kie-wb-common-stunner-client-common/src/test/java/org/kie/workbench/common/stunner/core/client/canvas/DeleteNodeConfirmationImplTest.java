@@ -34,7 +34,7 @@ import org.kie.workbench.common.stunner.core.graph.content.HasContentDefinitionI
 import org.kie.workbench.common.stunner.core.graph.content.HasStringName;
 import org.kie.workbench.common.stunner.core.graph.content.definition.Definition;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.uberfire.mvp.Command;
 
 import static org.junit.Assert.assertEquals;
@@ -51,7 +51,7 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(MockitoJUnitRunner.Silent.class)
 public class DeleteNodeConfirmationImplTest {
 
     @Mock
