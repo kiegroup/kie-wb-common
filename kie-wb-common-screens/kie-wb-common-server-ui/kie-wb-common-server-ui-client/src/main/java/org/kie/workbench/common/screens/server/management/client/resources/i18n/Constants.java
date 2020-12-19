@@ -251,6 +251,4 @@ public class Constants {
     @TranslationKey(defaultValue = "")
     public static final String NewContainer_Deploying = "NewContainer.Deploying";
 
-    @TranslationKey(defaultValue = "")
-    public static final String NewContainer_FailedContainer = "NewContainer.FailedContainer";
 }
