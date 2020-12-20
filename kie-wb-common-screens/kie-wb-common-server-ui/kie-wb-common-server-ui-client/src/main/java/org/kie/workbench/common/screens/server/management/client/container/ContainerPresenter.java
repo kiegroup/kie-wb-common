@@ -147,7 +147,9 @@ public class ContainerPresenter {
                 containerSpec != null &&
                 containerSpec.getId() != null &&
                 containerSpec.getId().equals(content.getContainerSpec().getId())) {
-            resetReleaseIdForFailedContainers(content.getContainers(), content.getContainerSpec());
+            if (containerSpec.getStatus() != KieContainerStatus.STOPPED) {
+                resetReleaseIdForFailedContainers(content.getContainers(), content.getContainerSpec());
+            }
             setup(content.getContainerSpec(),
                   content.getContainers());
         } else {
@@ -230,9 +232,17 @@ public class ContainerPresenter {
     }
 
     private boolean isEmpty(final Collection<Container> containers) {
-        for (final Container container : containers) {
-            if (!container.getStatus().equals(KieContainerStatus.STOPPED)) {
-                return false;
+        if (containerSpec.getStatus().equals(KieContainerStatus.STOPPED)) {
+            for (final Container container : containers) {
+                if (!container.getStatus().equals(KieContainerStatus.FAILED) && !container.getStatus().equals(KieContainerStatus.STOPPED)) {
+                    return false;
+                }
+            }
+        } else {
+            for (final Container container : containers) {
+                if (!container.getStatus().equals(KieContainerStatus.STOPPED)) {
+                    return false;
+                }
             }
         }
         return true;
