@@ -374,6 +374,7 @@ public class ContainerPresenterTest {
                                                   null,
                                                   null);
         container.setStatus(KieContainerStatus.FAILED);
+        containerSpecData.getContainerSpec().setStatus(KieContainerStatus.STARTED);
         containerSpecData.getContainers().add(container);
         assertNull(container.getResolvedReleasedId());
         presenter.loadContainers(containerSpecData);
@@ -610,5 +611,37 @@ public class ContainerPresenterTest {
         verify(view).setContainerStopState(State.DISABLED);
         verify(view).updateToggleActivationButton(true);
         verify(view).enableToggleActivationButton();
+    }
+
+    @Test
+    public void testLoadContainersWithStopContainerSpecHasStartedContainer() {
+        final Container container = new Container("containerSpecId",
+                                                  "containerName",
+                                                  new ServerInstanceKey(),
+                                                  Collections.<Message>emptyList(),
+                                                  null,
+                                                  null);
+        container.setStatus(KieContainerStatus.STARTED);
+        containerSpecData.getContainers().add(container);
+        presenter.loadContainers(containerSpecData);
+
+        assertNotEquals(KieContainerStatus.FAILED,containerSpecData.getContainerSpec().getStatus());
+        verifyLoad(false, 1, false);
+    }
+
+    @Test
+    public void testLoadContainersWithStopContainerSpecHasFailedContainer() {
+        final Container container = new Container("containerSpecId",
+                                                  "containerName",
+                                                  new ServerInstanceKey(),
+                                                  Collections.<Message>emptyList(),
+                                                  null,
+                                                  null);
+        container.setStatus(KieContainerStatus.FAILED);
+        containerSpecData.getContainers().add(container);
+        presenter.loadContainers(containerSpecData);
+
+        assertNotEquals(KieContainerStatus.FAILED,containerSpecData.getContainerSpec().getStatus());
+        verifyLoad(true, 1, false);
     }
 }
