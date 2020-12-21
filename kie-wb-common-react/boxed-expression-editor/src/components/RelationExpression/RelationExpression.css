@@ -62,3 +62,10 @@
   top: 0;
   bottom: 0;
 }
+
+.relation-expression table tbody td textarea {
+  padding: 0.125em;
+  margin: 0;
+  border: 0;
+  width: 100%;
+}
