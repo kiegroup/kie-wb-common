@@ -17,8 +17,17 @@
 import { DataType } from "../api";
 import { TableResizerProps } from "react-table";
 
+// Extending react-table definitions with missing and custom properties
 declare module "react-table" {
+  export interface TableOptions {
+    onCellUpdate: (rowIndex: number, columnId: string, value: string) => void;
+  }
+
   export interface ColumnInstance {
+    /** Column identifier */
+    accessor: string;
+    /** Column label */
+    label: string;
     /** Column data type */
     dataType: DataType;
     /** When resizable, this function returns the resizer props  */
