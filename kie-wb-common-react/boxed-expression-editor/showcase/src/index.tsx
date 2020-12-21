@@ -23,7 +23,8 @@ import {
   DataType,
   ExpressionContainerProps,
   ExpressionProps,
-  LiteralExpressionProps
+  LiteralExpressionProps,
+  RelationProps
 } from "./boxed_expression_editor";
 
 export const App: React.FunctionComponent = () => {
@@ -40,7 +41,8 @@ export const App: React.FunctionComponent = () => {
   //Defining global function that will be available in the Window namespace and used by the BoxedExpressionEditor component
   window.beeApi = {
     resetExpressionDefinition : (definition: ExpressionProps) => setUpdatedExpression(definition),
-    broadcastLiteralExpressionDefinition : (definition: LiteralExpressionProps) => setUpdatedExpression(definition)
+    broadcastLiteralExpressionDefinition : (definition: LiteralExpressionProps) => setUpdatedExpression(definition),
+    broadcastRelationExpressionDefinition: (definition: RelationProps) => setUpdatedExpression(definition),
   };
 
   return (
@@ -49,7 +51,7 @@ export const App: React.FunctionComponent = () => {
         <BoxedExpressionEditor expressionDefinition={expressionDefinition} />
       </div>
       <div className="updated-json">
-        <p>⚠ Currently, JSON gets updated only for literal expression logic type</p>
+        <p>⚠ Currently, JSON gets updated only for literal expression and relation logic types</p>
         <pre>{JSON.stringify(updatedExpression, null, 2)}</pre>
       </div>
     </div>

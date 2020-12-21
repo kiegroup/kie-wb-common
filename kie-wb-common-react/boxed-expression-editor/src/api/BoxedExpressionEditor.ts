@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { ExpressionProps, LiteralExpressionProps } from "./ExpressionProps";
+import { ExpressionProps, LiteralExpressionProps, RelationProps } from "./ExpressionProps";
 
 export {};
 
@@ -24,6 +24,7 @@ declare global {
     beeApi: {
       resetExpressionDefinition: (definition: ExpressionProps) => void;
       broadcastLiteralExpressionDefinition: (definition: LiteralExpressionProps) => void;
+      broadcastRelationExpressionDefinition: (definition: RelationProps) => void;
     };
   }
 }
