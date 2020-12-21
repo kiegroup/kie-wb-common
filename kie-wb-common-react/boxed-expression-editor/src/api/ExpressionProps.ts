@@ -44,9 +44,13 @@ export interface RelationProps extends ExpressionProps {
   columns?: {
     /** Relation's column name */
     name: string;
+    /** Relation's column label (the one shown in the page) */
+    label: string;
     /** Relation's column data type */
     dataType: DataType;
   }[];
   /** Rows order is from top to bottom. Each row has a collection of cells, one for each column */
-  rows?: string[][];
+  rows?: {
+    [key: string]: string;
+  }[];
 }
