@@ -16,7 +16,7 @@
 
 import "./RelationExpression.css";
 import * as React from "react";
-import { ChangeEvent, useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import "@patternfly/patternfly/utilities/Text/text.css";
 import { DataType, RelationProps } from "../../api";
 import { Cell, Column, ColumnInstance, Row, useBlockLayout, useResizeColumns, useTable } from "react-table";
@@ -25,30 +25,7 @@ import * as _ from "lodash";
 import { EditExpressionMenu } from "../EditExpressionMenu";
 import { useBoxedExpressionEditorI18n } from "../../i18n";
 import { Popover } from "@patternfly/react-core";
-
-function EditableCell({
-  value: initialValue,
-  row: { index },
-  column: { id },
-  onCellUpdate,
-}: {
-  value: string;
-  row: { index: number };
-  column: { id: string };
-  onCellUpdate: (rowIndex: number, columnId: string, value: string) => void;
-}): JSX.Element | string {
-  const [value, setValue] = React.useState(initialValue);
-
-  const onChange = useCallback((e: ChangeEvent<HTMLTextAreaElement>) => {
-    setValue(e.target.value);
-  }, []);
-
-  const onBlur = useCallback(() => {
-    onCellUpdate(index, id, value);
-  }, [id, index, value, onCellUpdate]);
-
-  return <textarea value={value} onChange={onChange} onBlur={onBlur} />;
-}
+import { EditableCell } from "../Table";
 
 export const RelationExpression: React.FunctionComponent<RelationProps> = (relationProps: RelationProps) => {
   const NUMBER_OF_ROWS_COLUMN = "#";
