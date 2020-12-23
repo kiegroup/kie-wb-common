@@ -24,6 +24,7 @@ import { TableComposable, Tbody, Td, Th, Thead, Tr } from "@patternfly/react-tab
 import * as _ from "lodash";
 import { EditExpressionMenu } from "../EditExpressionMenu";
 import { useBoxedExpressionEditorI18n } from "../../i18n";
+import { Popover } from "@patternfly/react-core";
 
 function EditableCell({
   value: initialValue,
@@ -50,15 +51,27 @@ function EditableCell({
 }
 
 export const RelationExpression: React.FunctionComponent<RelationProps> = (relationProps: RelationProps) => {
+  const NUMBER_OF_ROWS_COLUMN = "#";
+  const FIRST_COLUMN_NAME = "column-1";
+
+  const generateFirstRow = () => {
+    const firstRow: { [key: string]: string } = {};
+    firstRow[FIRST_COLUMN_NAME] = "";
+    return firstRow;
+  };
+
   const columns =
     relationProps.columns === undefined
-      ? [{ name: "column-1", label: "column-1", dataType: DataType.Undefined }]
+      ? [
+          { name: FIRST_COLUMN_NAME, label: FIRST_COLUMN_NAME, dataType: DataType.Undefined },
+          { name: "column-2", label: "column-2", dataType: DataType.Undefined },
+        ]
       : relationProps.columns;
-  const rows = relationProps.rows === undefined ? [{ "column-1": "" }] : relationProps.rows;
+  const rows = relationProps.rows === undefined ? [generateFirstRow()] : relationProps.rows;
   const { i18n } = useBoxedExpressionEditorI18n();
 
   const [tableColumns, setTableColumns] = useState([
-    { label: "#", accessor: "#", disableResizing: true, width: 60 },
+    { label: NUMBER_OF_ROWS_COLUMN, accessor: NUMBER_OF_ROWS_COLUMN, disableResizing: true, width: 60 },
     ..._.map(
       columns,
       (column) =>
@@ -72,10 +85,14 @@ export const RelationExpression: React.FunctionComponent<RelationProps> = (relat
 
   const [tableCells, setTableCells] = useState([
     ..._.map(rows, (row, rowIndex) => {
-      row["#"] = "" + (rowIndex + 1);
+      row[NUMBER_OF_ROWS_COLUMN] = "" + (rowIndex + 1);
       return row;
     }),
   ]);
+
+  const [showContextMenu, setShowContextMenu] = useState(false);
+
+  const [contextMenuTarget, setContextMenuTarget] = useState(document.body);
 
   useEffect(() => {
     window.beeApi?.broadcastRelationExpressionDefinition?.({
@@ -110,6 +127,23 @@ export const RelationExpression: React.FunctionComponent<RelationProps> = (relat
     };
   }, []);
 
+  const buildContextMenu = () => (
+    <Popover
+      aria-label="Popover with selector reference example"
+      headerContent={<div>Popover Header</div>}
+      bodyContent={
+        <div>
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam id feugiat augue, nec fringilla turpis.
+        </div>
+      }
+      footerContent="Popover Footer"
+      isVisible={showContextMenu}
+      shouldClose={() => setShowContextMenu(false)}
+      shouldOpen={(showFunction) => showFunction?.()}
+      reference={() => contextMenuTarget}
+    />
+  );
+
   const tableInstance = useTable(
     {
       columns: tableColumns,
@@ -118,6 +152,22 @@ export const RelationExpression: React.FunctionComponent<RelationProps> = (relat
         Cell: (cellRef) => (cellRef.column.canResize ? EditableCell(cellRef) : cellRef.value),
       },
       onCellUpdate,
+      getThProps: (column) => ({
+        onContextMenu: (e) => {
+          e.preventDefault();
+          setContextMenuTarget(e.target);
+          setShowContextMenu(true);
+          console.log("contextMenu - header", e, column);
+        },
+      }),
+      getTdProps: (cell, column, row) => ({
+        onContextMenu: (e) => {
+          e.preventDefault();
+          setContextMenuTarget(e.target);
+          setShowContextMenu(true);
+          console.log("contextMenu - cell", cell, column, row);
+        },
+      }),
     },
     useBlockLayout,
     useResizeColumns
@@ -130,7 +180,7 @@ export const RelationExpression: React.FunctionComponent<RelationProps> = (relat
           <tr>
             {tableInstance.headers.map((column: ColumnInstance, columnIndex: number) => {
               return (
-                <Th {...column.getHeaderProps()} key={columnIndex}>
+                <Th {...column.getHeaderProps()} {...tableInstance.getThProps(column)} key={columnIndex}>
                   {column.canResize ? (
                     <EditExpressionMenu
                       title={i18n.editRelation}
@@ -160,13 +210,13 @@ export const RelationExpression: React.FunctionComponent<RelationProps> = (relat
         </Thead>
 
         <Tbody {...tableInstance.getTableBodyProps()}>
-          {tableInstance.rows.map((row: Row, i: number) => {
+          {tableInstance.rows.map((row: Row, rowIndex: number) => {
             tableInstance.prepareRow(row);
             return (
-              <Tr {...row.getRowProps()} key={i}>
-                {row.cells.map((cell: Cell, j: number) => {
+              <Tr {...row.getRowProps()} key={rowIndex}>
+                {row.cells.map((cell: Cell, cellIndex: number) => {
                   return (
-                    <Td {...cell.getCellProps()} key={j}>
+                    <Td {...cell.getCellProps()} {...tableInstance.getTdProps(cell, cell.column, row)} key={cellIndex}>
                       {cell.render("Cell")}
                     </Td>
                   );
@@ -176,6 +226,7 @@ export const RelationExpression: React.FunctionComponent<RelationProps> = (relat
           })}
         </Tbody>
       </TableComposable>
+      {showContextMenu ? buildContextMenu() : null}
     </div>
   );
 };
