@@ -21,7 +21,7 @@ import { EditableCell } from "../../../components/Table";
 import * as _ from "lodash";
 
 describe("EditableCell tests", () => {
-  test("should render the initial value", async () => {
+  test("should render the initial value", () => {
     const initialValue = "INITIAL_VALUE";
 
     const { container } = render(
