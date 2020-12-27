@@ -16,6 +16,7 @@
 
 import { LogicType } from "./LogicType";
 import { DataType } from "./DataType";
+import { Cells, Columns } from "./Table";
 
 export interface ExpressionProps {
   /** Expression name (which, in DMN world, is equal to the Decision node's name) */
@@ -41,16 +42,7 @@ export interface RelationProps extends ExpressionProps {
   /** Logic type must be Relation */
   logicType: LogicType.Relation;
   /** Each column has a name and a data type. Their order is from left to right */
-  columns?: {
-    /** Relation's column name */
-    name: string;
-    /** Relation's column label (the one shown in the page) */
-    label: string;
-    /** Relation's column data type */
-    dataType: DataType;
-  }[];
+  columns?: Columns;
   /** Rows order is from top to bottom. Each row has a collection of cells, one for each column */
-  rows?: {
-    [key: string]: string;
-  }[];
+  cells?: Cells;
 }

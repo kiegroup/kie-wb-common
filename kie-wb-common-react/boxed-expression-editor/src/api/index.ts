@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
-export * from "./ExpressionProps";
+export * from "./BoxedExpressionEditor";
 export * from "./DataType";
+export * from "./ExpressionProps";
 export * from "./LogicType";
+export * from "./Table";
