@@ -14,5 +14,22 @@
  * limitations under the License.
  */
 
-export * from "./EditableCell";
-export * from "./Table";
+import { DataType } from "./DataType";
+
+export interface RowObject {
+  /** Dynamic fields, optionally one for each column identifier */
+  [columnId: string]: string;
+}
+
+export type Cells = RowObject[];
+
+export interface ColumnObject {
+  /** Relation's column name */
+  name: string;
+  /** Relation's column label (the one shown in the page) */
+  label: string;
+  /** Relation's column data type */
+  dataType: DataType;
+}
+
+export type Columns = ColumnObject[];
