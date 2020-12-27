@@ -39,7 +39,7 @@ describe("PopoverMenu tests", () => {
       ).wrapper
     );
 
-    await activatePopover(container);
+    await activatePopover(container as HTMLElement);
 
     expect(container).toMatchSnapshot();
   });
@@ -60,7 +60,7 @@ describe("PopoverMenu tests", () => {
       ).wrapper
     );
 
-    await activatePopover(container);
+    await activatePopover(container as HTMLElement);
 
     expect(container.querySelector(".selector-menu-title")).toBeTruthy();
     expect(container.querySelector(".selector-menu-title")!.innerHTML).toBe(title);

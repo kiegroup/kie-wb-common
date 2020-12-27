@@ -24,7 +24,7 @@ import {
   ExpressionContainerProps,
   ExpressionProps,
   LiteralExpressionProps,
-  RelationProps
+  RelationProps,
 } from "./boxed_expression_editor";
 
 export const App: React.FunctionComponent = () => {
@@ -40,8 +40,8 @@ export const App: React.FunctionComponent = () => {
 
   //Defining global function that will be available in the Window namespace and used by the BoxedExpressionEditor component
   window.beeApi = {
-    resetExpressionDefinition : (definition: ExpressionProps) => setUpdatedExpression(definition),
-    broadcastLiteralExpressionDefinition : (definition: LiteralExpressionProps) => setUpdatedExpression(definition),
+    resetExpressionDefinition: (definition: ExpressionProps) => setUpdatedExpression(definition),
+    broadcastLiteralExpressionDefinition: (definition: LiteralExpressionProps) => setUpdatedExpression(definition),
     broadcastRelationExpressionDefinition: (definition: RelationProps) => setUpdatedExpression(definition),
   };
 

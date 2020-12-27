@@ -44,7 +44,7 @@ describe("EditExpressionMenu tests", () => {
       ).wrapper
     );
 
-    await activatePopover(container);
+    await activatePopover(container as HTMLElement);
 
     expect(container.querySelector(".selector-menu-title")).toBeTruthy();
     expect(container.querySelector(".selector-menu-title")!.innerHTML).toBe(title);
@@ -69,7 +69,7 @@ describe("EditExpressionMenu tests", () => {
       ).wrapper
     );
 
-    await activatePopover(container);
+    await activatePopover(container as HTMLElement);
 
     expect(container.querySelector(".expression-name label")).toBeTruthy();
     expect(container.querySelector(".expression-name label")!.innerHTML).toBe(nameFieldLabel);
@@ -94,7 +94,7 @@ describe("EditExpressionMenu tests", () => {
       ).wrapper
     );
 
-    await activatePopover(container);
+    await activatePopover(container as HTMLElement);
 
     expect(container.querySelector(".expression-data-type label")).toBeTruthy();
     expect(container.querySelector(".expression-data-type label")!.innerHTML).toBe(dataTypeFieldLabel);
@@ -117,7 +117,7 @@ describe("EditExpressionMenu tests", () => {
       ).wrapper
     );
 
-    await activatePopover(container);
+    await activatePopover(container as HTMLElement);
 
     expect(container.querySelector("[id^='pf-select-toggle-id-']")).toBeTruthy();
     expect((container.querySelector("[id^='pf-select-toggle-id-']")! as HTMLInputElement).value).toBe(
@@ -144,7 +144,7 @@ describe("EditExpressionMenu tests", () => {
       ).wrapper
     );
 
-    await activatePopover(container);
+    await activatePopover(container as HTMLElement);
 
     expect(container.querySelector("[id^='pf-select-toggle-id-']")).toBeTruthy();
     expect((container.querySelector("[id^='pf-select-toggle-id-']")! as HTMLInputElement).value).toBe(selectedDataType);
@@ -168,7 +168,7 @@ describe("EditExpressionMenu tests", () => {
       ).wrapper
     );
 
-    await activatePopover(container);
+    await activatePopover(container as HTMLElement);
 
     expect(container.querySelector("#expression-name")).toBeTruthy();
     expect((container.querySelector("#expression-name")! as HTMLInputElement).value).toBe(expressionName);
@@ -193,7 +193,7 @@ describe("EditExpressionMenu tests", () => {
       ).wrapper
     );
 
-    await activatePopover(container);
+    await activatePopover(container as HTMLElement);
 
     (container.querySelector("#expression-name") as HTMLInputElement)!.value = "changed";
     (container.querySelector("#expression-name") as HTMLInputElement)!.dispatchEvent(new Event("change"));

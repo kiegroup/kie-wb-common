@@ -74,7 +74,7 @@ describe("ExpressionContainer tests", () => {
         usingTestingBoxedExpressionI18nContext(<ExpressionContainer selectedExpression={expression} />).wrapper
       );
 
-      await triggerContextMenu(container, ".expression-container-box");
+      await triggerContextMenu(container as HTMLElement, ".expression-container-box");
 
       expect(container.querySelector(".context-menu-container button.pf-m-disabled")).toBeTruthy();
       expect(container.querySelector(".context-menu-container button.pf-m-disabled")!.innerHTML).toBe("Clear");
@@ -87,7 +87,7 @@ describe("ExpressionContainer tests", () => {
         usingTestingBoxedExpressionI18nContext(<ExpressionContainer selectedExpression={expression} />).wrapper
       );
 
-      await triggerContextMenu(container, ".expression-container-box");
+      await triggerContextMenu(container as HTMLElement, ".expression-container-box");
 
       expect(container.querySelector(".context-menu-container button.pf-m-disabled")).toBeFalsy();
       expect(container.querySelector(".context-menu-container button")).toBeTruthy();
@@ -114,7 +114,7 @@ describe("ExpressionContainer tests", () => {
         usingTestingBoxedExpressionI18nContext(<ExpressionContainer selectedExpression={expression} />).wrapper
       );
 
-      await triggerContextMenu(container, ".expression-container-box");
+      await triggerContextMenu(container as HTMLElement, ".expression-container-box");
 
       act(() => {
         const clearButtonElement = container.querySelector(".context-menu-container button")!;
