@@ -51,7 +51,9 @@ export const App: React.FunctionComponent = () => {
         <BoxedExpressionEditor expressionDefinition={expressionDefinition} />
       </div>
       <div className="updated-json">
-        <p>⚠ Currently, JSON gets updated only for literal expression and relation logic types</p>
+        <p className="disclaimer">
+          ⚠ Currently, JSON gets updated only for literal expression and relation logic types
+        </p>
         <pre>{JSON.stringify(updatedExpression, null, 2)}</pre>
       </div>
     </div>
