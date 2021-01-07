@@ -44,7 +44,7 @@ export interface TableProps {
   /** Table's cells */
   cells: Cells;
   /** Function to be executed when columns are modified */
-  onColumnsUpdate: (columns: Columns) => void;
+  onColumnsUpdate: (columns: Column[]) => void;
   /** Function to be executed when cells are modified */
   onCellsUpdate: (cells: Cells) => void;
   /** Custom configuration for the table handler */
@@ -74,7 +74,7 @@ export const Table: React.FunctionComponent<TableProps> = ({
       columns,
       (column) =>
         ({
-          label: column.label,
+          label: column.name,
           accessor: column.name,
           dataType: column.dataType,
         } as Column)
@@ -92,13 +92,7 @@ export const Table: React.FunctionComponent<TableProps> = ({
   const [lastSelectedRowIndex, setLastSelectedRowIndex] = useState(-1);
 
   useEffect(() => {
-    onColumnsUpdate(
-      _.map(tableColumns, (columnInstance: ColumnInstance) => ({
-        name: columnInstance.accessor,
-        label: columnInstance.label,
-        dataType: columnInstance.dataType,
-      }))
-    );
+    onColumnsUpdate(tableColumns);
   }, [onColumnsUpdate, tableColumns]);
 
   useEffect(() => {

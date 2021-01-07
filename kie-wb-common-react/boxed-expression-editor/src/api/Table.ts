@@ -52,8 +52,6 @@ export type Cells = RowObject[];
 export interface ColumnObject {
   /** Relation's column name */
   name: string;
-  /** Relation's column label (the one shown in the page) */
-  label: string;
   /** Relation's column data type */
   dataType: DataType;
 }
