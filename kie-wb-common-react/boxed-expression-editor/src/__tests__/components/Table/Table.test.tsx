@@ -67,7 +67,7 @@ describe("Table tests", () => {
       usingTestingBoxedExpressionI18nContext(
         <Table
           columnPrefix="column-"
-          columns={[{ name: columnName, label: columnName, dataType: DataType.Undefined }]}
+          columns={[{ name: columnName, dataType: DataType.Undefined }]}
           cells={[]}
           onColumnsUpdate={_.identity}
           onCellsUpdate={_.identity}
@@ -110,7 +110,7 @@ describe("Table tests", () => {
       usingTestingBoxedExpressionI18nContext(
         <Table
           columnPrefix="column-"
-          columns={[{ name: columnName, label: columnName, dataType: DataType.Undefined }]}
+          columns={[{ name: columnName, dataType: DataType.Undefined }]}
           cells={cells}
           onColumnsUpdate={_.identity}
           onCellsUpdate={_.identity}
