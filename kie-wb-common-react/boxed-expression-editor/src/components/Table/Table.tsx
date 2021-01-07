@@ -14,38 +14,53 @@
  * limitations under the License.
  */
 
+import "./Table.css";
 import { Cell, Column, ColumnInstance, Row, useBlockLayout, useResizeColumns, useTable } from "react-table";
 import { TableComposable, Tbody, Td, Th, Thead, Tr } from "@patternfly/react-table";
 import { EditExpressionMenu } from "../EditExpressionMenu";
 import * as React from "react";
 import { useCallback, useState } from "react";
 import { useBoxedExpressionEditorI18n } from "../../i18n";
-import { Popover } from "@patternfly/react-core";
 import { EditableCell } from "./EditableCell";
-import { Cells, Columns, DataType } from "../../api";
+import { Cells, Columns, DataType, TableHandlerConfiguration, TableOperation } from "../../api";
 import * as _ from "lodash";
+import { Popover } from "@patternfly/react-core";
+import { TableHandlerMenu } from "./TableHandlerMenu";
 
 export interface TableProps {
+  /** The prefix to be used for the column name */
+  columnPrefix: string;
   /** Table's columns */
   columns: Columns;
   /** Table's cells */
   cells: Cells;
-  /** */
+  /** Function to be executed when columns are modified */
   onColumnsUpdate: (columns: Columns) => void;
+  /** Function to be executed when cells are modified */
   onCellsUpdate: (cells: Cells) => void;
+  /** Custom configuration for the table handler */
+  handlerConfiguration: TableHandlerConfiguration;
 }
 
 export const Table: React.FunctionComponent<TableProps> = ({
+  columnPrefix,
   onCellsUpdate,
   onColumnsUpdate,
   cells,
   columns,
+  handlerConfiguration,
 }: TableProps) => {
   const NUMBER_OF_ROWS_COLUMN = "#";
   const { i18n } = useBoxedExpressionEditorI18n();
 
   const [tableColumns, setTableColumns] = useState([
-    { label: NUMBER_OF_ROWS_COLUMN, accessor: NUMBER_OF_ROWS_COLUMN, disableResizing: true, width: 60 },
+    {
+      label: NUMBER_OF_ROWS_COLUMN,
+      accessor: NUMBER_OF_ROWS_COLUMN,
+      width: 60,
+      disableResizing: true,
+      hideFilter: true,
+    },
     ..._.map(
       columns,
       (column) =>
@@ -57,21 +72,15 @@ export const Table: React.FunctionComponent<TableProps> = ({
     ),
   ]);
 
-  const [tableCells, setTableCells] = useState([
-    ..._.map(cells, (row, rowIndex) => {
-      row[NUMBER_OF_ROWS_COLUMN] = "" + (rowIndex + 1);
-      return row;
-    }),
-  ]);
+  const [tableCells, setTableCells] = useState(cells);
 
-  const onCellUpdate = (rowIndex: number, columnId: string, value: string) => {
-    setTableCells((prevTableCells) => {
-      const updatedTableCells = [...prevTableCells];
-      updatedTableCells[rowIndex][columnId] = value;
-      onCellsUpdate(updatedTableCells);
-      return updatedTableCells;
-    });
-  };
+  const [showTableHandler, setShowTableHandler] = useState(false);
+  const [tableHandlerTarget, setTableHandlerTarget] = useState(document.body);
+  const [tableHandlerAllowedOperations, setTableHandlerAllowedOperations] = useState(
+    _.values(TableOperation).map((operation) => parseInt(operation.toString()))
+  );
+  const [lastSelectedColumnIndex, setLastSelectedColumnIndex] = useState(-1);
+  const [lastSelectedRowIndex, setLastSelectedRowIndex] = useState(-1);
 
   const onColumnNameOrDataTypeUpdate = useCallback(
     (columnIndex: number) => {
@@ -94,19 +103,84 @@ export const Table: React.FunctionComponent<TableProps> = ({
     [onColumnsUpdate]
   );
 
-  const [showContextMenu, setShowContextMenu] = useState(false);
-  const [contextMenuTarget, setContextMenuTarget] = useState(document.body);
-  const buildContextMenu = () => (
-    <Popover
-      aria-label="Popover with selector reference example"
-      headerContent={<div>Popover Header</div>}
-      bodyContent={<div>popover body</div>}
-      footerContent="Popover Footer"
-      isVisible={showContextMenu}
-      shouldClose={() => setShowContextMenu(false)}
-      shouldOpen={(showFunction) => showFunction?.()}
-      reference={() => contextMenuTarget}
-    />
+  const onCellUpdate = useCallback(
+    (rowIndex: number, columnId: string, value: string) => {
+      setTableCells((prevTableCells) => {
+        const updatedTableCells = [...prevTableCells];
+        updatedTableCells[rowIndex][columnId] = value;
+        onCellsUpdate(updatedTableCells);
+        return updatedTableCells;
+      });
+    },
+    [onCellsUpdate]
+  );
+
+  const generateNextAvailableColumnName: (lastIndex: number) => string = useCallback(
+    (lastIndex) => {
+      const candidateName = `${columnPrefix}${lastIndex}`;
+      const columnWithCandidateName = _.find(tableColumns, (column: Column) =>
+        _.isEqual(candidateName, column.accessor)
+      ); //TODO problem with accessor and label
+      return columnWithCandidateName ? generateNextAvailableColumnName(lastIndex + 1) : candidateName;
+    },
+    [columnPrefix, tableColumns]
+  );
+
+  const onHandlerOperation = useCallback(
+    (tableOperation: TableOperation) => {
+      switch (tableOperation) {
+        case TableOperation.ColumnInsertLeft:
+          setTableColumns((prevTableColumns) => [
+            ...prevTableColumns.slice(0, lastSelectedColumnIndex),
+            {
+              accessor: generateNextAvailableColumnName(prevTableColumns.length),
+              label: generateNextAvailableColumnName(prevTableColumns.length),
+              dataType: DataType.Undefined,
+            } as Column,
+            ...prevTableColumns.slice(lastSelectedColumnIndex),
+          ]);
+          break;
+        case TableOperation.ColumnInsertRight:
+          setTableColumns((prevTableColumns) => [
+            ...prevTableColumns.slice(0, lastSelectedColumnIndex + 1),
+            {
+              accessor: generateNextAvailableColumnName(prevTableColumns.length),
+              label: generateNextAvailableColumnName(prevTableColumns.length),
+              dataType: DataType.Undefined,
+            } as Column,
+            ...prevTableColumns.slice(lastSelectedColumnIndex + 1),
+          ]);
+          break;
+        case TableOperation.ColumnDelete:
+          setTableColumns((prevTableColumns) => [
+            ...prevTableColumns.slice(0, lastSelectedColumnIndex),
+            ...prevTableColumns.slice(lastSelectedColumnIndex + 1),
+          ]);
+          break;
+        case TableOperation.RowInsertAbove:
+          setTableCells((prevTableCells) => [
+            ...prevTableCells.slice(0, lastSelectedRowIndex),
+            {},
+            ...prevTableCells.slice(lastSelectedRowIndex),
+          ]);
+          break;
+        case TableOperation.RowInsertBelow:
+          setTableCells((prevTableCells) => [
+            ...prevTableCells.slice(0, lastSelectedRowIndex + 1),
+            {},
+            ...prevTableCells.slice(lastSelectedRowIndex + 1),
+          ]);
+          break;
+        case TableOperation.RowDelete:
+          setTableCells((prevTableCells) => [
+            ...prevTableCells.slice(0, lastSelectedRowIndex),
+            ...prevTableCells.slice(lastSelectedRowIndex + 1),
+          ]);
+          break;
+      }
+      setShowTableHandler(false);
+    },
+    [generateNextAvailableColumnName, lastSelectedColumnIndex, lastSelectedRowIndex]
   );
 
   const tableInstance = useTable(
@@ -114,23 +188,44 @@ export const Table: React.FunctionComponent<TableProps> = ({
       columns: tableColumns,
       data: tableCells,
       defaultColumn: {
+        minWidth: 38,
+        width: 150,
+        maxWidth: 400,
         Cell: (cellRef) => (cellRef.column.canResize ? EditableCell(cellRef) : cellRef.value),
       },
       onCellUpdate,
-      getThProps: (column) => ({
+      getThProps: (columnIndex) => ({
         onContextMenu: (e) => {
           e.preventDefault();
-          setContextMenuTarget(e.target);
-          setShowContextMenu(true);
-          console.log("contextMenu - header", e, column);
+          const allowedOperations = [TableOperation.ColumnInsertLeft, TableOperation.ColumnInsertRight];
+          if (tableColumns.length > 2) {
+            allowedOperations.push(TableOperation.ColumnDelete);
+          }
+          setTableHandlerAllowedOperations(allowedOperations);
+          setTableHandlerTarget(e.target);
+          setShowTableHandler(true);
+          setLastSelectedColumnIndex(columnIndex);
         },
       }),
-      getTdProps: (cell, column, row) => ({
+      getTdProps: (columnIndex, rowIndex) => ({
         onContextMenu: (e) => {
           e.preventDefault();
-          setContextMenuTarget(e.target);
-          setShowContextMenu(true);
-          console.log("contextMenu - cell", cell, column, row);
+          let allowedOperations: TableOperation[] = [];
+          if (columnIndex !== 0) {
+            allowedOperations = [TableOperation.ColumnInsertLeft, TableOperation.ColumnInsertRight];
+            if (tableColumns.length > 2) {
+              allowedOperations.push(TableOperation.ColumnDelete);
+            }
+          }
+          allowedOperations = [...allowedOperations, TableOperation.RowInsertAbove, TableOperation.RowInsertBelow];
+          if (tableCells.length > 2) {
+            allowedOperations.push(TableOperation.RowDelete);
+          }
+          setTableHandlerAllowedOperations(allowedOperations);
+          setTableHandlerTarget(e.target);
+          setShowTableHandler(true);
+          setLastSelectedColumnIndex(columnIndex);
+          setLastSelectedRowIndex(rowIndex);
         },
       }),
     },
@@ -138,13 +233,37 @@ export const Table: React.FunctionComponent<TableProps> = ({
     useResizeColumns
   );
 
+  const buildTableHandler = useCallback(
+    () => (
+      <Popover
+        className="table-handler"
+        hasNoPadding
+        showClose={false}
+        distance={5}
+        position={"right"}
+        isVisible={showTableHandler}
+        shouldClose={() => setShowTableHandler(false)}
+        shouldOpen={(showFunction) => showFunction?.()}
+        reference={() => tableHandlerTarget}
+        bodyContent={
+          <TableHandlerMenu
+            handlerConfiguration={handlerConfiguration}
+            allowedOperations={tableHandlerAllowedOperations}
+            onOperation={onHandlerOperation}
+          />
+        }
+      />
+    ),
+    [showTableHandler, handlerConfiguration, tableHandlerAllowedOperations, onHandlerOperation, tableHandlerTarget]
+  );
+
   return (
     <div className="table-component">
       <TableComposable variant="compact" {...tableInstance.getTableProps()}>
         <Thead noWrap>
           <tr>
-            {tableInstance.headers.map((column: ColumnInstance, columnIndex: number) => {
-              return column.canResize ? (
+            {tableInstance.headers.map((column: ColumnInstance, columnIndex: number) =>
+              column.canResize ? (
                 <EditExpressionMenu
                   title={i18n.editRelation}
                   selectedExpressionName={column.label}
@@ -152,7 +271,7 @@ export const Table: React.FunctionComponent<TableProps> = ({
                   onExpressionUpdate={onColumnNameOrDataTypeUpdate(columnIndex)}
                   key={columnIndex}
                 >
-                  <Th {...column.getHeaderProps()} {...tableInstance.getThProps(column)} key={columnIndex}>
+                  <Th {...column.getHeaderProps()} {...tableInstance.getThProps(columnIndex)} key={columnIndex}>
                     <div className="header-cell">
                       <div>
                         <p className="pf-u-text-truncate">{column.label}</p>
@@ -170,8 +289,8 @@ export const Table: React.FunctionComponent<TableProps> = ({
                 <Th {...column.getHeaderProps()} key={columnIndex}>
                   <div className="header-cell">{column.label}</div>
                 </Th>
-              );
-            })}
+              )
+            )}
           </tr>
         </Thead>
 
@@ -179,20 +298,18 @@ export const Table: React.FunctionComponent<TableProps> = ({
           {tableInstance.rows.map((row: Row, rowIndex: number) => {
             tableInstance.prepareRow(row);
             return (
-              <Tr {...row.getRowProps()} key={rowIndex}>
-                {row.cells.map((cell: Cell, cellIndex: number) => {
-                  return (
-                    <Td {...cell.getCellProps()} {...tableInstance.getTdProps(cell, cell.column, row)} key={cellIndex}>
-                      {cell.render("Cell")}
-                    </Td>
-                  );
-                })}
+              <Tr className="table-row" {...row.getRowProps()} key={rowIndex}>
+                {row.cells.map((cell: Cell, cellIndex: number) => (
+                  <Td {...cell.getCellProps()} {...tableInstance.getTdProps(cellIndex, rowIndex)} key={cellIndex}>
+                    {cellIndex === 0 ? rowIndex + 1 : cell.render("Cell")}
+                  </Td>
+                ))}
               </Tr>
             );
           })}
         </Tbody>
       </TableComposable>
-      {showContextMenu ? buildContextMenu() : null}
+      {showTableHandler ? buildTableHandler() : null}
     </div>
   );
 };

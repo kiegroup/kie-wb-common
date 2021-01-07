@@ -19,6 +19,12 @@ import { CommonI18n } from "@kogito-tooling/i18n-common-dictionary";
 
 interface BoxedExpressionEditorDictionary extends ReferenceDictionary<BoxedExpressionEditorDictionary> {
   choose: string;
+  columns: string;
+  columnOperations: {
+    delete: string;
+    insertLeft: string;
+    insertRight: string;
+  };
   clear: string;
   context: string;
   dataType: string;
@@ -31,6 +37,12 @@ interface BoxedExpressionEditorDictionary extends ReferenceDictionary<BoxedExpre
   literalExpression: string;
   name: string;
   relation: string;
+  rows: string;
+  rowOperations: {
+    delete: string;
+    insertAbove: string;
+    insertBelow: string;
+  };
   selectExpression: string;
   selectLogicType: string;
 }

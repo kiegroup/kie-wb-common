@@ -16,6 +16,32 @@
 
 import { DataType } from "./DataType";
 
+/** Table allowed operations */
+export enum TableOperation {
+  ColumnInsertLeft,
+  ColumnInsertRight,
+  ColumnDelete,
+  RowInsertAbove,
+  RowInsertBelow,
+  RowDelete,
+}
+
+export interface GroupOperations {
+  /** Name of the group (localized) */
+  group: string;
+  /** Collection of operations belonging to this group */
+  items: {
+    /** Name of the operation (localized) */
+    name: string;
+    /** Type of the operation */
+    type: TableOperation;
+  }[];
+}
+
+export type TableHandlerConfiguration = GroupOperations[];
+
+export type AllowedOperations = TableOperation[];
+
 export interface RowObject {
   /** Dynamic fields, optionally one for each column identifier */
   [columnId: string]: string;
