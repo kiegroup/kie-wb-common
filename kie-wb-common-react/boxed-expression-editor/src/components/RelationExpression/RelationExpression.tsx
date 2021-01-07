@@ -21,6 +21,8 @@ import "@patternfly/patternfly/utilities/Text/text.css";
 import { DataType, RelationProps, TableOperation } from "../../api";
 import { Table } from "../Table";
 import { useBoxedExpressionEditorI18n } from "../../i18n";
+import * as _ from "lodash";
+import { ColumnInstance } from "react-table";
 
 export const RelationExpression: React.FunctionComponent<RelationProps> = (relationProps: RelationProps) => {
   const FIRST_COLUMN_NAME = "column-1";
@@ -61,7 +63,17 @@ export const RelationExpression: React.FunctionComponent<RelationProps> = (relat
     });
   }, [relationProps, tableColumns, tableCells]);
 
-  const onColumnsUpdate = useCallback((columns) => setTableColumns(columns), []);
+  const onColumnsUpdate = useCallback(
+    (columns) =>
+      setTableColumns(
+        _.map(columns.slice(1), (columnInstance: ColumnInstance) => ({
+          name: columnInstance.accessor,
+          dataType: columnInstance.dataType,
+        }))
+      ),
+    []
+  );
+
   const onCellsUpdate = useCallback((cells) => setTableCells(cells), []);
 
   return (
