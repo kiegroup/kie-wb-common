@@ -15,13 +15,22 @@
  */
 
 import "./Table.css";
-import { Cell, Column, ColumnInstance, Row, useBlockLayout, useResizeColumns, useTable } from "react-table";
+import {
+  Cell,
+  Column,
+  ColumnInstance,
+  ContextMenuEvent,
+  Row,
+  useBlockLayout,
+  useResizeColumns,
+  useTable,
+} from "react-table";
 import { TableComposable, Tbody, Td, Th, Thead, Tr } from "@patternfly/react-table";
 import { EditExpressionMenu } from "../EditExpressionMenu";
 import * as React from "react";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useBoxedExpressionEditorI18n } from "../../i18n";
-import { EditableCell } from "./EditableCell";
+import { EditableCell, EditableCellProps } from "./EditableCell";
 import { Cells, Columns, DataType, TableHandlerConfiguration, TableOperation } from "../../api";
 import * as _ from "lodash";
 import { Popover } from "@patternfly/react-core";
@@ -82,38 +91,38 @@ export const Table: React.FunctionComponent<TableProps> = ({
   const [lastSelectedColumnIndex, setLastSelectedColumnIndex] = useState(-1);
   const [lastSelectedRowIndex, setLastSelectedRowIndex] = useState(-1);
 
-  const onColumnNameOrDataTypeUpdate = useCallback(
-    (columnIndex: number) => {
-      return ({ name = "", dataType = DataType.Undefined }) => {
-        setTableColumns((prevTableColumns: ColumnInstance[]) => {
-          const updatedTableColumns = [...prevTableColumns];
-          updatedTableColumns[columnIndex].label = name;
-          updatedTableColumns[columnIndex].dataType = dataType;
-          onColumnsUpdate(
-            _.map(updatedTableColumns, (columnInstance: ColumnInstance) => ({
-              name: columnInstance.accessor,
-              label: columnInstance.label,
-              dataType: columnInstance.dataType,
-            }))
-          );
-          return updatedTableColumns;
-        });
-      };
-    },
-    [onColumnsUpdate]
-  );
+  useEffect(() => {
+    onColumnsUpdate(
+      _.map(tableColumns, (columnInstance: ColumnInstance) => ({
+        name: columnInstance.accessor,
+        label: columnInstance.label,
+        dataType: columnInstance.dataType,
+      }))
+    );
+  }, [onColumnsUpdate, tableColumns]);
 
-  const onCellUpdate = useCallback(
-    (rowIndex: number, columnId: string, value: string) => {
-      setTableCells((prevTableCells) => {
-        const updatedTableCells = [...prevTableCells];
-        updatedTableCells[rowIndex][columnId] = value;
-        onCellsUpdate(updatedTableCells);
-        return updatedTableCells;
+  useEffect(() => {
+    onCellsUpdate(tableCells);
+  }, [onCellsUpdate, tableCells]);
+
+  const onColumnNameOrDataTypeUpdate = useCallback((columnIndex: number) => {
+    return ({ name = "", dataType = DataType.Undefined }) => {
+      setTableColumns((prevTableColumns: ColumnInstance[]) => {
+        const updatedTableColumns = [...prevTableColumns];
+        updatedTableColumns[columnIndex].label = name;
+        updatedTableColumns[columnIndex].dataType = dataType;
+        return updatedTableColumns;
       });
-    },
-    [onCellsUpdate]
-  );
+    };
+  }, []);
+
+  const onCellUpdate = useCallback((rowIndex: number, columnId: string, value: string) => {
+    setTableCells((prevTableCells) => {
+      const updatedTableCells = [...prevTableCells];
+      updatedTableCells[rowIndex][columnId] = value;
+      return updatedTableCells;
+    });
+  }, []);
 
   const generateNextAvailableColumnName: (lastIndex: number) => string = useCallback(
     (lastIndex) => {
@@ -183,51 +192,60 @@ export const Table: React.FunctionComponent<TableProps> = ({
     [generateNextAvailableColumnName, lastSelectedColumnIndex, lastSelectedRowIndex]
   );
 
+  const defaultColumn = {
+    minWidth: 38,
+    width: 150,
+    maxWidth: 400,
+    Cell: useCallback((cellRef: EditableCellProps) => {
+      const column = cellRef.column as ColumnInstance;
+      return column.canResize ? EditableCell(cellRef) : cellRef.value;
+    }, []),
+  };
+
+  const getThProps = (columnIndex: number) => ({
+    onContextMenu: (e: ContextMenuEvent) => {
+      e.preventDefault();
+      const allowedOperations = [TableOperation.ColumnInsertLeft, TableOperation.ColumnInsertRight];
+      if (tableColumns.length > 2) {
+        allowedOperations.push(TableOperation.ColumnDelete);
+      }
+      setTableHandlerAllowedOperations(allowedOperations);
+      setTableHandlerTarget(e.target as HTMLElement);
+      setShowTableHandler(true);
+      setLastSelectedColumnIndex(columnIndex);
+    },
+  });
+
+  const getTdProps = (columnIndex: number, rowIndex: number) => ({
+    onContextMenu: (e: ContextMenuEvent) => {
+      e.preventDefault();
+      let allowedOperations: TableOperation[] = [];
+      if (columnIndex !== 0) {
+        allowedOperations = [TableOperation.ColumnInsertLeft, TableOperation.ColumnInsertRight];
+        if (tableColumns.length > 2) {
+          allowedOperations.push(TableOperation.ColumnDelete);
+        }
+      }
+      allowedOperations = [...allowedOperations, TableOperation.RowInsertAbove, TableOperation.RowInsertBelow];
+      if (tableCells.length > 1) {
+        allowedOperations.push(TableOperation.RowDelete);
+      }
+      setTableHandlerAllowedOperations(allowedOperations);
+      setTableHandlerTarget(e.target as HTMLElement);
+      setShowTableHandler(true);
+      setLastSelectedColumnIndex(columnIndex);
+      setLastSelectedRowIndex(rowIndex);
+    },
+  });
+
   const tableInstance = useTable(
     {
       columns: tableColumns,
       data: tableCells,
-      defaultColumn: {
-        minWidth: 38,
-        width: 150,
-        maxWidth: 400,
-        Cell: (cellRef) => (cellRef.column.canResize ? EditableCell(cellRef) : cellRef.value),
-      },
+      defaultColumn,
       onCellUpdate,
-      getThProps: (columnIndex) => ({
-        onContextMenu: (e) => {
-          e.preventDefault();
-          const allowedOperations = [TableOperation.ColumnInsertLeft, TableOperation.ColumnInsertRight];
-          if (tableColumns.length > 2) {
-            allowedOperations.push(TableOperation.ColumnDelete);
-          }
-          setTableHandlerAllowedOperations(allowedOperations);
-          setTableHandlerTarget(e.target);
-          setShowTableHandler(true);
-          setLastSelectedColumnIndex(columnIndex);
-        },
-      }),
-      getTdProps: (columnIndex, rowIndex) => ({
-        onContextMenu: (e) => {
-          e.preventDefault();
-          let allowedOperations: TableOperation[] = [];
-          if (columnIndex !== 0) {
-            allowedOperations = [TableOperation.ColumnInsertLeft, TableOperation.ColumnInsertRight];
-            if (tableColumns.length > 2) {
-              allowedOperations.push(TableOperation.ColumnDelete);
-            }
-          }
-          allowedOperations = [...allowedOperations, TableOperation.RowInsertAbove, TableOperation.RowInsertBelow];
-          if (tableCells.length > 2) {
-            allowedOperations.push(TableOperation.RowDelete);
-          }
-          setTableHandlerAllowedOperations(allowedOperations);
-          setTableHandlerTarget(e.target);
-          setShowTableHandler(true);
-          setLastSelectedColumnIndex(columnIndex);
-          setLastSelectedRowIndex(rowIndex);
-        },
-      }),
+      getThProps,
+      getTdProps,
     },
     useBlockLayout,
     useResizeColumns

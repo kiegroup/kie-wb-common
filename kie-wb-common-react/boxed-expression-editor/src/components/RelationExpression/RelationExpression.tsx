@@ -16,7 +16,7 @@
 
 import "./RelationExpression.css";
 import * as React from "react";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import "@patternfly/patternfly/utilities/Text/text.css";
 import { DataType, RelationProps, TableOperation } from "../../api";
 import { Table } from "../Table";
@@ -61,14 +61,17 @@ export const RelationExpression: React.FunctionComponent<RelationProps> = (relat
     });
   }, [relationProps, tableColumns, tableCells]);
 
+  const onColumnsUpdate = useCallback((columns) => setTableColumns(columns), []);
+  const onCellsUpdate = useCallback((cells) => setTableCells(cells), []);
+
   return (
     <div className="relation-expression">
       <Table
         columnPrefix="column-"
         columns={tableColumns}
         cells={tableCells}
-        onColumnsUpdate={setTableColumns}
-        onCellsUpdate={setTableCells}
+        onColumnsUpdate={onColumnsUpdate}
+        onCellsUpdate={onCellsUpdate}
         handlerConfiguration={handlerConfiguration}
       />
     </div>
