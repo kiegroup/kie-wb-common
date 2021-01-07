@@ -15,7 +15,7 @@
  */
 
 import * as React from "react";
-import { ChangeEvent, useCallback } from "react";
+import { ChangeEvent, useCallback, useEffect } from "react";
 
 export interface EditableCellProps {
   /** Cell's value */
@@ -36,6 +36,10 @@ export const EditableCell: React.FunctionComponent<EditableCellProps> = ({
 }: EditableCellProps) => {
   const [value, setValue] = React.useState(initialValue);
 
+  useEffect(() => {
+    setValue(initialValue);
+  }, [initialValue]);
+
   const onChange = useCallback((e: ChangeEvent<HTMLTextAreaElement>) => {
     setValue(e.target.value);
   }, []);
@@ -44,5 +48,5 @@ export const EditableCell: React.FunctionComponent<EditableCellProps> = ({
     onCellUpdate(index, id, value);
   }, [id, index, value, onCellUpdate]);
 
-  return <textarea value={value} onChange={onChange} onBlur={onBlur} />;
+  return <textarea value={value || ""} onChange={onChange} onBlur={onBlur} />;
 };

@@ -16,21 +16,27 @@
 
 import { DataType } from "../api";
 import { TableResizerProps } from "react-table";
+import * as React from "react";
 
 // Extending react-table definitions with missing and custom properties
 declare module "react-table" {
+  export interface ContextMenuEvent {
+    preventDefault: () => void;
+    target: React.SetStateAction<EventTarget>;
+  }
+
   export interface TableOptions {
     onCellUpdate: (rowIndex: number, columnId: string, value: string) => void;
     getThProps: (
       columnIndex: number
     ) => {
-      onContextMenu: (event) => void;
+      onContextMenu: (event: ContextMenuEvent) => void;
     };
     getTdProps: (
       columnIndex: number,
       rowIndex: number
     ) => {
-      onContextMenu: (event) => void;
+      onContextMenu: (event: ContextMenuEvent) => void;
     };
   }
 
