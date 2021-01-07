@@ -45,7 +45,6 @@ import org.kie.workbench.common.screens.server.management.client.util.State;
 import org.kie.workbench.common.screens.server.management.model.ContainerRuntimeOperation;
 import org.kie.workbench.common.screens.server.management.model.ContainerSpecData;
 import org.kie.workbench.common.screens.server.management.model.ContainerUpdateEvent;
-import org.kie.workbench.common.screens.server.management.service.ContainerService;
 import org.kie.workbench.common.screens.server.management.service.RuntimeManagementService;
 import org.kie.workbench.common.screens.server.management.service.SpecManagementService;
 import org.mockito.ArgumentCaptor;
@@ -83,8 +82,6 @@ public class ContainerPresenterTest {
 
     Caller<SpecManagementService> specManagementServiceCaller;
 
-    Caller<ContainerService> containerServiceCaller;
-
     @Mock
     SpecManagementService specManagementService;
 
@@ -109,9 +106,6 @@ public class ContainerPresenterTest {
     @Mock
     ContainerProcessConfigPresenter containerProcessConfigPresenter;
 
-    @Mock
-    ContainerService containerService;
-
     ContainerPresenter presenter;
 
     ReleaseId releaseId;
@@ -128,7 +122,6 @@ public class ContainerPresenterTest {
     public void init() {
         runtimeManagementServiceCaller = new CallerMock<RuntimeManagementService>(runtimeManagementService);
         specManagementServiceCaller = new CallerMock<SpecManagementService>(specManagementService);
-        containerServiceCaller = new CallerMock<ContainerService>(containerService) ;
         doNothing().when(serverTemplateSelectedEvent).fire(any(ServerTemplateSelected.class));
         doNothing().when(notification).fire(any(NotificationEvent.class));
         when(containerStatusEmptyPresenter.getView()).thenReturn(containerStatusEmptyPresenterView);
@@ -143,8 +136,7 @@ public class ContainerPresenterTest {
                 runtimeManagementServiceCaller,
                 specManagementServiceCaller,
                 serverTemplateSelectedEvent,
-                notification,
-                containerServiceCaller));
+                notification));
 
         releaseId = new ReleaseId("org.kie",
                                   "container",
@@ -204,7 +196,6 @@ public class ContainerPresenterTest {
     @Test
     public void testStartContainer() {
         presenter.loadContainers(containerSpecData);
-
         presenter.startContainer();
 
         verify(view).setContainerStartState(State.ENABLED);
@@ -229,7 +220,6 @@ public class ContainerPresenterTest {
 
     @Test
     public void testStopContainer() {
-        when(containerService.isRunningContainer(any())).thenReturn(false);
         presenter.loadContainers(containerSpecData);
 
         presenter.stopContainer();
@@ -251,15 +241,8 @@ public class ContainerPresenterTest {
         verify(view).setContainerStartState(State.ENABLED);
         verify(view).setContainerStopState(State.DISABLED);
         verify(view).disableRemoveButton();
-
-        when(containerService.isRunningContainer(any())).thenReturn(true);
-        final String canNotStopMessage = "can not stop";
-        when(view.getCanNotStopContainerMessage()).thenReturn(canNotStopMessage);
-        presenter.stopContainer();
-        verify(notification).fire(new NotificationEvent(canNotStopMessage, NotificationEvent.NotificationType.WARNING));
-        verify(specManagementService, times(2)).stopContainer(any());
     }
-
+    
     @Test
     public void testDeactivateContainerFromStopedState() {
         presenter.loadContainers(containerSpecData);
@@ -315,7 +298,8 @@ public class ContainerPresenterTest {
     public void testLoadContainersEmpty() {
         presenter.loadContainers(containerSpecData);
 
-        verifyLoad(true, 1, false);
+        verifyLoad(true,
+                   1);
     }
 
     @Test
@@ -330,12 +314,14 @@ public class ContainerPresenterTest {
         presenter.setContainerSpec(containerSpec1);
         presenter.loadContainers(containerSpecData);
 
-        verifyLoad(true, 0, false);
+        verifyLoad(true,
+                   0);
 
         presenter.setContainerSpec(containerSpec);
         presenter.loadContainers(containerSpecData);
 
-        verifyLoad(true, 1, false);
+        verifyLoad(true,
+                   1);
 
     }
 
@@ -349,7 +335,8 @@ public class ContainerPresenterTest {
         presenter.loadContainers(containerSpecData);
         presenter.refresh();
 
-        verifyLoad(true, 2, false);
+        verifyLoad(true,
+                   2);
     }
 
     @Test
@@ -363,7 +350,8 @@ public class ContainerPresenterTest {
         containerSpecData.getContainers().add(container);
         presenter.loadContainers(containerSpecData);
 
-        verifyLoad(true, 1, false);
+        verifyLoad(true,
+                   1);
     }
 
     @Test
@@ -378,29 +366,12 @@ public class ContainerPresenterTest {
         containerSpecData.getContainers().add(container);
         presenter.loadContainers(containerSpecData);
 
-        verifyLoad(false, 1, false);
+        verifyLoad(false,
+                   1);
     }
 
-    @Test
-    public void testLoadContainersHasFailed() {
-        final Container container = new Container("containerSpecId",
-                                                  "containerName",
-                                                  new ServerInstanceKey(),
-                                                  Collections.<Message>emptyList(),
-                                                  null,
-                                                  null);
-        container.setStatus(KieContainerStatus.FAILED);
-        containerSpecData.getContainers().add(container);
-        assertNull(container.getResolvedReleasedId());
-        presenter.loadContainers(containerSpecData);
-
-        assertEquals(KieContainerStatus.FAILED, containerSpecData.getContainerSpec().getStatus());
-        assertNotNull(container.getResolvedReleasedId());
-
-        verifyLoad(false, 1, true);
-    }
-
-    private void verifyLoad(boolean empty, int times, boolean hasFailed) {
+    private void verifyLoad(boolean empty,
+                            int times) {
         verify(containerStatusEmptyPresenter,
                times(times)).setup(containerSpec);
         verify(containerRemoteStatusPresenter,
@@ -434,11 +405,8 @@ public class ContainerPresenterTest {
 
         verify(view,
                times(times)).setContainerStartState(State.DISABLED);
-        if (!hasFailed) {
-            verify(view, times(times)).setContainerStopState(State.ENABLED);
-        } else {
-            verify(view, times(times)).setContainerStopState(State.DISABLED);
-        }
+        verify(view,
+               times(times)).setContainerStopState(State.ENABLED);
 
         verify(containerProcessConfigPresenter,
                times(times)).setup(containerSpec,
@@ -456,7 +424,8 @@ public class ContainerPresenterTest {
 
         presenter.load(new ContainerSpecSelected(containerSpec));
 
-        verifyLoad(true, 1, false);
+        verifyLoad(true,
+                   1);
     }
 
     @Test
@@ -529,7 +498,8 @@ public class ContainerPresenterTest {
 
         presenter.onRefresh(new RefreshRemoteServers(containerSpec));
 
-        verifyLoad(true, 1, false);
+        verifyLoad(true,
+                   1);
     }
 
     @Test
@@ -613,7 +583,7 @@ public class ContainerPresenterTest {
 
         verify(view).enableRemoveButton();
         verify(view).setContainerStartState(State.DISABLED);
-        verify(view).setContainerStopState(State.DISABLED);
+        verify(view).setContainerStopState(State.ENABLED);
         verify(view).disableToggleActivationButton();
     }
 
