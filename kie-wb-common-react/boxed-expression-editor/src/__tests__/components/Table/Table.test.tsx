@@ -19,15 +19,23 @@ import { usingTestingBoxedExpressionI18nContext } from "../test-utils";
 import { Table } from "../../../components/Table";
 import * as _ from "lodash";
 import * as React from "react";
-import { Cells, DataType, RowObject } from "../../../api";
+import { Cells, DataType, RowObject, TableHandlerConfiguration } from "../../../api";
 
 describe("Table tests", () => {
   const columnName = "column-1";
+  const handlerConfiguration: TableHandlerConfiguration = [];
 
   test("should render a table element", () => {
     const { container } = render(
       usingTestingBoxedExpressionI18nContext(
-        <Table columns={[]} cells={[]} onColumnsUpdate={_.identity} onCellsUpdate={_.identity} />
+        <Table
+          columnPrefix="column-"
+          columns={[]}
+          cells={[]}
+          onColumnsUpdate={_.identity}
+          onCellsUpdate={_.identity}
+          handlerConfiguration={handlerConfiguration}
+        />
       ).wrapper
     );
 
@@ -37,7 +45,14 @@ describe("Table tests", () => {
   test("should render a table head with only one default column (#)", () => {
     const { container } = render(
       usingTestingBoxedExpressionI18nContext(
-        <Table columns={[]} cells={[]} onColumnsUpdate={_.identity} onCellsUpdate={_.identity} />
+        <Table
+          columnPrefix="column-"
+          columns={[]}
+          cells={[]}
+          onColumnsUpdate={_.identity}
+          onCellsUpdate={_.identity}
+          handlerConfiguration={handlerConfiguration}
+        />
       ).wrapper
     );
 
@@ -51,10 +66,12 @@ describe("Table tests", () => {
     const { container } = render(
       usingTestingBoxedExpressionI18nContext(
         <Table
+          columnPrefix="column-"
           columns={[{ name: columnName, label: columnName, dataType: DataType.Undefined }]}
           cells={[]}
           onColumnsUpdate={_.identity}
           onCellsUpdate={_.identity}
+          handlerConfiguration={handlerConfiguration}
         />
       ).wrapper
     );
@@ -68,7 +85,14 @@ describe("Table tests", () => {
   test("should render a table body with no rows", () => {
     const { container } = render(
       usingTestingBoxedExpressionI18nContext(
-        <Table columns={[]} cells={[]} onColumnsUpdate={_.identity} onCellsUpdate={_.identity} />
+        <Table
+          columnPrefix="column-"
+          columns={[]}
+          cells={[]}
+          onColumnsUpdate={_.identity}
+          onCellsUpdate={_.identity}
+          handlerConfiguration={handlerConfiguration}
+        />
       ).wrapper
     );
 
@@ -85,10 +109,12 @@ describe("Table tests", () => {
     const { container } = render(
       usingTestingBoxedExpressionI18nContext(
         <Table
+          columnPrefix="column-"
           columns={[{ name: columnName, label: columnName, dataType: DataType.Undefined }]}
           cells={cells}
           onColumnsUpdate={_.identity}
           onCellsUpdate={_.identity}
+          handlerConfiguration={handlerConfiguration}
         />
       ).wrapper
     );

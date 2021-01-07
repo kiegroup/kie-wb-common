@@ -15,21 +15,20 @@
  */
 
 import { DataType } from "../api";
-import { Cell, Row, TableResizerProps } from "react-table";
+import { TableResizerProps } from "react-table";
 
 // Extending react-table definitions with missing and custom properties
 declare module "react-table" {
   export interface TableOptions {
     onCellUpdate: (rowIndex: number, columnId: string, value: string) => void;
     getThProps: (
-      column: ColumnInstance
+      columnIndex: number
     ) => {
       onContextMenu: (event) => void;
     };
     getTdProps: (
-      cell: Cell,
-      column: ColumnInstance,
-      row: Row
+      columnIndex: number,
+      rowIndex: number
     ) => {
       onContextMenu: (event) => void;
     };

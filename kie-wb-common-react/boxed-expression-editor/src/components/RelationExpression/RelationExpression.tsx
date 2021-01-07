@@ -18,30 +18,40 @@ import "./RelationExpression.css";
 import * as React from "react";
 import { useEffect, useState } from "react";
 import "@patternfly/patternfly/utilities/Text/text.css";
-import { DataType, RelationProps } from "../../api";
+import { DataType, RelationProps, TableOperation } from "../../api";
 import { Table } from "../Table";
+import { useBoxedExpressionEditorI18n } from "../../i18n";
 
 export const RelationExpression: React.FunctionComponent<RelationProps> = (relationProps: RelationProps) => {
   const FIRST_COLUMN_NAME = "column-1";
-
-  const generateFirstRow = () => {
-    const firstRow: { [key: string]: string } = {};
-    firstRow[FIRST_COLUMN_NAME] = "";
-    return firstRow;
-  };
+  const { i18n } = useBoxedExpressionEditorI18n();
 
   const [tableColumns, setTableColumns] = useState(
     relationProps.columns === undefined
-      ? [
-          { name: FIRST_COLUMN_NAME, label: FIRST_COLUMN_NAME, dataType: DataType.Undefined },
-          { name: "column-2", label: "column-2", dataType: DataType.Undefined },
-        ]
+      ? [{ name: FIRST_COLUMN_NAME, label: FIRST_COLUMN_NAME, dataType: DataType.Undefined }]
       : relationProps.columns
   );
 
-  const [tableCells, setTableCells] = useState(
-    relationProps.cells === undefined ? [generateFirstRow()] : relationProps.cells
-  );
+  const [tableCells, setTableCells] = useState(relationProps.cells === undefined ? [{}] : relationProps.cells);
+
+  const handlerConfiguration = [
+    {
+      group: i18n.columns,
+      items: [
+        { name: i18n.columnOperations.insertLeft, type: TableOperation.ColumnInsertLeft },
+        { name: i18n.columnOperations.insertRight, type: TableOperation.ColumnInsertRight },
+        { name: i18n.columnOperations.delete, type: TableOperation.ColumnDelete },
+      ],
+    },
+    {
+      group: i18n.rows,
+      items: [
+        { name: i18n.rowOperations.insertAbove, type: TableOperation.RowInsertAbove },
+        { name: i18n.rowOperations.insertBelow, type: TableOperation.RowInsertBelow },
+        { name: i18n.rowOperations.delete, type: TableOperation.RowDelete },
+      ],
+    },
+  ];
 
   useEffect(() => {
     window.beeApi?.broadcastRelationExpressionDefinition?.({
@@ -54,10 +64,12 @@ export const RelationExpression: React.FunctionComponent<RelationProps> = (relat
   return (
     <div className="relation-expression">
       <Table
+        columnPrefix="column-"
         columns={tableColumns}
         cells={tableCells}
         onColumnsUpdate={setTableColumns}
         onCellsUpdate={setTableCells}
+        handlerConfiguration={handlerConfiguration}
       />
     </div>
   );
