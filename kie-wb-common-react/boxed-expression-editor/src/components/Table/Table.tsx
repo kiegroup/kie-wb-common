@@ -84,14 +84,6 @@ export const Table: React.FunctionComponent<TableProps> = ({
   const [lastSelectedColumnIndex, setLastSelectedColumnIndex] = useState(-1);
   const [lastSelectedRowIndex, setLastSelectedRowIndex] = useState(-1);
 
-  useEffect(() => {
-    onColumnsUpdate(tableColumns.slice(1)); //Removing "# of rows" column
-  }, [onColumnsUpdate, tableColumns]);
-
-  useEffect(() => {
-    onRowsUpdate(tableCells);
-  }, [onRowsUpdate, tableCells]);
-
   const onColumnNameOrDataTypeUpdate = useCallback(
     (columnIndex: number) => {
       return ({ name = "", dataType = DataType.Undefined }) => {
@@ -197,7 +189,7 @@ export const Table: React.FunctionComponent<TableProps> = ({
   const defaultColumn = {
     minWidth: 38,
     width: 150,
-    maxWidth: 400,
+    maxWidth: 600,
     Cell: useCallback((cellRef: EditableCellProps) => {
       const column = cellRef.column as ColumnInstance;
       return column.canResize ? EditableCell(cellRef) : cellRef.value;
@@ -276,6 +268,30 @@ export const Table: React.FunctionComponent<TableProps> = ({
     ),
     [showTableHandler, handlerConfiguration, tableHandlerAllowedOperations, onHandlerOperation, tableHandlerTarget]
   );
+
+  useEffect(() => {
+    onColumnsUpdate(tableColumns.slice(1)); //Removing "# of rows" column
+  }, [onColumnsUpdate, tableColumns]);
+
+  useEffect(() => {
+    onRowsUpdate(tableCells);
+  }, [onRowsUpdate, tableCells]);
+
+  const finishedResizing =
+    tableInstance.state.columnResizing.isResizingColumn === null &&
+    !_.isEmpty(tableInstance.state.columnResizing.columnWidths);
+  useEffect(() => {
+    setTableColumns((prevTableColumns) => {
+      _.forEach(tableInstance.state.columnResizing.columnWidths, (updatedColumnWidth, accessor) => {
+        const columnIndex = _.findIndex(prevTableColumns, { accessor });
+        const updatedColumn = { ...prevTableColumns[columnIndex] };
+        updatedColumn.width = updatedColumnWidth;
+        prevTableColumns.splice(columnIndex, 1, updatedColumn);
+      });
+      return [...prevTableColumns];
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [finishedResizing]);
 
   return (
     <div className="table-component">

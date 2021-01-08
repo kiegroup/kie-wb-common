@@ -42,15 +42,17 @@ export type TableHandlerConfiguration = GroupOperations[];
 
 export type AllowedOperations = TableOperation[];
 
-export type RowInstance = string[];
+export type Row = string[];
 
-export type Rows = RowInstance[];
+export type Rows = Row[];
 
-export interface ColumnInstance {
+export interface Column {
   /** Relation's column name */
   name: string;
   /** Relation's column data type */
   dataType: DataType;
+  /** Column width */
+  width?: string | number;
 }
 
-export type Columns = ColumnInstance[];
+export type Columns = Column[];

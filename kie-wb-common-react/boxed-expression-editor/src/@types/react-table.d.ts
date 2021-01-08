@@ -25,6 +25,15 @@ declare module "react-table" {
     target: React.SetStateAction<EventTarget>;
   }
 
+  export interface TableState {
+    columnResizing: {
+      isResizingColumn: string;
+      columnWidths: {
+        [columnName: string]: number;
+      };
+    };
+  }
+
   export interface TableOptions {
     onCellUpdate: (rowIndex: number, columnId: string, value: string) => void;
     getThProps: (
