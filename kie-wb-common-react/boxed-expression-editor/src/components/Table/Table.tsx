@@ -20,6 +20,7 @@ import {
   Column,
   ColumnInstance,
   ContextMenuEvent,
+  DataRecord,
   Row,
   useBlockLayout,
   useResizeColumns,
@@ -31,7 +32,7 @@ import * as React from "react";
 import { useCallback, useEffect, useState } from "react";
 import { useBoxedExpressionEditorI18n } from "../../i18n";
 import { EditableCell, EditableCellProps } from "./EditableCell";
-import { Cells, Columns, DataType, TableHandlerConfiguration, TableOperation } from "../../api";
+import { DataType, TableHandlerConfiguration, TableOperation } from "../../api";
 import * as _ from "lodash";
 import { Popover } from "@patternfly/react-core";
 import { TableHandlerMenu } from "./TableHandlerMenu";
@@ -40,22 +41,22 @@ export interface TableProps {
   /** The prefix to be used for the column name */
   columnPrefix: string;
   /** Table's columns */
-  columns: Columns;
+  columns: Column[];
   /** Table's cells */
-  cells: Cells;
+  rows: DataRecord[];
   /** Function to be executed when columns are modified */
   onColumnsUpdate: (columns: Column[]) => void;
   /** Function to be executed when cells are modified */
-  onCellsUpdate: (cells: Cells) => void;
+  onRowsUpdate: (rows: DataRecord[]) => void;
   /** Custom configuration for the table handler */
   handlerConfiguration: TableHandlerConfiguration;
 }
 
 export const Table: React.FunctionComponent<TableProps> = ({
   columnPrefix,
-  onCellsUpdate,
+  onRowsUpdate,
   onColumnsUpdate,
-  cells,
+  rows,
   columns,
   handlerConfiguration,
 }: TableProps) => {
@@ -70,18 +71,10 @@ export const Table: React.FunctionComponent<TableProps> = ({
       disableResizing: true,
       hideFilter: true,
     },
-    ..._.map(
-      columns,
-      (column) =>
-        ({
-          label: column.name,
-          accessor: column.name,
-          dataType: column.dataType,
-        } as Column)
-    ),
+    ...columns,
   ]);
 
-  const [tableCells, setTableCells] = useState(cells);
+  const [tableCells, setTableCells] = useState(rows);
 
   const [showTableHandler, setShowTableHandler] = useState(false);
   const [tableHandlerTarget, setTableHandlerTarget] = useState(document.body);
@@ -92,23 +85,38 @@ export const Table: React.FunctionComponent<TableProps> = ({
   const [lastSelectedRowIndex, setLastSelectedRowIndex] = useState(-1);
 
   useEffect(() => {
-    onColumnsUpdate(tableColumns);
+    onColumnsUpdate(tableColumns.slice(1)); //Removing "# of rows" column
   }, [onColumnsUpdate, tableColumns]);
 
   useEffect(() => {
-    onCellsUpdate(tableCells);
-  }, [onCellsUpdate, tableCells]);
+    onRowsUpdate(tableCells);
+  }, [onRowsUpdate, tableCells]);
 
-  const onColumnNameOrDataTypeUpdate = useCallback((columnIndex: number) => {
-    return ({ name = "", dataType = DataType.Undefined }) => {
-      setTableColumns((prevTableColumns: ColumnInstance[]) => {
-        const updatedTableColumns = [...prevTableColumns];
-        updatedTableColumns[columnIndex].label = name;
-        updatedTableColumns[columnIndex].dataType = dataType;
-        return updatedTableColumns;
-      });
-    };
-  }, []);
+  const onColumnNameOrDataTypeUpdate = useCallback(
+    (columnIndex: number) => {
+      return ({ name = "", dataType = DataType.Undefined }) => {
+        const prevColumnName = (tableColumns[columnIndex] as ColumnInstance).accessor as string;
+        setTableColumns((prevTableColumns: ColumnInstance[]) => {
+          const updatedTableColumns = [...prevTableColumns];
+          updatedTableColumns[columnIndex].label = name;
+          updatedTableColumns[columnIndex].accessor = name;
+          updatedTableColumns[columnIndex].dataType = dataType;
+          return updatedTableColumns;
+        });
+        if (name !== prevColumnName) {
+          setTableCells((prevTableCells) => {
+            return _.map(prevTableCells, (tableCells) => {
+              const assignedCellValue = tableCells[prevColumnName]!;
+              delete tableCells[prevColumnName];
+              tableCells[name] = assignedCellValue;
+              return tableCells;
+            });
+          });
+        }
+      };
+    },
+    [tableColumns]
+  );
 
   const onCellUpdate = useCallback((rowIndex: number, columnId: string, value: string) => {
     setTableCells((prevTableCells) => {
@@ -123,7 +131,7 @@ export const Table: React.FunctionComponent<TableProps> = ({
       const candidateName = `${columnPrefix}${lastIndex}`;
       const columnWithCandidateName = _.find(tableColumns, (column: Column) =>
         _.isEqual(candidateName, column.accessor)
-      ); //TODO problem with accessor and label
+      );
       return columnWithCandidateName ? generateNextAvailableColumnName(lastIndex + 1) : candidateName;
     },
     [columnPrefix, tableColumns]

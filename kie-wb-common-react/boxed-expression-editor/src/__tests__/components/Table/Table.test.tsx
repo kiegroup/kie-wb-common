@@ -19,7 +19,8 @@ import { usingTestingBoxedExpressionI18nContext } from "../test-utils";
 import { Table } from "../../../components/Table";
 import * as _ from "lodash";
 import * as React from "react";
-import { Cells, DataType, RowObject, TableHandlerConfiguration } from "../../../api";
+import { DataType, TableHandlerConfiguration } from "../../../api";
+import { ColumnInstance, DataRecord } from "react-table";
 
 describe("Table tests", () => {
   const columnName = "column-1";
@@ -31,9 +32,9 @@ describe("Table tests", () => {
         <Table
           columnPrefix="column-"
           columns={[]}
-          cells={[]}
+          rows={[]}
           onColumnsUpdate={_.identity}
-          onCellsUpdate={_.identity}
+          onRowsUpdate={_.identity}
           handlerConfiguration={handlerConfiguration}
         />
       ).wrapper
@@ -48,9 +49,9 @@ describe("Table tests", () => {
         <Table
           columnPrefix="column-"
           columns={[]}
-          cells={[]}
+          rows={[]}
           onColumnsUpdate={_.identity}
-          onCellsUpdate={_.identity}
+          onRowsUpdate={_.identity}
           handlerConfiguration={handlerConfiguration}
         />
       ).wrapper
@@ -67,10 +68,10 @@ describe("Table tests", () => {
       usingTestingBoxedExpressionI18nContext(
         <Table
           columnPrefix="column-"
-          columns={[{ name: columnName, dataType: DataType.Undefined }]}
-          cells={[]}
+          columns={[{ accessor: columnName, label: columnName, dataType: DataType.Undefined } as ColumnInstance]}
+          rows={[]}
           onColumnsUpdate={_.identity}
-          onCellsUpdate={_.identity}
+          onRowsUpdate={_.identity}
           handlerConfiguration={handlerConfiguration}
         />
       ).wrapper
@@ -88,9 +89,9 @@ describe("Table tests", () => {
         <Table
           columnPrefix="column-"
           columns={[]}
-          cells={[]}
+          rows={[]}
           onColumnsUpdate={_.identity}
-          onCellsUpdate={_.identity}
+          onRowsUpdate={_.identity}
           handlerConfiguration={handlerConfiguration}
         />
       ).wrapper
@@ -101,19 +102,19 @@ describe("Table tests", () => {
   });
 
   test("should render a table body with one configured row", () => {
-    const row: RowObject = {};
+    const row: DataRecord = {};
     const cellValue = "cell value";
     row[columnName] = cellValue;
-    const cells: Cells = [row];
+    const rows: DataRecord[] = [row];
 
     const { container } = render(
       usingTestingBoxedExpressionI18nContext(
         <Table
           columnPrefix="column-"
-          columns={[{ name: columnName, dataType: DataType.Undefined }]}
-          cells={cells}
+          columns={[{ accessor: columnName, dataType: DataType.Undefined } as ColumnInstance]}
+          rows={rows}
           onColumnsUpdate={_.identity}
-          onCellsUpdate={_.identity}
+          onRowsUpdate={_.identity}
           handlerConfiguration={handlerConfiguration}
         />
       ).wrapper

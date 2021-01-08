@@ -52,4 +52,8 @@ declare module "react-table" {
     /** It tells whether column can resize or not */
     canResize: boolean;
   }
+
+  export interface DataRecord {
+    [columnName: string]: string;
+  }
 }

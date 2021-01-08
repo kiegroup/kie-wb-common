@@ -16,7 +16,7 @@
 
 import { LogicType } from "./LogicType";
 import { DataType } from "./DataType";
-import { Cells, Columns } from "./Table";
+import { Columns, Rows } from "./Table";
 
 export interface ExpressionProps {
   /** Expression name (which, in DMN world, is equal to the Decision node's name) */
@@ -44,5 +44,5 @@ export interface RelationProps extends ExpressionProps {
   /** Each column has a name and a data type. Their order is from left to right */
   columns?: Columns;
   /** Rows order is from top to bottom. Each row has a collection of cells, one for each column */
-  cells?: Cells;
+  rows?: Rows;
 }
