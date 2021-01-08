@@ -22,7 +22,7 @@ import { DataType, RelationProps, TableOperation } from "../../api";
 import { Table } from "../Table";
 import { useBoxedExpressionEditorI18n } from "../../i18n";
 import * as _ from "lodash";
-import { ColumnInstance } from "react-table";
+import { Column, ColumnInstance, DataRecord } from "react-table";
 
 export const RelationExpression: React.FunctionComponent<RelationProps> = (relationProps: RelationProps) => {
   const FIRST_COLUMN_NAME = "column-1";
@@ -30,11 +30,11 @@ export const RelationExpression: React.FunctionComponent<RelationProps> = (relat
 
   const [tableColumns, setTableColumns] = useState(
     relationProps.columns === undefined
-      ? [{ name: FIRST_COLUMN_NAME, label: FIRST_COLUMN_NAME, dataType: DataType.Undefined }]
+      ? [{ name: FIRST_COLUMN_NAME, dataType: DataType.Undefined }]
       : relationProps.columns
   );
 
-  const [tableCells, setTableCells] = useState(relationProps.cells === undefined ? [{}] : relationProps.cells);
+  const [tableRows, setTableRows] = useState(relationProps.rows === undefined ? [[]] : relationProps.rows);
 
   const handlerConfiguration = [
     {
@@ -59,14 +59,25 @@ export const RelationExpression: React.FunctionComponent<RelationProps> = (relat
     window.beeApi?.broadcastRelationExpressionDefinition?.({
       ...relationProps,
       columns: tableColumns,
-      cells: tableCells,
+      rows: tableRows,
     });
-  }, [relationProps, tableColumns, tableCells]);
+  }, [relationProps, tableColumns, tableRows]);
 
-  const onColumnsUpdate = useCallback(
+  const convertColumnsForTheTable = () =>
+    _.map(
+      tableColumns,
+      (column) =>
+        ({
+          label: column.name,
+          accessor: column.name,
+          dataType: column.dataType,
+        } as Column)
+    );
+
+  const onSavingColumns = useCallback(
     (columns) =>
       setTableColumns(
-        _.map(columns.slice(1), (columnInstance: ColumnInstance) => ({
+        _.map(columns, (columnInstance: ColumnInstance) => ({
           name: columnInstance.accessor,
           dataType: columnInstance.dataType,
         }))
@@ -74,16 +85,43 @@ export const RelationExpression: React.FunctionComponent<RelationProps> = (relat
     []
   );
 
-  const onCellsUpdate = useCallback((cells) => setTableCells(cells), []);
+  const convertRowsForTheTable = () =>
+    _.map(tableRows, (row) =>
+      _.reduce(
+        tableColumns,
+        (tableRow: DataRecord, column, columnIndex) => {
+          tableRow[column.name] = row[columnIndex] || "";
+          return tableRow;
+        },
+        {}
+      )
+    );
+
+  const onSavingRows = useCallback(
+    (rows) =>
+      setTableRows(
+        _.map(rows, (tableRow: DataRecord) =>
+          _.reduce(
+            tableColumns,
+            (row: string[], column) => {
+              row.push(tableRow[column.name]! || "");
+              return row;
+            },
+            []
+          )
+        )
+      ),
+    [tableColumns]
+  );
 
   return (
     <div className="relation-expression">
       <Table
         columnPrefix="column-"
-        columns={tableColumns}
-        cells={tableCells}
-        onColumnsUpdate={onColumnsUpdate}
-        onCellsUpdate={onCellsUpdate}
+        columns={convertColumnsForTheTable()}
+        rows={convertRowsForTheTable()}
+        onColumnsUpdate={onSavingColumns}
+        onRowsUpdate={onSavingRows}
         handlerConfiguration={handlerConfiguration}
       />
     </div>

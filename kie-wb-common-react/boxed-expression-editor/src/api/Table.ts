@@ -42,18 +42,15 @@ export type TableHandlerConfiguration = GroupOperations[];
 
 export type AllowedOperations = TableOperation[];
 
-export interface RowObject {
-  /** Dynamic fields, optionally one for each column identifier */
-  [columnId: string]: string;
-}
+export type RowInstance = string[];
 
-export type Cells = RowObject[];
+export type Rows = RowInstance[];
 
-export interface ColumnObject {
+export interface ColumnInstance {
   /** Relation's column name */
   name: string;
   /** Relation's column data type */
   dataType: DataType;
 }
 
-export type Columns = ColumnObject[];
+export type Columns = ColumnInstance[];
