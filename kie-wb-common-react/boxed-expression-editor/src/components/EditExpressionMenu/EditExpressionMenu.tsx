@@ -16,7 +16,7 @@
 
 import "./EditExpressionMenu.css";
 import * as React from "react";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { PopoverMenu } from "../PopoverMenu";
 import { useBoxedExpressionEditorI18n } from "../../i18n";
 import { DataType, ExpressionProps } from "../../api";
@@ -63,6 +63,14 @@ export const EditExpressionMenu: React.FunctionComponent<EditExpressionMenuProps
   const [dataTypeSelectOpen, setDataTypeSelectOpen] = useState(false);
   const [dataType, setDataType] = useState(selectedDataType);
   const [expressionName, setExpressionName] = useState(selectedExpressionName);
+
+  useEffect(() => {
+    setExpressionName(selectedExpressionName);
+  }, [selectedExpressionName]);
+
+  useEffect(() => {
+    setDataType(selectedDataType);
+  }, [selectedDataType]);
 
   const onExpressionNameChange = useCallback(
     (event) => {
