@@ -73,9 +73,7 @@ export const Table: React.FunctionComponent<TableProps> = ({
     },
     ...columns,
   ]);
-
   const [tableRows, setTableRows] = useState(rows);
-
   const [showTableHandler, setShowTableHandler] = useState(false);
   const [tableHandlerTarget, setTableHandlerTarget] = useState(document.body);
   const [tableHandlerAllowedOperations, setTableHandlerAllowedOperations] = useState(
@@ -287,6 +285,7 @@ export const Table: React.FunctionComponent<TableProps> = ({
       });
       return [...prevTableColumns];
     });
+    // Need to consider a change only when resizing is finished (no other dependencies to consider for this useEffect)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [finishedResizing]);
 
