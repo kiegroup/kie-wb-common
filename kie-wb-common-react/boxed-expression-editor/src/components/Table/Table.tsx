@@ -84,6 +84,31 @@ export const Table: React.FunctionComponent<TableProps> = ({
   const [lastSelectedColumnIndex, setLastSelectedColumnIndex] = useState(-1);
   const [lastSelectedRowIndex, setLastSelectedRowIndex] = useState(-1);
 
+  const insertBefore = <T extends unknown>(elements: T[], index: number, element: T) => {
+    return [...elements.slice(0, index), element, ...elements.slice(index)];
+  };
+
+  const insertAfter = <T extends unknown>(elements: T[], index: number, element: T) => {
+    return [...elements.slice(0, index + 1), element, ...elements.slice(index + 1)];
+  };
+
+  const deleteAt = <T extends unknown>(elements: T[], index: number) => {
+    return [...elements.slice(0, index), ...elements.slice(index + 1)];
+  };
+
+  const updateColumnNameInRows = useCallback(
+    (prevColumnName: string, newColumnName: string) =>
+      setTableRows((prevTableCells) => {
+        return _.map(prevTableCells, (tableCells) => {
+          const assignedCellValue = tableCells[prevColumnName]!;
+          delete tableCells[prevColumnName];
+          tableCells[newColumnName] = assignedCellValue;
+          return tableCells;
+        });
+      }),
+    []
+  );
+
   const onColumnNameOrDataTypeUpdate = useCallback(
     (columnIndex: number) => {
       return ({ name = "", dataType = DataType.Undefined }) => {
@@ -96,18 +121,11 @@ export const Table: React.FunctionComponent<TableProps> = ({
           return updatedTableColumns;
         });
         if (name !== prevColumnName) {
-          setTableRows((prevTableCells) => {
-            return _.map(prevTableCells, (tableCells) => {
-              const assignedCellValue = tableCells[prevColumnName]!;
-              delete tableCells[prevColumnName];
-              tableCells[name] = assignedCellValue;
-              return tableCells;
-            });
-          });
+          updateColumnNameInRows(prevColumnName, name);
         }
       };
     },
-    [tableColumns]
+    [tableColumns, updateColumnNameInRows]
   );
 
   const onCellUpdate = useCallback((rowIndex: number, columnId: string, value: string) => {
@@ -121,69 +139,52 @@ export const Table: React.FunctionComponent<TableProps> = ({
   const generateNextAvailableColumnName: (lastIndex: number) => string = useCallback(
     (lastIndex) => {
       const candidateName = `${columnPrefix}${lastIndex}`;
-      const columnWithCandidateName = _.find(tableColumns, (column: Column) =>
-        _.isEqual(candidateName, column.accessor)
-      );
+      const columnWithCandidateName = _.find(tableColumns, { accessor: candidateName });
       return columnWithCandidateName ? generateNextAvailableColumnName(lastIndex + 1) : candidateName;
     },
     [columnPrefix, tableColumns]
   );
 
-  const onHandlerOperation = useCallback(
+  const generateNextAvailableColumn = useCallback(
+    (columns: Column[]) => {
+      return {
+        accessor: generateNextAvailableColumnName(columns.length),
+        label: generateNextAvailableColumnName(columns.length),
+        dataType: DataType.Undefined,
+      };
+    },
+    [generateNextAvailableColumnName]
+  );
+
+  const handlingOperation = useCallback(
     (tableOperation: TableOperation) => {
       switch (tableOperation) {
         case TableOperation.ColumnInsertLeft:
-          setTableColumns((prevTableColumns) => [
-            ...prevTableColumns.slice(0, lastSelectedColumnIndex),
-            {
-              accessor: generateNextAvailableColumnName(prevTableColumns.length),
-              label: generateNextAvailableColumnName(prevTableColumns.length),
-              dataType: DataType.Undefined,
-            } as Column,
-            ...prevTableColumns.slice(lastSelectedColumnIndex),
-          ]);
+          setTableColumns((prevTableColumns) =>
+            insertBefore(prevTableColumns, lastSelectedColumnIndex, generateNextAvailableColumn(prevTableColumns))
+          );
           break;
         case TableOperation.ColumnInsertRight:
-          setTableColumns((prevTableColumns) => [
-            ...prevTableColumns.slice(0, lastSelectedColumnIndex + 1),
-            {
-              accessor: generateNextAvailableColumnName(prevTableColumns.length),
-              label: generateNextAvailableColumnName(prevTableColumns.length),
-              dataType: DataType.Undefined,
-            } as Column,
-            ...prevTableColumns.slice(lastSelectedColumnIndex + 1),
-          ]);
+          setTableColumns((prevTableColumns) =>
+            insertAfter(prevTableColumns, lastSelectedColumnIndex, generateNextAvailableColumn(prevTableColumns))
+          );
           break;
         case TableOperation.ColumnDelete:
-          setTableColumns((prevTableColumns) => [
-            ...prevTableColumns.slice(0, lastSelectedColumnIndex),
-            ...prevTableColumns.slice(lastSelectedColumnIndex + 1),
-          ]);
+          setTableColumns((prevTableColumns) => deleteAt(prevTableColumns, lastSelectedColumnIndex));
           break;
         case TableOperation.RowInsertAbove:
-          setTableRows((prevTableCells) => [
-            ...prevTableCells.slice(0, lastSelectedRowIndex),
-            {},
-            ...prevTableCells.slice(lastSelectedRowIndex),
-          ]);
+          setTableRows((prevTableRows) => insertBefore(prevTableRows, lastSelectedRowIndex, {}));
           break;
         case TableOperation.RowInsertBelow:
-          setTableRows((prevTableCells) => [
-            ...prevTableCells.slice(0, lastSelectedRowIndex + 1),
-            {},
-            ...prevTableCells.slice(lastSelectedRowIndex + 1),
-          ]);
+          setTableRows((prevTableRows) => insertAfter(prevTableRows, lastSelectedRowIndex, {}));
           break;
         case TableOperation.RowDelete:
-          setTableRows((prevTableCells) => [
-            ...prevTableCells.slice(0, lastSelectedRowIndex),
-            ...prevTableCells.slice(lastSelectedRowIndex + 1),
-          ]);
+          setTableRows((prevTableRows) => deleteAt(prevTableRows, lastSelectedRowIndex));
           break;
       }
       setShowTableHandler(false);
     },
-    [generateNextAvailableColumnName, lastSelectedColumnIndex, lastSelectedRowIndex]
+    [generateNextAvailableColumn, lastSelectedColumnIndex, lastSelectedRowIndex]
   );
 
   const defaultColumn = {
@@ -257,12 +258,12 @@ export const Table: React.FunctionComponent<TableProps> = ({
           <TableHandlerMenu
             handlerConfiguration={handlerConfiguration}
             allowedOperations={tableHandlerAllowedOperations}
-            onOperation={onHandlerOperation}
+            onOperation={handlingOperation}
           />
         }
       />
     ),
-    [showTableHandler, handlerConfiguration, tableHandlerAllowedOperations, onHandlerOperation, tableHandlerTarget]
+    [showTableHandler, handlerConfiguration, tableHandlerAllowedOperations, handlingOperation, tableHandlerTarget]
   );
 
   useEffect(() => {
