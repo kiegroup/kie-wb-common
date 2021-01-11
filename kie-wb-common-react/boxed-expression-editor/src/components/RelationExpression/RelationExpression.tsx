@@ -28,14 +28,6 @@ export const RelationExpression: React.FunctionComponent<RelationProps> = (relat
   const FIRST_COLUMN_NAME = "column-1";
   const { i18n } = useBoxedExpressionEditorI18n();
 
-  const [tableColumns, setTableColumns] = useState(
-    relationProps.columns === undefined
-      ? [{ name: FIRST_COLUMN_NAME, dataType: DataType.Undefined }]
-      : relationProps.columns
-  );
-
-  const [tableRows, setTableRows] = useState(relationProps.rows === undefined ? [[]] : relationProps.rows);
-
   const handlerConfiguration = [
     {
       group: i18n.columns,
@@ -55,6 +47,14 @@ export const RelationExpression: React.FunctionComponent<RelationProps> = (relat
     },
   ];
 
+  const [tableColumns, setTableColumns] = useState(
+    relationProps.columns === undefined
+      ? [{ name: FIRST_COLUMN_NAME, dataType: DataType.Undefined }]
+      : relationProps.columns
+  );
+
+  const [tableRows, setTableRows] = useState(relationProps.rows === undefined ? [[]] : relationProps.rows);
+
   useEffect(() => {
     window.beeApi?.broadcastRelationExpressionDefinition?.({
       ...relationProps,
@@ -63,17 +63,20 @@ export const RelationExpression: React.FunctionComponent<RelationProps> = (relat
     });
   }, [relationProps, tableColumns, tableRows]);
 
-  const convertColumnsForTheTable = () =>
-    _.map(
-      tableColumns,
-      (column) =>
-        ({
-          label: column.name,
-          accessor: column.name,
-          dataType: column.dataType,
-          ...(column.width ? { width: column.width } : {}),
-        } as Column)
-    );
+  const convertColumnsForTheTable = useCallback(
+    () =>
+      _.map(
+        tableColumns,
+        (column) =>
+          ({
+            label: column.name,
+            accessor: column.name,
+            dataType: column.dataType,
+            ...(column.width ? { width: column.width } : {}),
+          } as Column)
+      ),
+    [tableColumns]
+  );
 
   const onSavingColumns = useCallback(
     (columns) =>
@@ -87,17 +90,20 @@ export const RelationExpression: React.FunctionComponent<RelationProps> = (relat
     []
   );
 
-  const convertRowsForTheTable = () =>
-    _.map(tableRows, (row) =>
-      _.reduce(
-        tableColumns,
-        (tableRow: DataRecord, column, columnIndex) => {
-          tableRow[column.name] = row[columnIndex] || "";
-          return tableRow;
-        },
-        {}
-      )
-    );
+  const convertRowsForTheTable = useCallback(
+    () =>
+      _.map(tableRows, (row) =>
+        _.reduce(
+          tableColumns,
+          (tableRow: DataRecord, column, columnIndex) => {
+            tableRow[column.name] = row[columnIndex] || "";
+            return tableRow;
+          },
+          {}
+        )
+      ),
+    [tableColumns, tableRows]
+  );
 
   const onSavingRows = useCallback(
     (rows) =>
