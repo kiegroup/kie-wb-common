@@ -74,7 +74,7 @@ export const Table: React.FunctionComponent<TableProps> = ({
     ...columns,
   ]);
 
-  const [tableCells, setTableCells] = useState(rows);
+  const [tableRows, setTableRows] = useState(rows);
 
   const [showTableHandler, setShowTableHandler] = useState(false);
   const [tableHandlerTarget, setTableHandlerTarget] = useState(document.body);
@@ -96,7 +96,7 @@ export const Table: React.FunctionComponent<TableProps> = ({
           return updatedTableColumns;
         });
         if (name !== prevColumnName) {
-          setTableCells((prevTableCells) => {
+          setTableRows((prevTableCells) => {
             return _.map(prevTableCells, (tableCells) => {
               const assignedCellValue = tableCells[prevColumnName]!;
               delete tableCells[prevColumnName];
@@ -111,7 +111,7 @@ export const Table: React.FunctionComponent<TableProps> = ({
   );
 
   const onCellUpdate = useCallback((rowIndex: number, columnId: string, value: string) => {
-    setTableCells((prevTableCells) => {
+    setTableRows((prevTableCells) => {
       const updatedTableCells = [...prevTableCells];
       updatedTableCells[rowIndex][columnId] = value;
       return updatedTableCells;
@@ -161,21 +161,21 @@ export const Table: React.FunctionComponent<TableProps> = ({
           ]);
           break;
         case TableOperation.RowInsertAbove:
-          setTableCells((prevTableCells) => [
+          setTableRows((prevTableCells) => [
             ...prevTableCells.slice(0, lastSelectedRowIndex),
             {},
             ...prevTableCells.slice(lastSelectedRowIndex),
           ]);
           break;
         case TableOperation.RowInsertBelow:
-          setTableCells((prevTableCells) => [
+          setTableRows((prevTableCells) => [
             ...prevTableCells.slice(0, lastSelectedRowIndex + 1),
             {},
             ...prevTableCells.slice(lastSelectedRowIndex + 1),
           ]);
           break;
         case TableOperation.RowDelete:
-          setTableCells((prevTableCells) => [
+          setTableRows((prevTableCells) => [
             ...prevTableCells.slice(0, lastSelectedRowIndex),
             ...prevTableCells.slice(lastSelectedRowIndex + 1),
           ]);
@@ -199,11 +199,11 @@ export const Table: React.FunctionComponent<TableProps> = ({
   const getThProps = (columnIndex: number) => ({
     onContextMenu: (e: ContextMenuEvent) => {
       e.preventDefault();
-      const allowedOperations = [TableOperation.ColumnInsertLeft, TableOperation.ColumnInsertRight];
-      if (tableColumns.length > 2) {
-        allowedOperations.push(TableOperation.ColumnDelete);
-      }
-      setTableHandlerAllowedOperations(allowedOperations);
+      setTableHandlerAllowedOperations([
+        TableOperation.ColumnInsertLeft,
+        TableOperation.ColumnInsertRight,
+        ...(tableColumns.length > 2 ? [TableOperation.ColumnDelete] : []),
+      ]);
       setTableHandlerTarget(e.target as HTMLElement);
       setShowTableHandler(true);
       setLastSelectedColumnIndex(columnIndex);
@@ -213,18 +213,14 @@ export const Table: React.FunctionComponent<TableProps> = ({
   const getTdProps = (columnIndex: number, rowIndex: number) => ({
     onContextMenu: (e: ContextMenuEvent) => {
       e.preventDefault();
-      let allowedOperations: TableOperation[] = [];
-      if (columnIndex !== 0) {
-        allowedOperations = [TableOperation.ColumnInsertLeft, TableOperation.ColumnInsertRight];
-        if (tableColumns.length > 2) {
-          allowedOperations.push(TableOperation.ColumnDelete);
-        }
-      }
-      allowedOperations = [...allowedOperations, TableOperation.RowInsertAbove, TableOperation.RowInsertBelow];
-      if (tableCells.length > 1) {
-        allowedOperations.push(TableOperation.RowDelete);
-      }
-      setTableHandlerAllowedOperations(allowedOperations);
+      setTableHandlerAllowedOperations([
+        TableOperation.ColumnInsertLeft,
+        TableOperation.ColumnInsertRight,
+        ...(tableColumns.length > 2 ? [TableOperation.ColumnDelete] : []),
+        TableOperation.RowInsertAbove,
+        TableOperation.RowInsertBelow,
+        ...(tableRows.length > 1 ? [TableOperation.RowDelete] : []),
+      ]);
       setTableHandlerTarget(e.target as HTMLElement);
       setShowTableHandler(true);
       setLastSelectedColumnIndex(columnIndex);
@@ -235,7 +231,7 @@ export const Table: React.FunctionComponent<TableProps> = ({
   const tableInstance = useTable(
     {
       columns: tableColumns,
-      data: tableCells,
+      data: tableRows,
       defaultColumn,
       onCellUpdate,
       getThProps,
@@ -274,8 +270,8 @@ export const Table: React.FunctionComponent<TableProps> = ({
   }, [onColumnsUpdate, tableColumns]);
 
   useEffect(() => {
-    onRowsUpdate(tableCells);
-  }, [onRowsUpdate, tableCells]);
+    onRowsUpdate(tableRows);
+  }, [onRowsUpdate, tableRows]);
 
   const finishedResizing =
     tableInstance.state.columnResizing.isResizingColumn === null &&
