@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { render } from "@testing-library/react";
+import { fireEvent, render } from "@testing-library/react";
 import { usingTestingBoxedExpressionI18nContext } from "../test-utils";
 import * as React from "react";
 import { EditableCell } from "../../../components/Table";
@@ -36,6 +36,7 @@ describe("EditableCell tests", () => {
 
   test("should trigger onCellUpdate function when the user changes its value", () => {
     const value = "value";
+    const newValue = "changed";
     const rowIndex = 0;
     const columnId = "col1";
     const onCellUpdate = (rowIndex: number, columnId: string, value: string) => {
@@ -54,11 +55,10 @@ describe("EditableCell tests", () => {
       ).wrapper
     );
 
-    (container.querySelector("textarea") as HTMLTextAreaElement)!.value = "changed";
-    (container.querySelector("textarea") as HTMLTextAreaElement)!.dispatchEvent(new Event("change"));
-    (container.querySelector("textarea") as HTMLTextAreaElement)!.dispatchEvent(new Event("blur"));
+    fireEvent.change(container.querySelector("textarea") as HTMLTextAreaElement, { target: { value: newValue } });
+    fireEvent.blur(container.querySelector("textarea") as HTMLTextAreaElement);
 
     expect(mockedOnCellUpdate).toHaveBeenCalled();
-    expect(mockedOnCellUpdate).toHaveBeenCalledWith(rowIndex, columnId, value);
+    expect(mockedOnCellUpdate).toHaveBeenCalledWith(rowIndex, columnId, newValue);
   });
 });
