@@ -29,7 +29,7 @@ import {
 import { TableComposable, Tbody, Td, Th, Thead, Tr } from "@patternfly/react-table";
 import { EditExpressionMenu } from "../EditExpressionMenu";
 import * as React from "react";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useBoxedExpressionEditorI18n } from "../../i18n";
 import { EditableCell, EditableCellProps } from "./EditableCell";
 import { DataType, TableHandlerConfiguration, TableOperation } from "../../api";
@@ -240,7 +240,7 @@ export const Table: React.FunctionComponent<TableProps> = ({
     useResizeColumns
   );
 
-  const buildTableHandler = useCallback(
+  const buildTableHandler = useMemo(
     () => (
       <Popover
         className="table-handler"
@@ -341,7 +341,7 @@ export const Table: React.FunctionComponent<TableProps> = ({
           })}
         </Tbody>
       </TableComposable>
-      {showTableHandler ? buildTableHandler() : null}
+      {showTableHandler ? buildTableHandler : null}
     </div>
   );
 };
