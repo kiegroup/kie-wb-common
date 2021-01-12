@@ -36,33 +36,29 @@ export const TableHandlerMenu: React.FunctionComponent<TableHandlerProps> = ({
 }) => {
   return (
     <Menu className="table-handler-menu" onSelect={(event, itemId) => onOperation(itemId)}>
-      {handlerConfiguration.map((groupOperation) => {
-        return (
-          <MenuGroup
-            key={groupOperation.group}
-            label={groupOperation.group}
-            className={
-              _.every(groupOperation.items, (operation) => !_.includes(allowedOperations, operation.type))
-                ? "no-allowed-actions-in-group"
-                : ""
-            }
-          >
-            <MenuList>
-              {groupOperation.items.map((operation) => {
-                return (
-                  <MenuItem
-                    key={operation.type}
-                    itemId={operation.type}
-                    isDisabled={!_.includes(allowedOperations, operation.type)}
-                  >
-                    {operation.name}
-                  </MenuItem>
-                );
-              })}
-            </MenuList>
-          </MenuGroup>
-        );
-      })}
+      {handlerConfiguration.map((groupOperation) => (
+        <MenuGroup
+          key={groupOperation.group}
+          label={groupOperation.group}
+          className={
+            _.every(groupOperation.items, (operation) => !_.includes(allowedOperations, operation.type))
+              ? "no-allowed-actions-in-group"
+              : ""
+          }
+        >
+          <MenuList>
+            {groupOperation.items.map((operation) => (
+              <MenuItem
+                key={operation.type}
+                itemId={operation.type}
+                isDisabled={!_.includes(allowedOperations, operation.type)}
+              >
+                {operation.name}
+              </MenuItem>
+            ))}
+          </MenuList>
+        </MenuGroup>
+      ))}
     </Menu>
   );
 };
