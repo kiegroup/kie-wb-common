@@ -46,6 +46,12 @@
 
 .table-component table tbody td {
   border-style: ridge;
+  padding: 1.1em 0;
+  text-align: center;
+}
+
+.table-component table tbody td + td {
+  padding: 0;
 }
 
 .table-component table tbody td.row-count-cell {
