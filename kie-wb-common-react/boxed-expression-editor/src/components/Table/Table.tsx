@@ -289,39 +289,49 @@ export const Table: React.FunctionComponent<TableProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [finishedResizing]);
 
+  const renderFixedColumn = useCallback(
+    (column: ColumnInstance, columnIndex: number) => (
+      <Th {...column.getHeaderProps()} key={columnIndex}>
+        <div className="header-cell">{column.label}</div>
+      </Th>
+    ),
+    []
+  );
+
+  const renderResizableColumn = useCallback(
+    (column: ColumnInstance, columnIndex: number) => (
+      <EditExpressionMenu
+        title={i18n.editRelation}
+        selectedExpressionName={column.label}
+        selectedDataType={column.dataType}
+        onExpressionUpdate={onColumnNameOrDataTypeUpdate(columnIndex)}
+        key={columnIndex}
+      >
+        <Th {...column.getHeaderProps()} {...tableInstance.getThProps(columnIndex)} key={columnIndex}>
+          <div className="header-cell">
+            <div>
+              <p className="pf-u-text-truncate">{column.label}</p>
+              <p className="pf-u-text-truncate data-type">({column.dataType})</p>
+            </div>
+            <div className="pf-c-drawer" {...column.getResizerProps()}>
+              <div className="pf-c-drawer__splitter pf-m-vertical">
+                <div className="pf-c-drawer__splitter-handle" />
+              </div>
+            </div>
+          </div>
+        </Th>
+      </EditExpressionMenu>
+    ),
+    [i18n.editRelation, onColumnNameOrDataTypeUpdate, tableInstance]
+  );
+
   return (
     <div className="table-component">
       <TableComposable variant="compact" {...tableInstance.getTableProps()}>
         <Thead noWrap>
           <tr>
             {tableInstance.headers.map((column: ColumnInstance, columnIndex: number) =>
-              column.canResize ? (
-                <EditExpressionMenu
-                  title={i18n.editRelation}
-                  selectedExpressionName={column.label}
-                  selectedDataType={column.dataType}
-                  onExpressionUpdate={onColumnNameOrDataTypeUpdate(columnIndex)}
-                  key={columnIndex}
-                >
-                  <Th {...column.getHeaderProps()} {...tableInstance.getThProps(columnIndex)} key={columnIndex}>
-                    <div className="header-cell">
-                      <div>
-                        <p className="pf-u-text-truncate">{column.label}</p>
-                        <p className="pf-u-text-truncate data-type">({column.dataType})</p>
-                      </div>
-                      <div className="pf-c-drawer" {...column.getResizerProps()}>
-                        <div className="pf-c-drawer__splitter pf-m-vertical">
-                          <div className="pf-c-drawer__splitter-handle" />
-                        </div>
-                      </div>
-                    </div>
-                  </Th>
-                </EditExpressionMenu>
-              ) : (
-                <Th {...column.getHeaderProps()} key={columnIndex}>
-                  <div className="header-cell">{column.label}</div>
-                </Th>
-              )
+              column.canResize ? renderResizableColumn(column, columnIndex) : renderFixedColumn(column, columnIndex)
             )}
           </tr>
         </Thead>
