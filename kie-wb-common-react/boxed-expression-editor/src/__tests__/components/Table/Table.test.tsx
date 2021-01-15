@@ -26,26 +26,31 @@ import { act } from "react-dom/test-utils";
 jest.useFakeTimers();
 const flushPromises = () => new Promise((resolve) => process.nextTick(resolve));
 
-const EDIT_EXPRESSION_NAME: string = "[data-ouia-component-id='edit-expression-name']";
-const EDIT_EXPRESSION_DATA_TYPE: string = "[data-ouia-component-id='edit-expression-data-type'] input";
-const EXPRESSION_COLUMN_HEADER: string = "[data-ouia-component-type='expression-column-header']";
-const EXPRESSION_POPOVER_MENU: string = "[data-ouia-component-id='expression-popover-menu']";
-const EXPRESSION_POPOVER_MENU_TITLE: string = "[data-ouia-component-id='expression-popover-menu-title']";
-const EXPRESSION_TABLE_HANDLER_MENU: string = "[data-ouia-component-id='expression-table-handler-menu']";
+const EDIT_EXPRESSION_NAME = "[data-ouia-component-id='edit-expression-name']";
+const EDIT_EXPRESSION_DATA_TYPE = "[data-ouia-component-id='edit-expression-data-type'] input";
+const EXPRESSION_COLUMN_HEADER = "[data-ouia-component-type='expression-column-header']";
+const EXPRESSION_POPOVER_MENU = "[data-ouia-component-id='expression-popover-menu']";
+const EXPRESSION_POPOVER_MENU_TITLE = "[data-ouia-component-id='expression-popover-menu-title']";
+const EXPRESSION_TABLE_HANDLER_MENU = "[data-ouia-component-id='expression-table-handler-menu']";
 const expressionRow = (index: number) => {
   return "[data-ouia-component-id='expression-row-" + index + "']";
-}
+};
 
 const expressionCell = (rowIndex: number, columnIndex: number) => {
-  return "[data-ouia-component-id='expression-row-" + rowIndex + "'] [data-ouia-component-id='expression-column-" + columnIndex + "']";
-}
+  return (
+    "[data-ouia-component-id='expression-row-" +
+    rowIndex +
+    "'] [data-ouia-component-id='expression-column-" +
+    columnIndex +
+    "']"
+  );
+};
 
 const expressionTableHandlerMenuEntry = (menuEntry: string) => {
   return "[data-ouia-component-id='expression-table-handler-menu-" + menuEntry + "']";
-}
+};
 
 describe("Table tests", () => {
-
   const columnName = "column-1";
   const handlerConfiguration: TableHandlerConfiguration = [];
 
@@ -173,12 +178,8 @@ describe("Table tests", () => {
 
       expect(baseElement.querySelector(EXPRESSION_POPOVER_MENU)).toBeTruthy();
       expect(baseElement.querySelector(EXPRESSION_POPOVER_MENU_TITLE)?.innerHTML).toBe("Edit Relation");
-      expect(
-        (baseElement.querySelector(EDIT_EXPRESSION_NAME)! as HTMLInputElement).value
-      ).toBe(columnName);
-      expect(
-        (baseElement.querySelector(EDIT_EXPRESSION_DATA_TYPE)! as HTMLInputElement).value
-      ).toBe(DataType.Boolean);
+      expect((baseElement.querySelector(EDIT_EXPRESSION_NAME)! as HTMLInputElement).value).toBe(columnName);
+      expect((baseElement.querySelector(EDIT_EXPRESSION_DATA_TYPE)! as HTMLInputElement).value).toBe(DataType.Boolean);
     });
 
     test("should trigger onColumnUpdate, when changing column name via popover", async () => {
@@ -498,12 +499,8 @@ async function updateElementViaPopover(
     container.querySelectorAll(EXPRESSION_COLUMN_HEADER)[1] as HTMLTableHeaderCellElement
   );
   (baseElement.querySelector(EDIT_EXPRESSION_NAME)! as HTMLInputElement).value = newName;
-  (baseElement.querySelector(EDIT_EXPRESSION_NAME)! as HTMLInputElement).dispatchEvent(
-    new Event("change")
-  );
-  (baseElement.querySelector(EDIT_EXPRESSION_NAME)! as HTMLInputElement).dispatchEvent(
-    new Event("blur")
-  );
+  (baseElement.querySelector(EDIT_EXPRESSION_NAME)! as HTMLInputElement).dispatchEvent(new Event("change"));
+  (baseElement.querySelector(EDIT_EXPRESSION_NAME)! as HTMLInputElement).dispatchEvent(new Event("blur"));
 
   expect(baseElement.querySelector(EXPRESSION_POPOVER_MENU)).toBeTruthy();
   expect(updateFn).toHaveBeenCalled();
