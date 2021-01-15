@@ -132,6 +132,7 @@ export const EditExpressionMenu: React.FunctionComponent<EditExpressionMenuProps
             <input
               type="text"
               id="expression-name"
+              data-ouia-component-id="edit-expression-name"
               value={expressionName}
               onChange={onExpressionNameChange}
               onBlur={onExpressionNameChange}
@@ -142,6 +143,7 @@ export const EditExpressionMenu: React.FunctionComponent<EditExpressionMenuProps
           <div className="expression-data-type">
             <label>{dataTypeField}</label>
             <Select
+              ouiaId="edit-expression-data-type"
               variant={SelectVariant.typeahead}
               typeAheadAriaLabel={i18n.choose}
               onToggle={onDataTypeSelectToggle}

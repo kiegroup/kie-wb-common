@@ -35,7 +35,11 @@ export const TableHandlerMenu: React.FunctionComponent<TableHandlerProps> = ({
   onOperation,
 }) => {
   return (
-    <Menu className="table-handler-menu" onSelect={(event, itemId) => onOperation(itemId)}>
+    <Menu
+      ouiaId="expression-table-handler-menu"
+      className="table-handler-menu"
+      onSelect={(event, itemId) => onOperation(itemId)}
+    >
       {handlerConfiguration.map((groupOperation) => (
         <MenuGroup
           key={groupOperation.group}
@@ -49,6 +53,7 @@ export const TableHandlerMenu: React.FunctionComponent<TableHandlerProps> = ({
           <MenuList>
             {groupOperation.items.map((operation) => (
               <MenuItem
+                data-ouia-component-id={"expression-table-handler-menu-" + operation.name}
                 key={operation.type}
                 itemId={operation.type}
                 isDisabled={!_.includes(allowedOperations, operation.type)}

@@ -26,7 +26,26 @@ import { act } from "react-dom/test-utils";
 jest.useFakeTimers();
 const flushPromises = () => new Promise((resolve) => process.nextTick(resolve));
 
+const EDIT_EXPRESSION_NAME: string = "[data-ouia-component-id='edit-expression-name']";
+const EDIT_EXPRESSION_DATA_TYPE: string = "[data-ouia-component-id='edit-expression-data-type'] input";
+const EXPRESSION_COLUMN_HEADER: string = "[data-ouia-component-type='expression-column-header']";
+const EXPRESSION_POPOVER_MENU: string = "[data-ouia-component-id='expression-popover-menu']";
+const EXPRESSION_POPOVER_MENU_TITLE: string = "[data-ouia-component-id='expression-popover-menu-title']";
+const EXPRESSION_TABLE_HANDLER_MENU: string = "[data-ouia-component-id='expression-table-handler-menu']";
+const expressionRow = (index: number) => {
+  return "[data-ouia-component-id='expression-row-" + index + "']";
+}
+
+const expressionCell = (rowIndex: number, columnIndex: number) => {
+  return "[data-ouia-component-id='expression-row-" + rowIndex + "'] [data-ouia-component-id='expression-column-" + columnIndex + "']";
+}
+
+const expressionTableHandlerMenuEntry = (menuEntry: string) => {
+  return "[data-ouia-component-id='expression-table-handler-menu-" + menuEntry + "']";
+}
+
 describe("Table tests", () => {
+
   const columnName = "column-1";
   const handlerConfiguration: TableHandlerConfiguration = [];
 
@@ -64,8 +83,8 @@ describe("Table tests", () => {
 
       expect(container.querySelector(".table-component table thead")).toBeTruthy();
       expect(container.querySelector(".table-component table thead tr")).toBeTruthy();
-      expect(container.querySelectorAll(".table-component table thead tr th").length).toBe(1);
-      expect(container.querySelectorAll(".table-component table thead tr th")[0].innerHTML).toContain("#");
+      expect(container.querySelectorAll(EXPRESSION_COLUMN_HEADER).length).toBe(1);
+      expect(container.querySelectorAll(EXPRESSION_COLUMN_HEADER)[0].innerHTML).toContain("#");
     });
 
     test("should show a table head with one configured column", () => {
@@ -84,8 +103,8 @@ describe("Table tests", () => {
 
       expect(container.querySelector(".table-component table thead")).toBeTruthy();
       expect(container.querySelector(".table-component table thead tr")).toBeTruthy();
-      expect(container.querySelectorAll(".table-component table thead tr th").length).toBe(2);
-      expect(container.querySelectorAll(".table-component table thead tr th")[1].innerHTML).toContain(columnName);
+      expect(container.querySelectorAll(EXPRESSION_COLUMN_HEADER).length).toBe(2);
+      expect(container.querySelectorAll(EXPRESSION_COLUMN_HEADER)[1].innerHTML).toContain(columnName);
     });
 
     test("should show a table body with no rows", () => {
@@ -126,10 +145,10 @@ describe("Table tests", () => {
       );
 
       expect(container.querySelector(".table-component table tbody")).toBeTruthy();
-      expect(container.querySelector(".table-component table tbody tr")).toBeTruthy();
-      expect(container.querySelectorAll(".table-component table tbody tr td").length).toBe(2);
-      expect(container.querySelectorAll(".table-component table tbody tr td")[0].innerHTML).toContain("1");
-      expect(container.querySelectorAll(".table-component table tbody tr td")[1].innerHTML).toContain(cellValue);
+      expect(container.querySelector(expressionRow(0))).toBeTruthy();
+      expect(container.querySelectorAll(expressionRow(0) + " td")).toHaveLength(2);
+      expect(container.querySelector(expressionCell(0, 0))!.innerHTML).toContain("1");
+      expect(container.querySelector(expressionCell(0, 1))!.innerHTML).toContain(cellValue);
     });
   });
 
@@ -149,16 +168,16 @@ describe("Table tests", () => {
       );
 
       await activateNameAndDataTypePopover(
-        container.querySelectorAll(".table-component table thead tr th")[1] as HTMLTableHeaderCellElement
+        container.querySelectorAll(EXPRESSION_COLUMN_HEADER)[1] as HTMLTableHeaderCellElement
       );
 
-      expect(baseElement.querySelector(".popover-menu-selector")).toBeTruthy();
-      expect(baseElement.querySelector(".selector-menu-title")!.innerHTML).toContain("Edit Relation");
+      expect(baseElement.querySelector(EXPRESSION_POPOVER_MENU)).toBeTruthy();
+      expect(baseElement.querySelector(EXPRESSION_POPOVER_MENU_TITLE)?.innerHTML).toBe("Edit Relation");
       expect(
-        (baseElement.querySelector(".edit-expression-menu .expression-name input")! as HTMLInputElement).value
+        (baseElement.querySelector(EDIT_EXPRESSION_NAME)! as HTMLInputElement).value
       ).toBe(columnName);
       expect(
-        (baseElement.querySelector(".edit-expression-menu .expression-data-type input")! as HTMLInputElement).value
+        (baseElement.querySelector(EDIT_EXPRESSION_DATA_TYPE)! as HTMLInputElement).value
       ).toBe(DataType.Boolean);
     });
 
@@ -279,8 +298,8 @@ describe("Table tests", () => {
           />
         ).wrapper
       );
-      await openContextMenu(container.querySelectorAll("table thead th")[1]);
-      await selectFirstMenuEntry(baseElement);
+      await openContextMenu(container.querySelectorAll(EXPRESSION_COLUMN_HEADER)[1]);
+      await selectMenuEntry(baseElement, "Insert Column Left");
 
       expect(mockedOnColumnUpdate).toHaveBeenCalledWith([secondColumn, firstColumn]);
     });
@@ -310,8 +329,8 @@ describe("Table tests", () => {
           />
         ).wrapper
       );
-      await openContextMenu(container.querySelectorAll("table thead th")[1]);
-      await selectFirstMenuEntry(baseElement);
+      await openContextMenu(container.querySelectorAll(EXPRESSION_COLUMN_HEADER)[1]);
+      await selectMenuEntry(baseElement, "Insert Column right");
 
       expect(mockedOnColumnUpdate).toHaveBeenCalledWith([firstColumn, secondColumn]);
     });
@@ -335,14 +354,14 @@ describe("Table tests", () => {
             handlerConfiguration={[
               {
                 group: "COLUMNS",
-                items: [{ name: "Delete column", type: TableOperation.ColumnDelete }],
+                items: [{ name: "Delete", type: TableOperation.ColumnDelete }],
               },
             ]}
           />
         ).wrapper
       );
-      await openContextMenu(container.querySelectorAll("table thead th")[1]);
-      await selectFirstMenuEntry(baseElement);
+      await openContextMenu(container.querySelectorAll(EXPRESSION_COLUMN_HEADER)[1]);
+      await selectMenuEntry(baseElement, "Delete");
 
       expect(mockedOnColumnUpdate).toHaveBeenCalledWith([secondColumn]);
     });
@@ -372,8 +391,8 @@ describe("Table tests", () => {
           />
         ).wrapper
       );
-      await openContextMenu(container.querySelectorAll("table tbody td")[1]);
-      await selectFirstMenuEntry(baseElement);
+      await openContextMenu(container.querySelector(expressionCell(0, 1))!);
+      await selectMenuEntry(baseElement, "Insert row above");
 
       expect(mockedOnRowsUpdate).toHaveBeenCalledWith([{}, row]);
     });
@@ -403,8 +422,8 @@ describe("Table tests", () => {
           />
         ).wrapper
       );
-      await openContextMenu(container.querySelectorAll("table tbody td")[1]);
-      await selectFirstMenuEntry(baseElement);
+      await openContextMenu(container.querySelector(expressionCell(0, 1))!);
+      await selectMenuEntry(baseElement, "Insert row below");
 
       expect(mockedOnRowsUpdate).toHaveBeenCalledWith([row, {}]);
     });
@@ -430,26 +449,24 @@ describe("Table tests", () => {
             handlerConfiguration={[
               {
                 group: "ROWS",
-                items: [{ name: "Delete row", type: TableOperation.RowDelete }],
+                items: [{ name: "Delete", type: TableOperation.RowDelete }],
               },
             ]}
           />
         ).wrapper
       );
-      await openContextMenu(container.querySelectorAll("table tbody td")[1]);
-      await selectFirstMenuEntry(baseElement);
+      await openContextMenu(container.querySelector(expressionCell(0, 1))!);
+      await selectMenuEntry(baseElement, "Delete");
 
       expect(mockedOnRowsUpdate).toHaveBeenCalledWith([secondRow]);
     });
   });
 });
 
-async function selectFirstMenuEntry(baseElement: Element) {
+async function selectMenuEntry(baseElement: Element, menuEntry: string) {
   await act(async () => {
-    expect(baseElement.querySelector(".table-handler-menu")).toBeTruthy();
-    (baseElement.querySelectorAll(
-      ".table-handler-menu .pf-c-menu__group .pf-c-menu__list button"
-    )[0] as HTMLButtonElement).click();
+    expect(baseElement.querySelector(EXPRESSION_TABLE_HANDLER_MENU)).toBeTruthy();
+    (baseElement.querySelector(expressionTableHandlerMenuEntry(menuEntry) + " button") as HTMLButtonElement).click();
     await flushPromises();
     jest.runAllTimers();
   });
@@ -478,16 +495,16 @@ async function updateElementViaPopover(
   updateFn: jest.Mock<void, [Column[] | DataRecord[]]>
 ) {
   await activateNameAndDataTypePopover(
-    container.querySelectorAll(".table-component table thead tr th")[1] as HTMLTableHeaderCellElement
+    container.querySelectorAll(EXPRESSION_COLUMN_HEADER)[1] as HTMLTableHeaderCellElement
   );
-  (baseElement.querySelector(".edit-expression-menu .expression-name input")! as HTMLInputElement).value = newName;
-  (baseElement.querySelector(".edit-expression-menu .expression-name input")! as HTMLInputElement).dispatchEvent(
+  (baseElement.querySelector(EDIT_EXPRESSION_NAME)! as HTMLInputElement).value = newName;
+  (baseElement.querySelector(EDIT_EXPRESSION_NAME)! as HTMLInputElement).dispatchEvent(
     new Event("change")
   );
-  (baseElement.querySelector(".edit-expression-menu .expression-name input")! as HTMLInputElement).dispatchEvent(
+  (baseElement.querySelector(EDIT_EXPRESSION_NAME)! as HTMLInputElement).dispatchEvent(
     new Event("blur")
   );
 
-  expect(baseElement.querySelector(".popover-menu-selector")).toBeTruthy();
+  expect(baseElement.querySelector(EXPRESSION_POPOVER_MENU)).toBeTruthy();
   expect(updateFn).toHaveBeenCalled();
 }
