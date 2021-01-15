@@ -27,7 +27,7 @@ declare module "react-table" {
 
   export interface TableState {
     columnResizing: {
-      isResizingColumn: string;
+      isResizingColumn: boolean;
       columnWidths: {
         [columnName: string]: number;
       };
