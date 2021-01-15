@@ -46,3 +46,19 @@ export interface RelationProps extends ExpressionProps {
   /** Rows order is from top to bottom. Each row has a collection of cells, one for each column */
   rows?: Rows;
 }
+
+export interface ContextProps extends ExpressionProps {
+  /** Logic type must be Context */
+  logicType: LogicType.Context;
+  /** Collection of context entries */
+  contextEntries?: {
+    /** Entry name */
+    name: string;
+    /** Entry data type */
+    dataType: DataType;
+    /** Entry expression */
+    expression: ExpressionProps;
+  }[];
+  /** Context result */
+  result?: ExpressionProps;
+}
