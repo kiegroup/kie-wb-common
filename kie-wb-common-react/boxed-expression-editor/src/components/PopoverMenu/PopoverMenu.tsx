@@ -40,13 +40,18 @@ export const PopoverMenu: React.FunctionComponent<PopoverMenuProps> = ({
 }: PopoverMenuProps) => {
   return (
     <Popover
+      data-ouia-component-id="expression-popover-menu"
       className="popover-menu-selector"
       position="bottom"
       distance={0}
       id="menu-selector"
       reference={arrowPlacement}
       appendTo={appendTo}
-      headerContent={<div className="selector-menu-title">{title}</div>}
+      headerContent={
+        <div className="selector-menu-title" data-ouia-component-id="expression-popover-menu-title">
+          {title}
+        </div>
+      }
       bodyContent={body}
     >
       {children}
