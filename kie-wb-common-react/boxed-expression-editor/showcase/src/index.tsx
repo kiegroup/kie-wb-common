@@ -52,7 +52,7 @@ export const App: React.FunctionComponent = () => {
       </div>
       <div className="updated-json">
         <p className="disclaimer">
-          ⚠ Currently, JSON gets updated only for literal expression and relation logic types
+          ⚠ Currently, JSON gets updated only for literal expression, relation and context logic types
         </p>
         <pre>{JSON.stringify(updatedExpression, null, 2)}</pre>
       </div>
