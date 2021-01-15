@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2021 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,14 +29,15 @@ describe("RelationExpression tests", () => {
     );
 
     expect(container.querySelector(".relation-expression")).toBeTruthy();
-    expect(container.querySelectorAll(".relation-expression table thead tr th").length).toBe(2);
+    expect(container.querySelectorAll(".relation-expression table thead tr th")).toHaveLength(2);
     expect(container.querySelectorAll(".relation-expression table thead tr th")[1].innerHTML).toContain("column-1");
-    expect(container.querySelectorAll(".relation-expression table tbody tr").length).toBe(1);
+    expect(container.querySelectorAll(".relation-expression table tbody tr")).toHaveLength(1);
   });
 
   test("should render a table element, with one column, corresponding to passed prop", () => {
     const columnName = "a column";
-    const column = { name: columnName, dataType: DataType.Date };
+    const columnDataType = DataType.Date;
+    const column = { name: columnName, dataType: columnDataType };
 
     const { container } = render(
       usingTestingBoxedExpressionI18nContext(
@@ -50,8 +51,9 @@ describe("RelationExpression tests", () => {
     );
 
     expect(container.querySelector(".relation-expression")).toBeTruthy();
-    expect(container.querySelectorAll(".relation-expression table thead tr th").length).toBe(2);
+    expect(container.querySelectorAll(".relation-expression table thead tr th")).toHaveLength(2);
     expect(container.querySelectorAll(".relation-expression table thead tr th")[1].innerHTML).toContain(columnName);
+    expect(container.querySelectorAll(".relation-expression table thead tr th")[1].innerHTML).toContain(columnDataType);
   });
 
   test("should render a table element, with one row, corresponding to passed prop", () => {
@@ -63,8 +65,8 @@ describe("RelationExpression tests", () => {
     const container = buildRelationComponent(column, row);
 
     expect(container.querySelector(".relation-expression")).toBeTruthy();
-    expect(container.querySelectorAll(".relation-expression table tbody tr").length).toBe(1);
-    expect(container.querySelectorAll(".relation-expression table tbody tr td").length).toBe(2);
+    expect(container.querySelectorAll(".relation-expression table tbody tr")).toHaveLength(1);
+    expect(container.querySelectorAll(".relation-expression table tbody tr td")).toHaveLength(2);
     expect(container.querySelectorAll(".relation-expression table tbody tr td")[1].innerHTML).toContain(rowValue);
   });
 
@@ -77,8 +79,8 @@ describe("RelationExpression tests", () => {
     const container = buildRelationComponent(column, row);
 
     expect(container.querySelector(".relation-expression")).toBeTruthy();
-    expect(container.querySelectorAll(".relation-expression table tbody tr").length).toBe(1);
-    expect(container.querySelectorAll(".relation-expression table tbody tr td").length).toBe(2);
+    expect(container.querySelectorAll(".relation-expression table tbody tr")).toHaveLength(1);
+    expect(container.querySelectorAll(".relation-expression table tbody tr td")).toHaveLength(2);
   });
 });
 
