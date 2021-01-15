@@ -15,7 +15,7 @@
  */
 
 import { ExpressionContainer } from "../../../components/ExpressionContainer";
-import { render } from "@testing-library/react";
+import { fireEvent, render } from "@testing-library/react";
 import * as React from "react";
 import { usingTestingBoxedExpressionI18nContext } from "../test-utils";
 import { DataType, LogicType } from "../../../api";
@@ -74,7 +74,7 @@ describe("ExpressionContainer tests", () => {
         usingTestingBoxedExpressionI18nContext(<ExpressionContainer selectedExpression={expression} />).wrapper
       );
 
-      await triggerContextMenu(container as HTMLElement, ".expression-container-box");
+      await triggerContextMenu(container as HTMLElement, ".logic-type-selector");
 
       expect(container.querySelector(".context-menu-container button.pf-m-disabled")).toBeTruthy();
       expect(container.querySelector(".context-menu-container button.pf-m-disabled")!.innerHTML).toBe("Clear");
@@ -87,7 +87,7 @@ describe("ExpressionContainer tests", () => {
         usingTestingBoxedExpressionI18nContext(<ExpressionContainer selectedExpression={expression} />).wrapper
       );
 
-      await triggerContextMenu(container as HTMLElement, ".expression-container-box");
+      await triggerContextMenu(container as HTMLElement, ".logic-type-selector");
 
       expect(container.querySelector(".context-menu-container button.pf-m-disabled")).toBeFalsy();
       expect(container.querySelector(".context-menu-container button")).toBeTruthy();
@@ -104,7 +104,7 @@ describe("ExpressionContainer tests", () => {
       );
 
       expect(container.querySelector(".expression-container-box")).toBeTruthy();
-      expect(container.querySelector(".expression-container-box")!.innerHTML).toBe(expression.logicType);
+      expect(container.querySelector(".expression-container-box")!.innerHTML).toContain(expression.logicType);
     });
 
     test("should reset the selection, when logic type is selected and clear button gets clicked", async () => {
@@ -114,7 +114,7 @@ describe("ExpressionContainer tests", () => {
         usingTestingBoxedExpressionI18nContext(<ExpressionContainer selectedExpression={expression} />).wrapper
       );
 
-      await triggerContextMenu(container as HTMLElement, ".expression-container-box");
+      await triggerContextMenu(container as HTMLElement, ".logic-type-selector");
 
       act(() => {
         const clearButtonElement = container.querySelector(".context-menu-container button")!;
@@ -131,19 +131,7 @@ describe("ExpressionContainer tests", () => {
 const triggerContextMenu = async (container: HTMLElement, selector: string) => {
   await act(async () => {
     const element = container.querySelector(selector)!;
-
-    element.dispatchEvent(
-      new MouseEvent("contextmenu", {
-        bubbles: true,
-        cancelable: false,
-        view: window,
-        button: 2,
-        buttons: 0,
-        clientX: element.getBoundingClientRect().x,
-        clientY: element.getBoundingClientRect().y,
-      })
-    );
-
+    fireEvent.contextMenu(element);
     await flushPromises();
     jest.runAllTimers();
   });

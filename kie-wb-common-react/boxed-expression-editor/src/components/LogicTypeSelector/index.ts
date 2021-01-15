@@ -14,19 +14,4 @@
  * limitations under the License.
  */
 
-.expression-container .expression-container-box {
-  border-style: ridge;
-  border-color: #39A5DC;
-}
-
-.expression-container .context-menu-container {
-  position: absolute;
-  z-index: 10000;
-}
-
-.expression-container > .expression-container-box,
-.expression-container .expression-type {
-  font-size: smaller;
-  font-style: italic;
-  color: gray;
-}
+export * from "./LogicTypeSelector";
