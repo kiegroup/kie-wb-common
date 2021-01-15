@@ -292,7 +292,9 @@ export const Table: React.FunctionComponent<TableProps> = ({
   const renderFixedColumn = useCallback(
     (column: ColumnInstance, columnIndex: number) => (
       <Th {...column.getHeaderProps()} key={columnIndex}>
-        <div className="header-cell">{column.label}</div>
+        <div className="header-cell" data-ouia-component-type="expression-column-header">
+          {column.label}
+        </div>
       </Th>
     ),
     []
@@ -308,7 +310,7 @@ export const Table: React.FunctionComponent<TableProps> = ({
         key={columnIndex}
       >
         <Th {...column.getHeaderProps()} {...tableInstance.getThProps(columnIndex)} key={columnIndex}>
-          <div className="header-cell">
+          <div className="header-cell" data-ouia-component-type="expression-column-header">
             <div>
               <p className="pf-u-text-truncate">{column.label}</p>
               <p className="pf-u-text-truncate data-type">({column.dataType})</p>
@@ -340,9 +342,14 @@ export const Table: React.FunctionComponent<TableProps> = ({
           {tableInstance.rows.map((row: Row, rowIndex: number) => {
             tableInstance.prepareRow(row);
             return (
-              <Tr className="table-row" {...row.getRowProps()} key={rowIndex}>
+              <Tr className="table-row" {...row.getRowProps()} key={rowIndex} ouiaId={"expression-row-" + rowIndex}>
                 {row.cells.map((cell: Cell, cellIndex: number) => (
-                  <Td {...cell.getCellProps()} {...tableInstance.getTdProps(cellIndex, rowIndex)} key={cellIndex}>
+                  <Td
+                    {...cell.getCellProps()}
+                    {...tableInstance.getTdProps(cellIndex, rowIndex)}
+                    key={cellIndex}
+                    data-ouia-component-id={"expression-column-" + cellIndex}
+                  >
                     {cellIndex === 0 ? rowIndex + 1 : cell.render("Cell")}
                   </Td>
                 ))}
