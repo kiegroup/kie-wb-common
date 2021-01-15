@@ -18,9 +18,13 @@ exports[`BoxedExpressionEditor tests should render BoxedExpressionEditor compone
       )
     </span>
     <div
-      class="expression-container-box logic-type-not-present"
+      class="expression-container-box"
     >
-      Select expression
+      <div
+        class="logic-type-selector logic-type-not-present"
+      >
+        Select expression
+      </div>
     </div>
   </div>
 </div>

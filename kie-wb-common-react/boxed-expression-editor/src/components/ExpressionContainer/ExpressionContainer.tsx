@@ -15,16 +15,10 @@
  */
 
 import * as React from "react";
-import { useCallback, useMemo, useState } from "react";
-import * as _ from "lodash";
+import { useCallback, useState } from "react";
 import "./ExpressionContainer.css";
-import { useBoxedExpressionEditorI18n } from "../../i18n";
-import { Button, ButtonVariant, SimpleList, SimpleListItem, SimpleListItemProps } from "@patternfly/react-core";
-import { PopoverMenu } from "../PopoverMenu";
-import { ExpressionProps, LiteralExpressionProps, LogicType, RelationProps } from "../../api";
-import { LiteralExpression } from "../LiteralExpression";
-import { useContextMenuHandler } from "../../hooks";
-import { RelationExpression } from "../RelationExpression";
+import { ExpressionProps, LogicType } from "../../api";
+import { LogicTypeSelector } from "../LogicTypeSelector";
 
 export interface ExpressionContainerProps {
   /** Expression properties */
@@ -34,36 +28,24 @@ export interface ExpressionContainerProps {
 export const ExpressionContainer: ({ selectedExpression }: ExpressionContainerProps) => JSX.Element = (
   props: ExpressionContainerProps
 ) => {
-  const { i18n } = useBoxedExpressionEditorI18n();
-
-  const [logicTypeSelected, setLogicTypeSelected] = useState(
-    !_.isEmpty(props.selectedExpression.logicType) || props.selectedExpression.logicType === LogicType.Undefined
-  );
   const [selectedExpression, setSelectedExpression] = useState(props.selectedExpression);
 
-  const {
-    contextMenuRef,
-    contextMenuXPos,
-    contextMenuYPos,
-    contextMenuVisibility,
-    setContextMenuVisibility,
-  } = useContextMenuHandler();
+  const updateExpressionNameAndDataType = useCallback((updatedName, updatedDataType) => {
+    setSelectedExpression((previousSelectedExpression: ExpressionProps) => ({
+      ...previousSelectedExpression,
+      name: updatedName,
+      dataType: updatedDataType,
+    }));
+  }, []);
 
-  const onLogicTypeSelect = useCallback(
-    (currentItem: React.RefObject<HTMLButtonElement>, currentItemProps: SimpleListItemProps) => {
-      setLogicTypeSelected(true);
-      const selectedLogicType = currentItemProps.children as LogicType;
-      setSelectedExpression((previousSelectedExpression: ExpressionProps) => ({
-        ...previousSelectedExpression,
-        logicType: selectedLogicType,
-      }));
-    },
-    []
-  );
+  const onLogicTypeUpdating = useCallback((logicType) => {
+    setSelectedExpression((previousSelectedExpression: ExpressionProps) => ({
+      ...previousSelectedExpression,
+      logicType: logicType,
+    }));
+  }, []);
 
-  const executeClearAction = useCallback(() => {
-    setLogicTypeSelected(false);
-    setContextMenuVisibility(false);
+  const onLogicTypeResetting = useCallback(() => {
     setSelectedExpression((previousSelectedExpression: ExpressionProps) => {
       const updatedExpression = {
         name: previousSelectedExpression.name,
@@ -73,95 +55,21 @@ export const ExpressionContainer: ({ selectedExpression }: ExpressionContainerPr
       window.beeApi?.resetExpressionDefinition?.(updatedExpression);
       return updatedExpression;
     });
-  }, [setContextMenuVisibility]);
-
-  const getLogicTypesWithoutUndefined = useCallback(() => {
-    return Object.values(LogicType).filter((logicType) => logicType !== LogicType.Undefined);
   }, []);
-
-  const renderLogicTypeItems = useCallback(() => {
-    return _.map(getLogicTypesWithoutUndefined(), (key) => <SimpleListItem key={key}>{key}</SimpleListItem>);
-  }, [getLogicTypesWithoutUndefined]);
-
-  const getLogicSelectionArrowPlacement = useCallback(
-    () => document.querySelector(".expression-container-box")! as HTMLElement,
-    []
-  );
-
-  const buildLogicSelectorMenu = useCallback(() => {
-    return (
-      <PopoverMenu
-        title={i18n.selectLogicType}
-        arrowPlacement={getLogicSelectionArrowPlacement}
-        body={<SimpleList onSelect={onLogicTypeSelect}>{renderLogicTypeItems()}</SimpleList>}
-      />
-    );
-  }, [i18n.selectLogicType, getLogicSelectionArrowPlacement, onLogicTypeSelect, renderLogicTypeItems]);
-
-  const updateNameAndDataType = useCallback((updatedName, updatedDataType) => {
-    setSelectedExpression((previousSelectedExpression: ExpressionProps) => ({
-      ...previousSelectedExpression,
-      name: updatedName,
-      dataType: updatedDataType,
-    }));
-  }, []);
-
-  const renderSelectedExpression = useMemo(() => {
-    switch (selectedExpression.logicType) {
-      case LogicType.LiteralExpression:
-        return (
-          <LiteralExpression
-            onUpdatingNameAndDataType={updateNameAndDataType}
-            {...(selectedExpression as LiteralExpressionProps)}
-          />
-        );
-      case LogicType.Relation:
-        return <RelationExpression {...(selectedExpression as RelationProps)} />;
-      case LogicType.Context:
-      case LogicType.DecisionTable:
-      case LogicType.Function:
-      case LogicType.Invocation:
-      case LogicType.List:
-      default:
-        return selectedExpression.logicType;
-    }
-  }, [selectedExpression, updateNameAndDataType]);
-
-  const buildContextMenu = useCallback(() => {
-    return (
-      <div
-        className="context-menu-container"
-        style={{
-          top: contextMenuYPos,
-          left: contextMenuXPos,
-        }}
-      >
-        <Button
-          isDisabled={!logicTypeSelected}
-          isSmall={true}
-          variant={ButtonVariant.primary}
-          onClick={executeClearAction}
-        >
-          {i18n.clear}
-        </Button>
-      </div>
-    );
-  }, [logicTypeSelected, contextMenuXPos, contextMenuYPos, executeClearAction, i18n.clear]);
 
   return (
     <div className="expression-container">
       <span className="expression-title">{selectedExpression.name}</span>
       <span className="expression-type">({selectedExpression.logicType || LogicType.Undefined})</span>
 
-      <div
-        className={`expression-container-box ${logicTypeSelected ? "logic-type-selected" : "logic-type-not-present"}`}
-        ref={contextMenuRef}
-      >
-        {selectedExpression.logicType ? renderSelectedExpression : i18n.selectExpression}
+      <div className="expression-container-box">
+        <LogicTypeSelector
+          selectedExpression={selectedExpression}
+          onLogicTypeUpdating={onLogicTypeUpdating}
+          onLogicTypeResetting={onLogicTypeResetting}
+          onNameAndDataTypeUpdating={updateExpressionNameAndDataType}
+        />
       </div>
-
-      {!logicTypeSelected ? buildLogicSelectorMenu() : null}
-      {contextMenuVisibility ? buildContextMenu() : null}
     </div>
   );
 };
