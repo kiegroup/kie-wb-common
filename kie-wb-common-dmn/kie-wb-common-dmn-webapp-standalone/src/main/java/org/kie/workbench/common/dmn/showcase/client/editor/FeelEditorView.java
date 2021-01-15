@@ -31,6 +31,8 @@ public interface FeelEditorView
 
     void setC3(String result);
 
+    void setAvailableMethods(String availableMethods);
+
     int getCaretIndex();
 
 }

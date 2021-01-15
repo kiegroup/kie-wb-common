@@ -35,6 +35,7 @@ public class FeelEditorViewImpl
     private TextArea astDump = new TextArea();
     private TextArea evaluation = new TextArea();
     private TextArea c3 = new TextArea();
+    private TextArea availableMethods = new TextArea();
     private FEELEditor presenter;
 
     private AceEditor aceEditor = new AceEditor();
@@ -60,6 +61,9 @@ public class FeelEditorViewImpl
         c3.setEnabled(false);
         c3.setHeight(TOP_ROW_HEIGHT);
         c3.setWidth("250px");
+        availableMethods.setEnabled(false);
+        availableMethods.setHeight(TOP_ROW_HEIGHT);
+        availableMethods.setWidth("250px");
         evaluation.setEnabled(false);
         evaluation.setHeight("50px");
         evaluation.setWidth("200px");
@@ -76,6 +80,7 @@ public class FeelEditorViewImpl
         topRow.add(astDump);
         topRow.add(aceEditor);
         topRow.add(c3);
+        topRow.add(availableMethods);
         verticalPanel.add(topRow);
 
         HorizontalPanel bottomRow = new HorizontalPanel();
@@ -103,6 +108,11 @@ public class FeelEditorViewImpl
     @Override
     public void setC3(String result) {
         c3.setText(result);
+    }
+
+    @Override
+    public void setAvailableMethods(String availableMethods) {
+        this.availableMethods.setText(availableMethods);
     }
 
     @Override

@@ -23,8 +23,11 @@ import javax.annotation.PostConstruct;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.IsWidget;
 import org.antlr.v4.runtime.tree.ParseTree;
+import org.kie.dmn.feel.gwt.functions.api.FunctionOverrideVariation;
+import org.kie.dmn.feel.gwt.functions.client.FEELFunctionProvider;
 import org.kie.dmn.feel.lang.ast.ASTNode;
 import org.kie.dmn.feel.lang.ast.BaseNode;
 import org.kie.dmn.feel.parser.feel11.ASTBuilderVisitor;
@@ -55,6 +58,18 @@ public class FEELEditor {
 
     @OnStartup
     public void onStartup(final PlaceRequest placeRequest) {
+
+        FEELFunctionProvider functionProvider = GWT.create(FEELFunctionProvider.class);
+        StringBuilder builder = new StringBuilder();
+        for (final FunctionOverrideVariation definition : functionProvider.getDefinitions()) {
+
+            builder.append(definition.getReturnType());
+            builder.append(" - ");
+            builder.append(definition.toHumanReadableStrings().getTemplate());
+            builder.append("\n");
+        }
+        view.setAvailableMethods(builder.toString());
+//        Window.alert("testing " + o.getDefinitions().size());
     }
 
     @WorkbenchPartTitle

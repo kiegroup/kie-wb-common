@@ -951,6 +951,7 @@
                 <compileSourcesArtifact>org.kie:kie-dmn-api</compileSourcesArtifact>
                 <compileSourcesArtifact>org.kie:kie-dmn-feel</compileSourcesArtifact>
                 <compileSourcesArtifact>org.kie:kie-dmn-feel-gwt</compileSourcesArtifact>
+                <compileSourcesArtifact>org.kie:kie-dmn-feel-gwt-functions</compileSourcesArtifact>
                 <compileSourcesArtifact>org.kie:kie-dmn-model</compileSourcesArtifact>
 
                 <!-- UF-ext -->
@@ -1139,6 +1140,7 @@
               <configuration>
                 <module>org.kie.workbench.common.dmn.showcase.DMNShowcase</module>
                 <draftCompile>false</draftCompile>
+                <style>PRETTY</style>
               </configuration>
             </plugin>
           </plugins>

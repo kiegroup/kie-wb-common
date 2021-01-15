@@ -277,6 +277,18 @@
       <classifier>sources</classifier>
     </dependency>
     <dependency>
+      <groupId>org.kie</groupId>
+      <artifactId>kie-dmn-feel-gwt-functions</artifactId>
+      <!--      <scope>provided</scope>-->
+<!--      <classifier>sources</classifier>-->
+    </dependency>
+    <dependency>
+      <groupId>org.kie</groupId>
+      <artifactId>kie-dmn-feel-gwt-functions</artifactId>
+      <!--      <scope>provided</scope>-->
+      <classifier>sources</classifier>
+    </dependency>
+    <dependency>
       <groupId>org.rikkola.gwt</groupId>
       <artifactId>antlr4-c3-gwt</artifactId>
     </dependency>
