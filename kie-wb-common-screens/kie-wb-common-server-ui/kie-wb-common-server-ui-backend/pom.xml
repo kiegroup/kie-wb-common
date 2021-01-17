@@ -254,6 +254,12 @@
     <dependency>
       <groupId>org.uberfire</groupId>
       <artifactId>uberfire-rest-backend</artifactId>
+      <exclusions>
+        <exclusion>
+          <groupId>org.jboss.spec.javax.xml.bind</groupId>
+          <artifactId>jboss-jaxb-api_2.3_spec</artifactId>
+        </exclusion>
+      </exclusions>
       <scope>test</scope>
     </dependency>
 
