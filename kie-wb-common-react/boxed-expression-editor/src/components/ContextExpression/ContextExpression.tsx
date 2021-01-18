@@ -17,10 +17,11 @@
 import "./ContextExpression.css";
 import * as React from "react";
 import { useCallback, useState } from "react";
-import { ContextProps, TableHandlerConfiguration, TableOperation } from "../../api";
+import { ContextProps, DataType, LogicType, TableHandlerConfiguration, TableOperation } from "../../api";
 import { Table } from "../Table";
 import { useBoxedExpressionEditorI18n } from "../../i18n";
 import { ColumnInstance } from "react-table";
+import { ContextEntry } from "./ContextEntry";
 
 export const ContextExpression: React.FunctionComponent<ContextProps> = ({
   name,
@@ -65,15 +66,20 @@ export const ContextExpression: React.FunctionComponent<ContextProps> = ({
     <div className="context-expression">
       <Table
         columnPrefix="ContextEntry-"
+        defaultCell={ContextEntry}
         columns={columns}
-        rows={[{}]}
+        rows={[
+          {
+            "Expression Name": {
+              name: "test",
+              dataType: DataType.Boolean,
+              expression: { name: "expression", dataType: DataType.Undefined, logicType: LogicType.Undefined },
+            },
+          },
+        ]}
         onColumnsUpdate={onUpdatingExpressionColumn}
         onRowsUpdate={(rows) => console.log("rows updated", rows)}
         handlerConfiguration={handlerConfiguration}
-        customAllowedOperations={{
-          onTh: [TableOperation.RowInsertBelow],
-          onTd: [],
-        }}
       />
     </div>
   );
