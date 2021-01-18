@@ -21,6 +21,10 @@ import * as React from "react";
 import { TableOperation } from "../../../api";
 import * as _ from "lodash";
 
+const menuItem = (item: string) => {
+  return "[data-ouia-component-id='expression-table-handler-menu-" + item + "'] span";
+}
+
 describe("TableHandlerMenu tests", () => {
   test("should render the passed operations", () => {
     const groupName = "a group";
@@ -44,8 +48,8 @@ describe("TableHandlerMenu tests", () => {
     expect(container.querySelector("div.table-handler-menu")).toBeTruthy();
     expect(container.querySelector("h1.pf-c-menu__group-title")).toBeTruthy();
     expect(container.querySelector("h1.pf-c-menu__group-title")!.innerHTML).toContain(groupName);
-    expect(container.querySelector("span.pf-c-menu__item-text")).toBeTruthy();
-    expect(container.querySelector("span.pf-c-menu__item-text")!.innerHTML).toContain(operationName);
+    expect(container.querySelector(menuItem(operationName))).toBeTruthy();
+    expect(container.querySelector(menuItem(operationName))!.innerHTML).toContain(operationName);
   });
 
   test("should execute the clicked operation", () => {
@@ -67,7 +71,7 @@ describe("TableHandlerMenu tests", () => {
       ).wrapper
     );
 
-    (container.querySelector("span.pf-c-menu__item-text") as HTMLSpanElement)!.click();
+    (container.querySelector(menuItem("insert left")) as HTMLSpanElement)!.click();
     expect(mockedOnOperation).toHaveBeenCalled();
     expect(mockedOnOperation).toHaveBeenCalledWith(TableOperation.ColumnInsertLeft);
   });
