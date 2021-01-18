@@ -368,7 +368,7 @@ describe("Table tests", () => {
     });
 
     test("should not trigger onColumnUpdate, when deleting a row number column", async () => {
-      const row: DataRecord = {}
+      const row: DataRecord = {};
       row["#"] = "1";
       row["column-1"] = "column-1 value";
       row["column-2"] = "column-2 value";
@@ -502,7 +502,9 @@ describe("Table tests", () => {
 async function selectMenuEntryIfNotDisabled(baseElement: Element, menuEntry: string) {
   await act(async () => {
     expect(baseElement.querySelector(EXPRESSION_TABLE_HANDLER_MENU)).toBeTruthy();
-    const button: HTMLButtonElement = baseElement.querySelector(expressionTableHandlerMenuEntry(menuEntry) + " button:not([disabled])") as HTMLButtonElement;
+    const button: HTMLButtonElement = baseElement.querySelector(
+      expressionTableHandlerMenuEntry(menuEntry) + " button:not([disabled])"
+    ) as HTMLButtonElement;
     if (button != null) {
       button.click();
     }

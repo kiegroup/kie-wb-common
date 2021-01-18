@@ -23,7 +23,7 @@ import * as _ from "lodash";
 
 const menuItem = (item: string) => {
   return "[data-ouia-component-id='expression-table-handler-menu-" + item + "'] span";
-}
+};
 
 describe("TableHandlerMenu tests", () => {
   test("should render the passed operations", () => {
