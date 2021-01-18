@@ -303,7 +303,7 @@ export const Table: React.FunctionComponent<TableProps> = ({
   const renderResizableColumn = useCallback(
     (column: ColumnInstance, columnIndex: number) => (
       <EditExpressionMenu
-        title={i18n.editRelation}
+        title={editColumnLabel}
         selectedExpressionName={column.label}
         selectedDataType={column.dataType}
         onExpressionUpdate={onColumnNameOrDataTypeUpdate(columnIndex)}
@@ -324,7 +324,7 @@ export const Table: React.FunctionComponent<TableProps> = ({
         </Th>
       </EditExpressionMenu>
     ),
-    [i18n.editRelation, onColumnNameOrDataTypeUpdate, tableInstance]
+    [editColumnLabel, onColumnNameOrDataTypeUpdate, tableInstance]
   );
 
   return (

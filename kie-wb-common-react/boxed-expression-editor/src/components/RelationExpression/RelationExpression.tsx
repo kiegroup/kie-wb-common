@@ -125,6 +125,7 @@ export const RelationExpression: React.FunctionComponent<RelationProps> = (relat
     <div className="relation-expression">
       <Table
         columnPrefix="column-"
+        editColumnLabel={i18n.editRelation}
         columns={convertColumnsForTheTable()}
         rows={convertRowsForTheTable()}
         onColumnsUpdate={onSavingColumns}
