@@ -201,7 +201,7 @@ export const Table: React.FunctionComponent<TableProps> = ({
       setTableHandlerAllowedOperations([
         TableOperation.ColumnInsertLeft,
         TableOperation.ColumnInsertRight,
-        ...(tableColumns.length > 2 ? [TableOperation.ColumnDelete] : []),
+        ...(tableColumns.length > 2 && columnIndex > 0 ? [TableOperation.ColumnDelete] : []),
       ]);
       setTableHandlerTarget(e.target as HTMLElement);
       setShowTableHandler(true);
@@ -215,7 +215,7 @@ export const Table: React.FunctionComponent<TableProps> = ({
       setTableHandlerAllowedOperations([
         TableOperation.ColumnInsertLeft,
         TableOperation.ColumnInsertRight,
-        ...(tableColumns.length > 2 ? [TableOperation.ColumnDelete] : []),
+        ...(tableColumns.length > 2  && columnIndex > 0 ? [TableOperation.ColumnDelete] : []),
         TableOperation.RowInsertAbove,
         TableOperation.RowInsertBelow,
         ...(tableRows.length > 1 ? [TableOperation.RowDelete] : []),
