@@ -30,8 +30,8 @@ import { TableComposable, Tbody, Td, Th, Thead, Tr } from "@patternfly/react-tab
 import { EditExpressionMenu } from "../EditExpressionMenu";
 import * as React from "react";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { EditableCell, EditableCellProps } from "./EditableCell";
-import { DataType, TableHandlerConfiguration, TableOperation } from "../../api";
+import { EditableCell } from "./EditableCell";
+import { CellProps, DataType, TableHandlerConfiguration, TableOperation } from "../../api";
 import * as _ from "lodash";
 import { Popover } from "@patternfly/react-core";
 import { TableHandlerMenu } from "./TableHandlerMenu";
@@ -41,6 +41,8 @@ export interface TableProps {
   columnPrefix: string;
   /** Optional label to be used for the edit popover that appears when clicking on column header */
   editColumnLabel?: string;
+  /** Component to be used for rendering a cell */
+  defaultCell?: React.FunctionComponent<CellProps>;
   /** Table's columns */
   columns: Column[];
   /** Table's cells */
@@ -58,6 +60,7 @@ export const Table: React.FunctionComponent<TableProps> = ({
   editColumnLabel,
   onRowsUpdate,
   onColumnsUpdate,
+  defaultCell = EditableCell,
   rows,
   columns,
   handlerConfiguration,
@@ -190,10 +193,13 @@ export const Table: React.FunctionComponent<TableProps> = ({
     minWidth: 38,
     width: 150,
     maxWidth: 600,
-    Cell: useCallback((cellRef: EditableCellProps) => {
-      const column = cellRef.column as ColumnInstance;
-      return column.canResize ? EditableCell(cellRef) : cellRef.value;
-    }, []),
+    Cell: useCallback(
+      (cellRef) => {
+        const column = cellRef.column as ColumnInstance;
+        return column.canResize ? defaultCell(cellRef) : cellRef.value;
+      },
+      [defaultCell]
+    ),
   };
 
   const getThProps = (columnIndex: number) => ({

@@ -16,14 +16,11 @@
 
 import * as React from "react";
 import { ChangeEvent, useCallback, useEffect } from "react";
+import { CellProps } from "../../api";
 
-export interface EditableCellProps {
+export interface EditableCellProps extends CellProps {
   /** Cell's value */
   value: string;
-  /** Cell's row index */
-  row: { index: number };
-  /** Cell's column identifier */
-  column: { id: string };
   /** Function executed each time a cell gets updated */
   onCellUpdate: (rowIndex: number, columnId: string, value: string) => void;
 }

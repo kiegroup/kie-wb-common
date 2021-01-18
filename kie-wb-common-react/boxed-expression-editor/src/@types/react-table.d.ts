@@ -65,6 +65,6 @@ declare module "react-table" {
   }
 
   export interface DataRecord {
-    [columnName: string]: string;
+    [columnName: string]: unknown;
   }
 }

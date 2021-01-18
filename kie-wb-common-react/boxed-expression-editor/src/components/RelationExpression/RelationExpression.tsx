@@ -18,7 +18,7 @@ import * as React from "react";
 import { useCallback, useEffect, useState } from "react";
 import "@patternfly/patternfly/utilities/Text/text.css";
 import { DataType, RelationProps, TableOperation } from "../../api";
-import { Table } from "../Table";
+import { EditableCell, Table } from "../Table";
 import { useBoxedExpressionEditorI18n } from "../../i18n";
 import * as _ from "lodash";
 import { Column, ColumnInstance, DataRecord } from "react-table";
@@ -111,7 +111,7 @@ export const RelationExpression: React.FunctionComponent<RelationProps> = (relat
           _.reduce(
             tableColumns,
             (row: string[], column) => {
-              row.push(tableRow[column.name]! || "");
+              row.push((tableRow[column.name]! as string) || "");
               return row;
             },
             []
@@ -127,6 +127,7 @@ export const RelationExpression: React.FunctionComponent<RelationProps> = (relat
         columnPrefix="column-"
         editColumnLabel={i18n.editRelation}
         columns={convertColumnsForTheTable()}
+        defaultCell={EditableCell}
         rows={convertRowsForTheTable()}
         onColumnsUpdate={onSavingColumns}
         onRowsUpdate={onSavingRows}
