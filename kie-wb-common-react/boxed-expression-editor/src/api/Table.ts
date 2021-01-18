@@ -56,3 +56,10 @@ export interface Column {
 }
 
 export type Columns = Column[];
+
+export interface CellProps {
+  /** Cell's row properties */
+  row: { index: number };
+  /** Cell's column properties */
+  column: { id: string };
+}
