@@ -300,7 +300,7 @@ describe("Table tests", () => {
         ).wrapper
       );
       await openContextMenu(container.querySelectorAll(EXPRESSION_COLUMN_HEADER)[1]);
-      await selectMenuEntry(baseElement, "Insert Column Left");
+      await selectMenuEntryIfNotDisabled(baseElement, "Insert Column Left");
 
       expect(mockedOnColumnUpdate).toHaveBeenCalledWith([secondColumn, firstColumn]);
     });
@@ -331,14 +331,14 @@ describe("Table tests", () => {
         ).wrapper
       );
       await openContextMenu(container.querySelectorAll(EXPRESSION_COLUMN_HEADER)[1]);
-      await selectMenuEntry(baseElement, "Insert Column right");
+      await selectMenuEntryIfNotDisabled(baseElement, "Insert Column right");
 
       expect(mockedOnColumnUpdate).toHaveBeenCalledWith([firstColumn, secondColumn]);
     });
 
     test("should trigger onColumnUpdate, when deleting a column", async () => {
-      const firstColumn = { label: "column-2", accessor: "column-2", dataType: DataType.Undefined } as ColumnInstance;
-      const secondColumn = { label: "column-3", accessor: "column-3", dataType: DataType.Undefined } as ColumnInstance;
+      const firstColumn = { label: "column-1", accessor: "column-1", dataType: DataType.Undefined } as ColumnInstance;
+      const secondColumn = { label: "column-2", accessor: "column-2", dataType: DataType.Undefined } as ColumnInstance;
       const onColumnUpdate = (columns: Column[]) => {
         _.identity(columns);
       };
@@ -362,9 +362,44 @@ describe("Table tests", () => {
         ).wrapper
       );
       await openContextMenu(container.querySelectorAll(EXPRESSION_COLUMN_HEADER)[1]);
-      await selectMenuEntry(baseElement, "Delete");
+      await selectMenuEntryIfNotDisabled(baseElement, "Delete");
 
       expect(mockedOnColumnUpdate).toHaveBeenCalledWith([secondColumn]);
+    });
+
+    test("should not trigger onColumnUpdate, when deleting a row number column", async () => {
+      const row: DataRecord = {}
+      row["#"] = "1";
+      row["column-1"] = "column-1 value";
+      row["column-2"] = "column-2 value";
+      const firstColumn = { label: "column-1", accessor: "column-1", dataType: DataType.Undefined } as ColumnInstance;
+      const secondColumn = { label: "column-2", accessor: "column-2", dataType: DataType.Undefined } as ColumnInstance;
+      const onColumnUpdate = (columns: Column[]) => {
+        _.identity(columns);
+      };
+      const mockedOnColumnUpdate = jest.fn(onColumnUpdate);
+
+      const { container, baseElement } = render(
+        usingTestingBoxedExpressionI18nContext(
+          <Table
+            columnPrefix="column-"
+            columns={[firstColumn, secondColumn]}
+            rows={[row]}
+            onColumnsUpdate={mockedOnColumnUpdate}
+            onRowsUpdate={_.identity}
+            handlerConfiguration={[
+              {
+                group: "COLUMNS",
+                items: [{ name: "Delete", type: TableOperation.ColumnDelete }],
+              },
+            ]}
+          />
+        ).wrapper
+      );
+      await openContextMenu(container.querySelector(expressionCell(0, 0))!);
+      await selectMenuEntryIfNotDisabled(baseElement, "Delete");
+
+      expect(mockedOnColumnUpdate).toHaveBeenCalledWith([firstColumn, secondColumn]);
     });
 
     test("should trigger onRowsUpdate, when inserting a new row above", async () => {
@@ -393,7 +428,7 @@ describe("Table tests", () => {
         ).wrapper
       );
       await openContextMenu(container.querySelector(expressionCell(0, 1))!);
-      await selectMenuEntry(baseElement, "Insert row above");
+      await selectMenuEntryIfNotDisabled(baseElement, "Insert row above");
 
       expect(mockedOnRowsUpdate).toHaveBeenCalledWith([{}, row]);
     });
@@ -424,7 +459,7 @@ describe("Table tests", () => {
         ).wrapper
       );
       await openContextMenu(container.querySelector(expressionCell(0, 1))!);
-      await selectMenuEntry(baseElement, "Insert row below");
+      await selectMenuEntryIfNotDisabled(baseElement, "Insert row below");
 
       expect(mockedOnRowsUpdate).toHaveBeenCalledWith([row, {}]);
     });
@@ -457,17 +492,20 @@ describe("Table tests", () => {
         ).wrapper
       );
       await openContextMenu(container.querySelector(expressionCell(0, 1))!);
-      await selectMenuEntry(baseElement, "Delete");
+      await selectMenuEntryIfNotDisabled(baseElement, "Delete");
 
       expect(mockedOnRowsUpdate).toHaveBeenCalledWith([secondRow]);
     });
   });
 });
 
-async function selectMenuEntry(baseElement: Element, menuEntry: string) {
+async function selectMenuEntryIfNotDisabled(baseElement: Element, menuEntry: string) {
   await act(async () => {
     expect(baseElement.querySelector(EXPRESSION_TABLE_HANDLER_MENU)).toBeTruthy();
-    (baseElement.querySelector(expressionTableHandlerMenuEntry(menuEntry) + " button") as HTMLButtonElement).click();
+    const button: HTMLButtonElement = baseElement.querySelector(expressionTableHandlerMenuEntry(menuEntry) + " button:not([disabled])") as HTMLButtonElement;
+    if (button != null) {
+      button.click();
+    }
     await flushPromises();
     jest.runAllTimers();
   });
