@@ -19,10 +19,12 @@ import { Popover } from "@patternfly/react-core";
 import "./PopoverMenu.css";
 
 export interface PopoverMenuProps {
+  /** Optional children element to be considered for triggering the popover */
+  children?: React.ReactElement;
   /** Title of the popover menu */
   title: string;
   /** A function which returns the HTMLElement where the popover's arrow should be placed */
-  arrowPlacement: () => HTMLElement;
+  arrowPlacement?: () => HTMLElement;
   /** The content of the popover itself */
   body: React.ReactNode;
   /** The node where to append the popover content */
@@ -30,6 +32,7 @@ export interface PopoverMenuProps {
 }
 
 export const PopoverMenu: React.FunctionComponent<PopoverMenuProps> = ({
+  children,
   arrowPlacement,
   body,
   title,
@@ -37,14 +40,21 @@ export const PopoverMenu: React.FunctionComponent<PopoverMenuProps> = ({
 }: PopoverMenuProps) => {
   return (
     <Popover
+      data-ouia-component-id="expression-popover-menu"
       className="popover-menu-selector"
       position="bottom"
       distance={0}
       id="menu-selector"
       reference={arrowPlacement}
       appendTo={appendTo}
-      headerContent={<div className="selector-menu-title">{title}</div>}
+      headerContent={
+        <div className="selector-menu-title" data-ouia-component-id="expression-popover-menu-title">
+          {title}
+        </div>
+      }
       bodyContent={body}
-    />
+    >
+      {children}
+    </Popover>
   );
 };

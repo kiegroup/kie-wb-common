@@ -16,7 +16,7 @@
 
 import "./EditExpressionMenu.css";
 import * as React from "react";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { PopoverMenu } from "../PopoverMenu";
 import { useBoxedExpressionEditorI18n } from "../../i18n";
 import { DataType, ExpressionProps } from "../../api";
@@ -24,10 +24,12 @@ import { Select, SelectOption, SelectVariant } from "@patternfly/react-core";
 import * as _ from "lodash";
 
 export interface EditExpressionMenuProps {
+  /** Optional children element to be considered for triggering the edit expression menu */
+  children?: React.ReactElement;
   /** The node where to append the popover content */
   appendTo?: HTMLElement | ((ref?: HTMLElement) => HTMLElement);
   /** A function which returns the HTMLElement where the popover's arrow should be placed */
-  arrowPlacement: () => HTMLElement;
+  arrowPlacement?: () => HTMLElement;
   /** The label for the field 'Name' */
   nameField?: string;
   /** The label for the field 'Data Type' */
@@ -43,6 +45,7 @@ export interface EditExpressionMenuProps {
 }
 
 export const EditExpressionMenu: React.FunctionComponent<EditExpressionMenuProps> = ({
+  children,
   appendTo,
   arrowPlacement,
   title,
@@ -60,6 +63,14 @@ export const EditExpressionMenu: React.FunctionComponent<EditExpressionMenuProps
   const [dataTypeSelectOpen, setDataTypeSelectOpen] = useState(false);
   const [dataType, setDataType] = useState(selectedDataType);
   const [expressionName, setExpressionName] = useState(selectedExpressionName);
+
+  useEffect(() => {
+    setExpressionName(selectedExpressionName);
+  }, [selectedExpressionName]);
+
+  useEffect(() => {
+    setDataType(selectedDataType);
+  }, [selectedDataType]);
 
   const onExpressionNameChange = useCallback(
     (event) => {
@@ -121,6 +132,7 @@ export const EditExpressionMenu: React.FunctionComponent<EditExpressionMenuProps
             <input
               type="text"
               id="expression-name"
+              data-ouia-component-id="edit-expression-name"
               value={expressionName}
               onChange={onExpressionNameChange}
               onBlur={onExpressionNameChange}
@@ -131,6 +143,7 @@ export const EditExpressionMenu: React.FunctionComponent<EditExpressionMenuProps
           <div className="expression-data-type">
             <label>{dataTypeField}</label>
             <Select
+              ouiaId="edit-expression-data-type"
               variant={SelectVariant.typeahead}
               typeAheadAriaLabel={i18n.choose}
               onToggle={onDataTypeSelectToggle}
@@ -146,6 +159,8 @@ export const EditExpressionMenu: React.FunctionComponent<EditExpressionMenuProps
           </div>
         </div>
       }
-    />
+    >
+      {children}
+    </PopoverMenu>
   );
 };

@@ -34,4 +34,11 @@ body {
   margin-left: 5em;
   border-style: inset;
   padding: 1em;
+  max-height: 30em;
+  overflow-y: scroll;
+}
+
+.showcase .updated-json .disclaimer {
+  font-style: italic;
+  color: #4d5258;
 }
