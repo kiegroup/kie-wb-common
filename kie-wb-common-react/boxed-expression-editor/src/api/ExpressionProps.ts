@@ -50,6 +50,8 @@ export interface RelationProps extends ExpressionProps {
 export interface ContextProps extends ExpressionProps {
   /** Logic type must be Context */
   logicType: LogicType.Context;
+  /** Context component width */
+  width?: number;
   /** Collection of context entries */
   contextEntries?: {
     /** Entry name */

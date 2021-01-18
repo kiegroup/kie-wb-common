@@ -70,7 +70,12 @@ export const LogicTypeSelector: React.FunctionComponent<LogicTypeSelectorProps> 
       case LogicType.Relation:
         return <RelationExpression {...(selectedExpression as RelationProps)} />;
       case LogicType.Context:
-        return <ContextExpression {...(selectedExpression as ContextProps)} />;
+        return (
+          <ContextExpression
+            onUpdatingNameAndDataType={onNameAndDataTypeUpdating}
+            {...(selectedExpression as ContextProps)}
+          />
+        );
       case LogicType.DecisionTable:
       case LogicType.Function:
       case LogicType.Invocation:

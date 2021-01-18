@@ -47,13 +47,13 @@ describe("ExpressionContainer tests", () => {
   });
 
   test("should render expression type, when type prop is passed", () => {
-    const expression = { name: "Test", logicType: LogicType.Context, dataType: DataType.Undefined };
+    const expression = { name: "Test", logicType: LogicType.LiteralExpression, dataType: DataType.Undefined };
     const { container } = render(
       usingTestingBoxedExpressionI18nContext(<ExpressionContainer selectedExpression={expression} />).wrapper
     );
 
     expect(container.querySelector(".expression-type")).toBeTruthy();
-    expect(container.querySelector(".expression-type")!.innerHTML).toBe("(" + LogicType.Context + ")");
+    expect(container.querySelector(".expression-type")!.innerHTML).toBe("(" + LogicType.LiteralExpression + ")");
   });
 
   test("should render expression type as undefined, when type prop is not passed", () => {
@@ -97,7 +97,7 @@ describe("ExpressionContainer tests", () => {
 
   describe("Logic type selection", () => {
     test("should show the pre-selection, when logic type prop is passed", () => {
-      const expression = { name: "Test", logicType: LogicType.Context, dataType: DataType.Undefined };
+      const expression = { name: "Test", logicType: LogicType.Invocation, dataType: DataType.Undefined };
 
       const { container } = render(
         usingTestingBoxedExpressionI18nContext(<ExpressionContainer selectedExpression={expression} />).wrapper

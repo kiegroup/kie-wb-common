@@ -30,7 +30,6 @@ import { TableComposable, Tbody, Td, Th, Thead, Tr } from "@patternfly/react-tab
 import { EditExpressionMenu } from "../EditExpressionMenu";
 import * as React from "react";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { useBoxedExpressionEditorI18n } from "../../i18n";
 import { EditableCell, EditableCellProps } from "./EditableCell";
 import { DataType, TableHandlerConfiguration, TableOperation } from "../../api";
 import * as _ from "lodash";
@@ -40,6 +39,8 @@ import { TableHandlerMenu } from "./TableHandlerMenu";
 export interface TableProps {
   /** The prefix to be used for the column name */
   columnPrefix: string;
+  /** Optional label to be used for the edit popover that appears when clicking on column header */
+  editColumnLabel?: string;
   /** Table's columns */
   columns: Column[];
   /** Table's cells */
@@ -54,6 +55,7 @@ export interface TableProps {
 
 export const Table: React.FunctionComponent<TableProps> = ({
   columnPrefix,
+  editColumnLabel,
   onRowsUpdate,
   onColumnsUpdate,
   rows,
@@ -61,7 +63,6 @@ export const Table: React.FunctionComponent<TableProps> = ({
   handlerConfiguration,
 }: TableProps) => {
   const NUMBER_OF_ROWS_COLUMN = "#";
-  const { i18n } = useBoxedExpressionEditorI18n();
 
   const [tableColumns, setTableColumns] = useState([
     {
