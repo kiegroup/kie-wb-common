@@ -16,8 +16,63 @@
 
 import "./ContextExpression.css";
 import * as React from "react";
-import { ContextProps } from "../../api";
+import { useCallback, useState } from "react";
+import { ContextProps, TableHandlerConfiguration, TableOperation } from "../../api";
+import { Table } from "../Table";
+import { useBoxedExpressionEditorI18n } from "../../i18n";
+import { ColumnInstance } from "react-table";
 
-export const ContextExpression: React.FunctionComponent<ContextProps> = () => {
-  return <div className="context-expression">Context expression!</div>;
+export const ContextExpression: React.FunctionComponent<ContextProps> = ({
+  name,
+  dataType,
+  onUpdatingNameAndDataType,
+  width,
+}) => {
+  const { i18n } = useBoxedExpressionEditorI18n();
+
+  const handlerConfiguration: TableHandlerConfiguration = [
+    {
+      group: i18n.contextEntry,
+      items: [
+        { name: i18n.rowOperations.insertAbove, type: TableOperation.RowInsertAbove },
+        { name: i18n.rowOperations.insertBelow, type: TableOperation.RowInsertBelow },
+        { name: i18n.rowOperations.delete, type: TableOperation.RowDelete },
+      ],
+    },
+  ];
+
+  const [columns, setColumns] = useState([{ label: name, accessor: name, dataType, width: width ?? 300 }]);
+
+  const onUpdatingExpressionColumn = useCallback(
+    ([expressionColumn]: [ColumnInstance]) => {
+      onUpdatingNameAndDataType?.(expressionColumn.label, expressionColumn.dataType);
+      setColumns(([prevExpressionColumn]) => [
+        {
+          ...prevExpressionColumn,
+          label: expressionColumn.label,
+          accessor: expressionColumn.accessor,
+          dataType: expressionColumn.dataType,
+          width: expressionColumn.width as number,
+        },
+      ]);
+    },
+    [onUpdatingNameAndDataType]
+  );
+
+  return (
+    <div className="context-expression">
+      <Table
+        columnPrefix="ContextEntry-"
+        columns={columns}
+        rows={[{}]}
+        onColumnsUpdate={onUpdatingExpressionColumn}
+        onRowsUpdate={(rows) => console.log("rows updated", rows)}
+        handlerConfiguration={handlerConfiguration}
+        customAllowedOperations={{
+          onTh: [TableOperation.RowInsertBelow],
+          onTd: [],
+        }}
+      />
+    </div>
+  );
 };

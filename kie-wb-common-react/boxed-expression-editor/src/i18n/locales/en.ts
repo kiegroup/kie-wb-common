@@ -28,6 +28,7 @@ export const en: BoxedExpressionEditorI18n = {
   },
   columns: "COLUMNS",
   context: "Context",
+  contextEntry: "CONTEXT ENTRY",
   dataType: "Data Type",
   decisionTable: "Decision Table",
   editExpression: "Edit Expression",

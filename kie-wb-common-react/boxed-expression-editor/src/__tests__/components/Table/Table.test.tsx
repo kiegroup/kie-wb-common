@@ -159,10 +159,12 @@ describe("Table tests", () => {
 
   describe("when interacting with header", () => {
     test("should render popover with column name and dataType, when clicking on header cell", async () => {
+      const editRelationLabel = "Edit Relation";
       const { container, baseElement } = render(
         usingTestingBoxedExpressionI18nContext(
           <Table
             columnPrefix="column-"
+            editColumnLabel={editRelationLabel}
             columns={[{ label: columnName, accessor: columnName, dataType: DataType.Boolean } as ColumnInstance]}
             rows={[]}
             onColumnsUpdate={_.identity}
@@ -177,7 +179,7 @@ describe("Table tests", () => {
       );
 
       expect(baseElement.querySelector(EXPRESSION_POPOVER_MENU)).toBeTruthy();
-      expect(baseElement.querySelector(EXPRESSION_POPOVER_MENU_TITLE)?.innerHTML).toBe("Edit Relation");
+      expect(baseElement.querySelector(EXPRESSION_POPOVER_MENU_TITLE)?.innerHTML).toBe(editRelationLabel);
       expect((baseElement.querySelector(EDIT_EXPRESSION_NAME)! as HTMLInputElement).value).toBe(columnName);
       expect((baseElement.querySelector(EDIT_EXPRESSION_DATA_TYPE)! as HTMLInputElement).value).toBe(DataType.Boolean);
     });

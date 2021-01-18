@@ -42,6 +42,11 @@ export type TableHandlerConfiguration = GroupOperations[];
 
 export type AllowedOperations = TableOperation[];
 
+export interface CustomAllowedOperations {
+  onTh: AllowedOperations;
+  onTd: AllowedOperations;
+}
+
 export type Row = string[];
 
 export type Rows = Row[];
