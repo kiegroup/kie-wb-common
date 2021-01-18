@@ -205,7 +205,7 @@ export const Table: React.FunctionComponent<TableProps> = ({
         ...(tableColumns.length > 2 && columnIndex > 0 ? [TableOperation.ColumnDelete] : []),
       ]);
       setTableHandlerTarget(e.target as HTMLElement);
-      setShowTableHandler(true);
+      setShowTableHandler(!(tableColumns[columnIndex] as ColumnInstance).disableHandlerOnHeader);
       setLastSelectedColumnIndex(columnIndex);
     },
   });

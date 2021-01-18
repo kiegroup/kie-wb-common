@@ -42,19 +42,14 @@ export type TableHandlerConfiguration = GroupOperations[];
 
 export type AllowedOperations = TableOperation[];
 
-export interface CustomAllowedOperations {
-  onTh: AllowedOperations;
-  onTd: AllowedOperations;
-}
-
 export type Row = string[];
 
 export type Rows = Row[];
 
 export interface Column {
-  /** Relation's column name */
+  /** Column name */
   name: string;
-  /** Relation's column data type */
+  /** Column data type */
   dataType: DataType;
   /** Column width */
   width?: string | number;
