@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2021 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,7 +41,9 @@ export const ContextExpression: React.FunctionComponent<ContextProps> = ({
     },
   ];
 
-  const [columns, setColumns] = useState([{ label: name, accessor: name, dataType, width: width ?? 300 }]);
+  const [columns, setColumns] = useState([
+    { label: name, accessor: name, dataType, width: width ?? 300, disableHandlerOnHeader: true },
+  ]);
 
   const onUpdatingExpressionColumn = useCallback(
     ([expressionColumn]: [ColumnInstance]) => {

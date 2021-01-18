@@ -60,6 +60,8 @@ declare module "react-table" {
     getResizerProps: (props?: Partial<TableResizerProps>) => TableResizerProps;
     /** It tells whether column can resize or not */
     canResize: boolean;
+    /** Disabling table handler on the header of this column */
+    disableHandlerOnHeader?: boolean;
   }
 
   export interface DataRecord {
