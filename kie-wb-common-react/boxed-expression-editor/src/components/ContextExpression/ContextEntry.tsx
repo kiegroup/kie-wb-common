@@ -14,5 +14,24 @@
  * limitations under the License.
  */
 
-export * from "./ContextExpression";
-export * from "./ContextEntry";
+import * as React from "react";
+import { CellProps, DataType, ExpressionProps } from "../../api";
+
+export interface ContextEntryProps extends CellProps {
+  data: {
+    /** Context entry name */
+    name: string;
+    /** Context entry data type */
+    dataType: DataType;
+    /** Context selected expression */
+    expression: ExpressionProps;
+  }[];
+}
+
+export const ContextEntry: React.FunctionComponent<ContextEntryProps> = ({ data, row: { index } }) => {
+  return (
+    <div>
+      <pre>{JSON.stringify(data[index], null, 2)}</pre>
+    </div>
+  );
+};
