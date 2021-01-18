@@ -39,5 +39,9 @@
 }
 
 .literal-expression .literal-expression-body {
+  height: 4em;
+}
 
+.literal-expression .literal-expression-body textarea {
+  padding-bottom: 0;
 }
