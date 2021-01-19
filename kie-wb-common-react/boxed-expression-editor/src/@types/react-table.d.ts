@@ -36,6 +36,7 @@ declare module "react-table" {
 
   export interface TableOptions {
     onCellUpdate: (rowIndex: number, columnId: string, value: string) => void;
+    onRowUpdate: (rowIndex: number, updatedRow: DataRecord) => void;
     getThProps: (
       columnIndex: number
     ) => {

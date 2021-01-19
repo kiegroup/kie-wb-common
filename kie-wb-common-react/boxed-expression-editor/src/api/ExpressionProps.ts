@@ -47,20 +47,24 @@ export interface RelationProps extends ExpressionProps {
   rows?: Rows;
 }
 
+interface ContextEntry {
+  /** Entry name */
+  name: string;
+  /** Entry data type */
+  dataType: DataType;
+  /** Entry expression */
+  expression: ExpressionProps;
+}
+
+export type ContextEntries = ContextEntry[];
+
 export interface ContextProps extends ExpressionProps {
   /** Logic type must be Context */
   logicType: LogicType.Context;
   /** Context component width */
   width?: number;
   /** Collection of context entries */
-  contextEntries?: {
-    /** Entry name */
-    name: string;
-    /** Entry data type */
-    dataType: DataType;
-    /** Entry expression */
-    expression: ExpressionProps;
-  }[];
+  contextEntries?: ContextEntries;
   /** Context result */
   result?: ExpressionProps;
 }

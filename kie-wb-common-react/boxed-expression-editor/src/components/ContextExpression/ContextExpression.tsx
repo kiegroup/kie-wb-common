@@ -16,10 +16,17 @@
 
 import * as React from "react";
 import { useCallback, useEffect, useState } from "react";
-import { ContextProps, DataType, LogicType, TableHandlerConfiguration, TableOperation } from "../../api";
+import {
+  ContextEntries,
+  ContextProps,
+  DataType,
+  LogicType,
+  TableHandlerConfiguration,
+  TableOperation,
+} from "../../api";
 import { Table } from "../Table";
 import { useBoxedExpressionEditorI18n } from "../../i18n";
-import { ColumnInstance } from "react-table";
+import { ColumnInstance, DataRecord } from "react-table";
 import { ContextEntry } from "./ContextEntry";
 
 export const ContextExpression: React.FunctionComponent<ContextProps> = ({
@@ -27,6 +34,7 @@ export const ContextExpression: React.FunctionComponent<ContextProps> = ({
   dataType,
   onUpdatingNameAndDataType,
   width,
+  contextEntries = [{ name: "ContextEntry-1", dataType: DataType.Undefined, expression: {} } as DataRecord],
 }) => {
   const DEFAULT_EXPRESSION_COLUMN_WIDTH = 300;
   const { i18n } = useBoxedExpressionEditorI18n();
@@ -53,6 +61,8 @@ export const ContextExpression: React.FunctionComponent<ContextProps> = ({
     },
   ]);
 
+  const [rows, setRows] = useState(contextEntries);
+
   useEffect(() => {
     const expressionColumn = columns[0];
     window.beeApi?.broadcastContextExpressionDefinition?.({
@@ -60,8 +70,9 @@ export const ContextExpression: React.FunctionComponent<ContextProps> = ({
       name: expressionColumn.accessor,
       dataType: expressionColumn.dataType,
       ...(expressionColumn.width > DEFAULT_EXPRESSION_COLUMN_WIDTH ? { width: expressionColumn.width } : {}),
+      contextEntries: rows as ContextEntries,
     });
-  }, [columns]);
+  }, [columns, rows]);
 
   const onUpdatingExpressionColumn = useCallback(
     ([expressionColumn]: [ColumnInstance]) => {
@@ -82,18 +93,11 @@ export const ContextExpression: React.FunctionComponent<ContextProps> = ({
   return (
     <div className="context-expression">
       <Table
-        columnPrefix="ContextEntry-"
         defaultCell={ContextEntry}
         columns={columns}
-        rows={[
-          {
-            name: "test",
-            dataType: DataType.Boolean,
-            expression: {},
-          },
-        ]}
+        rows={rows as DataRecord[]}
         onColumnsUpdate={onUpdatingExpressionColumn}
-        onRowsUpdate={(rows) => console.log("rows updated", rows)}
+        onRowsUpdate={setRows}
         handlerConfiguration={handlerConfiguration}
       />
     </div>

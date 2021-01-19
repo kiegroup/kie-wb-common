@@ -21,9 +21,14 @@
 .expression-container .context-expression .context-entry .entry-definition {
   flex: 0.5 1;
   border-right-style: ridge;
-  padding-top: 0.5em;
+  padding: 0.5em 0.5em 0 0.5em;
   cursor: pointer;
 }
+
+.expression-container .context-expression .context-entry .entry-definition .entry-name {
+  white-space: nowrap;
+}
+
 .expression-container .context-expression .context-entry .entry-definition .entry-data-type {
   font-style: italic;
   font-size: smaller;

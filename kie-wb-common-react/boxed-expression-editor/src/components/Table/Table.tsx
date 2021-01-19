@@ -38,7 +38,7 @@ import { TableHandlerMenu } from "./TableHandlerMenu";
 
 export interface TableProps {
   /** The prefix to be used for the column name */
-  columnPrefix: string;
+  columnPrefix?: string;
   /** Optional label to be used for the edit popover that appears when clicking on column header */
   editColumnLabel?: string;
   /** Component to be used for rendering a cell */
@@ -56,7 +56,7 @@ export interface TableProps {
 }
 
 export const Table: React.FunctionComponent<TableProps> = ({
-  columnPrefix,
+  columnPrefix = "column-",
   editColumnLabel,
   onRowsUpdate,
   onColumnsUpdate,
@@ -135,6 +135,14 @@ export const Table: React.FunctionComponent<TableProps> = ({
       const updatedTableCells = [...prevTableCells];
       updatedTableCells[rowIndex][columnId] = value;
       return updatedTableCells;
+    });
+  }, []);
+
+  const onRowUpdate = useCallback((rowIndex: number, updatedRow: DataRecord) => {
+    setTableRows((prevTableCells) => {
+      const updatedRows = [...prevTableCells];
+      updatedRows[rowIndex] = updatedRow;
+      return updatedRows;
     });
   }, []);
 
@@ -240,6 +248,7 @@ export const Table: React.FunctionComponent<TableProps> = ({
       data: tableRows,
       defaultColumn,
       onCellUpdate,
+      onRowUpdate,
       getThProps,
       getTdProps,
     },

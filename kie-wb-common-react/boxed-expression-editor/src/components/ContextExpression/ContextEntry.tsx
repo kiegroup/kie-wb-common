@@ -17,23 +17,18 @@
 import "./ContextEntry.css";
 import * as React from "react";
 import { useCallback, useState } from "react";
-import { CellProps, DataType, ExpressionProps } from "../../api";
+import { CellProps, ContextEntries } from "../../api";
 import { LogicTypeSelector } from "../LogicTypeSelector";
 import { EditExpressionMenu } from "../EditExpressionMenu";
 import { useBoxedExpressionEditorI18n } from "../../i18n";
+import { DataRecord } from "react-table";
 
 export interface ContextEntryProps extends CellProps {
-  data: {
-    /** Context entry name */
-    name: string;
-    /** Context entry data type */
-    dataType: DataType;
-    /** Context selected expression */
-    expression: ExpressionProps;
-  }[];
+  data: ContextEntries;
+  onRowUpdate: (rowIndex: number, updatedRow: DataRecord) => void;
 }
 
-export const ContextEntry: React.FunctionComponent<ContextEntryProps> = ({ data, row: { index } }) => {
+export const ContextEntry: React.FunctionComponent<ContextEntryProps> = ({ data, row: { index }, onRowUpdate }) => {
   const { i18n } = useBoxedExpressionEditorI18n();
 
   const contextEntry = data[index];
@@ -42,10 +37,14 @@ export const ContextEntry: React.FunctionComponent<ContextEntryProps> = ({ data,
 
   const [entryDataType, setEntryDataType] = useState(contextEntry.dataType);
 
-  const onEntryNameOrDataTypeUpdate = useCallback(({ name, dataType }) => {
-    setEntryName(name);
-    setEntryDataType(dataType);
-  }, []);
+  const onEntryNameOrDataTypeUpdate = useCallback(
+    ({ name, dataType }) => {
+      setEntryName(name);
+      setEntryDataType(dataType);
+      onRowUpdate(index, { ...contextEntry, name, dataType });
+    },
+    [contextEntry, index, onRowUpdate]
+  );
 
   return (
     <div className="context-entry">
