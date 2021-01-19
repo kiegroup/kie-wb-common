@@ -16,7 +16,7 @@
 
 import "./ContextExpression.css";
 import * as React from "react";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { ContextProps, DataType, LogicType, TableHandlerConfiguration, TableOperation } from "../../api";
 import { Table } from "../Table";
 import { useBoxedExpressionEditorI18n } from "../../i18n";
@@ -29,6 +29,7 @@ export const ContextExpression: React.FunctionComponent<ContextProps> = ({
   onUpdatingNameAndDataType,
   width,
 }) => {
+  const DEFAULT_EXPRESSION_COLUMN_WIDTH = 300;
   const { i18n } = useBoxedExpressionEditorI18n();
 
   const handlerConfiguration: TableHandlerConfiguration = [
@@ -43,8 +44,25 @@ export const ContextExpression: React.FunctionComponent<ContextProps> = ({
   ];
 
   const [columns, setColumns] = useState([
-    { label: name, accessor: name, dataType, width: width ?? 300, disableHandlerOnHeader: true },
+    {
+      label: name,
+      accessor: name,
+      dataType,
+      minWidth: DEFAULT_EXPRESSION_COLUMN_WIDTH,
+      width: width ?? DEFAULT_EXPRESSION_COLUMN_WIDTH,
+      disableHandlerOnHeader: true,
+    },
   ]);
+
+  useEffect(() => {
+    const expressionColumn = columns[0];
+    window.beeApi?.broadcastContextExpressionDefinition?.({
+      logicType: LogicType.Context,
+      name: expressionColumn.accessor,
+      dataType: expressionColumn.dataType,
+      ...(expressionColumn.width > DEFAULT_EXPRESSION_COLUMN_WIDTH ? { width: expressionColumn.width } : {}),
+    });
+  }, [columns]);
 
   const onUpdatingExpressionColumn = useCallback(
     ([expressionColumn]: [ColumnInstance]) => {

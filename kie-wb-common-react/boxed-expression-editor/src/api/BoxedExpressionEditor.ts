@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { ExpressionProps, LiteralExpressionProps, RelationProps } from "./ExpressionProps";
+import { ContextProps, ExpressionProps, LiteralExpressionProps, RelationProps } from "./ExpressionProps";
 
 export {};
 
@@ -25,6 +25,7 @@ declare global {
       resetExpressionDefinition: (definition: ExpressionProps) => void;
       broadcastLiteralExpressionDefinition: (definition: LiteralExpressionProps) => void;
       broadcastRelationExpressionDefinition: (definition: RelationProps) => void;
+      broadcastContextExpressionDefinition: (definition: ContextProps) => void;
     };
   }
 }

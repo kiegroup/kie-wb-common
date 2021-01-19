@@ -20,6 +20,7 @@ import * as ReactDOM from "react-dom";
 import "./index.css";
 import {
   BoxedExpressionEditor,
+  ContextProps,
   DataType,
   ExpressionContainerProps,
   ExpressionProps,
@@ -43,6 +44,7 @@ export const App: React.FunctionComponent = () => {
     resetExpressionDefinition: (definition: ExpressionProps) => setUpdatedExpression(definition),
     broadcastLiteralExpressionDefinition: (definition: LiteralExpressionProps) => setUpdatedExpression(definition),
     broadcastRelationExpressionDefinition: (definition: RelationProps) => setUpdatedExpression(definition),
+    broadcastContextExpressionDefinition: (definition: ContextProps) => setUpdatedExpression(definition),
   };
 
   return (
