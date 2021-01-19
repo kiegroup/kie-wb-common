@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import "./ContextExpression.css";
 import * as React from "react";
 import { useCallback, useEffect, useState } from "react";
 import { ContextProps, DataType, LogicType, TableHandlerConfiguration, TableOperation } from "../../api";
@@ -88,11 +87,9 @@ export const ContextExpression: React.FunctionComponent<ContextProps> = ({
         columns={columns}
         rows={[
           {
-            "Expression Name": {
-              name: "test",
-              dataType: DataType.Boolean,
-              expression: { name: "expression", dataType: DataType.Undefined, logicType: LogicType.Undefined },
-            },
+            name: "test",
+            dataType: DataType.Boolean,
+            expression: {},
           },
         ]}
         onColumnsUpdate={onUpdatingExpressionColumn}

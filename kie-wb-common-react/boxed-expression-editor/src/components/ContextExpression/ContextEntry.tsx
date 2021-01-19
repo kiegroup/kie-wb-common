@@ -14,8 +14,13 @@
  * limitations under the License.
  */
 
+import "./ContextEntry.css";
 import * as React from "react";
+import { useCallback, useState } from "react";
 import { CellProps, DataType, ExpressionProps } from "../../api";
+import { LogicTypeSelector } from "../LogicTypeSelector";
+import { EditExpressionMenu } from "../EditExpressionMenu";
+import { useBoxedExpressionEditorI18n } from "../../i18n";
 
 export interface ContextEntryProps extends CellProps {
   data: {
@@ -29,9 +34,42 @@ export interface ContextEntryProps extends CellProps {
 }
 
 export const ContextEntry: React.FunctionComponent<ContextEntryProps> = ({ data, row: { index } }) => {
+  const { i18n } = useBoxedExpressionEditorI18n();
+
+  const contextEntry = data[index];
+
+  const [entryName, setEntryName] = useState(contextEntry.name);
+
+  const [entryDataType, setEntryDataType] = useState(contextEntry.dataType);
+
+  const onEntryNameOrDataTypeUpdate = useCallback(({ name, dataType }) => {
+    setEntryName(name);
+    setEntryDataType(dataType);
+  }, []);
+
   return (
-    <div>
-      <pre>{JSON.stringify(data[index], null, 2)}</pre>
+    <div className="context-entry">
+      <EditExpressionMenu
+        title={i18n.editContextEntry}
+        selectedExpressionName={entryName}
+        selectedDataType={entryDataType}
+        onExpressionUpdate={onEntryNameOrDataTypeUpdate}
+      >
+        <div className="entry-definition">
+          <p className="entry-name">{entryName}</p>
+          <p className="entry-data-type">({entryDataType})</p>
+        </div>
+      </EditExpressionMenu>
+
+      <div className="entry-expression">
+        <LogicTypeSelector
+          selectedExpression={contextEntry.expression}
+          onLogicTypeUpdating={(logicType) => console.log(logicType)}
+          onLogicTypeResetting={() => console.log("logic type resetting")}
+          onNameAndDataTypeUpdating={(name, dataType) => console.log(name, dataType)}
+          querySelectorPlacement=".entry-expression"
+        />
+      </div>
     </div>
   );
 };

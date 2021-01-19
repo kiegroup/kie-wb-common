@@ -14,3 +14,21 @@
  * limitations under the License.
  */
 
+.expression-container .context-expression .context-entry {
+  display: flex;
+}
+
+.expression-container .context-expression .context-entry .entry-definition {
+  flex: 0.5 1;
+  border-right-style: ridge;
+  padding-top: 0.5em;
+  cursor: pointer;
+}
+.expression-container .context-expression .context-entry .entry-definition .entry-data-type {
+  font-style: italic;
+  font-size: smaller;
+}
+
+.expression-container .context-expression .context-entry .entry-expression {
+  flex: 2 1;
+}
