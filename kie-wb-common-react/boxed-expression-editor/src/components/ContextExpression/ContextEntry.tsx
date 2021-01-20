@@ -16,7 +16,7 @@
 
 import "./ContextEntry.css";
 import * as React from "react";
-import { useCallback, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { CellProps, ContextEntries } from "../../api";
 import { LogicTypeSelector } from "../LogicTypeSelector";
 import { EditExpressionMenu } from "../EditExpressionMenu";
@@ -30,6 +30,8 @@ export interface ContextEntryProps extends CellProps {
 
 export const ContextEntry: React.FunctionComponent<ContextEntryProps> = ({ data, row: { index }, onRowUpdate }) => {
   const { i18n } = useBoxedExpressionEditorI18n();
+
+  const expressionContainerRef = useRef<HTMLDivElement>(null);
 
   const contextEntry = data[index];
 
@@ -46,6 +48,10 @@ export const ContextEntry: React.FunctionComponent<ContextEntryProps> = ({ data,
     [contextEntry, index, onRowUpdate]
   );
 
+  const getLogicTypeSelectorRef = useCallback(() => {
+    return expressionContainerRef.current!;
+  }, []);
+
   return (
     <div className="context-entry">
       <EditExpressionMenu
@@ -60,13 +66,13 @@ export const ContextEntry: React.FunctionComponent<ContextEntryProps> = ({ data,
         </div>
       </EditExpressionMenu>
 
-      <div className="entry-expression">
+      <div className="entry-expression" ref={expressionContainerRef}>
         <LogicTypeSelector
           selectedExpression={contextEntry.expression}
           onLogicTypeUpdating={(logicType) => console.log(logicType)}
           onLogicTypeResetting={() => console.log("logic type resetting")}
           onNameAndDataTypeUpdating={(name, dataType) => console.log(name, dataType)}
-          querySelectorPlacement=".entry-expression"
+          getPlacementRef={getLogicTypeSelectorRef}
         />
       </div>
     </div>

@@ -36,8 +36,8 @@ export interface LogicTypeSelectorProps {
   onLogicTypeResetting: () => void;
   /** Function to be invoked to update expression's name and datatype */
   onNameAndDataTypeUpdating: (updatedName: string, updatedDataType: DataType) => void;
-  /** Optional string to be used for the query selection for placing the logic type selector popover */
-  querySelectorPlacement?: string;
+  /** Function to be invoked to retrieve the DOM reference to be used for selector placement */
+  getPlacementRef: () => HTMLDivElement;
 }
 
 export const LogicTypeSelector: React.FunctionComponent<LogicTypeSelectorProps> = ({
@@ -45,7 +45,7 @@ export const LogicTypeSelector: React.FunctionComponent<LogicTypeSelectorProps> 
   onLogicTypeUpdating,
   onLogicTypeResetting,
   onNameAndDataTypeUpdating,
-  querySelectorPlacement = ".expression-container-box",
+  getPlacementRef,
 }) => {
   const { i18n } = useBoxedExpressionEditorI18n();
 
@@ -98,10 +98,7 @@ export const LogicTypeSelector: React.FunctionComponent<LogicTypeSelectorProps> 
     [getLogicTypesWithoutUndefined]
   );
 
-  const getLogicSelectionArrowPlacement = useCallback(
-    () => document.querySelector(querySelectorPlacement)! as HTMLElement,
-    [querySelectorPlacement]
-  );
+  const getLogicSelectionArrowPlacement = useCallback(() => getPlacementRef() as HTMLElement, [getPlacementRef]);
 
   const onLogicTypeSelect = useCallback(
     (currentItem: React.RefObject<HTMLButtonElement>, currentItemProps: SimpleListItemProps) => {

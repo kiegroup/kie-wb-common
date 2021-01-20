@@ -15,7 +15,7 @@
  */
 
 import * as React from "react";
-import { useCallback, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import "./ExpressionContainer.css";
 import { ExpressionProps, LogicType } from "../../api";
 import { LogicTypeSelector } from "../LogicTypeSelector";
@@ -28,6 +28,8 @@ export interface ExpressionContainerProps {
 export const ExpressionContainer: ({ selectedExpression }: ExpressionContainerProps) => JSX.Element = (
   props: ExpressionContainerProps
 ) => {
+  const expressionContainerRef = useRef<HTMLDivElement>(null);
+
   const [selectedExpression, setSelectedExpression] = useState(props.selectedExpression);
 
   const updateExpressionNameAndDataType = useCallback((updatedName, updatedDataType) => {
@@ -57,17 +59,22 @@ export const ExpressionContainer: ({ selectedExpression }: ExpressionContainerPr
     });
   }, []);
 
+  const getLogicTypeSelectorRef = useCallback(() => {
+    return expressionContainerRef.current!;
+  }, []);
+
   return (
     <div className="expression-container">
       <span className="expression-title">{selectedExpression.name}</span>
       <span className="expression-type">({selectedExpression.logicType || LogicType.Undefined})</span>
 
-      <div className="expression-container-box">
+      <div className="expression-container-box" ref={expressionContainerRef}>
         <LogicTypeSelector
           selectedExpression={selectedExpression}
           onLogicTypeUpdating={onLogicTypeUpdating}
           onLogicTypeResetting={onLogicTypeResetting}
           onNameAndDataTypeUpdating={updateExpressionNameAndDataType}
+          getPlacementRef={getLogicTypeSelectorRef}
         />
       </div>
     </div>
