@@ -29,14 +29,20 @@ import { useBoxedExpressionEditorI18n } from "../../i18n";
 import { ColumnInstance, DataRecord } from "react-table";
 import { ContextEntry } from "./ContextEntry";
 
+const DEFAULT_CONTEXT_ENTRY_NAME = "ContextEntry-1";
+const DEFAULT_CONTEXT_ENTRY_DATA_TYPE = DataType.Undefined;
+const DEFAULT_EXPRESSION_COLUMN_WIDTH = 300;
+
 export const ContextExpression: React.FunctionComponent<ContextProps> = ({
-  name,
-  dataType,
+  name = DEFAULT_CONTEXT_ENTRY_NAME,
+  dataType = DEFAULT_CONTEXT_ENTRY_DATA_TYPE,
   onUpdatingNameAndDataType,
-  width,
-  contextEntries = [{ name: "ContextEntry-1", dataType: DataType.Undefined, expression: {} } as DataRecord],
+  width = DEFAULT_EXPRESSION_COLUMN_WIDTH,
+  contextEntries = [
+    { name: DEFAULT_CONTEXT_ENTRY_NAME, dataType: DEFAULT_CONTEXT_ENTRY_DATA_TYPE, expression: {} } as DataRecord,
+  ],
+  isHeadless = false,
 }) => {
-  const DEFAULT_EXPRESSION_COLUMN_WIDTH = 300;
   const { i18n } = useBoxedExpressionEditorI18n();
 
   const handlerConfiguration: TableHandlerConfiguration = [
@@ -93,6 +99,7 @@ export const ContextExpression: React.FunctionComponent<ContextProps> = ({
   return (
     <div className="context-expression">
       <Table
+        isHeadless={isHeadless}
         defaultCell={ContextEntry}
         columns={columns}
         rows={rows as DataRecord[]}

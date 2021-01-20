@@ -35,9 +35,11 @@ export interface LogicTypeSelectorProps {
   /** Function to be invoked when logic type is reset */
   onLogicTypeResetting: () => void;
   /** Function to be invoked to update expression's name and datatype */
-  onNameAndDataTypeUpdating: (updatedName: string, updatedDataType: DataType) => void;
+  onNameAndDataTypeUpdating?: (updatedName: string, updatedDataType: DataType) => void;
   /** Function to be invoked to retrieve the DOM reference to be used for selector placement */
   getPlacementRef: () => HTMLDivElement;
+  /** True to have no header for the selected expression (if it has one) */
+  isHeadless?: boolean;
 }
 
 export const LogicTypeSelector: React.FunctionComponent<LogicTypeSelectorProps> = ({
@@ -46,6 +48,7 @@ export const LogicTypeSelector: React.FunctionComponent<LogicTypeSelectorProps> 
   onLogicTypeResetting,
   onNameAndDataTypeUpdating,
   getPlacementRef,
+  isHeadless = false,
 }) => {
   const { i18n } = useBoxedExpressionEditorI18n();
 
@@ -66,6 +69,7 @@ export const LogicTypeSelector: React.FunctionComponent<LogicTypeSelectorProps> 
       case LogicType.LiteralExpression:
         return (
           <LiteralExpression
+            isHeadless={isHeadless}
             onUpdatingNameAndDataType={onNameAndDataTypeUpdating}
             {...(selectedExpression as LiteralExpressionProps)}
           />
@@ -75,6 +79,7 @@ export const LogicTypeSelector: React.FunctionComponent<LogicTypeSelectorProps> 
       case LogicType.Context:
         return (
           <ContextExpression
+            isHeadless={isHeadless}
             onUpdatingNameAndDataType={onNameAndDataTypeUpdating}
             {...(selectedExpression as ContextProps)}
           />
@@ -86,7 +91,7 @@ export const LogicTypeSelector: React.FunctionComponent<LogicTypeSelectorProps> 
       default:
         return selectedExpression.logicType;
     }
-  }, [selectedExpression, onNameAndDataTypeUpdating]);
+  }, [selectedExpression, isHeadless, onNameAndDataTypeUpdating]);
 
   const getLogicTypesWithoutUndefined = useCallback(
     () => Object.values(LogicType).filter((logicType) => logicType !== LogicType.Undefined),

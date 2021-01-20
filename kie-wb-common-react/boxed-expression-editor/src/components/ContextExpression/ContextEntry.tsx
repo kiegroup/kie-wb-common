@@ -17,7 +17,7 @@
 import "./ContextEntry.css";
 import * as React from "react";
 import { useCallback, useRef, useState } from "react";
-import { CellProps, ContextEntries } from "../../api";
+import { CellProps, ContextEntries, ExpressionProps, LogicType } from "../../api";
 import { LogicTypeSelector } from "../LogicTypeSelector";
 import { EditExpressionMenu } from "../EditExpressionMenu";
 import { useBoxedExpressionEditorI18n } from "../../i18n";
@@ -40,6 +40,8 @@ export const ContextEntry: React.FunctionComponent<ContextEntryProps> = ({ data,
 
   const [entryDataType, setEntryDataType] = useState(contextEntry.dataType);
 
+  const [entryExpression, setEntryExpression] = useState(contextEntry.expression || {});
+
   const onEntryNameOrDataTypeUpdate = useCallback(
     ({ name, dataType }) => {
       setEntryName(name);
@@ -51,6 +53,23 @@ export const ContextEntry: React.FunctionComponent<ContextEntryProps> = ({ data,
 
   const getLogicTypeSelectorRef = useCallback(() => {
     return expressionContainerRef.current!;
+  }, []);
+
+  const onLogicTypeUpdating = useCallback((logicType) => {
+    setEntryExpression((previousSelectedExpression: ExpressionProps) => ({
+      ...previousSelectedExpression,
+      logicType: logicType,
+    }));
+  }, []);
+
+  const onLogicTypeResetting = useCallback(() => {
+    setEntryExpression((previousSelectedExpression: ExpressionProps) => {
+      return {
+        name: previousSelectedExpression.name,
+        dataType: previousSelectedExpression.dataType,
+        logicType: LogicType.Undefined,
+      };
+    });
   }, []);
 
   return (
@@ -69,10 +88,10 @@ export const ContextEntry: React.FunctionComponent<ContextEntryProps> = ({ data,
 
       <div className={`entry-expression ${NO_TABLE_CONTEXT_MENU_CLASS}`} ref={expressionContainerRef}>
         <LogicTypeSelector
-          selectedExpression={contextEntry.expression}
-          onLogicTypeUpdating={(logicType) => console.log(logicType)}
-          onLogicTypeResetting={() => console.log("logic type resetting")}
-          onNameAndDataTypeUpdating={(name, dataType) => console.log(name, dataType)}
+          isHeadless={true}
+          selectedExpression={entryExpression}
+          onLogicTypeUpdating={onLogicTypeUpdating}
+          onLogicTypeResetting={onLogicTypeResetting}
           getPlacementRef={getLogicTypeSelectorRef}
         />
       </div>

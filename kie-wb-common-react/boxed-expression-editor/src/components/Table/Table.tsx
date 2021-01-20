@@ -53,6 +53,8 @@ export interface TableProps {
   onRowsUpdate: (rows: DataRecord[]) => void;
   /** Custom configuration for the table handler */
   handlerConfiguration: TableHandlerConfiguration;
+  /** True to have no header for this table */
+  isHeadless?: boolean;
 }
 
 export const NO_TABLE_CONTEXT_MENU_CLASS = "no-table-context-menu";
@@ -66,6 +68,7 @@ export const Table: React.FunctionComponent<TableProps> = ({
   rows,
   columns,
   handlerConfiguration,
+  isHeadless = false,
 }: TableProps) => {
   const NUMBER_OF_ROWS_COLUMN = "#";
 
@@ -351,7 +354,7 @@ export const Table: React.FunctionComponent<TableProps> = ({
   return (
     <div className="table-component">
       <TableComposable variant="compact" {...tableInstance.getTableProps()}>
-        <Thead noWrap>
+        <Thead noWrap className={isHeadless ? "headless-table" : ""}>
           <tr>
             {tableInstance.headers.map((column: ColumnInstance, columnIndex: number) =>
               column.canResize ? renderResizableColumn(column, columnIndex) : renderFixedColumn(column, columnIndex)

@@ -67,4 +67,6 @@ export interface ContextProps extends ExpressionProps {
   contextEntries?: ContextEntries;
   /** Context result */
   result?: ExpressionProps;
+  /** True to have no header for this specific context */
+  isHeadless?: boolean;
 }
