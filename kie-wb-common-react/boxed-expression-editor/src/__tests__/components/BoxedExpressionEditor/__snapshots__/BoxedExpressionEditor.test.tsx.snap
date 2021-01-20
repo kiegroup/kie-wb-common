@@ -21,7 +21,7 @@ exports[`BoxedExpressionEditor tests should render BoxedExpressionEditor compone
       class="expression-container-box"
     >
       <div
-        class="logic-type-selector logic-type-not-present"
+        class="logic-type-selector no-table-context-menu logic-type-not-present"
       >
         Select expression
       </div>
