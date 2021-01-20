@@ -55,6 +55,8 @@ export interface TableProps {
   handlerConfiguration: TableHandlerConfiguration;
 }
 
+export const NO_TABLE_CONTEXT_MENU_CLASS = "no-table-context-menu";
+
 export const Table: React.FunctionComponent<TableProps> = ({
   columnPrefix = "column-",
   editColumnLabel,
@@ -226,19 +228,22 @@ export const Table: React.FunctionComponent<TableProps> = ({
 
   const getTdProps = (columnIndex: number, rowIndex: number) => ({
     onContextMenu: (e: ContextMenuEvent) => {
-      e.preventDefault();
-      setTableHandlerAllowedOperations([
-        TableOperation.ColumnInsertLeft,
-        TableOperation.ColumnInsertRight,
-        ...(tableColumns.length > 2 && columnIndex > 0 ? [TableOperation.ColumnDelete] : []),
-        TableOperation.RowInsertAbove,
-        TableOperation.RowInsertBelow,
-        ...(tableRows.length > 1 ? [TableOperation.RowDelete] : []),
-      ]);
-      setTableHandlerTarget(e.target as HTMLElement);
-      setShowTableHandler(true);
-      setLastSelectedColumnIndex(columnIndex);
-      setLastSelectedRowIndex(rowIndex);
+      const noTableContextMenu = (e.target as HTMLElement).closest(`.${NO_TABLE_CONTEXT_MENU_CLASS}`);
+      if (!noTableContextMenu) {
+        e.preventDefault();
+        setTableHandlerAllowedOperations([
+          TableOperation.ColumnInsertLeft,
+          TableOperation.ColumnInsertRight,
+          ...(tableColumns.length > 2 && columnIndex > 0 ? [TableOperation.ColumnDelete] : []),
+          TableOperation.RowInsertAbove,
+          TableOperation.RowInsertBelow,
+          ...(tableRows.length > 1 ? [TableOperation.RowDelete] : []),
+        ]);
+        setTableHandlerTarget(e.target as HTMLElement);
+        setShowTableHandler(true);
+        setLastSelectedColumnIndex(columnIndex);
+        setLastSelectedRowIndex(rowIndex);
+      }
     },
   });
 

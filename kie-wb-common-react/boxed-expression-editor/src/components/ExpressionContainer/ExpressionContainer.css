@@ -20,7 +20,7 @@
 }
 
 .expression-container .context-menu-container {
-  position: absolute;
+  position: fixed;
   z-index: 10000;
 }
 
