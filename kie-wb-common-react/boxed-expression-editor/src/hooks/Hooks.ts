@@ -47,9 +47,11 @@ export function useContextMenuHandler(): {
 
   useEffect(() => {
     document.addEventListener("click", hideContextMenu);
+    document.addEventListener("contextmenu", hideContextMenu);
     document.addEventListener("contextmenu", showContextMenu);
     return () => {
       document.removeEventListener("click", hideContextMenu);
+      document.removeEventListener("contextmenu", hideContextMenu);
       document.removeEventListener("contextmenu", showContextMenu);
     };
   });
