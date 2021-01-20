@@ -27,6 +27,10 @@ export interface ExpressionProps {
   onUpdatingNameAndDataType?: (updatedName: string, updatedDataType: DataType) => void;
   /** Logic type should not be defined at this stage */
   logicType?: LogicType;
+  /** True to have no header for this specific expression component, used in a recursive expression */
+  isHeadless?: boolean;
+  /** When a component is headless, it will call this function to pass its most updated expression definition */
+  onUpdatingRecursiveExpression?: (expression: ExpressionProps) => void;
 }
 
 export interface LiteralExpressionProps extends ExpressionProps {
@@ -34,8 +38,6 @@ export interface LiteralExpressionProps extends ExpressionProps {
   logicType: LogicType.LiteralExpression;
   /** Optional content to display for this literal expression */
   content?: string;
-  /** True to have no header for this specific literal expression */
-  isHeadless?: boolean;
 }
 
 export interface RelationProps extends ExpressionProps {
@@ -67,6 +69,4 @@ export interface ContextProps extends ExpressionProps {
   contextEntries?: ContextEntries;
   /** Context result */
   result?: ExpressionProps;
-  /** True to have no header for this specific context */
-  isHeadless?: boolean;
 }

@@ -73,7 +73,7 @@ export const ExpressionContainer: ({ selectedExpression }: ExpressionContainerPr
           selectedExpression={selectedExpression}
           onLogicTypeUpdating={onLogicTypeUpdating}
           onLogicTypeResetting={onLogicTypeResetting}
-          onNameAndDataTypeUpdating={updateExpressionNameAndDataType}
+          onUpdatingNameAndDataType={updateExpressionNameAndDataType}
           getPlacementRef={getLogicTypeSelectorRef}
         />
       </div>

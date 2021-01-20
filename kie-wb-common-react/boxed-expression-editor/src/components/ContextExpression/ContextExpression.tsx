@@ -42,6 +42,7 @@ export const ContextExpression: React.FunctionComponent<ContextProps> = ({
     { name: DEFAULT_CONTEXT_ENTRY_NAME, dataType: DEFAULT_CONTEXT_ENTRY_DATA_TYPE, expression: {} } as DataRecord,
   ],
   isHeadless = false,
+  onUpdatingRecursiveExpression,
 }) => {
   const { i18n } = useBoxedExpressionEditorI18n();
 
@@ -71,14 +72,17 @@ export const ContextExpression: React.FunctionComponent<ContextProps> = ({
 
   useEffect(() => {
     const expressionColumn = columns[0];
-    window.beeApi?.broadcastContextExpressionDefinition?.({
+    const updatedDefinition: ContextProps = {
       logicType: LogicType.Context,
       name: expressionColumn.accessor,
       dataType: expressionColumn.dataType,
       ...(expressionColumn.width > DEFAULT_EXPRESSION_COLUMN_WIDTH ? { width: expressionColumn.width } : {}),
       contextEntries: rows as ContextEntries,
-    });
-  }, [columns, rows]);
+    };
+    isHeadless
+      ? onUpdatingRecursiveExpression?.(updatedDefinition)
+      : window.beeApi?.broadcastContextExpressionDefinition?.(updatedDefinition);
+  }, [columns, isHeadless, onUpdatingRecursiveExpression, rows]);
 
   const onUpdatingExpressionColumn = useCallback(
     ([expressionColumn]: [ColumnInstance]) => {

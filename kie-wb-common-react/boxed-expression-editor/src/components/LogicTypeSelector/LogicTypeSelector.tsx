@@ -35,25 +35,34 @@ export interface LogicTypeSelectorProps {
   /** Function to be invoked when logic type is reset */
   onLogicTypeResetting: () => void;
   /** Function to be invoked to update expression's name and datatype */
-  onNameAndDataTypeUpdating?: (updatedName: string, updatedDataType: DataType) => void;
+  onUpdatingNameAndDataType?: (updatedName: string, updatedDataType: DataType) => void;
   /** Function to be invoked to retrieve the DOM reference to be used for selector placement */
   getPlacementRef: () => HTMLDivElement;
-  /** True to have no header for the selected expression (if it has one) */
+  /** True to have no header for this specific expression component, used in a recursive expression */
   isHeadless?: boolean;
+  /** When a component is headless, it will call this function to pass its most updated expression definition */
+  onUpdatingRecursiveExpression?: (expression: ExpressionProps) => void;
 }
 
 export const LogicTypeSelector: React.FunctionComponent<LogicTypeSelectorProps> = ({
   selectedExpression,
   onLogicTypeUpdating,
   onLogicTypeResetting,
-  onNameAndDataTypeUpdating,
+  onUpdatingNameAndDataType,
   getPlacementRef,
   isHeadless = false,
+  onUpdatingRecursiveExpression,
 }) => {
   const { i18n } = useBoxedExpressionEditorI18n();
 
+  const expression = _.extend(selectedExpression, {
+    isHeadless,
+    onUpdatingNameAndDataType,
+    onUpdatingRecursiveExpression,
+  });
+
   const [logicTypeSelected, setLogicTypeSelected] = useState(
-    !_.isEmpty(selectedExpression.logicType) || selectedExpression.logicType === LogicType.Undefined
+    !_.isEmpty(expression.logicType) || expression.logicType === LogicType.Undefined
   );
 
   const {
@@ -64,34 +73,24 @@ export const LogicTypeSelector: React.FunctionComponent<LogicTypeSelectorProps> 
     setContextMenuVisibility,
   } = useContextMenuHandler();
 
-  const renderSelectedExpression = useMemo(() => {
-    switch (selectedExpression.logicType) {
+  const renderExpression = useMemo(() => {
+    switch (expression.logicType) {
       case LogicType.LiteralExpression:
-        return (
-          <LiteralExpression
-            isHeadless={isHeadless}
-            onUpdatingNameAndDataType={onNameAndDataTypeUpdating}
-            {...(selectedExpression as LiteralExpressionProps)}
-          />
-        );
+        return <LiteralExpression {...(expression as LiteralExpressionProps)} />;
       case LogicType.Relation:
-        return <RelationExpression {...(selectedExpression as RelationProps)} />;
+        return <RelationExpression {...(expression as RelationProps)} />;
       case LogicType.Context:
-        return (
-          <ContextExpression
-            isHeadless={isHeadless}
-            onUpdatingNameAndDataType={onNameAndDataTypeUpdating}
-            {...(selectedExpression as ContextProps)}
-          />
-        );
+        return <ContextExpression {...(expression as ContextProps)} />;
       case LogicType.DecisionTable:
       case LogicType.Function:
       case LogicType.Invocation:
       case LogicType.List:
       default:
-        return selectedExpression.logicType;
+        return expression.logicType;
     }
-  }, [selectedExpression, isHeadless, onNameAndDataTypeUpdating]);
+    // logicType is enough for deciding when to re-execute this function
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [expression.logicType]);
 
   const getLogicTypesWithoutUndefined = useCallback(
     () => Object.values(LogicType).filter((logicType) => logicType !== LogicType.Undefined),
@@ -158,7 +157,7 @@ export const LogicTypeSelector: React.FunctionComponent<LogicTypeSelectorProps> 
       className={`logic-type-selector ${logicTypeSelected ? "logic-type-selected" : "logic-type-not-present"}`}
       ref={contextMenuRef}
     >
-      {logicTypeSelected ? renderSelectedExpression : i18n.selectExpression}
+      {logicTypeSelected ? renderExpression : i18n.selectExpression}
       {!logicTypeSelected ? buildLogicSelectorMenu() : null}
       {contextMenuVisibility ? buildContextMenu() : null}
     </div>

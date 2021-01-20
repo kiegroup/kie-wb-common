@@ -55,11 +55,14 @@ export const RelationExpression: React.FunctionComponent<RelationProps> = (relat
   const [tableRows, setTableRows] = useState(relationProps.rows === undefined ? [[]] : relationProps.rows);
 
   useEffect(() => {
-    window.beeApi?.broadcastRelationExpressionDefinition?.({
+    const expressionDefinition = {
       ...relationProps,
       columns: tableColumns,
       rows: tableRows,
-    });
+    };
+    relationProps.isHeadless
+      ? relationProps.onUpdatingRecursiveExpression?.(expressionDefinition)
+      : window.beeApi?.broadcastRelationExpressionDefinition?.(expressionDefinition);
   }, [relationProps, tableColumns, tableRows]);
 
   const convertColumnsForTheTable = useCallback(

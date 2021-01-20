@@ -16,7 +16,7 @@
 
 import "./ContextEntry.css";
 import * as React from "react";
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { CellProps, ContextEntries, ExpressionProps, LogicType } from "../../api";
 import { LogicTypeSelector } from "../LogicTypeSelector";
 import { EditExpressionMenu } from "../EditExpressionMenu";
@@ -41,6 +41,12 @@ export const ContextEntry: React.FunctionComponent<ContextEntryProps> = ({ data,
   const [entryDataType, setEntryDataType] = useState(contextEntry.dataType);
 
   const [entryExpression, setEntryExpression] = useState(contextEntry.expression || {});
+
+  useEffect(() => {
+    onRowUpdate(index, { ...contextEntry, expression: entryExpression });
+    // Purpose is to update the row every time the expression wrapped in the entry changes
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [entryExpression]);
 
   const onEntryNameOrDataTypeUpdate = useCallback(
     ({ name, dataType }) => {
@@ -72,6 +78,10 @@ export const ContextEntry: React.FunctionComponent<ContextEntryProps> = ({ data,
     });
   }, []);
 
+  const onUpdatingRecursiveExpression = useCallback((expression: ExpressionProps) => {
+    setEntryExpression(expression);
+  }, []);
+
   return (
     <div className="context-entry">
       <EditExpressionMenu
@@ -89,6 +99,7 @@ export const ContextEntry: React.FunctionComponent<ContextEntryProps> = ({ data,
       <div className={`entry-expression ${NO_TABLE_CONTEXT_MENU_CLASS}`} ref={expressionContainerRef}>
         <LogicTypeSelector
           isHeadless={true}
+          onUpdatingRecursiveExpression={onUpdatingRecursiveExpression}
           selectedExpression={entryExpression}
           onLogicTypeUpdating={onLogicTypeUpdating}
           onLogicTypeResetting={onLogicTypeResetting}

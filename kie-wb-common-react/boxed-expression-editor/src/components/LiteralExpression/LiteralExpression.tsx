@@ -27,19 +27,23 @@ export const LiteralExpression: React.FunctionComponent<LiteralExpressionProps> 
   name,
   onUpdatingNameAndDataType,
   isHeadless = false,
+  onUpdatingRecursiveExpression,
 }: LiteralExpressionProps) => {
   const [expressionName, setExpressionName] = useState(name);
   const [expressionDataType, setExpressionDataType] = useState(dataType);
   const [literalExpressionContent, setLiteralExpressionContent] = useState(content);
 
   useEffect(() => {
-    window.beeApi?.broadcastLiteralExpressionDefinition?.({
+    const expressionDefinition: LiteralExpressionProps = {
       name: expressionName,
       dataType: expressionDataType,
       logicType: LogicType.LiteralExpression,
       content: literalExpressionContent,
-    });
-  }, [expressionName, expressionDataType, literalExpressionContent]);
+    };
+    isHeadless
+      ? onUpdatingRecursiveExpression?.(expressionDefinition)
+      : window.beeApi?.broadcastLiteralExpressionDefinition?.(expressionDefinition);
+  }, [expressionName, expressionDataType, literalExpressionContent, isHeadless, onUpdatingRecursiveExpression]);
 
   const onExpressionUpdate = useCallback(
     ({ dataType, name }: ExpressionProps) => {
