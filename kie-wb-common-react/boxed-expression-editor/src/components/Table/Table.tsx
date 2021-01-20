@@ -231,7 +231,7 @@ export const Table: React.FunctionComponent<TableProps> = ({
 
   const getTdProps = (columnIndex: number, rowIndex: number) => ({
     onContextMenu: (e: ContextMenuEvent) => {
-      const noTableContextMenu = (e.target as HTMLElement).closest(`.${NO_TABLE_CONTEXT_MENU_CLASS}`);
+      const noTableContextMenu = (e.target as HTMLElement).classList.contains(NO_TABLE_CONTEXT_MENU_CLASS);
       if (!noTableContextMenu) {
         e.preventDefault();
         setTableHandlerAllowedOperations([

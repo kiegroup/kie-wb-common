@@ -22,7 +22,6 @@ import { LogicTypeSelector } from "../LogicTypeSelector";
 import { EditExpressionMenu } from "../EditExpressionMenu";
 import { useBoxedExpressionEditorI18n } from "../../i18n";
 import { DataRecord } from "react-table";
-import { NO_TABLE_CONTEXT_MENU_CLASS } from "../Table";
 
 export interface ContextEntryProps extends CellProps {
   data: ContextEntries;
@@ -96,7 +95,7 @@ export const ContextEntry: React.FunctionComponent<ContextEntryProps> = ({ data,
         </div>
       </EditExpressionMenu>
 
-      <div className={`entry-expression ${NO_TABLE_CONTEXT_MENU_CLASS}`} ref={expressionContainerRef}>
+      <div className="entry-expression" ref={expressionContainerRef}>
         <LogicTypeSelector
           isHeadless={true}
           onUpdatingRecursiveExpression={onUpdatingRecursiveExpression}

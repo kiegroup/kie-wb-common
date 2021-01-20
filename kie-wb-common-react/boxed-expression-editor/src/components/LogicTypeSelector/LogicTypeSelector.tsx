@@ -26,6 +26,7 @@ import { PopoverMenu } from "../PopoverMenu";
 import { Button, ButtonVariant, SimpleList, SimpleListItem, SimpleListItemProps } from "@patternfly/react-core";
 import * as _ from "lodash";
 import { useContextMenuHandler } from "../../hooks";
+import { NO_TABLE_CONTEXT_MENU_CLASS } from "../Table";
 
 export interface LogicTypeSelectorProps {
   /** Expression properties */
@@ -154,7 +155,9 @@ export const LogicTypeSelector: React.FunctionComponent<LogicTypeSelectorProps> 
 
   return (
     <div
-      className={`logic-type-selector ${logicTypeSelected ? "logic-type-selected" : "logic-type-not-present"}`}
+      className={`logic-type-selector ${NO_TABLE_CONTEXT_MENU_CLASS} ${
+        logicTypeSelected ? "logic-type-selected" : "logic-type-not-present"
+      }`}
       ref={contextMenuRef}
     >
       {logicTypeSelected ? renderExpression : i18n.selectExpression}
