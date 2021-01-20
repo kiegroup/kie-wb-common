@@ -39,7 +39,22 @@ export const ContextEntry: React.FunctionComponent<ContextEntryProps> = ({ data,
 
   const [entryDataType, setEntryDataType] = useState(contextEntry.dataType);
 
-  const [entryExpression, setEntryExpression] = useState(contextEntry.expression || {});
+  const [entryExpression, setEntryExpression] = useState(contextEntry.expression);
+
+  useEffect(() => {
+    setEntryName(contextEntry.name);
+  }, [contextEntry.name]);
+
+  useEffect(() => {
+    setEntryDataType(contextEntry.dataType);
+  }, [contextEntry.dataType]);
+
+  const expressionChangedExternally = contextEntry.expression.logicType === undefined;
+  useEffect(() => {
+    setEntryExpression(contextEntry.expression);
+    // Every time, for an expression, its logic type is undefined, it means that corresponding entry has been just added
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [expressionChangedExternally]);
 
   useEffect(() => {
     onRowUpdate(index, { ...contextEntry, expression: entryExpression });

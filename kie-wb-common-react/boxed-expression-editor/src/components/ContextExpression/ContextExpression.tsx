@@ -28,6 +28,7 @@ import { Table } from "../Table";
 import { useBoxedExpressionEditorI18n } from "../../i18n";
 import { ColumnInstance, DataRecord } from "react-table";
 import { ContextEntry } from "./ContextEntry";
+import * as _ from "lodash";
 
 const DEFAULT_CONTEXT_ENTRY_NAME = "ContextEntry-1";
 const DEFAULT_CONTEXT_ENTRY_DATA_TYPE = DataType.Undefined;
@@ -100,6 +101,24 @@ export const ContextExpression: React.FunctionComponent<ContextProps> = ({
     [onUpdatingNameAndDataType]
   );
 
+  const generateNextAvailableEntryName: (lastIndex: number) => string = useCallback(
+    (lastIndex) => {
+      const candidateName = `ContextEntry-${lastIndex}`;
+      const entryWithCandidateName = _.find(rows, { name: candidateName });
+      return entryWithCandidateName ? generateNextAvailableEntryName(lastIndex + 1) : candidateName;
+    },
+    [rows]
+  );
+
+  const onRowAdding = useCallback(
+    () => ({
+      name: generateNextAvailableEntryName(rows.length),
+      dataType: DataType.Undefined,
+      expression: {},
+    }),
+    [generateNextAvailableEntryName, rows.length]
+  );
+
   return (
     <div className="context-expression">
       <Table
@@ -108,6 +127,7 @@ export const ContextExpression: React.FunctionComponent<ContextProps> = ({
         columns={columns}
         rows={rows as DataRecord[]}
         onColumnsUpdate={onUpdatingExpressionColumn}
+        onRowAdding={onRowAdding}
         onRowsUpdate={setRows}
         handlerConfiguration={handlerConfiguration}
       />

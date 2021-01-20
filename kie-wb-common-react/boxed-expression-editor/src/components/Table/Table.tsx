@@ -51,6 +51,8 @@ export interface TableProps {
   onColumnsUpdate: (columns: Column[]) => void;
   /** Function to be executed when cells are modified */
   onRowsUpdate: (rows: DataRecord[]) => void;
+  /** Function to be executed when adding a new row to the table */
+  onRowAdding?: () => DataRecord;
   /** Custom configuration for the table handler */
   handlerConfiguration: TableHandlerConfiguration;
   /** True to have no header for this table */
@@ -62,8 +64,9 @@ export const NO_TABLE_CONTEXT_MENU_CLASS = "no-table-context-menu";
 export const Table: React.FunctionComponent<TableProps> = ({
   columnPrefix = "column-",
   editColumnLabel,
-  onRowsUpdate,
   onColumnsUpdate,
+  onRowsUpdate,
+  onRowAdding = () => ({}),
   defaultCell = EditableCell,
   rows,
   columns,
@@ -188,10 +191,10 @@ export const Table: React.FunctionComponent<TableProps> = ({
           setTableColumns((prevTableColumns) => deleteAt(prevTableColumns, lastSelectedColumnIndex));
           break;
         case TableOperation.RowInsertAbove:
-          setTableRows((prevTableRows) => insertBefore(prevTableRows, lastSelectedRowIndex, {}));
+          setTableRows((prevTableRows) => insertBefore(prevTableRows, lastSelectedRowIndex, onRowAdding()));
           break;
         case TableOperation.RowInsertBelow:
-          setTableRows((prevTableRows) => insertAfter(prevTableRows, lastSelectedRowIndex, {}));
+          setTableRows((prevTableRows) => insertAfter(prevTableRows, lastSelectedRowIndex, onRowAdding()));
           break;
         case TableOperation.RowDelete:
           setTableRows((prevTableRows) => deleteAt(prevTableRows, lastSelectedRowIndex));
@@ -199,7 +202,7 @@ export const Table: React.FunctionComponent<TableProps> = ({
       }
       setShowTableHandler(false);
     },
-    [generateNextAvailableColumn, lastSelectedColumnIndex, lastSelectedRowIndex]
+    [generateNextAvailableColumn, lastSelectedColumnIndex, lastSelectedRowIndex, onRowAdding]
   );
 
   const defaultColumn = {

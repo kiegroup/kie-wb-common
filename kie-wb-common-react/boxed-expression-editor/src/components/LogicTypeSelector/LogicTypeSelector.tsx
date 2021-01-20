@@ -16,7 +16,7 @@
 
 import "./LogicTypeSelector.css";
 import * as React from "react";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { ContextProps, DataType, ExpressionProps, LiteralExpressionProps, LogicType, RelationProps } from "../../api";
 import { LiteralExpression } from "../LiteralExpression";
 import { RelationExpression } from "../RelationExpression";
@@ -62,9 +62,13 @@ export const LogicTypeSelector: React.FunctionComponent<LogicTypeSelectorProps> 
     onUpdatingRecursiveExpression,
   });
 
-  const [logicTypeSelected, setLogicTypeSelected] = useState(
-    !_.isEmpty(expression.logicType) || expression.logicType === LogicType.Undefined
-  );
+  const isLogicTypeSelected = (logicType?: LogicType) => !_.isEmpty(logicType) && logicType !== LogicType.Undefined;
+
+  const [logicTypeSelected, setLogicTypeSelected] = useState(isLogicTypeSelected(expression.logicType));
+
+  useEffect(() => {
+    setLogicTypeSelected(isLogicTypeSelected(selectedExpression.logicType));
+  }, [selectedExpression.logicType]);
 
   const {
     contextMenuRef,
