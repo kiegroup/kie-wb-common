@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2020 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,6 +14,22 @@
  * limitations under the License.
  */
 
-export * from "./ContextExpression";
-export * from "./ContextEntry";
-export * from "./ContextResult";
+.expression-container .context-expression .context-result {
+  display: flex;
+}
+
+.expression-container .context-expression .context-result .result-label {
+  display: flex;
+  flex: 0.5 1;
+  border-right-style: ridge;
+  padding: 0.5em 0.5em 0 0.5em;
+  cursor: pointer;
+  font-style: italic;
+  justify-content: center;
+  flex-direction: column;
+  color: gray;
+}
+
+.expression-container .context-expression .context-result .result-expression {
+  flex: 2 1;
+}

@@ -37,6 +37,8 @@ import { Popover } from "@patternfly/react-core";
 import { TableHandlerMenu } from "./TableHandlerMenu";
 
 export interface TableProps {
+  /** Optional children element to be appended below the table content */
+  children?: React.ReactElement;
   /** The prefix to be used for the column name */
   columnPrefix?: string;
   /** Optional label to be used for the edit popover that appears when clicking on column header */
@@ -62,6 +64,7 @@ export interface TableProps {
 export const NO_TABLE_CONTEXT_MENU_CLASS = "no-table-context-menu";
 
 export const Table: React.FunctionComponent<TableProps> = ({
+  children,
   columnPrefix = "column-",
   editColumnLabel,
   onColumnsUpdate,
@@ -354,6 +357,19 @@ export const Table: React.FunctionComponent<TableProps> = ({
     [editColumnLabel, onColumnNameOrDataTypeUpdate, tableInstance]
   );
 
+  const renderAdditiveRow = useMemo(() => {
+    return (
+      <Tr className="table-row">
+        <Td role="cell" style={{ display: "inline-block", boxSizing: "border-box", width: "60px" }}>
+          <br />
+        </Td>
+        <Td role="cell" style={{ display: "inline-block", boxSizing: "border-box", width: "83%" }}>
+          {children}
+        </Td>
+      </Tr>
+    );
+  }, [children]);
+
   return (
     <div className="table-component">
       <TableComposable variant="compact" {...tableInstance.getTableProps()}>
@@ -383,6 +399,7 @@ export const Table: React.FunctionComponent<TableProps> = ({
               </Tr>
             );
           })}
+          {children ? renderAdditiveRow : null}
         </Tbody>
       </TableComposable>
       {showTableHandler ? buildTableHandler : null}

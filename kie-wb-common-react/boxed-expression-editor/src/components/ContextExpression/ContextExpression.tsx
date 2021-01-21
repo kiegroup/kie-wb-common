@@ -20,6 +20,7 @@ import {
   ContextEntries,
   ContextProps,
   DataType,
+  ExpressionProps,
   LogicType,
   TableHandlerConfiguration,
   TableOperation,
@@ -29,6 +30,7 @@ import { useBoxedExpressionEditorI18n } from "../../i18n";
 import { ColumnInstance, DataRecord } from "react-table";
 import { ContextEntry } from "./ContextEntry";
 import * as _ from "lodash";
+import { ContextResult } from "./ContextResult";
 
 const DEFAULT_CONTEXT_ENTRY_NAME = "ContextEntry-1";
 const DEFAULT_CONTEXT_ENTRY_DATA_TYPE = DataType.Undefined;
@@ -42,6 +44,7 @@ export const ContextExpression: React.FunctionComponent<ContextProps> = ({
   contextEntries = [
     { name: DEFAULT_CONTEXT_ENTRY_NAME, dataType: DEFAULT_CONTEXT_ENTRY_DATA_TYPE, expression: {} } as DataRecord,
   ],
+  result = {} as ExpressionProps,
   isHeadless = false,
   onUpdatingRecursiveExpression,
 }) => {
@@ -71,6 +74,8 @@ export const ContextExpression: React.FunctionComponent<ContextProps> = ({
 
   const [rows, setRows] = useState(contextEntries);
 
+  const [resultExpression, setResultExpression] = useState(result);
+
   useEffect(() => {
     const expressionColumn = columns[0];
     const updatedDefinition: ContextProps = {
@@ -79,11 +84,12 @@ export const ContextExpression: React.FunctionComponent<ContextProps> = ({
       dataType: expressionColumn.dataType,
       ...(expressionColumn.width > DEFAULT_EXPRESSION_COLUMN_WIDTH ? { width: expressionColumn.width } : {}),
       contextEntries: rows as ContextEntries,
+      result: resultExpression,
     };
     isHeadless
       ? onUpdatingRecursiveExpression?.(updatedDefinition)
       : window.beeApi?.broadcastContextExpressionDefinition?.(updatedDefinition);
-  }, [columns, isHeadless, onUpdatingRecursiveExpression, rows]);
+  }, [columns, isHeadless, onUpdatingRecursiveExpression, rows, resultExpression]);
 
   const onUpdatingExpressionColumn = useCallback(
     ([expressionColumn]: [ColumnInstance]) => {
@@ -130,7 +136,9 @@ export const ContextExpression: React.FunctionComponent<ContextProps> = ({
         onRowAdding={onRowAdding}
         onRowsUpdate={setRows}
         handlerConfiguration={handlerConfiguration}
-      />
+      >
+        <ContextResult expression={resultExpression} onUpdatingExpression={setResultExpression} />
+      </Table>
     </div>
   );
 };
