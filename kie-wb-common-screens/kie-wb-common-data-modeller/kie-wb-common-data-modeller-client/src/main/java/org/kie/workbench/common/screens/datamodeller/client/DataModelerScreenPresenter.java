@@ -1117,6 +1117,9 @@ public class DataModelerScreenPresenter
         unpublishMessage.setShowSystemConsole(false);
         unpublishMessage.setMessageType(currentMessageType);
         unpublishMessage.setUserId((sessionInfo != null && sessionInfo.getIdentity() != null) ? sessionInfo.getIdentity().getIdentifier() : null);
+        if (workbenchContext.getActiveModule().isPresent()) {
+            unpublishMessage.setRootPath(workbenchContext.getActiveModule().get().getRootPath().toURI());
+        }
         unpublishMessagesEvent.fire(unpublishMessage);
     }
 
@@ -1140,6 +1143,10 @@ public class DataModelerScreenPresenter
             systemMessage.setColumn(error.getColumn());
             publishMessage.getMessagesToPublish().add(systemMessage);
         }
+        if (workbenchContext.getActiveModule().isPresent()) {
+            publishMessage.setRootPath(workbenchContext.getActiveModule().get().getRootPath().toURI());
+        }
+
         publishBatchMessagesEvent.fire(publishMessage);
     }
 
