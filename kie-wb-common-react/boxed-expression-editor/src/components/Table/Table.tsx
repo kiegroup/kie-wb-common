@@ -29,7 +29,7 @@ import {
 import { TableComposable, Tbody, Td, Th, Thead, Tr } from "@patternfly/react-table";
 import { EditExpressionMenu } from "../EditExpressionMenu";
 import * as React from "react";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { EditableCell } from "./EditableCell";
 import { CellProps, DataType, TableHandlerConfiguration, TableOperation } from "../../api";
 import * as _ from "lodash";
@@ -77,6 +77,8 @@ export const Table: React.FunctionComponent<TableProps> = ({
   isHeadless = false,
 }: TableProps) => {
   const NUMBER_OF_ROWS_COLUMN = "#";
+
+  const tableRef = useRef<HTMLTableElement>(null);
 
   const [tableColumns, setTableColumns] = useState([
     {
@@ -221,24 +223,33 @@ export const Table: React.FunctionComponent<TableProps> = ({
     ),
   };
 
+  const contextMenuIsAvailable = (target: HTMLElement) => {
+    const targetIsContainedInCurrentTable = target.closest("table") === tableRef.current;
+    const contextMenuAvailableForTarget = !target.classList.contains(NO_TABLE_CONTEXT_MENU_CLASS);
+    return targetIsContainedInCurrentTable && contextMenuAvailableForTarget;
+  };
+
   const getThProps = (columnIndex: number) => ({
     onContextMenu: (e: ContextMenuEvent) => {
-      e.preventDefault();
-      setTableHandlerAllowedOperations([
-        TableOperation.ColumnInsertLeft,
-        TableOperation.ColumnInsertRight,
-        ...(tableColumns.length > 2 && columnIndex > 0 ? [TableOperation.ColumnDelete] : []),
-      ]);
-      setTableHandlerTarget(e.target as HTMLElement);
-      setShowTableHandler(!(tableColumns[columnIndex] as ColumnInstance).disableHandlerOnHeader);
-      setLastSelectedColumnIndex(columnIndex);
+      const target = e.target as HTMLElement;
+      if (contextMenuIsAvailable(target)) {
+        e.preventDefault();
+        setTableHandlerAllowedOperations([
+          TableOperation.ColumnInsertLeft,
+          TableOperation.ColumnInsertRight,
+          ...(tableColumns.length > 2 && columnIndex > 0 ? [TableOperation.ColumnDelete] : []),
+        ]);
+        setTableHandlerTarget(target);
+        setShowTableHandler(!(tableColumns[columnIndex] as ColumnInstance).disableHandlerOnHeader);
+        setLastSelectedColumnIndex(columnIndex);
+      }
     },
   });
 
   const getTdProps = (columnIndex: number, rowIndex: number) => ({
     onContextMenu: (e: ContextMenuEvent) => {
-      const noTableContextMenu = (e.target as HTMLElement).classList.contains(NO_TABLE_CONTEXT_MENU_CLASS);
-      if (!noTableContextMenu) {
+      const target = e.target as HTMLElement;
+      if (contextMenuIsAvailable(target)) {
         e.preventDefault();
         setTableHandlerAllowedOperations([
           TableOperation.ColumnInsertLeft,
@@ -248,7 +259,7 @@ export const Table: React.FunctionComponent<TableProps> = ({
           TableOperation.RowInsertBelow,
           ...(tableRows.length > 1 ? [TableOperation.RowDelete] : []),
         ]);
-        setTableHandlerTarget(e.target as HTMLElement);
+        setTableHandlerTarget(target);
         setShowTableHandler(true);
         setLastSelectedColumnIndex(columnIndex);
         setLastSelectedRowIndex(rowIndex);
@@ -372,7 +383,7 @@ export const Table: React.FunctionComponent<TableProps> = ({
 
   return (
     <div className="table-component">
-      <TableComposable variant="compact" {...tableInstance.getTableProps()}>
+      <TableComposable variant="compact" {...tableInstance.getTableProps()} ref={tableRef}>
         <Thead noWrap className={isHeadless ? "headless-table" : ""}>
           <tr>
             {tableInstance.headers.map((column: ColumnInstance, columnIndex: number) =>
