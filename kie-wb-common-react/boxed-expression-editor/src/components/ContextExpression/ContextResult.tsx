@@ -25,15 +25,20 @@ export interface ContextResultProps {
   onUpdatingExpression: (expression: ExpressionProps) => void;
 }
 
-export const ContextResult: React.FunctionComponent<ContextResultProps> = ({ expression }) => {
+export const ContextResult: React.FunctionComponent<ContextResultProps> = ({ expression, onUpdatingExpression }) => {
   const [resultExpression, setResultExpression] = useState(expression);
 
   const expressionChangedExternally = expression.logicType === undefined;
+
   useEffect(() => {
     setResultExpression(expression);
     // Every time, for an expression, its logic type is undefined, it means that corresponding entry has been just added
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [expressionChangedExternally]);
+
+  useEffect(() => {
+    onUpdatingExpression(resultExpression);
+  }, [onUpdatingExpression, resultExpression]);
 
   const expressionContainerRef = useRef<HTMLDivElement>(null);
 
