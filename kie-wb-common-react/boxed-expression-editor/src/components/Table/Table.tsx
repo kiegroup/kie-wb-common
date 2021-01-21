@@ -232,7 +232,8 @@ export const Table: React.FunctionComponent<TableProps> = ({
   const getThProps = (columnIndex: number) => ({
     onContextMenu: (e: ContextMenuEvent) => {
       const target = e.target as HTMLElement;
-      if (contextMenuIsAvailable(target)) {
+      const handlerOnHeaderIsAvailable = !(tableColumns[columnIndex] as ColumnInstance).disableHandlerOnHeader;
+      if (contextMenuIsAvailable(target) && handlerOnHeaderIsAvailable) {
         e.preventDefault();
         setTableHandlerAllowedOperations([
           TableOperation.ColumnInsertLeft,
@@ -240,7 +241,7 @@ export const Table: React.FunctionComponent<TableProps> = ({
           ...(tableColumns.length > 2 && columnIndex > 0 ? [TableOperation.ColumnDelete] : []),
         ]);
         setTableHandlerTarget(target);
-        setShowTableHandler(!(tableColumns[columnIndex] as ColumnInstance).disableHandlerOnHeader);
+        setShowTableHandler(true);
         setLastSelectedColumnIndex(columnIndex);
       }
     },
