@@ -67,6 +67,7 @@ public class BuildServiceHelper {
         invokeLocalBuildPipeLine(module,
                                  localBinaryConfig -> {
                                      result[0] = localBinaryConfig.getBuildResults();
+                                     result[0].setRootPathURI(module.getRootPath().toURI());
                                  });
         return result[0];
     }
@@ -100,6 +101,7 @@ public class BuildServiceHelper {
                                  resource,
                                  localBinaryConfig -> {
                                      result[0] = localBinaryConfig.getIncrementalBuildResults();
+                                     result[0].setRootPathURI(module.getRootPath().toURI());
                                  });
         return result[0];
     }
@@ -119,6 +121,7 @@ public class BuildServiceHelper {
                                  resourceChanges,
                                  localBinaryConfig -> {
                                      result[0] = localBinaryConfig.getIncrementalBuildResults();
+                                     result[0].setRootPathURI(module.getRootPath().toURI());
                                  });
         return result[0];
     }
@@ -142,6 +145,7 @@ public class BuildServiceHelper {
                                  mode,
                                  localBinaryConfig -> {
                                      result[0] = localBinaryConfig.getBuildResults();
+                                     result[0].setRootPathURI(module.getRootPath().toURI());
                                  });
         return result[0];
     }

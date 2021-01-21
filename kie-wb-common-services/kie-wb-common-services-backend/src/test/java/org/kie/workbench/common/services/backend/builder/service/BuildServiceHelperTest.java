@@ -39,6 +39,7 @@ import org.uberfire.backend.vfs.Path;
 import org.uberfire.workbench.events.ResourceChange;
 
 import static org.junit.Assert.*;
+import static org.kie.workbench.common.services.backend.builder.ala.BuildPipelineTestConstants.ROOT_PATH_URI;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
@@ -72,12 +73,17 @@ public class BuildServiceHelperTest {
     @Mock
     private Path resource;
 
+    @Mock
+    private Path rootPath;
+
     private BuildPipelineInvoker.LocalBuildRequest expectedRequest;
 
     @Before
     public void setUp() {
         serviceHelper = new BuildServiceHelper(pipelineInvoker,
                                                deploymentVerifier);
+        when(module.getRootPath()).thenReturn(rootPath);
+        when(rootPath.toURI()).thenReturn(ROOT_PATH_URI);
     }
 
     @Test
