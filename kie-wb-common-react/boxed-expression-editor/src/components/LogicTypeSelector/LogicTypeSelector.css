@@ -32,5 +32,5 @@
 
 .expression-container .logic-type-selector.logic-type-selected {
   cursor: default;
-  padding: 1em;
+  padding: .5em;
 }
