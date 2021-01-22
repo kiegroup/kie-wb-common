@@ -213,7 +213,6 @@ export const Table: React.FunctionComponent<TableProps> = ({
   const defaultColumn = {
     minWidth: 38,
     width: 150,
-    maxWidth: 800,
     Cell: useCallback(
       (cellRef) => {
         const column = cellRef.column as ColumnInstance;
@@ -371,11 +370,11 @@ export const Table: React.FunctionComponent<TableProps> = ({
 
   const renderAdditiveRow = useMemo(() => {
     return (
-      <Tr className="table-row">
-        <Td role="cell" style={{ display: "inline-block", boxSizing: "border-box", width: "60px" }}>
+      <Tr className="table-row additive-row">
+        <Td role="cell" className="empty-cell">
           <br />
         </Td>
-        <Td role="cell" style={{ display: "inline-block", boxSizing: "border-box", width: "83%" }}>
+        <Td role="cell" className="row-remainder-content">
           {children}
         </Td>
       </Tr>
@@ -404,6 +403,7 @@ export const Table: React.FunctionComponent<TableProps> = ({
                     {...tableInstance.getTdProps(cellIndex, rowIndex)}
                     key={cellIndex}
                     data-ouia-component-id={"expression-column-" + cellIndex}
+                    className={cellIndex === 0 ? "counter-cell" : "data-cell"}
                   >
                     {cellIndex === 0 ? rowIndex + 1 : cell.render("Cell")}
                   </Td>
