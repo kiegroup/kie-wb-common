@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2020 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,24 +16,18 @@
 
 .expression-container .context-expression .context-entry {
   display: flex;
-}
-
-.expression-container .context-expression .context-entry .entry-definition {
-  flex: 0.5 1;
-  border-right-style: ridge;
-  padding: 0.5em 0.5em 0 0.5em;
-  cursor: pointer;
-}
-
-.expression-container .context-expression .context-entry .entry-definition .entry-name {
-  white-space: nowrap;
-}
-
-.expression-container .context-expression .context-entry .entry-definition .entry-data-type {
-  font-style: italic;
-  font-size: smaller;
+  width: 100%;
 }
 
 .expression-container .context-expression .context-entry .entry-expression {
-  flex: 2 1;
+  width: 100%;
+}
+
+.expression-container .context-expression .context-entry .entry-info {
+  border-right-style: ridge;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: 8em;
+  min-width: 8em;
 }

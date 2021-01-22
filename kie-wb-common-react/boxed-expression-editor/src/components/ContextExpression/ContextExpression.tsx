@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import "./ContextExpression.css";
 import * as React from "react";
 import { useCallback, useEffect, useState } from "react";
 import {
@@ -28,13 +29,13 @@ import {
 import { Table } from "../Table";
 import { useBoxedExpressionEditorI18n } from "../../i18n";
 import { ColumnInstance, DataRecord } from "react-table";
-import { ContextEntry } from "./ContextEntry";
+import { ContextEntryCell } from "./ContextEntryCell";
 import * as _ from "lodash";
-import { ContextResult } from "./ContextResult";
+import { ContextEntry } from "./ContextEntry";
 
 const DEFAULT_CONTEXT_ENTRY_NAME = "ContextEntry-1";
 const DEFAULT_CONTEXT_ENTRY_DATA_TYPE = DataType.Undefined;
-const DEFAULT_EXPRESSION_COLUMN_WIDTH = 300;
+const DEFAULT_EXPRESSION_COLUMN_WIDTH = 400;
 
 export const ContextExpression: React.FunctionComponent<ContextProps> = ({
   name = DEFAULT_CONTEXT_ENTRY_NAME,
@@ -129,7 +130,7 @@ export const ContextExpression: React.FunctionComponent<ContextProps> = ({
     <div className="context-expression">
       <Table
         isHeadless={isHeadless}
-        defaultCell={ContextEntry}
+        defaultCell={ContextEntryCell}
         columns={columns}
         rows={rows as DataRecord[]}
         onColumnsUpdate={onUpdatingExpressionColumn}
@@ -137,7 +138,9 @@ export const ContextExpression: React.FunctionComponent<ContextProps> = ({
         onRowsUpdate={setRows}
         handlerConfiguration={handlerConfiguration}
       >
-        <ContextResult expression={resultExpression} onUpdatingExpression={setResultExpression} />
+        <ContextEntry expression={resultExpression} onUpdatingRecursiveExpression={setResultExpression}>
+          <div className="context-result">{`<result>`}</div>
+        </ContextEntry>
       </Table>
     </div>
   );

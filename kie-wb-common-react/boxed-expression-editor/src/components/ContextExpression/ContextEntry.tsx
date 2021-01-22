@@ -15,61 +15,40 @@
  */
 
 import "./ContextEntry.css";
+import { ExpressionProps, LogicType } from "../../api";
 import * as React from "react";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { CellProps, ContextEntries, ExpressionProps, LogicType } from "../../api";
 import { LogicTypeSelector } from "../LogicTypeSelector";
-import { EditExpressionMenu } from "../EditExpressionMenu";
-import { useBoxedExpressionEditorI18n } from "../../i18n";
-import { DataRecord } from "react-table";
 
-export interface ContextEntryProps extends CellProps {
-  data: ContextEntries;
-  onRowUpdate: (rowIndex: number, updatedRow: DataRecord) => void;
+export interface ContextResultProps {
+  /** Children element to be used for entry info */
+  children?: React.ReactElement;
+  /** The expression wrapped by the entry */
+  expression: ExpressionProps;
+  /** Function invoked when updating expression */
+  onUpdatingRecursiveExpression: (expression: ExpressionProps) => void;
 }
 
-export const ContextEntry: React.FunctionComponent<ContextEntryProps> = ({ data, row: { index }, onRowUpdate }) => {
-  const { i18n } = useBoxedExpressionEditorI18n();
+export const ContextEntry: React.FunctionComponent<ContextResultProps> = ({
+  children,
+  expression,
+  onUpdatingRecursiveExpression,
+}) => {
+  const [entryExpression, setEntryExpression] = useState(expression);
 
-  const expressionContainerRef = useRef<HTMLDivElement>(null);
-
-  const contextEntry = data[index];
-
-  const [entryName, setEntryName] = useState(contextEntry.name);
-
-  const [entryDataType, setEntryDataType] = useState(contextEntry.dataType);
-
-  const [entryExpression, setEntryExpression] = useState(contextEntry.expression);
+  const expressionChangedExternally = expression.logicType === undefined;
 
   useEffect(() => {
-    setEntryName(contextEntry.name);
-  }, [contextEntry.name]);
-
-  useEffect(() => {
-    setEntryDataType(contextEntry.dataType);
-  }, [contextEntry.dataType]);
-
-  const expressionChangedExternally = contextEntry.expression.logicType === undefined;
-  useEffect(() => {
-    setEntryExpression(contextEntry.expression);
+    setEntryExpression(expression);
     // Every time, for an expression, its logic type is undefined, it means that corresponding entry has been just added
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [expressionChangedExternally]);
 
   useEffect(() => {
-    onRowUpdate(index, { ...contextEntry, expression: entryExpression });
-    // Purpose is to update the row every time the expression wrapped in the entry changes
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [entryExpression]);
+    onUpdatingRecursiveExpression(entryExpression);
+  }, [onUpdatingRecursiveExpression, entryExpression]);
 
-  const onEntryNameOrDataTypeUpdate = useCallback(
-    ({ name, dataType }) => {
-      setEntryName(name);
-      setEntryDataType(dataType);
-      onRowUpdate(index, { ...contextEntry, name, dataType });
-    },
-    [contextEntry, index, onRowUpdate]
-  );
+  const expressionContainerRef = useRef<HTMLDivElement>(null);
 
   const getLogicTypeSelectorRef = useCallback(() => {
     return expressionContainerRef.current!;
@@ -92,23 +71,9 @@ export const ContextEntry: React.FunctionComponent<ContextEntryProps> = ({ data,
     });
   }, []);
 
-  const onUpdatingRecursiveExpression = useCallback((expression: ExpressionProps) => {
-    setEntryExpression(expression);
-  }, []);
-
   return (
     <div className="context-entry">
-      <EditExpressionMenu
-        title={i18n.editContextEntry}
-        selectedExpressionName={entryName}
-        selectedDataType={entryDataType}
-        onExpressionUpdate={onEntryNameOrDataTypeUpdate}
-      >
-        <div className="entry-definition">
-          <p className="entry-name">{entryName}</p>
-          <p className="entry-data-type">({entryDataType})</p>
-        </div>
-      </EditExpressionMenu>
+      <div className="entry-info">{children}</div>
 
       <div className="entry-expression" ref={expressionContainerRef}>
         <LogicTypeSelector
