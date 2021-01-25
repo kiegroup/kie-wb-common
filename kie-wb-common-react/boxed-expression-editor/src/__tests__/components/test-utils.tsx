@@ -22,6 +22,12 @@ import {
   BoxedExpressionEditorI18nContext,
   boxedExpressionEditorI18nDefaults,
 } from "../../i18n";
+import { act } from "react-dom/test-utils";
+
+export const EDIT_EXPRESSION_NAME = "[data-ouia-component-id='edit-expression-name']";
+export const EDIT_EXPRESSION_DATA_TYPE = "[data-ouia-component-id='edit-expression-data-type'] input";
+
+export const flushPromises: () => Promise<unknown> = () => new Promise((resolve) => process.nextTick(resolve));
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export function usingTestingBoxedExpressionI18nContext(
@@ -43,4 +49,25 @@ export function usingTestingBoxedExpressionI18nContext(
       </I18nDictionariesProvider>
     ),
   };
+}
+
+export async function activateNameAndDataTypePopover(element: HTMLElement): Promise<void> {
+  await act(async () => {
+    element.click();
+    await flushPromises();
+    jest.runAllTimers();
+  });
+}
+
+export async function updateElementViaPopover(
+  triggerPoint: HTMLElement,
+  baseElement: Element,
+  inputSelector: string,
+  newName: string
+): Promise<void> {
+  await activateNameAndDataTypePopover(triggerPoint);
+  const inputElement = baseElement.querySelector(inputSelector)! as HTMLInputElement;
+  inputElement.value = newName;
+  inputElement.dispatchEvent(new Event("change"));
+  inputElement.dispatchEvent(new Event("blur"));
 }

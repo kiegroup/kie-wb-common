@@ -15,7 +15,14 @@
  */
 
 import { fireEvent, render } from "@testing-library/react";
-import { usingTestingBoxedExpressionI18nContext } from "../test-utils";
+import {
+  activateNameAndDataTypePopover,
+  EDIT_EXPRESSION_DATA_TYPE,
+  EDIT_EXPRESSION_NAME,
+  flushPromises,
+  updateElementViaPopover,
+  usingTestingBoxedExpressionI18nContext,
+} from "../test-utils";
 import { Table } from "../../../components/Table";
 import * as _ from "lodash";
 import * as React from "react";
@@ -24,10 +31,7 @@ import { Column, ColumnInstance, DataRecord } from "react-table";
 import { act } from "react-dom/test-utils";
 
 jest.useFakeTimers();
-const flushPromises = () => new Promise((resolve) => process.nextTick(resolve));
 
-const EDIT_EXPRESSION_NAME = "[data-ouia-component-id='edit-expression-name']";
-const EDIT_EXPRESSION_DATA_TYPE = "[data-ouia-component-id='edit-expression-data-type'] input";
 const EXPRESSION_COLUMN_HEADER = "[data-ouia-component-type='expression-column-header']";
 const EXPRESSION_POPOVER_MENU = "[data-ouia-component-id='expression-popover-menu']";
 const EXPRESSION_POPOVER_MENU_TITLE = "[data-ouia-component-id='expression-popover-menu-title']";
@@ -203,8 +207,14 @@ describe("Table tests", () => {
           />
         ).wrapper
       );
-      await updateElementViaPopover(container, baseElement, newColumnName, mockedOnColumnUpdate);
+      await updateElementViaPopover(
+        container.querySelectorAll(EXPRESSION_COLUMN_HEADER)[1] as HTMLTableHeaderCellElement,
+        baseElement,
+        EDIT_EXPRESSION_NAME,
+        newColumnName
+      );
 
+      expect(mockedOnColumnUpdate).toHaveBeenCalled();
       expect(mockedOnColumnUpdate).toHaveBeenCalledWith([
         { label: newColumnName, accessor: newColumnName, dataType: DataType.Boolean } as ColumnInstance,
       ]);
@@ -234,8 +244,14 @@ describe("Table tests", () => {
           />
         ).wrapper
       );
-      await updateElementViaPopover(container, baseElement, newColumnName, mockedOnRowsUpdate);
+      await updateElementViaPopover(
+        container.querySelectorAll(EXPRESSION_COLUMN_HEADER)[1] as HTMLTableHeaderCellElement,
+        baseElement,
+        EDIT_EXPRESSION_NAME,
+        newColumnName
+      );
 
+      expect(mockedOnRowsUpdate).toHaveBeenCalled();
       expect(mockedOnRowsUpdate).toHaveBeenCalledWith([newRow]);
     });
   });
@@ -521,29 +537,4 @@ async function openContextMenu(element: Element) {
     await flushPromises();
     jest.runAllTimers();
   });
-}
-
-async function activateNameAndDataTypePopover(element: HTMLElement): Promise<void> {
-  await act(async () => {
-    element.click();
-    await flushPromises();
-    jest.runAllTimers();
-  });
-}
-
-async function updateElementViaPopover(
-  container: Element,
-  baseElement: Element,
-  newName: string,
-  updateFn: jest.Mock<void, [Column[] | DataRecord[]]>
-) {
-  await activateNameAndDataTypePopover(
-    container.querySelectorAll(EXPRESSION_COLUMN_HEADER)[1] as HTMLTableHeaderCellElement
-  );
-  (baseElement.querySelector(EDIT_EXPRESSION_NAME)! as HTMLInputElement).value = newName;
-  (baseElement.querySelector(EDIT_EXPRESSION_NAME)! as HTMLInputElement).dispatchEvent(new Event("change"));
-  (baseElement.querySelector(EDIT_EXPRESSION_NAME)! as HTMLInputElement).dispatchEvent(new Event("blur"));
-
-  expect(baseElement.querySelector(EXPRESSION_POPOVER_MENU)).toBeTruthy();
-  expect(updateFn).toHaveBeenCalled();
 }
