@@ -67,7 +67,7 @@
   padding: 0;
 }
 
-.expression-container .table-component table tbody td.row-count-cell,
+.expression-container .table-component table tbody td.counter-cell,
 .expression-container .table-component table tbody .table-row .empty-cell {
   display: inline-block;
   box-sizing: border-box;
