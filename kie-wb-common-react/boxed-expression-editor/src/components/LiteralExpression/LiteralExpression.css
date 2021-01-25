@@ -16,6 +16,7 @@
 
 .literal-expression {
   width: 100%;
+  height: 100%;
 }
 
 .literal-expression .literal-expression-header {
@@ -44,4 +45,6 @@
 
 .literal-expression .literal-expression-body textarea {
   padding-bottom: 0;
+  width: 100%;
+  height: 100%;
 }
