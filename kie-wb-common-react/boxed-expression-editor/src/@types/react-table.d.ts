@@ -61,6 +61,8 @@ declare module "react-table" {
     getResizerProps: (props?: Partial<TableResizerProps>) => TableResizerProps;
     /** It tells whether column can resize or not */
     canResize: boolean;
+    /** It tells whether column is of type counter or not */
+    isCountColumn: boolean;
     /** Disabling table handler on the header of this column */
     disableHandlerOnHeader?: boolean;
   }

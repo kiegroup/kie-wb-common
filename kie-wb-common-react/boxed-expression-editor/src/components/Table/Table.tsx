@@ -86,6 +86,7 @@ export const Table: React.FunctionComponent<TableProps> = ({
       accessor: NUMBER_OF_ROWS_COLUMN,
       width: 60,
       disableResizing: true,
+      isCountColumn: true,
       hideFilter: true,
     },
     ...columns,
@@ -216,7 +217,7 @@ export const Table: React.FunctionComponent<TableProps> = ({
     Cell: useCallback(
       (cellRef) => {
         const column = cellRef.column as ColumnInstance;
-        return column.canResize ? defaultCell(cellRef) : cellRef.value;
+        return column.isCountColumn ? cellRef.value : defaultCell(cellRef);
       },
       [defaultCell]
     ),
@@ -330,9 +331,9 @@ export const Table: React.FunctionComponent<TableProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [finishedResizing]);
 
-  const renderFixedColumn = useCallback(
+  const renderCountColumn = useCallback(
     (column: ColumnInstance, columnIndex: number) => (
-      <Th {...column.getHeaderProps()} key={columnIndex}>
+      <Th {...column.getHeaderProps()} className="fixed-column" key={columnIndex}>
         <div className="header-cell" data-ouia-component-type="expression-column-header">
           {column.label}
         </div>
@@ -350,17 +351,24 @@ export const Table: React.FunctionComponent<TableProps> = ({
         onExpressionUpdate={onColumnNameOrDataTypeUpdate(columnIndex)}
         key={columnIndex}
       >
-        <Th {...column.getHeaderProps()} {...tableInstance.getThProps(columnIndex)} key={columnIndex}>
+        <Th
+          {...column.getHeaderProps()}
+          {...tableInstance.getThProps(columnIndex)}
+          className="resizable-column"
+          key={columnIndex}
+        >
           <div className="header-cell" data-ouia-component-type="expression-column-header">
             <div>
               <p className="pf-u-text-truncate">{column.label}</p>
               <p className="pf-u-text-truncate data-type">({column.dataType})</p>
             </div>
-            <div className="pf-c-drawer" {...column.getResizerProps()}>
-              <div className="pf-c-drawer__splitter pf-m-vertical">
-                <div className="pf-c-drawer__splitter-handle" />
+            {column.canResize ? (
+              <div className="pf-c-drawer" {...column.getResizerProps()}>
+                <div className="pf-c-drawer__splitter pf-m-vertical">
+                  <div className="pf-c-drawer__splitter-handle" />
+                </div>
               </div>
-            </div>
+            ) : null}
           </div>
         </Th>
       </EditExpressionMenu>
@@ -387,7 +395,7 @@ export const Table: React.FunctionComponent<TableProps> = ({
         <Thead noWrap className={isHeadless ? "headless-table" : ""}>
           <tr>
             {tableInstance.headers.map((column: ColumnInstance, columnIndex: number) =>
-              column.canResize ? renderResizableColumn(column, columnIndex) : renderFixedColumn(column, columnIndex)
+              column.isCountColumn ? renderCountColumn(column, columnIndex) : renderResizableColumn(column, columnIndex)
             )}
           </tr>
         </Thead>

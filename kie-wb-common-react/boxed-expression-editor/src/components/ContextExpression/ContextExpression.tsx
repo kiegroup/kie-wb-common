@@ -35,13 +35,11 @@ import { ContextEntry } from "./ContextEntry";
 
 const DEFAULT_CONTEXT_ENTRY_NAME = "ContextEntry-1";
 const DEFAULT_CONTEXT_ENTRY_DATA_TYPE = DataType.Undefined;
-const DEFAULT_EXPRESSION_COLUMN_WIDTH = 400;
 
 export const ContextExpression: React.FunctionComponent<ContextProps> = ({
   name = DEFAULT_CONTEXT_ENTRY_NAME,
   dataType = DEFAULT_CONTEXT_ENTRY_DATA_TYPE,
   onUpdatingNameAndDataType,
-  width = DEFAULT_EXPRESSION_COLUMN_WIDTH,
   contextEntries = [
     { name: DEFAULT_CONTEXT_ENTRY_NAME, dataType: DEFAULT_CONTEXT_ENTRY_DATA_TYPE, expression: {} } as DataRecord,
   ],
@@ -67,9 +65,8 @@ export const ContextExpression: React.FunctionComponent<ContextProps> = ({
       label: name,
       accessor: name,
       dataType,
-      minWidth: DEFAULT_EXPRESSION_COLUMN_WIDTH,
-      width: isHeadless ? "100%" : width,
       disableHandlerOnHeader: true,
+      disableResizing: true,
     },
   ]);
 
@@ -83,7 +80,6 @@ export const ContextExpression: React.FunctionComponent<ContextProps> = ({
       logicType: LogicType.Context,
       name: expressionColumn.accessor,
       dataType: expressionColumn.dataType,
-      ...(expressionColumn.width > DEFAULT_EXPRESSION_COLUMN_WIDTH ? { width: expressionColumn.width } : {}),
       contextEntries: rows as ContextEntries,
       result: resultExpression,
     };
@@ -91,6 +87,21 @@ export const ContextExpression: React.FunctionComponent<ContextProps> = ({
       ? onUpdatingRecursiveExpression?.(updatedDefinition)
       : window.beeApi?.broadcastContextExpressionDefinition?.(updatedDefinition);
   }, [columns, isHeadless, onUpdatingRecursiveExpression, rows, resultExpression]);
+
+  /**
+   * Every time the ContextExpression component gets re-rendered, automatically calculating table cells width to fit the entire content
+   */
+  useEffect(() => {
+    document
+      .querySelectorAll(".context-expression > .table-component > table > tbody > tr > td.data-cell")
+      .forEach((td: HTMLElement) => (td.style.width = "100%"));
+    document
+      .querySelectorAll(".context-expression > .table-component > table > tbody > tr.table-row")
+      .forEach((td: HTMLElement) => (td.style.width = "100%"));
+    document
+      .querySelectorAll(".context-expression > .table-component > table > thead > tr > th.resizable-column")
+      .forEach((th: HTMLElement) => (th.style.width = "calc((100% - 60px)"));
+  });
 
   const onUpdatingExpressionColumn = useCallback(
     ([expressionColumn]: [ColumnInstance]) => {
