@@ -68,7 +68,7 @@ export const ContextExpression: React.FunctionComponent<ContextProps> = ({
       accessor: name,
       dataType,
       minWidth: DEFAULT_EXPRESSION_COLUMN_WIDTH,
-      width: width ?? DEFAULT_EXPRESSION_COLUMN_WIDTH,
+      width: isHeadless ? "100%" : width,
       disableHandlerOnHeader: true,
     },
   ]);

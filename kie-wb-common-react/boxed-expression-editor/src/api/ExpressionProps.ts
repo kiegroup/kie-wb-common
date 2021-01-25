@@ -64,7 +64,7 @@ export interface ContextProps extends ExpressionProps {
   /** Logic type must be Context */
   logicType: LogicType.Context;
   /** Context component width */
-  width?: number;
+  width?: number | string;
   /** Collection of context entries */
   contextEntries?: ContextEntries;
   /** Context result */

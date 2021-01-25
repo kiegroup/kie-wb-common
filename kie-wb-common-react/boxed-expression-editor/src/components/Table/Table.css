@@ -74,6 +74,11 @@
   min-width: 60px;
 }
 
+.expression-container .table-component table tbody tr.table-row,
+.expression-container .table-component table tbody td.data-cell {
+  width: 100%;
+}
+
 .expression-container .table-component table .pf-c-drawer__splitter {
   background-color: #DEF3FF;
 }
