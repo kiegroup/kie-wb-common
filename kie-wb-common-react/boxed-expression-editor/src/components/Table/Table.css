@@ -63,6 +63,10 @@
   overflow: auto;
 }
 
+.expression-container .table-component tr > *:last-child {
+  padding-right: 0;
+}
+
 .expression-container .table-component table tbody td + td {
   padding: 0;
 }
