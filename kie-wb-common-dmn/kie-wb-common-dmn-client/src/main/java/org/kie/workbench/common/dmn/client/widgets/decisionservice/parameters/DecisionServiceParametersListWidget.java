@@ -151,8 +151,22 @@ public class DecisionServiceParametersListWidget extends Composite implements Ha
                     loadInputsFromNode(inputs, targetNode);
                 }));
 
-        loadInputsParameters(inputs);
+        loadInputsParameters(getSortedInputs(inputs));
         loadGroupsElements();
+    }
+
+    List<InputData> getSortedInputs(final List<InputData> inputs) {
+        final List<InputData> sorted = new ArrayList<>();
+
+        getValue().getDecisionService().getInputData().forEach(ref -> {
+            final String href = ref.getHref().replace("#", "");
+            final Optional<InputData> currentInput = inputs.stream()
+                    .filter(input -> Objects.equals(input.getId().getValue(), href))
+                    .findFirst();
+            currentInput.ifPresent(inputData -> sorted.add(inputData));
+        });
+
+        return sorted;
     }
 
     void loadDecisionsFromNode(final Node node,

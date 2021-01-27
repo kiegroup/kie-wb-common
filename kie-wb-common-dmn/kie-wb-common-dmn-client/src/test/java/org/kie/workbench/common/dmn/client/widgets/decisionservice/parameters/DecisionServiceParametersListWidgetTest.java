@@ -16,6 +16,7 @@
 
 package org.kie.workbench.common.dmn.client.widgets.decisionservice.parameters;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -28,6 +29,7 @@ import org.jboss.errai.common.client.dom.elemental2.Elemental2DomUtil;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.kie.workbench.common.dmn.api.definition.model.DMNElementReference;
 import org.kie.workbench.common.dmn.api.definition.model.DRGElement;
 import org.kie.workbench.common.dmn.api.definition.model.Decision;
 import org.kie.workbench.common.dmn.api.definition.model.DecisionService;
@@ -159,6 +161,7 @@ public class DecisionServiceParametersListWidgetTest {
         final Optional<DRGElement> targetDrg1 = Optional.of(drgElement1);
         final Optional<DRGElement> targetDrg2 = Optional.of(drgElement2);
         final Optional<DRGElement> targetDrg3 = Optional.of(drgElement3);
+        final List<InputData> sortedList = new ArrayList<>();
 
         when(decisionService.getContentDefinitionId()).thenReturn(contentDefinitionId);
         when(value.getDecisionService()).thenReturn(decisionService);
@@ -182,6 +185,7 @@ public class DecisionServiceParametersListWidgetTest {
         doReturn(targetDrg2).when(widget).getTargetDRGElement(edge2);
         doReturn(targetDrg3).when(widget).getTargetDRGElement(edge3);
         doReturn(Optional.empty()).when(widget).getTargetDRGElement(edgeNotChild);
+        doReturn(sortedList).when(widget).getSortedInputs(anyList());
 
         widget.refresh();
 
@@ -191,8 +195,62 @@ public class DecisionServiceParametersListWidgetTest {
         verify(widget).loadInputsFromNode(anyList(), eq(targetNode1));
         verify(widget).loadInputsFromNode(anyList(), eq(targetNode2));
         verify(widget).loadInputsFromNode(anyList(), eq(targetNode3));
-        verify(widget).loadInputsParameters(anyList());
+        verify(widget).getSortedInputs(anyList());
+        verify(widget).loadInputsParameters(sortedList);
         verify(widget).loadGroupsElements();
+    }
+
+    @Test
+    public void testGetSortedInputs() {
+
+        final DecisionServiceParametersList value = mock(DecisionServiceParametersList.class);
+        final DecisionService decisionService = mock(DecisionService.class);
+        final String id1 = "id1";
+        final String id2 = "id2";
+        final String id3 = "id3";
+
+        final List<DMNElementReference> list = createListOfDMNElementReferenceWithIds(
+                id1,
+                id2,
+                id3);
+        final List<InputData> unsortedInputs = Arrays.asList(createInputDataWithId(id2),
+                                                             createInputDataWithId(id3),
+                                                             createInputDataWithId(id1));
+
+        doReturn(value).when(widget).getValue();
+
+        when(value.getDecisionService()).thenReturn(decisionService);
+        when(decisionService.getInputData()).thenReturn(list);
+
+        final List<InputData> sorted = widget.getSortedInputs(unsortedInputs);
+
+        checkIfInputDataListIsInOrder(sorted, id1, id2, id3);
+    }
+
+    private InputData createInputDataWithId(final String id) {
+        final InputData inputData = new InputData();
+        inputData.getId().setValue(id);
+        return inputData;
+    }
+
+    private List<DMNElementReference> createListOfDMNElementReferenceWithIds(final String... ids) {
+        final List<DMNElementReference> list = new ArrayList<>();
+        for (final String id : ids) {
+            final DMNElementReference reference = new DMNElementReference();
+            reference.setHref("#" + id);
+            list.add(reference);
+        }
+
+        return list;
+    }
+
+    private void checkIfInputDataListIsInOrder(final List<InputData> inputData,
+                                               final String... ids) {
+        assertEquals(inputData.size(), ids.length);
+        for (int i = 0; i < ids.length; i++) {
+            final InputData input = inputData.get(i);
+            assertEquals(input.getId().getValue(), ids[i]);
+        }
     }
 
     @Test
