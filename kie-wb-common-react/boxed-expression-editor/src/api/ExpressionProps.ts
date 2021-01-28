@@ -38,6 +38,8 @@ export interface LiteralExpressionProps extends ExpressionProps {
   logicType: LogicType.LiteralExpression;
   /** Optional content to display for this literal expression */
   content?: string;
+  /** Optional width for this literal expression */
+  width?: number;
 }
 
 export interface RelationProps extends ExpressionProps {

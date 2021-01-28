@@ -29,6 +29,7 @@ export const LiteralExpression: React.FunctionComponent<LiteralExpressionProps> 
   onUpdatingNameAndDataType,
   isHeadless = false,
   onUpdatingRecursiveExpression,
+  width,
 }: LiteralExpressionProps) => {
   const HEADER_WIDTH = 250;
   const HEADER_HEIGHT = 40;
@@ -38,6 +39,7 @@ export const LiteralExpression: React.FunctionComponent<LiteralExpressionProps> 
   const [expressionName, setExpressionName] = useState(name);
   const [expressionDataType, setExpressionDataType] = useState(dataType);
   const [literalExpressionContent, setLiteralExpressionContent] = useState(content);
+  const [literalExpressionWidth, setLiteralExpressionWidth] = useState(width || isHeadless ? BODY_WIDTH : HEADER_WIDTH);
 
   useEffect(() => {
     const expressionDefinition: LiteralExpressionProps = {
@@ -45,11 +47,22 @@ export const LiteralExpression: React.FunctionComponent<LiteralExpressionProps> 
       dataType: expressionDataType,
       logicType: LogicType.LiteralExpression,
       content: literalExpressionContent,
+      ...((isHeadless && literalExpressionWidth === BODY_WIDTH) ||
+      (!isHeadless && literalExpressionWidth === HEADER_WIDTH)
+        ? {}
+        : { width: literalExpressionWidth }),
     };
     isHeadless
       ? onUpdatingRecursiveExpression?.(expressionDefinition)
       : window.beeApi?.broadcastLiteralExpressionDefinition?.(expressionDefinition);
-  }, [expressionName, expressionDataType, literalExpressionContent, isHeadless, onUpdatingRecursiveExpression]);
+  }, [
+    expressionName,
+    expressionDataType,
+    literalExpressionContent,
+    isHeadless,
+    onUpdatingRecursiveExpression,
+    literalExpressionWidth,
+  ]);
 
   const onExpressionUpdate = useCallback(
     ({ dataType, name }: ExpressionProps) => {
@@ -83,15 +96,24 @@ export const LiteralExpression: React.FunctionComponent<LiteralExpressionProps> 
     []
   );
 
+  const onResizeStop = useCallback((e, data) => setLiteralExpressionWidth(data.size.width), []);
+
   const renderElementWithResizeHandler = useCallback(
-    (element, width, height) => {
+    (element, minWidth, height) => {
       return (
-        <ResizableBox width={width} height={height} minConstraints={[width, height]} axis="x" handle={resizerHandler}>
+        <ResizableBox
+          width={literalExpressionWidth}
+          height={height}
+          minConstraints={[minWidth, height]}
+          axis="x"
+          onResizeStop={onResizeStop}
+          handle={resizerHandler}
+        >
           {element}
         </ResizableBox>
       );
     },
-    [resizerHandler]
+    [literalExpressionWidth, onResizeStop, resizerHandler]
   );
 
   const renderLiteralExpressionHeader = useMemo(() => {
