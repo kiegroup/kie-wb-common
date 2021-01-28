@@ -98,6 +98,14 @@
   bottom: 0;
 }
 
+.expression-container .table-component table .pf-c-drawer.resizer-disabled * {
+  cursor: not-allowed;
+}
+
+.expression-container .table-component table .pf-c-drawer.resizer-disabled .pf-c-drawer__splitter {
+  background-color: lightgray;
+}
+
 .expression-container .table-component table tbody td textarea {
   padding: 0.125em;
   margin: 0;

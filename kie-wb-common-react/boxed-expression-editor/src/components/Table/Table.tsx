@@ -362,13 +362,14 @@ export const Table: React.FunctionComponent<TableProps> = ({
               <p className="pf-u-text-truncate">{column.label}</p>
               <p className="pf-u-text-truncate data-type">({column.dataType})</p>
             </div>
-            {column.canResize ? (
-              <div className="pf-c-drawer" {...column.getResizerProps()}>
-                <div className="pf-c-drawer__splitter pf-m-vertical">
-                  <div className="pf-c-drawer__splitter-handle" />
-                </div>
+            <div
+              className={`pf-c-drawer ${!column.canResize ? "resizer-disabled" : ""}`}
+              {...(column.canResize ? column.getResizerProps() : {})}
+            >
+              <div className="pf-c-drawer__splitter pf-m-vertical">
+                <div className="pf-c-drawer__splitter-handle" />
               </div>
-            ) : null}
+            </div>
           </div>
         </Th>
       </EditExpressionMenu>
