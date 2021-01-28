@@ -84,7 +84,7 @@
 }
 
 .expression-container .table-component table .pf-c-drawer__splitter {
-  background-color: #DEF3FF;
+  background-color: inherit;
 }
 
 .expression-container .table-component table .pf-c-drawer {

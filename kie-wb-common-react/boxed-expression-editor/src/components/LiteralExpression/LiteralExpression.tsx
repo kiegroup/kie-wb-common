@@ -16,10 +16,11 @@
 
 import "./LiteralExpression.css";
 import * as React from "react";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { ExpressionProps, LiteralExpressionProps, LogicType } from "../../api";
 import { TextArea } from "@patternfly/react-core";
 import { EditExpressionMenu } from "../EditExpressionMenu";
+import { ResizableBox } from "react-resizable";
 
 export const LiteralExpression: React.FunctionComponent<LiteralExpressionProps> = ({
   content,
@@ -29,6 +30,11 @@ export const LiteralExpression: React.FunctionComponent<LiteralExpressionProps> 
   isHeadless = false,
   onUpdatingRecursiveExpression,
 }: LiteralExpressionProps) => {
+  const HEADER_WIDTH = 250;
+  const HEADER_HEIGHT = 40;
+  const BODY_WIDTH = 200;
+  const BODY_HEIGHT = 50;
+
   const [expressionName, setExpressionName] = useState(name);
   const [expressionDataType, setExpressionDataType] = useState(dataType);
   const [literalExpressionContent, setLiteralExpressionContent] = useState(content);
@@ -66,25 +72,59 @@ export const LiteralExpression: React.FunctionComponent<LiteralExpressionProps> 
     []
   );
 
-  const renderLiteralExpressionHeader = useCallback(
+  const resizerHandler = useMemo(
     () => (
-      <div className="literal-expression-header">
-        <p className="expression-name">{expressionName}</p>
-        <p className="expression-data-type">({expressionDataType})</p>
+      <div className="pf-c-drawer">
+        <div className="pf-c-drawer__splitter pf-m-vertical">
+          <div className="pf-c-drawer__splitter-handle" />
+        </div>
       </div>
     ),
-    [expressionDataType, expressionName]
+    []
+  );
+
+  const renderElementWithResizeHandler = useCallback(
+    (element, width, height) => {
+      return (
+        <ResizableBox width={width} height={height} minConstraints={[width, height]} axis="x" handle={resizerHandler}>
+          {element}
+        </ResizableBox>
+      );
+    },
+    [resizerHandler]
+  );
+
+  const renderLiteralExpressionHeader = useMemo(() => {
+    return (
+      <div className="literal-expression-header">
+        {renderElementWithResizeHandler(
+          <div className="expression-info">
+            <p className="expression-name pf-u-text-truncate">{expressionName}</p>
+            <p className="expression-data-type pf-u-text-truncate">({expressionDataType})</p>
+          </div>,
+          HEADER_WIDTH,
+          HEADER_HEIGHT
+        )}
+      </div>
+    );
+  }, [expressionDataType, expressionName, renderElementWithResizeHandler]);
+
+  const getBodyContent = useMemo(
+    () => (
+      <TextArea
+        defaultValue={literalExpressionContent}
+        onBlur={onContentChange}
+        aria-label="literal-expression-content"
+      />
+    ),
+    [literalExpressionContent, onContentChange]
   );
 
   return (
     <div className="literal-expression">
-      {!isHeadless ? renderLiteralExpressionHeader() : null}
-      <div className="literal-expression-body">
-        <TextArea
-          defaultValue={literalExpressionContent}
-          onBlur={onContentChange}
-          aria-label="literal-expression-content"
-        />
+      {!isHeadless ? renderLiteralExpressionHeader : null}
+      <div className={`literal-expression-body ${isHeadless ? "headless-body" : ""}`}>
+        {isHeadless ? renderElementWithResizeHandler(getBodyContent, BODY_WIDTH, BODY_HEIGHT) : getBodyContent}
       </div>
       <EditExpressionMenu
         arrowPlacement={getEditExpressionMenuArrowPlacement}
