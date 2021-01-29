@@ -408,7 +408,7 @@ export const Table: React.FunctionComponent<TableProps> = ({
               <Tr className="table-row" {...row.getRowProps()} key={rowIndex} ouiaId={"expression-row-" + rowIndex}>
                 {row.cells.map((cell: Cell, cellIndex: number) => (
                   <Td
-                    {...cell.getCellProps()}
+                    {...(cellIndex === 0 ? {} : cell.getCellProps())}
                     {...tableInstance.getTdProps(cellIndex, rowIndex)}
                     key={cellIndex}
                     data-ouia-component-id={"expression-column-" + cellIndex}

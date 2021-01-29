@@ -71,7 +71,14 @@
   padding: 0;
 }
 
-.expression-container .table-component table tbody td.counter-cell,
+.expression-container .table-component table tbody td.counter-cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  min-width: 60px;
+}
+
 .expression-container .table-component table tbody .table-row .empty-cell {
   display: inline-block;
   box-sizing: border-box;
