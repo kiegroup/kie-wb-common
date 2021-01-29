@@ -138,7 +138,7 @@ export const LogicTypeSelector: React.FunctionComponent<LogicTypeSelectorProps> 
   const buildContextMenu = useCallback(
     () => (
       <div
-        className="context-menu-container"
+        className="context-menu-container no-table-context-menu"
         style={{
           top: contextMenuYPos,
           left: contextMenuXPos,
