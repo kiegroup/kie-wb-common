@@ -26,30 +26,37 @@ describe("ContextEntry tests", () => {
   const dataType = DataType.Boolean;
   const emptyExpression = { name, dataType };
 
-  test("should show a context entry element with logic type not selected and empty entry info, when rendering it with an empty expression", () => {
-    const { container } = render(
-      usingTestingBoxedExpressionI18nContext(
-        <ContextEntry expression={emptyExpression} onUpdatingRecursiveExpression={_.identity} />
-      ).wrapper
-    );
-
-    expect(container.querySelector(".context-entry")).toBeTruthy();
-    expect(container.querySelector(".context-entry .entry-info")).toBeEmptyDOMElement();
-    expect(container.querySelector(".context-entry .logic-type-selector")).toHaveClass("logic-type-not-present");
-  });
-
-  test("should show a context entry element with selected logic type and empty entry info, when rendering it with an expression", () => {
+  test("should show a context entry element with logic type not selected and empty resizable entry info, when rendering it with an empty expression", () => {
     const { container } = render(
       usingTestingBoxedExpressionI18nContext(
         <ContextEntry
-          expression={{ ...emptyExpression, logicType: LogicType.LiteralExpression }}
+          expression={emptyExpression}
           onUpdatingRecursiveExpression={_.identity}
+          onUpdatingWidth={_.identity}
         />
       ).wrapper
     );
 
     expect(container.querySelector(".context-entry")).toBeTruthy();
-    expect(container.querySelector(".context-entry .entry-info")).toBeEmptyDOMElement();
+    expect(container.querySelector(".context-entry .entry-info")!.children).toHaveLength(1);
+    expect(container.querySelector(".context-entry .entry-info")!.children[0]).toHaveClass("react-resizable");
+    expect(container.querySelector(".context-entry .logic-type-selector")).toHaveClass("logic-type-not-present");
+  });
+
+  test("should show a context entry element with selected logic type and empty resizable entry info, when rendering it with an expression", () => {
+    const { container } = render(
+      usingTestingBoxedExpressionI18nContext(
+        <ContextEntry
+          expression={{ ...emptyExpression, logicType: LogicType.LiteralExpression }}
+          onUpdatingRecursiveExpression={_.identity}
+          onUpdatingWidth={_.identity}
+        />
+      ).wrapper
+    );
+
+    expect(container.querySelector(".context-entry")).toBeTruthy();
+    expect(container.querySelector(".context-entry .entry-info")!.children).toHaveLength(1);
+    expect(container.querySelector(".context-entry .entry-info")!.children[0]).toHaveClass("react-resizable");
     expect(container.querySelector(".context-entry .logic-type-selector")).toHaveClass("logic-type-selected");
   });
 
@@ -57,7 +64,11 @@ describe("ContextEntry tests", () => {
     const content = <div id="content">content</div>;
     const { container } = render(
       usingTestingBoxedExpressionI18nContext(
-        <ContextEntry expression={emptyExpression} onUpdatingRecursiveExpression={_.identity}>
+        <ContextEntry
+          expression={emptyExpression}
+          onUpdatingRecursiveExpression={_.identity}
+          onUpdatingWidth={_.identity}
+        >
           {content}
         </ContextEntry>
       ).wrapper

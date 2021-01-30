@@ -20,7 +20,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { ExpressionProps, LiteralExpressionProps, LogicType } from "../../api";
 import { TextArea } from "@patternfly/react-core";
 import { EditExpressionMenu } from "../EditExpressionMenu";
-import { ResizableBox } from "react-resizable";
+import { Resizer } from "../Resizer";
 
 export const LiteralExpression: React.FunctionComponent<LiteralExpressionProps> = ({
   content,
@@ -85,35 +85,23 @@ export const LiteralExpression: React.FunctionComponent<LiteralExpressionProps> 
     []
   );
 
-  const resizerHandler = useMemo(
-    () => (
-      <div className="pf-c-drawer">
-        <div className="pf-c-drawer__splitter pf-m-vertical">
-          <div className="pf-c-drawer__splitter-handle" />
-        </div>
-      </div>
-    ),
-    []
-  );
-
-  const onResizeStop = useCallback((e, data) => setLiteralExpressionWidth(data.size.width), []);
+  const onHorizontalResizeStop = useCallback((width) => setLiteralExpressionWidth(width), []);
 
   const renderElementWithResizeHandler = useCallback(
     (element, minWidth, height) => {
       return (
-        <ResizableBox
+        <Resizer
           width={literalExpressionWidth}
           height={height}
-          minConstraints={[minWidth, height]}
-          axis="x"
-          onResizeStop={onResizeStop}
-          handle={resizerHandler}
+          minWidth={minWidth}
+          minHeight={height}
+          onHorizontalResizeStop={onHorizontalResizeStop}
         >
           {element}
-        </ResizableBox>
+        </Resizer>
       );
     },
-    [literalExpressionWidth, onResizeStop, resizerHandler]
+    [literalExpressionWidth, onHorizontalResizeStop]
   );
 
   const renderLiteralExpressionHeader = useMemo(() => {

@@ -19,25 +19,39 @@ import { ExpressionProps, LogicType } from "../../api";
 import * as React from "react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { LogicTypeSelector } from "../LogicTypeSelector";
+import { Resizer } from "../Resizer";
 
-export interface ContextResultProps {
+export interface ContextEntryProps {
   /** Children element to be used for entry info */
   children?: React.ReactElement;
   /** The expression wrapped by the entry */
   expression: ExpressionProps;
   /** Function invoked when updating expression */
   onUpdatingRecursiveExpression: (expression: ExpressionProps) => void;
+  /** Width size for entry info */
+  width?: number;
+  /** Function invoked when updating entry width */
+  onUpdatingWidth: (width: number) => void;
 }
 
-export const ContextEntry: React.FunctionComponent<ContextResultProps> = ({
+export const DEFAULT_ENTRY_INFO_WIDTH = 120;
+export const DEFAULT_ENTRY_INFO_HEIGHT = 56;
+
+export const ContextEntry: React.FunctionComponent<ContextEntryProps> = ({
   children,
   expression,
   onUpdatingRecursiveExpression,
+  width,
+  onUpdatingWidth,
 }) => {
   const [entryExpression, setEntryExpression] = useState(expression);
+  const [entryInfoWidth, setEntryInfoWidth] = useState(width || DEFAULT_ENTRY_INFO_WIDTH);
+
+  useEffect(() => {
+    setEntryInfoWidth(width || DEFAULT_ENTRY_INFO_WIDTH);
+  }, [width]);
 
   const expressionChangedExternally = expression.logicType === undefined;
-
   useEffect(() => {
     setEntryExpression(expression);
     // Every time, for an expression, its logic type is undefined, it means that corresponding entry has been just added
@@ -71,9 +85,21 @@ export const ContextEntry: React.FunctionComponent<ContextResultProps> = ({
     });
   }, []);
 
+  const onHorizontalResizeStop = useCallback((width) => onUpdatingWidth(width), [onUpdatingWidth]);
+
   return (
     <div className="context-entry">
-      <div className="entry-info">{children}</div>
+      <div className="entry-info">
+        <Resizer
+          width={entryInfoWidth}
+          height={DEFAULT_ENTRY_INFO_HEIGHT}
+          minWidth={DEFAULT_ENTRY_INFO_WIDTH}
+          minHeight={DEFAULT_ENTRY_INFO_HEIGHT}
+          onHorizontalResizeStop={onHorizontalResizeStop}
+        >
+          {children}
+        </Resizer>
+      </div>
 
       <div className="entry-expression" ref={expressionContainerRef}>
         <LogicTypeSelector

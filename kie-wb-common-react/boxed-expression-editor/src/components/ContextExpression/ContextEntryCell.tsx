@@ -21,14 +21,18 @@ import { CellProps, ContextEntries, ExpressionProps } from "../../api";
 import { EditExpressionMenu } from "../EditExpressionMenu";
 import { useBoxedExpressionEditorI18n } from "../../i18n";
 import { DataRecord } from "react-table";
-import { ContextEntry } from "./ContextEntry";
+import { ContextEntry, DEFAULT_ENTRY_INFO_WIDTH } from "./ContextEntry";
 
-export interface ContextEntryProps extends CellProps {
+export interface ContextEntryCellProps extends CellProps {
   data: ContextEntries;
   onRowUpdate: (rowIndex: number, updatedRow: DataRecord) => void;
 }
 
-export const ContextEntryCell: React.FunctionComponent<ContextEntryProps> = ({ data, row: { index }, onRowUpdate }) => {
+export const ContextEntryCell: React.FunctionComponent<ContextEntryCellProps> = ({
+  data,
+  row: { index },
+  onRowUpdate,
+}) => {
   const { i18n } = useBoxedExpressionEditorI18n();
 
   const contextEntry = data[index];
@@ -38,6 +42,8 @@ export const ContextEntryCell: React.FunctionComponent<ContextEntryProps> = ({ d
   const [entryDataType, setEntryDataType] = useState(contextEntry.dataType);
 
   const [entryExpression, setEntryExpression] = useState(contextEntry.expression);
+
+  const [entryWidth, setEntryWidth] = useState(contextEntry.width);
 
   useEffect(() => {
     setEntryName(contextEntry.name);
@@ -55,10 +61,21 @@ export const ContextEntryCell: React.FunctionComponent<ContextEntryProps> = ({ d
   }, [expressionChangedExternally]);
 
   useEffect(() => {
+    setEntryWidth(contextEntry.width);
+  }, [contextEntry.width]);
+
+  useEffect(() => {
     onRowUpdate(index, { ...contextEntry, expression: entryExpression });
     // Purpose is to update the row every time the expression wrapped in the entry changes
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [entryExpression]);
+
+  useEffect(() => {
+    delete contextEntry.width;
+    onRowUpdate(index, { ...contextEntry, ...(entryWidth !== DEFAULT_ENTRY_INFO_WIDTH ? { width: entryWidth } : {}) });
+    // Purpose is to update the row every time the context info width changes
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [entryWidth]);
 
   const onEntryNameOrDataTypeUpdate = useCallback(
     ({ name, dataType }) => {
@@ -75,7 +92,12 @@ export const ContextEntryCell: React.FunctionComponent<ContextEntryProps> = ({ d
 
   return (
     <div className="context-entry-cell">
-      <ContextEntry expression={entryExpression} onUpdatingRecursiveExpression={onUpdatingRecursiveExpression}>
+      <ContextEntry
+        expression={entryExpression}
+        onUpdatingRecursiveExpression={onUpdatingRecursiveExpression}
+        width={entryWidth}
+        onUpdatingWidth={setEntryWidth}
+      >
         <EditExpressionMenu
           title={i18n.editContextEntry}
           selectedExpressionName={entryName}

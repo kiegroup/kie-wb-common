@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2021 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,21 +14,4 @@
  * limitations under the License.
  */
 
-.expression-container .context-expression .context-entry {
-  display: flex;
-  width: 100%;
-}
-
-.expression-container .context-expression .context-entry .entry-expression {
-  width: 100%;
-}
-
-.expression-container .context-expression .context-entry .entry-info {
-  position: relative;
-}
-
-.expression-container .context-expression .context-entry .entry-info > * {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-}
+export * from "./Resizer";

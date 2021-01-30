@@ -31,7 +31,7 @@ import { useBoxedExpressionEditorI18n } from "../../i18n";
 import { ColumnInstance, DataRecord } from "react-table";
 import { ContextEntryCell } from "./ContextEntryCell";
 import * as _ from "lodash";
-import { ContextEntry } from "./ContextEntry";
+import { ContextEntry, DEFAULT_ENTRY_INFO_WIDTH } from "./ContextEntry";
 
 const DEFAULT_CONTEXT_ENTRY_NAME = "ContextEntry-1";
 const DEFAULT_CONTEXT_ENTRY_DATA_TYPE = DataType.Undefined;
@@ -44,6 +44,7 @@ export const ContextExpression: React.FunctionComponent<ContextProps> = ({
     { name: DEFAULT_CONTEXT_ENTRY_NAME, dataType: DEFAULT_CONTEXT_ENTRY_DATA_TYPE, expression: {} } as DataRecord,
   ],
   result = {} as ExpressionProps,
+  resultWidth,
   isHeadless = false,
   onUpdatingRecursiveExpression,
 }) => {
@@ -74,6 +75,8 @@ export const ContextExpression: React.FunctionComponent<ContextProps> = ({
 
   const [resultExpression, setResultExpression] = useState(result);
 
+  const [resultEntryWidth, setResultEntryWidth] = useState(resultWidth);
+
   useEffect(() => {
     const expressionColumn = columns[0];
     const updatedDefinition: ContextProps = {
@@ -82,11 +85,12 @@ export const ContextExpression: React.FunctionComponent<ContextProps> = ({
       dataType: expressionColumn.dataType,
       contextEntries: rows as ContextEntries,
       result: resultExpression,
+      ...(resultEntryWidth !== DEFAULT_ENTRY_INFO_WIDTH ? { resultWidth: resultEntryWidth } : {}),
     };
     isHeadless
       ? onUpdatingRecursiveExpression?.(updatedDefinition)
       : window.beeApi?.broadcastContextExpressionDefinition?.(updatedDefinition);
-  }, [columns, isHeadless, onUpdatingRecursiveExpression, rows, resultExpression]);
+  }, [columns, isHeadless, onUpdatingRecursiveExpression, rows, resultExpression, resultEntryWidth]);
 
   /**
    * Every time the ContextExpression component gets re-rendered, automatically calculating table cells width to fit the entire content
@@ -149,7 +153,12 @@ export const ContextExpression: React.FunctionComponent<ContextProps> = ({
         onRowsUpdate={setRows}
         handlerConfiguration={handlerConfiguration}
       >
-        <ContextEntry expression={resultExpression} onUpdatingRecursiveExpression={setResultExpression}>
+        <ContextEntry
+          expression={resultExpression}
+          onUpdatingRecursiveExpression={setResultExpression}
+          width={resultWidth}
+          onUpdatingWidth={setResultEntryWidth}
+        >
           <div className="context-result">{`<result>`}</div>
         </ContextEntry>
       </Table>

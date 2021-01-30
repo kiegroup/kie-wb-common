@@ -58,6 +58,8 @@ interface ContextEntry {
   dataType: DataType;
   /** Entry expression */
   expression: ExpressionProps;
+  /** Entry width */
+  width?: number;
 }
 
 export type ContextEntries = ContextEntry[];
@@ -69,4 +71,6 @@ export interface ContextProps extends ExpressionProps {
   contextEntries?: ContextEntries;
   /** Context result */
   result?: ExpressionProps;
+  /** Context result width */
+  resultWidth?: number;
 }

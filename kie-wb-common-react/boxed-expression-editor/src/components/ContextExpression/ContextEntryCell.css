@@ -16,6 +16,7 @@
 
 .expression-container .context-expression .context-entry .entry-definition {
   cursor: pointer;
+  padding: 0.25em;
 }
 
 .expression-container .context-expression .context-entry .entry-definition .entry-name {
