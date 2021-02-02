@@ -33,13 +33,11 @@ export const LiteralExpression: React.FunctionComponent<LiteralExpressionProps> 
 }: LiteralExpressionProps) => {
   const HEADER_WIDTH = 250;
   const HEADER_HEIGHT = 40;
-  const BODY_WIDTH = 200;
-  const BODY_HEIGHT = 50;
 
   const [expressionName, setExpressionName] = useState(name);
   const [expressionDataType, setExpressionDataType] = useState(dataType);
   const [literalExpressionContent, setLiteralExpressionContent] = useState(content);
-  const [literalExpressionWidth, setLiteralExpressionWidth] = useState(width || isHeadless ? BODY_WIDTH : HEADER_WIDTH);
+  const [literalExpressionWidth, setLiteralExpressionWidth] = useState(width || HEADER_WIDTH);
 
   useEffect(() => {
     const expressionDefinition: LiteralExpressionProps = {
@@ -47,10 +45,7 @@ export const LiteralExpression: React.FunctionComponent<LiteralExpressionProps> 
       dataType: expressionDataType,
       logicType: LogicType.LiteralExpression,
       content: literalExpressionContent,
-      ...((isHeadless && literalExpressionWidth === BODY_WIDTH) ||
-      (!isHeadless && literalExpressionWidth === HEADER_WIDTH)
-        ? {}
-        : { width: literalExpressionWidth }),
+      ...(!isHeadless && literalExpressionWidth !== HEADER_WIDTH ? { width: literalExpressionWidth } : {}),
     };
     isHeadless
       ? onUpdatingRecursiveExpression?.(expressionDefinition)
@@ -68,9 +63,7 @@ export const LiteralExpression: React.FunctionComponent<LiteralExpressionProps> 
     ({ dataType, name }: ExpressionProps) => {
       setExpressionName(name);
       setExpressionDataType(dataType);
-      if (onUpdatingNameAndDataType) {
-        onUpdatingNameAndDataType(name, dataType);
-      }
+      onUpdatingNameAndDataType?.(name, dataType);
     },
     [onUpdatingNameAndDataType]
   );
@@ -88,19 +81,17 @@ export const LiteralExpression: React.FunctionComponent<LiteralExpressionProps> 
   const onHorizontalResizeStop = useCallback((width) => setLiteralExpressionWidth(width), []);
 
   const renderElementWithResizeHandler = useCallback(
-    (element, minWidth, height) => {
-      return (
-        <Resizer
-          width={literalExpressionWidth}
-          height={height}
-          minWidth={minWidth}
-          minHeight={height}
-          onHorizontalResizeStop={onHorizontalResizeStop}
-        >
-          {element}
-        </Resizer>
-      );
-    },
+    (element) => (
+      <Resizer
+        width={literalExpressionWidth}
+        height={HEADER_HEIGHT}
+        minWidth={HEADER_WIDTH}
+        minHeight={HEADER_HEIGHT}
+        onHorizontalResizeStop={onHorizontalResizeStop}
+      >
+        {element}
+      </Resizer>
+    ),
     [literalExpressionWidth, onHorizontalResizeStop]
   );
 
@@ -111,9 +102,7 @@ export const LiteralExpression: React.FunctionComponent<LiteralExpressionProps> 
           <div className="expression-info">
             <p className="expression-name pf-u-text-truncate">{expressionName}</p>
             <p className="expression-data-type pf-u-text-truncate">({expressionDataType})</p>
-          </div>,
-          HEADER_WIDTH,
-          HEADER_HEIGHT
+          </div>
         )}
       </div>
     );
@@ -133,9 +122,7 @@ export const LiteralExpression: React.FunctionComponent<LiteralExpressionProps> 
   return (
     <div className="literal-expression">
       {!isHeadless ? renderLiteralExpressionHeader : null}
-      <div className={`literal-expression-body ${isHeadless ? "headless-body" : ""}`}>
-        {isHeadless ? renderElementWithResizeHandler(getBodyContent, BODY_WIDTH, BODY_HEIGHT) : getBodyContent}
-      </div>
+      <div className="literal-expression-body">{getBodyContent}</div>
       <EditExpressionMenu
         arrowPlacement={getEditExpressionMenuArrowPlacement}
         selectedExpressionName={expressionName}
