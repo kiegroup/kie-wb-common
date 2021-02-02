@@ -90,11 +90,12 @@ describe("ContextExpression tests", () => {
     expect(container.querySelector(".context-expression table tbody tr:first-of-type")).toContainHTML(firstEntry);
     expect(container.querySelector(".context-expression table tbody tr:first-of-type")).toContainHTML(firstDataType);
     expect(
-      container.querySelector(".context-expression table tbody tr:first-of-type .entry-expression")!.firstChild
+      container.querySelector(".context-expression table tbody tr:first-of-type .entry-expression .react-resizable")!
+        .firstChild
     ).toHaveClass("logic-type-selected");
     expect(
-      container.querySelector(".context-expression table tbody tr:first-of-type .entry-expression")!.firstChild!
-        .firstChild
+      container.querySelector(".context-expression table tbody tr:first-of-type .entry-expression .react-resizable")!
+        .firstChild!.firstChild
     ).toHaveClass("literal-expression");
   };
 

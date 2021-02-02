@@ -17,7 +17,7 @@
 import "./ContextEntry.css";
 import { ExpressionProps, LogicType } from "../../api";
 import * as React from "react";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { LogicTypeSelector } from "../LogicTypeSelector";
 import { Resizer } from "../Resizer";
 
@@ -29,27 +29,40 @@ export interface ContextEntryProps {
   /** Function invoked when updating expression */
   onUpdatingRecursiveExpression: (expression: ExpressionProps) => void;
   /** Width size for entry info */
-  width?: number;
-  /** Function invoked when updating entry width */
-  onUpdatingWidth: (width: number) => void;
+  infoWidth?: number;
+  /** Width size for entry expression */
+  expressionWidth?: number;
+  /** Function invoked when updating entry info width */
+  onUpdatingInfoWidth: (width: number) => void;
+  /** Function invoked when updating entry expression width */
+  onUpdatingExpressionWidth: (width: number) => void;
 }
 
+export const LOGIC_TYPES_WITH_RESIZER = [LogicType.LiteralExpression];
 export const DEFAULT_ENTRY_INFO_WIDTH = 120;
-export const DEFAULT_ENTRY_INFO_HEIGHT = 56;
+export const DEFAULT_ENTRY_INFO_HEIGHT = 70;
+export const DEFAULT_ENTRY_EXPRESSION_WIDTH = 210;
 
 export const ContextEntry: React.FunctionComponent<ContextEntryProps> = ({
   children,
   expression,
   onUpdatingRecursiveExpression,
-  width,
-  onUpdatingWidth,
+  infoWidth,
+  expressionWidth,
+  onUpdatingInfoWidth,
+  onUpdatingExpressionWidth,
 }) => {
   const [entryExpression, setEntryExpression] = useState(expression);
-  const [entryInfoWidth, setEntryInfoWidth] = useState(width || DEFAULT_ENTRY_INFO_WIDTH);
+  const [entryInfoWidth, setEntryInfoWidth] = useState(infoWidth || DEFAULT_ENTRY_INFO_WIDTH);
+  const [entryExpressionWidth, setEntryExpressionWidth] = useState(expressionWidth || DEFAULT_ENTRY_EXPRESSION_WIDTH);
 
   useEffect(() => {
-    setEntryInfoWidth(width || DEFAULT_ENTRY_INFO_WIDTH);
-  }, [width]);
+    setEntryInfoWidth(infoWidth || DEFAULT_ENTRY_INFO_WIDTH);
+  }, [infoWidth]);
+
+  useEffect(() => {
+    setEntryExpressionWidth(expressionWidth || DEFAULT_ENTRY_EXPRESSION_WIDTH);
+  }, [expressionWidth]);
 
   const expressionChangedExternally = expression.logicType === undefined;
   useEffect(() => {
@@ -76,16 +89,56 @@ export const ContextEntry: React.FunctionComponent<ContextEntryProps> = ({
   }, []);
 
   const onLogicTypeResetting = useCallback(() => {
-    setEntryExpression((previousSelectedExpression: ExpressionProps) => {
-      return {
-        name: previousSelectedExpression.name,
-        dataType: previousSelectedExpression.dataType,
-        logicType: LogicType.Undefined,
-      };
-    });
-  }, []);
+    setEntryExpressionWidth(DEFAULT_ENTRY_EXPRESSION_WIDTH);
+    onUpdatingExpressionWidth(DEFAULT_ENTRY_EXPRESSION_WIDTH);
+    setEntryExpression((previousSelectedExpression: ExpressionProps) => ({
+      name: previousSelectedExpression.name,
+      dataType: previousSelectedExpression.dataType,
+      logicType: LogicType.Undefined,
+    }));
+  }, [onUpdatingExpressionWidth]);
 
-  const onHorizontalResizeStop = useCallback((width) => onUpdatingWidth(width), [onUpdatingWidth]);
+  const onHorizontalEntryInfoResizeStop = useCallback((width) => onUpdatingInfoWidth(width), [onUpdatingInfoWidth]);
+  const onHorizontalEntryExpressionResizeStop = useCallback((width) => onUpdatingExpressionWidth(width), [
+    onUpdatingExpressionWidth,
+  ]);
+
+  const renderLogicType = useMemo(
+    () => (
+      <LogicTypeSelector
+        isHeadless={true}
+        onUpdatingRecursiveExpression={onUpdatingRecursiveExpression}
+        selectedExpression={entryExpression}
+        onLogicTypeUpdating={onLogicTypeUpdating}
+        onLogicTypeResetting={onLogicTypeResetting}
+        getPlacementRef={getLogicTypeSelectorRef}
+      />
+    ),
+    [entryExpression, getLogicTypeSelectorRef, onLogicTypeResetting, onLogicTypeUpdating, onUpdatingRecursiveExpression]
+  );
+
+  const renderResizer = useCallback(
+    (element: JSX.Element) => (
+      <Resizer
+        width={entryExpressionWidth}
+        height={DEFAULT_ENTRY_INFO_HEIGHT}
+        minWidth={DEFAULT_ENTRY_EXPRESSION_WIDTH}
+        minHeight={DEFAULT_ENTRY_INFO_HEIGHT}
+        onHorizontalResizeStop={onHorizontalEntryExpressionResizeStop}
+      >
+        {element}
+      </Resizer>
+    ),
+    [entryExpressionWidth, onHorizontalEntryExpressionResizeStop]
+  );
+
+  const renderEntryExpression = useMemo(
+    () =>
+      entryExpression.logicType && LOGIC_TYPES_WITH_RESIZER.includes(entryExpression.logicType)
+        ? renderResizer(renderLogicType)
+        : renderLogicType,
+    [entryExpression.logicType, renderLogicType, renderResizer]
+  );
 
   return (
     <div className="context-entry">
@@ -95,21 +148,14 @@ export const ContextEntry: React.FunctionComponent<ContextEntryProps> = ({
           height={DEFAULT_ENTRY_INFO_HEIGHT}
           minWidth={DEFAULT_ENTRY_INFO_WIDTH}
           minHeight={DEFAULT_ENTRY_INFO_HEIGHT}
-          onHorizontalResizeStop={onHorizontalResizeStop}
+          onHorizontalResizeStop={onHorizontalEntryInfoResizeStop}
         >
           {children}
         </Resizer>
       </div>
 
       <div className="entry-expression" ref={expressionContainerRef}>
-        <LogicTypeSelector
-          isHeadless={true}
-          onUpdatingRecursiveExpression={onUpdatingRecursiveExpression}
-          selectedExpression={entryExpression}
-          onLogicTypeUpdating={onLogicTypeUpdating}
-          onLogicTypeResetting={onLogicTypeResetting}
-          getPlacementRef={getLogicTypeSelectorRef}
-        />
+        {renderEntryExpression}
       </div>
     </div>
   );

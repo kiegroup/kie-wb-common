@@ -32,7 +32,8 @@ describe("ContextEntry tests", () => {
         <ContextEntry
           expression={emptyExpression}
           onUpdatingRecursiveExpression={_.identity}
-          onUpdatingWidth={_.identity}
+          onUpdatingInfoWidth={_.identity}
+          onUpdatingExpressionWidth={_.identity}
         />
       ).wrapper
     );
@@ -49,7 +50,8 @@ describe("ContextEntry tests", () => {
         <ContextEntry
           expression={{ ...emptyExpression, logicType: LogicType.LiteralExpression }}
           onUpdatingRecursiveExpression={_.identity}
-          onUpdatingWidth={_.identity}
+          onUpdatingInfoWidth={_.identity}
+          onUpdatingExpressionWidth={_.identity}
         />
       ).wrapper
     );
@@ -67,7 +69,8 @@ describe("ContextEntry tests", () => {
         <ContextEntry
           expression={emptyExpression}
           onUpdatingRecursiveExpression={_.identity}
-          onUpdatingWidth={_.identity}
+          onUpdatingInfoWidth={_.identity}
+          onUpdatingExpressionWidth={_.identity}
         >
           {content}
         </ContextEntry>

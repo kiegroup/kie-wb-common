@@ -23,11 +23,17 @@
   width: 100%;
 }
 
+.expression-container .context-expression .context-entry .entry-expression .react-resizable .logic-type-selector {
+  padding-right: 1.15em;
+}
+
 .expression-container .context-expression .context-entry .entry-info {
   position: relative;
 }
 
-.expression-container .context-expression .context-entry .entry-info > * {
+.expression-container .context-expression .context-entry .entry-info,
+.expression-container .context-expression .context-entry .entry-info > *,
+.expression-container .context-expression .context-entry .entry-expression > * {
   display: flex;
   flex-direction: column;
   justify-content: center;
