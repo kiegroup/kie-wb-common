@@ -23,6 +23,8 @@ import {
   boxedExpressionEditorI18nDefaults,
 } from "../../i18n";
 import { act } from "react-dom/test-utils";
+import { RecoilRoot } from "recoil";
+import { fireEvent } from "@testing-library/react";
 
 export const EDIT_EXPRESSION_NAME = "[data-ouia-component-id='edit-expression-name']";
 export const EDIT_EXPRESSION_DATA_TYPE = "[data-ouia-component-id='edit-expression-data-type'] input";
@@ -44,9 +46,11 @@ export function usingTestingBoxedExpressionI18nContext(
   return {
     ctx: usedCtx,
     wrapper: (
-      <I18nDictionariesProvider defaults={usedCtx.defaults} dictionaries={usedCtx.dictionaries} ctx={usedCtx.ctx}>
-        {usedCtx.children}
-      </I18nDictionariesProvider>
+      <RecoilRoot>
+        <I18nDictionariesProvider defaults={usedCtx.defaults} dictionaries={usedCtx.dictionaries} ctx={usedCtx.ctx}>
+          {usedCtx.children}
+        </I18nDictionariesProvider>
+      </RecoilRoot>
     ),
   };
 }
@@ -68,6 +72,8 @@ export async function updateElementViaPopover(
   await activateNameAndDataTypePopover(triggerPoint);
   const inputElement = baseElement.querySelector(inputSelector)! as HTMLInputElement;
   inputElement.value = newName;
-  inputElement.dispatchEvent(new Event("change"));
-  inputElement.dispatchEvent(new Event("blur"));
+  fireEvent.change(inputElement, {
+    target: { value: newName },
+  });
+  fireEvent.blur(inputElement);
 }
