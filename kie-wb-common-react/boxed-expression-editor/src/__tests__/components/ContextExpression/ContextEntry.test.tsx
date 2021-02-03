@@ -34,6 +34,7 @@ describe("ContextEntry tests", () => {
           onUpdatingRecursiveExpression={_.identity}
           onUpdatingInfoWidth={_.identity}
           onUpdatingExpressionWidth={_.identity}
+          contextExpressionId="id-0"
         />
       ).wrapper
     );
@@ -52,6 +53,7 @@ describe("ContextEntry tests", () => {
           onUpdatingRecursiveExpression={_.identity}
           onUpdatingInfoWidth={_.identity}
           onUpdatingExpressionWidth={_.identity}
+          contextExpressionId="id-0"
         />
       ).wrapper
     );
@@ -71,6 +73,7 @@ describe("ContextEntry tests", () => {
           onUpdatingRecursiveExpression={_.identity}
           onUpdatingInfoWidth={_.identity}
           onUpdatingExpressionWidth={_.identity}
+          contextExpressionId="id-0"
         >
           {content}
         </ContextEntry>

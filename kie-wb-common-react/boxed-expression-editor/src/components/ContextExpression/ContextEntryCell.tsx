@@ -22,7 +22,12 @@ import { EditExpressionMenu } from "../EditExpressionMenu";
 import { useBoxedExpressionEditorI18n } from "../../i18n";
 import { DataRecord } from "react-table";
 import { ContextEntry } from "./ContextEntry";
-import { DEFAULT_ENTRY_EXPRESSION_WIDTH, DEFAULT_ENTRY_INFO_WIDTH } from "./ContextExpression";
+import {
+  DEFAULT_ENTRY_EXPRESSION_WIDTH,
+  DEFAULT_ENTRY_INFO_WIDTH,
+  lastContextInfoWidthStateFamily,
+} from "./ContextExpression";
+import { useRecoilState } from "recoil";
 
 export interface ContextEntryCellProps extends CellProps {
   data: ContextEntries;
@@ -47,6 +52,8 @@ export const ContextEntryCell: React.FunctionComponent<ContextEntryCellProps> = 
   const [entryInfoWidth, setEntryInfoWidth] = useState(contextEntry.infoWidth);
 
   const [entryExpressionWidth, setEntryExpressionWidth] = useState(contextEntry.expressionWidth);
+
+  const [lastContextInfoWidth] = useRecoilState(lastContextInfoWidthStateFamily(contextEntry.contextExpressionId));
 
   useEffect(() => {
     setEntryName(contextEntry.name);
@@ -84,6 +91,16 @@ export const ContextEntryCell: React.FunctionComponent<ContextEntryCellProps> = 
   }, [entryInfoWidth]);
 
   useEffect(() => {
+    delete contextEntry.infoWidth;
+    onRowUpdate(index, {
+      ...contextEntry,
+      ...(lastContextInfoWidth !== DEFAULT_ENTRY_INFO_WIDTH ? { infoWidth: lastContextInfoWidth } : {}),
+    });
+    // Purpose is to update the row every time the context info width changes
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [lastContextInfoWidth]);
+
+  useEffect(() => {
     delete contextEntry.expressionWidth;
     onRowUpdate(index, {
       ...contextEntry,
@@ -112,7 +129,6 @@ export const ContextEntryCell: React.FunctionComponent<ContextEntryCellProps> = 
         contextExpressionId={contextEntry.contextExpressionId}
         expression={entryExpression}
         onUpdatingRecursiveExpression={onUpdatingRecursiveExpression}
-        infoWidth={entryInfoWidth}
         expressionWidth={entryExpressionWidth}
         onUpdatingInfoWidth={setEntryInfoWidth}
         onUpdatingExpressionWidth={setEntryExpressionWidth}

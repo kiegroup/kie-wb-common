@@ -52,7 +52,6 @@ export const ContextExpression: React.FunctionComponent<ContextProps> = ({
   onUpdatingNameAndDataType,
   contextEntries,
   result = {} as ExpressionProps,
-  resultInfoWidth,
   resultExpressionWidth,
   isHeadless = false,
   onUpdatingRecursiveExpression,
@@ -93,7 +92,6 @@ export const ContextExpression: React.FunctionComponent<ContextProps> = ({
 
   const [resultExpression, setResultExpression] = useState(result);
 
-  const [resultEntryInfoWidth, setResultEntryInfoWidth] = useState(resultInfoWidth);
   const [resultEntryExpressionWidth, setResultEntryExpressionWidth] = useState(resultExpressionWidth);
 
   const [lastContextInfoWidth, setLastContextInfoWidth] = useRecoilState(lastContextInfoWidthStateFamily(uid));
@@ -123,7 +121,6 @@ export const ContextExpression: React.FunctionComponent<ContextProps> = ({
     onUpdatingRecursiveExpression,
     rows,
     resultExpression,
-    resultEntryInfoWidth,
     resultEntryExpressionWidth,
     lastContextInfoWidth,
     uid,
@@ -195,12 +192,8 @@ export const ContextExpression: React.FunctionComponent<ContextProps> = ({
           contextExpressionId={uid}
           expression={resultExpression}
           onUpdatingRecursiveExpression={setResultExpression}
-          infoWidth={lastContextInfoWidth}
           expressionWidth={resultEntryExpressionWidth}
-          onUpdatingInfoWidth={(entryInfoWidth) => {
-            setResultEntryInfoWidth(entryInfoWidth);
-            setLastContextInfoWidth(entryInfoWidth);
-          }}
+          onUpdatingInfoWidth={setLastContextInfoWidth}
           onUpdatingExpressionWidth={setResultEntryExpressionWidth}
         >
           <div className="context-result">{`<result>`}</div>
