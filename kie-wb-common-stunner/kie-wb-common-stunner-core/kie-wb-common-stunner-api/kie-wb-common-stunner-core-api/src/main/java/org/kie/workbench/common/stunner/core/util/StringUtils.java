@@ -124,6 +124,7 @@ public class StringUtils {
         final StringBuilder sb = new StringBuilder();
         for (int i = 0; i < value.length(); i++) {
             final char c = value.charAt(i);
+
             switch (c) {
                 case '#':
                 case '"':
@@ -131,10 +132,73 @@ public class StringUtils {
                 case ' ':
                     sb.append("-");
                     break;
-                case '\n':
+                case '\n': // Leave as is
+                    break;
+
+                // Normal Characters
+                case 'a':
+                case 'b':
+                case 'c':
+                case 'd':
+                case 'e':
+                case 'f':
+                case 'g':
+                case 'h':
+                case 'i':
+                case 'j':
+                case 'k':
+                case 'l':
+                case 'm':
+                case 'n':
+                case 'o':
+                case 'p':
+                case 'q':
+                case 'r':
+                case 's':
+                case 't':
+                case 'u':
+                case 'v':
+                case 'w':
+                case 'x':
+                case 'y':
+                case 'z':
+                case 'A':
+                case 'B':
+                case 'C':
+                case 'D':
+                case 'E':
+                case 'F':
+                case 'G':
+                case 'H':
+                case 'I':
+                case 'J':
+                case 'K':
+                case 'L':
+                case 'M':
+                case 'N':
+                case 'O':
+                case 'P':
+                case 'Q':
+                case 'R':
+                case 'S':
+                case 'T':
+                case 'U':
+                case 'V':
+                case 'W':
+                case 'X':
+                case 'Y':
+                case 'Z':
+                case '\'':
+                case '?':
+                case '*':
+                case '/':
+                case '+':
+                case '_':
+                case '-':
+                    sb.append(c);
                     break;
                 default:
-                    sb.append(c);
+                    sb.append("-");
                     break;
             }
         }
