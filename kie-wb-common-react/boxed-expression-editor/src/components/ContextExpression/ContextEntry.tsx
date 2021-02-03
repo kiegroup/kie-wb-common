@@ -56,13 +56,29 @@ export const ContextEntry: React.FunctionComponent<ContextEntryProps> = ({
   onUpdatingInfoWidth,
   onUpdatingExpressionWidth,
 }) => {
+  const expressionContainerRef = useRef<HTMLDivElement>(null);
+
   const [entryExpression, setEntryExpression] = useState(expression);
 
   const [entryExpressionWidth, setEntryExpressionWidth] = useState(expressionWidth || DEFAULT_ENTRY_EXPRESSION_WIDTH);
 
+  const [entryExpressionMinWidth, setEntryExpressionMinWidth] = useState(
+    expressionWidth || DEFAULT_ENTRY_EXPRESSION_WIDTH
+  );
+
   const [lastContextInfoWidth, setLastContextInfoWidth] = useRecoilState(
     lastContextInfoWidthStateFamily(contextExpressionId)
   );
+
+  // On each rendering, we check if container width has changed. In that case updating entry expression width/minWidth
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => {
+    const containerCurrentWidth = expressionContainerRef.current?.getBoundingClientRect().width || 0;
+    if (containerCurrentWidth > entryExpressionWidth && containerCurrentWidth - entryExpressionWidth >= 1) {
+      setEntryExpressionWidth(containerCurrentWidth);
+      setEntryExpressionMinWidth(containerCurrentWidth);
+    }
+  });
 
   useEffect(() => {
     setEntryExpressionWidth(expressionWidth || DEFAULT_ENTRY_EXPRESSION_WIDTH);
@@ -78,8 +94,6 @@ export const ContextEntry: React.FunctionComponent<ContextEntryProps> = ({
   useEffect(() => {
     onUpdatingRecursiveExpression(entryExpression);
   }, [onUpdatingRecursiveExpression, entryExpression]);
-
-  const expressionContainerRef = useRef<HTMLDivElement>(null);
 
   const getLogicTypeSelectorRef = useCallback(() => {
     return expressionContainerRef.current!;
@@ -109,9 +123,13 @@ export const ContextEntry: React.FunctionComponent<ContextEntryProps> = ({
     },
     [onUpdatingInfoWidth, setLastContextInfoWidth]
   );
-  const onHorizontalEntryExpressionResizeStop = useCallback((width) => onUpdatingExpressionWidth(width), [
-    onUpdatingExpressionWidth,
-  ]);
+  const onHorizontalEntryExpressionResizeStop = useCallback(
+    (width) => {
+      setEntryExpressionWidth(width);
+      onUpdatingExpressionWidth(width);
+    },
+    [onUpdatingExpressionWidth]
+  );
 
   const renderLogicType = useMemo(
     () => (
@@ -132,14 +150,14 @@ export const ContextEntry: React.FunctionComponent<ContextEntryProps> = ({
       <Resizer
         width={entryExpressionWidth}
         height={DEFAULT_ENTRY_INFO_HEIGHT}
-        minWidth={DEFAULT_ENTRY_EXPRESSION_WIDTH}
+        minWidth={entryExpressionMinWidth}
         minHeight={DEFAULT_ENTRY_INFO_HEIGHT}
         onHorizontalResizeStop={onHorizontalEntryExpressionResizeStop}
       >
         {element}
       </Resizer>
     ),
-    [entryExpressionWidth, onHorizontalEntryExpressionResizeStop]
+    [entryExpressionMinWidth, entryExpressionWidth, onHorizontalEntryExpressionResizeStop]
   );
 
   const renderEntryExpression = useMemo(
