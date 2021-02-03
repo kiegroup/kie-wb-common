@@ -21,12 +21,13 @@ import * as React from "react";
 import { DataType, LogicType } from "../../../api";
 
 describe("ContextExpression tests", () => {
+  const contextExpressionId = "id-0";
   const name = "contextName";
   const dataType = DataType.Boolean;
   test("should show a table with two rows: two context entries, where last is representing the result", () => {
     const { container } = render(
       usingTestingBoxedExpressionI18nContext(
-        <ContextExpression logicType={LogicType.Context} name={name} dataType={dataType} />
+        <ContextExpression logicType={LogicType.Context} name={name} dataType={dataType} uid={contextExpressionId} />
       ).wrapper
     );
 
@@ -52,11 +53,13 @@ describe("ContextExpression tests", () => {
         name: firstEntry,
         dataType: firstDataType,
         expression: firstExpression,
+        contextExpressionId: contextExpressionId,
       },
       {
         name: secondEntry,
         dataType: secondDataType,
         expression: secondExpression,
+        contextExpressionId: contextExpressionId,
       },
     ];
 
@@ -74,6 +77,7 @@ describe("ContextExpression tests", () => {
           dataType={dataType}
           contextEntries={contextEntries}
           result={result}
+          uid={contextExpressionId}
         />
       ).wrapper
     );

@@ -31,18 +31,26 @@ import { useBoxedExpressionEditorI18n } from "../../i18n";
 import { ColumnInstance, DataRecord } from "react-table";
 import { ContextEntryCell } from "./ContextEntryCell";
 import * as _ from "lodash";
-import { ContextEntry, DEFAULT_ENTRY_EXPRESSION_WIDTH, DEFAULT_ENTRY_INFO_WIDTH } from "./ContextEntry";
+import { ContextEntry } from "./ContextEntry";
+import { atomFamily, useRecoilState } from "recoil";
 
 const DEFAULT_CONTEXT_ENTRY_NAME = "ContextEntry-1";
 const DEFAULT_CONTEXT_ENTRY_DATA_TYPE = DataType.Undefined;
 
+export const DEFAULT_ENTRY_INFO_WIDTH = 120;
+export const DEFAULT_ENTRY_INFO_HEIGHT = 70;
+export const DEFAULT_ENTRY_EXPRESSION_WIDTH = 210;
+export const lastContextInfoWidthStateFamily = atomFamily({
+  key: "lastContextInfoWidthStateFamily",
+  default: DEFAULT_ENTRY_INFO_WIDTH,
+});
+
 export const ContextExpression: React.FunctionComponent<ContextProps> = ({
+  uid,
   name = DEFAULT_CONTEXT_ENTRY_NAME,
   dataType = DEFAULT_CONTEXT_ENTRY_DATA_TYPE,
   onUpdatingNameAndDataType,
-  contextEntries = [
-    { name: DEFAULT_CONTEXT_ENTRY_NAME, dataType: DEFAULT_CONTEXT_ENTRY_DATA_TYPE, expression: {} } as DataRecord,
-  ],
+  contextEntries,
   result = {} as ExpressionProps,
   resultInfoWidth,
   resultExpressionWidth,
@@ -72,23 +80,37 @@ export const ContextExpression: React.FunctionComponent<ContextProps> = ({
     },
   ]);
 
-  const [rows, setRows] = useState(contextEntries);
+  const [rows, setRows] = useState(
+    contextEntries || [
+      {
+        contextExpressionId: uid,
+        name: DEFAULT_CONTEXT_ENTRY_NAME,
+        dataType: DEFAULT_CONTEXT_ENTRY_DATA_TYPE,
+        expression: {},
+      } as DataRecord,
+    ]
+  );
 
   const [resultExpression, setResultExpression] = useState(result);
 
   const [resultEntryInfoWidth, setResultEntryInfoWidth] = useState(resultInfoWidth);
   const [resultEntryExpressionWidth, setResultEntryExpressionWidth] = useState(resultExpressionWidth);
 
+  const [lastContextInfoWidth, setLastContextInfoWidth] = useRecoilState(lastContextInfoWidthStateFamily(uid));
+
   useEffect(() => {
     const expressionColumn = columns[0];
     const updatedDefinition: ContextProps = {
+      uid,
       logicType: LogicType.Context,
       name: expressionColumn.accessor,
       dataType: expressionColumn.dataType,
       contextEntries: rows as ContextEntries,
       result: resultExpression,
-      ...(resultEntryInfoWidth !== DEFAULT_ENTRY_INFO_WIDTH ? { resultInfoWidth: resultEntryInfoWidth } : {}),
-      ...(resultEntryExpressionWidth !== DEFAULT_ENTRY_EXPRESSION_WIDTH
+      ...(lastContextInfoWidth && lastContextInfoWidth !== DEFAULT_ENTRY_INFO_WIDTH
+        ? { resultInfoWidth: lastContextInfoWidth }
+        : {}),
+      ...(resultEntryExpressionWidth && resultEntryExpressionWidth !== DEFAULT_ENTRY_EXPRESSION_WIDTH
         ? { resultExpressionWidth: resultEntryExpressionWidth }
         : {}),
     };
@@ -103,6 +125,8 @@ export const ContextExpression: React.FunctionComponent<ContextProps> = ({
     resultExpression,
     resultEntryInfoWidth,
     resultEntryExpressionWidth,
+    lastContextInfoWidth,
+    uid,
   ]);
 
   /**
@@ -147,11 +171,12 @@ export const ContextExpression: React.FunctionComponent<ContextProps> = ({
 
   const onRowAdding = useCallback(
     () => ({
+      contextExpressionId: uid,
       name: generateNextAvailableEntryName(rows.length),
       dataType: DataType.Undefined,
       expression: {},
     }),
-    [generateNextAvailableEntryName, rows.length]
+    [generateNextAvailableEntryName, rows.length, uid]
   );
 
   return (
@@ -167,11 +192,15 @@ export const ContextExpression: React.FunctionComponent<ContextProps> = ({
         handlerConfiguration={handlerConfiguration}
       >
         <ContextEntry
+          contextExpressionId={uid}
           expression={resultExpression}
           onUpdatingRecursiveExpression={setResultExpression}
-          infoWidth={resultEntryInfoWidth}
+          infoWidth={lastContextInfoWidth}
           expressionWidth={resultEntryExpressionWidth}
-          onUpdatingInfoWidth={setResultEntryInfoWidth}
+          onUpdatingInfoWidth={(entryInfoWidth) => {
+            setResultEntryInfoWidth(entryInfoWidth);
+            setLastContextInfoWidth(entryInfoWidth);
+          }}
           onUpdatingExpressionWidth={setResultEntryExpressionWidth}
         >
           <div className="context-result">{`<result>`}</div>
