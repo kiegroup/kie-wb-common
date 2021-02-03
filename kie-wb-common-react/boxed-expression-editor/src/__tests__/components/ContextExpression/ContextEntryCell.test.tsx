@@ -25,6 +25,7 @@ import { DataRecord } from "react-table";
 jest.useFakeTimers();
 
 describe("ContextEntryCell tests", () => {
+  const contextExpressionId = "id-0";
   const name = "Expression Name";
   const dataType = DataType.Boolean;
   const emptyExpression = { name, dataType };
@@ -42,7 +43,7 @@ describe("ContextEntryCell tests", () => {
     const { container } = render(
       usingTestingBoxedExpressionI18nContext(
         <ContextEntryCell
-          data={[{ name: entryName, dataType: entryDataType, expression: emptyExpression }]}
+          data={[{ name: entryName, dataType: entryDataType, expression: emptyExpression, contextExpressionId }]}
           row={{ index: 0 }}
           column={{ id: "col1" }}
           onRowUpdate={_.identity}
@@ -70,7 +71,7 @@ describe("ContextEntryCell tests", () => {
     const { container, baseElement } = render(
       usingTestingBoxedExpressionI18nContext(
         <ContextEntryCell
-          data={[{ name: value, dataType: entryDataType, expression: emptyExpression }]}
+          data={[{ name: value, dataType: entryDataType, expression: emptyExpression, contextExpressionId }]}
           row={{ index: rowIndex }}
           column={{ id: columnId }}
           onRowUpdate={mockedOnRowUpdate}
@@ -87,6 +88,7 @@ describe("ContextEntryCell tests", () => {
 
     expect(mockedOnRowUpdate).toHaveBeenCalled();
     expect(mockedOnRowUpdate).toHaveBeenCalledWith(rowIndex, {
+      contextExpressionId,
       name: newValue,
       dataType: entryDataType,
       expression: emptyExpression,

@@ -21,7 +21,8 @@ import { CellProps, ContextEntries, ExpressionProps } from "../../api";
 import { EditExpressionMenu } from "../EditExpressionMenu";
 import { useBoxedExpressionEditorI18n } from "../../i18n";
 import { DataRecord } from "react-table";
-import { ContextEntry, DEFAULT_ENTRY_EXPRESSION_WIDTH, DEFAULT_ENTRY_INFO_WIDTH } from "./ContextEntry";
+import { ContextEntry } from "./ContextEntry";
+import { DEFAULT_ENTRY_EXPRESSION_WIDTH, DEFAULT_ENTRY_INFO_WIDTH } from "./ContextExpression";
 
 export interface ContextEntryCellProps extends CellProps {
   data: ContextEntries;
@@ -108,6 +109,7 @@ export const ContextEntryCell: React.FunctionComponent<ContextEntryCellProps> = 
   return (
     <div className="context-entry-cell">
       <ContextEntry
+        contextExpressionId={contextEntry.contextExpressionId}
         expression={entryExpression}
         onUpdatingRecursiveExpression={onUpdatingRecursiveExpression}
         infoWidth={entryInfoWidth}
