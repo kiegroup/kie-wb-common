@@ -51,6 +51,7 @@ import org.kie.workbench.common.stunner.core.graph.content.relationship.Child;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
 import org.mockito.Mock;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -208,6 +209,8 @@ public class DecisionServiceParametersListWidgetTest {
         final String id1 = "id1";
         final String id2 = "id2";
         final String id3 = "id3";
+        final String newId1 = "newId1";
+        final String newId2 = "newId2";
 
         final List<DMNElementReference> list = createListOfDMNElementReferenceWithIds(
                 id1,
@@ -215,7 +218,9 @@ public class DecisionServiceParametersListWidgetTest {
                 id3);
         final List<InputData> unsortedInputs = Arrays.asList(createInputDataWithId(id2),
                                                              createInputDataWithId(id3),
-                                                             createInputDataWithId(id1));
+                                                             createInputDataWithId(id1),
+                                                             createInputDataWithId(newId1),
+                                                             createInputDataWithId(newId2));
 
         doReturn(value).when(widget).getValue();
 
@@ -224,7 +229,9 @@ public class DecisionServiceParametersListWidgetTest {
 
         final List<InputData> sorted = widget.getSortedInputs(unsortedInputs);
 
-        checkIfInputDataListIsInOrder(sorted, id1, id2, id3);
+        assertThat(sorted)
+                .extracting(inputData -> inputData.getId().getValue())
+                .containsExactly(id1, id2, id3, newId1, newId2);
     }
 
     private InputData createInputDataWithId(final String id) {
@@ -242,15 +249,6 @@ public class DecisionServiceParametersListWidgetTest {
         }
 
         return list;
-    }
-
-    private void checkIfInputDataListIsInOrder(final List<InputData> inputData,
-                                               final String... ids) {
-        assertEquals(inputData.size(), ids.length);
-        for (int i = 0; i < ids.length; i++) {
-            final InputData input = inputData.get(i);
-            assertEquals(input.getId().getValue(), ids[i]);
-        }
     }
 
     @Test

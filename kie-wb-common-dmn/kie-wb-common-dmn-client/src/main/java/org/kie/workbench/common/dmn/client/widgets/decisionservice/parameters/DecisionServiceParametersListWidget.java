@@ -52,6 +52,7 @@ import org.kie.workbench.common.stunner.core.graph.content.definition.Definition
 import org.kie.workbench.common.stunner.core.graph.content.relationship.Child;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
 
+import static java.util.stream.Collectors.toList;
 import static org.kie.workbench.common.dmn.client.editors.common.RemoveHelper.removeChildren;
 import static org.kie.workbench.common.dmn.client.resources.i18n.DMNEditorConstants.DecisionServiceParameters_EncapsulatedDecisions;
 import static org.kie.workbench.common.dmn.client.resources.i18n.DMNEditorConstants.DecisionServiceParameters_Inputs;
@@ -155,6 +156,12 @@ public class DecisionServiceParametersListWidget extends Composite implements Ha
         loadGroupsElements();
     }
 
+    /**
+     * Sort the InputData list based on the order of the input nodes in Decision Service.
+     *
+     * @param inputs The unsorted list of InputData.
+     * @return The sorted list.
+     */
     List<InputData> getSortedInputs(final List<InputData> inputs) {
         final List<InputData> sorted = new ArrayList<>();
 
@@ -165,6 +172,12 @@ public class DecisionServiceParametersListWidget extends Composite implements Ha
                     .findFirst();
             currentInput.ifPresent(inputData -> sorted.add(inputData));
         });
+
+        final List<InputData> notSavedItems = inputs.stream()
+                .filter(item -> !sorted.contains(item))
+                .collect(toList());
+
+        sorted.addAll(notSavedItems);
 
         return sorted;
     }
