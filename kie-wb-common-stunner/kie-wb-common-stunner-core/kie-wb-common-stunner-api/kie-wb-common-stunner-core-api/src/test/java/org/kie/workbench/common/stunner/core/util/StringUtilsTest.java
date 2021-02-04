@@ -177,6 +177,6 @@ public class StringUtilsTest {
 
     @Test
     public void testReplaceIllegalCharsDataObjectName() {
-        assertEquals("--------*--_+-------------'---?--/----------------", replaceIllegalCharsForDataObjects(DECODED_VALUE_DATA_OBJECT_ILLEGAL_CHARS));
+        assertEquals("--------*--_+-10----------'---?--/----------------", replaceIllegalCharsForDataObjects(DECODED_VALUE_DATA_OBJECT_ILLEGAL_CHARS));
     }
 }
