@@ -16,6 +16,7 @@
 
 import * as React from "react";
 import "@patternfly/react-core/dist/styles/base.css";
+import "@patternfly/react-styles/css/components/Drawer/drawer.css";
 import { I18nDictionariesProvider } from "@kogito-tooling/i18n/dist/react-components";
 import { ExpressionContainer, ExpressionContainerProps } from "../ExpressionContainer";
 import {
