@@ -45,7 +45,7 @@ public class WorkItemDefinitionClientParser {
     private static final String DEFAULT_HANDLER = "defaultHandler";
     private static final String DESCRIPTION = "description";
 
-    // TODO: JBPM jira. Properties supported by the engine but not supported by Designer yet.
+    // KOGITO-4372. Properties supported by the engine but not supported by Designer    .
     private static final String CUSTOM_EDITOR = "customEditor";
     private static final String PARAMETER_VALUES = "parameterValues";
     private static final String DEPENDENCIES = "dependencies";
@@ -83,15 +83,10 @@ public class WorkItemDefinitionClientParser {
         findNextToken();
 
         List<Map<String, Object>> widFile = new ArrayList<>();
-        while (isObjectStart(skipWhitespace()) || isElementSeparator(skipWhitespace())) {
-            if (isElementSeparator(skipWhitespace())) {
-                findNextToken();
-            }
+        while (isObjectStart(skipWhitespace())) {
             switch (findNextToken()) {
                 case '"':
                     widFile.add(getMapEntries());
-                    break;
-                case ',':
                     break;
                 case ']':
                     // WID is empty, just skip it
@@ -99,6 +94,9 @@ public class WorkItemDefinitionClientParser {
                 default:
                     // If current WID file is incorrect return all already parsed and skip others
                     return convertMvelToWid(widFile);
+            }
+            if (isElementSeparator(skipWhitespace())) {
+                findNextToken();
             }
         }
 
@@ -246,9 +244,6 @@ public class WorkItemDefinitionClientParser {
     }
 
     private static char findNextToken() {
-        if (getCurrentSymbol() == '\n') {
-            lineNumber++;
-        }
         index++;
         return skipWhitespace();
     }
@@ -288,8 +283,7 @@ public class WorkItemDefinitionClientParser {
         }
 
         StringBuilder name = new StringBuilder();
-        // TODO Add support for escaped symbols \" and \' see KOGITO-4328
-        for (; getCurrentSymbol() != wrapper; index++) {
+        for (; nonStringEnd(wrapper); index++) {
             name.append(getCurrentSymbol());
         }
 
@@ -299,12 +293,19 @@ public class WorkItemDefinitionClientParser {
 
     private static String parseLiteral() {
         StringBuilder literal = new StringBuilder();
-        // TODO Add support for escaped symbols \" and \' see KOGITO-4328
         for (; widString.length() > index && isLiteralSymbol(getCurrentSymbol()); index++) {
             literal.append(getCurrentSymbol());
         }
 
         return literal.toString();
+    }
+
+    private static boolean nonStringEnd(char endOfString) {
+        if (isEscape(getCurrentSymbol())) {
+            index++;
+            return true;
+        }
+        return getCurrentSymbol() != endOfString;
     }
 
     private static boolean isLiteralSymbol(char symbol) {
@@ -332,6 +333,10 @@ public class WorkItemDefinitionClientParser {
 
     private static boolean isAttributeWrapper(char symbol) {
         return symbol == '"' || symbol == '\'';
+    }
+
+    private static boolean isEscape(char symbol) {
+        return symbol == '\\';
     }
 
     private static boolean isParameterDivider(char symbol) {
