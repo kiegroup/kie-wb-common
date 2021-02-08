@@ -41,7 +41,7 @@ import static org.kie.workbench.common.stunner.bpmn.client.forms.filters.Multipl
 import static org.kie.workbench.common.stunner.bpmn.client.forms.filters.MultipleInstanceNodeFilterProvider.MULTIPLE_INSTANCE_DATA_INPUT;
 import static org.kie.workbench.common.stunner.bpmn.client.forms.filters.MultipleInstanceNodeFilterProvider.MULTIPLE_INSTANCE_DATA_OUTPUT;
 import static org.kie.workbench.common.stunner.bpmn.client.forms.filters.MultipleInstanceNodeFilterProvider.MULTIPLE_INSTANCE_EXECUTION_MODE;
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;

@@ -63,7 +63,7 @@ import static org.guvnor.ala.ui.openshift.client.resources.i18n.GuvnorAlaOpenShi
 import static org.guvnor.ala.ui.openshift.client.resources.i18n.GuvnorAlaOpenShiftUIConstants.TemplateParamsFormPresenter_InvalidProjectNameError;
 import static org.guvnor.ala.ui.openshift.client.resources.i18n.GuvnorAlaOpenShiftUIConstants.TemplateParamsFormPresenter_RequiredParamsNotCompletedMessage;
 import static org.junit.Assert.*;
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)

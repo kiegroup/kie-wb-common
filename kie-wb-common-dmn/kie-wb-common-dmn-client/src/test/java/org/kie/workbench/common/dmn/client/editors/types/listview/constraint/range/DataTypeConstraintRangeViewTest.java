@@ -27,7 +27,7 @@ import org.junit.runner.RunWith;
 import org.kie.workbench.common.dmn.client.editors.types.listview.constraint.DataTypeConstraintModal;
 import org.kie.workbench.common.dmn.client.editors.types.listview.constraint.common.typed.TypedValueComponentSelector;
 import org.kie.workbench.common.dmn.client.editors.types.listview.constraint.common.typed.TypedValueSelector;
-import org.mockito.Matchers;
+import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
 
 import static org.junit.Assert.assertEquals;

@@ -42,8 +42,8 @@ import static org.guvnor.structure.repositories.EnvironmentParameters.AVOID_INDE
 import static org.junit.Assert.*;
 import static org.kie.workbench.common.migration.cli.TemporaryNiogitService.OU_NAME;
 import static org.kie.workbench.common.migration.cli.TemporaryNiogitService.TMP_REPO_ALIAS;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;

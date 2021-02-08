@@ -29,7 +29,7 @@ import org.uberfire.java.nio.file.FileSystem;
 import org.uberfire.java.nio.file.api.FileSystemUtils;
 
 import static org.junit.Assert.*;
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.never;

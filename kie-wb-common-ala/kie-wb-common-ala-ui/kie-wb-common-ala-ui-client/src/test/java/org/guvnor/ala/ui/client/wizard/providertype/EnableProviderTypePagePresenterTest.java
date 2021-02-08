@@ -38,7 +38,7 @@ import org.uberfire.mocks.EventSourceMock;
 import static org.guvnor.ala.ui.ProvisioningManagementTestCommons.buildProviderTypeStatusList;
 import static org.guvnor.ala.ui.ProvisioningManagementTestCommons.mockProviderTypeList;
 import static org.junit.Assert.*;
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @RunWith(GwtMockitoTestRunner.class)

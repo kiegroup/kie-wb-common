@@ -27,7 +27,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import static org.jgroups.util.Util.assertEquals;
 import static org.kie.workbench.common.stunner.core.util.SafeComparator.TO_STRING_COMPARATOR;
 import static org.kie.workbench.common.stunner.core.util.SafeComparator.TO_STRING_REVERSE_COMPARATOR;
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;

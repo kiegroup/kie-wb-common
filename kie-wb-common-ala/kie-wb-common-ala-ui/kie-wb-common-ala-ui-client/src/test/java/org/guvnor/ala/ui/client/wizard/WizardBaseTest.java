@@ -26,7 +26,7 @@ import org.uberfire.ext.widgets.core.client.wizards.WizardView;
 import org.uberfire.mocks.EventSourceMock;
 import org.uberfire.workbench.events.NotificationEvent;
 
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 public class WizardBaseTest {

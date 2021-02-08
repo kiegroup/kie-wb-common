@@ -39,8 +39,8 @@ import org.uberfire.mvp.Command;
 import static org.guvnor.ala.ui.ProvisioningManagementTestCommons.mockProviderKey;
 import static org.guvnor.ala.ui.ProvisioningManagementTestCommons.mockProviderType;
 import static org.guvnor.ala.ui.client.util.UIUtil.getDisplayableProviderTypeName;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 @RunWith(GwtMockitoTestRunner.class)

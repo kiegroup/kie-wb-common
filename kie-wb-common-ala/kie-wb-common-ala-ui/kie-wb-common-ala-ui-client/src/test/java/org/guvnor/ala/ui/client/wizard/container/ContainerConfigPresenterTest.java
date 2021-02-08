@@ -42,7 +42,7 @@ import static org.guvnor.ala.ui.client.resources.i18n.GuvnorAlaUIConstants.Conta
 import static org.guvnor.ala.ui.client.resources.i18n.GuvnorAlaUIConstants.ContainerConfigPresenter_LoadGAVErrorMessage;
 import static org.guvnor.ala.ui.client.util.UIUtil.EMPTY_STRING;
 import static org.junit.Assert.*;
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)

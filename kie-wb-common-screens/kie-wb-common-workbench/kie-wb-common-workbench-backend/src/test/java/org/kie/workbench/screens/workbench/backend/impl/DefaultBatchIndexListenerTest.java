@@ -34,7 +34,7 @@ import org.uberfire.ext.metadata.model.KCluster;
 import org.uberfire.java.nio.file.Path;
 import org.uberfire.mocks.FileSystemTestingUtils;
 
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
