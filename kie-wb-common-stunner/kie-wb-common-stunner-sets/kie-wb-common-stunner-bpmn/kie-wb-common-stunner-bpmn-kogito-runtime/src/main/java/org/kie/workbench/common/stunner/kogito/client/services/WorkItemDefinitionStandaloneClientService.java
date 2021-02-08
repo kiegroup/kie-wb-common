@@ -29,7 +29,6 @@ import javax.enterprise.inject.Default;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 
-import elemental2.dom.DomGlobal;
 import elemental2.promise.Promise;
 import org.appformer.kogito.bridge.client.resource.ResourceContentService;
 import org.appformer.kogito.bridge.client.resource.interop.ResourceListOptions;
@@ -153,7 +152,6 @@ public class WorkItemDefinitionStandaloneClientService implements WorkItemDefini
 
     private Promise<Collection<WorkItemDefinition>> workItemsLoader(final String path,
                                                                     final Collection<WorkItemDefinition> loaded) {
-        DomGlobal.console.info("There is path: " + path);
         if (nonEmpty(path)) {
             return resourceContentService
                     .get(path)
