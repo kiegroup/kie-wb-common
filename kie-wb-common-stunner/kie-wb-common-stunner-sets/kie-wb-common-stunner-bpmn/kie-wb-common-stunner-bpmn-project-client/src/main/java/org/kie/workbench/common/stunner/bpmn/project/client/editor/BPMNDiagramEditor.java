@@ -89,8 +89,8 @@ public class BPMNDiagramEditor extends AbstractProjectDiagramEditor<BPMNDiagramR
     private boolean isMigrating = false;
     private boolean isPropertiesOpenedBeforeMaximize = false;
     private boolean isExplorerOpenedBeforeMaximize = false;
-    private boolean isPropertiesOpenedWhenModelSelected = false;
-    private boolean isExplorerOpenedWhenModelSelected = false;
+    protected boolean isPropertiesOpenedWhenModelSelected = false;
+    protected boolean isExplorerOpenedWhenModelSelected = false;
     private boolean isPropertiesOpenedBeforeSwitchingSessions = false;
     private boolean isExplorerOpenedBeforeSwitchingSessions = false;
 
@@ -156,7 +156,7 @@ public class BPMNDiagramEditor extends AbstractProjectDiagramEditor<BPMNDiagramR
         fireDiagramFocusEvent();
     }
 
-    private boolean isInTabs = false;
+    protected boolean isInTabs = false;
 
     @Override
     public void onEditTabSelected() {

@@ -541,6 +541,64 @@ public class BPMNDiagramEditorTest extends AbstractProjectDiagramEditorTest {
         // properties should now not be opened since explore panel was opened during Documentation / Overview
         verify(uberfireDocks, times(5)).open(propertiesDock);
         verify(uberfireDocks, times(5)).open(explorerDock);
+
+        // test not same session logic
+        screenDiagramModelUnSelectedEvent = new ScreenDiagramModelUnSelectedEvent(new ClientSession() {
+            @Override
+            public String getSessionUUID() {
+                return "test";
+            }
+
+            @Override
+            public Canvas getCanvas() {
+                return null;
+            }
+
+            @Override
+            public CanvasHandler getCanvasHandler() {
+                return null;
+            }
+        }, false);
+        diagramEditor.isInTabs = true;
+        diagramEditor.openPropertiesDocks(); // open properties panel
+        diagramEditor.onScreenDiagramModelUnSelectedEvent(screenDiagramModelUnSelectedEvent);
+
+        verify(uberfireDocks, times(6)).open(propertiesDock);
+
+        diagramEditor.onEditTabSelected(); // open properties
+
+        // properties should now not be opened since explore panel was opened during Documentation / Overview
+        verify(uberfireDocks, times(7)).open(propertiesDock);
+        verify(uberfireDocks, times(5)).open(explorerDock);
+
+        // test same session with open panels
+
+        screenDiagramModelUnSelectedEvent = new ScreenDiagramModelUnSelectedEvent(diagramEditor.getClientSession(), false);
+        diagramEditor.openPropertiesDocks(); // open properties panel
+        diagramEditor.isInTabs = true;
+        diagramEditor.onScreenDiagramModelUnSelectedEvent(screenDiagramModelUnSelectedEvent);
+
+        verify(uberfireDocks, times(9)).open(propertiesDock);
+
+        diagramEditor.onEditTabSelected(); // open properties
+
+        // properties should now not be opened since explore panel was opened during Documentation / Overview
+        verify(uberfireDocks, times(10)).open(propertiesDock);
+        verify(uberfireDocks, times(5)).open(explorerDock);
+
+        // test Explorer
+        screenDiagramModelUnSelectedEvent = new ScreenDiagramModelUnSelectedEvent(diagramEditor.getClientSession(), true);
+        diagramEditor.openExplorerDocks(); // open explorer panel
+        diagramEditor.isInTabs = true;
+        diagramEditor.onScreenDiagramModelUnSelectedEvent(screenDiagramModelUnSelectedEvent);
+
+        verify(uberfireDocks, times(10)).open(propertiesDock);
+
+        diagramEditor.onEditTabSelected(); // open properties
+
+        // properties should now not be opened since explore panel was opened during Documentation / Overview
+        verify(uberfireDocks, times(10)).open(propertiesDock);
+        verify(uberfireDocks, times(8)).open(explorerDock);
     }
 
     @Test
