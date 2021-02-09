@@ -25,7 +25,7 @@ import org.kie.workbench.common.forms.adf.engine.shared.formGeneration.FormGener
 import org.kie.workbench.common.forms.adf.service.definitions.elements.FieldElement;
 import org.kie.workbench.common.stunner.bpmn.forms.model.AssigneeEditorFieldDefinition;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import static org.junit.Assert.assertEquals;
 import static org.kie.workbench.common.stunner.bpmn.forms.model.AssigneeEditorFieldType.MAX_PARAM;

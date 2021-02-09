@@ -40,7 +40,7 @@ import org.kie.workbench.common.project.config.MigrationConfigurationFactoryImpl
 import org.kie.workbench.common.project.config.MigrationConfigurationServiceImpl;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.uberfire.io.IOService;
 import org.uberfire.java.nio.file.FileSystem;
 import org.uberfire.mocks.FileSystemTestingUtils;

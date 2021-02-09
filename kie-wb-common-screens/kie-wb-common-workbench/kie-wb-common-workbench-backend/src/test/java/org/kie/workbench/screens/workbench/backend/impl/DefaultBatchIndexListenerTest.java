@@ -29,7 +29,7 @@ import org.junit.runner.RunWith;
 import org.kie.workbench.common.services.refactoring.model.index.events.IndexingFinishedEvent;
 import org.kie.workbench.common.services.refactoring.model.index.events.IndexingStartedEvent;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.uberfire.ext.metadata.model.KCluster;
 import org.uberfire.java.nio.file.Path;
 import org.uberfire.mocks.FileSystemTestingUtils;

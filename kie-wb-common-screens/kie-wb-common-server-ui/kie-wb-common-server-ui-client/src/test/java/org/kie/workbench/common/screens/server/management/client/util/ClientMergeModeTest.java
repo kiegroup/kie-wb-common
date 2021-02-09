@@ -24,7 +24,7 @@ import org.kie.workbench.common.screens.server.management.client.resources.i18n.
 import org.kie.workbench.common.screens.server.management.model.MergeMode;
 import org.mockito.Mock;
 import org.mockito.invocation.InvocationOnMock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
 
 import static org.junit.Assert.*;

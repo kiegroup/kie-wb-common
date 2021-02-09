@@ -27,7 +27,7 @@ import org.kie.workbench.common.stunner.core.graph.Graph;
 import org.kie.workbench.common.stunner.forms.service.FormGeneratedEvent;
 import org.kie.workbench.common.stunner.forms.service.FormGenerationFailureEvent;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.uberfire.backend.vfs.Path;
 
 import static org.mockito.ArgumentMatchers.any;

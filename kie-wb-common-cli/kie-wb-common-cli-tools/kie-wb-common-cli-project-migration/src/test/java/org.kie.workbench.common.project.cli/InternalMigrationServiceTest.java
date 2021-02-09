@@ -39,7 +39,7 @@ import org.kie.workbench.common.project.config.MigrationWorkspaceProjectMigratio
 import org.kie.workbench.common.project.config.MigrationWorkspaceProjectServiceImpl;
 import org.mockito.Mock;
 import org.mockito.invocation.InvocationOnMock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
 
 import static org.junit.Assert.assertEquals;

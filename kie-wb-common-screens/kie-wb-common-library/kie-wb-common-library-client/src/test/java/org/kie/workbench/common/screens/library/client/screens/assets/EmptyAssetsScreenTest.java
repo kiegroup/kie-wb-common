@@ -26,7 +26,7 @@ import org.kie.workbench.common.screens.defaulteditor.client.editor.NewFileUploa
 import org.kie.workbench.common.screens.library.client.util.LibraryPlaces;
 import org.kie.workbench.common.widgets.client.handlers.NewResourcePresenter;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.uberfire.mvp.Command;
 import org.uberfire.promise.SyncPromises;
 

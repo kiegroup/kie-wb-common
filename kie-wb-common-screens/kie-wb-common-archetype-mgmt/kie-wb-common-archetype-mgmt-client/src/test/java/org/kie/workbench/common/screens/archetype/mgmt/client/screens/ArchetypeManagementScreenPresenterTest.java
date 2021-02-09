@@ -27,7 +27,7 @@ import org.kie.workbench.common.screens.archetype.mgmt.client.table.presenters.A
 import org.kie.workbench.common.screens.archetype.mgmt.shared.events.ArchetypeListUpdatedEvent;
 import org.kie.workbench.common.screens.archetype.mgmt.shared.model.ArchetypeListOperation;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.uberfire.client.promise.Promises;
 import org.uberfire.promise.SyncPromises;
 import org.uberfire.workbench.events.NotificationEvent;

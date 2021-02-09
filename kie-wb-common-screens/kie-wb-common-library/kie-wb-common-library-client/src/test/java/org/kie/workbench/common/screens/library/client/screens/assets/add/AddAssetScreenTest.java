@@ -50,7 +50,7 @@ import org.kie.workbench.common.widgets.client.handlers.NewResourceHandler;
 import org.mockito.Answers;
 import org.mockito.Mock;
 import org.mockito.Spy;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.uberfire.client.mvp.CategoriesManagerCache;
 import org.uberfire.mvp.ParameterizedCommand;
 import org.uberfire.workbench.category.Others;

@@ -29,7 +29,7 @@ import org.kie.workbench.common.stunner.svg.gen.translator.SVGDocumentTranslator
 import org.kie.workbench.common.stunner.svg.gen.translator.SVGTranslatorContext;
 import org.mockito.Mock;
 import org.mockito.invocation.InvocationOnMock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
 
 import static org.junit.Assert.assertEquals;

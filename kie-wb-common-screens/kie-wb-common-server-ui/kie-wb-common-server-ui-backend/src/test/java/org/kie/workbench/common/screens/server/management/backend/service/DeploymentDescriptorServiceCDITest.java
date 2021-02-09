@@ -26,7 +26,7 @@ import org.kie.workbench.common.screens.server.management.model.ProcessConfigMod
 import org.kie.workbench.common.screens.server.management.model.RuntimeStrategy;
 import org.kie.workbench.common.screens.server.management.service.DeploymentDescriptorService;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;

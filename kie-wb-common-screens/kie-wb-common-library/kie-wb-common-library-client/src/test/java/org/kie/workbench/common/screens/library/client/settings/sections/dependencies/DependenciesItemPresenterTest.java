@@ -14,7 +14,7 @@ import org.kie.workbench.common.services.shared.dependencies.NormalEnhancedDepen
 import org.kie.workbench.common.services.shared.dependencies.TransitiveEnhancedDependency;
 import org.kie.workbench.common.services.shared.whitelist.WhiteList;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import static java.util.Collections.emptySet;
 import static org.mockito.ArgumentMatchers.any;

@@ -25,7 +25,7 @@ import org.kie.workbench.common.stunner.bpmn.BPMNDefinitionSet;
 import org.kie.workbench.common.stunner.bpmn.forms.dataproviders.ProcessDataEvent;
 import org.kie.workbench.common.stunner.forms.client.session.StunnerFormsHandler;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;

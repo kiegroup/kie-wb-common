@@ -24,7 +24,7 @@ import org.guvnor.ala.wildfly.config.WildflyProviderConfig;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import static org.guvnor.ala.wildfly.config.WildflyProviderConfig.HOST;
 import static org.guvnor.ala.wildfly.config.WildflyProviderConfig.MANAGEMENT_PORT;

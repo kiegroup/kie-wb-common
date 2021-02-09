@@ -44,7 +44,7 @@ import org.kie.workbench.common.screens.server.management.client.widget.card.bod
 import org.kie.workbench.common.screens.server.management.client.widget.card.footer.FooterPresenter;
 import org.kie.workbench.common.screens.server.management.client.widget.card.title.LinkTitlePresenter;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.uberfire.mocks.EventSourceMock;
 import org.uberfire.mvp.Command;
 

@@ -44,7 +44,7 @@ import org.kie.server.controller.impl.service.SpecManagementServiceImpl;
 import org.kie.workbench.common.screens.server.management.model.ContainerSpecData;
 import org.mockito.InjectMocks;
 import org.mockito.Spy;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
 public class RuntimeManagementServiceCDITest {

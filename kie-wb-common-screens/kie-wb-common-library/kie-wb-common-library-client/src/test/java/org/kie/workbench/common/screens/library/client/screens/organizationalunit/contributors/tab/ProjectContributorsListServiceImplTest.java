@@ -34,7 +34,7 @@ import org.junit.runner.RunWith;
 import org.kie.workbench.common.screens.library.client.util.LibraryPlaces;
 import org.mockito.Mock;
 import org.mockito.Spy;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.uberfire.client.promise.Promises;
 import org.uberfire.mocks.CallerMock;
 import org.uberfire.mocks.SessionInfoMock;

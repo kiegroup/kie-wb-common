@@ -7,7 +7,7 @@ import org.kie.workbench.common.screens.datamodeller.model.persistence.Property;
 import org.kie.workbench.common.screens.library.client.settings.sections.persistence.PersistencePresenter;
 import org.kie.workbench.common.screens.library.client.settings.sections.persistence.PersistencePresenter.PropertiesListPresenter;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;

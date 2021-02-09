@@ -7,7 +7,7 @@ import org.kie.workbench.common.screens.library.client.settings.sections.knowled
 import org.kie.workbench.common.screens.library.client.settings.sections.knowledgebases.item.KnowledgeBaseItemPresenter.PackageListPresenter;
 import org.kie.workbench.common.services.shared.kmodule.SingleValueItemObjectModel;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;

@@ -27,7 +27,7 @@ import org.junit.runner.RunWith;
 import org.kie.workbench.common.stunner.core.profile.Profile;
 import org.kie.workbench.common.stunner.core.util.DefinitionUtils;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.uberfire.mocks.MockInstanceImpl;
 
 import static org.junit.Assert.assertEquals;

@@ -28,7 +28,7 @@ import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.kie.workbench.common.stunner.core.diagram.Metadata;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.uberfire.ext.editor.commons.client.file.exports.FileExport;
 import org.uberfire.ext.editor.commons.client.file.exports.ImageDataUriContent;
 import org.uberfire.ext.editor.commons.client.file.exports.PdfDocument;

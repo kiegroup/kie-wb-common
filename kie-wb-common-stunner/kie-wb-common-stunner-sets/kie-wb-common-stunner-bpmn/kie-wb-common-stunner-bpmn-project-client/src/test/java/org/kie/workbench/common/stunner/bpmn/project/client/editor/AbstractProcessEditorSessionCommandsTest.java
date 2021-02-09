@@ -36,7 +36,7 @@ import org.kie.workbench.common.stunner.forms.client.session.command.GeneratePro
 import org.kie.workbench.common.stunner.forms.client.session.command.GenerateSelectedFormsSessionCommand;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;

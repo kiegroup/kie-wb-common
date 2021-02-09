@@ -70,7 +70,7 @@ import org.kie.workbench.common.stunner.core.registry.definition.TypeDefinitionS
 import org.kie.workbench.common.stunner.core.util.UUID;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.uberfire.client.promise.Promises;
 import org.uberfire.promise.SyncPromises;
 

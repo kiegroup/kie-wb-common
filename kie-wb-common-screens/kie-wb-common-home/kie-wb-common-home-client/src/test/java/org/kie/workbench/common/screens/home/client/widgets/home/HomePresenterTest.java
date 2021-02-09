@@ -37,7 +37,7 @@ import org.kie.workbench.common.screens.home.model.ModelUtils;
 import org.kie.workbench.common.profile.api.preferences.ProfilePreferences;
 import org.kie.workbench.common.profile.api.preferences.Profile;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.uberfire.mvp.Command;
 import org.uberfire.mvp.ParameterizedCommand;
 import org.uberfire.security.ResourceAction;

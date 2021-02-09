@@ -38,7 +38,7 @@ import org.kie.workbench.common.services.shared.whitelist.PackageNameWhiteListSe
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.uberfire.backend.vfs.Path;
 import org.uberfire.io.IOService;
 import org.uberfire.workbench.events.ResourceChange;

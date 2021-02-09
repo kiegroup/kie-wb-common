@@ -28,7 +28,7 @@ import org.kie.workbench.common.screens.library.client.util.LibraryPlaces;
 import org.mockito.Answers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.uberfire.mocks.CallerMock;
 
 import static org.mockito.ArgumentMatchers.eq;

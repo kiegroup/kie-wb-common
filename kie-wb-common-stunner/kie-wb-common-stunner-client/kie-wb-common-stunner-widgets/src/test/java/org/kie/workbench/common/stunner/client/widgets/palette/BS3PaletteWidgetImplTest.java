@@ -44,7 +44,7 @@ import org.kie.workbench.common.stunner.core.client.shape.factory.ShapeFactory;
 import org.kie.workbench.common.stunner.core.preferences.StunnerDiagramEditorPreferences;
 import org.kie.workbench.common.stunner.core.preferences.StunnerPreferences;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.anyObject;

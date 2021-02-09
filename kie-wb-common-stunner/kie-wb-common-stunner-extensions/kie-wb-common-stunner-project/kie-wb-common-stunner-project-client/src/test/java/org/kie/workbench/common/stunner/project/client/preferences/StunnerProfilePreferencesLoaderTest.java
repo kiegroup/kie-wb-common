@@ -28,7 +28,7 @@ import org.kie.workbench.common.stunner.core.profile.FullProfile;
 import org.kie.workbench.common.stunner.core.profile.Profile;
 import org.kie.workbench.common.stunner.project.profile.ProjectProfile;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.uberfire.mvp.ParameterizedCommand;
 
 import static org.mockito.ArgumentMatchers.any;

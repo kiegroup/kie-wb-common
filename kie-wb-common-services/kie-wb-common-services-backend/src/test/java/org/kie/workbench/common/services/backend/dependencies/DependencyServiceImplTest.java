@@ -34,7 +34,7 @@ import org.junit.runner.RunWith;
 import org.kie.api.builder.ReleaseId;
 import org.mockito.Mock;
 import org.mockito.invocation.InvocationOnMock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
 
 import static org.junit.Assert.*;

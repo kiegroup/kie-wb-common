@@ -37,7 +37,7 @@ import org.kie.workbench.common.forms.fields.shared.fieldTypes.basic.textBox.def
 import org.kie.workbench.common.forms.model.FieldDefinition;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.uberfire.ext.layout.editor.api.editor.LayoutColumn;
 import org.uberfire.ext.layout.editor.api.editor.LayoutComponent;
 import org.uberfire.ext.layout.editor.api.editor.LayoutRow;
