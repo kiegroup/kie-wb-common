@@ -31,8 +31,11 @@ import static org.guvnor.ala.wildfly.config.WildflyProviderConfig.MANAGEMENT_POR
 import static org.guvnor.ala.wildfly.config.WildflyProviderConfig.PORT;
 import static org.guvnor.ala.wildfly.config.WildflyProviderConfig.WILDFLY_PASSWORD;
 import static org.guvnor.ala.wildfly.config.WildflyProviderConfig.WILDFLY_USER;
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class WildflyProviderConfigConverterTest {

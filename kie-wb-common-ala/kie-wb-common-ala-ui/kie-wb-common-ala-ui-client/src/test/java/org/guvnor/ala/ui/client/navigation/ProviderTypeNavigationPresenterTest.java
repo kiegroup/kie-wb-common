@@ -35,7 +35,8 @@ import static org.guvnor.ala.ui.ProvisioningManagementTestCommons.mockProviderTy
 import static org.guvnor.ala.ui.client.util.UIUtil.getDisplayableProviderTypeName;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 @RunWith(GwtMockitoTestRunner.class)
 public class ProviderTypeNavigationPresenterTest {
