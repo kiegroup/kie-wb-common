@@ -16,7 +16,6 @@
 
 package org.kie.workbench.common.dmn.client.widgets.grid.columns.factory.dom;
 
-import java.util.Optional;
 import java.util.function.Function;
 
 import com.ait.lienzo.test.LienzoMockitoTestRunner;
@@ -45,7 +44,6 @@ import org.uberfire.ext.wires.core.grids.client.widget.layer.GridLayer;
 
 import static com.google.gwt.dom.client.Style.Unit.PCT;
 import static com.google.gwt.dom.client.Style.Unit.PX;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -62,7 +60,6 @@ public class MonacoEditorDOMElementTest extends BaseDOMElementTest<MonacoEditorW
 
     @Override
     protected MonacoEditorWidget getWidget() {
-        when(monacoEditorWidget.getCodeEditor()).thenReturn(Optional.empty());
         return monacoEditorWidget;
     }
 
@@ -139,14 +136,11 @@ public class MonacoEditorDOMElementTest extends BaseDOMElementTest<MonacoEditorW
 
         when(widget.getElement()).thenReturn(element);
         when(element.getStyle()).thenReturn(style);
-        when(domElement.uncheckedCast(any())).thenReturn(mockedElement);
         when(properties.getConstructionOptions()).thenReturn(constructionOptions);
         doReturn(onKeyDown).when(domElement).getOnKeyDown(standaloneCodeEditor);
         doReturn(widgetTrigger).when(domElement).getWidgetTrigger(blurEvent);
         doReturn(blurEvent).when(domElement).getBlurEvent();
-        doReturn(properties).when(domElement).makeMonacoPropertiesFactory();
-        doReturn(editor).when(domElement).getMonacoEditor();
-        doReturn(standaloneCodeEditor).when(editor).create(mockedElement, constructionOptions);
+        doReturn(standaloneCodeEditor).when(widget).getCodeEditor();
 
         domElement.setupInternalComponent();
 
@@ -154,7 +148,6 @@ public class MonacoEditorDOMElementTest extends BaseDOMElementTest<MonacoEditorW
         verify(style).setHeight(100, PCT);
         verify(standaloneCodeEditor).onKeyDown(onKeyDown);
         verify(standaloneCodeEditor).onDidBlurEditorWidget(widgetTrigger);
-        verify(widget).setCodeEditor(standaloneCodeEditor);
         verify(widget).setFocus(true);
     }
 
