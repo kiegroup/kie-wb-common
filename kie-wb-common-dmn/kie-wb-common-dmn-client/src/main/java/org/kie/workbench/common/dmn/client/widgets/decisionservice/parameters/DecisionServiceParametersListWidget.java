@@ -52,6 +52,7 @@ import org.kie.workbench.common.stunner.core.graph.content.definition.Definition
 import org.kie.workbench.common.stunner.core.graph.content.relationship.Child;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
 
+import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
 import static org.kie.workbench.common.dmn.client.editors.common.RemoveHelper.removeChildren;
 import static org.kie.workbench.common.dmn.client.resources.i18n.DMNEditorConstants.DecisionServiceParameters_EncapsulatedDecisions;
@@ -157,12 +158,22 @@ public class DecisionServiceParametersListWidget extends Composite implements Ha
     }
 
     /**
-     * Sort the InputData list based on the order of the input nodes in Decision Service.
+     * Sort the InputData list based on the order of the input nodes in Decision Service and new items in alphabetical order.
      *
      * @param inputs The unsorted list of InputData.
      * @return The sorted list.
      */
     List<InputData> getSortedInputs(final List<InputData> inputs) {
+
+        final List<InputData> currentItems = getCurrentItems(inputs);
+        final List<InputData> newItems = getNewItems(inputs, currentItems);
+
+        currentItems.addAll(newItems);
+
+        return currentItems;
+    }
+
+    List<InputData> getCurrentItems(final List<InputData> inputs) {
         final List<InputData> sorted = new ArrayList<>();
 
         getValue().getDecisionService().getInputData().forEach(ref -> {
@@ -172,14 +183,19 @@ public class DecisionServiceParametersListWidget extends Composite implements Ha
                     .findFirst();
             currentInput.ifPresent(inputData -> sorted.add(inputData));
         });
+        return sorted;
+    }
 
-        final List<InputData> notSavedItems = inputs.stream()
-                .filter(item -> !sorted.contains(item))
+    List<InputData> getNewItems(final List<InputData> inputs,
+                                final List<InputData> currentItems) {
+
+        // The marshaller also sorts new items in alphabetical order
+        final List<InputData> newItems = inputs.stream()
+                .filter(item -> !currentItems.contains(item))
+                .sorted(comparing(x -> x.getName().getValue()))
                 .collect(toList());
 
-        sorted.addAll(notSavedItems);
-
-        return sorted;
+        return newItems;
     }
 
     void loadDecisionsFromNode(final Node node,

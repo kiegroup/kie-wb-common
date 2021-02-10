@@ -218,9 +218,9 @@ public class DecisionServiceParametersListWidgetTest {
                 id3);
         final List<InputData> unsortedInputs = Arrays.asList(createInputDataWithId(id2),
                                                              createInputDataWithId(id3),
+                                                             createInputDataWithId(newId2),
                                                              createInputDataWithId(id1),
-                                                             createInputDataWithId(newId1),
-                                                             createInputDataWithId(newId2));
+                                                             createInputDataWithId(newId1));
 
         doReturn(value).when(widget).getValue();
 
@@ -234,9 +234,77 @@ public class DecisionServiceParametersListWidgetTest {
                 .containsExactly(id1, id2, id3, newId1, newId2);
     }
 
+    @Test
+    public void testGetCurrentItems() {
+
+        final DecisionServiceParametersList value = mock(DecisionServiceParametersList.class);
+        final DecisionService decisionService = mock(DecisionService.class);
+        final String id1 = "id1";
+        final String id2 = "id2";
+        final String id3 = "id3";
+
+        final List<DMNElementReference> list = createListOfDMNElementReferenceWithIds(
+                id1,
+                id2,
+                id3);
+        final List<InputData> unsortedInputs = Arrays.asList(createInputDataWithId(id2),
+                                                             createInputDataWithId(id3),
+                                                             createInputDataWithId(id1));
+
+        doReturn(value).when(widget).getValue();
+
+        when(value.getDecisionService()).thenReturn(decisionService);
+        when(decisionService.getInputData()).thenReturn(list);
+
+        final List<InputData> sorted = widget.getCurrentItems(unsortedInputs);
+
+        assertThat(sorted)
+                .extracting(inputData -> inputData.getId().getValue())
+                .containsExactly(id1, id2, id3);
+    }
+
+    @Test
+    public void testGetNewItems() {
+
+        final DecisionServiceParametersList value = mock(DecisionServiceParametersList.class);
+        final DecisionService decisionService = mock(DecisionService.class);
+        final String id1 = "id1";
+        final String id2 = "id2";
+        final String id3 = "id3";
+        final String newItem1 = "aaa";
+        final String newItem2 = "bbb";
+        final String newItem3 = "ccc";
+        final String newItem4 = "ddd";
+
+        final List<DMNElementReference> list = createListOfDMNElementReferenceWithIds(
+                id1,
+                id2,
+                id3);
+        final List<InputData> currentItems = Arrays.asList(createInputDataWithId(id2),
+                                                           createInputDataWithId(id3),
+                                                           createInputDataWithId(id1));
+
+        final List<InputData> inputs = Arrays.asList(createInputDataWithId(newItem3),
+                                                     createInputDataWithId(newItem2),
+                                                     createInputDataWithId(newItem4),
+                                                     createInputDataWithId(newItem1));
+
+        doReturn(value).when(widget).getValue();
+
+        when(value.getDecisionService()).thenReturn(decisionService);
+        when(decisionService.getInputData()).thenReturn(list);
+
+        final List<InputData> result = widget.getNewItems(inputs, currentItems);
+
+        assertThat(result)
+                .extracting(inputData -> inputData.getId().getValue())
+                .containsExactly(newItem1, newItem2, newItem3, newItem4);
+    }
+
     private InputData createInputDataWithId(final String id) {
         final InputData inputData = new InputData();
         inputData.getId().setValue(id);
+        inputData.getName().setValue(id);
         return inputData;
     }
 
