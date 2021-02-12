@@ -21,6 +21,7 @@ import {
   ColumnInstance,
   ContextMenuEvent,
   DataRecord,
+  HeaderGroup,
   Row,
   useBlockLayout,
   useResizeColumns,
@@ -38,13 +39,15 @@ import { TableHandlerMenu } from "./TableHandlerMenu";
 
 export interface TableProps {
   /** Optional children element to be appended below the table content */
-  children?: React.ReactElement;
+  children?: React.ReactElement[];
   /** The prefix to be used for the column name */
   columnPrefix?: string;
   /** Optional label to be used for the edit popover that appears when clicking on column header */
   editColumnLabel?: string;
-  /** Component to be used for rendering a cell */
-  defaultCell?: React.FunctionComponent<CellProps>;
+  /** For each column there is a default component to be used to render the related cell */
+  defaultCell?: {
+    [columnName: string]: React.FunctionComponent<CellProps>;
+  };
   /** Table's columns */
   columns: Column[];
   /** Table's cells */
@@ -59,6 +62,8 @@ export interface TableProps {
   handlerConfiguration: TableHandlerConfiguration;
   /** True to have no header for this table */
   isHeadless?: boolean;
+  /** True to support multiple levels in the header */
+  headerHasMultipleLevels?: boolean;
 }
 
 export const NO_TABLE_CONTEXT_MENU_CLASS = "no-table-context-menu";
@@ -70,11 +75,12 @@ export const Table: React.FunctionComponent<TableProps> = ({
   onColumnsUpdate,
   onRowsUpdate,
   onRowAdding = () => ({}),
-  defaultCell = EditableCell,
+  defaultCell,
   rows,
   columns,
   handlerConfiguration,
   isHeadless = false,
+  headerHasMultipleLevels = false,
 }: TableProps) => {
   const NUMBER_OF_ROWS_COLUMN = "#";
 
@@ -88,6 +94,20 @@ export const Table: React.FunctionComponent<TableProps> = ({
       disableResizing: true,
       isCountColumn: true,
       hideFilter: true,
+      ...(headerHasMultipleLevels
+        ? {
+            columns: [
+              {
+                label: "0",
+                accessor: "0",
+                width: 60,
+                disableResizing: true,
+                isCountColumn: true,
+                hideFilter: true,
+              },
+            ],
+          }
+        : {}),
     },
     ...columns,
   ]);
@@ -217,7 +237,11 @@ export const Table: React.FunctionComponent<TableProps> = ({
     Cell: useCallback(
       (cellRef) => {
         const column = cellRef.column as ColumnInstance;
-        return column.isCountColumn ? cellRef.value : defaultCell(cellRef);
+        if (column.isCountColumn) {
+          return cellRef.value;
+        } else {
+          return defaultCell ? defaultCell[column.id](cellRef) : EditableCell(cellRef);
+        }
       },
       [defaultCell]
     ),
@@ -229,10 +253,10 @@ export const Table: React.FunctionComponent<TableProps> = ({
     return targetIsContainedInCurrentTable && contextMenuAvailableForTarget;
   };
 
-  const getThProps = (columnIndex: number) => ({
+  const getThProps = (column: ColumnInstance, columnIndex: number) => ({
     onContextMenu: (e: ContextMenuEvent) => {
       const target = e.target as HTMLElement;
-      const handlerOnHeaderIsAvailable = !(tableColumns[columnIndex] as ColumnInstance).disableHandlerOnHeader;
+      const handlerOnHeaderIsAvailable = !column.disableHandlerOnHeader;
       if (contextMenuIsAvailable(target) && handlerOnHeaderIsAvailable) {
         e.preventDefault();
         setTableHandlerAllowedOperations([
@@ -314,17 +338,25 @@ export const Table: React.FunctionComponent<TableProps> = ({
     onRowsUpdate(tableRows);
   }, [onRowsUpdate, tableRows]);
 
+  const resizeNestedColumns = (columns: ColumnInstance[], accessor: string, updatedWidth: number) => {
+    const columnIndex = _.findIndex(columns, { accessor });
+    if (columnIndex >= 0) {
+      const updatedColumn = { ...columns[columnIndex] };
+      updatedColumn.width = updatedWidth;
+      columns.splice(columnIndex, 1, updatedColumn);
+    } else {
+      _.forEach(columns, (column) => resizeNestedColumns(column.columns, accessor, updatedWidth));
+    }
+  };
+
   const finishedResizing =
     tableInstance.state.columnResizing.isResizingColumn === null &&
     !_.isEmpty(tableInstance.state.columnResizing.columnWidths);
   useEffect(() => {
     setTableColumns((prevTableColumns) => {
-      _.forEach(tableInstance.state.columnResizing.columnWidths, (updatedColumnWidth, accessor) => {
-        const columnIndex = _.findIndex(prevTableColumns, { accessor });
-        const updatedColumn = { ...prevTableColumns[columnIndex] };
-        updatedColumn.width = updatedColumnWidth;
-        prevTableColumns.splice(columnIndex, 1, updatedColumn);
-      });
+      _.forEach(tableInstance.state.columnResizing.columnWidths, (updatedColumnWidth, accessor) =>
+        resizeNestedColumns(prevTableColumns as ColumnInstance[], accessor, updatedColumnWidth)
+      );
       return [...prevTableColumns];
     });
     // Need to consider a change only when resizing is finished (no other dependencies to consider for this useEffect)
@@ -333,7 +365,7 @@ export const Table: React.FunctionComponent<TableProps> = ({
 
   const renderCountColumn = useCallback(
     (column: ColumnInstance, columnIndex: number) => (
-      <Th {...column.getHeaderProps()} className="fixed-column" key={columnIndex}>
+      <Th {...column.getHeaderProps()} className="fixed-column no-clickable-cell" key={columnIndex}>
         <div className="header-cell" data-ouia-component-type="expression-column-header">
           {column.label}
         </div>
@@ -342,64 +374,108 @@ export const Table: React.FunctionComponent<TableProps> = ({
     []
   );
 
-  const renderResizableColumn = useCallback(
-    (column: ColumnInstance, columnIndex: number) => (
-      <EditExpressionMenu
-        title={editColumnLabel}
-        selectedExpressionName={column.label}
-        selectedDataType={column.dataType}
-        onExpressionUpdate={onColumnNameOrDataTypeUpdate(columnIndex)}
+  const renderResizableHeaderCell = useCallback(
+    (column, columnIndex) => (
+      <Th
+        {...column.getHeaderProps()}
+        {...tableInstance.getThProps(column, columnIndex)}
+        className={`resizable-column ${!column.dataType ? "no-clickable-cell" : null}`}
         key={columnIndex}
       >
-        <Th
-          {...column.getHeaderProps()}
-          {...tableInstance.getThProps(columnIndex)}
-          className="resizable-column"
-          key={columnIndex}
-        >
-          <div className="header-cell" data-ouia-component-type="expression-column-header">
-            <div>
-              <p className="pf-u-text-truncate">{column.label}</p>
-              <p className="pf-u-text-truncate data-type">({column.dataType})</p>
-            </div>
-            <div
-              className={`pf-c-drawer ${!column.canResize ? "resizer-disabled" : ""}`}
-              {...(column.canResize ? column.getResizerProps() : {})}
-            >
-              <div className="pf-c-drawer__splitter pf-m-vertical">
-                <div className="pf-c-drawer__splitter-handle" />
-              </div>
+        <div className="header-cell" data-ouia-component-type="expression-column-header">
+          <div>
+            <p className="pf-u-text-truncate">{column.label}</p>
+            {column.dataType ? <p className="pf-u-text-truncate data-type">({column.dataType})</p> : null}
+          </div>
+          <div
+            className={`pf-c-drawer ${!column.canResize ? "resizer-disabled" : ""}`}
+            {...(column.canResize ? column.getResizerProps() : {})}
+          >
+            <div className="pf-c-drawer__splitter pf-m-vertical">
+              <div className="pf-c-drawer__splitter-handle" />
             </div>
           </div>
-        </Th>
-      </EditExpressionMenu>
+        </div>
+      </Th>
     ),
-    [editColumnLabel, onColumnNameOrDataTypeUpdate, tableInstance]
+    [tableInstance]
   );
 
-  const renderAdditiveRow = useMemo(() => {
-    return (
+  const renderResizableColumn = useCallback(
+    (column: ColumnInstance, columnIndex: number) =>
+      column.dataType ? (
+        <EditExpressionMenu
+          title={editColumnLabel}
+          selectedExpressionName={column.label}
+          selectedDataType={column.dataType}
+          onExpressionUpdate={onColumnNameOrDataTypeUpdate(columnIndex)}
+          key={columnIndex}
+        >
+          {renderResizableHeaderCell(column, columnIndex)}
+        </EditExpressionMenu>
+      ) : (
+        renderResizableHeaderCell(column, columnIndex)
+      ),
+    [editColumnLabel, onColumnNameOrDataTypeUpdate, renderResizableHeaderCell]
+  );
+
+  const renderColumn = useCallback(
+    (column: ColumnInstance, columnIndex: number) =>
+      column.isCountColumn ? renderCountColumn(column, columnIndex) : renderResizableColumn(column, columnIndex),
+    [renderCountColumn, renderResizableColumn]
+  );
+
+  const renderAdditiveRow = useMemo(
+    () => (
       <Tr className="table-row additive-row">
         <Td role="cell" className="empty-cell">
           <br />
         </Td>
-        <Td role="cell" className="row-remainder-content">
-          {children}
-        </Td>
+        {children?.map((child, childIndex) => {
+          return (
+            <Td
+              role="cell"
+              key={childIndex}
+              className="row-remainder-content"
+              style={{
+                width: tableInstance.allColumns[childIndex + 1].width,
+                minWidth: tableInstance.allColumns[childIndex + 1].minWidth,
+              }}
+            >
+              {child}
+            </Td>
+          );
+        })}
       </Tr>
-    );
-  }, [children]);
+    ),
+    [children, tableInstance.allColumns]
+  );
+
+  const renderHeaderGroups = useMemo(
+    () =>
+      tableInstance.headerGroups.map((headerGroup: HeaderGroup) => (
+        <Tr key={headerGroup.accessor} {...headerGroup.getHeaderGroupProps()}>
+          {headerGroup.headers.map((column: ColumnInstance, columnIndex: number) => renderColumn(column, columnIndex))}
+        </Tr>
+      )),
+    [renderColumn, tableInstance.headerGroups]
+  );
+
+  const renderLastLevelInHeaderGroups = useMemo(
+    () => (
+      <Tr>
+        {_.last(
+          tableInstance.headerGroups as HeaderGroup[]
+        )!.headers.map((column: ColumnInstance, columnIndex: number) => renderColumn(column, columnIndex))}
+      </Tr>
+    ),
+    [renderColumn, tableInstance.headerGroups]
+  );
 
   return (
     <div className="table-component">
       <TableComposable variant="compact" {...tableInstance.getTableProps()} ref={tableRef}>
-        <Thead noWrap className={isHeadless ? "headless-table" : ""}>
-          <tr>
-            {tableInstance.headers.map((column: ColumnInstance, columnIndex: number) =>
-              column.isCountColumn ? renderCountColumn(column, columnIndex) : renderResizableColumn(column, columnIndex)
-            )}
-          </tr>
-        </Thead>
+        <Thead noWrap>{isHeadless ? renderLastLevelInHeaderGroups : renderHeaderGroups}</Thead>
 
         <Tbody {...tableInstance.getTableBodyProps()}>
           {tableInstance.rows.map((row: Row, rowIndex: number) => {

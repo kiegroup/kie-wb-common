@@ -18,10 +18,6 @@
   font-style: normal;
 }
 
-.expression-container .table-component table thead.headless-table {
-  display: none;
-}
-
 .expression-container .table-component table th {
   position: relative;
   border-style: ridge;
@@ -31,6 +27,10 @@
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
+}
+
+.expression-container .table-component table th.fixed-column {
+  font-weight: 400;
 }
 
 .expression-container .table-component table th .header-cell {
@@ -47,9 +47,16 @@
 }
 
 .expression-container .table-component table th:not(:first-child) {
-  cursor: pointer;
   text-align: center;
   background-color: #DEF3FF;
+}
+
+.expression-container .table-component table th:not(.no-clickable-cell) {
+  cursor: pointer;
+}
+
+.expression-container .table-component table thead tr:not(:first-of-type) {
+  height: 4em;
 }
 
 .expression-container .table-component table tbody tr {
@@ -124,7 +131,6 @@
 .expression-container .table-component table tbody .table-row .row-remainder-content {
   display: inline-block;
   box-sizing: border-box;
-  width: 100%;
 }
 
 .table-handler .pf-c-popover__arrow {
