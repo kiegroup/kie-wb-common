@@ -38,6 +38,7 @@ declare module "react-table" {
     onCellUpdate: (rowIndex: number, columnId: string, value: string) => void;
     onRowUpdate: (rowIndex: number, updatedRow: DataRecord) => void;
     getThProps: (
+      column: ColumnInstance,
       columnIndex: number
     ) => {
       onContextMenu: (event: ContextMenuEvent) => void;
