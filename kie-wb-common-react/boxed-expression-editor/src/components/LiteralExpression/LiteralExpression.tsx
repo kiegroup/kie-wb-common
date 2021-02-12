@@ -17,15 +17,15 @@
 import "./LiteralExpression.css";
 import * as React from "react";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { ExpressionProps, LiteralExpressionProps, LogicType } from "../../api";
+import { DataType, ExpressionProps, LiteralExpressionProps, LogicType } from "../../api";
 import { TextArea } from "@patternfly/react-core";
-import { EditExpressionMenu } from "../EditExpressionMenu";
+import { EditExpressionMenu, EXPRESSION_NAME } from "../EditExpressionMenu";
 import { Resizer } from "../Resizer";
 
 export const LiteralExpression: React.FunctionComponent<LiteralExpressionProps> = ({
   content,
   dataType,
-  name,
+  name = EXPRESSION_NAME,
   onUpdatingNameAndDataType,
   isHeadless = false,
   onUpdatingRecursiveExpression,
@@ -60,7 +60,7 @@ export const LiteralExpression: React.FunctionComponent<LiteralExpressionProps> 
   ]);
 
   const onExpressionUpdate = useCallback(
-    ({ dataType, name }: ExpressionProps) => {
+    ({ dataType = DataType.Undefined, name = EXPRESSION_NAME }: ExpressionProps) => {
       setExpressionName(name);
       setExpressionDataType(dataType);
       onUpdatingNameAndDataType?.(name, dataType);

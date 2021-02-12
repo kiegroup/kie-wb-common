@@ -18,6 +18,7 @@ import { ExpressionProps, LogicType } from "../../api";
 import * as React from "react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { LogicTypeSelector } from "../LogicTypeSelector";
+import * as _ from "lodash";
 
 export interface ContextEntryExpressionProps {
   /** The expression wrapped by the entry */
@@ -36,13 +37,13 @@ export const ContextEntryExpression: React.FunctionComponent<ContextEntryExpress
 
   const expressionChangedExternally = expression.logicType === undefined;
   useEffect(() => {
-    setEntryExpression(expression);
+    setEntryExpression(_.omit(expression, "isHeadless"));
     // Every time, for an expression, its logic type is undefined, it means that corresponding entry has been just added
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [expressionChangedExternally]);
 
   useEffect(() => {
-    onUpdatingRecursiveExpression(entryExpression);
+    onUpdatingRecursiveExpression(_.omit(entryExpression, "isHeadless"));
   }, [onUpdatingRecursiveExpression, entryExpression]);
 
   const getLogicTypeSelectorRef = useCallback(() => {
@@ -50,10 +51,13 @@ export const ContextEntryExpression: React.FunctionComponent<ContextEntryExpress
   }, []);
 
   const onLogicTypeUpdating = useCallback((logicType) => {
-    setEntryExpression((previousSelectedExpression: ExpressionProps) => ({
-      ...previousSelectedExpression,
-      logicType: logicType,
-    }));
+    setEntryExpression((previousSelectedExpression: ExpressionProps) => {
+      const updatedExpression = {
+        ...previousSelectedExpression,
+        logicType: logicType,
+      };
+      return _.omit(updatedExpression, "isHeadless");
+    });
   }, []);
 
   const onLogicTypeResetting = useCallback(() => {

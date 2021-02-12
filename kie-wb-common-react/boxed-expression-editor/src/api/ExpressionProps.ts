@@ -20,9 +20,9 @@ import { Columns, Rows } from "./Table";
 
 export interface ExpressionProps {
   /** Expression name (which, in DMN world, is equal to the Decision node's name) */
-  name: string;
+  name?: string;
   /** Expression data type */
-  dataType: DataType;
+  dataType?: DataType;
   /** Optional callback executed to update expression's name and data type */
   onUpdatingNameAndDataType?: (updatedName: string, updatedDataType: DataType) => void;
   /** Logic type should not be defined at this stage */

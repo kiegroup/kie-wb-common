@@ -85,7 +85,6 @@ describe("ContextEntryExpressionCell tests", () => {
       },
       entryExpression: {
         dataType: DataType.Boolean,
-        isHeadless: true,
         logicType: LogicType.LiteralExpression,
         name,
         onUpdatingNameAndDataType: undefined,

@@ -112,12 +112,12 @@ export const ContextExpression: React.FunctionComponent<ContextProps> = ({
       name: expressionColumn.accessor,
       dataType: expressionColumn.dataType,
       contextEntries: rows as ContextEntries,
-      result: resultExpression,
+      result: _.omit(resultExpression, "isHeadless"),
       ...(infoWidth > DEFAULT_ENTRY_INFO_MIN_WIDTH ? { entryExpressionWidth: infoWidth } : {}),
       ...(expressionWidth > DEFAULT_ENTRY_EXPRESSION_MIN_WIDTH ? { entryInfoWidth: expressionWidth } : {}),
     };
     isHeadless
-      ? onUpdatingRecursiveExpression?.(updatedDefinition)
+      ? onUpdatingRecursiveExpression?.(_.omit(updatedDefinition, ["name", "dataType"]))
       : window.beeApi?.broadcastContextExpressionDefinition?.(updatedDefinition);
   }, [columns, isHeadless, onUpdatingRecursiveExpression, rows, resultExpression, infoWidth, expressionWidth]);
 
