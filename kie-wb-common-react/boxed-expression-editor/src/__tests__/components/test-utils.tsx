@@ -26,6 +26,8 @@ import { act } from "react-dom/test-utils";
 import { RecoilRoot } from "recoil";
 import { fireEvent } from "@testing-library/react";
 
+global.console = { ...global.console, warn: jest.fn() };
+
 export const EDIT_EXPRESSION_NAME = "[data-ouia-component-id='edit-expression-name']";
 export const EDIT_EXPRESSION_DATA_TYPE = "[data-ouia-component-id='edit-expression-data-type'] input";
 
