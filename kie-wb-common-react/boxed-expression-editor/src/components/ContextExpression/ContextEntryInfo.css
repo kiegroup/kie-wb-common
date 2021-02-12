@@ -14,16 +14,20 @@
  * limitations under the License.
  */
 
-.expression-container .context-expression .context-entry .entry-definition {
+.context-expression .entry-info {
+  width: 100%;
+}
+
+.context-expression .entry-info .entry-definition {
   cursor: pointer;
   padding: 0.25em;
 }
 
-.expression-container .context-expression .context-entry .entry-definition .entry-name {
+.context-expression .entry-info .entry-definition .entry-name {
   white-space: nowrap;
 }
 
-.expression-container .context-expression .context-entry .entry-definition .entry-data-type {
+.context-expression .entry-info .entry-definition .entry-data-type {
   font-style: italic;
   font-size: smaller;
 }

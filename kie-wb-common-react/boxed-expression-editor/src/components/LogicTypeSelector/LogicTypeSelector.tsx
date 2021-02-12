@@ -27,7 +27,6 @@ import { Button, ButtonVariant, SimpleList, SimpleListItem, SimpleListItemProps 
 import * as _ from "lodash";
 import { useContextMenuHandler } from "../../hooks";
 import { NO_TABLE_CONTEXT_MENU_CLASS } from "../Table";
-import nextId from "react-id-generator";
 
 export interface LogicTypeSelectorProps {
   /** Expression properties */
@@ -86,7 +85,7 @@ export const LogicTypeSelector: React.FunctionComponent<LogicTypeSelectorProps> 
       case LogicType.Relation:
         return <RelationExpression {...(expression as RelationProps)} />;
       case LogicType.Context:
-        return <ContextExpression {...(expression as ContextProps)} uid={nextId()} />;
+        return <ContextExpression {...(expression as ContextProps)} />;
       case LogicType.DecisionTable:
       case LogicType.Function:
       case LogicType.Invocation:

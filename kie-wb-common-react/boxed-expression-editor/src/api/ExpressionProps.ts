@@ -52,33 +52,27 @@ export interface RelationProps extends ExpressionProps {
 }
 
 export interface ContextEntryRecord {
-  /** Reference to the context expression */
-  contextExpressionId: string;
-  /** Entry name */
-  name: string;
-  /** Entry data type */
-  dataType: DataType;
+  entryInfo: {
+    /** Entry name */
+    name: string;
+    /** Entry data type */
+    dataType: DataType;
+  };
   /** Entry expression */
-  expression: ExpressionProps;
-  /** Entry info width */
-  infoWidth?: number;
-  /** Entry expression width */
-  expressionWidth?: number;
+  entryExpression: ExpressionProps;
 }
 
 export type ContextEntries = ContextEntryRecord[];
 
 export interface ContextProps extends ExpressionProps {
-  /** Unique identifier used to distinguish all nested instance of context expression */
-  uid: string;
   /** Logic type must be Context */
   logicType: LogicType.Context;
   /** Collection of context entries */
   contextEntries?: ContextEntries;
   /** Context result */
   result?: ExpressionProps;
-  /** Context result info width */
-  resultInfoWidth?: number;
-  /** Context result expression width */
-  resultExpressionWidth?: number;
+  /** Entry info width */
+  entryInfoWidth?: number;
+  /** Entry expression width */
+  entryExpressionWidth?: number;
 }

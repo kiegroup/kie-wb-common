@@ -21,13 +21,12 @@ import * as React from "react";
 import { DataType, LogicType } from "../../../api";
 
 describe("ContextExpression tests", () => {
-  const contextExpressionId = "id-0";
   const name = "contextName";
   const dataType = DataType.Boolean;
   test("should show a table with two rows: two context entries, where last is representing the result", () => {
     const { container } = render(
       usingTestingBoxedExpressionI18nContext(
-        <ContextExpression logicType={LogicType.Context} name={name} dataType={dataType} uid={contextExpressionId} />
+        <ContextExpression logicType={LogicType.Context} name={name} dataType={dataType} />
       ).wrapper
     );
 
@@ -50,16 +49,18 @@ describe("ContextExpression tests", () => {
 
     const contextEntries = [
       {
-        name: firstEntry,
-        dataType: firstDataType,
-        expression: firstExpression,
-        contextExpressionId: contextExpressionId,
+        entryInfo: {
+          name: firstEntry,
+          dataType: firstDataType,
+        },
+        entryExpression: firstExpression,
       },
       {
-        name: secondEntry,
-        dataType: secondDataType,
-        expression: secondExpression,
-        contextExpressionId: contextExpressionId,
+        entryInfo: {
+          name: secondEntry,
+          dataType: secondDataType,
+        },
+        entryExpression: secondExpression,
       },
     ];
 
@@ -77,7 +78,6 @@ describe("ContextExpression tests", () => {
           dataType={dataType}
           contextEntries={contextEntries}
           result={result}
-          uid={contextExpressionId}
         />
       ).wrapper
     );
@@ -94,12 +94,11 @@ describe("ContextExpression tests", () => {
     expect(container.querySelector(".context-expression table tbody tr:first-of-type")).toContainHTML(firstEntry);
     expect(container.querySelector(".context-expression table tbody tr:first-of-type")).toContainHTML(firstDataType);
     expect(
-      container.querySelector(".context-expression table tbody tr:first-of-type .entry-expression .react-resizable")!
-        .firstChild
+      container.querySelector(".context-expression table tbody tr:first-of-type .entry-expression")!.firstChild
     ).toHaveClass("logic-type-selected");
     expect(
-      container.querySelector(".context-expression table tbody tr:first-of-type .entry-expression .react-resizable")!
-        .firstChild!.firstChild
+      container.querySelector(".context-expression table tbody tr:first-of-type .entry-expression")!.firstChild!
+        .firstChild
     ).toHaveClass("literal-expression");
   };
 

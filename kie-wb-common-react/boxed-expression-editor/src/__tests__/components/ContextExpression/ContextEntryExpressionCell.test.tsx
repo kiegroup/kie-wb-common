@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-import { DataType } from "../../../api";
+import { DataType, LogicType } from "../../../api";
 import { render } from "@testing-library/react";
-import { EDIT_EXPRESSION_NAME, updateElementViaPopover, usingTestingBoxedExpressionI18nContext } from "../test-utils";
-import { ContextEntryCell } from "../../../components/ContextExpression";
+import { flushPromises, usingTestingBoxedExpressionI18nContext } from "../test-utils";
+import { ContextEntryExpressionCell } from "../../../components/ContextExpression";
 import * as _ from "lodash";
 import * as React from "react";
 import { DataRecord } from "react-table";
+import { act } from "react-dom/test-utils";
 
 jest.useFakeTimers();
 
-describe("ContextEntryCell tests", () => {
-  const contextExpressionId = "id-0";
+describe("ContextEntryExpressionCell tests", () => {
   const name = "Expression Name";
   const dataType = DataType.Boolean;
   const emptyExpression = { name, dataType };
@@ -33,17 +33,16 @@ describe("ContextEntryCell tests", () => {
   const entryDataType = DataType.Date;
 
   const value = "value";
-  const newValue = "changed";
   const rowIndex = 0;
   const columnId = "col1";
   const onRowUpdate: (rowIndex: number, updatedRow: DataRecord) => void = (rowIndex, updatedRow) =>
     _.identity({ rowIndex, updatedRow });
 
-  test("should show a context entry cell with logic type not selected", () => {
+  test("should show a context entry expression cell with logic type not selected", () => {
     const { container } = render(
       usingTestingBoxedExpressionI18nContext(
-        <ContextEntryCell
-          data={[{ name: entryName, dataType: entryDataType, expression: emptyExpression, contextExpressionId }]}
+        <ContextEntryExpressionCell
+          data={[{ entryInfo: { name: entryName, dataType: entryDataType }, entryExpression: emptyExpression }]}
           row={{ index: 0 }}
           column={{ id: "col1" }}
           onRowUpdate={_.identity}
@@ -51,27 +50,17 @@ describe("ContextEntryCell tests", () => {
       ).wrapper
     );
 
-    expect(container.querySelector(".context-entry-cell")).toBeTruthy();
-    expect(container.querySelector(".context-entry .entry-info")).not.toBeEmptyDOMElement();
-    expect(container.querySelector(".context-entry .entry-info .entry-definition")).not.toBeEmptyDOMElement();
-    expect(container.querySelector(".context-entry .entry-info .entry-definition .entry-name")).toContainHTML(
-      entryName
-    );
-    expect(container.querySelector(".context-entry .entry-info .entry-definition .entry-data-type")).toContainHTML(
-      entryDataType
-    );
-    expect(container.querySelector(".context-entry .entry-expression .logic-type-selector")).toHaveClass(
-      "logic-type-not-present"
-    );
+    expect(container.querySelector(".context-entry-expression-cell")).toBeTruthy();
+    expect(container.querySelector(".entry-expression .logic-type-selector")).toHaveClass("logic-type-not-present");
   });
 
-  test("should trigger onRowUpdate function when something in the context entry changes", async () => {
+  test("should trigger onRowUpdate function when something in the context entry expression changes", async () => {
     const mockedOnRowUpdate = jest.fn(onRowUpdate);
 
     const { container, baseElement } = render(
       usingTestingBoxedExpressionI18nContext(
-        <ContextEntryCell
-          data={[{ name: value, dataType: entryDataType, expression: emptyExpression, contextExpressionId }]}
+        <ContextEntryExpressionCell
+          data={[{ entryInfo: { name: value, dataType: entryDataType }, entryExpression: emptyExpression }]}
           row={{ index: rowIndex }}
           column={{ id: columnId }}
           onRowUpdate={mockedOnRowUpdate}
@@ -79,19 +68,29 @@ describe("ContextEntryCell tests", () => {
       ).wrapper
     );
 
-    await updateElementViaPopover(
-      container.querySelector(".entry-definition") as HTMLTableHeaderCellElement,
-      baseElement,
-      EDIT_EXPRESSION_NAME,
-      newValue
-    );
+    (container.querySelector(".entry-expression")! as HTMLDivElement).click();
+    await act(async () => {
+      await flushPromises();
+      jest.runAllTimers();
+      Array.from(baseElement.querySelectorAll("button"))
+        .find((el) => el.textContent === LogicType.LiteralExpression)!
+        .click();
+    });
 
     expect(mockedOnRowUpdate).toHaveBeenCalled();
     expect(mockedOnRowUpdate).toHaveBeenCalledWith(rowIndex, {
-      contextExpressionId,
-      name: newValue,
-      dataType: entryDataType,
-      expression: emptyExpression,
+      entryInfo: {
+        name: value,
+        dataType: entryDataType,
+      },
+      entryExpression: {
+        dataType: DataType.Boolean,
+        isHeadless: true,
+        logicType: LogicType.LiteralExpression,
+        name,
+        onUpdatingNameAndDataType: undefined,
+        onUpdatingRecursiveExpression: expect.any(Function),
+      },
     });
   });
 });
