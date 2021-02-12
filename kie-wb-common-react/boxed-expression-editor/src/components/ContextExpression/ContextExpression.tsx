@@ -63,26 +63,29 @@ export const ContextExpression: React.FunctionComponent<ContextProps> = ({
     },
   ];
 
+  const [resultExpression, setResultExpression] = useState(result);
+  const [infoWidth, setInfoWidth] = useState(entryInfoWidth);
+  const [expressionWidth, setExpressionWidth] = useState(entryExpressionWidth);
+
   const [columns, setColumns] = useState([
     {
       label: name,
       accessor: name,
       dataType,
       disableHandlerOnHeader: true,
-      disableResizing: true,
       columns: [
         {
           label: "Name",
           accessor: "entryInfo",
           disableHandlerOnHeader: true,
-          width: entryInfoWidth,
+          width: infoWidth,
           minWidth: DEFAULT_ENTRY_INFO_MIN_WIDTH,
         },
         {
           label: "Value",
           accessor: "entryExpression",
           disableHandlerOnHeader: true,
-          width: entryExpressionWidth,
+          width: expressionWidth,
           minWidth: DEFAULT_ENTRY_EXPRESSION_MIN_WIDTH,
         },
       ],
@@ -101,10 +104,6 @@ export const ContextExpression: React.FunctionComponent<ContextProps> = ({
     ]
   );
 
-  const [resultExpression, setResultExpression] = useState(result);
-  const [infoWidth, setInfoWidth] = useState(entryInfoWidth);
-  const [expressionWidth, setExpressionWidth] = useState(entryExpressionWidth);
-
   useEffect(() => {
     const [expressionColumn] = columns;
     const updatedDefinition: ContextProps = {
@@ -113,28 +112,13 @@ export const ContextExpression: React.FunctionComponent<ContextProps> = ({
       dataType: expressionColumn.dataType,
       contextEntries: rows as ContextEntries,
       result: _.omit(resultExpression, "isHeadless"),
-      ...(infoWidth > DEFAULT_ENTRY_INFO_MIN_WIDTH ? { entryExpressionWidth: infoWidth } : {}),
-      ...(expressionWidth > DEFAULT_ENTRY_EXPRESSION_MIN_WIDTH ? { entryInfoWidth: expressionWidth } : {}),
+      ...(infoWidth > DEFAULT_ENTRY_INFO_MIN_WIDTH ? { entryInfoWidth: infoWidth } : {}),
+      ...(expressionWidth > DEFAULT_ENTRY_EXPRESSION_MIN_WIDTH ? { entryExpressionWidth: expressionWidth } : {}),
     };
     isHeadless
       ? onUpdatingRecursiveExpression?.(_.omit(updatedDefinition, ["name", "dataType"]))
       : window.beeApi?.broadcastContextExpressionDefinition?.(updatedDefinition);
   }, [columns, isHeadless, onUpdatingRecursiveExpression, rows, resultExpression, infoWidth, expressionWidth]);
-
-  /**
-   * Every time the ContextExpression component gets re-rendered, automatically calculating table cells width to fit the entire content
-   */
-  // useEffect(() => {
-  //   document
-  //     .querySelectorAll(".context-expression > .table-component > table > tbody > tr > td.data-cell")
-  //     .forEach((td: HTMLElement) => (td.style.width = "100%"));
-  //   document
-  //     .querySelectorAll(".context-expression > .table-component > table > tbody > tr.table-row")
-  //     .forEach((td: HTMLElement) => (td.style.width = "100%"));
-  //   document
-  //     .querySelectorAll(".context-expression > .table-component > table > thead > tr > th.resizable-column")
-  //     .forEach((th: HTMLElement) => (th.style.width = "calc((100% - 60px)"));
-  // });
 
   const onColumnsUpdate = useCallback(
     ([expressionColumn]: [ColumnInstance]) => {
