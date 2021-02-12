@@ -83,6 +83,7 @@ export const Table: React.FunctionComponent<TableProps> = ({
   headerHasMultipleLevels = false,
 }: TableProps) => {
   const NUMBER_OF_ROWS_COLUMN = "#";
+  const NUMBER_OF_ROWS_SUBCOLUMN = "0";
 
   const tableRef = useRef<HTMLTableElement>(null);
 
@@ -98,8 +99,8 @@ export const Table: React.FunctionComponent<TableProps> = ({
         ? {
             columns: [
               {
-                label: "0",
-                accessor: "0",
+                label: NUMBER_OF_ROWS_SUBCOLUMN,
+                accessor: NUMBER_OF_ROWS_SUBCOLUMN,
                 width: 60,
                 disableResizing: true,
                 isCountColumn: true,

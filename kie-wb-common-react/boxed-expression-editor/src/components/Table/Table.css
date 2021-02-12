@@ -18,6 +18,11 @@
   font-style: normal;
 }
 
+.expression-container .table-component table thead,
+.expression-container .table-component table tbody {
+  display: table;
+}
+
 .expression-container .table-component table th {
   position: relative;
   border-style: ridge;
