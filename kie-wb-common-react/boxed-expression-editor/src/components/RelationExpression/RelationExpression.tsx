@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import "./RelationExpression.css";
 import * as React from "react";
 import { useCallback, useEffect, useState } from "react";
 import "@patternfly/patternfly/utilities/Text/text.css";
