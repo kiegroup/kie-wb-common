@@ -24,7 +24,6 @@ import {
   BoxedExpressionEditorI18nContext,
   boxedExpressionEditorI18nDefaults,
 } from "../../i18n";
-import { RecoilRoot } from "recoil";
 
 export interface BoxedExpressionEditorProps {
   /** All expression properties used to define it */
@@ -34,16 +33,14 @@ export interface BoxedExpressionEditorProps {
 const BoxedExpressionEditor: (props: BoxedExpressionEditorProps) => JSX.Element = (
   props: BoxedExpressionEditorProps
 ) => (
-  <RecoilRoot>
-    <I18nDictionariesProvider
-      defaults={boxedExpressionEditorI18nDefaults}
-      dictionaries={boxedExpressionEditorDictionaries}
-      initialLocale={navigator.language}
-      ctx={BoxedExpressionEditorI18nContext}
-    >
-      <ExpressionContainer {...props.expressionDefinition} />
-    </I18nDictionariesProvider>
-  </RecoilRoot>
+  <I18nDictionariesProvider
+    defaults={boxedExpressionEditorI18nDefaults}
+    dictionaries={boxedExpressionEditorDictionaries}
+    initialLocale={navigator.language}
+    ctx={BoxedExpressionEditorI18nContext}
+  >
+    <ExpressionContainer {...props.expressionDefinition} />
+  </I18nDictionariesProvider>
 );
 
 export { BoxedExpressionEditor };

@@ -23,7 +23,6 @@ import {
   boxedExpressionEditorI18nDefaults,
 } from "../../i18n";
 import { act } from "react-dom/test-utils";
-import { RecoilRoot } from "recoil";
 import { fireEvent } from "@testing-library/react";
 
 global.console = { ...global.console, warn: jest.fn() };
@@ -48,11 +47,9 @@ export function usingTestingBoxedExpressionI18nContext(
   return {
     ctx: usedCtx,
     wrapper: (
-      <RecoilRoot>
-        <I18nDictionariesProvider defaults={usedCtx.defaults} dictionaries={usedCtx.dictionaries} ctx={usedCtx.ctx}>
-          {usedCtx.children}
-        </I18nDictionariesProvider>
-      </RecoilRoot>
+      <I18nDictionariesProvider defaults={usedCtx.defaults} dictionaries={usedCtx.dictionaries} ctx={usedCtx.ctx}>
+        {usedCtx.children}
+      </I18nDictionariesProvider>
     ),
   };
 }
