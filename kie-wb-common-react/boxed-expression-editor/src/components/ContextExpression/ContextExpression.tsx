@@ -33,6 +33,7 @@ import { ContextEntryExpressionCell } from "./ContextEntryExpressionCell";
 import * as _ from "lodash";
 import { ContextEntryExpression } from "./ContextEntryExpression";
 import { ContextEntryInfoCell } from "./ContextEntryInfoCell";
+import { useDragEvents } from "../../hooks";
 
 const DEFAULT_CONTEXT_ENTRY_NAME = "ContextEntry-1";
 const DEFAULT_CONTEXT_ENTRY_DATA_TYPE = DataType.Undefined;
@@ -40,6 +41,7 @@ const DEFAULT_ENTRY_INFO_MIN_WIDTH = 150;
 const DEFAULT_ENTRY_EXPRESSION_MIN_WIDTH = 370;
 
 export const ContextExpression: React.FunctionComponent<ContextProps> = ({
+  uid,
   name = DEFAULT_CONTEXT_ENTRY_NAME,
   dataType = DEFAULT_CONTEXT_ENTRY_DATA_TYPE,
   onUpdatingNameAndDataType,
@@ -51,6 +53,7 @@ export const ContextExpression: React.FunctionComponent<ContextProps> = ({
   onUpdatingRecursiveExpression,
 }) => {
   const { i18n } = useBoxedExpressionEditorI18n();
+  const { setResizerElement, dragItHorizontally } = useDragEvents();
 
   const handlerConfiguration: TableHandlerConfiguration = [
     {
@@ -66,6 +69,7 @@ export const ContextExpression: React.FunctionComponent<ContextProps> = ({
   const [resultExpression, setResultExpression] = useState(result);
   const [infoWidth, setInfoWidth] = useState(entryInfoWidth);
   const [expressionWidth, setExpressionWidth] = useState(entryExpressionWidth);
+  const [expressionMinWidth, setExpressionMinWidth] = useState(DEFAULT_ENTRY_EXPRESSION_MIN_WIDTH);
 
   const [columns, setColumns] = useState([
     {
@@ -86,7 +90,7 @@ export const ContextExpression: React.FunctionComponent<ContextProps> = ({
           accessor: "entryExpression",
           disableHandlerOnHeader: true,
           width: expressionWidth,
-          minWidth: DEFAULT_ENTRY_EXPRESSION_MIN_WIDTH,
+          minWidth: expressionMinWidth,
         },
       ],
     },
@@ -103,22 +107,6 @@ export const ContextExpression: React.FunctionComponent<ContextProps> = ({
       } as DataRecord,
     ]
   );
-
-  useEffect(() => {
-    const [expressionColumn] = columns;
-    const updatedDefinition: ContextProps = {
-      logicType: LogicType.Context,
-      name: expressionColumn.accessor,
-      dataType: expressionColumn.dataType,
-      contextEntries: rows as ContextEntries,
-      result: _.omit(resultExpression, "isHeadless"),
-      ...(infoWidth > DEFAULT_ENTRY_INFO_MIN_WIDTH ? { entryInfoWidth: infoWidth } : {}),
-      ...(expressionWidth > DEFAULT_ENTRY_EXPRESSION_MIN_WIDTH ? { entryExpressionWidth: expressionWidth } : {}),
-    };
-    isHeadless
-      ? onUpdatingRecursiveExpression?.(_.omit(updatedDefinition, ["name", "dataType"]))
-      : window.beeApi?.broadcastContextExpressionDefinition?.(updatedDefinition);
-  }, [columns, isHeadless, onUpdatingRecursiveExpression, rows, resultExpression, infoWidth, expressionWidth]);
 
   const onColumnsUpdate = useCallback(
     ([expressionColumn]: [ColumnInstance]) => {
@@ -157,9 +145,63 @@ export const ContextExpression: React.FunctionComponent<ContextProps> = ({
     [generateNextAvailableEntryName, rows.length]
   );
 
+  const checkForOverflowingCell = useCallback(
+    () =>
+      Array.from(
+        document.querySelectorAll(
+          `.context-expression.${uid} > .table-component > table > tbody > tr > td:last-of-type`
+        )
+      ).reduce(
+        (acc, td: HTMLElement) => {
+          const { clientWidth, scrollWidth } = td;
+          return {
+            isOverflow: acc.isOverflow || scrollWidth > clientWidth,
+            contentWidth: Math.max(acc.contentWidth, scrollWidth - clientWidth),
+          };
+        },
+        { isOverflow: false, contentWidth: 0 }
+      ),
+    [uid]
+  );
+
+  const onSingleRowUpdate = useCallback(() => {
+    const { isOverflow, contentWidth } = checkForOverflowingCell();
+    if (isOverflow) {
+      setResizerElement(
+        document.querySelector(
+          `.table-component.${uid} > table > thead > tr:last-of-type > th:last-of-type div.pf-c-drawer`
+        )! as HTMLDivElement
+      );
+      dragItHorizontally(contentWidth);
+      setExpressionWidth(expressionWidth + contentWidth);
+      setExpressionMinWidth(expressionMinWidth + contentWidth);
+    }
+  }, [checkForOverflowingCell, dragItHorizontally, expressionMinWidth, expressionWidth, setResizerElement, uid]);
+
+  useEffect(() => {
+    onSingleRowUpdate();
+  }, [onSingleRowUpdate]);
+
+  useEffect(() => {
+    const [expressionColumn] = columns;
+    const updatedDefinition: ContextProps = {
+      logicType: LogicType.Context,
+      name: expressionColumn.accessor,
+      dataType: expressionColumn.dataType,
+      contextEntries: rows as ContextEntries,
+      result: _.omit(resultExpression, "isHeadless"),
+      ...(infoWidth > DEFAULT_ENTRY_INFO_MIN_WIDTH ? { entryInfoWidth: infoWidth } : {}),
+      ...(expressionWidth > DEFAULT_ENTRY_EXPRESSION_MIN_WIDTH ? { entryExpressionWidth: expressionWidth } : {}),
+    };
+    isHeadless
+      ? onUpdatingRecursiveExpression?.(_.omit(updatedDefinition, ["name", "dataType"]))
+      : window.beeApi?.broadcastContextExpressionDefinition?.(updatedDefinition);
+  }, [columns, isHeadless, onUpdatingRecursiveExpression, rows, resultExpression, infoWidth, expressionWidth]);
+
   return (
-    <div className="context-expression">
+    <div className={`context-expression ${uid}`}>
       <Table
+        tableId={uid}
         headerHasMultipleLevels={true}
         isHeadless={isHeadless}
         defaultCell={{ entryInfo: ContextEntryInfoCell, entryExpression: ContextEntryExpressionCell }}
@@ -168,6 +210,7 @@ export const ContextExpression: React.FunctionComponent<ContextProps> = ({
         onColumnsUpdate={onColumnsUpdate}
         onRowAdding={onRowAdding}
         onRowsUpdate={setRows}
+        onSingleRowUpdate={onSingleRowUpdate}
         handlerConfiguration={handlerConfiguration}
       >
         <div className="context-result">{`<result>`}</div>

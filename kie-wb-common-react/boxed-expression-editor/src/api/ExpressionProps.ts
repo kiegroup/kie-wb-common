@@ -65,6 +65,8 @@ export interface ContextEntryRecord {
 export type ContextEntries = ContextEntryRecord[];
 
 export interface ContextProps extends ExpressionProps {
+  /** Unique identifier used to distinguish all nested instance of context expression */
+  uid?: string;
   /** Logic type must be Context */
   logicType: LogicType.Context;
   /** Collection of context entries */
