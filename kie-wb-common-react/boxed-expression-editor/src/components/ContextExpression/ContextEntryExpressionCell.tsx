@@ -56,6 +56,7 @@ export const ContextEntryExpressionCell: React.FunctionComponent<ContextEntryExp
       <ContextEntryExpression
         expression={entryExpression}
         onUpdatingRecursiveExpression={onUpdatingRecursiveExpression}
+        onExpressionResetting={contextEntry.onExpressionResetting}
       />
     </div>
   );

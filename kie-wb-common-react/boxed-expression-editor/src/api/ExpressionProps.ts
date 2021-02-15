@@ -60,6 +60,8 @@ export interface ContextEntryRecord {
   };
   /** Entry expression */
   entryExpression: ExpressionProps;
+  /** Callback to be invoked on expression resetting */
+  onExpressionResetting?: () => void;
 }
 
 export type ContextEntries = ContextEntryRecord[];

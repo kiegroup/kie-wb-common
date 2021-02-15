@@ -25,11 +25,14 @@ export interface ContextEntryExpressionProps {
   expression: ExpressionProps;
   /** Function invoked when updating expression */
   onUpdatingRecursiveExpression: (expression: ExpressionProps) => void;
+  /** Function invoked when resetting expression */
+  onExpressionResetting?: () => void;
 }
 
 export const ContextEntryExpression: React.FunctionComponent<ContextEntryExpressionProps> = ({
   expression,
   onUpdatingRecursiveExpression,
+  onExpressionResetting,
 }) => {
   const expressionContainerRef = useRef<HTMLDivElement>(null);
 
@@ -66,7 +69,8 @@ export const ContextEntryExpression: React.FunctionComponent<ContextEntryExpress
       dataType: previousSelectedExpression.dataType,
       logicType: LogicType.Undefined,
     }));
-  }, []);
+    onExpressionResetting?.();
+  }, [onExpressionResetting]);
 
   return (
     <div className="entry-expression" ref={expressionContainerRef}>

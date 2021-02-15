@@ -66,6 +66,10 @@ export const ContextExpression: React.FunctionComponent<ContextProps> = ({
     },
   ];
 
+  const onExpressionResetting = useCallback(() => {
+    setExpressionWidth(DEFAULT_ENTRY_EXPRESSION_MIN_WIDTH);
+  }, []);
+
   const [resultExpression, setResultExpression] = useState(result);
   const [infoWidth, setInfoWidth] = useState(entryInfoWidth);
   const [expressionWidth, setExpressionWidth] = useState(entryExpressionWidth);
@@ -103,6 +107,7 @@ export const ContextExpression: React.FunctionComponent<ContextProps> = ({
           dataType: DEFAULT_CONTEXT_ENTRY_DATA_TYPE,
         },
         entryExpression: {},
+        onExpressionResetting,
       } as DataRecord,
     ]
   );
@@ -140,8 +145,9 @@ export const ContextExpression: React.FunctionComponent<ContextProps> = ({
         dataType: DataType.Undefined,
       },
       entryExpression: {},
+      onExpressionResetting,
     }),
-    [generateNextAvailableEntryName, rows.length]
+    [generateNextAvailableEntryName, onExpressionResetting, rows.length]
   );
 
   const checkForOverflowingCell = useCallback(
@@ -243,7 +249,11 @@ export const ContextExpression: React.FunctionComponent<ContextProps> = ({
         handlerConfiguration={handlerConfiguration}
       >
         <div className="context-result">{`<result>`}</div>
-        <ContextEntryExpression expression={resultExpression} onUpdatingRecursiveExpression={setResultExpression} />
+        <ContextEntryExpression
+          expression={resultExpression}
+          onUpdatingRecursiveExpression={setResultExpression}
+          onExpressionResetting={onExpressionResetting}
+        />
       </Table>
     </div>
   );
