@@ -38,6 +38,8 @@ import { Popover } from "@patternfly/react-core";
 import { TableHandlerMenu } from "./TableHandlerMenu";
 
 export interface TableProps {
+  /** Table identifier, useful for nested structures */
+  tableId?: string;
   /** Optional children element to be appended below the table content */
   children?: React.ReactElement[];
   /** The prefix to be used for the column name */
@@ -54,8 +56,10 @@ export interface TableProps {
   rows: DataRecord[];
   /** Function to be executed when columns are modified */
   onColumnsUpdate: (columns: Column[]) => void;
-  /** Function to be executed when cells are modified */
-  onRowsUpdate: (rows: DataRecord[]) => void;
+  /** Function to be executed when one or more rows are modified */
+  onRowsUpdate?: (rows: DataRecord[]) => void;
+  /** Function to be executed when a single row gets modified */
+  onSingleRowUpdate?: (rowIndex: number, row: DataRecord) => void;
   /** Function to be executed when adding a new row to the table */
   onRowAdding?: () => DataRecord;
   /** Custom configuration for the table handler */
@@ -69,11 +73,13 @@ export interface TableProps {
 export const NO_TABLE_CONTEXT_MENU_CLASS = "no-table-context-menu";
 
 export const Table: React.FunctionComponent<TableProps> = ({
+  tableId,
   children,
   columnPrefix = "column-",
   editColumnLabel,
   onColumnsUpdate,
   onRowsUpdate,
+  onSingleRowUpdate,
   onRowAdding = () => ({}),
   defaultCell,
   rows,
@@ -173,13 +179,17 @@ export const Table: React.FunctionComponent<TableProps> = ({
     });
   }, []);
 
-  const onRowUpdate = useCallback((rowIndex: number, updatedRow: DataRecord) => {
-    setTableRows((prevTableCells) => {
-      const updatedRows = [...prevTableCells];
-      updatedRows[rowIndex] = updatedRow;
-      return updatedRows;
-    });
-  }, []);
+  const onRowUpdate = useCallback(
+    (rowIndex: number, updatedRow: DataRecord) => {
+      onSingleRowUpdate?.(rowIndex, updatedRow);
+      setTableRows((prevTableCells) => {
+        const updatedRows = [...prevTableCells];
+        updatedRows[rowIndex] = updatedRow;
+        return updatedRows;
+      });
+    },
+    [onSingleRowUpdate]
+  );
 
   const generateNextAvailableColumnName: (lastIndex: number) => string = useCallback(
     (lastIndex) => {
@@ -336,7 +346,7 @@ export const Table: React.FunctionComponent<TableProps> = ({
   }, [onColumnsUpdate, tableColumns]);
 
   useEffect(() => {
-    onRowsUpdate(tableRows);
+    onRowsUpdate?.(tableRows);
   }, [onRowsUpdate, tableRows]);
 
   const resizeNestedColumns = (columns: ColumnInstance[], accessor: string, updatedWidth: number) => {
@@ -474,7 +484,7 @@ export const Table: React.FunctionComponent<TableProps> = ({
   );
 
   return (
-    <div className="table-component">
+    <div className={`table-component ${tableId}`}>
       <TableComposable variant="compact" {...tableInstance.getTableProps()} ref={tableRef}>
         <Thead noWrap>{isHeadless ? renderLastLevelInHeaderGroups : renderHeaderGroups}</Thead>
 
