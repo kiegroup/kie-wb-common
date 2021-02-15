@@ -72,6 +72,7 @@
     "@types/react-resizable": "^1.7.2",
     "@types/recoil": "^0.0.1",
     "lodash": "^4.17.20",
+    "react-id-generator": "^3.0.1",
     "react-resizable": "^1.11.0",
     "react-table": "^7.6.2",
     "recoil": "^0.1.2"
