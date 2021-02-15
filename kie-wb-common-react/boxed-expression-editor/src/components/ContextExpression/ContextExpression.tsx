@@ -69,7 +69,6 @@ export const ContextExpression: React.FunctionComponent<ContextProps> = ({
   const [resultExpression, setResultExpression] = useState(result);
   const [infoWidth, setInfoWidth] = useState(entryInfoWidth);
   const [expressionWidth, setExpressionWidth] = useState(entryExpressionWidth);
-  const [expressionMinWidth, setExpressionMinWidth] = useState(DEFAULT_ENTRY_EXPRESSION_MIN_WIDTH);
 
   const [columns, setColumns] = useState([
     {
@@ -90,7 +89,7 @@ export const ContextExpression: React.FunctionComponent<ContextProps> = ({
           accessor: "entryExpression",
           disableHandlerOnHeader: true,
           width: expressionWidth,
-          minWidth: expressionMinWidth,
+          minWidth: DEFAULT_ENTRY_EXPRESSION_MIN_WIDTH,
         },
       ],
     },
@@ -164,19 +163,49 @@ export const ContextExpression: React.FunctionComponent<ContextProps> = ({
     [uid]
   );
 
-  const onSingleRowUpdate = useCallback(() => {
-    const { isOverflow, contentWidth } = checkForOverflowingCell();
-    if (isOverflow) {
+  const checkForSpareSpace = useCallback(() => {
+    const tableWidth = (document.querySelector(
+      `.context-expression.${uid} > .table-component > table`
+    ) as HTMLTableElement).getBoundingClientRect().width;
+    const tableHeaderWidth = (document.querySelector(
+      `.context-expression.${uid} > .table-component > table > thead`
+    ) as HTMLTableElement).getBoundingClientRect().width;
+    const spareSpace = tableWidth - tableHeaderWidth;
+    if (spareSpace > 0) {
+      return {
+        isSpareSpace: true,
+        spareSpace,
+      };
+    }
+    return {
+      isSpareSpace: false,
+      spareSpace: 0,
+    };
+  }, [uid]);
+
+  const updateValueColumnWidth = useCallback(
+    (width: number) => {
       setResizerElement(
         document.querySelector(
           `.table-component.${uid} > table > thead > tr:last-of-type > th:last-of-type div.pf-c-drawer`
         )! as HTMLDivElement
       );
-      dragItHorizontally(contentWidth);
-      setExpressionWidth(expressionWidth + contentWidth);
-      setExpressionMinWidth(expressionMinWidth + contentWidth);
+      dragItHorizontally(width);
+      setExpressionWidth(width);
+    },
+    [dragItHorizontally, setResizerElement, uid]
+  );
+
+  const onSingleRowUpdate = useCallback(() => {
+    const { isOverflow, contentWidth } = checkForOverflowingCell();
+    const { isSpareSpace, spareSpace } = checkForSpareSpace();
+    if (isOverflow) {
+      const contentWidthPlusPadding = contentWidth + 7;
+      updateValueColumnWidth(contentWidthPlusPadding);
+    } else if (isSpareSpace) {
+      updateValueColumnWidth(spareSpace);
     }
-  }, [checkForOverflowingCell, dragItHorizontally, expressionMinWidth, expressionWidth, setResizerElement, uid]);
+  }, [checkForOverflowingCell, checkForSpareSpace, updateValueColumnWidth]);
 
   useEffect(() => {
     onSingleRowUpdate();
