@@ -245,17 +245,16 @@ export const Table: React.FunctionComponent<TableProps> = ({
   const defaultColumn = {
     minWidth: 38,
     width: 150,
-    Cell: useCallback(
-      (cellRef) => {
-        const column = cellRef.column as ColumnInstance;
-        if (column.isCountColumn) {
-          return cellRef.value;
-        } else {
-          return defaultCell ? defaultCell[column.id](cellRef) : EditableCell(cellRef);
-        }
-      },
-      [defaultCell]
-    ),
+    Cell: useCallback((cellRef) => {
+      const column = cellRef.column as ColumnInstance;
+      if (column.isCountColumn) {
+        return cellRef.value;
+      } else {
+        return defaultCell ? defaultCell[column.id](cellRef) : EditableCell(cellRef);
+      }
+      // Table performance optimization: no need to re-render cells, since nested component themselves will re-render
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []),
   };
 
   const contextMenuIsAvailable = (target: HTMLElement) => {
