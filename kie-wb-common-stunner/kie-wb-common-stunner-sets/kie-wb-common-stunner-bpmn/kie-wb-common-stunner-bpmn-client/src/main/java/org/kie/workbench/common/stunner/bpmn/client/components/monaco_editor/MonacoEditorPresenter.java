@@ -33,6 +33,8 @@ public class MonacoEditorPresenter {
     private boolean readyOnly;
     private int widthPx;
     private int heightPx;
+    private boolean requestRefresh = false;
+
     OnChangeCallback onChangeCallback;
     String current;
 
@@ -83,10 +85,12 @@ public class MonacoEditorPresenter {
 
     // Reloads the editor if language has changed
     public void setValue(String languageId, String value) {
-        if (null != current && !current.equals(languageId)) {
+        if (requestRefresh || (null != current && !current.equals(languageId))) {
             view.dispose();
             current = null;
         }
+        requestRefresh = false;
+
         if (null == current) {
             getLanguageById(languageId).ifPresent(module -> load(module, value));
         } else {
@@ -112,6 +116,10 @@ public class MonacoEditorPresenter {
                   });
     }
 
+    public void reload() {
+        load(getLanguageById(getLanguageId()).get(), getValue());
+    }
+
     public String getValue() {
         return view.getValue();
     }
@@ -133,6 +141,10 @@ public class MonacoEditorPresenter {
 
     void onValueChanged() {
         onChangeCallback.onChange();
+    }
+
+    void requestRefresh() {
+        requestRefresh = true;
     }
 
     void onLanguageChanged(String languageId) {

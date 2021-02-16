@@ -68,6 +68,8 @@ public class MonacoEditorView implements UberElement<MonacoEditorPresenter> {
 
     MonacoStandaloneCodeEditor editor;
     private MonacoEditorPresenter presenter;
+    private Integer lastWidth = 0;
+    private ResizeObserver resizeObserver = null;
 
     @Override
     public void init(final MonacoEditorPresenter presenter) {
@@ -124,6 +126,20 @@ public class MonacoEditorView implements UberElement<MonacoEditorPresenter> {
                     .addEventListener(EVENT_NAME,
                                       event -> presenter.onLanguageChanged(languageSelector.getValue()),
                                       false);
+        }
+
+        if (resizeObserver == null) {
+            resizeObserver = new ResizeObserver(event -> {
+                if (lastWidth == monacoEditor.getBoundingClientRect().getWidth().intValue()) { // no point in resizing
+                    return;
+                }
+
+                lastWidth = monacoEditor.getBoundingClientRect().getWidth().intValue();
+                presenter.setWidthPx(monacoEditor.getBoundingClientRect().getWidth().intValue());
+                presenter.requestRefresh();
+                presenter.onLanguageChanged(languageSelector.getValue());
+            });
+            resizeObserver.observe((elemental2.dom.Element) monacoEditor.getParentElement().getParentNode());
         }
     }
 
