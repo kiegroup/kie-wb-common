@@ -68,8 +68,8 @@ public class MonacoEditorView implements UberElement<MonacoEditorPresenter> {
 
     MonacoStandaloneCodeEditor editor;
     private MonacoEditorPresenter presenter;
-    private Integer lastWidth = 0;
-    private ResizeObserver resizeObserver = null;
+    protected Integer lastWidth = 0;
+    protected ResizeObserver resizeObserver = null;
 
     @Override
     public void init(final MonacoEditorPresenter presenter) {
@@ -129,19 +129,27 @@ public class MonacoEditorView implements UberElement<MonacoEditorPresenter> {
         }
 
         if (resizeObserver == null) {
-            resizeObserver = new ResizeObserver(event -> {
-                if (lastWidth == monacoEditor.getBoundingClientRect().getWidth().intValue()) { // no point in resizing
-                    return;
-                }
+            resizeObserver = new ResizeObserver(event -> onResize());
 
-                lastWidth = monacoEditor.getBoundingClientRect().getWidth().intValue();
-                presenter.setWidthPx(monacoEditor.getBoundingClientRect().getWidth().intValue());
-                presenter.requestRefresh();
-                presenter.onLanguageChanged(languageSelector.getValue());
-            });
-            resizeObserver.observe((elemental2.dom.Element) monacoEditor.getParentElement().getParentNode());
+            if (observeCommand == null) {
+                observeCommand = () -> resizeObserver.observe((elemental2.dom.Element) monacoEditor.getParentElement().getParentNode());
+            }
+            observeCommand.execute();
         }
     }
+
+    protected void onResize() {
+        if (lastWidth == monacoEditor.getBoundingClientRect().getWidth().intValue()) { // no point in resizing
+            return;
+        }
+
+        lastWidth = monacoEditor.getBoundingClientRect().getWidth().intValue();
+        presenter.setWidthPx(monacoEditor.getBoundingClientRect().getWidth().intValue());
+        presenter.requestRefresh();
+        presenter.onLanguageChanged(languageSelector.getValue());
+    }
+
+    protected com.google.gwt.user.client.Command observeCommand = null;
 
     static Element getParentInDepth(final Element element, int depth) {
         if (null != element && depth > 0) {

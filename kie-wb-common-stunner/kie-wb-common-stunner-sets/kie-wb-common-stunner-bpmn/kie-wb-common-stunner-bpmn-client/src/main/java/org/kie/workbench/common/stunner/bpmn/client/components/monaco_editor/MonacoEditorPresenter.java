@@ -115,11 +115,7 @@ public class MonacoEditorPresenter {
                       view.attachListenerToPanelTitle();
                   });
     }
-
-    public void reload() {
-        load(getLanguageById(getLanguageId()).get(), getValue());
-    }
-
+    
     public String getValue() {
         return view.getValue();
     }
