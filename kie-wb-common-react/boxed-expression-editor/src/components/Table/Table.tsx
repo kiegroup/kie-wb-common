@@ -30,11 +30,10 @@ import { TableComposable, Tbody, Td, Tr } from "@patternfly/react-table";
 import * as React from "react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { EditableCell } from "./EditableCell";
-import { CellProps, DataType, TableHandlerConfiguration, TableOperation } from "../../api";
+import { CellProps, TableHandlerConfiguration, TableOperation } from "../../api";
 import * as _ from "lodash";
-import { Popover } from "@patternfly/react-core";
-import { TableHandlerMenu } from "./TableHandlerMenu";
 import { TableHeader } from "./TableHeader";
+import { TableHandler } from "./TableHandler";
 
 export interface TableProps {
   /** Table identifier, useful for nested structures */
@@ -126,18 +125,6 @@ export const Table: React.FunctionComponent<TableProps> = ({
   const [lastSelectedColumnIndex, setLastSelectedColumnIndex] = useState(-1);
   const [lastSelectedRowIndex, setLastSelectedRowIndex] = useState(-1);
 
-  const insertBefore = <T extends unknown>(elements: T[], index: number, element: T) => {
-    return [...elements.slice(0, index), element, ...elements.slice(index)];
-  };
-
-  const insertAfter = <T extends unknown>(elements: T[], index: number, element: T) => {
-    return [...elements.slice(0, index + 1), element, ...elements.slice(index + 1)];
-  };
-
-  const deleteAt = <T extends unknown>(elements: T[], index: number) => {
-    return [...elements.slice(0, index), ...elements.slice(index + 1)];
-  };
-
   const onCellUpdate = useCallback((rowIndex: number, columnId: string, value: string) => {
     setTableRows((prevTableCells) => {
       const updatedTableCells = [...prevTableCells];
@@ -156,57 +143,6 @@ export const Table: React.FunctionComponent<TableProps> = ({
       });
     },
     [onSingleRowUpdate]
-  );
-
-  const generateNextAvailableColumnName: (lastIndex: number) => string = useCallback(
-    (lastIndex) => {
-      const candidateName = `${columnPrefix}${lastIndex}`;
-      const columnWithCandidateName = _.find(tableColumns, { accessor: candidateName });
-      return columnWithCandidateName ? generateNextAvailableColumnName(lastIndex + 1) : candidateName;
-    },
-    [columnPrefix, tableColumns]
-  );
-
-  const generateNextAvailableColumn = useCallback(
-    (columns: Column[]) => {
-      return {
-        accessor: generateNextAvailableColumnName(columns.length),
-        label: generateNextAvailableColumnName(columns.length),
-        dataType: DataType.Undefined,
-      };
-    },
-    [generateNextAvailableColumnName]
-  );
-
-  const handlingOperation = useCallback(
-    (tableOperation: TableOperation) => {
-      switch (tableOperation) {
-        case TableOperation.ColumnInsertLeft:
-          setTableColumns((prevTableColumns) =>
-            insertBefore(prevTableColumns, lastSelectedColumnIndex, generateNextAvailableColumn(prevTableColumns))
-          );
-          break;
-        case TableOperation.ColumnInsertRight:
-          setTableColumns((prevTableColumns) =>
-            insertAfter(prevTableColumns, lastSelectedColumnIndex, generateNextAvailableColumn(prevTableColumns))
-          );
-          break;
-        case TableOperation.ColumnDelete:
-          setTableColumns((prevTableColumns) => deleteAt(prevTableColumns, lastSelectedColumnIndex));
-          break;
-        case TableOperation.RowInsertAbove:
-          setTableRows((prevTableRows) => insertBefore(prevTableRows, lastSelectedRowIndex, onRowAdding()));
-          break;
-        case TableOperation.RowInsertBelow:
-          setTableRows((prevTableRows) => insertAfter(prevTableRows, lastSelectedRowIndex, onRowAdding()));
-          break;
-        case TableOperation.RowDelete:
-          setTableRows((prevTableRows) => deleteAt(prevTableRows, lastSelectedRowIndex));
-          break;
-      }
-      setShowTableHandler(false);
-    },
-    [generateNextAvailableColumn, lastSelectedColumnIndex, lastSelectedRowIndex, onRowAdding]
   );
 
   const defaultColumn = {
@@ -281,30 +217,6 @@ export const Table: React.FunctionComponent<TableProps> = ({
     },
     useBlockLayout,
     useResizeColumns
-  );
-
-  const buildTableHandler = useMemo(
-    () => (
-      <Popover
-        className="table-handler"
-        hasNoPadding
-        showClose={false}
-        distance={5}
-        position={"right"}
-        isVisible={showTableHandler}
-        shouldClose={() => setShowTableHandler(false)}
-        shouldOpen={(showFunction) => showFunction?.()}
-        reference={() => tableHandlerTarget}
-        bodyContent={
-          <TableHandlerMenu
-            handlerConfiguration={handlerConfiguration}
-            allowedOperations={tableHandlerAllowedOperations}
-            onOperation={handlingOperation}
-          />
-        }
-      />
-    ),
-    [showTableHandler, handlerConfiguration, tableHandlerAllowedOperations, handlingOperation, tableHandlerTarget]
   );
 
   useEffect(() => {
@@ -399,7 +311,22 @@ export const Table: React.FunctionComponent<TableProps> = ({
           {children ? renderAdditiveRow : null}
         </Tbody>
       </TableComposable>
-      {showTableHandler ? buildTableHandler : null}
+      {showTableHandler ? (
+        <TableHandler
+          tableColumns={tableColumns as ColumnInstance[]}
+          setTableColumns={setTableColumns}
+          setTableRows={setTableRows}
+          columnPrefix={columnPrefix}
+          handlerConfiguration={handlerConfiguration}
+          lastSelectedColumnIndex={lastSelectedColumnIndex}
+          lastSelectedRowIndex={lastSelectedRowIndex}
+          onRowAdding={onRowAdding}
+          showTableHandler={showTableHandler}
+          setShowTableHandler={setShowTableHandler}
+          tableHandlerAllowedOperations={tableHandlerAllowedOperations}
+          tableHandlerTarget={tableHandlerTarget}
+        />
+      ) : null}
     </div>
   );
 };

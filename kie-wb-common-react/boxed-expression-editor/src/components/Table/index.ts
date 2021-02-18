@@ -16,5 +16,6 @@
 
 export * from "./EditableCell";
 export * from "./Table";
+export * from "./TableHandler";
 export * from "./TableHandlerMenu";
 export * from "./TableHeader";
