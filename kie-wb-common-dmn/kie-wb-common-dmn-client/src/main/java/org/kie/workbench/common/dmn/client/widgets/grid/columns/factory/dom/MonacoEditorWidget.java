@@ -17,6 +17,7 @@
 package org.kie.workbench.common.dmn.client.widgets.grid.columns.factory.dom;
 
 import com.google.gwt.dom.client.Document;
+import elemental2.dom.Element;
 import jsinterop.base.Js;
 import org.gwtbootstrap3.client.ui.base.TextBoxBase;
 import org.kie.workbench.common.dmn.client.widgets.codecompletion.MonacoPropertiesFactory;
@@ -31,8 +32,15 @@ public class MonacoEditorWidget extends TextBoxBase {
 
     public MonacoEditorWidget() {
         super(Document.get().createDivElement());
-        codeEditor = monacoEditor.create(Js.uncheckedCast(getElement()),
+        codeEditor = monacoEditor.create(getMonacoEditorWidgetElement(),
                                          monacoPropertiesFactory.getConstructionOptions());
+    }
+
+    /**
+     * for testing
+     */
+    public Element getMonacoEditorWidgetElement() {
+        return Js.uncheckedCast(getElement());
     }
 
     /**
