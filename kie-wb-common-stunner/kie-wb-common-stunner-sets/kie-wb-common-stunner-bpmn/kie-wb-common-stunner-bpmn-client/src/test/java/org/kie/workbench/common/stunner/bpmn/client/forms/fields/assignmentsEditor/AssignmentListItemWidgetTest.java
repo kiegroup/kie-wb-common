@@ -191,7 +191,7 @@ public class AssignmentListItemWidgetTest {
                                     "abc");
         verify(widget,
                times(1)).setExpression("abc");
-        verify(activityWidget, times(1)).addDataType(anyString(), anyString());
+        verify(activityWidget, times(1)).addDataType(anyString(), any());
     }
 
     @Test
@@ -263,7 +263,7 @@ public class AssignmentListItemWidgetTest {
         String returnedCustomDataType2 = widget.getModelValue(widget.dataType);
         assertEquals(customDataType,
                      returnedCustomDataType2);
-        verify(activityWidget, times(1)).addDataType(anyString(), anyString());
+        verify(activityWidget, times(1)).addDataType(anyString(), any());
     }
 
     @Test
