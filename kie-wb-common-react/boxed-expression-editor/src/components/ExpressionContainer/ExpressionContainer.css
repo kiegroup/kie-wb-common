@@ -25,8 +25,9 @@
 }
 
 .expression-container > .expression-container-box,
-.expression-container .expression-type {
-  font-size: smaller;
+.expression-container .expression-type,
+.expression-container .entry-expression {
+  font-size: 14px;
   font-style: italic;
   color: gray;
 }
