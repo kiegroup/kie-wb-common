@@ -35,15 +35,8 @@ import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSIT
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITInformationRequirement;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITKnowledgeRequirement;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITKnowledgeSource;
-import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmndi12.JSIDMNDiagram;
-import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmndi12.JSIDMNEdge;
-import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.definition.Definition;
-import org.kie.workbench.common.stunner.core.graph.content.view.ControlPoint;
-import org.kie.workbench.common.stunner.core.graph.content.view.DiscreteConnection;
-import org.kie.workbench.common.stunner.core.graph.content.view.View;
-import org.kie.workbench.common.stunner.core.graph.content.view.ViewConnector;
 import org.mockito.invocation.InvocationOnMock;
 
 import static java.util.Arrays.asList;
@@ -77,15 +70,15 @@ public class DMNMarshallerTest {
         final JSITKnowledgeSource node5 = makeKnowledgeSource("id5");
 
         final DMNMarshaller dmnMarshaller = spy(new DMNMarshaller());
-        final JSITDefinitions definitions = spy(new JSITDefinitions());
+        final JSITDefinitions definitions = spy(JSITDefinitions.class);
         final List<JSITDRGElement> definitionsDRGElements = new ArrayList<>(asList(existingNode1, existingNode2, existingNode3));
 
-        final JSITAuthorityRequirement node1AuthorityRequirement = new JSITAuthorityRequirement();
-        final JSITInformationRequirement node1InformationRequirement = new JSITInformationRequirement();
-        final JSITKnowledgeRequirement node1KnowledgeRequirement = new JSITKnowledgeRequirement();
-        final JSITAuthorityRequirement node2AuthorityRequirement = new JSITAuthorityRequirement();
-        final JSITKnowledgeRequirement node2KnowledgeRequirement = new JSITKnowledgeRequirement();
-        final JSITAuthorityRequirement node3AuthorityRequirement = new JSITAuthorityRequirement();
+        final JSITAuthorityRequirement node1AuthorityRequirement = mock(JSITAuthorityRequirement.class);
+        final JSITInformationRequirement node1InformationRequirement = mock(JSITInformationRequirement.class);
+        final JSITKnowledgeRequirement node1KnowledgeRequirement = mock(JSITKnowledgeRequirement.class);
+        final JSITAuthorityRequirement node2AuthorityRequirement = mock(JSITAuthorityRequirement.class);
+        final JSITKnowledgeRequirement node2KnowledgeRequirement = mock(JSITKnowledgeRequirement.class);
+        final JSITAuthorityRequirement node3AuthorityRequirement = mock(JSITAuthorityRequirement.class);
 
         final List<JSITAuthorityRequirement> node1ExistingAuthorityRequirement = new ArrayList<>();
         final List<JSITInformationRequirement> node1ExistingInformationRequirement = new ArrayList<>();
@@ -182,7 +175,7 @@ public class DMNMarshallerTest {
         final JSITDecision definitionsDRGElement3 = makeDecision("id3");
         final DMNMarshaller dmnMarshaller = new DMNMarshaller();
 
-        final JSITDefinitions definitions = spy(new JSITDefinitions());
+        final JSITDefinitions definitions = spy(JSITDefinitions.class);
         final List<JSITDRGElement> definitionsDRGElements = new ArrayList<>(asList(definitionsDRGElement1, definitionsDRGElement2, definitionsDRGElement3));
 
         doReturn(definitionsDRGElements).when(definitions).getDrgElement();
@@ -278,81 +271,20 @@ public class DMNMarshallerTest {
         assertTrue(nodeDiagramImports.contains(import2));
     }
 
-    @Test
-    public void testConnect() {
-        final DMNMarshaller dmnMarshaller = new DMNMarshaller();
-        final JSIDMNDiagram diagram = mock(JSIDMNDiagram.class);
-        final List<String> dmnDiagramElementIds = mock(List.class);
-        final Definitions definitionsStunnerPojo = mock(Definitions.class);
-        final List<JSIDMNEdge> dmnEdges = new ArrayList<>();
-
-        final Node<?, ?> node = mock(Node.class);
-        final List inEdges = new ArrayList<>();
-        final Edge edge = mock(Edge.class);
-        final Node sourceNode = mock(Node.class);
-        final View sourceView = mock(View.class);
-        final ViewConnector viewConnector = mock(ViewConnector.class);
-        final DiscreteConnection sourceConnection = mock(DiscreteConnection.class);
-        final DiscreteConnection targetConnection = mock(DiscreteConnection.class);
-        final View<?> view = mock(View.class);
-
-        inEdges.add(edge);
-        when(edge.getSourceNode()).thenReturn(sourceNode);
-        when(sourceNode.getContent()).thenReturn(sourceView);
-
-        when(node.getInEdges()).thenReturn(inEdges);
-        when(edge.getContent()).thenReturn(viewConnector);
-        when(viewConnector.getControlPoints()).thenReturn(new ControlPoint[]{});
-        when(sourceConnection.isAuto()).thenReturn(true);
-        when(targetConnection.isAuto()).thenReturn(true);
-        when(diagram.getName()).thenReturn("dmnEdge");
-        when(definitionsStunnerPojo.getDefaultNamespace()).thenReturn("org.edge");
-
-        when(viewConnector.getSourceConnection()).thenReturn(Optional.of(sourceConnection));
-        when(viewConnector.getTargetConnection()).thenReturn(Optional.of(targetConnection));
-        dmnMarshaller.connect(diagram,
-                              dmnDiagramElementIds,
-                              definitionsStunnerPojo,
-                              dmnEdges,
-                              node,
-                              view);
-
-        when(viewConnector.getSourceConnection()).thenReturn(Optional.empty());
-        when(viewConnector.getTargetConnection()).thenReturn(Optional.empty());
-        dmnMarshaller.connect(diagram,
-                              dmnDiagramElementIds,
-                              definitionsStunnerPojo,
-                              dmnEdges,
-                              node,
-                              view);
-
-        when(viewConnector.getSourceConnection()).thenReturn(Optional.of(sourceConnection));
-        when(viewConnector.getTargetConnection()).thenReturn(Optional.empty());
-        dmnMarshaller.connect(diagram,
-                              dmnDiagramElementIds,
-                              definitionsStunnerPojo,
-                              dmnEdges,
-                              node,
-                              view);
-
-        verify(sourceConnection).isAuto();
-        verify(targetConnection).isAuto();
-    }
-
     private JSITDecision makeDecision(final String id) {
-        final JSITDecision decision = spy(new JSITDecision());
+        final JSITDecision decision = mock(JSITDecision.class);
         doReturn(id).when(decision).getId();
         return decision;
     }
 
     private JSITBusinessKnowledgeModel makeBusinessKnowledgeModel(final String id) {
-        final JSITBusinessKnowledgeModel businessKnowledgeModel = spy(new JSITBusinessKnowledgeModel());
+        final JSITBusinessKnowledgeModel businessKnowledgeModel = spy(JSITBusinessKnowledgeModel.class);
         doReturn(id).when(businessKnowledgeModel).getId();
         return businessKnowledgeModel;
     }
 
     private JSITKnowledgeSource makeKnowledgeSource(final String id) {
-        final JSITKnowledgeSource knowledgeSource = spy(new JSITKnowledgeSource());
+        final JSITKnowledgeSource knowledgeSource = spy(JSITKnowledgeSource.class);
         doReturn(id).when(knowledgeSource).getId();
         return knowledgeSource;
     }

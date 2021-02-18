@@ -26,7 +26,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.xml.XMLConstants;
@@ -60,7 +59,6 @@ import org.kie.workbench.common.dmn.client.marshaller.converters.InputDataConver
 import org.kie.workbench.common.dmn.client.marshaller.converters.KnowledgeSourceConverter;
 import org.kie.workbench.common.dmn.client.marshaller.converters.TextAnnotationConverter;
 import org.kie.workbench.common.dmn.client.marshaller.converters.dd.PointUtils;
-import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.MainJs;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.di.JSIDiagramElement;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITAssociation;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITBusinessKnowledgeModel;
@@ -146,11 +144,6 @@ public class DMNMarshaller {
         this.decisionServiceConverter = new DecisionServiceConverter(factoryManager, dmnDiagramsSession);
     }
 
-    @PostConstruct
-    public void init() {
-        MainJs.initializeJsInteropConstructors(MainJs.getConstructorsMap());
-    }
-
     public JSITDefinitions marshall() {
         final Map<String, JSITDRGElement> nodes = new HashMap<>();
         final Map<String, JSITTextAnnotation> textAnnotations = new HashMap<>();
@@ -160,7 +153,7 @@ public class DMNMarshaller {
 
         final JSITDefinitions definitions = DefinitionsConverter.dmnFromWB(definitionsStunnerPojo, true);
         if (Objects.isNull(definitions.getExtensionElements())) {
-            JSITDMNElement.JSIExtensionElements jsiExtensionElements = new JSITDMNElement.JSIExtensionElements();
+            JSITDMNElement.JSIExtensionElements jsiExtensionElements = JSITDMNElement.JSIExtensionElements.newInstance();
             definitions.setExtensionElements(jsiExtensionElements);
         }
 
@@ -175,9 +168,9 @@ public class DMNMarshaller {
 
             //Setup callback for marshalling ComponentWidths
             if (Objects.isNull(diagram.getExtension())) {
-                diagram.setExtension(new JSIDiagramElement.JSIExtension());
+                diagram.setExtension(JSIDiagramElement.JSIExtension.newInstance());
             }
-            final JSITComponentsWidthsExtension componentsWidthsExtension = new JSITComponentsWidthsExtension();
+            final JSITComponentsWidthsExtension componentsWidthsExtension = JSITComponentsWidthsExtension.newInstance();
             final JSIDiagramElement.JSIExtension extension = diagram.getExtension();
             JSITComponentsWidthsExtension wrappedComponentsWidthsExtension = WrapperUtils.getWrappedJSITComponentsWidthsExtension(componentsWidthsExtension);
             extension.addAny(wrappedComponentsWidthsExtension);
@@ -191,7 +184,6 @@ public class DMNMarshaller {
 
             //Iterate Graph processing nodes..
             for (final Node<?, ?> node : diagramNodes) {
-
                 if (!(node.getContent() instanceof View<?>)) {
                     continue;
                 }
@@ -240,6 +232,8 @@ public class DMNMarshaller {
                                                                                     namespaceURI));
 
                     final List<JSITAssociation> associations = AssociationConverter.dmnFromWB((Node<View<TextAnnotation>, ?>) node);
+
+
                     forEach(associations, association -> {
                         final JSITAssociation wrappedJSITAssociation = WrapperUtils.getWrappedJSITAssociation(Js.uncheckedCast(association));
                         definitions.addArtifact(wrappedJSITAssociation);
@@ -247,6 +241,7 @@ public class DMNMarshaller {
                 }
                 connect(diagram, dmnDiagramElementIds, definitionsStunnerPojo, dmnEdges, node, view);
             }
+
 
             nodes.values().forEach(node -> {
                 mergeOrAddNodeToDefinitions(node, definitions);
@@ -495,7 +490,7 @@ public class DMNMarshaller {
                         targetPoint = Point2D.create(xTarget + targetPoint.getX(), yTarget + targetPoint.getY());
                     }
 
-                    final JSIDMNEdge dmnEdge = new JSIDMNEdge();
+                    final JSIDMNEdge dmnEdge = getDmnEdge();
                     // DMNDI edge elementRef is uuid of Stunner edge,
                     // with the only exception when edge contains as content a DMN Association (Association is an edge)
                     final String uuid = getRawId(getUUID(e));
@@ -519,6 +514,10 @@ public class DMNMarshaller {
                 }
             }
         }
+    }
+
+    protected JSIDMNEdge getDmnEdge() {
+        return JSIDMNEdge.newInstance();
     }
 
     private String getUUID(final Edge<?, ?> edge) {
