@@ -31,3 +31,7 @@
   font-style: italic;
   font-size: smaller;
 }
+
+.context-expression .context-expression table th .header-cell {
+  height: 24px;
+}
