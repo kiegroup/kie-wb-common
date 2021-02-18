@@ -236,7 +236,7 @@ public class DefaultImportsEditorWidgetTest {
         tested.addDataTypes(value);
 
         verify(dataTypeNamesService,
-               times(1)).add(eq("MyString"), anyString());
+               times(1)).add(eq("MyString"), any());
 
         defaultImport = new DefaultImport();
 
