@@ -19,7 +19,9 @@ package org.kie.workbench.common.stunner.bpmn.definition.property.diagram;
 import java.util.Objects;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 
+import org.hibernate.validator.constraints.NotEmpty;
 import org.jboss.errai.common.client.api.annotations.MapsTo;
 import org.jboss.errai.common.client.api.annotations.Portable;
 import org.jboss.errai.databinding.client.api.Bindable;
@@ -27,15 +29,15 @@ import org.kie.workbench.common.forms.adf.definitions.annotations.FieldParam;
 import org.kie.workbench.common.forms.adf.definitions.annotations.FormDefinition;
 import org.kie.workbench.common.forms.adf.definitions.annotations.FormField;
 import org.kie.workbench.common.forms.adf.definitions.annotations.field.selector.SelectorDataProvider;
+import org.kie.workbench.common.forms.adf.definitions.annotations.metaModel.FieldValue;
 import org.kie.workbench.common.forms.adf.definitions.settings.FieldPolicy;
 import org.kie.workbench.common.forms.fields.shared.fieldTypes.basic.selectors.listBox.type.ListBoxFieldType;
 import org.kie.workbench.common.forms.fields.shared.fieldTypes.basic.textArea.type.TextAreaFieldType;
 import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.imports.Imports;
-import org.kie.workbench.common.stunner.bpmn.definition.property.general.Documentation;
-import org.kie.workbench.common.stunner.bpmn.definition.property.general.Name;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.SLADueDate;
 import org.kie.workbench.common.stunner.bpmn.forms.model.ImportsFieldType;
 import org.kie.workbench.common.stunner.core.definition.annotation.Property;
+import org.kie.workbench.common.stunner.core.definition.annotation.property.Value;
 import org.kie.workbench.common.stunner.core.util.HashUtil;
 
 @Portable
@@ -49,9 +51,12 @@ public class DiagramSet implements BaseDiagramSet {
     public static final String ADHOC = "adHoc";
 
     @Property
-    @FormField
     @Valid
-    private Name name;
+    @Value
+    @NotNull
+    @NotEmpty
+    @FieldValue
+    private String name;
 
     @Property
     @FormField(
@@ -59,7 +64,7 @@ public class DiagramSet implements BaseDiagramSet {
             afterElement = "name"
     )
     @Valid
-    private Documentation documentation;
+    private String documentation;
 
     @Property
     @FormField(
@@ -128,8 +133,8 @@ public class DiagramSet implements BaseDiagramSet {
     private SLADueDate slaDueDate;
 
     public DiagramSet() {
-        this(new Name(),
-             new Documentation(),
+        this("",
+             "",
              new Id(),
              new Package(),
              new ProcessType(),
@@ -141,8 +146,8 @@ public class DiagramSet implements BaseDiagramSet {
              new SLADueDate());
     }
 
-    public DiagramSet(final @MapsTo("name") Name name,
-                      final @MapsTo("documentation") Documentation documentation,
+    public DiagramSet(final @MapsTo("name") String name,
+                      final @MapsTo("documentation") String documentation,
                       final @MapsTo("id") Id id,
                       final @MapsTo("packageProperty") Package packageProperty,
                       final @MapsTo("processType") ProcessType processType,
@@ -166,8 +171,8 @@ public class DiagramSet implements BaseDiagramSet {
     }
 
     public DiagramSet(final String name) {
-        this(new Name(name),
-             new Documentation(),
+        this(name,
+             "",
              new Id(),
              new Package(),
              new ProcessType(),
@@ -180,20 +185,21 @@ public class DiagramSet implements BaseDiagramSet {
     }
 
     @Override
-    public Name getName() {
+    public String getName() {
         return name;
     }
 
-    public void setName(final Name name) {
+    @Override
+    public void setName(final String name) {
         this.name = name;
     }
 
     @Override
-    public Documentation getDocumentation() {
+    public String getDocumentation() {
         return documentation;
     }
 
-    public void setDocumentation(final Documentation documentation) {
+    public void setDocumentation(final String documentation) {
         this.documentation = documentation;
     }
 

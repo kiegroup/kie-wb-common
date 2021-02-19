@@ -46,8 +46,8 @@ public class ReusableSubprocessConverter {
         BaseReusableSubprocess definition = n.getContent().getDefinition();
 
         BPMNGeneralSet general = definition.getGeneral();
-        p.setName(general.getName().getValue());
-        p.setDocumentation(general.getDocumentation().getValue());
+        p.setName(general.getName());
+        p.setDocumentation(general.getDocumentation());
 
         BaseReusableSubprocessTaskExecutionSet executionSet = definition.getExecutionSet();
         p.setOnEntryAction(executionSet.getOnEntryAction());

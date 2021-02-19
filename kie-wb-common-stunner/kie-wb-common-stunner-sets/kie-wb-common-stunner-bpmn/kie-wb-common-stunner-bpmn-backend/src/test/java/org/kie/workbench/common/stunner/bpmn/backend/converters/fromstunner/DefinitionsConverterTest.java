@@ -32,8 +32,6 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.Version
 import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.imports.Imports;
 import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.imports.ImportsValue;
 import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.imports.WSDLImport;
-import org.kie.workbench.common.stunner.bpmn.definition.property.general.Documentation;
-import org.kie.workbench.common.stunner.bpmn.definition.property.general.Name;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.SLADueDate;
 import org.kie.workbench.common.stunner.core.graph.content.Bounds;
 import org.kie.workbench.common.stunner.core.graph.content.view.ViewImpl;
@@ -53,8 +51,8 @@ public class DefinitionsConverterTest {
         NodeImpl x = new NodeImpl("x");
         BPMNDiagramImpl diag = new BPMNDiagramImpl();
         diag.setDiagramSet(new DiagramSet(
-                new Name("x"),
-                new Documentation("doc"),
+                "x",
+                "doc",
                 new Id("x"),
                 new Package("org.jbpm"),
                 new ProcessType(),
@@ -90,8 +88,8 @@ public class DefinitionsConverterTest {
 
         BPMNDiagramImpl diag = new BPMNDiagramImpl();
         diag.setDiagramSet(new DiagramSet(
-                new Name(),
-                new Documentation(),
+                "",
+                "",
                 new Id(),
                 new Package(),
                 new ProcessType(),

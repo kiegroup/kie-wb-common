@@ -30,16 +30,17 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.general.Name;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 public class DataObjectTest {
 
-    private DataObject dataObject = new DataObject();
+    private final DataObject dataObject = new DataObject();
 
     @Test
     public void getLabels() {
         assertEquals(2, dataObject.getLabels().size());
-        assertEquals(true, dataObject.getLabels().contains("all"));
-        assertEquals(true, dataObject.getLabels().contains("lane_child"));
+        assertTrue(dataObject.getLabels().contains("all"));
+        assertTrue(dataObject.getLabels().contains("lane_child"));
     }
 
     @Test
@@ -100,7 +101,7 @@ public class DataObjectTest {
         assertEquals(dataObject1, dataObject2);
         // Test General Set
         BPMNGeneralSet generalSet = new BPMNGeneralSet();
-        generalSet.setName(new Name("someName"));
+        generalSet.setName("someName");
         dataObject2.setGeneral(generalSet);
         assertNotEquals(dataObject1, dataObject2);
         // Reset

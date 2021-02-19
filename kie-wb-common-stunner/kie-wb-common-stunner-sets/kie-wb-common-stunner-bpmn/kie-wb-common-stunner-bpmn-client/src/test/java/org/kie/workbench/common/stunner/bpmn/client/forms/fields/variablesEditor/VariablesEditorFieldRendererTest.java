@@ -34,7 +34,6 @@ import org.kie.workbench.common.stunner.bpmn.client.forms.fields.model.Variable;
 import org.kie.workbench.common.stunner.bpmn.client.forms.fields.model.VariableRow;
 import org.kie.workbench.common.stunner.bpmn.definition.UserTask;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.AssignmentsInfo;
-import org.kie.workbench.common.stunner.bpmn.definition.property.general.Name;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.TaskGeneralSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.IsMultipleInstance;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.MultipleInstanceCollectionInput;
@@ -188,8 +187,7 @@ public class VariablesEditorFieldRendererTest {
         when(node.getContent()).thenReturn(view);
         UserTask content = mock(UserTask.class);
         TaskGeneralSet generalSet = mock(TaskGeneralSet.class);
-        Name nameProperty = mock(Name.class);
-        when(generalSet.getName()).thenReturn(nameProperty);
+        when(generalSet.getName()).thenReturn("");
         when(content.getGeneral()).thenReturn(generalSet);
         UserTaskExecutionSet executionSet = mock(UserTaskExecutionSet.class);
         when(content.getExecutionSet()).thenReturn(executionSet);
@@ -207,18 +205,18 @@ public class VariablesEditorFieldRendererTest {
 
     @Test
     public void testDeserializeVariables() {
-        List<String> dataTypes = new ArrayList<String>(Arrays.asList("Boolean",
-                                                                     "Float",
-                                                                     "Integer",
-                                                                     "Object",
-                                                                     "org.veg.Potato",
-                                                                     "String"));
-        List<String> dataTypeDisplayNames = new ArrayList<String>(Arrays.asList("Boolean",
-                                                                                "Float",
-                                                                                "Integer",
-                                                                                "Potato [org.veg]",
-                                                                                "Object",
-                                                                                "String"));
+        List<String> dataTypes = new ArrayList<>(Arrays.asList("Boolean",
+                                                               "Float",
+                                                               "Integer",
+                                                               "Object",
+                                                               "org.veg.Potato",
+                                                               "String"));
+        List<String> dataTypeDisplayNames = new ArrayList<>(Arrays.asList("Boolean",
+                                                                          "Float",
+                                                                          "Integer",
+                                                                          "Potato [org.veg]",
+                                                                          "Object",
+                                                                          "String"));
 
         variablesEditor.setDataTypes(dataTypes,
                                      dataTypeDisplayNames);
@@ -270,7 +268,7 @@ public class VariablesEditorFieldRendererTest {
 
     @Test
     public void testSerializeVariables() {
-        Map<String, String> mapDataTypeDisplayNamesToNames = new HashMap<String, String>();
+        Map<String, String> mapDataTypeDisplayNamesToNames = new HashMap<>();
         mapDataTypeDisplayNamesToNames.put("String",
                                            "String");
         mapDataTypeDisplayNamesToNames.put("Integer",
@@ -281,7 +279,7 @@ public class VariablesEditorFieldRendererTest {
 
         List<String> tags = new ArrayList<>(Arrays.asList("Tag_1", "Tag_2"));
 
-        List<VariableRow> variableRows = new ArrayList<VariableRow>();
+        List<VariableRow> variableRows = new ArrayList<>();
         variableRows.add(new VariableRow(Variable.VariableType.PROCESS,
                                          "var1",
                                          "String",
@@ -312,7 +310,7 @@ public class VariablesEditorFieldRendererTest {
 
     @Test
     public void testSerializeVariablesWithTags() {
-        Map<String, String> mapDataTypeDisplayNamesToNames = new HashMap<String, String>();
+        Map<String, String> mapDataTypeDisplayNamesToNames = new HashMap<>();
         mapDataTypeDisplayNamesToNames.put("String",
                                            "String");
         mapDataTypeDisplayNamesToNames.put("Integer",
@@ -321,7 +319,7 @@ public class VariablesEditorFieldRendererTest {
                                            "org.veg.Potato");
         variablesEditor.mapDataTypeDisplayNamesToNames = mapDataTypeDisplayNamesToNames;
 
-        List<VariableRow> variableRows = new ArrayList<VariableRow>();
+        List<VariableRow> variableRows = new ArrayList<>();
         variableRows.add(new VariableRow(Variable.VariableType.PROCESS,
                                          "var1",
                                          "String",
@@ -364,7 +362,7 @@ public class VariablesEditorFieldRendererTest {
 
     @Test
     public void testIsDuplicateName() {
-        List<VariableRow> variableRows = new ArrayList<VariableRow>();
+        List<VariableRow> variableRows = new ArrayList<>();
         variableRows.add(new VariableRow(Variable.VariableType.PROCESS,
                                          "var1",
                                          "String",

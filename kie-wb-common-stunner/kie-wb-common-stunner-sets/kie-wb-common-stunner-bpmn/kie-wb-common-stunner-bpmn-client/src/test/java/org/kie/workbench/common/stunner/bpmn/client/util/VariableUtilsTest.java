@@ -51,7 +51,6 @@ import org.kie.workbench.common.stunner.bpmn.definition.UserTask;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.AssignmentsInfo;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.DataIOSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.BPMNGeneralSet;
-import org.kie.workbench.common.stunner.bpmn.definition.property.general.Name;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.TaskGeneralSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.IsMultipleInstance;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.MultipleInstanceCollectionInput;
@@ -726,15 +725,13 @@ public class VariableUtilsTest {
 
     private TaskGeneralSet mockTaskGeneralSet(String name) {
         TaskGeneralSet result = mock(TaskGeneralSet.class);
-        Name nameProperty = mockName(name);
-        when(result.getName()).thenReturn(nameProperty);
+        when(result.getName()).thenReturn(name);
         return result;
     }
 
     private BPMNGeneralSet mockGeneralSet(String name) {
         BPMNGeneralSet result = mock(BPMNGeneralSet.class);
-        Name nameProperty = mockName(name);
-        when(result.getName()).thenReturn(nameProperty);
+        when(result.getName()).thenReturn(name);
         return result;
     }
 
@@ -746,12 +743,6 @@ public class VariableUtilsTest {
 
     private AssignmentsInfo mockAssignmentsInfo(String value) {
         AssignmentsInfo result = mock(AssignmentsInfo.class);
-        when(result.getValue()).thenReturn(value);
-        return result;
-    }
-
-    private Name mockName(String value) {
-        Name result = mock(Name.class);
         when(result.getValue()).thenReturn(value);
         return result;
     }

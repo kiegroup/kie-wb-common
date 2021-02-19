@@ -42,8 +42,7 @@ public class BPMNElementDecorators {
                                                                                   .getContent()
                                                                                   .getDefinition()
                                                                                   .getGeneral()
-                                                                                  .getName()
-                                                                                  .getValue())
+                                                                                  .getName())
                                                               .orElseGet(() -> o.value().getUUID()),
                                               bpmnNode -> bpmnNode.value()
                                                       .getContent()
@@ -60,8 +59,7 @@ public class BPMNElementDecorators {
                                                                                      .getContent()
                                                                                      .getDefinition()
                                                                                      .getGeneral()
-                                                                                     .getName()
-                                                                                     .getValue())
+                                                                                     .getName())
                                                           .orElseGet(() -> o.value().getUUID());
                                               },
                                               r -> {

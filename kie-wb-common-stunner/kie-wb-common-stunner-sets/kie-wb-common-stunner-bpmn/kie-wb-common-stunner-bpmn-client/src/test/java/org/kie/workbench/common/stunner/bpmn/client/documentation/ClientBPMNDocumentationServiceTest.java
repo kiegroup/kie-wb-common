@@ -59,8 +59,6 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.imports
 import org.kie.workbench.common.stunner.bpmn.definition.property.dimensions.RectangleDimensionsSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.font.FontSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.BPMNGeneralSet;
-import org.kie.workbench.common.stunner.bpmn.definition.property.general.Documentation;
-import org.kie.workbench.common.stunner.bpmn.definition.property.general.Name;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.SLADueDate;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.TaskGeneralSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.notification.NotificationsInfo;
@@ -226,15 +224,9 @@ public class ClientBPMNDocumentationServiceTest {
     @Mock
     private AdapterManager adapters;
 
-    private List<Node> nodes;
-
     private BPMNDiagramImpl bpmnDiagram;
 
     private DiagramSet diagramSet;
-
-    private Name processName;
-
-    private Documentation processDocumentation;
 
     private Id processId;
 
@@ -306,8 +298,6 @@ public class ClientBPMNDocumentationServiceTest {
     public void setUp() throws Exception {
 
         //DiagramSet
-        processName = new Name(PROCESS_NAME);
-        processDocumentation = new Documentation(PROCESS_DOCUMENTATION);
         packageProperty = new Package(PROCESS_PACKAGE);
         type = new ProcessType();
         version = new Version(PROCESS_VERSION);
@@ -329,8 +319,8 @@ public class ClientBPMNDocumentationServiceTest {
         importsValue.addImport(new WSDLImport(LOCATION + "4", NAMESPACE + "4"));
         imports = new Imports(importsValue);
 
-        diagramSet = new DiagramSet(processName,
-                                    processDocumentation,
+        diagramSet = new DiagramSet(PROCESS_NAME,
+                                    PROCESS_DOCUMENTATION,
                                     processId,
                                     packageProperty,
                                     type,
@@ -359,8 +349,8 @@ public class ClientBPMNDocumentationServiceTest {
                 advancedData
         );
 
-        userTask = new UserTask(new TaskGeneralSet(new Name(TASK_NAME),
-                                                   new Documentation(TASK_DOC)),
+        userTask = new UserTask(new TaskGeneralSet(TASK_NAME,
+                                                   TASK_DOC),
                                 new UserTaskExecutionSet(new TaskName(TASK_NAME),
                                                          new Actors(),
                                                          new Groupid(TASK_GROUPID),
@@ -391,8 +381,8 @@ public class ClientBPMNDocumentationServiceTest {
                                 new SimulationSet(),
                                 new TaskType(TaskTypes.USER));
 
-        embeddedSubprocess = new EmbeddedSubprocess(new BPMNGeneralSet(new Name(SUB_PROCESS_NAME),
-                                                                       new Documentation(SUB_PROCESS_DOCUMENTATION)),
+        embeddedSubprocess = new EmbeddedSubprocess(new BPMNGeneralSet(SUB_PROCESS_NAME,
+                                                                       SUB_PROCESS_DOCUMENTATION),
                                                     new BackgroundSet(),
                                                     new FontSet(),
                                                     new RectangleDimensionsSet(),
@@ -405,7 +395,7 @@ public class ClientBPMNDocumentationServiceTest {
                                                                                        new SLADueDate()),
                                                     new ProcessData(SUB_PROCESS_VARIABLES));
 
-        nodes = Arrays.asList(createNode(bpmnDiagram), createNode(userTask), createNode(embeddedSubprocess));
+        List<Node> nodes = Arrays.asList(createNode(bpmnDiagram), createNode(userTask), createNode(embeddedSubprocess));
 
         when(diagram.getGraph()).thenReturn(graph);
         when(graph.nodes()).thenReturn(nodes);

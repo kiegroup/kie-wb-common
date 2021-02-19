@@ -29,7 +29,6 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.imports
 import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.imports.Imports;
 import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.imports.ImportsValue;
 import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.imports.WSDLImport;
-import org.kie.workbench.common.stunner.bpmn.definition.property.general.Name;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
@@ -54,7 +53,7 @@ public class DiagramSetTest {
         this.validator = vf.getValidator();
 
         tested = new DiagramSet();
-        tested.setName(new Name((NAME_VALID)));
+        tested.setName(NAME_VALID);
         tested.setId(new Id(ID_VALID));
         tested.setPackageProperty(new Package(PACKAGE_VALID));
         tested.setVersion(new Version(VERSION_VALID));
@@ -69,7 +68,7 @@ public class DiagramSetTest {
 
     @Test
     public void testNameInvalid() {
-        tested.setName(new Name(NAME_INVALID));
+        tested.setName(NAME_INVALID);
         Set<ConstraintViolation<DiagramSet>> violations = this.validator.validate(tested);
         assertEquals(1, violations.size());
     }

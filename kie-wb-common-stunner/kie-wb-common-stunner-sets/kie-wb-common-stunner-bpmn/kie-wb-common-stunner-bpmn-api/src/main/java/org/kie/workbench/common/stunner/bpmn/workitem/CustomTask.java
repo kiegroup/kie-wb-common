@@ -31,8 +31,6 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.DataIOMo
 import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.DataIOSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dimensions.RectangleDimensionsSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.font.FontSet;
-import org.kie.workbench.common.stunner.bpmn.definition.property.general.Documentation;
-import org.kie.workbench.common.stunner.bpmn.definition.property.general.Name;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.TaskGeneralSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.simulation.SimulationSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.TaskType;
@@ -98,8 +96,8 @@ public class CustomTask extends BaseCustomTask implements DataIOModel {
              "Custom Task",
              BPMNCategories.CUSTOM_TASKS,
              "",
-             new TaskGeneralSet(new Name("Custom Task"),
-                                new Documentation()),
+             new TaskGeneralSet("Custom Task",
+                                ""),
              new DataIOSet(),
              new CustomTaskExecutionSet(),
              new BackgroundSet(),

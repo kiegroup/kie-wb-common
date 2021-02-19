@@ -67,8 +67,6 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.font.FontBorder
 import org.kie.workbench.common.stunner.bpmn.definition.property.font.FontColor;
 import org.kie.workbench.common.stunner.bpmn.definition.property.font.FontFamily;
 import org.kie.workbench.common.stunner.bpmn.definition.property.font.FontSize;
-import org.kie.workbench.common.stunner.bpmn.definition.property.general.Documentation;
-import org.kie.workbench.common.stunner.bpmn.definition.property.general.Name;
 import org.kie.workbench.common.stunner.bpmn.definition.property.simulation.Currency;
 import org.kie.workbench.common.stunner.bpmn.definition.property.simulation.DistributionType;
 import org.kie.workbench.common.stunner.bpmn.definition.property.simulation.Max;
@@ -210,7 +208,6 @@ public class ClientBPMNDocumentationService implements BPMNDocumentationService 
 
         final String documentation = diagramSet
                 .map(DiagramSet::getDocumentation)
-                .map(Documentation::getValue)
                 .map(this::encodeLineBreak)
                 .orElse(null);
 
@@ -243,7 +240,6 @@ public class ClientBPMNDocumentationService implements BPMNDocumentationService 
 
         final String name = diagramSet
                 .map(DiagramSet::getName)
-                .map(Name::getValue)
                 .orElse(null);
 
         final String description = diagramSet

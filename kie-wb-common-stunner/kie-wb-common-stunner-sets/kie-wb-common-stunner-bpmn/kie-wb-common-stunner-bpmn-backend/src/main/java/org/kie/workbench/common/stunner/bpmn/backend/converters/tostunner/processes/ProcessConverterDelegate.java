@@ -88,7 +88,7 @@ final class ProcessConverterDelegate {
         final Result<BpmnNode>[] laneSetsResult = convertLaneSets(laneSets, freeFloatingNodes, firstNode);
 
         final Map<String, BpmnNode> lanesMap = Stream.of(laneSetsResult)
-                .filter(Objects::nonNull).map(v -> v.value())
+                .filter(Objects::nonNull).map(Result::value)
                 .collect(Collectors.toMap(n -> n.value().getUUID(), n -> n));
         freeFloatingNodes.putAll(lanesMap);
 

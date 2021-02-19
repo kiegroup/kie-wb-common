@@ -90,8 +90,8 @@ public class CustomTaskFactoryTest {
         assertEquals(WID_NAME, customTask.getExecutionSet().getTaskName().getValue());
         assertEquals(WID_CAT, customTask.getCategory());
         assertEquals(WID_HANDLER, customTask.getDefaultHandler());
-        assertEquals(WID_DISP_NAME, customTask.getGeneral().getName().getValue());
-        assertEquals(WID_DOC, customTask.getGeneral().getDocumentation().getValue());
+        assertEquals(WID_DISP_NAME, customTask.getGeneral().getName());
+        assertEquals(WID_DOC, customTask.getGeneral().getDocumentation());
         assertEquals(WID_DESC, customTask.getDescription());
         assertEquals(WID_PARAMS + WID_RESULTS, customTask.getDataIOSet().getAssignmentsinfo().getValue());
     }

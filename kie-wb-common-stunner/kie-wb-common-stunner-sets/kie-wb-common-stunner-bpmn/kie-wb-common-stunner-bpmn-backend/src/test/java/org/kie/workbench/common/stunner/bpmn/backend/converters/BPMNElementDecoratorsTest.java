@@ -23,7 +23,6 @@ import org.junit.runner.RunWith;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.BpmnNode;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNBaseInfo;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNViewDefinition;
-import org.kie.workbench.common.stunner.bpmn.definition.property.general.Name;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
 import org.kie.workbench.common.stunner.core.marshaller.MarshallingMessageDecorator;
@@ -75,9 +74,8 @@ public class BPMNElementDecoratorsTest {
         when(content.getDefinition()).thenReturn(viewDefinition);
         BPMNBaseInfo general = mock(BPMNBaseInfo.class);
         when(viewDefinition.getGeneral()).thenReturn(general);
-        Name name = mock(Name.class);
+        String name = NAME;
         when(general.getName()).thenReturn(name);
-        when(name.getValue()).thenReturn(NAME);
         return element;
     }
 

@@ -39,52 +39,46 @@ public class BPMNGeneralSet implements BPMNPropertySet,
 
     @Property
     @FormField(type = TextAreaFieldType.class)
-    private Name name;
+    private String name;
 
     @Property
     @FormField(
             type = TextAreaFieldType.class,
             afterElement = "name"
     )
-    private Documentation documentation;
+    private String documentation;
 
     public BPMNGeneralSet() {
-        this(new Name(""),
-             new Documentation());
+        this("", "");
     }
 
-    public BPMNGeneralSet(final @MapsTo("name") Name name,
-                          final @MapsTo("documentation") Documentation documentation) {
+    public BPMNGeneralSet(final @MapsTo("name") String name,
+                          final @MapsTo("documentation") String documentation) {
         this.name = name;
         this.documentation = documentation;
     }
 
-    public BPMNGeneralSet(final String name,
-                          final String documentation) {
-        this.name = new Name(name);
-        this.documentation = new Documentation(documentation);
-    }
-
     public BPMNGeneralSet(String name) {
-        this.name = new Name(name);
-        this.documentation = new Documentation();
+        this.name = name;
+        this.documentation = "";
     }
 
     @Override
-    public Name getName() {
+    public String getName() {
         return name;
     }
 
-    public void setName(final Name name) {
+    @Override
+    public void setName(final String name) {
         this.name = name;
     }
 
     @Override
-    public Documentation getDocumentation() {
+    public String getDocumentation() {
         return documentation;
     }
 
-    public void setDocumentation(final Documentation documentation) {
+    public void setDocumentation(final String documentation) {
         this.documentation = documentation;
     }
 

@@ -31,8 +31,6 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.common.Conditio
 import org.kie.workbench.common.stunner.bpmn.definition.property.connectors.Priority;
 import org.kie.workbench.common.stunner.bpmn.definition.property.connectors.SequenceFlowExecutionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.BPMNGeneralSet;
-import org.kie.workbench.common.stunner.bpmn.definition.property.general.Documentation;
-import org.kie.workbench.common.stunner.bpmn.definition.property.general.Name;
 import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
@@ -55,8 +53,8 @@ public class SequenceFlowConverter implements EdgeConverter<org.eclipse.bpmn2.Se
         SequenceFlowPropertyReader p = propertyReaderFactory.of(seq);
 
         definition.setGeneral(new BPMNGeneralSet(
-                new Name(p.getName()),
-                new Documentation(p.getDocumentation())
+                p.getName(),
+                p.getDocumentation()
         ));
 
         definition.setExecutionSet(new SequenceFlowExecutionSet(

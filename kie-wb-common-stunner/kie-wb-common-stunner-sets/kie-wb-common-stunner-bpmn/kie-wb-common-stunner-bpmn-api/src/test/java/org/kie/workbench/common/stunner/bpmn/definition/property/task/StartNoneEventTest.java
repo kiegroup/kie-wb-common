@@ -62,7 +62,7 @@ public class StartNoneEventTest {
     @Test
     public void testBPMNGeneralSetNameValid() {
         BPMNGeneralSet bpmnGeneralSet = new BPMNGeneralSet();
-        bpmnGeneralSet.setName(new Name(NAME_VALID));
+        bpmnGeneralSet.setName(NAME_VALID);
         Set<ConstraintViolation<BPMNGeneralSet>> violations = this.validator.validate(bpmnGeneralSet);
         assertTrue(violations.isEmpty());
     }
@@ -70,7 +70,7 @@ public class StartNoneEventTest {
     @Test
     public void testBPMNGeneralSetNameEmpty() {
         BPMNGeneralSet bpmnGeneralSet = new BPMNGeneralSet();
-        bpmnGeneralSet.setName(new Name(""));
+        bpmnGeneralSet.setName("");
         Set<ConstraintViolation<BPMNGeneralSet>> violations = this.validator.validate(bpmnGeneralSet);
         assertTrue(violations.isEmpty());
     }
@@ -78,7 +78,7 @@ public class StartNoneEventTest {
     @Test
     public void testStartNoneEventNameValid() {
         StartNoneEvent startNoneEvent = new StartNoneEvent();
-        startNoneEvent.getGeneral().setName(new Name(NAME_VALID));
+        startNoneEvent.getGeneral().setName(NAME_VALID);
         Set<ConstraintViolation<StartNoneEvent>> violations = this.validator.validate(startNoneEvent);
         assertTrue(violations.isEmpty());
     }
@@ -86,7 +86,7 @@ public class StartNoneEventTest {
     @Test
     public void testStartNoneEventNameEmpty() {
         StartNoneEvent startNoneEvent = new StartNoneEvent();
-        startNoneEvent.getGeneral().setName(new Name(""));
+        startNoneEvent.getGeneral().setName("");
         Set<ConstraintViolation<StartNoneEvent>> violations = this.validator.validate(startNoneEvent);
         assertTrue(violations.isEmpty());
     }

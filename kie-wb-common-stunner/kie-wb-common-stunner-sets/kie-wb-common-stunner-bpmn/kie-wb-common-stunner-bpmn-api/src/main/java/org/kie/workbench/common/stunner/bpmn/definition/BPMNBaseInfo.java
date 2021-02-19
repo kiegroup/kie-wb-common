@@ -16,12 +16,11 @@
 
 package org.kie.workbench.common.stunner.bpmn.definition;
 
-import org.kie.workbench.common.stunner.bpmn.definition.property.general.Documentation;
-import org.kie.workbench.common.stunner.bpmn.definition.property.general.Name;
-
 public interface BPMNBaseInfo {
 
-    Name getName();
+    String getName();
 
-    Documentation getDocumentation();
+    void setName(String name);
+
+    String getDocumentation();
 }

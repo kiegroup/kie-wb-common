@@ -26,7 +26,6 @@ import javax.validation.ValidatorFactory;
 import org.junit.Before;
 import org.junit.Test;
 import org.kie.workbench.common.stunner.bpmn.definition.ParallelGateway;
-import org.kie.workbench.common.stunner.bpmn.definition.property.general.Name;
 
 import static org.junit.Assert.assertTrue;
 
@@ -45,7 +44,7 @@ public class ParallelGatewayTest {
     @Test
     public void testParallelDatabasedGatewayNameValid() {
         ParallelGateway parallelGateway = new ParallelGateway();
-        parallelGateway.getGeneral().setName(new Name(NAME_VALID));
+        parallelGateway.getGeneral().setName(NAME_VALID);
         Set<ConstraintViolation<ParallelGateway>> violations = this.validator.validate(parallelGateway);
         assertTrue(violations.isEmpty());
     }
@@ -53,7 +52,7 @@ public class ParallelGatewayTest {
     @Test
     public void testParallelDatabasedGatewayNameEmpty() {
         ParallelGateway parallelGateway = new ParallelGateway();
-        parallelGateway.getGeneral().setName(new Name(""));
+        parallelGateway.getGeneral().setName("");
         Set<ConstraintViolation<ParallelGateway>> violations = this.validator.validate(parallelGateway);
         assertTrue(violations.isEmpty());
     }

@@ -42,8 +42,6 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.Version
 import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.imports.Imports;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dimensions.RectangleDimensionsSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.font.FontSet;
-import org.kie.workbench.common.stunner.bpmn.definition.property.general.Documentation;
-import org.kie.workbench.common.stunner.bpmn.definition.property.general.Name;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.SLADueDate;
 import org.kie.workbench.common.stunner.bpmn.definition.property.variables.AdvancedData;
 import org.kie.workbench.common.stunner.bpmn.definition.property.variables.ProcessData;
@@ -135,10 +133,6 @@ public class BPMNClientDiagramServiceTest {
     @Mock
     private Graph<DefinitionSet, Node> graph;
 
-    private Name processName;
-
-    private Documentation processDocumentation;
-
     private Id processId;
 
     private Package packageProperty;
@@ -175,9 +169,7 @@ public class BPMNClientDiagramServiceTest {
         when(widService.call(any())).thenReturn(promises.create((resolve, reject) -> resolve.onInvoke(WIDS)));
 
         //DiagramSet
-        processName = new Name("");
         processId = new Id("");
-        processDocumentation = new Documentation("someDocumentation");
         packageProperty = new Package();
         version = new Version("1.0");
         adHoc = new AdHoc(false);
@@ -186,8 +178,8 @@ public class BPMNClientDiagramServiceTest {
         slaDueDate = new SLADueDate("");
         processType = new ProcessType();
 
-        diagramSet = new DiagramSet(processName,
-                                    processDocumentation,
+        diagramSet = new DiagramSet("",
+                                    "someDocumentation",
                                     processId,
                                     packageProperty,
                                     processType,
@@ -253,7 +245,7 @@ public class BPMNClientDiagramServiceTest {
                              }
                          });
 
-        assertEquals("someFile", diagramSet.getName().getValue());
+        assertEquals("someFile", diagramSet.getName());
         assertEquals("someFile", diagramSet.getId().getValue());
     }
 
@@ -264,7 +256,7 @@ public class BPMNClientDiagramServiceTest {
         when(marshalling.unmarshall(any(), any())).thenReturn(graph);
         when(graph.nodes()).thenReturn(nodes);
 
-        diagramSet.getName().setValue(null);
+        diagramSet.setName(null);
         diagramSet.getId().setValue(null);
         diagramSet.getPackageProperty().setValue(null);
 
@@ -283,7 +275,7 @@ public class BPMNClientDiagramServiceTest {
                              }
                          });
 
-        assertEquals(BPMNClientDiagramService.DEFAULT_DIAGRAM_ID, diagramSet.getName().getValue());
+        assertEquals(BPMNClientDiagramService.DEFAULT_DIAGRAM_ID, diagramSet.getName());
         assertEquals(BPMNClientDiagramService.DEFAULT_DIAGRAM_ID, diagramSet.getId().getValue());
         assertEquals(BPMNClientDiagramService.DEFAULT_PACKAGE, diagramSet.getPackageProperty().getValue());
     }
@@ -295,7 +287,7 @@ public class BPMNClientDiagramServiceTest {
         when(marshalling.unmarshall(any(), any())).thenReturn(graph);
         when(graph.nodes()).thenReturn(nodes);
 
-        diagramSet.getName().setValue("");
+        diagramSet.setName("");
         diagramSet.getId().setValue("");
         diagramSet.getPackageProperty().setValue("");
 
@@ -314,7 +306,7 @@ public class BPMNClientDiagramServiceTest {
                              }
                          });
 
-        assertEquals(BPMNClientDiagramService.DEFAULT_DIAGRAM_ID, diagramSet.getName().getValue());
+        assertEquals(BPMNClientDiagramService.DEFAULT_DIAGRAM_ID, diagramSet.getName());
         assertEquals(BPMNClientDiagramService.DEFAULT_DIAGRAM_ID, diagramSet.getId().getValue());
         assertEquals(BPMNClientDiagramService.DEFAULT_PACKAGE, diagramSet.getPackageProperty().getValue());
     }
@@ -325,7 +317,7 @@ public class BPMNClientDiagramServiceTest {
         when(definitionManager.definitionSets()).thenReturn(definitionSetRegistry);
         when(marshalling.unmarshall(any(), any())).thenReturn(graph);
         when(graph.nodes()).thenReturn(nodes);
-        diagramSet.getName().setValue("somePreviousName");
+        diagramSet.setName("somePreviousName");
         diagramSet.getId().setValue("somePreviousId");
         diagramSet.getPackageProperty().setValue("somePreviousPackage");
 
@@ -344,7 +336,7 @@ public class BPMNClientDiagramServiceTest {
                              }
                          });
 
-        assertEquals("somePreviousName", diagramSet.getName().getValue());
+        assertEquals("somePreviousName", diagramSet.getName());
         assertEquals("somePreviousId", diagramSet.getId().getValue());
         assertEquals("somePreviousPackage", diagramSet.getPackageProperty().getValue());
     }
@@ -370,7 +362,7 @@ public class BPMNClientDiagramServiceTest {
                              }
                          });
 
-        assertEquals(BPMNClientDiagramService.DEFAULT_DIAGRAM_ID, diagramSet.getName().getValue());
+        assertEquals(BPMNClientDiagramService.DEFAULT_DIAGRAM_ID, diagramSet.getName());
         assertEquals(BPMNClientDiagramService.DEFAULT_DIAGRAM_ID, diagramSet.getId().getValue());
         assertEquals(BPMNClientDiagramService.DEFAULT_PACKAGE, diagramSet.getPackageProperty().getValue());
     }

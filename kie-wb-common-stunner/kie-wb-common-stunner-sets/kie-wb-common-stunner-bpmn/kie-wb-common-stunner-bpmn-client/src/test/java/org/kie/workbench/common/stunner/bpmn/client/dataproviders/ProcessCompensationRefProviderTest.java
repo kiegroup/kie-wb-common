@@ -36,7 +36,6 @@ import org.kie.workbench.common.stunner.bpmn.definition.Lane;
 import org.kie.workbench.common.stunner.bpmn.definition.StartNoneEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.UserTask;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.BPMNGeneralSet;
-import org.kie.workbench.common.stunner.bpmn.definition.property.general.Name;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.TaskGeneralSet;
 import org.kie.workbench.common.stunner.core.TestingGraphInstanceBuilder2;
 import org.kie.workbench.common.stunner.core.TestingGraphMockHandler;
@@ -92,9 +91,6 @@ public class ProcessCompensationRefProviderTest {
 
     @Mock
     private SelectionControl selectionControl;
-
-    @Mock
-    private Node node;
 
     @Mock
     private FormRenderingContext renderingContext;
@@ -366,10 +362,8 @@ public class ProcessCompensationRefProviderTest {
     private UserTask mockTask(String taskName) {
         UserTask userTask = mock(UserTask.class);
         TaskGeneralSet generalSet = mock(TaskGeneralSet.class);
-        Name name = mock(Name.class);
         when(userTask.getGeneral()).thenReturn(generalSet);
-        when(generalSet.getName()).thenReturn(name);
-        when(name.getValue()).thenReturn(taskName);
+        when(generalSet.getName()).thenReturn(taskName);
         return userTask;
     }
 
@@ -389,9 +383,7 @@ public class ProcessCompensationRefProviderTest {
 
     private BPMNGeneralSet mockGeneralSet(String name) {
         BPMNGeneralSet generalSet = mock(BPMNGeneralSet.class);
-        Name nameProperty = mock(Name.class);
-        when(generalSet.getName()).thenReturn(nameProperty);
-        when(nameProperty.getValue()).thenReturn(name);
+        when(generalSet.getName()).thenReturn(name);
         return generalSet;
     }
 }

@@ -151,8 +151,8 @@ public abstract class EndEventTest<T extends BaseEndEvent> extends BPMNDiagramMa
         assertNotNull(generalSet);
         assertNotNull(generalSet.getName());
         assertNotNull(generalSet.getDocumentation());
-        assertEquals(nodeName, generalSet.getName().getValue());
-        assertEquals(documentation, generalSet.getDocumentation().getValue());
+        assertEquals(nodeName, generalSet.getName());
+        assertEquals(documentation, generalSet.getDocumentation());
     }
 
     void assertDataIOSet(DataIOSet dataIOSet, String value) {

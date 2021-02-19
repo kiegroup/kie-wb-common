@@ -40,7 +40,6 @@ import org.kie.workbench.common.stunner.bpmn.definition.Lane;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dimensions.Height;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dimensions.RectangleDimensionsSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dimensions.Width;
-import org.kie.workbench.common.stunner.bpmn.definition.property.general.Name;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.Bound;
 import org.kie.workbench.common.stunner.core.graph.content.Bounds;
@@ -101,7 +100,6 @@ public class ProcessPostConverter {
                                                           .map(View::getDefinition)
                                                           .map(BPMNViewDefinition::getGeneral)
                                                           .map(BPMNBaseInfo::getName)
-                                                          .map(Name::getValue)
                                                           .orElse(""))
                                 .type(Violation.Type.WARNING)
                                 .build())
@@ -113,8 +111,8 @@ public class ProcessPostConverter {
 
     private static class PostConverterContext {
 
-        private HashMap<BpmnNode, Boolean> collapsedNodes;
-        private HashMap<BpmnNode, Boolean> resizedNodes = new HashMap<>();
+        private final HashMap<BpmnNode, Boolean> collapsedNodes;
+        private final HashMap<BpmnNode, Boolean> resizedNodes = new HashMap<>();
 
         private PostConverterContext(HashMap<BpmnNode, Boolean> collapsedNodes) {
             this.collapsedNodes = collapsedNodes;

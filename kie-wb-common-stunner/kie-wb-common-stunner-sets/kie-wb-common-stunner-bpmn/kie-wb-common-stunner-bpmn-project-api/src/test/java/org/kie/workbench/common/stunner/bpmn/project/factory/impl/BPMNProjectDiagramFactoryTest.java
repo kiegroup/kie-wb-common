@@ -27,7 +27,6 @@ import org.kie.workbench.common.stunner.bpmn.definition.BPMNDiagramImpl;
 import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.DiagramSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.Id;
 import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.Package;
-import org.kie.workbench.common.stunner.bpmn.definition.property.general.Name;
 import org.kie.workbench.common.stunner.core.diagram.Metadata;
 import org.kie.workbench.common.stunner.core.graph.Graph;
 import org.kie.workbench.common.stunner.core.graph.Node;
@@ -87,7 +86,7 @@ public class BPMNProjectDiagramFactoryTest {
 
     private Id id;
 
-    private Name name;
+    private String name;
 
     private Package packageProperty;
 
@@ -95,7 +94,7 @@ public class BPMNProjectDiagramFactoryTest {
     public void setup() {
         diagram = new BPMNDiagramImpl();
         id = new Id();
-        name = new Name();
+        name = "";
         packageProperty = new Package();
         diagram.setDiagramSet(diagramSet);
         View<BPMNDiagram> diagramNodeContent = new ViewImpl<>(diagram, bounds);
@@ -134,7 +133,7 @@ public class BPMNProjectDiagramFactoryTest {
         assertNotNull(pdiagram);
         assertEquals(graph, pdiagram.getGraph());
         assertEquals(MODULE + "." + NAME, id.getValue());
-        assertEquals(NAME, name.getValue());
+        assertEquals(NAME, pdiagram.getName());
         assertEquals(Package.DEFAULT_PACKAGE, packageProperty.getValue());
         verify(metadata, times(1)).setCanvasRootUUID(eq(DIAGRAM_NODE_UUID));
     }
@@ -146,12 +145,10 @@ public class BPMNProjectDiagramFactoryTest {
         final String name2 = "name2";
 
         this.id.setValue(id2);
-        name.setValue(name2);
-
-        ProjectDiagram pdiagram = tested.build(NAME, metadata, graph);
+        name = name2;
 
         assertEquals(id2, this.id.getValue());
-        assertEquals(name2, name.getValue());
+        assertEquals(name2, name);
     }
 
     @Test

@@ -33,8 +33,6 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.Process
 import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.ProcessType;
 import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.Version;
 import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.imports.Imports;
-import org.kie.workbench.common.stunner.bpmn.definition.property.general.Documentation;
-import org.kie.workbench.common.stunner.bpmn.definition.property.general.Name;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.SLADueDate;
 import org.kie.workbench.common.stunner.core.graph.content.Bounds;
 import org.kie.workbench.common.stunner.core.graph.content.view.ViewImpl;
@@ -43,7 +41,6 @@ import org.kie.workbench.common.stunner.core.graph.impl.NodeImpl;
 import org.kie.workbench.common.stunner.core.graph.store.GraphNodeStoreImpl;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.mockito.stubbing.Answer;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -52,8 +49,6 @@ public class DefinitionsConverterTest {
 
     @Mock
     private URL url;
-
-    private Answer<String> returnArgument = invocation -> (String) invocation.getArguments()[0];
 
     @Before
     public void setUp() {
@@ -66,8 +61,8 @@ public class DefinitionsConverterTest {
         NodeImpl x = new NodeImpl("x");
         BPMNDiagramImpl diag = new BPMNDiagramImpl();
         diag.setDiagramSet(new DiagramSet(
-                new Name("x"),
-                new Documentation("doc"),
+                "x",
+                "doc",
                 new Id("x"),
                 new Package("org.jbpm"),
                 new ProcessType(),

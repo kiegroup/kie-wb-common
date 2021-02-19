@@ -150,8 +150,8 @@ public class LaneTest extends BPMNDiagramMarshallerBaseTest {
         assertThat(generalSet).isNotNull();
         assertThat(generalSet.getName()).isNotNull();
         assertThat(generalSet.getDocumentation()).isNotNull();
-        assertThat(generalSet.getName().getValue()).isEqualTo(nodeName);
-        assertThat(generalSet.getDocumentation().getValue()).isEqualTo(documentation);
+        assertThat(generalSet.getName()).isEqualTo(nodeName);
+        assertThat(generalSet.getDocumentation()).isEqualTo(documentation);
     }
 
     private void assertLaneSubNodes(Diagram<Graph, Metadata> diagram, String laneId, String... nodesInsideLane) {

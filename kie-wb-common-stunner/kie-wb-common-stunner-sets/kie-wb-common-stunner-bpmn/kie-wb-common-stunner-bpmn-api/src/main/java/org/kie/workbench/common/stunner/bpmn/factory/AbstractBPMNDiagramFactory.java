@@ -69,7 +69,7 @@ public abstract class AbstractBPMNDiagramFactory<M extends Metadata, D extends D
                                            final M metadata) {
         // Default initializations.
         final Optional<BaseDiagramSet> diagramSet = Optional.ofNullable(diagramNode)
-                .map(Node::<Definition<BPMNDiagram>>getContent)
+                .map(Node::getContent)
                 .map(Definition::getDefinition)
                 .map(BPMNDiagram::getDiagramSet);
 
@@ -78,10 +78,9 @@ public abstract class AbstractBPMNDiagramFactory<M extends Metadata, D extends D
                 .filter(id -> Objects.isNull(id.getValue()))
                 .ifPresent(id -> id.setValue(createValidId(metadata.getTitle())));
 
-        diagramSet
-                .map(BaseDiagramSet::getName)
-                .filter(attr -> Objects.isNull(attr.getValue()))
-                .ifPresent(attr -> attr.setValue(name));
+        if (diagramSet.isPresent() && diagramSet.get().getName() == null) {
+            diagramSet.get().setName(name);
+        }
     }
 
     private void updateProperties(final String name,

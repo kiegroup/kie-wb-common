@@ -43,8 +43,6 @@ import org.kie.workbench.common.stunner.bpmn.definition.GenericServiceTask;
 import org.kie.workbench.common.stunner.bpmn.definition.NoneTask;
 import org.kie.workbench.common.stunner.bpmn.definition.ScriptTask;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.DataIOSet;
-import org.kie.workbench.common.stunner.bpmn.definition.property.general.Documentation;
-import org.kie.workbench.common.stunner.bpmn.definition.property.general.Name;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.SLADueDate;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.TaskGeneralSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.service.GenericServiceTaskExecutionSet;
@@ -122,8 +120,8 @@ public abstract class BaseTaskConverter<U extends BaseUserTask<S>, S extends Bas
         definition.setDefaultHandler(serviceTaskPropertyReader.getServiceTaskDefaultHandler());
 
         definition.setGeneral(new TaskGeneralSet(
-                new Name(serviceTaskPropertyReader.getName()),
-                new Documentation(serviceTaskPropertyReader.getDocumentation())
+                serviceTaskPropertyReader.getName(),
+                serviceTaskPropertyReader.getDocumentation()
         ));
 
         definition.setDataIOSet(new DataIOSet(
@@ -161,8 +159,8 @@ public abstract class BaseTaskConverter<U extends BaseUserTask<S>, S extends Bas
         }
 
         definition.setGeneral(new TaskGeneralSet(
-                new Name(p.getName()),
-                new Documentation(p.getDocumentation())
+                p.getName(),
+                p.getDocumentation()
         ));
 
         definition.setExecutionSet(new GenericServiceTaskExecutionSet(
@@ -198,8 +196,8 @@ public abstract class BaseTaskConverter<U extends BaseUserTask<S>, S extends Bas
         BusinessRuleTaskPropertyReader p = propertyReaderFactory.of(task);
 
         definition.setGeneral(new TaskGeneralSet(
-                new Name(p.getName()),
-                new Documentation(p.getDocumentation())
+                p.getName(),
+                p.getDocumentation()
         ));
 
         definition.setDataIOSet(new DataIOSet(
@@ -255,8 +253,8 @@ public abstract class BaseTaskConverter<U extends BaseUserTask<S>, S extends Bas
         ScriptTaskPropertyReader p = propertyReaderFactory.of(task);
 
         definition.setGeneral(new TaskGeneralSet(
-                new Name(p.getName()),
-                new Documentation(p.getDocumentation())
+                p.getName(),
+                p.getDocumentation()
         ));
 
         definition.setExecutionSet(new ScriptTaskExecutionSet(
@@ -283,8 +281,8 @@ public abstract class BaseTaskConverter<U extends BaseUserTask<S>, S extends Bas
         UserTaskPropertyReader p = propertyReaderFactory.of(task);
 
         definition.setGeneral(new TaskGeneralSet(
-                new Name(p.getName()),
-                new Documentation(p.getDocumentation())
+                p.getName(),
+                p.getDocumentation()
         ));
 
         definition.setSimulationSet(
@@ -327,8 +325,8 @@ public abstract class BaseTaskConverter<U extends BaseUserTask<S>, S extends Bas
         NoneTask definition = node.getContent().getDefinition();
 
         definition.setGeneral(new TaskGeneralSet(
-                new Name(p.getName()),
-                new Documentation(p.getDocumentation())
+                p.getName(),
+                p.getDocumentation()
         ));
 
         definition.setExecutionSet(new EmptyTaskExecutionSet());

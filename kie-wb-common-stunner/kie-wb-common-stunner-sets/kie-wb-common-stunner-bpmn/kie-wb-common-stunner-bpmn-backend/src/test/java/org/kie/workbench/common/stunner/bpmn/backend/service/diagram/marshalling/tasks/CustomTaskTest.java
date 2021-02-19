@@ -50,8 +50,8 @@ public class CustomTaskTest extends BPMNDiagramMarshallerBaseTest {
         Diagram<Graph, Metadata> d = unmarshall(marshaller, BPMN_SERVICE_TASK_PROPERTIES_FILE_PATH);
         Node<View<CustomTask>, ?> node = d.getGraph().getNode(SERVICE_TASK_ID);
         CustomTask definition = node.getContent().getDefinition();
-        assertEquals("Custom Email", definition.getGeneral().getName().getValue());
-        assertEquals("This is an email task", definition.getGeneral().getDocumentation().getValue());
+        assertEquals("Custom Email", definition.getGeneral().getName());
+        assertEquals("This is an email task", definition.getGeneral().getDocumentation());
     }
 
     @Test
@@ -82,7 +82,7 @@ public class CustomTaskTest extends BPMNDiagramMarshallerBaseTest {
         Node<View<CustomTask>, ?> node = d2.getGraph().getNode(SERVICE_TASK_ID);
 
         CustomTask definition = node.getContent().getDefinition();
-        assertEquals("Custom Email", definition.getGeneral().getName().getValue());
-        assertEquals("This is an email task", definition.getGeneral().getDocumentation().getValue());
+        assertEquals("Custom Email", definition.getGeneral().getName());
+        assertEquals("This is an email task", definition.getGeneral().getDocumentation());
     }
 }

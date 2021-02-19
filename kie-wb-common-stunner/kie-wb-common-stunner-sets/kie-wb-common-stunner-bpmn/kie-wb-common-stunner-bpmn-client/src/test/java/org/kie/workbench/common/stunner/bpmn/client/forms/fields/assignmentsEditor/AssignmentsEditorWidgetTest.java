@@ -71,6 +71,8 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import org.uberfire.commons.data.Pair;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.anyObject;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.anyBoolean;
@@ -207,8 +209,7 @@ public class AssignmentsEditorWidgetTest extends AssignmentBaseTest {
         doCallRealMethod().when(widget).getDisallowedPropertyNames();
         doCallRealMethod().when(widget).setReadOnly(anyBoolean());
         when(userTask.getGeneral()).thenReturn(taskGeneralSet);
-        when(taskGeneralSet.getName()).thenReturn(taskName);
-        when(taskName.getValue()).thenReturn(TASK_NAME);
+        when(taskGeneralSet.getName()).thenReturn(TASK_NAME);
         doCallRealMethod().when(userTask).hasInputVars();
         doCallRealMethod().when(userTask).isSingleInputVar();
         doCallRealMethod().when(userTask).hasOutputVars();
@@ -275,7 +276,6 @@ public class AssignmentsEditorWidgetTest extends AssignmentBaseTest {
     public void testShowAssignmentsDialog() {
         widget.setBPMNModel(userTask);
         widget.assignmentsInfo = ASSIGNMENTS_INFO;
-        Map<String, String> assignmentsProperties = AssignmentParser.parseAssignmentsInfo(ASSIGNMENTS_INFO);
 
         widget.showAssignmentsDialog();
 
@@ -320,14 +320,10 @@ public class AssignmentsEditorWidgetTest extends AssignmentBaseTest {
     @Test
     public void testSetBPMNModelUserTask() {
         widget.setBPMNModel(userTask);
-        assertEquals(true,
-                     widget.hasInputVars);
-        assertEquals(false,
-                     widget.isSingleInputVar);
-        assertEquals(true,
-                     widget.hasOutputVars);
-        assertEquals(false,
-                     widget.isSingleOutputVar);
+        assertTrue(widget.hasInputVars);
+        assertFalse(widget.isSingleInputVar);
+        assertTrue(widget.hasOutputVars);
+        assertFalse(widget.isSingleOutputVar);
 
         String assignmentsInfoString = widget.getVariableCountsString(null,
                                                                       DATA_INPUT_SET,
@@ -343,14 +339,10 @@ public class AssignmentsEditorWidgetTest extends AssignmentBaseTest {
     @Test
     public void testSetBPMNModelBusinessRuleTask() {
         widget.setBPMNModel(businessRuleTask);
-        assertEquals(true,
-                     widget.hasInputVars);
-        assertEquals(false,
-                     widget.isSingleInputVar);
-        assertEquals(true,
-                     widget.hasOutputVars);
-        assertEquals(false,
-                     widget.isSingleOutputVar);
+        assertTrue(widget.hasInputVars);
+        assertFalse(widget.isSingleInputVar);
+        assertTrue(widget.hasOutputVars);
+        assertFalse(widget.isSingleOutputVar);
 
         String assignmentsInfoString = widget.getVariableCountsString(null,
                                                                       DATA_INPUT_SET,
@@ -366,14 +358,10 @@ public class AssignmentsEditorWidgetTest extends AssignmentBaseTest {
     @Test
     public void testSetBPMNModelStartNoneEvent() {
         widget.setBPMNModel(startNoneEvent);
-        assertEquals(false,
-                     widget.hasInputVars);
-        assertEquals(false,
-                     widget.isSingleInputVar);
-        assertEquals(false,
-                     widget.hasOutputVars);
-        assertEquals(false,
-                     widget.isSingleOutputVar);
+        assertFalse(widget.hasInputVars);
+        assertFalse(widget.isSingleInputVar);
+        assertFalse(widget.hasOutputVars);
+        assertFalse(widget.isSingleOutputVar);
 
         String assignmentsInfoString = widget.getVariableCountsString(null,
                                                                       null,
@@ -389,14 +377,10 @@ public class AssignmentsEditorWidgetTest extends AssignmentBaseTest {
     @Test
     public void testSetBPMNModelStartSignalEvent() {
         widget.setBPMNModel(startSignalEvent);
-        assertEquals(false,
-                     widget.hasInputVars);
-        assertEquals(false,
-                     widget.isSingleInputVar);
-        assertEquals(true,
-                     widget.hasOutputVars);
-        assertEquals(true,
-                     widget.isSingleOutputVar);
+        assertFalse(widget.hasInputVars);
+        assertFalse(widget.isSingleInputVar);
+        assertTrue(widget.hasOutputVars);
+        assertTrue(widget.isSingleOutputVar);
 
         String assignmentsInfoString = widget.getVariableCountsString(null,
                                                                       null,
@@ -412,14 +396,10 @@ public class AssignmentsEditorWidgetTest extends AssignmentBaseTest {
     @Test
     public void testSetBPMNModelEndTerminateEvent() {
         widget.setBPMNModel(endTerminateEvent);
-        assertEquals(false,
-                     widget.hasInputVars);
-        assertEquals(false,
-                     widget.isSingleInputVar);
-        assertEquals(false,
-                     widget.hasOutputVars);
-        assertEquals(false,
-                     widget.isSingleOutputVar);
+        assertFalse(widget.hasInputVars);
+        assertFalse(widget.isSingleInputVar);
+        assertFalse(widget.hasOutputVars);
+        assertFalse(widget.isSingleOutputVar);
 
         String assignmentsInfoString = widget.getVariableCountsString(DATA_INPUT,
                                                                       null,
@@ -435,14 +415,10 @@ public class AssignmentsEditorWidgetTest extends AssignmentBaseTest {
     @Test
     public void testSetBPMNModelEndNoneEvent() {
         widget.setBPMNModel(endNoneEvent);
-        assertEquals(false,
-                     widget.hasInputVars);
-        assertEquals(false,
-                     widget.isSingleInputVar);
-        assertEquals(false,
-                     widget.hasOutputVars);
-        assertEquals(false,
-                     widget.isSingleOutputVar);
+        assertFalse(widget.hasInputVars);
+        assertFalse(widget.isSingleInputVar);
+        assertFalse(widget.hasOutputVars);
+        assertFalse(widget.isSingleOutputVar);
 
         String assignmentsInfoString = widget.getVariableCountsString(DATA_INPUT,
                                                                       null,
@@ -458,14 +434,10 @@ public class AssignmentsEditorWidgetTest extends AssignmentBaseTest {
     @Test
     public void testSetBPMNModelNoDataIO() {
         widget.setBPMNModel(sequenceFlow);
-        assertEquals(false,
-                     widget.hasInputVars);
-        assertEquals(false,
-                     widget.isSingleInputVar);
-        assertEquals(false,
-                     widget.hasOutputVars);
-        assertEquals(false,
-                     widget.isSingleOutputVar);
+        assertFalse(widget.hasInputVars);
+        assertFalse(widget.isSingleInputVar);
+        assertFalse(widget.hasOutputVars);
+        assertFalse(widget.isSingleOutputVar);
     }
 
     @Test
@@ -487,7 +459,7 @@ public class AssignmentsEditorWidgetTest extends AssignmentBaseTest {
         DataObject dataObject = new DataObject();
         dataObject.getName().setValue("Data\nObject");
         String doNameFilter = widget.dataObjectToProcessVariableFormat(dataObject);
-        assertEquals(doNameFilter, "DataObject:Object");
+        assertEquals("DataObject:Object", doNameFilter);
      }
 
     @Test

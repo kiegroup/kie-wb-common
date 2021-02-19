@@ -31,7 +31,6 @@ import org.kie.workbench.common.stunner.bpmn.definition.InclusiveGateway;
 import org.kie.workbench.common.stunner.bpmn.definition.ScriptTask;
 import org.kie.workbench.common.stunner.bpmn.definition.UserTask;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.BPMNGeneralSet;
-import org.kie.workbench.common.stunner.bpmn.definition.property.general.Name;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.TaskGeneralSet;
 import org.kie.workbench.common.stunner.core.api.DefinitionManager;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.SelectionControl;
@@ -89,7 +88,7 @@ public class DefaultRouteFormProviderTest
 
         outEdges = new ArrayList<>();
 
-        UserTask userTask1 = new UserTask(new TaskGeneralSet(new Name("UserTask1"),
+        UserTask userTask1 = new UserTask(new TaskGeneralSet("UserTask1",
                                                              null),
                                           null,
                                           null,
@@ -101,7 +100,7 @@ public class DefaultRouteFormProviderTest
         outEdges.add(mockEdge("Edge1",
                               userTask1));
 
-        UserTask userTask2 = new UserTask(new TaskGeneralSet(new Name("UserTask2"),
+        UserTask userTask2 = new UserTask(new TaskGeneralSet("UserTask2",
                                                              null),
                                           null,
                                           null,
@@ -113,7 +112,7 @@ public class DefaultRouteFormProviderTest
         outEdges.add(mockEdge("Edge2",
                               userTask2));
 
-        ScriptTask scriptTask3 = new ScriptTask(new TaskGeneralSet(new Name("ScriptTask3"),
+        ScriptTask scriptTask3 = new ScriptTask(new TaskGeneralSet("ScriptTask3",
                                                                    null),
                                                 null,
                                                 null,
@@ -146,8 +145,6 @@ public class DefaultRouteFormProviderTest
 
     @Test
     public void testGetSelectorDataWithValues() {
-        List<Element> nodes = mockModes();
-
         //add the desired edges to the selected node.
         when(selectedNode.getOutEdges()).thenReturn(outEdges);
 

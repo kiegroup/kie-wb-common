@@ -66,8 +66,8 @@ public class RootProcessConverter {
 
         BaseDiagramSet diagramSet = definition.getDiagramSet();
 
-        p.setName(replaceIllegalCharsAttribute(diagramSet.getName().getValue()));
-        p.setDocumentation(diagramSet.getDocumentation().getValue());
+        p.setName(replaceIllegalCharsAttribute(diagramSet.getName()));
+        p.setDocumentation(diagramSet.getDocumentation());
         p.setId(replaceIllegalCharsAttribute(diagramSet.getId().getValue()));
         p.setPackage(diagramSet.getPackageProperty().getValue());
         p.setType(diagramSet.getProcessType().getValue());

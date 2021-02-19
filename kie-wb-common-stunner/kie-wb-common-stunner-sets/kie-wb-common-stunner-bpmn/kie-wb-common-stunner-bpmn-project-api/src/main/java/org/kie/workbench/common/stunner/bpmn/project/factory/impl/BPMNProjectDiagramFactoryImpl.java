@@ -90,9 +90,9 @@ public class BPMNProjectDiagramFactoryImpl
                     metadata.getProjectPackage().getPackageName();
             diagramSet.getPackageProperty().setValue(value);
         }
-        final String diagramName = diagramSet.getName().getValue();
+        final String diagramName = diagramSet.getName();
         if (null == diagramName || diagramName.isEmpty()) {
-            diagramSet.getName().setValue(name);
+            diagramSet.setName(name);
         }
 
         super.updateDiagramProperties(name, diagramNode, metadata);

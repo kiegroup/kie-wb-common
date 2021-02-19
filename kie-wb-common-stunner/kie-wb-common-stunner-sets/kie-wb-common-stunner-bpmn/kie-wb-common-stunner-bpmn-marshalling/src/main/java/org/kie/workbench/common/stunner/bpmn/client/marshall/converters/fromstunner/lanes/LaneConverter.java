@@ -45,8 +45,8 @@ public class LaneConverter {
             LanePropertyWriter p = propertyWriterFactory.of(lane);
 
             BPMNGeneralSet general = definition.getGeneral();
-            p.setName(general.getName().getValue());
-            p.setDocumentation(general.getDocumentation().getValue());
+            p.setName(general.getName());
+            p.setDocumentation(general.getDocumentation());
 
             p.setAbsoluteBounds(node);
 

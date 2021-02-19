@@ -91,7 +91,7 @@ public class DefaultRouteFormProvider
                                         bpmnDefinition instanceof BaseTask ||
                                         bpmnDefinition instanceof BaseGateway ||
                                         bpmnDefinition instanceof BaseSubprocess) {
-                                    targetName = bpmnDefinition.getGeneral().getName().getValue();
+                                    targetName = bpmnDefinition.getGeneral().getName();
                                 }
                             }
                             if (targetName != null && !targetName.isEmpty()) {

@@ -33,7 +33,6 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.MetaDat
 import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.Package;
 import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.Version;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dimensions.RectangleDimensionsSet;
-import org.kie.workbench.common.stunner.bpmn.definition.property.general.Name;
 import org.kie.workbench.common.stunner.bpmn.definition.property.variables.AdvancedData;
 import org.kie.workbench.common.stunner.bpmn.definition.property.variables.ProcessData;
 
@@ -68,7 +67,7 @@ public class BPMNDiagramTest {
     public BPMNDiagramImpl createValidBpmnDiagram() {
         BPMNDiagramImpl BPMNDiagramImpl = new BPMNDiagramImpl();
         DiagramSet diagramSet = BPMNDiagramImpl.getDiagramSet();
-        diagramSet.setName(new Name(NAME_VALID));
+        diagramSet.setName(NAME_VALID);
         diagramSet.setId(new Id(ID_VALID));
         diagramSet.setPackageProperty(new Package(PACKAGE_VALID));
         diagramSet.setVersion(new Version(VERSION_VALID));
@@ -86,7 +85,7 @@ public class BPMNDiagramTest {
     @Test
     public void testNameInvalid() {
         BPMNDiagramImpl BPMNDiagramImpl = createValidBpmnDiagram();
-        BPMNDiagramImpl.getDiagramSet().setName(new Name(NAME_INVALID));
+        BPMNDiagramImpl.getDiagramSet().setName(NAME_INVALID);
         Set<ConstraintViolation<BPMNDiagramImpl>> violations = this.validator.validate(BPMNDiagramImpl);
         assertEquals(1,
                      violations.size());

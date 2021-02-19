@@ -18,8 +18,6 @@ package org.kie.workbench.common.stunner.bpmn.definition;
 
 import org.junit.Test;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.BPMNGeneralSet;
-import org.kie.workbench.common.stunner.bpmn.definition.property.general.Documentation;
-import org.kie.workbench.common.stunner.bpmn.definition.property.general.Name;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
@@ -52,16 +50,14 @@ public class TextAnnotationTest {
 
     @Test
     public void setName() {
-        Name name = new Name(this.getClass().getSimpleName());
-        tested.getGeneral().setName(name);
-        assertEquals(name, tested.getGeneral().getName());
+        tested.getGeneral().setName(this.getClass().getSimpleName());
+        assertEquals(this.getClass().getSimpleName(), tested.getGeneral().getName());
     }
 
     @Test
     public void setDocumentation() {
-        Documentation documentation = new Documentation(this.getClass().getSimpleName());
-        tested.getGeneral().setDocumentation(documentation);
-        assertEquals(documentation, tested.getGeneral().getDocumentation());
+        tested.getGeneral().setDocumentation(this.getClass().getSimpleName());
+        assertEquals(this.getClass().getSimpleName(), tested.getGeneral().getDocumentation());
     }
 
     @Test

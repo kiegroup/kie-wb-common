@@ -16,6 +16,8 @@
 
 package org.kie.workbench.common.stunner.bpmn.definition.property.diagram;
 
+import java.util.Objects;
+
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.NotEmpty;
@@ -71,7 +73,7 @@ public class ProcessType implements BPMNProperty {
     public boolean equals(Object o) {
         if (o instanceof ProcessType) {
             ProcessType other = (ProcessType) o;
-            return (null != value) ? value.equals(other.value) : null == other.value;
+            return Objects.equals(value, other.value);
         }
         return false;
     }

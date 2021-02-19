@@ -62,8 +62,8 @@ public class GatewayConverterTest {
     @Test
     public void testInclusive() {
         InclusiveGateway gateway = new InclusiveGateway();
-        gateway.getGeneral().getName().setValue(NAME);
-        gateway.getGeneral().getDocumentation().setValue(DOCUMENTATION);
+        gateway.getGeneral().setName(NAME);
+        gateway.getGeneral().setDocumentation(DOCUMENTATION);
         gateway.getExecutionSet().getDefaultRoute().setValue(DEFAULT_ROUTE);
 
         Node<View<BaseGateway>, ?> node = newNode(UUID, gateway);
@@ -78,8 +78,8 @@ public class GatewayConverterTest {
     @Test
     public void testExclusive() {
         ExclusiveGateway gateway = new ExclusiveGateway();
-        gateway.getGeneral().getName().setValue(NAME);
-        gateway.getGeneral().getDocumentation().setValue(DOCUMENTATION);
+        gateway.getGeneral().setName(NAME);
+        gateway.getGeneral().setDocumentation(DOCUMENTATION);
         gateway.getExecutionSet().getDefaultRoute().setValue(DEFAULT_ROUTE);
 
         Node<View<BaseGateway>, ?> node = newNode(UUID, gateway);
@@ -94,8 +94,8 @@ public class GatewayConverterTest {
     @Test
     public void testParallel() {
         ParallelGateway gateway = new ParallelGateway();
-        gateway.getGeneral().getName().setValue(NAME);
-        gateway.getGeneral().getDocumentation().setValue(DOCUMENTATION);
+        gateway.getGeneral().setName(NAME);
+        gateway.getGeneral().setDocumentation(DOCUMENTATION);
 
         Node<View<BaseGateway>, ?> node = newNode(UUID, gateway);
         when(propertyWriterFactory.of(any(org.eclipse.bpmn2.ParallelGateway.class))).thenReturn(gatewayPropertyWriter);
@@ -108,8 +108,8 @@ public class GatewayConverterTest {
     @Test
     public void testEvent() {
         EventGateway gateway = new EventGateway();
-        gateway.getGeneral().getName().setValue(NAME);
-        gateway.getGeneral().getDocumentation().setValue(DOCUMENTATION);
+        gateway.getGeneral().setName(NAME);
+        gateway.getGeneral().setDocumentation(DOCUMENTATION);
 
         Node<View<BaseGateway>, ?> node = newNode(UUID, gateway);
         when(propertyWriterFactory.of(any(org.eclipse.bpmn2.EventBasedGateway.class))).thenReturn(gatewayPropertyWriter);

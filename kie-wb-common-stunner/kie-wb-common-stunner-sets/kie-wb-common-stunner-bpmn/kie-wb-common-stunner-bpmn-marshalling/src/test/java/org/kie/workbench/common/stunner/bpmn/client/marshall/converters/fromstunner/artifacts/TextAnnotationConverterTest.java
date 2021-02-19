@@ -50,16 +50,14 @@ public class TextAnnotationConverterTest {
     @Mock
     private View<TextAnnotation> textAnnotationView;
 
-    private TextAnnotation textAnnotation;
-
     @Mock
     private TextAnnotationPropertyWriter writer;
 
     @Before
     public void setUp() {
-        textAnnotation = new TextAnnotation();
-        textAnnotation.getGeneral().getDocumentation().setValue(DOC);
-        textAnnotation.getGeneral().getName().setValue(NAME);
+        TextAnnotation textAnnotation = new TextAnnotation();
+        textAnnotation.getGeneral().setDocumentation(DOC);
+        textAnnotation.getGeneral().setName(NAME);
         node = new NodeImpl<>(UUID.uuid());
         node.setContent(textAnnotationView);
         when(textAnnotationView.getDefinition()).thenReturn(textAnnotation);
@@ -80,6 +78,6 @@ public class TextAnnotationConverterTest {
     @Test(expected = NullPointerException.class)
     public void toElementWithNullValue() {
         when(textAnnotationView.getDefinition()).thenReturn(null);
-        PropertyWriter propertyWriter = tested.toElement(node);
+        tested.toElement(node);
     }
 }

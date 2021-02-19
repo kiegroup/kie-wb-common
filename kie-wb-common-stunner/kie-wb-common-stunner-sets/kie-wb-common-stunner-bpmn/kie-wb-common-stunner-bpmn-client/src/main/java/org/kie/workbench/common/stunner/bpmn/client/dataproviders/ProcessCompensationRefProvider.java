@@ -156,7 +156,7 @@ public class ProcessCompensationRefProvider implements SelectorDataProvider {
     }
 
     private static Pair<Object, String> buildPair(final String uuid, final BPMNDefinition definition) {
-        String name = definition.getGeneral().getName().getValue();
+        String name = definition.getGeneral().getName();
         return new Pair<>(uuid, isEmpty(name) ? uuid : name);
     }
 }

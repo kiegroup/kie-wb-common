@@ -28,8 +28,6 @@ import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.tostunne
 import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.tostunner.properties.PropertyReaderFactory;
 import org.kie.workbench.common.stunner.bpmn.definition.Association;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.BPMNGeneralSet;
-import org.kie.workbench.common.stunner.bpmn.definition.property.general.Documentation;
-import org.kie.workbench.common.stunner.bpmn.definition.property.general.Name;
 import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
@@ -56,8 +54,8 @@ public class AssociationConverter implements EdgeConverter<org.eclipse.bpmn2.Ass
         Association definition = edge.getContent().getDefinition();
 
         definition.setGeneral(new BPMNGeneralSet(
-                new Name(""),
-                new Documentation(p.getDocumentation())
+                "",
+                p.getDocumentation()
         ));
 
         return result(nodes, edge, p, "Association ignored from " + p.getSourceId() + " to " + p.getTargetId(),

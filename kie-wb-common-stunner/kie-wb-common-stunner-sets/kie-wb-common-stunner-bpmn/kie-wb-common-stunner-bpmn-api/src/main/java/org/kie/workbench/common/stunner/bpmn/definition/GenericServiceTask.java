@@ -27,8 +27,6 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.background.Back
 import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.DataIOModel;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dimensions.RectangleDimensionsSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.font.FontSet;
-import org.kie.workbench.common.stunner.bpmn.definition.property.general.Documentation;
-import org.kie.workbench.common.stunner.bpmn.definition.property.general.Name;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.TaskGeneralSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.service.GenericServiceTaskExecutionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.simulation.SimulationSet;
@@ -62,8 +60,8 @@ public class GenericServiceTask extends BaseTask implements DataIOModel {
     protected GenericServiceTaskExecutionSet executionSet;
 
     public GenericServiceTask() {
-        this(new TaskGeneralSet(new Name("Service Task"),
-                                new Documentation("")),
+        this(new TaskGeneralSet("Service Task",
+                                ""),
              new GenericServiceTaskExecutionSet(),
              new BackgroundSet(),
              new FontSet(),

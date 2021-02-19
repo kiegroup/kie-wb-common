@@ -135,8 +135,8 @@ public class BPMNClientDiagramService extends AbstractKogitoClientDiagramService
         final BaseDiagramSet diagramSet = diagramNode.getContent().getDefinition().getDiagramSet();
 
         if (diagramSet.getPackageProperty().getValue() == null ||
-                diagramSet.getName().getValue().isEmpty()) {
-            diagramSet.getName().setValue(name);
+                diagramSet.getName().isEmpty()) {
+            diagramSet.setName(name);
         }
 
         if (diagramSet.getPackageProperty().getValue() == null ||
@@ -177,7 +177,7 @@ public class BPMNClientDiagramService extends AbstractKogitoClientDiagramService
 
         updateDiagramSet(diagramNode, fileName);
 
-        final String title = diagramNode.getContent().getDefinition().getDiagramSet().getName().getValue();
+        final String title = diagramNode.getContent().getDefinition().getDiagramSet().getName();
         metadata.setTitle(title);
         final Diagram diagram = diagramFactory.build(title,
                                                      metadata,

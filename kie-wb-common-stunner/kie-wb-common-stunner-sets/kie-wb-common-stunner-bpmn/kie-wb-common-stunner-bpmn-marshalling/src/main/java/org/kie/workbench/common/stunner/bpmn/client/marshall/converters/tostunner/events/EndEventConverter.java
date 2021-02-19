@@ -58,8 +58,6 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.event.signal.Sc
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.signal.SignalRef;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.signal.SignalScope;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.BPMNGeneralSet;
-import org.kie.workbench.common.stunner.bpmn.definition.property.general.Documentation;
-import org.kie.workbench.common.stunner.bpmn.definition.property.general.Name;
 import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
@@ -112,8 +110,8 @@ public class EndEventConverter extends AbstractConverter implements NodeConverte
         EventPropertyReader p = propertyReaderFactory.of(event);
 
         definition.setGeneral(new BPMNGeneralSet(
-                new Name(p.getName()),
-                new Documentation(p.getDocumentation())
+                p.getName(),
+                p.getDocumentation()
         ));
 
         definition.setDataIOSet(new DataIOSet(
@@ -142,8 +140,8 @@ public class EndEventConverter extends AbstractConverter implements NodeConverte
         EventPropertyReader p = propertyReaderFactory.of(event);
 
         definition.setGeneral(new BPMNGeneralSet(
-                new Name(p.getName()),
-                new Documentation(p.getDocumentation())
+                p.getName(),
+                p.getDocumentation()
         ));
 
         definition.setDataIOSet(new DataIOSet(
@@ -172,8 +170,8 @@ public class EndEventConverter extends AbstractConverter implements NodeConverte
         EventPropertyReader p = propertyReaderFactory.of(event);
 
         definition.setGeneral(new BPMNGeneralSet(
-                new Name(p.getName()),
-                new Documentation(p.getDocumentation())
+                p.getName(),
+                p.getDocumentation()
         ));
 
         node.getContent().setBounds(p.getBounds());
@@ -192,8 +190,8 @@ public class EndEventConverter extends AbstractConverter implements NodeConverte
         EventPropertyReader p = propertyReaderFactory.of(event);
 
         definition.setGeneral(new BPMNGeneralSet(
-                new Name(p.getName()),
-                new Documentation(p.getDocumentation())
+                p.getName(),
+                p.getDocumentation()
         ));
 
         node.getContent().setBounds(p.getBounds());
@@ -213,8 +211,8 @@ public class EndEventConverter extends AbstractConverter implements NodeConverte
         EventPropertyReader p = propertyReaderFactory.of(event);
 
         definition.setGeneral(new BPMNGeneralSet(
-                new Name(p.getName()),
-                new Documentation(p.getDocumentation())
+                p.getName(),
+                p.getDocumentation()
         ));
 
         definition.setDataIOSet(new DataIOSet(
@@ -244,8 +242,8 @@ public class EndEventConverter extends AbstractConverter implements NodeConverte
         EventPropertyReader p = propertyReaderFactory.of(event);
 
         definition.setGeneral(new BPMNGeneralSet(
-                new Name(p.getName()),
-                new Documentation(p.getDocumentation())
+                p.getName(),
+                p.getDocumentation()
         ));
 
         definition.setDataIOSet(new DataIOSet(
@@ -275,8 +273,8 @@ public class EndEventConverter extends AbstractConverter implements NodeConverte
         EventPropertyReader p = propertyReaderFactory.of(event);
 
         definition.setGeneral(new BPMNGeneralSet(
-                new Name(p.getName()),
-                new Documentation(p.getDocumentation())
+                p.getName(),
+                p.getDocumentation()
         ));
 
         definition.setExecutionSet(new CompensationEventExecutionSet(

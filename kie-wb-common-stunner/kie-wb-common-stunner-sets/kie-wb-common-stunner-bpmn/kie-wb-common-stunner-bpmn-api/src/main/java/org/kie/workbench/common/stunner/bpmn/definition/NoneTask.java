@@ -27,8 +27,6 @@ import org.kie.workbench.common.forms.adf.definitions.settings.FieldPolicy;
 import org.kie.workbench.common.stunner.bpmn.definition.property.background.BackgroundSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dimensions.RectangleDimensionsSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.font.FontSet;
-import org.kie.workbench.common.stunner.bpmn.definition.property.general.Documentation;
-import org.kie.workbench.common.stunner.bpmn.definition.property.general.Name;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.TaskGeneralSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.simulation.SimulationSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.EmptyTaskExecutionSet;
@@ -58,8 +56,8 @@ public class NoneTask extends BaseTask {
     protected EmptyTaskExecutionSet executionSet;
 
     public NoneTask() {
-        this(new TaskGeneralSet(new Name("Task"),
-                                new Documentation("")),
+        this(new TaskGeneralSet("Task",
+                                ""),
              new EmptyTaskExecutionSet(),
              new BackgroundSet(),
              new FontSet(),

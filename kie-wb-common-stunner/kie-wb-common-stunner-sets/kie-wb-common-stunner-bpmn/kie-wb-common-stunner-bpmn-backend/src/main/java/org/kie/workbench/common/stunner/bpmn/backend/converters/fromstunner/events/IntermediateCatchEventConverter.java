@@ -75,8 +75,8 @@ public class IntermediateCatchEventConverter {
         IntermediateErrorEventCatching definition = n.getContent().getDefinition();
 
         BPMNGeneralSet general = definition.getGeneral();
-        p.setName(general.getName().getValue());
-        p.setDocumentation(general.getDocumentation().getValue());
+        p.setName(general.getName());
+        p.setDocumentation(general.getDocumentation());
 
         p.setAssignmentsInfo(definition.getDataIOSet().getAssignmentsinfo());
 
@@ -96,8 +96,8 @@ public class IntermediateCatchEventConverter {
         IntermediateSignalEventCatching definition = n.getContent().getDefinition();
 
         BPMNGeneralSet general = definition.getGeneral();
-        p.setName(general.getName().getValue());
-        p.setDocumentation(general.getDocumentation().getValue());
+        p.setName(general.getName());
+        p.setDocumentation(general.getDocumentation());
 
         p.setAssignmentsInfo(definition.getDataIOSet().getAssignmentsinfo());
 
@@ -118,8 +118,8 @@ public class IntermediateCatchEventConverter {
         IntermediateLinkEventCatching definition = n.getContent().getDefinition();
 
         BPMNGeneralSet general = definition.getGeneral();
-        p.setName(general.getName().getValue());
-        p.setDocumentation(general.getDocumentation().getValue());
+        p.setName(general.getName());
+        p.setDocumentation(general.getDocumentation());
 
         p.setAssignmentsInfo(definition.getDataIOSet().getAssignmentsinfo());
 
@@ -137,8 +137,8 @@ public class IntermediateCatchEventConverter {
         IntermediateTimerEvent definition = n.getContent().getDefinition();
 
         BPMNGeneralSet general = definition.getGeneral();
-        p.setName(general.getName().getValue());
-        p.setDocumentation(general.getDocumentation().getValue());
+        p.setName(general.getName());
+        p.setDocumentation(general.getDocumentation());
 
         p.setAssignmentsInfo(definition.getDataIOSet().getAssignmentsinfo());
 
@@ -158,8 +158,8 @@ public class IntermediateCatchEventConverter {
         IntermediateMessageEventCatching definition = n.getContent().getDefinition();
 
         BPMNGeneralSet general = definition.getGeneral();
-        p.setName(general.getName().getValue());
-        p.setDocumentation(general.getDocumentation().getValue());
+        p.setName(general.getName());
+        p.setDocumentation(general.getDocumentation());
 
         p.setAssignmentsInfo(definition.getDataIOSet().getAssignmentsinfo());
 
@@ -179,8 +179,8 @@ public class IntermediateCatchEventConverter {
         IntermediateConditionalEvent definition = n.getContent().getDefinition();
 
         BPMNGeneralSet general = definition.getGeneral();
-        p.setName(general.getName().getValue());
-        p.setDocumentation(general.getDocumentation().getValue());
+        p.setName(general.getName());
+        p.setDocumentation(general.getDocumentation());
 
         p.setAssignmentsInfo(definition.getDataIOSet().getAssignmentsinfo());
 
@@ -200,8 +200,8 @@ public class IntermediateCatchEventConverter {
         IntermediateEscalationEvent definition = n.getContent().getDefinition();
 
         BPMNGeneralSet general = definition.getGeneral();
-        p.setName(general.getName().getValue());
-        p.setDocumentation(general.getDocumentation().getValue());
+        p.setName(general.getName());
+        p.setDocumentation(general.getDocumentation());
 
         p.setAssignmentsInfo(definition.getDataIOSet().getAssignmentsinfo());
 
@@ -221,8 +221,8 @@ public class IntermediateCatchEventConverter {
         IntermediateCompensationEvent definition = n.getContent().getDefinition();
 
         BPMNGeneralSet general = definition.getGeneral();
-        p.setName(general.getName().getValue());
-        p.setDocumentation(general.getDocumentation().getValue());
+        p.setName(general.getName());
+        p.setDocumentation(general.getDocumentation());
 
         p.setAssignmentsInfo(definition.getDataIOSet().getAssignmentsinfo());
 

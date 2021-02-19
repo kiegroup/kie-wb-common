@@ -87,8 +87,8 @@ public class SubProcessConverter extends ProcessConverterDelegate {
         MultipleInstanceSubprocess definition = n.getContent().getDefinition();
 
         BPMNGeneralSet general = definition.getGeneral();
-        p.setName(general.getName().getValue());
-        p.setDocumentation(general.getDocumentation().getValue());
+        p.setName(general.getName());
+        p.setDocumentation(general.getDocumentation());
 
         ProcessData processData = definition.getProcessData();
         p.setProcessVariables(processData.getProcessVariables());
@@ -121,8 +121,8 @@ public class SubProcessConverter extends ProcessConverterDelegate {
 
         BPMNGeneralSet general = definition.getGeneral();
 
-        p.setName(general.getName().getValue());
-        p.setDocumentation(general.getDocumentation().getValue());
+        p.setName(general.getName());
+        p.setDocumentation(general.getDocumentation());
 
         BaseProcessData processData = definition.getProcessData();
         p.setProcessVariables(processData.getProcessVariables());
@@ -155,8 +155,8 @@ public class SubProcessConverter extends ProcessConverterDelegate {
         process.setTriggeredByEvent(true);
 
         BPMNGeneralSet general = definition.getGeneral();
-        p.setName(general.getName().getValue());
-        p.setDocumentation(general.getDocumentation().getValue());
+        p.setName(general.getName());
+        p.setDocumentation(general.getDocumentation());
 
         ProcessData processData = definition.getProcessData();
         p.setProcessVariables(processData.getProcessVariables());
@@ -181,8 +181,8 @@ public class SubProcessConverter extends ProcessConverterDelegate {
         EmbeddedSubprocess definition = n.getContent().getDefinition();
 
         BPMNGeneralSet general = definition.getGeneral();
-        p.setName(general.getName().getValue());
-        p.setDocumentation(general.getDocumentation().getValue());
+        p.setName(general.getName());
+        p.setDocumentation(general.getDocumentation());
 
         EmbeddedSubprocessExecutionSet executionSet = definition.getExecutionSet();
 

@@ -64,8 +64,8 @@ public class SequenceFlowConverter {
         p.setConnection(connector);
 
         BPMNGeneralSet general = definition.getGeneral();
-        p.setName(general.getName().getValue());
-        p.setDocumentation(general.getDocumentation().getValue());
+        p.setName(general.getName());
+        p.setDocumentation(general.getDocumentation());
 
         SequenceFlowExecutionSet executionSet = definition.getExecutionSet();
         p.setPriority(executionSet.getPriority().getValue());

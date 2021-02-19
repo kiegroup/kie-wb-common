@@ -396,8 +396,8 @@ public class AssignmentsEditorWidget extends Composite implements HasValue<Strin
         if (bpmnModel instanceof BaseTask) {
             BaseTask task = (BaseTask) bpmnModel;
             if (task.getGeneral() != null && task.getGeneral().getName() != null &&
-                    task.getGeneral().getName().getValue() != null && task.getGeneral().getName().getValue().length() > 0) {
-                taskName = task.getGeneral().getName().getValue();
+                    task.getGeneral().getName() != null && task.getGeneral().getName().length() > 0) {
+                taskName = task.getGeneral().getName();
             }
         }
         return taskName;

@@ -29,8 +29,6 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.DataIOMo
 import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.DataIOSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dimensions.RectangleDimensionsSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.font.FontSet;
-import org.kie.workbench.common.stunner.bpmn.definition.property.general.Documentation;
-import org.kie.workbench.common.stunner.bpmn.definition.property.general.Name;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.TaskGeneralSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.simulation.SimulationSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.BusinessRuleTaskExecutionSet;
@@ -75,8 +73,8 @@ public class BusinessRuleTask extends BaseTask implements DataIOModel {
     protected DataIOSet dataIOSet;
 
     public BusinessRuleTask() {
-        this(new TaskGeneralSet(new Name("Task"),
-                                new Documentation("")),
+        this(new TaskGeneralSet("Task",
+                                ""),
              new BusinessRuleTaskExecutionSet(),
              new DataIOSet(),
              new BackgroundSet(),

@@ -94,8 +94,8 @@ public class CustomTaskFactory
                 setProperties(workItemDefinition,
                               customTask);
                 customTask.getExecutionSet().getTaskName().setValue(name);
-                customTask.getGeneral().getName().setValue(workItemDefinition.getDisplayName());
-                customTask.getGeneral().getDocumentation().setValue(workItemDefinition.getDocumentation());
+                customTask.getGeneral().setName(workItemDefinition.getDisplayName());
+                customTask.getGeneral().setDocumentation(workItemDefinition.getDocumentation());
                 customTask.setDescription(workItemDefinition.getDescription());
                 customTask.getDataIOSet()
                         .getAssignmentsinfo()

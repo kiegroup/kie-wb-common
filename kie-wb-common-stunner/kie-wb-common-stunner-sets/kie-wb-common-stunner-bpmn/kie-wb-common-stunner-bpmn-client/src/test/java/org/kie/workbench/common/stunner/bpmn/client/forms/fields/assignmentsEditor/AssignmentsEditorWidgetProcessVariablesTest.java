@@ -87,8 +87,6 @@ public class AssignmentsEditorWidgetProcessVariablesTest {
     @Mock
     private TaskGeneralSet taskGeneralSet;
     @Mock
-    private Name taskName;
-    @Mock
     private AbstractCanvasHandler canvasHandler;
     @Mock
     private Diagram diagram;
@@ -143,8 +141,7 @@ public class AssignmentsEditorWidgetProcessVariablesTest {
     public void setup() {
         GwtMockito.initMocks(this);
         when(userTask.getGeneral()).thenReturn(taskGeneralSet);
-        when(taskGeneralSet.getName()).thenReturn(taskName);
-        when(taskName.getValue()).thenReturn(TASK_NAME);
+        when(taskGeneralSet.getName()).thenReturn(TASK_NAME);
         when(canvasSessionManager.getCurrentSession()).thenReturn(clientSession);
         when(clientSession.getCanvasHandler()).thenReturn(canvasHandler);
         when(canvasHandler.getDiagram()).thenReturn(diagram);
@@ -236,7 +233,7 @@ public class AssignmentsEditorWidgetProcessVariablesTest {
         Node<View<DataObject>, ?> dataObjectNode;
 
         DataObject dataObject = new DataObject();
-        dataObject.getGeneral().getDocumentation().setValue("doc");
+        dataObject.getGeneral().setDocumentation("doc");
         dataObject.setName(new Name("name"));
         dataObject.setType(new DataObjectType(new DataObjectTypeValue("name")));
 
@@ -303,11 +300,10 @@ public class AssignmentsEditorWidgetProcessVariablesTest {
     public void testGetProcessVariableFromDataObjects() {
 
         DataObject dataObject = new DataObject();
-        dataObject.getGeneral().getDocumentation().setValue("doc");
+        dataObject.getGeneral().setDocumentation("doc");
         dataObject.setName(new Name("name"));
         dataObject.setType(new DataObjectType(new DataObjectTypeValue("com.myType.dataObject")));
 
-        final String uuid = UUID.uuid();
         when(dataObjectNode.getUUID()).thenReturn("uuid");
         when(dataObjectNode.getContent()).thenReturn(dataObjectView);
         when(dataObjectView.getDefinition()).thenReturn(dataObject);

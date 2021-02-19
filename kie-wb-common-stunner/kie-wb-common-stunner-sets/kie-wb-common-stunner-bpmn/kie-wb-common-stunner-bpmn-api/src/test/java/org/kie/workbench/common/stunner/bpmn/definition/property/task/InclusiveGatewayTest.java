@@ -27,7 +27,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.kie.workbench.common.stunner.bpmn.definition.InclusiveGateway;
 import org.kie.workbench.common.stunner.bpmn.definition.property.gateway.GatewayExecutionSet;
-import org.kie.workbench.common.stunner.bpmn.definition.property.general.Name;
 
 import static org.junit.Assert.assertTrue;
 
@@ -47,7 +46,7 @@ public class InclusiveGatewayTest {
     @Test
     public void testInclusiveDatabasedGatewayNameValid() {
         InclusiveGateway inclusiveGateway = new InclusiveGateway();
-        inclusiveGateway.getGeneral().setName(new Name(NAME_VALID));
+        inclusiveGateway.getGeneral().setName(NAME_VALID);
         Set<ConstraintViolation<InclusiveGateway>> violations = this.validator.validate(inclusiveGateway);
         assertTrue(violations.isEmpty());
     }
@@ -55,7 +54,7 @@ public class InclusiveGatewayTest {
     @Test
     public void testInclusiveDatabasedGatewayNameEmpty() {
         InclusiveGateway inclusiveGateway = new InclusiveGateway();
-        inclusiveGateway.getGeneral().setName(new Name(NAME_VALID));
+        inclusiveGateway.getGeneral().setName(NAME_VALID);
         Set<ConstraintViolation<InclusiveGateway>> violations = this.validator.validate(inclusiveGateway);
         assertTrue(violations.isEmpty());
     }

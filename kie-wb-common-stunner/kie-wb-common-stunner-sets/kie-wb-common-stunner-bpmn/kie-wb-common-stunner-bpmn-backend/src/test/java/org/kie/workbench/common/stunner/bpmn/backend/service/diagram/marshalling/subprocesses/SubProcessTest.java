@@ -185,8 +185,8 @@ public abstract class SubProcessTest<T extends BaseSubprocess> extends BPMNDiagr
         assertThat(generalSet).isNotNull();
         assertThat(generalSet.getName()).isNotNull();
         assertThat(generalSet.getDocumentation()).isNotNull();
-        assertThat(generalSet.getName().getValue()).isEqualTo(nodeName);
-        assertThat(generalSet.getDocumentation().getValue()).isEqualTo(documentation);
+        assertThat(generalSet.getName()).isEqualTo(nodeName);
+        assertThat(generalSet.getDocumentation()).isEqualTo(documentation);
     }
 
     void assertSubProcessProcessData(ProcessData processData, String variableValue) {

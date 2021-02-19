@@ -27,7 +27,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.kie.workbench.common.stunner.bpmn.definition.ExclusiveGateway;
 import org.kie.workbench.common.stunner.bpmn.definition.property.gateway.GatewayExecutionSet;
-import org.kie.workbench.common.stunner.bpmn.definition.property.general.Name;
 
 import static org.junit.Assert.assertTrue;
 
@@ -47,7 +46,7 @@ public class ExclusiveGatewayTest {
     @Test
     public void testExclusiveDatabasedGatewayNameValid() {
         ExclusiveGateway exclusiveGateway = new ExclusiveGateway();
-        exclusiveGateway.getGeneral().setName(new Name(NAME_VALID));
+        exclusiveGateway.getGeneral().setName(NAME_VALID);
         Set<ConstraintViolation<ExclusiveGateway>> violations = this.validator.validate(exclusiveGateway);
         assertTrue(violations.isEmpty());
     }
@@ -55,7 +54,7 @@ public class ExclusiveGatewayTest {
     @Test
     public void testExclusiveDatabasedGatewayNameEmpty() {
         ExclusiveGateway exclusiveGateway = new ExclusiveGateway();
-        exclusiveGateway.getGeneral().setName(new Name(""));
+        exclusiveGateway.getGeneral().setName("");
         Set<ConstraintViolation<ExclusiveGateway>> violations = this.validator.validate(exclusiveGateway);
         assertTrue(violations.isEmpty());
     }

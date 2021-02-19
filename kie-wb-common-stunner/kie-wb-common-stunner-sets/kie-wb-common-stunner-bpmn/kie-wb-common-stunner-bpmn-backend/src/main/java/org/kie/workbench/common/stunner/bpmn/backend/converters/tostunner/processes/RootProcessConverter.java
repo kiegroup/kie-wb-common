@@ -35,8 +35,6 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.Process
 import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.Version;
 import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.imports.Imports;
 import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.imports.ImportsValue;
-import org.kie.workbench.common.stunner.bpmn.definition.property.general.Documentation;
-import org.kie.workbench.common.stunner.bpmn.definition.property.general.Name;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.SLADueDate;
 import org.kie.workbench.common.stunner.bpmn.definition.property.variables.AdvancedData;
 import org.kie.workbench.common.stunner.bpmn.definition.property.variables.ProcessData;
@@ -63,8 +61,8 @@ public class RootProcessConverter extends BaseRootProcessConverter<BPMNDiagramIm
 
     @Override
     protected DiagramSet createDiagramSet(Process process, ProcessPropertyReader p, DefinitionsPropertyReader d) {
-        return new DiagramSet(new Name(revertIllegalCharsAttribute(process.getName())),
-                              new Documentation(p.getDocumentation()),
+        return new DiagramSet(revertIllegalCharsAttribute(process.getName()),
+                              p.getDocumentation(),
                               new Id(revertIllegalCharsAttribute(process.getId())),
                               new Package(p.getPackage()),
                               new ProcessType(p.getProcessType()),

@@ -70,8 +70,7 @@ public class Package implements BasePackage {
     public boolean equals(Object o) {
         if (o instanceof Package) {
             Package other = (Package) o;
-            return Objects.equals(value,
-                                  other.value);
+            return Objects.equals(value, other.value);
         }
         return false;
     }

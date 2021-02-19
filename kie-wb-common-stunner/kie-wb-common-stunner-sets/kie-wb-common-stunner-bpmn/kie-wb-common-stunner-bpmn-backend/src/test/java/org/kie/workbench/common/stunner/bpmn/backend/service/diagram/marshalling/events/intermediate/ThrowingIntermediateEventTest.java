@@ -184,8 +184,8 @@ public abstract class ThrowingIntermediateEventTest<T extends BaseThrowingInterm
         assertThat(generalSet).isNotNull();
         assertThat(generalSet.getName()).isNotNull();
         assertThat(generalSet.getDocumentation()).isNotNull();
-        assertThat(generalSet.getName().getValue()).isEqualTo(nodeName);
-        assertThat(generalSet.getDocumentation().getValue()).isEqualTo(documentation);
+        assertThat(generalSet.getName()).isEqualTo(nodeName);
+        assertThat(generalSet.getDocumentation()).isEqualTo(documentation);
     }
 
     void assertDataIOSet(DataIOSet dataIOSet, String value) {

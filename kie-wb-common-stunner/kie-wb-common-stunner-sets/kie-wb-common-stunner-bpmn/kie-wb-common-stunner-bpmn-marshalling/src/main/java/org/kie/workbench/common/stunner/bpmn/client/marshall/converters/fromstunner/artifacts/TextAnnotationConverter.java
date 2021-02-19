@@ -47,8 +47,8 @@ public class TextAnnotationConverter {
             TextAnnotationPropertyWriter writer = propertyWriterFactory.of(element);
 
             BPMNGeneralSet general = definition.getGeneral();
-            writer.setName(general.getName().getValue());
-            writer.setDocumentation(general.getDocumentation().getValue());
+            writer.setName(general.getName());
+            writer.setDocumentation(general.getDocumentation());
             writer.setAbsoluteBounds(node);
 
             return writer;

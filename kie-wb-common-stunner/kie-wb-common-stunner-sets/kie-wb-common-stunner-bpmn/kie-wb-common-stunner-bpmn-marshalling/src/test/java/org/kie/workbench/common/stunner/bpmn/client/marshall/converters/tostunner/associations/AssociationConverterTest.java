@@ -136,7 +136,7 @@ public class AssociationConverterTest {
     public void testConvertEdge() {
         associationConverter.convertEdge(association, nodes);
         verify(definition).setGeneral(generalSetCaptor.capture());
-        assertEquals(ASSOCIATION_DOCUMENTATION, generalSetCaptor.getValue().getDocumentation().getValue());
+        assertEquals(ASSOCIATION_DOCUMENTATION, generalSetCaptor.getValue().getDocumentation());
         assertEdgeWithConnections();
     }
 
@@ -152,7 +152,7 @@ public class AssociationConverterTest {
 
     @Test
     public void testConvertEdgeNonDirectional() {
-        when(factoryManager.newEdge(ASSOCIATION_ID, NonDirectionalAssociation.class)).thenReturn((Edge) edgeNonDirectional);
+        when(factoryManager.newEdge(ASSOCIATION_ID, NonDirectionalAssociation.class)).thenReturn(edgeNonDirectional);
         when(associationReader.getAssociationByDirection()).thenAnswer(a -> NonDirectionalAssociation.class);
         when(edgeNonDirectional.getContent()).thenReturn(contentNonDirectional);
         when(contentNonDirectional.getDefinition()).thenReturn(definitionNonDirectional);

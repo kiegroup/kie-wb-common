@@ -66,8 +66,6 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.font.FontSize;
 import org.kie.workbench.common.stunner.bpmn.definition.property.gateway.DefaultRoute;
 import org.kie.workbench.common.stunner.bpmn.definition.property.gateway.GatewayExecutionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.BPMNGeneralSet;
-import org.kie.workbench.common.stunner.bpmn.definition.property.general.Documentation;
-import org.kie.workbench.common.stunner.bpmn.definition.property.general.Name;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.SLADueDate;
 import org.kie.workbench.common.stunner.bpmn.definition.property.notification.NotificationsInfo;
 import org.kie.workbench.common.stunner.bpmn.definition.property.reassignment.ReassignmentsInfo;
@@ -1778,10 +1776,8 @@ public class HashCodeAndEqualityTest {
         TestCaseBuilder.newTestCase()
                 .addTrueCase(new BPMNGeneralSet(),
                              new BPMNGeneralSet())
-                .addTrueCase(new BPMNGeneralSet(new Name(),
-                                                new Documentation()),
-                             new BPMNGeneralSet(new Name(),
-                                                new Documentation()))
+                .addTrueCase(new BPMNGeneralSet("", ""),
+                             new BPMNGeneralSet("", ""))
                 .test();
     }
 

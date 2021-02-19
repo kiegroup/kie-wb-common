@@ -177,8 +177,8 @@ public class CallActivityConverterTest {
 
     private void assertCommonValues(Node<View<ReusableSubprocess>, Edge> result) {
         assertEquals(UUID, result.getUUID());
-        assertEquals(NAME, result.getContent().getDefinition().getGeneral().getName().getValue());
-        assertEquals(DOCUMENTATION, result.getContent().getDefinition().getGeneral().getDocumentation().getValue());
+        assertEquals(NAME, result.getContent().getDefinition().getGeneral().getName());
+        assertEquals(DOCUMENTATION, result.getContent().getDefinition().getGeneral().getDocumentation());
         assertEquals(ASSIGNMENTS_INFO, result.getContent().getDefinition().getDataIOSet().getAssignmentsinfo());
         assertEquals(BOUNDS, result.getContent().getBounds());
         assertEquals(SIMULATION_SET, result.getContent().getDefinition().getSimulationSet());

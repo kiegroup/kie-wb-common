@@ -215,7 +215,7 @@ public abstract class TaskTest<T extends BaseTask> extends BPMNDiagramMarshaller
         assertNotNull(generalSet);
         assertNotNull(generalSet.getName());
         assertNotNull(generalSet.getDocumentation());
-        assertEquals(nodeName, generalSet.getName().getValue());
-        assertEquals(documentation, generalSet.getDocumentation().getValue());
+        assertEquals(nodeName, generalSet.getName());
+        assertEquals(documentation, generalSet.getDocumentation());
     }
 }

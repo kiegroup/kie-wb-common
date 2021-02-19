@@ -68,8 +68,8 @@ public class ArtifactsConverterTest {
     @Test
     public void toTextAnnotationElement() {
         TextAnnotation textAnnotation = new TextAnnotation();
-        textAnnotation.getGeneral().getDocumentation().setValue(DOC);
-        textAnnotation.getGeneral().getName().setValue(NAME);
+        textAnnotation.getGeneral().setDocumentation(DOC);
+        textAnnotation.getGeneral().setName(NAME);
 
         textAnnotationNode = new NodeImpl<>(UUID.uuid());
         textAnnotationNode.setContent(textAnnotationView);
@@ -89,7 +89,7 @@ public class ArtifactsConverterTest {
     @Test
     public void toDataObjectElement() {
         DataObject dataObject = new DataObject();
-        dataObject.getGeneral().getDocumentation().setValue(DOC);
+        dataObject.getGeneral().setDocumentation(DOC);
         dataObject.setName(new Name(NAME));
         dataObject.setType(new DataObjectType(new DataObjectTypeValue(NAME)));
 
