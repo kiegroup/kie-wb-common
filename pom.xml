@@ -36,7 +36,7 @@
       <!-- Version 2.0.1.Final which is coming from kie-parent is not compatible with appformer validation components -->
     <version.javax.validation>1.0.0.GA</version.javax.validation>
     <spotbugs.failOnViolation>true</spotbugs.failOnViolation>
-    <version.xml.marshalling>0.1-SNAPSHOT</version.xml.marshalling>
+    <version.xml.marshalling>0.1</version.xml.marshalling>
     <checkstyle.header.template><![CDATA[
 ^\/\*$\n^
 \* Copyright \d\d\d\d Red Hat, Inc\. and\/or its affiliates\.$\n^
@@ -172,6 +172,16 @@
         <enabled>true</enabled>
         <updatePolicy>daily</updatePolicy>
       </snapshots>
+    </repository>
+    <repository>
+      <id>Sonatype</id>
+      <name>Sonatype</name>
+      <url>https://repo1.maven.org/maven2/</url>
+      <layout>default</layout>
+      <releases>
+        <enabled>true</enabled>
+        <updatePolicy>never</updatePolicy>
+      </releases>
     </repository>
   </repositories>
 
