@@ -21,7 +21,7 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.kie.workbench.common.stunner.bpmn.definition.dto.di.Point;
-import org.treblereel.gwt.jackson.api.annotation.XmlUnwrappedCollection;
+import org.treblereel.gwt.xml.mapper.api.annotation.XmlUnwrappedCollection;
 
 @XmlRootElement
 public class BPMNEdge extends BPMNPlaneElement {

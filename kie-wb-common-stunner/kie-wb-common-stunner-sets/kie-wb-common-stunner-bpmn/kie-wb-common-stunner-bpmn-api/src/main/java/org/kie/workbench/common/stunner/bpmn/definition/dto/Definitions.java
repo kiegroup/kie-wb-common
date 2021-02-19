@@ -25,9 +25,9 @@ import javax.xml.bind.annotation.XmlType;
 
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNDiagramImpl;
 import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.DiagramSet;
-import org.treblereel.gwt.jackson.api.annotation.TargetNamespace;
-import org.treblereel.gwt.jackson.api.annotation.XMLMapper;
-import org.treblereel.gwt.jackson.api.annotation.XmlUnwrappedCollection;
+import org.treblereel.gwt.xml.mapper.api.annotation.TargetNamespace;
+import org.treblereel.gwt.xml.mapper.api.annotation.XMLMapper;
+import org.treblereel.gwt.xml.mapper.api.annotation.XmlUnwrappedCollection;
 
 @XMLMapper
 @XmlType(propOrder = {"import", "itemDefinition", "process", "BPMNDiagram"})

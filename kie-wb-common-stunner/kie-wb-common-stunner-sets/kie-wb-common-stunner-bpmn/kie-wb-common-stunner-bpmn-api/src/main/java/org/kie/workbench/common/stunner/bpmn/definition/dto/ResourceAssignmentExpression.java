@@ -20,7 +20,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.kie.workbench.common.stunner.bpmn.definition.dto.handler.ResourceAssignmentExpressionDemarshaller;
 import org.kie.workbench.common.stunner.bpmn.definition.dto.handler.ResourceAssignmentExpressionMarshaller;
-import org.treblereel.gwt.jackson.api.annotation.XmlTypeAdapter;
+import org.treblereel.gwt.xml.mapper.api.annotation.XmlTypeAdapter;
 
 @XmlRootElement(name = "resourceAssignmentExpression", namespace = "http://www.omg.org/spec/BPMN/20100524/MODEL")
 

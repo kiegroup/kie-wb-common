@@ -24,7 +24,7 @@ import javax.xml.bind.annotation.XmlElementRefs;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.jboss.errai.common.client.api.annotations.Portable;
-import org.treblereel.gwt.jackson.api.annotation.XmlUnwrappedCollection;
+import org.treblereel.gwt.xml.mapper.api.annotation.XmlUnwrappedCollection;
 
 @Portable
 @XmlRootElement(name = "BPMNPlane", namespace = "http://www.omg.org/spec/BPMN/20100524/DI")

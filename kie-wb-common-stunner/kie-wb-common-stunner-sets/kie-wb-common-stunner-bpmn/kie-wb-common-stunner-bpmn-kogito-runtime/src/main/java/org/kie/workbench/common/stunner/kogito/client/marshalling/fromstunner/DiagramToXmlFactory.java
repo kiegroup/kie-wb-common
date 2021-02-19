@@ -58,8 +58,8 @@ import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.view.ViewImpl;
 import org.kie.workbench.common.stunner.core.graph.impl.NodeImpl;
-import org.treblereel.gwt.jackson.api.DefaultXMLSerializationContext;
-import org.treblereel.gwt.jackson.api.XMLSerializationContext;
+import org.treblereel.gwt.xml.mapper.api.DefaultXMLSerializationContext;
+import org.treblereel.gwt.xml.mapper.api.XMLSerializationContext;
 
 public class DiagramToXmlFactory {
 

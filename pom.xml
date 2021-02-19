@@ -134,22 +134,22 @@
       </dependency>
 
       <dependency>
-        <groupId>org.treblereel.gwt.jackson</groupId>
+        <groupId>org.treblereel.gwt.xml.mapper</groupId>
         <artifactId>gwt-backend</artifactId>
         <version>${version.xml.marshalling}</version>
       </dependency>
       <dependency>
-        <groupId>org.treblereel.gwt.jackson</groupId>
+        <groupId>org.treblereel.gwt.xml.mapper</groupId>
         <artifactId>jre-backend</artifactId>
         <version>${version.xml.marshalling}</version>
       </dependency>
       <dependency>
-        <groupId>org.treblereel.gwt.jackson</groupId>
+        <groupId>org.treblereel.gwt.xml.mapper</groupId>
         <artifactId>api</artifactId>
         <version>${version.xml.marshalling}</version>
       </dependency>
       <dependency>
-        <groupId>org.treblereel.gwt.jackson</groupId>
+        <groupId>org.treblereel.gwt.xml.mapper</groupId>
         <artifactId>processor</artifactId>
         <version>${version.xml.marshalling}</version>
       </dependency>
@@ -258,7 +258,7 @@
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
           <classpathDependencyExcludes>
-            <classpathDependencyExclude>org.treblereel.gwt.jackson:gwt-backend</classpathDependencyExclude>
+            <classpathDependencyExclude>org.treblereel.gwt.xml.mapeer:gwt-backend</classpathDependencyExclude>
           </classpathDependencyExcludes>
         </configuration>
       </plugin>

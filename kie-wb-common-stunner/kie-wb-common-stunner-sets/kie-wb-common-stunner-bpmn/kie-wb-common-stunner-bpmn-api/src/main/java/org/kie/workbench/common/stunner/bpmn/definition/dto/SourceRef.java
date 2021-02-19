@@ -20,7 +20,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.kie.workbench.common.stunner.bpmn.definition.dto.handler.SourceRefValueDemarshaller;
 import org.kie.workbench.common.stunner.bpmn.definition.dto.handler.SourceRefValueMarshaller;
-import org.treblereel.gwt.jackson.api.annotation.XmlTypeAdapter;
+import org.treblereel.gwt.xml.mapper.api.annotation.XmlTypeAdapter;
 
 @XmlTypeAdapter(
         serializer = SourceRefValueMarshaller.class,

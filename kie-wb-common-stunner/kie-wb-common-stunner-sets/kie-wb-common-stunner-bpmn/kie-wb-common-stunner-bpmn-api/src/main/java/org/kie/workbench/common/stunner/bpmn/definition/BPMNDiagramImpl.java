@@ -44,7 +44,7 @@ import org.kie.workbench.common.stunner.core.definition.annotation.definition.Ca
 import org.kie.workbench.common.stunner.core.definition.annotation.definition.Labels;
 import org.kie.workbench.common.stunner.core.rule.annotation.CanContain;
 import org.kie.workbench.common.stunner.core.util.HashUtil;
-import org.treblereel.gwt.jackson.api.annotation.XMLMapper;
+import org.treblereel.gwt.xml.mapper.api.annotation.XMLMapper;
 
 import static org.kie.workbench.common.forms.adf.engine.shared.formGeneration.processing.fields.fieldInitializers.nestedForms.SubFormFieldInitializer.COLLAPSIBLE_CONTAINER;
 import static org.kie.workbench.common.forms.adf.engine.shared.formGeneration.processing.fields.fieldInitializers.nestedForms.SubFormFieldInitializer.FIELD_CONTAINER_PARAM;

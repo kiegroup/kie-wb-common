@@ -688,20 +688,20 @@
     <!-- Marshalling -->
 
     <dependency>
-      <groupId>org.treblereel.gwt.jackson</groupId>
+      <groupId>org.treblereel.gwt.xml.mapper</groupId>
       <artifactId>gwt-backend</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.treblereel.gwt.jackson</groupId>
+      <groupId>org.treblereel.gwt.xml.mapper</groupId>
       <artifactId>api</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.treblereel.gwt.jackson</groupId>
+      <groupId>org.treblereel.gwt.xml.mapper</groupId>
       <artifactId>processor</artifactId>
     </dependency>
 
     <dependency>
-      <groupId>org.treblereel.gwt.jackson</groupId>
+      <groupId>org.treblereel.gwt.xml.mapper</groupId>
       <artifactId>jre-backend</artifactId>
       <scope>test</scope>
     </dependency>

@@ -18,7 +18,7 @@ package org.kie.workbench.common.stunner.bpmn.definition.dto;
 
 import org.kie.workbench.common.stunner.bpmn.definition.dto.handler.CompletionConditionDemarshaller;
 import org.kie.workbench.common.stunner.bpmn.definition.dto.handler.CompletionConditionMarshaller;
-import org.treblereel.gwt.jackson.api.annotation.XmlTypeAdapter;
+import org.treblereel.gwt.xml.mapper.api.annotation.XmlTypeAdapter;
 
 @XmlTypeAdapter(
         serializer = CompletionConditionMarshaller.class,

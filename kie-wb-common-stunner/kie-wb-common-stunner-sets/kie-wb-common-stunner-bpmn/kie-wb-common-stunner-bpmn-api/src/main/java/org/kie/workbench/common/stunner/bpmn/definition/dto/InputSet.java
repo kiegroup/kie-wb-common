@@ -21,7 +21,7 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.treblereel.gwt.jackson.api.annotation.XmlUnwrappedCollection;
+import org.treblereel.gwt.xml.mapper.api.annotation.XmlUnwrappedCollection;
 
 @XmlRootElement(name = "inputSet", namespace = "http://www.omg.org/spec/BPMN/20100524/MODEL")
 public class InputSet extends Data<InputSet> {

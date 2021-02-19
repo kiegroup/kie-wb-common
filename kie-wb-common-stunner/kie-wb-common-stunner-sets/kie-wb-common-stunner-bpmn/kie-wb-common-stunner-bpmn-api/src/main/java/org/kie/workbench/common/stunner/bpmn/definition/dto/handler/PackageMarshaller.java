@@ -20,10 +20,10 @@ import javax.xml.stream.XMLStreamException;
 
 import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.Package;
 
-import org.treblereel.gwt.jackson.api.XMLSerializationContext;
-import org.treblereel.gwt.jackson.api.XMLSerializerParameters;
-import org.treblereel.gwt.jackson.api.custom.CustomXMLSerializer;
-import org.treblereel.gwt.jackson.api.stream.XMLWriter;
+import org.treblereel.gwt.xml.mapper.api.XMLSerializationContext;
+import org.treblereel.gwt.xml.mapper.api.XMLSerializerParameters;
+import org.treblereel.gwt.xml.mapper.api.custom.CustomXMLSerializer;
+import org.treblereel.gwt.xml.mapper.api.stream.XMLWriter;
 
 public class PackageMarshaller extends CustomXMLSerializer<Package> {
 

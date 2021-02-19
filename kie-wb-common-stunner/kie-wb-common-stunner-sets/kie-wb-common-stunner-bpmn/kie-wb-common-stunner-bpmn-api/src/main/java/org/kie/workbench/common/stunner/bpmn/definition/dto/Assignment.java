@@ -18,7 +18,7 @@ package org.kie.workbench.common.stunner.bpmn.definition.dto;
 
 import org.kie.workbench.common.stunner.bpmn.definition.dto.handler.AssignmentDemarshaller;
 import org.kie.workbench.common.stunner.bpmn.definition.dto.handler.AssignmentMarshaller;
-import org.treblereel.gwt.jackson.api.annotation.XmlTypeAdapter;
+import org.treblereel.gwt.xml.mapper.api.annotation.XmlTypeAdapter;
 
 @XmlTypeAdapter(
         serializer = AssignmentMarshaller.class,

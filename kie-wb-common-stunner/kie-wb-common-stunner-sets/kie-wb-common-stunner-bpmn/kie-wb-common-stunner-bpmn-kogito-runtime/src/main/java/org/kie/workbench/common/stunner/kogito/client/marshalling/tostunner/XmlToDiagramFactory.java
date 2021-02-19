@@ -41,8 +41,8 @@ import org.kie.workbench.common.stunner.core.graph.content.view.ViewImpl;
 import org.kie.workbench.common.stunner.core.graph.impl.EdgeImpl;
 import org.kie.workbench.common.stunner.core.graph.impl.NodeImpl;
 import org.kie.workbench.common.stunner.core.util.UUID;
-import org.treblereel.gwt.jackson.api.DefaultXMLDeserializationContext;
-import org.treblereel.gwt.jackson.api.XMLDeserializationContext;
+import org.treblereel.gwt.xml.mapper.api.DefaultXMLDeserializationContext;
+import org.treblereel.gwt.xml.mapper.api.XMLDeserializationContext;
 
 public class XmlToDiagramFactory {
 

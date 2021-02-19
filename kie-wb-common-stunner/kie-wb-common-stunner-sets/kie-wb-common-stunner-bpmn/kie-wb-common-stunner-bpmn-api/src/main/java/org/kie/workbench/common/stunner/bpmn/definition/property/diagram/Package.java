@@ -31,7 +31,7 @@ import org.kie.workbench.common.stunner.bpmn.definition.dto.handler.PackageMarsh
 import org.kie.workbench.common.stunner.core.definition.annotation.Property;
 import org.kie.workbench.common.stunner.core.definition.annotation.property.Value;
 import org.kie.workbench.common.stunner.core.util.HashUtil;
-import org.treblereel.gwt.jackson.api.annotation.XmlTypeAdapter;
+import org.treblereel.gwt.xml.mapper.api.annotation.XmlTypeAdapter;
 
 @Portable
 @Bindable

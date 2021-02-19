@@ -24,7 +24,7 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.kie.workbench.common.stunner.bpmn.definition.dto.bpsim.BPSimData;
-import org.treblereel.gwt.jackson.api.annotation.XmlUnwrappedCollection;
+import org.treblereel.gwt.xml.mapper.api.annotation.XmlUnwrappedCollection;
 
 @XmlRootElement(name = "relationship", namespace = "http://www.omg.org/spec/BPMN/20100524/MODEL")
 public class Relationship {

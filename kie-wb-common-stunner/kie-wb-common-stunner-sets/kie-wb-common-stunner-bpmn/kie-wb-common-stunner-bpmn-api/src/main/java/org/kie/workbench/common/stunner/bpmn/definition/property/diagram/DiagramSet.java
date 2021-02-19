@@ -51,7 +51,7 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.general.SLADueD
 import org.kie.workbench.common.stunner.bpmn.forms.model.ImportsFieldType;
 import org.kie.workbench.common.stunner.core.definition.annotation.Property;
 import org.kie.workbench.common.stunner.core.util.HashUtil;
-import org.treblereel.gwt.jackson.api.annotation.XmlUnwrappedCollection;
+import org.treblereel.gwt.xml.mapper.api.annotation.XmlUnwrappedCollection;
 
 @Portable
 @Bindable

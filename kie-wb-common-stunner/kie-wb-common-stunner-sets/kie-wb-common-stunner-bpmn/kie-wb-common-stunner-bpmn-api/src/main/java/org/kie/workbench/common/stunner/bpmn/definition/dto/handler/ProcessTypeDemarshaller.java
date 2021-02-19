@@ -19,11 +19,11 @@ package org.kie.workbench.common.stunner.bpmn.definition.dto.handler;
 import javax.xml.stream.XMLStreamException;
 
 import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.ProcessType;
-import org.treblereel.gwt.jackson.api.XMLDeserializationContext;
-import org.treblereel.gwt.jackson.api.XMLDeserializerParameters;
-import org.treblereel.gwt.jackson.api.custom.CustomXMLDeserializer;
-import org.treblereel.gwt.jackson.api.exception.XMLDeserializationException;
-import org.treblereel.gwt.jackson.api.stream.XMLReader;
+import org.treblereel.gwt.xml.mapper.api.XMLDeserializationContext;
+import org.treblereel.gwt.xml.mapper.api.XMLDeserializerParameters;
+import org.treblereel.gwt.xml.mapper.api.custom.CustomXMLDeserializer;
+import org.treblereel.gwt.xml.mapper.api.exception.XMLDeserializationException;
+import org.treblereel.gwt.xml.mapper.api.stream.XMLReader;
 
 public class ProcessTypeDemarshaller extends CustomXMLDeserializer<ProcessType> {
 
