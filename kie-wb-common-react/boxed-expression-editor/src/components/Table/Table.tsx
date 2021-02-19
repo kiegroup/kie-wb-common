@@ -242,12 +242,14 @@ export const Table: React.FunctionComponent<TableProps> = ({
     tableInstance.state.columnResizing.isResizingColumn === null &&
     !_.isEmpty(tableInstance.state.columnResizing.columnWidths);
   useEffect(() => {
-    setTableColumns((prevTableColumns) => {
-      _.forEach(tableInstance.state.columnResizing.columnWidths, (updatedColumnWidth, accessor) =>
-        resizeNestedColumns(prevTableColumns as ColumnInstance[], accessor, updatedColumnWidth)
-      );
-      return [...prevTableColumns];
-    });
+    if (finishedResizing) {
+      setTableColumns((prevTableColumns) => {
+        _.forEach(tableInstance.state.columnResizing.columnWidths, (updatedColumnWidth, accessor) =>
+          resizeNestedColumns(prevTableColumns as ColumnInstance[], accessor, updatedColumnWidth)
+        );
+        return [...prevTableColumns];
+      });
+    }
     // Need to consider a change only when resizing is finished (no other dependencies to consider for this useEffect)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [finishedResizing]);
