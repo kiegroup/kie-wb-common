@@ -39,6 +39,7 @@ import org.kie.workbench.common.dmn.api.property.dmn.Description;
 import org.kie.workbench.common.dmn.api.property.dmn.Id;
 import org.kie.workbench.common.dmn.api.property.dmn.Name;
 import org.kie.workbench.common.dmn.api.property.font.FontSet;
+import org.kie.workbench.common.dmn.client.docks.navigator.drds.DMNDiagramsSession;
 import org.kie.workbench.common.dmn.client.marshaller.unmarshall.nodes.NodeEntry;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITDMNElementReference;
 import org.kie.workbench.common.dmn.webapp.kogito.marshaller.js.model.dmn12.JSITDecisionService;
@@ -57,9 +58,13 @@ public class DecisionServiceConverter implements NodeConverter<JSITDecisionServi
 
     private FactoryManager factoryManager;
 
-    public DecisionServiceConverter(final FactoryManager factoryManager) {
+    private DMNDiagramsSession diagramsSession;
+
+    public DecisionServiceConverter(final FactoryManager factoryManager,
+                                    final DMNDiagramsSession diagramsSession) {
         super();
         this.factoryManager = factoryManager;
+        this.diagramsSession = diagramsSession;
     }
 
     private static boolean isOutputDecision(final View<?> childView,
@@ -189,7 +194,15 @@ public class DecisionServiceConverter implements NodeConverter<JSITDecisionServi
                             candidate_outputDecision.add(ri);
                         } else {
                             candidate_encapsulatedDecision.add(ri);
+
+                            final List<Node> all = diagramsSession.getNodesFromAllDiagramsWithContentId(drgElement.getContentDefinitionId());
+                            for (final Node other : all) {
+                                if (!Objects.equals(other, targetNode)) {
+                                    inspectDecisionForDSReqs(other, reqInputs, reqDecisions);
+                                }
+                            }
                         }
+
                         inspectDecisionForDSReqs(targetNode, reqInputs, reqDecisions);
                     } else {
                         throw new UnsupportedOperationException("wrong model definition: a DecisionService is expected to encapsulate only Decision");
@@ -267,9 +280,13 @@ public class DecisionServiceConverter implements NodeConverter<JSITDecisionServi
                 if (view.getDefinition() instanceof DRGElement) {
                     final DRGElement drgElement = (DRGElement) view.getDefinition();
                     if (drgElement instanceof Decision) {
-                        reqDecisions.add((Decision) drgElement);
+                        if (!reqDecisions.contains(drgElement)) {
+                            reqDecisions.add((Decision) drgElement);
+                        }
                     } else if (drgElement instanceof InputData) {
-                        reqInputs.add((InputData) drgElement);
+                        if (!reqInputs.contains(drgElement)) {
+                            reqInputs.add((InputData) drgElement);
+                        }
                     }
                 }
             }
