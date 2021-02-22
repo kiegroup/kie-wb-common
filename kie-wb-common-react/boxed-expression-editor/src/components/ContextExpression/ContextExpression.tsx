@@ -190,14 +190,13 @@ export const ContextExpression: React.FunctionComponent<ContextProps> = ({
   }, [uid]);
 
   const updateValueColumnWidth = useCallback(
-    (width: number) => {
+    (shiftWidth: number) => {
       setResizerElement(
         document.querySelector(
           `.table-component.${uid} > table > thead > tr:last-of-type > th:last-of-type div.pf-c-drawer`
         )! as HTMLDivElement
       );
-      dragItHorizontally(width);
-      setExpressionWidth(width);
+      dragItHorizontally(shiftWidth);
     },
     [dragItHorizontally, setResizerElement, uid]
   );
