@@ -625,6 +625,7 @@ public class DMNDesignerKogitoSeleniumIT extends DMNDesignerBaseIT {
     public void testDecisionExpressionInvocation() throws Exception {
         final String expected = loadResource("decision-expression-invocation.xml");
         setContent(expected);
+        setContent(expected);
 
         final String actual = getContent();
         assertThat(actual).isNotBlank();
@@ -2365,15 +2366,7 @@ public class DMNDesignerKogitoSeleniumIT extends DMNDesignerBaseIT {
         final String zInputHref = "#_65560FB5-7AF0-4FCC-A8E8-8AEA2E307ABB";
 
         // assert original order
-        XmlAssert.assertThat(expected)
-                .withNamespaceContext(NAMESPACES)
-                .nodesByXPath("/dmn:definitions/dmn:decisionService/dmn:inputData")
-                .extracting(n-> n.getAttributes().getNamedItem("href").getNodeValue())
-                .containsExactly(
-                        zInputHref,
-                        xInputHref,
-                        yInputHref
-                );
+        assertDecisionServiceParametersOrder(expected, zInputHref, xInputHref, yInputHref);
 
         setContent(expected);
 
@@ -2386,7 +2379,7 @@ public class DMNDesignerKogitoSeleniumIT extends DMNDesignerBaseIT {
 
         List<WebElement> inputs = waitOperation()
                 .withMessage("Input Data decision service details not found in properties panel")
-                .until(alLElements(PropertiesPanelXPathLocator.decisionServiceDetails(PropertiesPanelXPathLocator.DecisionServiceDetails.INPUT_DATA)));
+                .until(allElements(PropertiesPanelXPathLocator.decisionServiceDetails(PropertiesPanelXPathLocator.DecisionServiceDetails.INPUT_DATA)));
 
         // assert order in UI is same as in the source
         assertThat(inputs)
@@ -2397,15 +2390,15 @@ public class DMNDesignerKogitoSeleniumIT extends DMNDesignerBaseIT {
 
         // assert order doesn't change when saving
         final String actual = getContent();
-        XmlAssert.assertThat(actual)
+        assertDecisionServiceParametersOrder(actual, zInputHref, xInputHref, yInputHref);
+    }
+
+    private void assertDecisionServiceParametersOrder(final String dmnModelXml, final String... inputHrefs) {
+        XmlAssert.assertThat(dmnModelXml)
                 .withNamespaceContext(NAMESPACES)
                 .nodesByXPath("/dmn:definitions/dmn:decisionService/dmn:inputData")
                 .extracting(n-> n.getAttributes().getNamedItem("href").getNodeValue())
-                .containsExactly(
-                        zInputHref,
-                        xInputHref,
-                        yInputHref
-                );
+                .containsExactly(inputHrefs);
     }
 
     private void assertDiagramNodeIsPresentInDecisionNavigator(final String nodeName) {
@@ -2544,7 +2537,7 @@ public class DMNDesignerKogitoSeleniumIT extends DMNDesignerBaseIT {
         return visibilityOfElementLocated(xpath(xpathLocator.getXPathLocator()));
     }
 
-    private ExpectedCondition<List<WebElement>> alLElements(final XPathLocator xpathLocator) {
+    private ExpectedCondition<List<WebElement>> allElements(final XPathLocator xpathLocator) {
         return visibilityOfAllElementsLocatedBy(xpath(xpathLocator.getXPathLocator()));
     }
 }
