@@ -68,11 +68,11 @@ public class DefaultImportsEditorWidget extends ImportsEditorWidget<DefaultImpor
     }
 
     public String getDataType(String displayName) {
-        return dataTypes.keySet()
-                .stream()
-                .filter(key -> displayName.equals(dataTypes.get(key)))
-                .findFirst()
-                .orElse(displayName);
+        if (dataTypes.containsKey(displayName)) {
+            return dataTypes.get(displayName);
+        } else {
+            return displayName;
+        }
     }
 
     @Override
@@ -113,8 +113,7 @@ public class DefaultImportsEditorWidget extends ImportsEditorWidget<DefaultImpor
     public void addDataTypes(ImportsValue imports) {
         boolean updated = false;
         for (DefaultImport imported : imports.getDefaultImports()) {
-            if (defaultTypes.contains(imported.getClassName())) {
-            } else {
+            if (!defaultTypes.contains(imported.getClassName())) {
                 updated = true;
                 dataTypeNamesService.add(imported.getClassName(), null);
             }
@@ -122,8 +121,6 @@ public class DefaultImportsEditorWidget extends ImportsEditorWidget<DefaultImpor
 
         if (updated) {
             refreshFormsEvent.fire(new RefreshFormPropertiesEvent(sessionManager.getCurrentSession()));
-        } else {
-            System.out.print("Hello");
         }
     }
 }
