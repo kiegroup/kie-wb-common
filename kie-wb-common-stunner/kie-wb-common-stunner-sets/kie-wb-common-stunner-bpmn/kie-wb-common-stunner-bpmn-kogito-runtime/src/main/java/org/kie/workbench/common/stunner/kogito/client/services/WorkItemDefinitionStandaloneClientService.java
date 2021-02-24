@@ -147,15 +147,17 @@ public class WorkItemDefinitionStandaloneClientService implements WorkItemDefini
 
     private Promise<Collection<WorkItemDefinition>> presetWorkItemsLoader(final Collection<WorkItemDefinition> preset) {
         final List<WorkItemDefinition> wids = parse(WidPresetResources.INSTANCE.asText().getText());
-        return getPromises(wids, preset);
+        return getPromises(wids, preset, "");
     }
 
     private Promise<Collection<WorkItemDefinition>> workItemsLoader(final String path,
                                                                     final Collection<WorkItemDefinition> loaded) {
+        int lastDirIndex = path.lastIndexOf('/');
+        final String directory = (lastDirIndex >= 0) ? path.substring(0, lastDirIndex) + "/" : path;
         if (nonEmpty(path)) {
             return resourceContentService
                     .get(path)
-                    .then(value -> getPromises(addPresetWids(parse(value)), loaded));
+                    .then(value -> getPromises(addPresetWids(parse(value)), loaded, directory));
         }
         return promises.resolve(emptyList());
     }
@@ -174,7 +176,8 @@ public class WorkItemDefinitionStandaloneClientService implements WorkItemDefini
         return wids;
     }
 
-    private Promise<Collection<WorkItemDefinition>> getPromises(final List<WorkItemDefinition> wids, final Collection<WorkItemDefinition> loaded) {
+    private Promise<Collection<WorkItemDefinition>> getPromises(final List<WorkItemDefinition> wids, final Collection<WorkItemDefinition> loaded, final String path) {
+        wids.forEach(w -> w.getIconDefinition().setUri(path + w.getIconDefinition().getUri()));
         return promises.create((success, failure) -> {
             promises.all(wids, this::workItemIconLoader)
                     .then(wid -> {

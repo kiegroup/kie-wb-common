@@ -89,7 +89,7 @@ public class WorkItemDefinitionStandaloneClientServiceTest {
         WorkItemDefinition milestone = items.get(3);
         assertNotNull(milestone);
         assertEquals("Milestone", milestone.getName());
-        assertEquals(WorkItemDefinitionStandaloneClientService.getPresetIcon("defaultmilestoneicon.png"),
+        assertEquals(BPMNStaticResourceContentService.MILESTONE_SERVICE_TASK_DATA_URI,
                      milestone.getIconDefinition().getIconData());
 
         WorkItemDefinition brTask = items.get(4);
