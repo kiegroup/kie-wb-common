@@ -68,7 +68,11 @@ export const ExpressionContainer: ({ selectedExpression }: ExpressionContainerPr
       <span className="expression-title">{selectedExpression.name}</span>
       <span className="expression-type">({selectedExpression.logicType || LogicType.Undefined})</span>
 
-      <div className="expression-container-box" ref={expressionContainerRef}>
+      <div
+        className="expression-container-box"
+        ref={expressionContainerRef}
+        data-ouia-component-id="expression-container"
+      >
         <LogicTypeSelector
           selectedExpression={selectedExpression}
           onLogicTypeUpdating={onLogicTypeUpdating}
