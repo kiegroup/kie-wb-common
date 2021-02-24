@@ -35,6 +35,14 @@ public class EditorXPathLocator implements XPathLocator {
         return new EditorXPathLocator("//div[@class='ace_content']");
     }
 
+    public static EditorXPathLocator expressionEditor() {
+        return new EditorXPathLocator("//div[@class='kie-dmn-expression-editor']/div/div/input");
+    }
+
+    public static EditorXPathLocator expressionAutocompleteEditor() {
+        return new EditorXPathLocator("//div[contains(@class,'monaco-editor')]//textarea");
+    }
+
     /**
      * Such element exists just if expression is being edited
      * @return XPath Locator for currently opened expression title
