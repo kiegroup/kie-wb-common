@@ -28,12 +28,13 @@ import {
 } from "react-table";
 import { TableComposable, Tbody, Td, Tr } from "@patternfly/react-table";
 import * as React from "react";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import { EditableCell } from "./EditableCell";
 import { CellProps, TableHandlerConfiguration, TableOperation } from "../../api";
 import * as _ from "lodash";
 import { TableHeader } from "./TableHeader";
 import { TableHandler } from "./TableHandler";
+import { BoxedExpressionGlobalContext } from "../../context";
 
 export interface TableProps {
   /** Table identifier, useful for nested structures */
@@ -90,6 +91,8 @@ export const Table: React.FunctionComponent<TableProps> = ({
   const NUMBER_OF_ROWS_SUBCOLUMN = "0";
 
   const tableRef = useRef<HTMLTableElement>(null);
+
+  const globalContext = useContext(BoxedExpressionGlobalContext);
 
   const [tableColumns, setTableColumns] = useState([
     {
@@ -166,6 +169,14 @@ export const Table: React.FunctionComponent<TableProps> = ({
     return targetIsContainedInCurrentTable && contextMenuAvailableForTarget;
   };
 
+  const tableHandlerStateUpdate = (target: HTMLElement, columnIndex: number) => {
+    setTableHandlerTarget(target);
+    globalContext.currentlyOpenedHandlerCallback?.(false);
+    setShowTableHandler(true);
+    globalContext.setCurrentlyOpenedHandlerCallback?.(() => setShowTableHandler);
+    setLastSelectedColumnIndex(columnIndex);
+  };
+
   const getThProps = (column: ColumnInstance, columnIndex: number) => ({
     onContextMenu: (e: ContextMenuEvent) => {
       const target = e.target as HTMLElement;
@@ -177,9 +188,7 @@ export const Table: React.FunctionComponent<TableProps> = ({
           TableOperation.ColumnInsertRight,
           ...(tableColumns.length > 2 && columnIndex > 0 ? [TableOperation.ColumnDelete] : []),
         ]);
-        setTableHandlerTarget(target);
-        setShowTableHandler(true);
-        setLastSelectedColumnIndex(columnIndex);
+        tableHandlerStateUpdate(target, columnIndex);
       }
     },
   });
@@ -197,9 +206,7 @@ export const Table: React.FunctionComponent<TableProps> = ({
           TableOperation.RowInsertBelow,
           ...(tableRows.length > 1 ? [TableOperation.RowDelete] : []),
         ]);
-        setTableHandlerTarget(target);
-        setShowTableHandler(true);
-        setLastSelectedColumnIndex(columnIndex);
+        tableHandlerStateUpdate(target, columnIndex);
         setLastSelectedRowIndex(rowIndex);
       }
     },

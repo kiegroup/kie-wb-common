@@ -15,6 +15,7 @@
  */
 
 import * as React from "react";
+import { useState } from "react";
 import "@patternfly/react-core/dist/styles/base.css";
 import "@patternfly/react-styles/css/components/Drawer/drawer.css";
 import { I18nDictionariesProvider } from "@kogito-tooling/i18n/dist/react-components";
@@ -24,6 +25,8 @@ import {
   BoxedExpressionEditorI18nContext,
   boxedExpressionEditorI18nDefaults,
 } from "../../i18n";
+import { BoxedExpressionGlobalContext } from "../../context";
+import * as _ from "lodash";
 
 export interface BoxedExpressionEditorProps {
   /** All expression properties used to define it */
@@ -32,15 +35,23 @@ export interface BoxedExpressionEditorProps {
 
 const BoxedExpressionEditor: (props: BoxedExpressionEditorProps) => JSX.Element = (
   props: BoxedExpressionEditorProps
-) => (
-  <I18nDictionariesProvider
-    defaults={boxedExpressionEditorI18nDefaults}
-    dictionaries={boxedExpressionEditorDictionaries}
-    initialLocale={navigator.language}
-    ctx={BoxedExpressionEditorI18nContext}
-  >
-    <ExpressionContainer {...props.expressionDefinition} />
-  </I18nDictionariesProvider>
-);
+) => {
+  const [currentlyOpenedHandlerCallback, setCurrentlyOpenedHandlerCallback] = useState(() => _.identity);
+
+  return (
+    <I18nDictionariesProvider
+      defaults={boxedExpressionEditorI18nDefaults}
+      dictionaries={boxedExpressionEditorDictionaries}
+      initialLocale={navigator.language}
+      ctx={BoxedExpressionEditorI18nContext}
+    >
+      <BoxedExpressionGlobalContext.Provider
+        value={{ currentlyOpenedHandlerCallback, setCurrentlyOpenedHandlerCallback }}
+      >
+        <ExpressionContainer {...props.expressionDefinition} />
+      </BoxedExpressionGlobalContext.Provider>
+    </I18nDictionariesProvider>
+  );
+};
 
 export { BoxedExpressionEditor };
