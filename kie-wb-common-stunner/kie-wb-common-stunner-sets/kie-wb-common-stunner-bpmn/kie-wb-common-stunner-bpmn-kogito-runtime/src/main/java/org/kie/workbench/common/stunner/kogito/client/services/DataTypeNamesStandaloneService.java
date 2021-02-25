@@ -50,7 +50,6 @@ public class DataTypeNamesStandaloneService implements DataTypeNamesService {
 
     @Override
     public void add(String value, String oldValue) {
-
         if (dataTypesSet.contains(oldValue)) {
             dataTypesSet.remove(oldValue);
         }

@@ -42,11 +42,11 @@ import static org.kie.workbench.common.stunner.bpmn.client.forms.util.StringUtil
 @Dependent
 public class DefaultImportsEditorWidget extends ImportsEditorWidget<DefaultImport> {
 
+    private static List<String> defaultTypes = new ArrayList<>(Arrays.asList("Boolean", "Float", "Integer", "Object", "String"));
     protected SessionManager sessionManager;
     protected DataTypeNamesService dataTypeNamesService;
     protected Event<NotificationEvent> notification;
     protected Event<RefreshFormPropertiesEvent> refreshFormsEvent;
-
     protected Map<String, String> dataTypes = new TreeMap<>();
 
     @Inject
@@ -80,8 +80,6 @@ public class DefaultImportsEditorWidget extends ImportsEditorWidget<DefaultImpor
         return new DefaultImport();
     }
 
-    private static List<String> defaultTypes = new ArrayList<>(Arrays.asList("Boolean", "Float", "Integer", "Object", "String"));
-
     protected void loadDefaultDataTypes() {
         addDataTypes(defaultTypes, false);
     }
@@ -89,7 +87,6 @@ public class DefaultImportsEditorWidget extends ImportsEditorWidget<DefaultImpor
     protected void loadServerDataTypes() {
         final Diagram diagram = sessionManager.getCurrentSession().getCanvasHandler().getDiagram();
         final Path path = diagram.getMetadata().getPath();
-
         dataTypeNamesService
                 .call(path)
                 .then(serverDataTypes -> {
@@ -113,7 +110,7 @@ public class DefaultImportsEditorWidget extends ImportsEditorWidget<DefaultImpor
     public void addDataTypes(ImportsValue imports) {
         boolean updated = false;
         for (DefaultImport imported : imports.getDefaultImports()) {
-            if (!defaultTypes.contains(imported.getClassName())) {
+            if (imported.getClassName() != null && !defaultTypes.contains(imported.getClassName())) {
                 updated = true;
                 dataTypeNamesService.add(imported.getClassName(), null);
             }
