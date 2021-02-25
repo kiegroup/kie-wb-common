@@ -23,6 +23,8 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
+import elemental2.dom.DomGlobal;
+import elemental2.dom.DomGlobal.SetTimeoutCallbackFn;
 import org.jboss.errai.ui.client.local.api.elemental2.IsElement;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.kie.workbench.common.dmn.client.docks.navigator.drds.DMNDiagramsSession;
@@ -36,6 +38,7 @@ import org.uberfire.client.annotations.WorkbenchPartTitle;
 import org.uberfire.client.annotations.WorkbenchPartView;
 import org.uberfire.client.annotations.WorkbenchScreen;
 import org.uberfire.client.mvp.UberElemental;
+import org.uberfire.mvp.Command;
 import org.uberfire.workbench.model.CompassPosition;
 import org.uberfire.workbench.model.Position;
 
@@ -46,6 +49,8 @@ import static org.kie.workbench.common.dmn.client.resources.i18n.DMNEditorConsta
 public class DecisionNavigatorPresenter {
 
     public static final String IDENTIFIER = "org.kie.dmn.decision.navigator";
+
+    static final int DEFER_DELAY = 250;
 
     private View view;
 
@@ -63,7 +68,7 @@ public class DecisionNavigatorPresenter {
 
     private DMNDiagramsSession dmnDiagramsSession;
 
-    private boolean isRefreshHandlersEnabled = false;
+    double latestDeferred = 0;
 
     @Inject
     public DecisionNavigatorPresenter(final View view,
@@ -103,7 +108,6 @@ public class DecisionNavigatorPresenter {
     void setup() {
         initialize();
         setupView();
-        enableRefreshHandlers();
         refreshComponentsView();
     }
 
@@ -140,34 +144,15 @@ public class DecisionNavigatorPresenter {
     }
 
     public void refresh() {
-        if (dmnDiagramsSession.isSessionStatePresent()) {
-            refreshTreeView();
-            refreshComponentsView();
-        }
+        deferredRefresh();
     }
 
     public void refreshTreeView() {
-        if (isRefreshHandlersEnabled()) {
-            treePresenter.setupItems(getItems());
-        }
+        treePresenter.setupItems(getItems());
     }
 
     void refreshComponentsView() {
-        if (isRefreshHandlersEnabled()) {
-            decisionComponents.refresh();
-        }
-    }
-
-    public void enableRefreshHandlers() {
-        isRefreshHandlersEnabled = true;
-    }
-
-    public void disableRefreshHandlers() {
-        isRefreshHandlersEnabled = false;
-    }
-
-    private boolean isRefreshHandlersEnabled() {
-        return isRefreshHandlersEnabled;
+        decisionComponents.refresh();
     }
 
     List<DecisionNavigatorItem> getItems() {
@@ -176,6 +161,29 @@ public class DecisionNavigatorPresenter {
 
     public void clearSelections() {
         getTreePresenter().deselectItem();
+    }
+
+    private void deferredRefresh() {
+        if (dmnDiagramsSession.isSessionStatePresent()) {
+            defer(() -> {
+                refreshTreeView();
+                refreshComponentsView();
+            });
+        }
+    }
+
+    void defer(final Command cmd) {
+        clearTimeout(latestDeferred);
+        latestDeferred = setTimeout((e) -> cmd.execute(), DEFER_DELAY);
+    }
+
+    double setTimeout(final SetTimeoutCallbackFn callbackFn,
+                      final int delay) {
+        return DomGlobal.setTimeout(callbackFn, delay);
+    }
+
+    void clearTimeout(final double latestDeferred) {
+        DomGlobal.clearTimeout(latestDeferred);
     }
 
     public interface View extends UberElemental<DecisionNavigatorPresenter>,
