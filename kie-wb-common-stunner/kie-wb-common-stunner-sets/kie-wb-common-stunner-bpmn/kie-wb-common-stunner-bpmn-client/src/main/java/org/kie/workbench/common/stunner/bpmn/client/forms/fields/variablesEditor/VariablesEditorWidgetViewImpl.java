@@ -35,6 +35,7 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HasValue;
 import org.gwtbootstrap3.client.ui.Button;
@@ -93,6 +94,8 @@ public class VariablesEditorWidgetViewImpl extends Composite implements Variable
 
     protected Event<RefreshFormPropertiesEvent> refreshFormsEvent;
 
+    protected RefreshFormPropertiesEvent refreshFormPropertiesEvent = null;
+
     @Inject
     public VariablesEditorWidgetViewImpl(final SessionManager sessionManager, final Event<RefreshFormPropertiesEvent> refreshFormsEvent) {
         this.sessionManager = sessionManager;
@@ -143,7 +146,7 @@ public class VariablesEditorWidgetViewImpl extends Composite implements Variable
     }
 
     void onRefreshFormPropertiesEvent(@Observes RefreshFormPropertiesEvent event) {
-        if (!event.equals(ignoreRefreshFormPropertiesEvent)) {
+        if (!event.equals(refreshFormPropertiesEvent)) {
             String value = getValue();
             getDataTypes(value,
                          false);
@@ -195,7 +198,6 @@ public class VariablesEditorWidgetViewImpl extends Composite implements Variable
                                                                         serverDataTypes);
                     setDataTypes(mergedDataTypes.get(0),
                                  mergedDataTypes.get(1));
-
                     doSetValue(value,
                                fireEvents,
                                true);
@@ -346,8 +348,6 @@ public class VariablesEditorWidgetViewImpl extends Composite implements Variable
         checkTagsNotEnabled();
     }
 
-    protected RefreshFormPropertiesEvent ignoreRefreshFormPropertiesEvent = null;
-
     @Override
     public void addDataType(String dataType, String oldType) {
         if (dataType != null && !dataType.isEmpty()) {
@@ -357,8 +357,13 @@ public class VariablesEditorWidgetViewImpl extends Composite implements Variable
 
     protected void doAddDataType(String dataType, String oldType) {
         clientDataTypesService.add(dataType, oldType);
-        ignoreRefreshFormPropertiesEvent = new RefreshFormPropertiesEvent(sessionManager.getCurrentSession());
-        refreshFormsEvent.fire(ignoreRefreshFormPropertiesEvent);
+        new Timer() {
+            @Override
+            public void run() {
+                refreshFormPropertiesEvent = new RefreshFormPropertiesEvent(sessionManager.getCurrentSession());
+                refreshFormsEvent.fire(refreshFormPropertiesEvent);
+            }
+        }.schedule(100);
     }
 
     protected void checkTagsNotEnabled() {

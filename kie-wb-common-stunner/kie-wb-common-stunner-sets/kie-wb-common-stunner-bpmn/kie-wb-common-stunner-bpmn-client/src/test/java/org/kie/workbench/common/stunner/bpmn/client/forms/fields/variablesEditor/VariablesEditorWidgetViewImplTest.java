@@ -251,7 +251,7 @@ public class VariablesEditorWidgetViewImplTest {
         verify(view,
                times(0)).initView();
 
-        view.ignoreRefreshFormPropertiesEvent = refreshFormsEvent;
+        view.refreshFormPropertiesEvent = refreshFormsEvent;
         view.onRefreshFormPropertiesEvent(refreshFormsEvent);
         verify(view,
                times(0)).initView();

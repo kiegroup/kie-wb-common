@@ -20,12 +20,10 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.function.Consumer;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
-import com.google.gwt.core.client.GWT;
 import elemental2.promise.Promise;
 import org.kie.workbench.common.stunner.bpmn.client.forms.DataTypeNamesService;
 import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.tostunner.processes.DataTypeCache;
@@ -33,8 +31,6 @@ import org.uberfire.backend.vfs.Path;
 
 @ApplicationScoped
 public class DataTypeNamesStandaloneService implements DataTypeNamesService {
-
-    private static Consumer<String> LOGGER2 = GWT::log;
 
     Set<String> dataTypesSet = new HashSet<>();
 
@@ -44,11 +40,7 @@ public class DataTypeNamesStandaloneService implements DataTypeNamesService {
 
     @Override
     public Promise<List<String>> call(final Path path) {
-        logMe("Calling Local Service cache is: " + cache);
-        logMe("Calling Local Service, contents are: " + dataTypesSet);
-        logMe("Calling Local Service, contents size: " + dataTypesSet.size());
         if (!cacheRead && cache != null) {
-            logMe("Adding Cached Types::" + cache.getCachedDataTypes());
             dataTypesSet.addAll(cache.getCachedDataTypes());
             cacheRead = true;
         }
@@ -56,19 +48,12 @@ public class DataTypeNamesStandaloneService implements DataTypeNamesService {
         return Promise.resolve(new ArrayList<>(dataTypesSet));
     }
 
-    private static void logMe(String message) {
-        LOGGER2.accept(message);
-    }
-
     @Override
     public void add(String value, String oldValue) {
-        logMe("Adding New: " + value + "oldValue");
 
         if (dataTypesSet.contains(oldValue)) {
             dataTypesSet.remove(oldValue);
         }
         dataTypesSet.add(value);
     }
-
-
-    }
+}
