@@ -27,7 +27,6 @@ import org.kie.workbench.common.stunner.bpmn.definition.ExclusiveGateway;
 import org.kie.workbench.common.stunner.bpmn.definition.InclusiveGateway;
 import org.kie.workbench.common.stunner.bpmn.definition.ParallelGateway;
 import org.kie.workbench.common.stunner.bpmn.definition.property.gateway.GatewayExecutionSet;
-import org.kie.workbench.common.stunner.bpmn.definition.property.general.BPMNGeneralSet;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
 
@@ -67,9 +66,8 @@ public class GatewayConverter {
 
         p.setGatewayDirection(n);
 
-        BPMNGeneralSet general = definition.getGeneral();
-        p.setName(general.getName());
-        p.setDocumentation(general.getDocumentation());
+        p.setName(definition.getName());
+        p.setDocumentation(definition.getDocumentation());
 
         GatewayExecutionSet executionSet = definition.getExecutionSet();
         p.setDefaultRoute(executionSet.getDefaultRoute().getValue());
@@ -87,9 +85,8 @@ public class GatewayConverter {
 
         p.setGatewayDirection(n);
 
-        BPMNGeneralSet general = definition.getGeneral();
-        p.setName(general.getName());
-        p.setDocumentation(general.getDocumentation());
+        p.setName(definition.getName());
+        p.setDocumentation(definition.getDocumentation());
 
         GatewayExecutionSet executionSet = definition.getExecutionSet();
         p.setDefaultRoute(executionSet.getDefaultRoute().getValue());
@@ -107,9 +104,8 @@ public class GatewayConverter {
 
         p.setGatewayDirection(n);
 
-        BPMNGeneralSet general = definition.getGeneral();
-        p.setName(general.getName());
-        p.setDocumentation(general.getDocumentation());
+        p.setName(definition.getName());
+        p.setDocumentation(definition.getDocumentation());
 
         p.setAbsoluteBounds(n);
 
@@ -123,9 +119,8 @@ public class GatewayConverter {
 
         EventGateway definition = n.getContent().getDefinition();
 
-        BPMNGeneralSet general = definition.getGeneral();
-        p.setName(general.getName());
-        p.setDocumentation(general.getDocumentation());
+        p.setName(definition.getName());
+        p.setDocumentation(definition.getDocumentation());
 
         p.setAbsoluteBounds(n);
 

@@ -64,7 +64,6 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.event.timer.Can
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.timer.TimerSettings;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.timer.TimerSettingsValue;
 import org.kie.workbench.common.stunner.bpmn.definition.property.font.FontSet;
-import org.kie.workbench.common.stunner.bpmn.definition.property.general.BPMNGeneralSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.SLADueDate;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.ScriptTypeValue;
 import org.kie.workbench.common.stunner.core.graph.Edge;
@@ -100,7 +99,6 @@ public class IntermediateCatchEventConverterTest {
 
     private PropertyWriterFactory propertyWriterFactory;
 
-    private BPMNGeneralSet generalSet;
     private AssignmentsInfo assignmentsInfo;
     private DataIOSet dataIOSet;
     private SLADueDate slaDueDate;
@@ -135,8 +133,6 @@ public class IntermediateCatchEventConverterTest {
         propertyWriterFactory = spy(PropertyWriterFactory.class);
         when(propertyWriterFactory.of(any(BoundaryEvent.class))).thenReturn(boundaryEventPropertyWriter);
         when(propertyWriterFactory.of(any(CatchEvent.class))).thenReturn(catchEventPropertyWriter);
-
-        generalSet = new BPMNGeneralSet(NAME, DOCUMENTATION);
 
         assignmentsInfo = new AssignmentsInfo(ASSIGNMENTS_INFO);
         dataIOSet = new DataIOSet(assignmentsInfo);
@@ -323,7 +319,8 @@ public class IntermediateCatchEventConverterTest {
                                                      errorRef);
 
         IntermediateErrorEventCatching eventCatching =
-                new IntermediateErrorEventCatching(generalSet,
+                new IntermediateErrorEventCatching(NAME,
+                                                   DOCUMENTATION,
                                                    mock(BackgroundSet.class),
                                                    mock(FontSet.class),
                                                    mock(CircleDimensionSet.class),
@@ -341,7 +338,8 @@ public class IntermediateCatchEventConverterTest {
                                                       signalRef);
 
         IntermediateSignalEventCatching eventCatching =
-                new IntermediateSignalEventCatching(generalSet,
+                new IntermediateSignalEventCatching(NAME,
+                                                    DOCUMENTATION,
                                                     mock(BackgroundSet.class),
                                                     mock(FontSet.class),
                                                     mock(CircleDimensionSet.class),
@@ -357,7 +355,8 @@ public class IntermediateCatchEventConverterTest {
                 new LinkEventExecutionSet(linkRef);
 
         IntermediateLinkEventCatching eventCatching =
-                new IntermediateLinkEventCatching(generalSet,
+                new IntermediateLinkEventCatching(NAME,
+                                                  DOCUMENTATION,
                                                   mock(BackgroundSet.class),
                                                   mock(FontSet.class),
                                                   mock(CircleDimensionSet.class),
@@ -375,7 +374,8 @@ public class IntermediateCatchEventConverterTest {
                                                      timerSettings);
 
         IntermediateTimerEvent eventCatching =
-                new IntermediateTimerEvent(generalSet,
+                new IntermediateTimerEvent(NAME,
+                                           DOCUMENTATION,
                                            mock(BackgroundSet.class),
                                            mock(FontSet.class),
                                            mock(CircleDimensionSet.class),
@@ -393,7 +393,8 @@ public class IntermediateCatchEventConverterTest {
                                                        messageRef);
 
         IntermediateMessageEventCatching eventCatching =
-                new IntermediateMessageEventCatching(generalSet,
+                new IntermediateMessageEventCatching(NAME,
+                                                     DOCUMENTATION,
                                                      mock(BackgroundSet.class),
                                                      mock(FontSet.class),
                                                      mock(CircleDimensionSet.class),
@@ -411,7 +412,8 @@ public class IntermediateCatchEventConverterTest {
                                                            conditionExpression);
 
         IntermediateConditionalEvent eventCatching =
-                new IntermediateConditionalEvent(generalSet,
+                new IntermediateConditionalEvent(NAME,
+                                                 DOCUMENTATION,
                                                  mock(BackgroundSet.class),
                                                  mock(FontSet.class),
                                                  mock(CircleDimensionSet.class),
@@ -429,7 +431,8 @@ public class IntermediateCatchEventConverterTest {
                                                           escalationRef);
 
         IntermediateEscalationEvent eventCatching =
-                new IntermediateEscalationEvent(generalSet,
+                new IntermediateEscalationEvent(NAME,
+                                                DOCUMENTATION,
                                                 mock(BackgroundSet.class),
                                                 mock(FontSet.class),
                                                 mock(CircleDimensionSet.class),
@@ -446,7 +449,8 @@ public class IntermediateCatchEventConverterTest {
                                                     slaDueDate);
 
         IntermediateCompensationEvent eventCatching =
-                new IntermediateCompensationEvent(generalSet,
+                new IntermediateCompensationEvent(NAME,
+                                                  DOCUMENTATION,
                                                   mock(BackgroundSet.class),
                                                   mock(FontSet.class),
                                                   mock(CircleDimensionSet.class),

@@ -64,7 +64,7 @@ public class EndMessageEventTest extends EndEventTest<EndMessageEvent> {
         EndMessageEvent filledTopEvent = getEndNodeById(diagram,
                                                         FILLED_TOP_LEVEL_EVENT_ID,
                                                         HAS_NO_INCOME_EDGE);
-        assertGeneralSet(filledTopEvent.getGeneral(), EVENT_NAME, EVENT_DOCUMENTATION);
+        assertGeneralSet(filledTopEvent, EVENT_NAME, EVENT_DOCUMENTATION);
         assertMessageEventExecutionSet(filledTopEvent.getExecutionSet(), EVENT_REF, MESSAGE_TYPE);
         assertDataIOSet(filledTopEvent.getDataIOSet(), EVENT_DATA_OUTPUT);
     }
@@ -78,7 +78,7 @@ public class EndMessageEventTest extends EndEventTest<EndMessageEvent> {
         EndMessageEvent emptyTopEvent = getEndNodeById(diagram,
                                                        EMPTY_TOP_LEVEL_EVENT_ID,
                                                        HAS_NO_INCOME_EDGE);
-        assertGeneralSet(emptyTopEvent.getGeneral(), EMPTY_VALUE, EMPTY_VALUE);
+        assertGeneralSet(emptyTopEvent, EMPTY_VALUE, EMPTY_VALUE);
         assertMessageEventExecutionSet(emptyTopEvent.getExecutionSet(), EMPTY_VALUE, EMPTY_VALUE);
         assertDataIOSet(emptyTopEvent.getDataIOSet(), EMPTY_VALUE);
     }
@@ -98,7 +98,7 @@ public class EndMessageEventTest extends EndEventTest<EndMessageEvent> {
         EndMessageEvent filledSubprocessEvent = getEndNodeById(diagram,
                                                                FILLED_SUBPROCESS_LEVEL_EVENT_ID,
                                                                HAS_NO_INCOME_EDGE);
-        assertGeneralSet(filledSubprocessEvent.getGeneral(), EVENT_NAME, EVENT_DOCUMENTATION);
+        assertGeneralSet(filledSubprocessEvent, EVENT_NAME, EVENT_DOCUMENTATION);
         assertMessageEventExecutionSet(filledSubprocessEvent.getExecutionSet(), EVENT_REF, MESSAGE_TYPE);
         assertDataIOSet(filledSubprocessEvent.getDataIOSet(), EVENT_DATA_OUTPUT);
     }
@@ -112,7 +112,7 @@ public class EndMessageEventTest extends EndEventTest<EndMessageEvent> {
         EndMessageEvent emptySubprocessEvent = getEndNodeById(diagram,
                                                               EMPTY_SUBPROCESS_LEVEL_EVENT_ID,
                                                               HAS_NO_INCOME_EDGE);
-        assertGeneralSet(emptySubprocessEvent.getGeneral(), EMPTY_VALUE, EMPTY_VALUE);
+        assertGeneralSet(emptySubprocessEvent, EMPTY_VALUE, EMPTY_VALUE);
         assertMessageEventExecutionSet(emptySubprocessEvent.getExecutionSet(), EMPTY_VALUE, EMPTY_VALUE);
         assertDataIOSet(emptySubprocessEvent.getDataIOSet(), EMPTY_VALUE);
     }
@@ -132,7 +132,7 @@ public class EndMessageEventTest extends EndEventTest<EndMessageEvent> {
         EndMessageEvent filledSubprocessEvent = getEndNodeById(diagram,
                                                                FILLED_WITH_INCOME_TOP_LEVEL_EVENT_ID,
                                                                HAS_INCOME_EDGE);
-        assertGeneralSet(filledSubprocessEvent.getGeneral(), EVENT_NAME, EVENT_DOCUMENTATION);
+        assertGeneralSet(filledSubprocessEvent, EVENT_NAME, EVENT_DOCUMENTATION);
         assertMessageEventExecutionSet(filledSubprocessEvent.getExecutionSet(), EVENT_REF, MESSAGE_TYPE);
         assertDataIOSet(filledSubprocessEvent.getDataIOSet(), EVENT_DATA_OUTPUT);
     }
@@ -146,7 +146,7 @@ public class EndMessageEventTest extends EndEventTest<EndMessageEvent> {
         EndMessageEvent emptyEvent = getEndNodeById(diagram,
                                                     EMPTY_WITH_INCOME_TOP_LEVEL_EVENT_ID,
                                                     HAS_INCOME_EDGE);
-        assertGeneralSet(emptyEvent.getGeneral(), EMPTY_VALUE, EMPTY_VALUE);
+        assertGeneralSet(emptyEvent, EMPTY_VALUE, EMPTY_VALUE);
         assertMessageEventExecutionSet(emptyEvent.getExecutionSet(), EMPTY_VALUE, EMPTY_VALUE);
         assertDataIOSet(emptyEvent.getDataIOSet(), EMPTY_VALUE);
     }
@@ -160,7 +160,7 @@ public class EndMessageEventTest extends EndEventTest<EndMessageEvent> {
         EndMessageEvent emptySubprocessEvent = getEndNodeById(diagram,
                                                               EMPTY_WITH_INCOME_SUBPROCESS_LEVEL_EVENT_ID,
                                                               HAS_INCOME_EDGE);
-        assertGeneralSet(emptySubprocessEvent.getGeneral(), EMPTY_VALUE, EMPTY_VALUE);
+        assertGeneralSet(emptySubprocessEvent, EMPTY_VALUE, EMPTY_VALUE);
         assertMessageEventExecutionSet(emptySubprocessEvent.getExecutionSet(), EMPTY_VALUE, EMPTY_VALUE);
         assertDataIOSet(emptySubprocessEvent.getDataIOSet(), EMPTY_VALUE);
     }
@@ -180,7 +180,7 @@ public class EndMessageEventTest extends EndEventTest<EndMessageEvent> {
         EndMessageEvent filledSubprocessEvent = getEndNodeById(diagram,
                                                                FILLED_WITH_INCOME_SUBPROCESS_LEVEL_EVENT_ID,
                                                                HAS_INCOME_EDGE);
-        assertGeneralSet(filledSubprocessEvent.getGeneral(), EVENT_NAME, EVENT_DOCUMENTATION);
+        assertGeneralSet(filledSubprocessEvent, EVENT_NAME, EVENT_DOCUMENTATION);
         assertMessageEventExecutionSet(filledSubprocessEvent.getExecutionSet(), EVENT_REF, MESSAGE_TYPE);
         assertDataIOSet(filledSubprocessEvent.getDataIOSet(), EVENT_DATA_OUTPUT);
     }

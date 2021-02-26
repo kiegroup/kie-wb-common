@@ -34,7 +34,6 @@ import org.kie.workbench.common.stunner.bpmn.definition.BaseAdHocSubprocess;
 import org.kie.workbench.common.stunner.bpmn.definition.EmbeddedSubprocess;
 import org.kie.workbench.common.stunner.bpmn.definition.EventSubprocess;
 import org.kie.workbench.common.stunner.bpmn.definition.MultipleInstanceSubprocess;
-import org.kie.workbench.common.stunner.bpmn.definition.property.general.BPMNGeneralSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.SLADueDate;
 import org.kie.workbench.common.stunner.bpmn.definition.property.subProcess.execution.EmbeddedSubprocessExecutionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.subProcess.execution.EventSubprocessExecutionSet;
@@ -104,10 +103,8 @@ public abstract class BaseSubProcessConverter<A extends BaseAdHocSubprocess<P, S
         MultipleInstanceSubprocess definition = node.getContent().getDefinition();
         MultipleInstanceSubProcessPropertyReader p = delegate.propertyReaderFactory.ofMultipleInstance(subProcess);
 
-        definition.setGeneral(new BPMNGeneralSet(p.getName(),
-                                                 p.getDocumentation()
-        ));
-
+        definition.setName(p.getName());
+        definition.setDocumentation(p.getDocumentation());
         definition.setExecutionSet(
                 new MultipleInstanceSubprocessTaskExecutionSet(new MultipleInstanceExecutionMode(p.isSequential()),
                                                                new MultipleInstanceCollectionInput(p.getCollectionInput()),
@@ -140,10 +137,8 @@ public abstract class BaseSubProcessConverter<A extends BaseAdHocSubprocess<P, S
         A definition = node.getContent().getDefinition();
         AdHocSubProcessPropertyReader p = delegate.propertyReaderFactory.of(subProcess);
 
-        definition.setGeneral(new BPMNGeneralSet(p.getName(),
-                                                 p.getDocumentation()
-        ));
-
+        definition.setName(p.getName());
+        definition.setDocumentation(p.getDocumentation());
         definition.setProcessData(createProcessData(p.getProcessVariables()));
 
         definition.setExecutionSet(createAdHocSubprocessTaskExecutionSet(p));
@@ -166,10 +161,8 @@ public abstract class BaseSubProcessConverter<A extends BaseAdHocSubprocess<P, S
         EmbeddedSubprocess definition = node.getContent().getDefinition();
         SubProcessPropertyReader p = delegate.propertyReaderFactory.of(subProcess);
 
-        definition.setGeneral(new BPMNGeneralSet(p.getName(),
-                                                 p.getDocumentation()
-        ));
-
+        definition.setName(p.getName());
+        definition.setDocumentation(p.getDocumentation());
         definition.setExecutionSet(new EmbeddedSubprocessExecutionSet(new OnEntryAction(p.getOnEntryAction()),
                                                                       new OnExitAction(p.getOnExitAction()),
                                                                       new IsAsync(p.isAsync()),
@@ -196,10 +189,8 @@ public abstract class BaseSubProcessConverter<A extends BaseAdHocSubprocess<P, S
         EventSubprocess definition = node.getContent().getDefinition();
         SubProcessPropertyReader p = delegate.propertyReaderFactory.of(subProcess);
 
-        definition.setGeneral(new BPMNGeneralSet(p.getName(),
-                                                 p.getDocumentation()
-        ));
-
+        definition.setName(p.getName());
+        definition.setDocumentation(p.getDocumentation());
         definition.setExecutionSet(new EventSubprocessExecutionSet(new IsAsync(p.isAsync()),
                                                                    new SLADueDate(p.getSlaDueDate())));
 

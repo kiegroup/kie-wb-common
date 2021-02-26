@@ -38,14 +38,10 @@ public class RingShape<W> extends BasicContainerShape<W, RingShapeDef<W, RingVie
                                     mutationContext);
         // Inner Radius.
         final Double innerRadius = getShapeDefinition().getInnerRadius(getDefinition(element));
-        _applyInnerRadius(element,
-                          innerRadius,
-                          mutationContext);
+        applyInnerRadius(innerRadius);
     }
 
-    private void _applyInnerRadius(final Node<View<W>, Edge> element,
-                                   final Double radius,
-                                   final MutationContext mutationContext) {
+    private void applyInnerRadius(final Double radius) {
         if (null != radius) {
             getShapeView().setInnerRadius(radius);
         }

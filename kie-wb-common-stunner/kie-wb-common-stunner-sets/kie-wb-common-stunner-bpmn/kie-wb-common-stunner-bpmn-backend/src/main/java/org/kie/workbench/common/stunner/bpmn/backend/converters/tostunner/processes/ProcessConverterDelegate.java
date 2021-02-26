@@ -140,7 +140,6 @@ final class ProcessConverterDelegate {
             parents.add(lane);
             Result<BpmnNode>[] laneSetResult = convertLaneSet(lane.getChildLaneSet(), parents, freeFloatingNodes, firstDiagramNode);
             parents.removeIf(parent -> Objects.equals(parent.getId(), lane.getId()));
-            //return ResultComposer.compose(null, laneSetResult);
             return laneSetResult;
         } else {
             Result<BpmnNode> laneResult;
@@ -159,14 +158,11 @@ final class ProcessConverterDelegate {
 
     private Result<BpmnNode>[] convertLaneSet(LaneSet laneSet, List<Lane> parents, Map<String, BpmnNode> freeFloatingNodes,
                                               BpmnNode firstDiagramNode) {
-        Result<BpmnNode>[] results = laneSet.getLanes()
+        return laneSet.getLanes()
                 .stream()
                 .map(lane -> convertLane(lane, parents, freeFloatingNodes, firstDiagramNode))
                 .flatMap(Stream::of)
                 .toArray(Result[]::new);
-
-        //return ResultComposer.compose(laneSet, results);
-        return results;
     }
 
     Result<BpmnNode> postConvert(BpmnNode processRoot) {

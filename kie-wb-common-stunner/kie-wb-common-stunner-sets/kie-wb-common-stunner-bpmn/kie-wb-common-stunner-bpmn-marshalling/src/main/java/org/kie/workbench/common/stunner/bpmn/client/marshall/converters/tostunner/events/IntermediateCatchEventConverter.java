@@ -67,7 +67,6 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.event.signal.Ca
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.signal.SignalRef;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.timer.CancellingTimerEventExecutionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.timer.TimerSettings;
-import org.kie.workbench.common.stunner.bpmn.definition.property.general.BPMNGeneralSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.SLADueDate;
 import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Node;
@@ -163,12 +162,8 @@ public class IntermediateCatchEventConverter extends AbstractConverter implement
 
         node.getContent().setBounds(p.getBounds());
 
-        definition.setGeneral(
-                new BPMNGeneralSet(
-                        p.getName(),
-                        p.getDocumentation()
-                )
-        );
+        definition.setName(p.getName());
+        definition.setDocumentation(p.getDocumentation());
 
         definition.setBackgroundSet(p.getBackgroundSet());
         definition.setFontSet(p.getFontSet());
@@ -197,12 +192,8 @@ public class IntermediateCatchEventConverter extends AbstractConverter implement
 
         node.getContent().setBounds(p.getBounds());
 
-        definition.setGeneral(
-                new BPMNGeneralSet(
-                        p.getName(),
-                        p.getDocumentation()
-                )
-        );
+        definition.setName(p.getName());
+        definition.setDocumentation(p.getDocumentation());
         definition.setBackgroundSet(p.getBackgroundSet());
         definition.setFontSet(p.getFontSet());
         definition.setDimensionsSet(p.getCircleDimensionSet());
@@ -224,12 +215,8 @@ public class IntermediateCatchEventConverter extends AbstractConverter implement
 
         node.getContent().setBounds(p.getBounds());
 
-        definition.setGeneral(
-                new BPMNGeneralSet(
-                        p.getName(),
-                        p.getDocumentation()
-                )
-        );
+        definition.setName(p.getName());
+        definition.setDocumentation(p.getDocumentation());
         definition.setBackgroundSet(p.getBackgroundSet());
         definition.setFontSet(p.getFontSet());
         definition.setDimensionsSet(p.getCircleDimensionSet());
@@ -257,12 +244,8 @@ public class IntermediateCatchEventConverter extends AbstractConverter implement
 
         node.getContent().setBounds(p.getBounds());
 
-        definition.setGeneral(
-                new BPMNGeneralSet(
-                        p.getName(),
-                        p.getDocumentation()
-                )
-        );
+        definition.setName(p.getName());
+        definition.setDocumentation(p.getDocumentation());
 
         definition.setBackgroundSet(p.getBackgroundSet());
         definition.setFontSet(p.getFontSet());
@@ -291,12 +274,8 @@ public class IntermediateCatchEventConverter extends AbstractConverter implement
 
         node.getContent().setBounds(p.getBounds());
 
-        definition.setGeneral(
-                new BPMNGeneralSet(
-                        p.getName(),
-                        p.getDocumentation()
-                )
-        );
+        definition.setName(p.getName());
+        definition.setDocumentation(p.getDocumentation());
 
         definition.setBackgroundSet(p.getBackgroundSet());
         definition.setFontSet(p.getFontSet());
@@ -325,12 +304,8 @@ public class IntermediateCatchEventConverter extends AbstractConverter implement
 
         node.getContent().setBounds(p.getBounds());
 
-        definition.setGeneral(
-                new BPMNGeneralSet(
-                        p.getName(),
-                        p.getDocumentation()
-                )
-        );
+        definition.setName(p.getName());
+        definition.setDocumentation(p.getDocumentation());
 
         definition.setBackgroundSet(p.getBackgroundSet());
         definition.setFontSet(p.getFontSet());
@@ -360,13 +335,8 @@ public class IntermediateCatchEventConverter extends AbstractConverter implement
 
         node.getContent().setBounds(p.getBounds());
 
-        definition.setGeneral(
-                new BPMNGeneralSet(
-                        p.getName(),
-                        p.getDocumentation()
-                )
-        );
-
+        definition.setName(p.getName());
+        definition.setDocumentation(p.getDocumentation());
         definition.setBackgroundSet(p.getBackgroundSet());
         definition.setFontSet(p.getFontSet());
         definition.setDimensionsSet(p.getCircleDimensionSet());
@@ -395,13 +365,8 @@ public class IntermediateCatchEventConverter extends AbstractConverter implement
 
         node.getContent().setBounds(p.getBounds());
 
-        definition.setGeneral(
-                new BPMNGeneralSet(
-                        p.getName(),
-                        p.getDocumentation()
-                )
-        );
-
+        definition.setName(p.getName());
+        definition.setDocumentation(p.getDocumentation());
         definition.setBackgroundSet(p.getBackgroundSet());
         definition.setFontSet(p.getFontSet());
         definition.setDimensionsSet(p.getCircleDimensionSet());
@@ -411,9 +376,8 @@ public class IntermediateCatchEventConverter extends AbstractConverter implement
         CancelActivity cancelActivity = new CancelActivity(false);
         SLADueDate slaDueDate = new SLADueDate(p.getSlaDueDate());
 
-        BaseCancellingEventExecutionSet executionSet =new BaseCancellingEventExecutionSet(cancelActivity, slaDueDate);
+        BaseCancellingEventExecutionSet executionSet = new BaseCancellingEventExecutionSet(cancelActivity, slaDueDate);
         definition.setExecutionSet(executionSet);
-
 
         return Result.success(BpmnNode.of(node, p));
     }

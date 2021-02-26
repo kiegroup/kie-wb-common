@@ -56,8 +56,8 @@ public class TextAnnotationConverterTest {
     @Before
     public void setUp() {
         TextAnnotation textAnnotation = new TextAnnotation();
-        textAnnotation.getGeneral().setDocumentation(DOC);
-        textAnnotation.getGeneral().setName(NAME);
+        textAnnotation.setDocumentation(DOC);
+        textAnnotation.setName(NAME);
         node = new NodeImpl<>(UUID.uuid());
         node.setContent(textAnnotationView);
         when(textAnnotationView.getDefinition()).thenReturn(textAnnotation);

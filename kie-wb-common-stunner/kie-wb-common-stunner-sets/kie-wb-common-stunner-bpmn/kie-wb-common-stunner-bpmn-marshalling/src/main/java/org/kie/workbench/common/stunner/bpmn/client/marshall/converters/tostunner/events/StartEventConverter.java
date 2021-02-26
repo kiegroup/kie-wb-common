@@ -60,7 +60,6 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.event.signal.In
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.signal.SignalRef;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.timer.InterruptingTimerEventExecutionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.timer.TimerSettings;
-import org.kie.workbench.common.stunner.bpmn.definition.property.general.BPMNGeneralSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.SLADueDate;
 import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Node;
@@ -106,7 +105,8 @@ public class StartEventConverter extends AbstractConverter implements NodeConver
         StartNoneEvent definition = node.getContent().getDefinition();
         EventPropertyReader p = propertyReaderFactory.of(event);
 
-        definition.setGeneral(new BPMNGeneralSet(p.getName(), p.getDocumentation()));
+        definition.setName(p.getName());
+        definition.setDocumentation(p.getDocumentation());
         definition.setBackgroundSet(p.getBackgroundSet());
         definition.setFontSet(p.getFontSet());
         definition.setDimensionsSet(p.getCircleDimensionSet());
@@ -130,7 +130,8 @@ public class StartEventConverter extends AbstractConverter implements NodeConver
         StartCompensationEvent definition = node.getContent().getDefinition();
         EventPropertyReader p = propertyReaderFactory.of(event);
 
-        definition.setGeneral(new BPMNGeneralSet(p.getName(), p.getDocumentation()));
+        definition.setName(p.getName());
+        definition.setDocumentation(p.getDocumentation());
         definition.setBackgroundSet(p.getBackgroundSet());
         definition.setFontSet(p.getFontSet());
         definition.setDimensionsSet(p.getCircleDimensionSet());
@@ -153,7 +154,8 @@ public class StartEventConverter extends AbstractConverter implements NodeConver
         StartSignalEvent definition = node.getContent().getDefinition();
         EventPropertyReader p = propertyReaderFactory.of(event);
 
-        definition.setGeneral(new BPMNGeneralSet(p.getName(), p.getDocumentation()));
+        definition.setName(p.getName());
+        definition.setDocumentation(p.getDocumentation());
         definition.setBackgroundSet(p.getBackgroundSet());
         definition.setFontSet(p.getFontSet());
         definition.setDimensionsSet(p.getCircleDimensionSet());
@@ -178,7 +180,8 @@ public class StartEventConverter extends AbstractConverter implements NodeConver
         StartTimerEvent definition = node.getContent().getDefinition();
         EventPropertyReader p = propertyReaderFactory.of(event);
 
-        definition.setGeneral(new BPMNGeneralSet(p.getName(), p.getDocumentation()));
+        definition.setName(p.getName());
+        definition.setDocumentation(p.getDocumentation());
         definition.setBackgroundSet(p.getBackgroundSet());
         definition.setFontSet(p.getFontSet());
         definition.setDimensionsSet(p.getCircleDimensionSet());
@@ -202,7 +205,8 @@ public class StartEventConverter extends AbstractConverter implements NodeConver
         StartConditionalEvent definition = node.getContent().getDefinition();
         EventPropertyReader p = propertyReaderFactory.of(event);
 
-        definition.setGeneral(new BPMNGeneralSet(p.getName(), p.getDocumentation()));
+        definition.setName(p.getName());
+        definition.setDocumentation(p.getDocumentation());
         definition.setBackgroundSet(p.getBackgroundSet());
         definition.setFontSet(p.getFontSet());
         definition.setDimensionsSet(p.getCircleDimensionSet());
@@ -225,7 +229,8 @@ public class StartEventConverter extends AbstractConverter implements NodeConver
         StartErrorEvent definition = node.getContent().getDefinition();
         EventPropertyReader p = propertyReaderFactory.of(event);
 
-        definition.setGeneral(new BPMNGeneralSet(p.getName(), p.getDocumentation()));
+        definition.setName(p.getName());
+        definition.setDocumentation(p.getDocumentation());
         definition.setBackgroundSet(p.getBackgroundSet());
         definition.setFontSet(p.getFontSet());
         definition.setDimensionsSet(p.getCircleDimensionSet());
@@ -250,7 +255,8 @@ public class StartEventConverter extends AbstractConverter implements NodeConver
         StartEscalationEvent definition = node.getContent().getDefinition();
         EventPropertyReader p = propertyReaderFactory.of(event);
 
-        definition.setGeneral(new BPMNGeneralSet(p.getName(), p.getDocumentation()));
+        definition.setName(p.getName());
+        definition.setDocumentation(p.getDocumentation());
         definition.setBackgroundSet(p.getBackgroundSet());
         definition.setFontSet(p.getFontSet());
         definition.setDimensionsSet(p.getCircleDimensionSet());
@@ -275,7 +281,8 @@ public class StartEventConverter extends AbstractConverter implements NodeConver
         StartMessageEvent definition = node.getContent().getDefinition();
         EventPropertyReader p = propertyReaderFactory.of(event);
 
-        definition.setGeneral(new BPMNGeneralSet(p.getName(), p.getDocumentation()));
+        definition.setName(p.getName());
+        definition.setDocumentation(p.getDocumentation());
         definition.setBackgroundSet(p.getBackgroundSet());
         definition.setFontSet(p.getFontSet());
         definition.setDimensionsSet(p.getCircleDimensionSet());

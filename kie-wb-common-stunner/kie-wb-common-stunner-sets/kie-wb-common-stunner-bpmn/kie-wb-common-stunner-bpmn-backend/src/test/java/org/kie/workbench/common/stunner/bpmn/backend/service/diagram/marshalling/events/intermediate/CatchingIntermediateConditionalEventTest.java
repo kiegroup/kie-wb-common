@@ -64,7 +64,7 @@ public class CatchingIntermediateConditionalEventTest extends CatchingIntermedia
                                                                                       FILLED_TOP_LEVEL_EVENT_ID,
                                                                                       HAS_NO_INCOME_EDGE,
                                                                                       ZERO_OUTGOING_EDGES);
-        assertGeneralSet(filledTopEvent.getGeneral(), EVENT_NAME, EVENT_DOCUMENTATION);
+        assertGeneralSet(filledTopEvent, EVENT_NAME, EVENT_DOCUMENTATION);
         assertConditionalEventExecutionSet(filledTopEvent.getExecutionSet(),
                                            CONDITION_EXPRESSION_SCRIPT,
                                            CONDITION_EXPRESSION_LANGUAGE,
@@ -83,7 +83,7 @@ public class CatchingIntermediateConditionalEventTest extends CatchingIntermedia
                                                                                      EMPTY_TOP_LEVEL_EVENT_ID,
                                                                                      HAS_NO_INCOME_EDGE,
                                                                                      ZERO_OUTGOING_EDGES);
-        assertGeneralSet(emptyTopEvent.getGeneral(), EMPTY_VALUE, EMPTY_VALUE);
+        assertGeneralSet(emptyTopEvent, EMPTY_VALUE, EMPTY_VALUE);
         assertConditionalEventExecutionSet(emptyTopEvent.getExecutionSet(),
                                            CONDITION_EXPRESSION_SCRIPT_DEFAULT_VALUE,
                                            CONDITION_EXPRESSION_LANGUAGE,
@@ -106,7 +106,7 @@ public class CatchingIntermediateConditionalEventTest extends CatchingIntermedia
                                                                                              FILLED_SUBPROCESS_LEVEL_EVENT_ID,
                                                                                              HAS_NO_INCOME_EDGE,
                                                                                              ZERO_OUTGOING_EDGES);
-        assertGeneralSet(filledSubprocessEvent.getGeneral(), EVENT_NAME, EVENT_DOCUMENTATION);
+        assertGeneralSet(filledSubprocessEvent, EVENT_NAME, EVENT_DOCUMENTATION);
         assertConditionalEventExecutionSet(filledSubprocessEvent.getExecutionSet(),
                                            CONDITION_EXPRESSION_SCRIPT,
                                            CONDITION_EXPRESSION_LANGUAGE,
@@ -125,7 +125,7 @@ public class CatchingIntermediateConditionalEventTest extends CatchingIntermedia
                                                                                             EMPTY_SUBPROCESS_LEVEL_EVENT_ID,
                                                                                             HAS_NO_INCOME_EDGE,
                                                                                             ZERO_OUTGOING_EDGES);
-        assertGeneralSet(emptySubprocessEvent.getGeneral(), EMPTY_VALUE, EMPTY_VALUE);
+        assertGeneralSet(emptySubprocessEvent, EMPTY_VALUE, EMPTY_VALUE);
         assertConditionalEventExecutionSet(emptySubprocessEvent.getExecutionSet(),
                                            CONDITION_EXPRESSION_SCRIPT_DEFAULT_VALUE,
                                            CONDITION_EXPRESSION_LANGUAGE,
@@ -148,7 +148,7 @@ public class CatchingIntermediateConditionalEventTest extends CatchingIntermedia
                                                                                              FILLED_WITH_EDGES_TOP_LEVEL_EVENT_ID,
                                                                                              HAS_INCOME_EDGE,
                                                                                              TWO_OUTGOING_EDGES);
-        assertGeneralSet(filledSubprocessEvent.getGeneral(), EVENT_NAME, EVENT_DOCUMENTATION);
+        assertGeneralSet(filledSubprocessEvent, EVENT_NAME, EVENT_DOCUMENTATION);
         assertConditionalEventExecutionSet(filledSubprocessEvent.getExecutionSet(),
                                            CONDITION_EXPRESSION_SCRIPT,
                                            CONDITION_EXPRESSION_LANGUAGE,
@@ -167,7 +167,7 @@ public class CatchingIntermediateConditionalEventTest extends CatchingIntermedia
                                                                                   EMPTY_WITH_EDGES_TOP_LEVEL_EVENT_ID,
                                                                                   HAS_INCOME_EDGE,
                                                                                   TWO_OUTGOING_EDGES);
-        assertGeneralSet(emptyEvent.getGeneral(), EMPTY_VALUE, EMPTY_VALUE);
+        assertGeneralSet(emptyEvent, EMPTY_VALUE, EMPTY_VALUE);
         assertConditionalEventExecutionSet(emptyEvent.getExecutionSet(),
                                            CONDITION_EXPRESSION_SCRIPT_DEFAULT_VALUE,
                                            CONDITION_EXPRESSION_LANGUAGE,
@@ -186,7 +186,7 @@ public class CatchingIntermediateConditionalEventTest extends CatchingIntermedia
                                                                                             EMPTY_WITH_EDGES_SUBPROCESS_LEVEL_EVENT_ID,
                                                                                             HAS_INCOME_EDGE,
                                                                                             TWO_OUTGOING_EDGES);
-        assertGeneralSet(emptySubprocessEvent.getGeneral(), EMPTY_VALUE, EMPTY_VALUE);
+        assertGeneralSet(emptySubprocessEvent, EMPTY_VALUE, EMPTY_VALUE);
         assertConditionalEventExecutionSet(emptySubprocessEvent.getExecutionSet(),
                                            CONDITION_EXPRESSION_SCRIPT_DEFAULT_VALUE,
                                            CONDITION_EXPRESSION_LANGUAGE,
@@ -209,7 +209,7 @@ public class CatchingIntermediateConditionalEventTest extends CatchingIntermedia
                                                                                              FILLED_WITH_EDGES_SUBPROCESS_LEVEL_EVENT_ID,
                                                                                              HAS_INCOME_EDGE,
                                                                                              TWO_OUTGOING_EDGES);
-        assertGeneralSet(filledSubprocessEvent.getGeneral(), EVENT_NAME, EVENT_DOCUMENTATION);
+        assertGeneralSet(filledSubprocessEvent, EVENT_NAME, EVENT_DOCUMENTATION);
         assertConditionalEventExecutionSet(filledSubprocessEvent.getExecutionSet(),
                                            CONDITION_EXPRESSION_SCRIPT,
                                            CONDITION_EXPRESSION_LANGUAGE,

@@ -44,7 +44,7 @@ public class ParallelGatewayTest {
     @Test
     public void testParallelDatabasedGatewayNameValid() {
         ParallelGateway parallelGateway = new ParallelGateway();
-        parallelGateway.getGeneral().setName(NAME_VALID);
+        parallelGateway.setName(NAME_VALID);
         Set<ConstraintViolation<ParallelGateway>> violations = this.validator.validate(parallelGateway);
         assertTrue(violations.isEmpty());
     }
@@ -52,7 +52,7 @@ public class ParallelGatewayTest {
     @Test
     public void testParallelDatabasedGatewayNameEmpty() {
         ParallelGateway parallelGateway = new ParallelGateway();
-        parallelGateway.getGeneral().setName("");
+        parallelGateway.setName("");
         Set<ConstraintViolation<ParallelGateway>> violations = this.validator.validate(parallelGateway);
         assertTrue(violations.isEmpty());
     }

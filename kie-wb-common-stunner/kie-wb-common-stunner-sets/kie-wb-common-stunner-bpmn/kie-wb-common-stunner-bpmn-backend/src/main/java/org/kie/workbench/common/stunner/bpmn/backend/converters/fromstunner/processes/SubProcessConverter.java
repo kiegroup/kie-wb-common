@@ -30,7 +30,6 @@ import org.kie.workbench.common.stunner.bpmn.definition.BaseSubprocess;
 import org.kie.workbench.common.stunner.bpmn.definition.EmbeddedSubprocess;
 import org.kie.workbench.common.stunner.bpmn.definition.EventSubprocess;
 import org.kie.workbench.common.stunner.bpmn.definition.MultipleInstanceSubprocess;
-import org.kie.workbench.common.stunner.bpmn.definition.property.general.BPMNGeneralSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.subProcess.execution.EmbeddedSubprocessExecutionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.subProcess.execution.EventSubprocessExecutionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.BaseAdHocSubprocessTaskExecutionSet;
@@ -86,9 +85,8 @@ public class SubProcessConverter extends ProcessConverterDelegate {
 
         MultipleInstanceSubprocess definition = n.getContent().getDefinition();
 
-        BPMNGeneralSet general = definition.getGeneral();
-        p.setName(general.getName());
-        p.setDocumentation(general.getDocumentation());
+        p.setName(definition.getName());
+        p.setDocumentation(definition.getDocumentation());
 
         ProcessData processData = definition.getProcessData();
         p.setProcessVariables(processData.getProcessVariables());
@@ -119,10 +117,8 @@ public class SubProcessConverter extends ProcessConverterDelegate {
         AdHocSubProcessPropertyWriter p = propertyWriterFactory.of(process);
         BaseAdHocSubprocess definition = n.getContent().getDefinition();
 
-        BPMNGeneralSet general = definition.getGeneral();
-
-        p.setName(general.getName());
-        p.setDocumentation(general.getDocumentation());
+        p.setName(definition.getName());
+        p.setDocumentation(definition.getDocumentation());
 
         BaseProcessData processData = definition.getProcessData();
         p.setProcessVariables(processData.getProcessVariables());
@@ -154,9 +150,8 @@ public class SubProcessConverter extends ProcessConverterDelegate {
         EventSubprocess definition = n.getContent().getDefinition();
         process.setTriggeredByEvent(true);
 
-        BPMNGeneralSet general = definition.getGeneral();
-        p.setName(general.getName());
-        p.setDocumentation(general.getDocumentation());
+        p.setName(definition.getName());
+        p.setDocumentation(definition.getDocumentation());
 
         ProcessData processData = definition.getProcessData();
         p.setProcessVariables(processData.getProcessVariables());
@@ -180,9 +175,8 @@ public class SubProcessConverter extends ProcessConverterDelegate {
 
         EmbeddedSubprocess definition = n.getContent().getDefinition();
 
-        BPMNGeneralSet general = definition.getGeneral();
-        p.setName(general.getName());
-        p.setDocumentation(general.getDocumentation());
+        p.setName(definition.getName());
+        p.setDocumentation(definition.getDocumentation());
 
         EmbeddedSubprocessExecutionSet executionSet = definition.getExecutionSet();
 

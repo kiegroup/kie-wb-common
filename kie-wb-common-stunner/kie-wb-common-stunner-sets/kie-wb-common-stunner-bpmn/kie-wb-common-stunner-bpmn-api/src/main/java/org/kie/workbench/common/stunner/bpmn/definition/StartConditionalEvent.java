@@ -32,7 +32,6 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.dimensions.Circ
 import org.kie.workbench.common.stunner.bpmn.definition.property.dimensions.Radius;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.conditional.InterruptingConditionalEventExecutionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.font.FontSet;
-import org.kie.workbench.common.stunner.bpmn.definition.property.general.BPMNGeneralSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.simulation.SimulationAttributeSet;
 import org.kie.workbench.common.stunner.core.definition.annotation.Definition;
 import org.kie.workbench.common.stunner.core.definition.annotation.Property;
@@ -59,7 +58,8 @@ public class StartConditionalEvent extends BaseStartEvent {
     protected InterruptingConditionalEventExecutionSet executionSet;
 
     public StartConditionalEvent() {
-        this((new BPMNGeneralSet("")),
+        this("",
+             "",
              new BackgroundSet(),
              new FontSet(),
              new CircleDimensionSet(new Radius()),
@@ -67,13 +67,15 @@ public class StartConditionalEvent extends BaseStartEvent {
              new InterruptingConditionalEventExecutionSet());
     }
 
-    public StartConditionalEvent(final @MapsTo("general") BPMNGeneralSet general,
+    public StartConditionalEvent(final @MapsTo("name") String name,
+                                 final @MapsTo("documentation") String documentation,
                                  final @MapsTo("backgroundSet") BackgroundSet backgroundSet,
                                  final @MapsTo("fontSet") FontSet fontSet,
                                  final @MapsTo("dimensionsSet") CircleDimensionSet dimensionsSet,
                                  final @MapsTo("simulationSet") SimulationAttributeSet simulationSet,
                                  final @MapsTo("executionSet") InterruptingConditionalEventExecutionSet executionSet) {
-        super(general,
+        super(name,
+              documentation,
               backgroundSet,
               fontSet,
               dimensionsSet,

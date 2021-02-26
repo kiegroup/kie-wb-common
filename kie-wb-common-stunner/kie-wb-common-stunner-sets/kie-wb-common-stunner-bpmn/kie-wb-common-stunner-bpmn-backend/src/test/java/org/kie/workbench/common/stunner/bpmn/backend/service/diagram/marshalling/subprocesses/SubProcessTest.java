@@ -19,7 +19,6 @@ package org.kie.workbench.common.stunner.bpmn.backend.service.diagram.marshallin
 import org.junit.Test;
 import org.kie.workbench.common.stunner.bpmn.backend.service.diagram.marshalling.BPMNDiagramMarshallerBaseTest;
 import org.kie.workbench.common.stunner.bpmn.definition.BaseSubprocess;
-import org.kie.workbench.common.stunner.bpmn.definition.property.general.BPMNGeneralSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.variables.ProcessData;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.kie.workbench.common.stunner.core.diagram.Metadata;
@@ -181,7 +180,7 @@ public abstract class SubProcessTest<T extends BaseSubprocess> extends BPMNDiagr
         assertNodesEqualsAfterMarshalling(initialDiagram, marshalledDiagram, nodeID, incomeEdges, outcomeEdges);
     }
 
-    void assertGeneralSet(BPMNGeneralSet generalSet, String nodeName, String documentation) {
+    void assertGeneralSet(BaseSubprocess generalSet, String nodeName, String documentation) {
         assertThat(generalSet).isNotNull();
         assertThat(generalSet.getName()).isNotNull();
         assertThat(generalSet.getDocumentation()).isNotNull();

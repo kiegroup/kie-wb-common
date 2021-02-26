@@ -92,7 +92,7 @@ public class ScriptTaskTest extends TaskTest<ScriptTask> {
                                                             FILLED_TOP_LEVEL_TASK_JAVA_ID,
                                                             ZERO_INCOME_EDGES,
                                                             HAS_NO_OUTCOME_EDGE);
-        assertGeneralSet(filledTopLevelTaskJava.getGeneral(), TASK_NAME_JAVA, TASK_DOCUMENTATION_JAVA);
+        assertGeneralSet(filledTopLevelTaskJava, TASK_NAME_JAVA, TASK_DOCUMENTATION_JAVA);
         assertScriptTaskExecutionSet(filledTopLevelTaskJava.getExecutionSet(),
                                      TASK_SCRIPT_JAVA,
                                      TASK_SCRIPT_JAVA_LANGUAGE,
@@ -103,7 +103,7 @@ public class ScriptTaskTest extends TaskTest<ScriptTask> {
                                                                   FILLED_TOP_LEVEL_TASK_JAVASCRIPT_ID,
                                                                   ZERO_INCOME_EDGES,
                                                                   HAS_NO_OUTCOME_EDGE);
-        assertGeneralSet(filledTopLevelTaskJavascript.getGeneral(), TASK_NAME_JAVASCRIPT, TASK_DOCUMENTATION_JAVASCRIPT);
+        assertGeneralSet(filledTopLevelTaskJavascript, TASK_NAME_JAVASCRIPT, TASK_DOCUMENTATION_JAVASCRIPT);
         assertScriptTaskExecutionSet(filledTopLevelTaskJavascript.getExecutionSet(),
                                      TASK_SCRIPT_JAVASCRIPT,
                                      TASK_SCRIPT_JAVASCRIPT_LANGUAGE,
@@ -114,7 +114,7 @@ public class ScriptTaskTest extends TaskTest<ScriptTask> {
                                                             FILLED_TOP_LEVEL_TASK_MVEL_ID,
                                                             ZERO_INCOME_EDGES,
                                                             HAS_NO_OUTCOME_EDGE);
-        assertGeneralSet(filledTopLevelTaskMvel.getGeneral(), TASK_NAME_MVEL, TASK_DOCUMENTATION_MVEL);
+        assertGeneralSet(filledTopLevelTaskMvel, TASK_NAME_MVEL, TASK_DOCUMENTATION_MVEL);
         assertScriptTaskExecutionSet(filledTopLevelTaskMvel.getExecutionSet(),
                                      TASK_SCRIPT_MVEL,
                                      TASK_SCRIPT_MVEL_LANGUAGE,
@@ -131,7 +131,7 @@ public class ScriptTaskTest extends TaskTest<ScriptTask> {
                                                         EMPTY_TOP_LEVEL_TASK_ID,
                                                         ZERO_INCOME_EDGES,
                                                         HAS_NO_OUTCOME_EDGE);
-        assertGeneralSet(filledTopLevelTask.getGeneral(), EMPTY_VALUE, EMPTY_VALUE);
+        assertGeneralSet(filledTopLevelTask, EMPTY_VALUE, EMPTY_VALUE);
         assertScriptTaskExecutionSet(filledTopLevelTask.getExecutionSet(),
                                      TASK_SCRIPT_DEFAULT_VALUE,
                                      TASK_SCRIPT_JAVA_LANGUAGE,
@@ -160,7 +160,7 @@ public class ScriptTaskTest extends TaskTest<ScriptTask> {
                                                                    FILLED_SUBPROCESS_LEVEL_TASK_JAVA_ID,
                                                                    ZERO_INCOME_EDGES,
                                                                    HAS_NO_OUTCOME_EDGE);
-        assertGeneralSet(filledSubprocessLevelTaskJava.getGeneral(), TASK_NAME_JAVA, TASK_DOCUMENTATION_JAVA);
+        assertGeneralSet(filledSubprocessLevelTaskJava, TASK_NAME_JAVA, TASK_DOCUMENTATION_JAVA);
         assertScriptTaskExecutionSet(filledSubprocessLevelTaskJava.getExecutionSet(),
                                      TASK_SCRIPT_JAVA,
                                      TASK_SCRIPT_JAVA_LANGUAGE,
@@ -171,7 +171,7 @@ public class ScriptTaskTest extends TaskTest<ScriptTask> {
                                                                          FILLED_SUBPROCESS_LEVEL_TASK_JAVASCRIPT_ID,
                                                                          ZERO_INCOME_EDGES,
                                                                          HAS_NO_OUTCOME_EDGE);
-        assertGeneralSet(filledSubprocessLevelTaskJavascript.getGeneral(), TASK_NAME_JAVASCRIPT, TASK_DOCUMENTATION_JAVASCRIPT);
+        assertGeneralSet(filledSubprocessLevelTaskJavascript, TASK_NAME_JAVASCRIPT, TASK_DOCUMENTATION_JAVASCRIPT);
         assertScriptTaskExecutionSet(filledSubprocessLevelTaskJavascript.getExecutionSet(),
                                      TASK_SCRIPT_JAVASCRIPT,
                                      TASK_SCRIPT_JAVASCRIPT_LANGUAGE,
@@ -182,7 +182,7 @@ public class ScriptTaskTest extends TaskTest<ScriptTask> {
                                                                    FILLED_SUBPROCESS_LEVEL_TASK_MVEL_ID,
                                                                    ZERO_INCOME_EDGES,
                                                                    HAS_NO_OUTCOME_EDGE);
-        assertGeneralSet(filledSubprocessLevelTaskMvel.getGeneral(), TASK_NAME_MVEL, TASK_DOCUMENTATION_MVEL);
+        assertGeneralSet(filledSubprocessLevelTaskMvel, TASK_NAME_MVEL, TASK_DOCUMENTATION_MVEL);
         assertScriptTaskExecutionSet(filledSubprocessLevelTaskMvel.getExecutionSet(),
                                      TASK_SCRIPT_MVEL,
                                      TASK_SCRIPT_MVEL_LANGUAGE,
@@ -199,7 +199,7 @@ public class ScriptTaskTest extends TaskTest<ScriptTask> {
                                                                    EMPTY_SUBPROCESS_LEVEL_TASK_ID,
                                                                    ZERO_INCOME_EDGES,
                                                                    HAS_NO_OUTCOME_EDGE);
-        assertGeneralSet(filledSubprocessLevelTaskJava.getGeneral(), EMPTY_VALUE, EMPTY_VALUE);
+        assertGeneralSet(filledSubprocessLevelTaskJava, EMPTY_VALUE, EMPTY_VALUE);
         assertScriptTaskExecutionSet(filledSubprocessLevelTaskJava.getExecutionSet(),
                                      TASK_SCRIPT_DEFAULT_VALUE,
                                      TASK_SCRIPT_JAVA_LANGUAGE,
@@ -228,7 +228,7 @@ public class ScriptTaskTest extends TaskTest<ScriptTask> {
                                                             FILLED_ONE_INCOME_TOP_LEVEL_TASK_JAVA_ID,
                                                             ONE_INCOME_EDGE,
                                                             HAS_OUTCOME_EDGE);
-        assertGeneralSet(filledTopLevelTaskJava.getGeneral(), TASK_NAME_JAVA, TASK_DOCUMENTATION_JAVA);
+        assertGeneralSet(filledTopLevelTaskJava, TASK_NAME_JAVA, TASK_DOCUMENTATION_JAVA);
         assertScriptTaskExecutionSet(filledTopLevelTaskJava.getExecutionSet(),
                                      TASK_SCRIPT_JAVA,
                                      TASK_SCRIPT_JAVA_LANGUAGE,
@@ -239,7 +239,7 @@ public class ScriptTaskTest extends TaskTest<ScriptTask> {
                                                                   FILLED_ONE_INCOME_TOP_LEVEL_TASK_JAVASCRIPT_ID,
                                                                   ONE_INCOME_EDGE,
                                                                   HAS_OUTCOME_EDGE);
-        assertGeneralSet(filledTopLevelTaskJavascript.getGeneral(), TASK_NAME_JAVASCRIPT, TASK_DOCUMENTATION_JAVASCRIPT);
+        assertGeneralSet(filledTopLevelTaskJavascript, TASK_NAME_JAVASCRIPT, TASK_DOCUMENTATION_JAVASCRIPT);
         assertScriptTaskExecutionSet(filledTopLevelTaskJavascript.getExecutionSet(),
                                      TASK_SCRIPT_JAVASCRIPT,
                                      TASK_SCRIPT_JAVASCRIPT_LANGUAGE,
@@ -250,7 +250,7 @@ public class ScriptTaskTest extends TaskTest<ScriptTask> {
                                                             FILLED_ONE_INCOME_TOP_LEVEL_TASK_MVEL_ID,
                                                             ONE_INCOME_EDGE,
                                                             HAS_OUTCOME_EDGE);
-        assertGeneralSet(filledTopLevelTaskMvel.getGeneral(), TASK_NAME_MVEL, TASK_DOCUMENTATION_MVEL);
+        assertGeneralSet(filledTopLevelTaskMvel, TASK_NAME_MVEL, TASK_DOCUMENTATION_MVEL);
         assertScriptTaskExecutionSet(filledTopLevelTaskMvel.getExecutionSet(),
                                      TASK_SCRIPT_MVEL,
                                      TASK_SCRIPT_MVEL_LANGUAGE,
@@ -267,7 +267,7 @@ public class ScriptTaskTest extends TaskTest<ScriptTask> {
                                                         EMPTY_ONE_INCOME_TOP_LEVEL_TASK_ID,
                                                         ONE_INCOME_EDGE,
                                                         HAS_OUTCOME_EDGE);
-        assertGeneralSet(filledTopLevelTask.getGeneral(), EMPTY_VALUE, EMPTY_VALUE);
+        assertGeneralSet(filledTopLevelTask, EMPTY_VALUE, EMPTY_VALUE);
         assertScriptTaskExecutionSet(filledTopLevelTask.getExecutionSet(),
                                      TASK_SCRIPT_DEFAULT_VALUE,
                                      TASK_SCRIPT_JAVA_LANGUAGE,
@@ -284,7 +284,7 @@ public class ScriptTaskTest extends TaskTest<ScriptTask> {
                                                                    EMPTY_ONE_INCOME_SUBPROCESS_LEVEL_TASK_ID,
                                                                    ONE_INCOME_EDGE,
                                                                    HAS_OUTCOME_EDGE);
-        assertGeneralSet(filledSubprocessLevelTaskJava.getGeneral(), EMPTY_VALUE, EMPTY_VALUE);
+        assertGeneralSet(filledSubprocessLevelTaskJava, EMPTY_VALUE, EMPTY_VALUE);
         assertScriptTaskExecutionSet(filledSubprocessLevelTaskJava.getExecutionSet(),
                                      TASK_SCRIPT_DEFAULT_VALUE,
                                      TASK_SCRIPT_JAVA_LANGUAGE,
@@ -313,7 +313,7 @@ public class ScriptTaskTest extends TaskTest<ScriptTask> {
                                                                    FILLED_ONE_INCOME_SUBPROCESS_LEVEL_TASK_JAVA_ID,
                                                                    ONE_INCOME_EDGE,
                                                                    HAS_OUTCOME_EDGE);
-        assertGeneralSet(filledSubprocessLevelTaskJava.getGeneral(), TASK_NAME_JAVA, TASK_DOCUMENTATION_JAVA);
+        assertGeneralSet(filledSubprocessLevelTaskJava, TASK_NAME_JAVA, TASK_DOCUMENTATION_JAVA);
         assertScriptTaskExecutionSet(filledSubprocessLevelTaskJava.getExecutionSet(),
                                      TASK_SCRIPT_JAVA,
                                      TASK_SCRIPT_JAVA_LANGUAGE,
@@ -324,7 +324,7 @@ public class ScriptTaskTest extends TaskTest<ScriptTask> {
                                                                          FILLED_ONE_INCOME_SUBPROCESS_LEVEL_TASK_JAVASCRIPT_ID,
                                                                          ONE_INCOME_EDGE,
                                                                          HAS_OUTCOME_EDGE);
-        assertGeneralSet(filledSubprocessLevelTaskJavascript.getGeneral(), TASK_NAME_JAVASCRIPT, TASK_DOCUMENTATION_JAVASCRIPT);
+        assertGeneralSet(filledSubprocessLevelTaskJavascript, TASK_NAME_JAVASCRIPT, TASK_DOCUMENTATION_JAVASCRIPT);
         assertScriptTaskExecutionSet(filledSubprocessLevelTaskJavascript.getExecutionSet(),
                                      TASK_SCRIPT_JAVASCRIPT,
                                      TASK_SCRIPT_JAVASCRIPT_LANGUAGE,
@@ -335,7 +335,7 @@ public class ScriptTaskTest extends TaskTest<ScriptTask> {
                                                                    FILLED_ONE_INCOME_SUBPROCESS_LEVEL_TASK_MVEL_ID,
                                                                    ONE_INCOME_EDGE,
                                                                    HAS_OUTCOME_EDGE);
-        assertGeneralSet(filledSubprocessLevelTaskMvel.getGeneral(), TASK_NAME_MVEL, TASK_DOCUMENTATION_MVEL);
+        assertGeneralSet(filledSubprocessLevelTaskMvel, TASK_NAME_MVEL, TASK_DOCUMENTATION_MVEL);
         assertScriptTaskExecutionSet(filledSubprocessLevelTaskMvel.getExecutionSet(),
                                      TASK_SCRIPT_MVEL,
                                      TASK_SCRIPT_MVEL_LANGUAGE,
@@ -364,7 +364,7 @@ public class ScriptTaskTest extends TaskTest<ScriptTask> {
                                                             FILLED_TWO_INCOMES_TOP_LEVEL_TASK_JAVA_ID,
                                                             TWO_INCOME_EDGES,
                                                             HAS_OUTCOME_EDGE);
-        assertGeneralSet(filledTopLevelTaskJava.getGeneral(), TASK_NAME_JAVA, TASK_DOCUMENTATION_JAVA);
+        assertGeneralSet(filledTopLevelTaskJava, TASK_NAME_JAVA, TASK_DOCUMENTATION_JAVA);
         assertScriptTaskExecutionSet(filledTopLevelTaskJava.getExecutionSet(),
                                      TASK_SCRIPT_JAVA,
                                      TASK_SCRIPT_JAVA_LANGUAGE,
@@ -375,7 +375,7 @@ public class ScriptTaskTest extends TaskTest<ScriptTask> {
                                                                   FILLED_TWO_INCOMES_TOP_LEVEL_TASK_JAVASCRIPT_ID,
                                                                   TWO_INCOME_EDGES,
                                                                   HAS_OUTCOME_EDGE);
-        assertGeneralSet(filledTopLevelTaskJavascript.getGeneral(), TASK_NAME_JAVASCRIPT, TASK_DOCUMENTATION_JAVASCRIPT);
+        assertGeneralSet(filledTopLevelTaskJavascript, TASK_NAME_JAVASCRIPT, TASK_DOCUMENTATION_JAVASCRIPT);
         assertScriptTaskExecutionSet(filledTopLevelTaskJavascript.getExecutionSet(),
                                      TASK_SCRIPT_JAVASCRIPT,
                                      TASK_SCRIPT_JAVASCRIPT_LANGUAGE,
@@ -386,7 +386,7 @@ public class ScriptTaskTest extends TaskTest<ScriptTask> {
                                                             FILLED_TWO_INCOMES_TOP_LEVEL_TASK_MVEL_ID,
                                                             TWO_INCOME_EDGES,
                                                             HAS_OUTCOME_EDGE);
-        assertGeneralSet(filledTopLevelTaskMvel.getGeneral(), TASK_NAME_MVEL, TASK_DOCUMENTATION_MVEL);
+        assertGeneralSet(filledTopLevelTaskMvel, TASK_NAME_MVEL, TASK_DOCUMENTATION_MVEL);
         assertScriptTaskExecutionSet(filledTopLevelTaskMvel.getExecutionSet(),
                                      TASK_SCRIPT_MVEL,
                                      TASK_SCRIPT_MVEL_LANGUAGE,
@@ -403,7 +403,7 @@ public class ScriptTaskTest extends TaskTest<ScriptTask> {
                                                         EMPTY_TWO_INCOMES_TOP_LEVEL_TASK_ID,
                                                         TWO_INCOME_EDGES,
                                                         HAS_OUTCOME_EDGE);
-        assertGeneralSet(filledTopLevelTask.getGeneral(), EMPTY_VALUE, EMPTY_VALUE);
+        assertGeneralSet(filledTopLevelTask, EMPTY_VALUE, EMPTY_VALUE);
         assertScriptTaskExecutionSet(filledTopLevelTask.getExecutionSet(),
                                      TASK_SCRIPT_DEFAULT_VALUE,
                                      TASK_SCRIPT_JAVA_LANGUAGE,
@@ -420,7 +420,7 @@ public class ScriptTaskTest extends TaskTest<ScriptTask> {
                                                                    EMPTY_TWO_INCOMES_SUBPROCESS_LEVEL_TASK_ID,
                                                                    TWO_INCOME_EDGES,
                                                                    HAS_OUTCOME_EDGE);
-        assertGeneralSet(filledSubprocessLevelTaskJava.getGeneral(), EMPTY_VALUE, EMPTY_VALUE);
+        assertGeneralSet(filledSubprocessLevelTaskJava, EMPTY_VALUE, EMPTY_VALUE);
         assertScriptTaskExecutionSet(filledSubprocessLevelTaskJava.getExecutionSet(),
                                      TASK_SCRIPT_DEFAULT_VALUE,
                                      TASK_SCRIPT_JAVA_LANGUAGE,
@@ -449,7 +449,7 @@ public class ScriptTaskTest extends TaskTest<ScriptTask> {
                                                                    FILLED_TWO_INCOMES_SUBPROCESS_LEVEL_TASK_JAVA_ID,
                                                                    TWO_INCOME_EDGES,
                                                                    HAS_OUTCOME_EDGE);
-        assertGeneralSet(filledSubprocessLevelTaskJava.getGeneral(), TASK_NAME_JAVA, TASK_DOCUMENTATION_JAVA);
+        assertGeneralSet(filledSubprocessLevelTaskJava, TASK_NAME_JAVA, TASK_DOCUMENTATION_JAVA);
         assertScriptTaskExecutionSet(filledSubprocessLevelTaskJava.getExecutionSet(),
                                      TASK_SCRIPT_JAVA,
                                      TASK_SCRIPT_JAVA_LANGUAGE,
@@ -460,7 +460,7 @@ public class ScriptTaskTest extends TaskTest<ScriptTask> {
                                                                          FILLED_TWO_INCOMES_SUBPROCESS_LEVEL_TASK_JAVASCRIPT_ID,
                                                                          TWO_INCOME_EDGES,
                                                                          HAS_OUTCOME_EDGE);
-        assertGeneralSet(filledSubprocessLevelTaskJavascript.getGeneral(), TASK_NAME_JAVASCRIPT, TASK_DOCUMENTATION_JAVASCRIPT);
+        assertGeneralSet(filledSubprocessLevelTaskJavascript, TASK_NAME_JAVASCRIPT, TASK_DOCUMENTATION_JAVASCRIPT);
         assertScriptTaskExecutionSet(filledSubprocessLevelTaskJavascript.getExecutionSet(),
                                      TASK_SCRIPT_JAVASCRIPT,
                                      TASK_SCRIPT_JAVASCRIPT_LANGUAGE,
@@ -471,7 +471,7 @@ public class ScriptTaskTest extends TaskTest<ScriptTask> {
                                                                    FILLED_TWO_INCOMES_SUBPROCESS_LEVEL_TASK_MVEL_ID,
                                                                    TWO_INCOME_EDGES,
                                                                    HAS_OUTCOME_EDGE);
-        assertGeneralSet(filledSubprocessLevelTaskMvel.getGeneral(), TASK_NAME_MVEL, TASK_DOCUMENTATION_MVEL);
+        assertGeneralSet(filledSubprocessLevelTaskMvel, TASK_NAME_MVEL, TASK_DOCUMENTATION_MVEL);
         assertScriptTaskExecutionSet(filledSubprocessLevelTaskMvel.getExecutionSet(),
                                      TASK_SCRIPT_MVEL,
                                      TASK_SCRIPT_MVEL_LANGUAGE,

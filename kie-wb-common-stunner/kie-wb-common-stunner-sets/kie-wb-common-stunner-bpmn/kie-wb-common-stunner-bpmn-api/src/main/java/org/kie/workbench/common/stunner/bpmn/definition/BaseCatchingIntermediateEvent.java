@@ -20,7 +20,6 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.background.Back
 import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.DataIOSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dimensions.CircleDimensionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.font.FontSet;
-import org.kie.workbench.common.stunner.bpmn.definition.property.general.BPMNGeneralSet;
 import org.kie.workbench.common.stunner.core.definition.annotation.definition.Category;
 import org.kie.workbench.common.stunner.core.definition.annotation.morph.MorphBase;
 
@@ -34,12 +33,14 @@ public abstract class BaseCatchingIntermediateEvent extends BaseIntermediateEven
         super();
     }
 
-    public BaseCatchingIntermediateEvent(final BPMNGeneralSet general,
+    public BaseCatchingIntermediateEvent(final String name,
+                                         final String documentation,
                                          final BackgroundSet backgroundSet,
                                          final FontSet fontSet,
                                          final CircleDimensionSet dimensionsSet,
                                          final DataIOSet dataIOSet) {
-        super(general,
+        super(name,
+              documentation,
               backgroundSet,
               fontSet,
               dimensionsSet,

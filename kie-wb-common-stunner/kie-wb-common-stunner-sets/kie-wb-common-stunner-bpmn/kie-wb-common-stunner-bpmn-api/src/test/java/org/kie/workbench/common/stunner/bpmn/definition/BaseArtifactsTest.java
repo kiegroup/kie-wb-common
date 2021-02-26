@@ -32,7 +32,7 @@ import static org.junit.Assert.assertTrue;
 
 public class BaseArtifactsTest {
 
-    private BaseArtifacts tested = new FakeBaseArtifacts(new BackgroundSet(),
+    private final BaseArtifacts tested = new FakeBaseArtifacts(new BackgroundSet(),
                                                          new FontSet(),
                                                          new RectangleDimensionsSet());
 
@@ -111,7 +111,13 @@ public class BaseArtifactsTest {
         }
 
         @Override
-        public BPMNBaseInfo getGeneral() {
+        public String getName() {
+            return null;
+        }
+
+
+        @Override
+        public String getDocumentation() {
             return null;
         }
     }

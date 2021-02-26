@@ -30,7 +30,6 @@ import org.kie.workbench.common.forms.adf.definitions.settings.FieldPolicy;
 import org.kie.workbench.common.stunner.bpmn.definition.property.background.BackgroundSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dimensions.RectangleDimensionsSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.font.FontSet;
-import org.kie.workbench.common.stunner.bpmn.definition.property.general.BPMNGeneralSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.simulation.SimulationSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.MultipleInstanceSubprocessTaskExecutionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.variables.HasProcessData;
@@ -74,7 +73,8 @@ public class MultipleInstanceSubprocess extends BaseSubprocess implements HasPro
     private ProcessData processData;
 
     public MultipleInstanceSubprocess() {
-        this(new BPMNGeneralSet("Multiple Instance Sub-process"),
+        this("Multiple Instance Sub-process",
+             "",
              new BackgroundSet(),
              new FontSet(),
              new RectangleDimensionsSet(),
@@ -83,14 +83,16 @@ public class MultipleInstanceSubprocess extends BaseSubprocess implements HasPro
              new ProcessData());
     }
 
-    public MultipleInstanceSubprocess(final @MapsTo("general") BPMNGeneralSet general,
+    public MultipleInstanceSubprocess(final @MapsTo("name") String name,
+                                      final @MapsTo("documentation") String documentation,
                                       final @MapsTo("backgroundSet") BackgroundSet backgroundSet,
                                       final @MapsTo("fontSet") FontSet fontSet,
                                       final @MapsTo("dimensionsSet") RectangleDimensionsSet dimensionsSet,
                                       final @MapsTo("simulationSet") SimulationSet simulationSet,
                                       final @MapsTo("executionSet") MultipleInstanceSubprocessTaskExecutionSet executionSet,
                                       final @MapsTo("processData") ProcessData processData) {
-        super(general,
+        super(name,
+              documentation,
               backgroundSet,
               fontSet,
               dimensionsSet,

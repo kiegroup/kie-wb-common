@@ -20,7 +20,6 @@ import org.junit.Test;
 import org.kie.workbench.common.stunner.bpmn.definition.property.background.BackgroundSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dimensions.RectangleDimensionsSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.font.FontSet;
-import org.kie.workbench.common.stunner.bpmn.definition.property.general.TaskGeneralSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.service.GenericServiceTaskExecutionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.simulation.SimulationSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.TaskType;
@@ -32,8 +31,8 @@ public class GenericServiceTaskTest {
 
     @Test
     public void setAndGetExecutionSet() {
-        GenericServiceTask genericServiceTask = new GenericServiceTask(new TaskGeneralSet("Service Task",
-                                                                                          ""),
+        GenericServiceTask genericServiceTask = new GenericServiceTask("Service Task",
+                                                                       "",
                                                                        new GenericServiceTaskExecutionSet(),
                                                                        new BackgroundSet(),
                                                                        new FontSet(),

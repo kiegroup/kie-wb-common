@@ -57,7 +57,7 @@ public class StartConditionalEventTest extends StartEventTest<StartConditionalEv
         assertDiagram(diagram, AMOUNT_OF_NODES_IN_DIAGRAM);
 
         StartConditionalEvent filledTop = getStartNodeById(diagram, FILLED_TOP_LEVEL_EVENT_ID);
-        assertGeneralSet(filledTop.getGeneral(), EVENT_NAME, EVENT_DOCUMENTATION);
+        assertGeneralSet(filledTop, EVENT_NAME, EVENT_DOCUMENTATION);
         assertConditionalEventExecutionSet(filledTop.getExecutionSet(),
                                            CONDITION_EXPRESSION_SCRIPT,
                                            CONDITION_EXPRESSION_LANGUAGE,
@@ -73,7 +73,7 @@ public class StartConditionalEventTest extends StartEventTest<StartConditionalEv
         assertDiagram(diagram, AMOUNT_OF_NODES_IN_DIAGRAM);
 
         StartConditionalEvent emptyTop = getStartNodeById(diagram, EMPTY_TOP_LEVEL_EVENT_ID);
-        assertGeneralSet(emptyTop.getGeneral(), EMPTY_VALUE, EMPTY_VALUE);
+        assertGeneralSet(emptyTop, EMPTY_VALUE, EMPTY_VALUE);
         assertConditionalEventExecutionSet(emptyTop.getExecutionSet(),
                                            CONDITION_EXPRESSION_SCRIPT_DEFAULT_VALUE,
                                            CONDITION_EXPRESSION_LANGUAGE,
@@ -93,7 +93,7 @@ public class StartConditionalEventTest extends StartEventTest<StartConditionalEv
         assertDiagram(diagram, AMOUNT_OF_NODES_IN_DIAGRAM);
 
         StartConditionalEvent filledSubprocess = getStartNodeById(diagram, FILLED_SUBPROCESS_LEVEL_EVENT_ID);
-        assertGeneralSet(filledSubprocess.getGeneral(), EVENT_NAME, EVENT_DOCUMENTATION);
+        assertGeneralSet(filledSubprocess, EVENT_NAME, EVENT_DOCUMENTATION);
         assertConditionalEventExecutionSet(filledSubprocess.getExecutionSet(),
                                            CONDITION_EXPRESSION_SCRIPT,
                                            CONDITION_EXPRESSION_LANGUAGE,
@@ -109,7 +109,7 @@ public class StartConditionalEventTest extends StartEventTest<StartConditionalEv
         assertDiagram(diagram, AMOUNT_OF_NODES_IN_DIAGRAM);
 
         StartConditionalEvent emptySubprocess = getStartNodeById(diagram, EMPTY_SUBPROCESS_LEVEL_EVENT_ID);
-        assertGeneralSet(emptySubprocess.getGeneral(), EMPTY_VALUE, EMPTY_VALUE);
+        assertGeneralSet(emptySubprocess, EMPTY_VALUE, EMPTY_VALUE);
         assertConditionalEventExecutionSet(emptySubprocess.getExecutionSet(),
                                            CONDITION_EXPRESSION_SCRIPT_DEFAULT_VALUE,
                                            CONDITION_EXPRESSION_LANGUAGE,

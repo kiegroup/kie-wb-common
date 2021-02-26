@@ -24,7 +24,6 @@ import org.kie.workbench.common.forms.adf.definitions.annotations.FormDefinition
 import org.kie.workbench.common.forms.adf.definitions.settings.FieldPolicy;
 import org.kie.workbench.common.stunner.bpmn.definition.property.background.BackgroundSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.font.FontSet;
-import org.kie.workbench.common.stunner.bpmn.definition.property.general.BPMNGeneralSet;
 import org.kie.workbench.common.stunner.core.definition.annotation.Definition;
 import org.kie.workbench.common.stunner.core.factory.graph.EdgeFactory;
 import org.kie.workbench.common.stunner.core.rule.annotation.CanConnect;
@@ -62,17 +61,20 @@ import static org.kie.workbench.common.forms.adf.engine.shared.formGeneration.pr
 public class DirectionalAssociation extends Association {
 
     public DirectionalAssociation() {
-        this(new BPMNGeneralSet(),
+        this("",
+             "",
              new BackgroundSet(COLOR,
                                BORDER_COLOR,
                                BORDER_SIZE),
              new FontSet());
     }
 
-    public DirectionalAssociation(final @MapsTo("general") BPMNGeneralSet general,
+    public DirectionalAssociation(final @MapsTo("name") String name,
+                                  final @MapsTo("documentation") String documentation,
                                   final @MapsTo("backgroundSet") BackgroundSet backgroundSet,
                                   final @MapsTo("fontSet") FontSet fontSet) {
-        super(general,
+        super(name,
+              documentation,
               backgroundSet,
               fontSet);
     }

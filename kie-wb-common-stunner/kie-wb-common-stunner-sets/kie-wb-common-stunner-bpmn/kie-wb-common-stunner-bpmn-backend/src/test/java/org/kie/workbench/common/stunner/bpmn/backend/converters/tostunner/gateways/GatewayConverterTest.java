@@ -126,8 +126,8 @@ public class GatewayConverterTest {
     }
 
     private void assertCommonValues(BaseGateway baseGateway, Node<? extends View, Edge> node) {
-        assertEquals(NAME, baseGateway.getGeneral().getName());
-        assertEquals(DOCUMENTATION, baseGateway.getGeneral().getDocumentation());
+        assertEquals(NAME, baseGateway.getName());
+        assertEquals(DOCUMENTATION, baseGateway.getDocumentation());
         assertEquals(backgroundSet, baseGateway.getBackgroundSet());
         assertEquals(fontSet, baseGateway.getFontSet());
         assertEquals(circleDimensionSet, baseGateway.getDimensionsSet());

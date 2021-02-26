@@ -178,8 +178,8 @@ public class TaskConverterTest extends BaseTaskConverterTest {
     }
 
     private void assertCommonValues(UserTask result) {
-        assertEquals(NAME, result.getGeneral().getName());
-        assertEquals(DOCUMENTATION, result.getGeneral().getDocumentation());
+        assertEquals(NAME, result.getName());
+        assertEquals(DOCUMENTATION, result.getDocumentation());
         assertEquals(SIMULATION_SET, result.getSimulationSet());
         verify(userTaskContent).setBounds(BOUNDS);
         assertEquals(ACTORS, result.getExecutionSet().getActors());

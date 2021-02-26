@@ -19,14 +19,15 @@ package org.kie.workbench.common.stunner.bpmn.definition;
 import org.jboss.errai.common.client.api.annotations.MapsTo;
 import org.kie.workbench.common.stunner.bpmn.definition.property.background.BackgroundSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.font.FontSet;
-import org.kie.workbench.common.stunner.bpmn.definition.property.general.BPMNGeneralSet;
 
 public abstract class Association extends BaseConnector {
 
-    public Association(final @MapsTo("general") BPMNGeneralSet general,
+    public Association(final @MapsTo("name") String name,
+                       final @MapsTo("documentation") String documentation,
                        final @MapsTo("backgroundSet") BackgroundSet backgroundSet,
                        final @MapsTo("fontSet") FontSet fontSet) {
-        super(general,
+        super(name,
+              documentation,
               backgroundSet,
               fontSet);
     }

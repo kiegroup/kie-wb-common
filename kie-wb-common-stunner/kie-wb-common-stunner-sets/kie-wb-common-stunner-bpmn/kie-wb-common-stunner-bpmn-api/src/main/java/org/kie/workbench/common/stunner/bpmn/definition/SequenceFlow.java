@@ -30,7 +30,6 @@ import org.kie.workbench.common.forms.adf.definitions.settings.FieldPolicy;
 import org.kie.workbench.common.stunner.bpmn.definition.property.background.BackgroundSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.connectors.SequenceFlowExecutionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.font.FontSet;
-import org.kie.workbench.common.stunner.bpmn.definition.property.general.BPMNGeneralSet;
 import org.kie.workbench.common.stunner.core.definition.annotation.Definition;
 import org.kie.workbench.common.stunner.core.definition.annotation.Property;
 import org.kie.workbench.common.stunner.core.factory.graph.EdgeFactory;
@@ -83,7 +82,8 @@ public class SequenceFlow extends BaseConnector {
     protected SequenceFlowExecutionSet executionSet;
 
     public SequenceFlow() {
-        this(new BPMNGeneralSet(),
+        this("",
+             "",
              new SequenceFlowExecutionSet(),
              new BackgroundSet(COLOR,
                                BORDER_COLOR,
@@ -91,11 +91,13 @@ public class SequenceFlow extends BaseConnector {
              new FontSet());
     }
 
-    public SequenceFlow(final @MapsTo("general") BPMNGeneralSet general,
+    public SequenceFlow(final @MapsTo("name") String name,
+                        final @MapsTo("documentation") String documentation,
                         final @MapsTo("executionSet") SequenceFlowExecutionSet executionSet,
                         final @MapsTo("backgroundSet") BackgroundSet backgroundSet,
                         final @MapsTo("fontSet") FontSet fontSet) {
-        super(general,
+        super(name,
+              documentation,
               backgroundSet,
               fontSet);
         this.executionSet = executionSet;

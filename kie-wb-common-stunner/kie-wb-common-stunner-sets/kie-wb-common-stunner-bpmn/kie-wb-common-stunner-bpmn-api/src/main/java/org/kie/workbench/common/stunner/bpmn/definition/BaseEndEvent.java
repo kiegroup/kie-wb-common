@@ -27,7 +27,6 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.background.Back
 import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.DataIOModel;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dimensions.CircleDimensionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.font.FontSet;
-import org.kie.workbench.common.stunner.bpmn.definition.property.general.BPMNGeneralSet;
 import org.kie.workbench.common.stunner.core.definition.annotation.Property;
 import org.kie.workbench.common.stunner.core.definition.annotation.definition.Category;
 import org.kie.workbench.common.stunner.core.definition.annotation.definition.Labels;
@@ -41,11 +40,15 @@ public abstract class BaseEndEvent implements BPMNViewDefinition,
     @Category
     public static final transient String category = BPMNCategories.END_EVENTS;
     @Labels
-    protected final Set<String> labels = new HashSet<String>();
+    protected final Set<String> labels = new HashSet<>();
     @Property
     @FormField
     @Valid
-    protected BPMNGeneralSet general;
+    protected String name;
+    @Property
+    @FormField
+    @Valid
+    protected String documentation;
     @Property
     @Valid
     protected BackgroundSet backgroundSet;
@@ -58,12 +61,14 @@ public abstract class BaseEndEvent implements BPMNViewDefinition,
         initLabels();
     }
 
-    public BaseEndEvent(final BPMNGeneralSet general,
+    public BaseEndEvent(final String name,
+                        final String documentation,
                         final BackgroundSet backgroundSet,
                         final FontSet fontSet,
                         final CircleDimensionSet dimensionsSet) {
         this();
-        this.general = general;
+        this.name = name;
+        this.documentation = documentation;
         this.backgroundSet = backgroundSet;
         this.fontSet = fontSet;
         this.dimensionsSet = dimensionsSet;
@@ -110,12 +115,20 @@ public abstract class BaseEndEvent implements BPMNViewDefinition,
         return labels;
     }
 
-    public BPMNGeneralSet getGeneral() {
-        return general;
+    public String getName() {
+        return name;
     }
 
-    public void setGeneral(final BPMNGeneralSet general) {
-        this.general = general;
+    public void setName(final String name) {
+        this.name = name;
+    }
+
+    public String getDocumentation() {
+        return documentation;
+    }
+
+    public void setDocumentation(final String documentation) {
+        this.documentation = documentation;
     }
 
     public BackgroundSet getBackgroundSet() {
@@ -145,7 +158,8 @@ public abstract class BaseEndEvent implements BPMNViewDefinition,
     @Override
     public int hashCode() {
         return HashUtil.combineHashCodes(Objects.hashCode(getClass()),
-                                         Objects.hashCode(general),
+                                         Objects.hashCode(name),
+                                         Objects.hashCode(documentation),
                                          Objects.hashCode(backgroundSet),
                                          Objects.hashCode(fontSet),
                                          Objects.hashCode(dimensionsSet),
@@ -156,7 +170,8 @@ public abstract class BaseEndEvent implements BPMNViewDefinition,
     public boolean equals(Object o) {
         if (o instanceof BaseEndEvent) {
             BaseEndEvent other = (BaseEndEvent) o;
-            return Objects.equals(general, other.general) &&
+            return Objects.equals(name, other.name) &&
+                    Objects.equals(documentation, other.documentation) &&
                     Objects.equals(backgroundSet, other.backgroundSet) &&
                     Objects.equals(fontSet, other.fontSet) &&
                     Objects.equals(dimensionsSet, other.dimensionsSet) &&

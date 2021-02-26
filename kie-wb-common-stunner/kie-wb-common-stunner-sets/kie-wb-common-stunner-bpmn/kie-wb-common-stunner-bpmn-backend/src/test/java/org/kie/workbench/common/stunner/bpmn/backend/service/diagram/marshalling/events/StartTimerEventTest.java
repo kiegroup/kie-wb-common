@@ -73,19 +73,19 @@ public class StartTimerEventTest extends StartEventTest<StartTimerEvent> {
         assertDiagram(diagram, AMOUNT_OF_NODES_IN_DIAGRAM);
 
         StartTimerEvent filledTopMultiple = getStartNodeById(diagram, FILLED_TOP_LEVEL_EVENT_MULTIPLE_ID);
-        assertGeneralSet(filledTopMultiple.getGeneral(), EVENT_NAME_MULTIPLE, EVENT_DOCUMENTATION_MULTIPLE);
+        assertGeneralSet(filledTopMultiple, EVENT_NAME_MULTIPLE, EVENT_DOCUMENTATION_MULTIPLE);
         assertTimerEventMultiple(filledTopMultiple.getExecutionSet(), TIMER_VALUE_MULTIPLE, TIMER_VALUE_LANGUAGE_MULTIPLE, INTERRUPTING, SLA_DUE_DATE);
         // Should be uncommented after https://issues.jboss.org/browse/JBPM-7038 will be fixed
         //final String timerDataOutputMultiple = "||hello:String||[dout]hello->processVar";
 
         StartTimerEvent filledTopSpecificDate = getStartNodeById(diagram, FILLED_TOP_LEVEL_EVENT_SPECIFIC_DATE_ID);
-        assertGeneralSet(filledTopSpecificDate.getGeneral(), EVENT_NAME_SPECIFIC_DATE, EVENT_DOCUMENTATION_SPECIFIC_DATE);
+        assertGeneralSet(filledTopSpecificDate, EVENT_NAME_SPECIFIC_DATE, EVENT_DOCUMENTATION_SPECIFIC_DATE);
         assertTimerEventSpecificDate(filledTopSpecificDate.getExecutionSet(), TIMER_VALUE_SPECIFIC_DATE, INTERRUPTING, SLA_DUE_DATE);
         // Should be uncommented after https://issues.jboss.org/browse/JBPM-7038 will be fixed
         //final String timerDataOutputSpecificDate = "||hello:String||[dout]hello->processVar";
 
         StartTimerEvent filledTopAfterDuration = getStartNodeById(diagram, FILLED_TOP_LEVEL_EVENT_AFTER_DURATION_ID);
-        assertGeneralSet(filledTopAfterDuration.getGeneral(), EVENT_NAME_AFTER_DURATION, EVENT_DOCUMENTATION_AFTER_DURATION);
+        assertGeneralSet(filledTopAfterDuration, EVENT_NAME_AFTER_DURATION, EVENT_DOCUMENTATION_AFTER_DURATION);
         assertTimerEventAfterDuration(filledTopAfterDuration.getExecutionSet(), TIMER_VALUE_AFTER_DURATION, INTERRUPTING, SLA_DUE_DATE);
         // Know issue. Should be uncommented after https://issues.jboss.org/browse/JBPM-7038 will be fixed
         //assertDataIOSet(filledTopSpecificDate.getDataIOSet(), timerDataOutputDuration);
@@ -98,7 +98,7 @@ public class StartTimerEventTest extends StartEventTest<StartTimerEvent> {
         assertDiagram(diagram, AMOUNT_OF_NODES_IN_DIAGRAM);
 
         StartTimerEvent emptyTop = getStartNodeById(diagram, EMPTY_TOP_LEVEL_EVENT_ID);
-        assertGeneralSet(emptyTop.getGeneral(), EMPTY_VALUE, EMPTY_VALUE);
+        assertGeneralSet(emptyTop, EMPTY_VALUE, EMPTY_VALUE);
         assertTimerEventEmpty(emptyTop.getExecutionSet(), NON_INTERRUPTING, EMPTY_VALUE);
         // Know issue. Should be uncommented after https://issues.jboss.org/browse/JBPM-7038 will be fixed
         //assertDataIOSet(emptySubprocess.getDataIOSet(), EMPTY_VALUE);
@@ -131,19 +131,19 @@ public class StartTimerEventTest extends StartEventTest<StartTimerEvent> {
         assertDiagram(diagram, AMOUNT_OF_NODES_IN_DIAGRAM);
 
         StartTimerEvent filledTopMultiple = getStartNodeById(diagram, FILLED_SUBPROCESS_LEVEL_EVENT_MULTIPLE_ID);
-        assertGeneralSet(filledTopMultiple.getGeneral(), EVENT_NAME_MULTIPLE, EVENT_DOCUMENTATION_MULTIPLE);
+        assertGeneralSet(filledTopMultiple, EVENT_NAME_MULTIPLE, EVENT_DOCUMENTATION_MULTIPLE);
         assertTimerEventMultiple(filledTopMultiple.getExecutionSet(), TIMER_VALUE_MULTIPLE, TIMER_VALUE_LANGUAGE_MULTIPLE, INTERRUPTING, SLA_DUE_DATE);
         // Know issue. Should be uncommented after https://issues.jboss.org/browse/JBPM-7038 will be fixed
         //assertDataIOSet(filledTopMultiple.getDataIOSet(), timerDataOutputMultiple);
 
         StartTimerEvent filledTopSpecificDate = getStartNodeById(diagram, FILLED_SUBPROCESS_LEVEL_EVENT_SPECIFIC_DATE_ID);
-        assertGeneralSet(filledTopSpecificDate.getGeneral(), EVENT_NAME_SPECIFIC_DATE, EVENT_DOCUMENTATION_SPECIFIC_DATE);
+        assertGeneralSet(filledTopSpecificDate, EVENT_NAME_SPECIFIC_DATE, EVENT_DOCUMENTATION_SPECIFIC_DATE);
         assertTimerEventSpecificDate(filledTopSpecificDate.getExecutionSet(), TIMER_VALUE_SPECIFIC_DATE, INTERRUPTING, SLA_DUE_DATE);
         // Know issue. Should be uncommented after https://issues.jboss.org/browse/JBPM-7038 will be fixed
         //assertDataIOSet(filledTopSpecificDate.getDataIOSet(), timerDataOutputSpecificDate);
 
         StartTimerEvent filledTopAfterDuration = getStartNodeById(diagram, FILLED_SUBPROCESS_LEVEL_EVENT_AFTER_DURATION_ID);
-        assertGeneralSet(filledTopAfterDuration.getGeneral(), EVENT_NAME_AFTER_DURATION, EVENT_DOCUMENTATION_AFTER_DURATION);
+        assertGeneralSet(filledTopAfterDuration, EVENT_NAME_AFTER_DURATION, EVENT_DOCUMENTATION_AFTER_DURATION);
         assertTimerEventAfterDuration(filledTopAfterDuration.getExecutionSet(), TIMER_VALUE_AFTER_DURATION, INTERRUPTING, SLA_DUE_DATE);
         // Know issue. Should be uncommented after https://issues.jboss.org/browse/JBPM-7038 will be fixed
         //assertDataIOSet(filledTopSpecificDate.getDataIOSet(), timerDataOutputDuration);
@@ -156,7 +156,7 @@ public class StartTimerEventTest extends StartEventTest<StartTimerEvent> {
         assertDiagram(diagram, AMOUNT_OF_NODES_IN_DIAGRAM);
 
         StartTimerEvent emptySubprocess = getStartNodeById(diagram, EMPTY_SUBPROCESS_LEVEL_EVENT_ID);
-        assertGeneralSet(emptySubprocess.getGeneral(), EMPTY_VALUE, EMPTY_VALUE);
+        assertGeneralSet(emptySubprocess, EMPTY_VALUE, EMPTY_VALUE);
         assertTimerEventEmpty(emptySubprocess.getExecutionSet(), NON_INTERRUPTING, EMPTY_VALUE);
         // Know issue. Should be uncommented after https://issues.jboss.org/browse/JBPM-7038 will be fixed
         //assertDataIOSet(emptySubprocess.getDataIOSet(), EMPTY_VALUE);

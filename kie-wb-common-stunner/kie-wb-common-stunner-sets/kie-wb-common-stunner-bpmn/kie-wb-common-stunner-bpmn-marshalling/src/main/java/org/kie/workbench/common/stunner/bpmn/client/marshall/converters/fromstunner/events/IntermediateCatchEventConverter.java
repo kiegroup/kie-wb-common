@@ -37,7 +37,6 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.event.link.Link
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.message.CancellingMessageEventExecutionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.signal.CancellingSignalEventExecutionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.timer.CancellingTimerEventExecutionSet;
-import org.kie.workbench.common.stunner.bpmn.definition.property.general.BPMNGeneralSet;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
 
@@ -90,9 +89,8 @@ public class IntermediateCatchEventConverter {
 
         p.setAbsoluteBounds(n);
 
-        BPMNGeneralSet general = definition.getGeneral();
-        p.setName(general.getName());
-        p.setDocumentation(general.getDocumentation());
+        p.setName(definition.getName());
+        p.setDocumentation(definition.getDocumentation());
 
         p.setAssignmentsInfo(definition.getDataIOSet().getAssignmentsinfo());
 
@@ -113,9 +111,8 @@ public class IntermediateCatchEventConverter {
 
         p.setAbsoluteBounds(n);
 
-        BPMNGeneralSet general = definition.getGeneral();
-        p.setName(general.getName());
-        p.setDocumentation(general.getDocumentation());
+        p.setName(definition.getName());
+        p.setDocumentation(definition.getDocumentation());
 
         p.setAssignmentsInfo(definition.getDataIOSet().getAssignmentsinfo());
 
@@ -136,9 +133,8 @@ public class IntermediateCatchEventConverter {
 
         p.setAbsoluteBounds(n);
 
-        BPMNGeneralSet general = definition.getGeneral();
-        p.setName(general.getName());
-        p.setDocumentation(general.getDocumentation());
+        p.setName(definition.getName());
+        p.setDocumentation(definition.getDocumentation());
 
         p.setAssignmentsInfo(definition.getDataIOSet().getAssignmentsinfo());
 
@@ -156,9 +152,8 @@ public class IntermediateCatchEventConverter {
 
         p.setAbsoluteBounds(n);
 
-        BPMNGeneralSet general = definition.getGeneral();
-        p.setName(general.getName());
-        p.setDocumentation(general.getDocumentation());
+        p.setName(definition.getName());
+        p.setDocumentation(definition.getDocumentation());
 
         p.setAssignmentsInfo(definition.getDataIOSet().getAssignmentsinfo());
 
@@ -178,9 +173,8 @@ public class IntermediateCatchEventConverter {
 
         p.setAbsoluteBounds(n);
 
-        BPMNGeneralSet general = definition.getGeneral();
-        p.setName(general.getName());
-        p.setDocumentation(general.getDocumentation());
+        p.setName(definition.getName());
+        p.setDocumentation(definition.getDocumentation());
 
         p.setAssignmentsInfo(definition.getDataIOSet().getAssignmentsinfo());
 
@@ -200,9 +194,8 @@ public class IntermediateCatchEventConverter {
 
         p.setAbsoluteBounds(n);
 
-        BPMNGeneralSet general = definition.getGeneral();
-        p.setName(general.getName());
-        p.setDocumentation(general.getDocumentation());
+        p.setName(definition.getName());
+        p.setDocumentation(definition.getDocumentation());
 
         p.setAssignmentsInfo(definition.getDataIOSet().getAssignmentsinfo());
 
@@ -222,9 +215,8 @@ public class IntermediateCatchEventConverter {
 
         p.setAbsoluteBounds(n);
 
-        BPMNGeneralSet general = definition.getGeneral();
-        p.setName(general.getName());
-        p.setDocumentation(general.getDocumentation());
+        p.setName(definition.getName());
+        p.setDocumentation(definition.getDocumentation());
 
         p.setAssignmentsInfo(definition.getDataIOSet().getAssignmentsinfo());
 
@@ -244,9 +236,8 @@ public class IntermediateCatchEventConverter {
 
         p.setAbsoluteBounds(n);
 
-        BPMNGeneralSet general = definition.getGeneral();
-        p.setName(general.getName());
-        p.setDocumentation(general.getDocumentation());
+        p.setName(definition.getName());
+        p.setDocumentation(definition.getDocumentation());
 
         p.setAssignmentsInfo(definition.getDataIOSet().getAssignmentsinfo());
 

@@ -24,7 +24,6 @@ import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.proper
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties.PropertyReaderFactory;
 import org.kie.workbench.common.stunner.bpmn.definition.BaseReusableSubprocess;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.DataIOSet;
-import org.kie.workbench.common.stunner.bpmn.definition.property.general.BPMNGeneralSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.BaseReusableSubprocessTaskExecutionSet;
 import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Node;
@@ -50,10 +49,8 @@ public abstract class BaseCallActivityConverter<R extends BaseReusableSubprocess
 
         R definition = node.getContent().getDefinition();
 
-        definition.setGeneral(new BPMNGeneralSet(
-                p.getName(),
-                p.getDocumentation()
-        ));
+        definition.setName(p.getName());
+        definition.setDocumentation(p.getDocumentation());
 
         definition.setExecutionSet(createReusableSubprocessTaskExecutionSet(activity, p));
 

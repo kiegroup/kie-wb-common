@@ -94,7 +94,7 @@ public class AdHocSubProcessTest extends SubProcessTest<AdHocSubprocess> {
                                                                    EMPTY_INCOME_EDGES,
                                                                    EMPTY_OUTCOME_EDGES);
 
-        assertGeneralSet(topLevelSubProcess.getGeneral(), DEFAULT_NAME, DEFAULT_DOCUMENTATION);
+        assertGeneralSet(topLevelSubProcess, DEFAULT_NAME, DEFAULT_DOCUMENTATION);
         assertAdHocSubProcessExecutionSet(topLevelSubProcess.getExecutionSet(),
                                           EMPTY_VALUE,
                                           ADHOC_COMPLETION_CONDITION_LANGUAGE_MVEL,
@@ -130,7 +130,7 @@ public class AdHocSubProcessTest extends SubProcessTest<AdHocSubprocess> {
                                                                        EMPTY_INCOME_EDGES,
                                                                        EMPTY_OUTCOME_EDGES);
 
-        assertGeneralSet(topLevelSubProcessJava.getGeneral(), SUB_PROCESS_NAME_JAVA, SUB_PROCESS_DOCUMENTATION_JAVA);
+        assertGeneralSet(topLevelSubProcessJava, SUB_PROCESS_NAME_JAVA, SUB_PROCESS_DOCUMENTATION_JAVA);
         assertAdHocSubProcessExecutionSet(topLevelSubProcessJava.getExecutionSet(),
                                           ADHOC_COMPLETION_CONDITION_SCRIPT_DEFAULT,
                                           ADHOC_COMPLETION_CONDITION_LANGUAGE_MVEL,
@@ -148,7 +148,7 @@ public class AdHocSubProcessTest extends SubProcessTest<AdHocSubprocess> {
                                                                              EMPTY_INCOME_EDGES,
                                                                              EMPTY_OUTCOME_EDGES);
 
-        assertGeneralSet(topLevelSubProcessJavascript.getGeneral(), SUB_PROCESS_NAME_JAVASCRIPT, SUB_PROCESS_DOCUMENTATION_JAVASCRIPT);
+        assertGeneralSet(topLevelSubProcessJavascript, SUB_PROCESS_NAME_JAVASCRIPT, SUB_PROCESS_DOCUMENTATION_JAVASCRIPT);
         assertAdHocSubProcessExecutionSet(topLevelSubProcessJavascript.getExecutionSet(),
                                           ADHOC_COMPLETION_CONDITION_SCRIPT,
                                           ADHOC_COMPLETION_CONDITION_LANGUAGE_DROOLS,
@@ -166,7 +166,7 @@ public class AdHocSubProcessTest extends SubProcessTest<AdHocSubprocess> {
                                                                        EMPTY_INCOME_EDGES,
                                                                        EMPTY_OUTCOME_EDGES);
 
-        assertGeneralSet(topLevelSubProcessMVEL.getGeneral(), SUB_PROCESS_NAME_MVEL, SUB_PROCESS_DOCUMENTATION_MVEL);
+        assertGeneralSet(topLevelSubProcessMVEL, SUB_PROCESS_NAME_MVEL, SUB_PROCESS_DOCUMENTATION_MVEL);
         assertAdHocSubProcessExecutionSet(topLevelSubProcessMVEL.getExecutionSet(),
                                           ADHOC_COMPLETION_CONDITION_SCRIPT_DEFAULT,
                                           ADHOC_COMPLETION_CONDITION_LANGUAGE_MVEL,
@@ -193,7 +193,7 @@ public class AdHocSubProcessTest extends SubProcessTest<AdHocSubprocess> {
                                                                    ONE_INCOME_EDGE,
                                                                    FOUR_OUTCOME_EDGES);
 
-        assertGeneralSet(topLevelSubProcess.getGeneral(), SUB_PROCESS_NAME, DEFAULT_DOCUMENTATION);
+        assertGeneralSet(topLevelSubProcess, SUB_PROCESS_NAME, DEFAULT_DOCUMENTATION);
         assertAdHocSubProcessExecutionSet(topLevelSubProcess.getExecutionSet(),
                                           ADHOC_COMPLETION_CONDITION_SCRIPT_DEFAULT,
                                           ADHOC_COMPLETION_CONDITION_LANGUAGE_MVEL,
@@ -218,7 +218,7 @@ public class AdHocSubProcessTest extends SubProcessTest<AdHocSubprocess> {
                                                                           EMPTY_INCOME_EDGES,
                                                                           EMPTY_OUTCOME_EDGES);
 
-        assertGeneralSet(subProcessLevelSubProcess.getGeneral(), DEFAULT_NAME, DEFAULT_DOCUMENTATION);
+        assertGeneralSet(subProcessLevelSubProcess, DEFAULT_NAME, DEFAULT_DOCUMENTATION);
         assertAdHocSubProcessExecutionSet(subProcessLevelSubProcess.getExecutionSet(),
                                           EMPTY_VALUE,
                                           ADHOC_COMPLETION_CONDITION_LANGUAGE_MVEL,
@@ -254,7 +254,7 @@ public class AdHocSubProcessTest extends SubProcessTest<AdHocSubprocess> {
                                                                               EMPTY_INCOME_EDGES,
                                                                               EMPTY_OUTCOME_EDGES);
 
-        assertGeneralSet(subProcessLevelSubProcessJava.getGeneral(), SUB_PROCESS_NAME_JAVA, SUB_PROCESS_DOCUMENTATION_JAVA);
+        assertGeneralSet(subProcessLevelSubProcessJava, SUB_PROCESS_NAME_JAVA, SUB_PROCESS_DOCUMENTATION_JAVA);
         assertAdHocSubProcessExecutionSet(subProcessLevelSubProcessJava.getExecutionSet(),
                                           ADHOC_COMPLETION_CONDITION_SCRIPT_DEFAULT,
                                           ADHOC_COMPLETION_CONDITION_LANGUAGE_MVEL,
@@ -272,7 +272,7 @@ public class AdHocSubProcessTest extends SubProcessTest<AdHocSubprocess> {
                                                                                     EMPTY_INCOME_EDGES,
                                                                                     EMPTY_OUTCOME_EDGES);
 
-        assertGeneralSet(subProcessLevelSubProcessJavascript.getGeneral(), SUB_PROCESS_NAME_JAVASCRIPT, SUB_PROCESS_DOCUMENTATION_JAVASCRIPT);
+        assertGeneralSet(subProcessLevelSubProcessJavascript, SUB_PROCESS_NAME_JAVASCRIPT, SUB_PROCESS_DOCUMENTATION_JAVASCRIPT);
         assertAdHocSubProcessExecutionSet(subProcessLevelSubProcessJavascript.getExecutionSet(),
                                           ADHOC_COMPLETION_CONDITION_SCRIPT,
                                           ADHOC_COMPLETION_CONDITION_LANGUAGE_DROOLS,
@@ -290,7 +290,7 @@ public class AdHocSubProcessTest extends SubProcessTest<AdHocSubprocess> {
                                                                               EMPTY_INCOME_EDGES,
                                                                               EMPTY_OUTCOME_EDGES);
 
-        assertGeneralSet(subProcessLevelSubProcessMVEL.getGeneral(), SUB_PROCESS_NAME_MVEL, SUB_PROCESS_DOCUMENTATION_MVEL);
+        assertGeneralSet(subProcessLevelSubProcessMVEL, SUB_PROCESS_NAME_MVEL, SUB_PROCESS_DOCUMENTATION_MVEL);
         assertAdHocSubProcessExecutionSet(subProcessLevelSubProcessMVEL.getExecutionSet(),
                                           ADHOC_COMPLETION_CONDITION_SCRIPT_DEFAULT,
                                           ADHOC_COMPLETION_CONDITION_LANGUAGE_MVEL,
@@ -317,7 +317,7 @@ public class AdHocSubProcessTest extends SubProcessTest<AdHocSubprocess> {
                                                                           ONE_INCOME_EDGE,
                                                                           FOUR_OUTCOME_EDGES);
 
-        assertGeneralSet(subProcessLevelSubProcess.getGeneral(), SUB_PROCESS_NAME, DEFAULT_DOCUMENTATION);
+        assertGeneralSet(subProcessLevelSubProcess, SUB_PROCESS_NAME, DEFAULT_DOCUMENTATION);
         assertAdHocSubProcessExecutionSet(subProcessLevelSubProcess.getExecutionSet(),
                                           ADHOC_COMPLETION_CONDITION_SCRIPT_DEFAULT,
                                           ADHOC_COMPLETION_CONDITION_LANGUAGE_MVEL,

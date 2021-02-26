@@ -33,7 +33,6 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.background.Back
 import org.kie.workbench.common.stunner.bpmn.definition.property.dimensions.RectangleDimensionsSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.font.FontSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.BPMNGeneralSet;
-import org.kie.workbench.common.stunner.bpmn.definition.property.general.Name;
 import org.kie.workbench.common.stunner.core.definition.annotation.Definition;
 import org.kie.workbench.common.stunner.core.definition.annotation.Property;
 import org.kie.workbench.common.stunner.core.definition.annotation.definition.Labels;
@@ -64,14 +63,20 @@ public class DataObject extends BaseArtifacts {
     @Property
     @Valid
     @FormField
-    private Name name;
+    private String name;
+
+    @Property
+    @Valid
+    @FormField
+    private String documentation;
 
     @Property
     @FormField
     private DataObjectType type;
 
     public DataObject() {
-        this(new Name("DataObject"),
+        this("DataObject",
+             "",
              new DataObjectType(),
              new BPMNGeneralSet(),
              new BackgroundSet(),
@@ -79,7 +84,8 @@ public class DataObject extends BaseArtifacts {
              new RectangleDimensionsSet());
     }
 
-    public DataObject(final @MapsTo("name") Name name,
+    public DataObject(final @MapsTo("name") String name,
+                      final @MapsTo("documentation") String documentation,
                       final @MapsTo("type") DataObjectType type,
                       final @MapsTo("general") BPMNGeneralSet general,
                       final @MapsTo("backgroundSet") BackgroundSet backgroundSet,
@@ -87,8 +93,8 @@ public class DataObject extends BaseArtifacts {
                       final @MapsTo("dimensionsSet") RectangleDimensionsSet dimensionsSet) {
 
         super(backgroundSet, fontSet, dimensionsSet);
-        this.name = name;
-        this.name.setValue(revertIllegalCharsAttribute(this.name.getValue()));
+        this.name = revertIllegalCharsAttribute(name);
+        this.documentation = documentation;
         this.type = type;
         this.general = general;
     }
@@ -105,12 +111,20 @@ public class DataObject extends BaseArtifacts {
         this.general = general;
     }
 
-    public Name getName() {
+    public String getName() {
         return name;
     }
 
-    public void setName(Name name) {
+    public void setName(String name) {
         this.name = name;
+    }
+
+    public String getDocumentation() {
+        return documentation;
+    }
+
+    public void setDocumentation(String documentation) {
+        this.documentation = documentation;
     }
 
     public DataObjectType getType() {

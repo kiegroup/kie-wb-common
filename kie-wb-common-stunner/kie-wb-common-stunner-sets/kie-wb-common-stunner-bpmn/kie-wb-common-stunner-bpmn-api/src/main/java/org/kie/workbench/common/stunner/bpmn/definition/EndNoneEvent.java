@@ -26,7 +26,6 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.background.Back
 import org.kie.workbench.common.stunner.bpmn.definition.property.dimensions.CircleDimensionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dimensions.Radius;
 import org.kie.workbench.common.stunner.bpmn.definition.property.font.FontSet;
-import org.kie.workbench.common.stunner.bpmn.definition.property.general.BPMNGeneralSet;
 import org.kie.workbench.common.stunner.core.definition.annotation.Definition;
 import org.kie.workbench.common.stunner.core.definition.annotation.morph.Morph;
 
@@ -45,17 +44,20 @@ import static org.kie.workbench.common.forms.adf.engine.shared.formGeneration.pr
 public class EndNoneEvent extends BaseEndEvent {
 
     public EndNoneEvent() {
-        this(new BPMNGeneralSet(""),
+        this("",
+             "",
              new BackgroundSet(),
              new FontSet(),
              new CircleDimensionSet(new Radius()));
     }
 
-    public EndNoneEvent(final @MapsTo("general") BPMNGeneralSet general,
+    public EndNoneEvent(final @MapsTo("name") String name,
+                        final @MapsTo("documentation") String documentation,
                         final @MapsTo("backgroundSet") BackgroundSet backgroundSet,
                         final @MapsTo("fontSet") FontSet fontSet,
                         final @MapsTo("dimensionsSet") CircleDimensionSet dimensionsSet) {
-        super(general,
+        super(name,
+              documentation,
               backgroundSet,
               fontSet,
               dimensionsSet);

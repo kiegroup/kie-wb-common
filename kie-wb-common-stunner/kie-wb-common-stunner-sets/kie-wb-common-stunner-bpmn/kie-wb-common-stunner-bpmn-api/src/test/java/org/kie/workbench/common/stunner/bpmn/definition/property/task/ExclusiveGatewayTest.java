@@ -46,7 +46,7 @@ public class ExclusiveGatewayTest {
     @Test
     public void testExclusiveDatabasedGatewayNameValid() {
         ExclusiveGateway exclusiveGateway = new ExclusiveGateway();
-        exclusiveGateway.getGeneral().setName(NAME_VALID);
+        exclusiveGateway.setName(NAME_VALID);
         Set<ConstraintViolation<ExclusiveGateway>> violations = this.validator.validate(exclusiveGateway);
         assertTrue(violations.isEmpty());
     }
@@ -54,7 +54,7 @@ public class ExclusiveGatewayTest {
     @Test
     public void testExclusiveDatabasedGatewayNameEmpty() {
         ExclusiveGateway exclusiveGateway = new ExclusiveGateway();
-        exclusiveGateway.getGeneral().setName("");
+        exclusiveGateway.setName("");
         Set<ConstraintViolation<ExclusiveGateway>> violations = this.validator.validate(exclusiveGateway);
         assertTrue(violations.isEmpty());
     }

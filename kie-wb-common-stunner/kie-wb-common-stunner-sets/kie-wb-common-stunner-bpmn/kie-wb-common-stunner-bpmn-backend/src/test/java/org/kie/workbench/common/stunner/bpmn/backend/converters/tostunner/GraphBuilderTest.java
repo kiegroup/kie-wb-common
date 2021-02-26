@@ -31,6 +31,7 @@ import org.kie.workbench.common.stunner.bpmn.BPMNDefinitionSet;
 import org.kie.workbench.common.stunner.bpmn.BPMNTestDefinitionFactory;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.TypedFactoryManager;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties.BasePropertyReader;
+import org.kie.workbench.common.stunner.bpmn.definition.BPMNDefinition;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNDiagramImpl;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNViewDefinition;
 import org.kie.workbench.common.stunner.bpmn.definition.EmbeddedSubprocess;
@@ -63,8 +64,6 @@ public class GraphBuilderTest {
     private static final String SUBPROCESS2_ID = "SUBPROCESS2_ID";
     private static final String SUBPROCESS3_ID = "SUBPROCESS3_ID";
 
-    private DefinitionResolver definitionResolver;
-
     @Mock
     private org.eclipse.bpmn2.Process process;
 
@@ -82,7 +81,6 @@ public class GraphBuilderTest {
     private GraphBuilder graphBuilder;
 
     @Before
-    @SuppressWarnings("unchecked")
     public void setUp() throws Exception {
         when(diagram.getPlane()).thenReturn(plane);
         List<RootElement> rootElements = Collections.singletonList(process);
@@ -91,7 +89,7 @@ public class GraphBuilderTest {
         when(definitions.getRootElements()).thenReturn(rootElements);
         when(definitions.getDiagrams()).thenReturn(diagrams);
         when(definitions.getRelationships()).thenReturn(Collections.emptyList());
-        definitionResolver = new DefinitionResolver(definitions, Collections.emptyList());
+        DefinitionResolver definitionResolver = new DefinitionResolver(definitions, Collections.emptyList());
         StunnerTestingGraphBackendAPI api = StunnerTestingGraphBackendAPI.build(BPMNDefinitionSet.class,
                                                                                 new BPMNTestDefinitionFactory());
         TypedFactoryManager typedFactoryManager = new TypedFactoryManager(api.getFactoryManager());
@@ -120,11 +118,11 @@ public class GraphBuilderTest {
         double subprocess1Width = 100;
         double subprocess1Height = 200;
         EmbeddedSubprocess subprocess1Definition = mock(EmbeddedSubprocess.class);
-        Node<? extends View<? extends BPMNViewDefinition>, ?> subprocess1 = mockNode(subprocess1Definition,
-                                                                                     subprocess1X,
-                                                                                     subprocess1Y,
-                                                                                     subprocess1Width,
-                                                                                     subprocess1Height);
+        Node<? extends View<? extends BPMNDefinition>, ?> subprocess1 = mockNode(subprocess1Definition,
+                                                                                 subprocess1X,
+                                                                                 subprocess1Y,
+                                                                                 subprocess1Width,
+                                                                                 subprocess1Height);
         when(subprocess1.getUUID()).thenReturn(SUBPROCESS1_ID);
         BpmnNode subprocess1Node = mockBpmnNode(subprocess1);
 
@@ -136,11 +134,11 @@ public class GraphBuilderTest {
         EmbeddedSubprocess subprocess2Definition = mock(EmbeddedSubprocess.class);
         //subprocess1 -> subprocess2
         //absolute coordinates in eclipse model
-        Node<? extends View<? extends BPMNViewDefinition>, ?> subprocess2 = mockNode(subprocess2Definition,
-                                                                                     subprocess1X + subprocess2X,
-                                                                                     subprocess1Y + subprocess2Y,
-                                                                                     subprocess2Width,
-                                                                                     subprocess2Height);
+        Node<? extends View<? extends BPMNDefinition>, ?> subprocess2 = mockNode(subprocess2Definition,
+                                                                                 subprocess1X + subprocess2X,
+                                                                                 subprocess1Y + subprocess2Y,
+                                                                                 subprocess2Width,
+                                                                                 subprocess2Height);
         when(subprocess2.getUUID()).thenReturn(SUBPROCESS2_ID);
         BpmnNode subprocess2Node = mockBpmnNode(subprocess2);
 
@@ -152,15 +150,15 @@ public class GraphBuilderTest {
         EmbeddedSubprocess subprocess3Definition = mock(EmbeddedSubprocess.class);
         //subprocess1 -> subprocess2 -> subprocess3
         //absolute coordinates in eclipse model
-        Node<? extends View<? extends BPMNViewDefinition>, ?> subprocess3 = mockNode(subprocess3Definition,
-                                                                                     subprocess1X + subprocess2X + subprocess3X,
-                                                                                     subprocess1Y + subprocess2Y + subprocess3Y,
-                                                                                     subprocess3Width, subprocess3Height);
+        Node<? extends View<? extends BPMNDefinition>, ?> subprocess3 = mockNode(subprocess3Definition,
+                                                                                 subprocess1X + subprocess2X + subprocess3X,
+                                                                                 subprocess1Y + subprocess2Y + subprocess3Y,
+                                                                                 subprocess3Width, subprocess3Height);
         when(subprocess3.getUUID()).thenReturn(SUBPROCESS3_ID);
         BpmnNode subprocess3Node = mockBpmnNode(subprocess3);
 
         //subprocess1 -> subprocess2 -> subprocess3
-        Node<? extends View<? extends BPMNViewDefinition>, ?> rootDiagram = mockNode(mock(BPMNDiagramImpl.class), 0, 0, 1000, 1000);
+        Node<? extends View<? extends BPMNDefinition>, ?> rootDiagram = mockNode(mock(BPMNDiagramImpl.class), 0, 0, 1000, 1000);
         when(rootDiagram.getUUID()).thenReturn(DIAGRAM_UUID);
         BpmnNode rootNode = mockBpmnNode(rootDiagram);
 
@@ -184,7 +182,7 @@ public class GraphBuilderTest {
         assertEquals(y, bounds.getUpperLeft().getY(), 0);
     }
 
-    public static BpmnNode mockBpmnNode(Node<? extends View<? extends BPMNViewDefinition>, ?> node) {
+    public static BpmnNode mockBpmnNode(Node<? extends View<? extends BPMNDefinition>, ?> node) {
         Bounds nodeBounds = node.getContent().getBounds();
         BasePropertyReader propertyReader = mock(BasePropertyReader.class);
         BPMNShape shape = mock(BPMNShape.class);
@@ -203,14 +201,14 @@ public class GraphBuilderTest {
         return BpmnNode.of(node, propertyReader);
     }
 
-    public static Node<? extends View<? extends BPMNViewDefinition>, ?> mockNode(BPMNViewDefinition definition, double x, double y, double width, double height) {
+    public static Node<? extends View<? extends BPMNDefinition>, ?> mockNode(BPMNDefinition definition, double x, double y, double width, double height) {
         return mockNode(definition, Bounds.create(x, y, x + width, y + height));
     }
 
     @SuppressWarnings("unchecked")
-    private static Node<? extends View<? extends BPMNViewDefinition>, ?> mockNode(BPMNViewDefinition definition, Bounds bounds) {
-        Node<View<BPMNViewDefinition>, ?> node = mock(Node.class);
-        View<BPMNViewDefinition> view = new ViewImpl<>(definition, bounds);
+    private static Node<? extends View<? extends BPMNDefinition>, ?> mockNode(BPMNDefinition definition, Bounds bounds) {
+        Node<View<BPMNDefinition>, ?> node = mock(Node.class);
+        View<BPMNDefinition> view = new ViewImpl<>(definition, bounds);
         when(node.getContent()).thenReturn(view);
         return node;
     }

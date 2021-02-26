@@ -20,14 +20,14 @@ import java.util.Optional;
 import java.util.function.BiConsumer;
 
 import org.kie.workbench.common.stunner.bpmn.client.shape.view.handler.BPMNShapeViewHandlers;
-import org.kie.workbench.common.stunner.bpmn.definition.BPMNViewDefinition;
+import org.kie.workbench.common.stunner.bpmn.definition.BPMNDefinition;
 import org.kie.workbench.common.stunner.core.client.shape.view.ShapeView;
 import org.kie.workbench.common.stunner.core.client.shape.view.handler.FontHandler;
 import org.kie.workbench.common.stunner.core.client.shape.view.handler.TitleHandler;
 import org.kie.workbench.common.stunner.core.client.shape.view.handler.ViewAttributesHandler;
 import org.kie.workbench.common.stunner.core.definition.shape.ShapeViewDef;
 
-public interface BPMNShapeDef<W extends BPMNViewDefinition, V extends ShapeView>
+public interface BPMNShapeDef<W extends BPMNDefinition, V extends ShapeView>
         extends ShapeViewDef<W, V> {
 
     @Override
@@ -36,7 +36,6 @@ public interface BPMNShapeDef<W extends BPMNViewDefinition, V extends ShapeView>
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     default Optional<BiConsumer<W, V>> fontHandler() {
         return Optional.of(newFontHandler()::handle);
     }
@@ -55,7 +54,7 @@ public interface BPMNShapeDef<W extends BPMNViewDefinition, V extends ShapeView>
     }
 
     default BPMNShapeViewHandlers.ViewAttributesHandlerBuilder<W, V> newViewAttributesHandlerBuilder() {
-        return new BPMNShapeViewHandlers.ViewAttributesHandlerBuilder<W, V>();
+        return new BPMNShapeViewHandlers.ViewAttributesHandlerBuilder<>();
     }
 
     default FontHandler<W, V> newFontHandler() {

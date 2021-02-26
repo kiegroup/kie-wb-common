@@ -48,7 +48,7 @@ public class StartNoneEventTest extends StartEventTest<StartNoneEvent> {
         assertDiagram(diagram, AMOUNT_OF_NODES_IN_DIAGRAM);
 
         StartNoneEvent filledTop = getStartNodeById(diagram, FILLED_TOP_LEVEL_EVENT_ID);
-        assertGeneralSet(filledTop.getGeneral(), EVENT_NAME, EVENT_DOCUMENTATION);
+        assertGeneralSet(filledTop, EVENT_NAME, EVENT_DOCUMENTATION);
         assertNotNull(filledTop.getExecutionSet());
         assertStartEventSlaDueDate(filledTop.getExecutionSet(), SLA_DUE_DATE);
     }
@@ -60,7 +60,7 @@ public class StartNoneEventTest extends StartEventTest<StartNoneEvent> {
         assertDiagram(diagram, AMOUNT_OF_NODES_IN_DIAGRAM);
 
         StartNoneEvent emptyTop = getStartNodeById(diagram, EMPTY_TOP_LEVEL_EVENT_ID);
-        assertGeneralSet(emptyTop.getGeneral(), EMPTY_VALUE, EMPTY_VALUE);
+        assertGeneralSet(emptyTop, EMPTY_VALUE, EMPTY_VALUE);
         assertNotNull(emptyTop.getExecutionSet());
         assertStartEventSlaDueDate(emptyTop.getExecutionSet(), EMPTY_VALUE);
     }
@@ -75,7 +75,7 @@ public class StartNoneEventTest extends StartEventTest<StartNoneEvent> {
         assertDiagram(diagram, AMOUNT_OF_NODES_IN_DIAGRAM);
 
         StartNoneEvent filledSubprocess = getStartNodeById(diagram, FILLED_SUBPROCESS_LEVEL_EVENT_ID);
-        assertGeneralSet(filledSubprocess.getGeneral(), EVENT_NAME, EVENT_DOCUMENTATION);
+        assertGeneralSet(filledSubprocess, EVENT_NAME, EVENT_DOCUMENTATION);
         assertNotNull(filledSubprocess.getExecutionSet());
         assertStartEventSlaDueDate(filledSubprocess.getExecutionSet(), SLA_DUE_DATE);
     }
@@ -87,7 +87,7 @@ public class StartNoneEventTest extends StartEventTest<StartNoneEvent> {
         assertDiagram(diagram, AMOUNT_OF_NODES_IN_DIAGRAM);
 
         StartNoneEvent emptySubprocess = getStartNodeById(diagram, EMPTY_SUBPROCESS_LEVEL_EVENT_ID);
-        assertGeneralSet(emptySubprocess.getGeneral(), EMPTY_VALUE, EMPTY_VALUE);
+        assertGeneralSet(emptySubprocess, EMPTY_VALUE, EMPTY_VALUE);
 
         assertNotNull(emptySubprocess.getExecutionSet());
         assertStartEventSlaDueDate(emptySubprocess.getExecutionSet(), EMPTY_VALUE);

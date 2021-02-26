@@ -33,7 +33,6 @@ import org.kie.workbench.common.stunner.bpmn.definition.InclusiveGateway;
 import org.kie.workbench.common.stunner.bpmn.definition.ParallelGateway;
 import org.kie.workbench.common.stunner.bpmn.definition.property.gateway.DefaultRoute;
 import org.kie.workbench.common.stunner.bpmn.definition.property.gateway.GatewayExecutionSet;
-import org.kie.workbench.common.stunner.bpmn.definition.property.general.BPMNGeneralSet;
 import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
@@ -71,11 +70,8 @@ public class GatewayConverter extends AbstractConverter implements NodeConverter
         InclusiveGateway definition = node.getContent().getDefinition();
         GatewayPropertyReader p = propertyReaderFactory.of(gateway);
 
-        definition.setGeneral(new BPMNGeneralSet(
-                p.getName(),
-                p.getDocumentation()
-        ));
-
+        definition.setName(p.getName());
+        definition.setDocumentation(p.getDocumentation());
         definition.setExecutionSet(new GatewayExecutionSet(
                 new DefaultRoute(p.getDefaultRoute())
         ));
@@ -95,11 +91,8 @@ public class GatewayConverter extends AbstractConverter implements NodeConverter
         ExclusiveGateway definition = node.getContent().getDefinition();
         GatewayPropertyReader p = propertyReaderFactory.of(gateway);
 
-        definition.setGeneral(new BPMNGeneralSet(
-                p.getName(),
-                p.getDocumentation()
-        ));
-
+        definition.setName(p.getName());
+        definition.setDocumentation(p.getDocumentation());
         definition.setExecutionSet(new GatewayExecutionSet(
                 new DefaultRoute(p.getDefaultRoute())
         ));
@@ -120,11 +113,8 @@ public class GatewayConverter extends AbstractConverter implements NodeConverter
         node.getContent().setBounds(p.getBounds());
         ParallelGateway definition = node.getContent().getDefinition();
 
-        definition.setGeneral(new BPMNGeneralSet(
-                p.getName(),
-                p.getDocumentation()
-        ));
-
+        definition.setName(p.getName());
+        definition.setDocumentation(p.getDocumentation());
         definition.setDimensionsSet(p.getCircleDimensionSet());
         definition.setFontSet(p.getFontSet());
         definition.setBackgroundSet(p.getBackgroundSet());
@@ -139,11 +129,8 @@ public class GatewayConverter extends AbstractConverter implements NodeConverter
         node.getContent().setBounds(p.getBounds());
         EventGateway definition = node.getContent().getDefinition();
 
-        definition.setGeneral(new BPMNGeneralSet(
-                p.getName(),
-                p.getDocumentation()
-        ));
-
+        definition.setName(p.getName());
+        definition.setDocumentation(p.getDocumentation());
         definition.setDimensionsSet(p.getCircleDimensionSet());
         definition.setFontSet(p.getFontSet());
         definition.setBackgroundSet(p.getBackgroundSet());

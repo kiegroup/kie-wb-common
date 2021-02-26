@@ -251,7 +251,7 @@ public class AssignmentsEditorWidget extends Composite implements HasValue<Strin
     }
 
     protected static String dataObjectToProcessVariableFormat(DataObject dataObject) {
-        return dataObject.getName().getValue().replace("\n", "") + ":" + dataObject.getType().getValue().getType();
+        return dataObject.getName().replace("\n", "") + ":" + dataObject.getType().getValue().getType();
     }
 
     protected String getSelectedElementUUID(ClientSession clientSession) {
@@ -395,9 +395,9 @@ public class AssignmentsEditorWidget extends Composite implements HasValue<Strin
         String taskName = "Task";
         if (bpmnModel instanceof BaseTask) {
             BaseTask task = (BaseTask) bpmnModel;
-            if (task.getGeneral() != null && task.getGeneral().getName() != null &&
-                    task.getGeneral().getName() != null && task.getGeneral().getName().length() > 0) {
-                taskName = task.getGeneral().getName();
+            if (task.getName() != null &&
+                    task.getName() != null && task.getName().length() > 0) {
+                taskName = task.getName();
             }
         }
         return taskName;

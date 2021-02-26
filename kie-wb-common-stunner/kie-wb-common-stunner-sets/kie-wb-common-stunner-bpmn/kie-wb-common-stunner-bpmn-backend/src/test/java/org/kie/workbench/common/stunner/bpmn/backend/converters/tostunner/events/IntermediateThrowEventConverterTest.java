@@ -38,18 +38,12 @@ import org.kie.workbench.common.stunner.bpmn.definition.IntermediateEscalationEv
 import org.kie.workbench.common.stunner.bpmn.definition.IntermediateLinkEventThrowing;
 import org.kie.workbench.common.stunner.bpmn.definition.IntermediateMessageEventThrowing;
 import org.kie.workbench.common.stunner.bpmn.definition.IntermediateSignalEventThrowing;
-import org.kie.workbench.common.stunner.bpmn.definition.property.background.BackgroundSet;
-import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.DataIOSet;
-import org.kie.workbench.common.stunner.bpmn.definition.property.dimensions.CircleDimensionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.compensation.CompensationEventExecutionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.escalation.EscalationEventExecutionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.link.LinkEventExecutionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.message.MessageEventExecutionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.signal.ScopedSignalEventExecutionSet;
-import org.kie.workbench.common.stunner.bpmn.definition.property.font.FontSet;
-import org.kie.workbench.common.stunner.bpmn.definition.property.general.BPMNGeneralSet;
 import org.kie.workbench.common.stunner.core.graph.Node;
-import org.kie.workbench.common.stunner.core.graph.content.Bounds;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
 import org.kie.workbench.common.stunner.core.marshaller.MarshallingRequest;
 import org.mockito.Mockito;
@@ -196,23 +190,24 @@ public class IntermediateThrowEventConverterTest {
 
     private void verifyCommonProperties(BaseThrowingIntermediateEvent definition) {
         verify(propertyReader).getBounds();
-        verify(view).setBounds(Mockito.<Bounds>any());
+        verify(view).setBounds(Mockito.any());
 
         verify(propertyReader).getName();
         verify(propertyReader).getDocumentation();
-        verify(definition).setGeneral(Mockito.<BPMNGeneralSet>any());
+        verify(definition).setName(Mockito.any());
+        verify(definition).setDocumentation(Mockito.any());
 
         verify(propertyReader).getBackgroundSet();
-        verify(definition).setBackgroundSet(Mockito.<BackgroundSet>any());
+        verify(definition).setBackgroundSet(Mockito.any());
 
         verify(propertyReader).getFontSet();
-        verify(definition).setFontSet(Mockito.<FontSet>any());
+        verify(definition).setFontSet(Mockito.any());
 
         verify(propertyReader).getCircleDimensionSet();
-        verify(definition).setDimensionsSet(Mockito.<CircleDimensionSet>any());
+        verify(definition).setDimensionsSet(Mockito.any());
 
         verify(propertyReader).getAssignmentsInfo();
-        verify(definition).setDataIOSet(Mockito.<DataIOSet>any());
+        verify(definition).setDataIOSet(Mockito.any());
     }
 
     private void verifyMessageEventConvert() {

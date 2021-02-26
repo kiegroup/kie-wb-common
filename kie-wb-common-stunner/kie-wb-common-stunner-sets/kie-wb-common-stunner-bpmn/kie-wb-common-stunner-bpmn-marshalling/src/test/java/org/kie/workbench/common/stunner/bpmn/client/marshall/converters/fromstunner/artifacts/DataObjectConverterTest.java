@@ -23,10 +23,8 @@ import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.fromstun
 import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.fromstunner.properties.PropertyWriter;
 import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.fromstunner.properties.PropertyWriterFactory;
 import org.kie.workbench.common.stunner.bpmn.definition.DataObject;
-import org.kie.workbench.common.stunner.bpmn.definition.TextAnnotation;
 import org.kie.workbench.common.stunner.bpmn.definition.property.artifacts.DataObjectType;
 import org.kie.workbench.common.stunner.bpmn.definition.property.artifacts.DataObjectTypeValue;
-import org.kie.workbench.common.stunner.bpmn.definition.property.general.Name;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
 import org.kie.workbench.common.stunner.core.graph.impl.NodeImpl;
@@ -57,15 +55,13 @@ public class DataObjectConverterTest {
     @Mock
     private View<DataObject> dataObjectView2;
 
-    private DataObject dataObject;
-
     @Mock
     private DataObjectPropertyWriter writer;
 
     @Before
     public void setUp() {
-        dataObject = new DataObject();
-        dataObject.setName(new Name(NAME));
+        DataObject dataObject = new DataObject();
+        dataObject.setName(NAME);
         dataObject.setType(new DataObjectType(new DataObjectTypeValue(TYPE)));
 
         node = new NodeImpl<>(UUID.uuid());
@@ -87,8 +83,7 @@ public class DataObjectConverterTest {
 
         Node<View<DataObject>, ?> node2 = new NodeImpl<>(UUID.uuid());
         node2.setContent(dataObjectView2);
-        TextAnnotation textAnnotation = new TextAnnotation();
         when(dataObjectView2.getDefinition()).thenReturn(null);
-        PropertyWriter propertyWriter2 = tested.toElement(node2);
+        tested.toElement(node2);
     }
 }

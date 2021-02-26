@@ -44,7 +44,7 @@ public class ParallelGatewayTest extends GatewayNodeTest<ParallelGateway> {
         assertDiagram(diagram, DIAGRAM_NODE_SIZE);
 
         ParallelGateway filledTopLevelGatewayDiverging = getGatewayNodeById(diagram, FILLED_TOP_LEVEL_GATEWAY_ID, getGatewayNodeType());
-        assertGeneralSet(filledTopLevelGatewayDiverging.getGeneral(), NAME, DOCUMENTATION);
+        assertGeneralSet(filledTopLevelGatewayDiverging, NAME, DOCUMENTATION);
     }
 
     @Test
@@ -53,7 +53,7 @@ public class ParallelGatewayTest extends GatewayNodeTest<ParallelGateway> {
         assertDiagram(diagram, DIAGRAM_NODE_SIZE);
 
         ParallelGateway emptyTopDiv = getGatewayNodeById(diagram, EMPTY_TOP_LEVEL_GATEWAY_ID, getGatewayNodeType());
-        assertGeneralSet(emptyTopDiv.getGeneral(), EMPTY, EMPTY);
+        assertGeneralSet(emptyTopDiv, EMPTY, EMPTY);
     }
 
     @Test
@@ -62,7 +62,7 @@ public class ParallelGatewayTest extends GatewayNodeTest<ParallelGateway> {
         assertDiagram(diagram, DIAGRAM_NODE_SIZE);
 
         ParallelGateway filledTopLevelGatewayDiverging = getGatewayNodeById(diagram, FILLED_SUBPROCESS_LEVEL_GATEWAY_ID, getGatewayNodeType());
-        assertGeneralSet(filledTopLevelGatewayDiverging.getGeneral(), NAME, DOCUMENTATION);
+        assertGeneralSet(filledTopLevelGatewayDiverging, NAME, DOCUMENTATION);
     }
 
     @Test
@@ -71,7 +71,7 @@ public class ParallelGatewayTest extends GatewayNodeTest<ParallelGateway> {
         assertDiagram(diagram, DIAGRAM_NODE_SIZE);
 
         ParallelGateway filledTopLevelGatewayDiverging = getGatewayNodeById(diagram, EMPTY_SUBPROCESS_LEVEL_GATEWAY_ID, getGatewayNodeType());
-        assertGeneralSet(filledTopLevelGatewayDiverging.getGeneral(), EMPTY, EMPTY);
+        assertGeneralSet(filledTopLevelGatewayDiverging, EMPTY, EMPTY);
     }
 
     @Override

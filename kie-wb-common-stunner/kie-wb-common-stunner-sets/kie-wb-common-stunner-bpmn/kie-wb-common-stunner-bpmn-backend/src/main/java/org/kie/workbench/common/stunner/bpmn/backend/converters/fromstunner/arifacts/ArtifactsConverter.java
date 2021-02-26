@@ -24,7 +24,6 @@ import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.prop
 import org.kie.workbench.common.stunner.bpmn.definition.BaseArtifacts;
 import org.kie.workbench.common.stunner.bpmn.definition.DataObject;
 import org.kie.workbench.common.stunner.bpmn.definition.TextAnnotation;
-import org.kie.workbench.common.stunner.bpmn.definition.property.general.BPMNGeneralSet;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
 import org.kie.workbench.common.stunner.core.util.StringUtils;
@@ -55,9 +54,8 @@ public class ArtifactsConverter {
         TextAnnotationPropertyWriter writer = propertyWriterFactory.of(element);
 
         TextAnnotation definition = node.getContent().getDefinition();
-        BPMNGeneralSet general = definition.getGeneral();
-        writer.setName(general.getName());
-        writer.setDocumentation(general.getDocumentation());
+        writer.setName(definition.getName());
+        writer.setDocumentation(definition.getDocumentation());
         writer.setAbsoluteBounds(node);
 
         return writer;
@@ -71,7 +69,7 @@ public class ArtifactsConverter {
         DataObjectPropertyWriter writer = propertyWriterFactory.of(element);
 
         DataObject definition = node.getContent().getDefinition();
-        writer.setName(StringUtils.replaceIllegalCharsAttribute(StringUtils.replaceIllegalCharsForDataObjects(definition.getName().getValue())));
+        writer.setName(StringUtils.replaceIllegalCharsAttribute(StringUtils.replaceIllegalCharsForDataObjects(definition.getName())));
         writer.setType(definition.getType().getValue().getType());
         writer.setAbsoluteBounds(node);
 

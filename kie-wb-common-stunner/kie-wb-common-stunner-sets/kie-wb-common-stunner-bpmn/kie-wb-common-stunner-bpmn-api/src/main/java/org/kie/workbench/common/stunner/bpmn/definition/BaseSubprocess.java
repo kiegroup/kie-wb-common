@@ -26,7 +26,6 @@ import org.kie.workbench.common.forms.adf.definitions.annotations.FormField;
 import org.kie.workbench.common.stunner.bpmn.definition.property.background.BackgroundSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dimensions.RectangleDimensionsSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.font.FontSet;
-import org.kie.workbench.common.stunner.bpmn.definition.property.general.BPMNGeneralSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.simulation.SimulationSet;
 import org.kie.workbench.common.stunner.core.definition.annotation.Property;
 import org.kie.workbench.common.stunner.core.definition.annotation.definition.Category;
@@ -43,7 +42,12 @@ public abstract class BaseSubprocess implements BPMNViewDefinition {
     @Property
     @FormField
     @Valid
-    protected BPMNGeneralSet general;
+    protected String name;
+
+    @Property
+    @FormField
+    @Valid
+    protected String documentation;
 
     @Property
     @Valid
@@ -65,12 +69,14 @@ public abstract class BaseSubprocess implements BPMNViewDefinition {
         initLabels();
     }
 
-    public BaseSubprocess(final @MapsTo("general") BPMNGeneralSet general,
+    public BaseSubprocess(final @MapsTo("name") String name,
+                          final @MapsTo("documentation") String documentation,
                           final @MapsTo("backgroundSet") BackgroundSet backgroundSet,
                           final @MapsTo("fontSet") FontSet fontSet,
                           final @MapsTo("dimensionsSet") RectangleDimensionsSet dimensionsSet,
                           final @MapsTo("simulationSet") SimulationSet simulationSet) {
-        this.general = general;
+        this.name = name;
+        this.documentation = documentation;
         this.backgroundSet = backgroundSet;
         this.fontSet = fontSet;
         this.dimensionsSet = dimensionsSet;
@@ -96,12 +102,20 @@ public abstract class BaseSubprocess implements BPMNViewDefinition {
         return category;
     }
 
-    public BPMNGeneralSet getGeneral() {
-        return general;
+    public String getName() {
+        return name;
     }
 
-    public void setGeneral(final BPMNGeneralSet general) {
-        this.general = general;
+    public void setName(final String name) {
+        this.name = name;
+    }
+
+    public String getDocumentation() {
+        return documentation;
+    }
+
+    public void setDocumentation(final String documentation) {
+        this.documentation = documentation;
     }
 
     public BackgroundSet getBackgroundSet() {
@@ -143,7 +157,8 @@ public abstract class BaseSubprocess implements BPMNViewDefinition {
     @Override
     public int hashCode() {
         return HashUtil.combineHashCodes(Objects.hashCode(getClass()),
-                                         Objects.hashCode(general),
+                                         Objects.hashCode(name),
+                                         Objects.hashCode(documentation),
                                          Objects.hashCode(backgroundSet),
                                          Objects.hashCode(fontSet),
                                          Objects.hashCode(simulationSet),
@@ -155,18 +170,13 @@ public abstract class BaseSubprocess implements BPMNViewDefinition {
     public boolean equals(Object o) {
         if (o instanceof BaseSubprocess) {
             BaseSubprocess other = (BaseSubprocess) o;
-            return Objects.equals(general,
-                                  other.general) &&
-                    Objects.equals(backgroundSet,
-                                   other.backgroundSet) &&
-                    Objects.equals(fontSet,
-                                   other.fontSet) &&
-                    Objects.equals(simulationSet,
-                                   other.simulationSet) &&
-                    Objects.equals(dimensionsSet,
-                                   other.dimensionsSet) &&
-                    Objects.equals(labels,
-                                   other.labels);
+            return Objects.equals(name, other.name) &&
+                    Objects.equals(documentation, other.documentation) &&
+                    Objects.equals(backgroundSet, other.backgroundSet) &&
+                    Objects.equals(fontSet, other.fontSet) &&
+                    Objects.equals(simulationSet, other.simulationSet) &&
+                    Objects.equals(dimensionsSet, other.dimensionsSet) &&
+                    Objects.equals(labels, other.labels);
         }
         return false;
     }

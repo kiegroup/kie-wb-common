@@ -50,7 +50,6 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.event.signal.Sc
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.signal.SignalRef;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.signal.SignalScope;
 import org.kie.workbench.common.stunner.bpmn.definition.property.font.FontSet;
-import org.kie.workbench.common.stunner.bpmn.definition.property.general.BPMNGeneralSet;
 import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.Bound;
@@ -80,7 +79,6 @@ public class IntermediateThrowEventConverterTest {
 
     private PropertyWriterFactory propertyWriterFactory;
 
-    private BPMNGeneralSet generalSet;
     private AssignmentsInfo assignmentsInfo;
     private DataIOSet dataIOSet;
 
@@ -102,8 +100,6 @@ public class IntermediateThrowEventConverterTest {
 
         propertyWriterFactory = mock(PropertyWriterFactory.class);
         when(propertyWriterFactory.of(Mockito.<ThrowEvent>any())).thenReturn(throwEventPropertyWriter);
-
-        generalSet = new BPMNGeneralSet(NAME, DOCUMENTATION);
 
         assignmentsInfo = new AssignmentsInfo(ASSIGNMENTS_INFO);
         dataIOSet = new DataIOSet(assignmentsInfo);
@@ -212,7 +208,8 @@ public class IntermediateThrowEventConverterTest {
                                                   signalScope);
 
         IntermediateSignalEventThrowing eventThrowing =
-                new IntermediateSignalEventThrowing(generalSet,
+                new IntermediateSignalEventThrowing(NAME,
+                                                    DOCUMENTATION,
                                                     mock(BackgroundSet.class),
                                                     mock(FontSet.class),
                                                     mock(CircleDimensionSet.class),
@@ -229,7 +226,8 @@ public class IntermediateThrowEventConverterTest {
                 new LinkEventExecutionSet(linkRef);
 
         IntermediateLinkEventThrowing eventThrowing =
-                new IntermediateLinkEventThrowing(generalSet,
+                new IntermediateLinkEventThrowing(NAME,
+                                                  DOCUMENTATION,
                                                   mock(BackgroundSet.class),
                                                   mock(FontSet.class),
                                                   mock(CircleDimensionSet.class),
@@ -245,7 +243,8 @@ public class IntermediateThrowEventConverterTest {
                 new MessageEventExecutionSet(messageRef);
 
         IntermediateMessageEventThrowing eventThrowing =
-                new IntermediateMessageEventThrowing(generalSet,
+                new IntermediateMessageEventThrowing(NAME,
+                                                     DOCUMENTATION,
                                                      mock(BackgroundSet.class),
                                                      mock(FontSet.class),
                                                      mock(CircleDimensionSet.class),
@@ -261,7 +260,8 @@ public class IntermediateThrowEventConverterTest {
                 new EscalationEventExecutionSet(escalationRef);
 
         IntermediateEscalationEventThrowing eventThrowing =
-                new IntermediateEscalationEventThrowing(generalSet,
+                new IntermediateEscalationEventThrowing(NAME,
+                                                        DOCUMENTATION,
                                                         mock(BackgroundSet.class),
                                                         mock(FontSet.class),
                                                         mock(CircleDimensionSet.class),
@@ -277,7 +277,8 @@ public class IntermediateThrowEventConverterTest {
                 new CompensationEventExecutionSet();
 
         IntermediateCompensationEventThrowing eventThrowing =
-                new IntermediateCompensationEventThrowing(generalSet,
+                new IntermediateCompensationEventThrowing(NAME,
+                                                          DOCUMENTATION,
                                                           mock(BackgroundSet.class),
                                                           mock(FontSet.class),
                                                           mock(CircleDimensionSet.class),

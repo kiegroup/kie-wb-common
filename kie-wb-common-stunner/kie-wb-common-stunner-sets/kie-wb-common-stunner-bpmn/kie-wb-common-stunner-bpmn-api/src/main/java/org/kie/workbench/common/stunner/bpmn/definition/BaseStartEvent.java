@@ -27,7 +27,6 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.background.Back
 import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.DataIOModel;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dimensions.CircleDimensionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.font.FontSet;
-import org.kie.workbench.common.stunner.bpmn.definition.property.general.BPMNGeneralSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.simulation.SimulationAttributeSet;
 import org.kie.workbench.common.stunner.core.definition.annotation.Property;
 import org.kie.workbench.common.stunner.core.definition.annotation.definition.Category;
@@ -43,12 +42,17 @@ public abstract class BaseStartEvent implements BPMNViewDefinition,
     public static final transient String category = BPMNCategories.START_EVENTS;
 
     @Labels
-    protected final Set<String> labels = new HashSet<String>();
+    protected final Set<String> labels = new HashSet<>();
 
     @Property
     @FormField
     @Valid
-    protected BPMNGeneralSet general;
+    protected String name;
+
+    @Property
+    @FormField
+    @Valid
+    protected String documentation;
 
     @Property
     @Valid
@@ -67,13 +71,15 @@ public abstract class BaseStartEvent implements BPMNViewDefinition,
         initLabels();
     }
 
-    public BaseStartEvent(final BPMNGeneralSet general,
+    public BaseStartEvent(final String name,
+                          final String documentation,
                           final BackgroundSet backgroundSet,
                           final FontSet fontSet,
                           final CircleDimensionSet dimensionsSet,
                           final SimulationAttributeSet simulationSet) {
         this();
-        this.general = general;
+        this.name = name;
+        this.documentation = documentation;
         this.backgroundSet = backgroundSet;
         this.fontSet = fontSet;
         this.dimensionsSet = dimensionsSet;
@@ -122,8 +128,20 @@ public abstract class BaseStartEvent implements BPMNViewDefinition,
         return labels;
     }
 
-    public BPMNGeneralSet getGeneral() {
-        return general;
+    public String getName() {
+        return name;
+    }
+
+    public void setName(final String name) {
+        this.name = name;
+    }
+
+    public String getDocumentation() {
+        return documentation;
+    }
+
+    public void setDocumentation(final String documentation) {
+        this.documentation = documentation;
     }
 
     public BackgroundSet getBackgroundSet() {
@@ -132,10 +150,6 @@ public abstract class BaseStartEvent implements BPMNViewDefinition,
 
     public FontSet getFontSet() {
         return fontSet;
-    }
-
-    public void setGeneral(final BPMNGeneralSet general) {
-        this.general = general;
     }
 
     public void setBackgroundSet(final BackgroundSet backgroundSet) {
@@ -165,7 +179,8 @@ public abstract class BaseStartEvent implements BPMNViewDefinition,
     @Override
     public int hashCode() {
         return HashUtil.combineHashCodes(Objects.hashCode(getClass()),
-                                         Objects.hashCode(general),
+                                         Objects.hashCode(name),
+                                         Objects.hashCode(documentation),
                                          Objects.hashCode(backgroundSet),
                                          Objects.hashCode(fontSet),
                                          Objects.hashCode(dimensionsSet),
@@ -177,7 +192,8 @@ public abstract class BaseStartEvent implements BPMNViewDefinition,
     public boolean equals(Object o) {
         if (o instanceof BaseStartEvent) {
             BaseStartEvent other = (BaseStartEvent) o;
-            return Objects.equals(general, other.general) &&
+            return Objects.equals(name, other.name) &&
+                    Objects.equals(documentation, other.documentation) &&
                     Objects.equals(backgroundSet, other.backgroundSet) &&
                     Objects.equals(fontSet, other.fontSet) &&
                     Objects.equals(dimensionsSet, other.dimensionsSet) &&

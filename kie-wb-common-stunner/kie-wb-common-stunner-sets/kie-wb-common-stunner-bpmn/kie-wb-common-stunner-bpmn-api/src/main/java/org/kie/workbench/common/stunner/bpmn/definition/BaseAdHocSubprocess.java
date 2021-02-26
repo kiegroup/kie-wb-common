@@ -18,7 +18,6 @@ package org.kie.workbench.common.stunner.bpmn.definition;
 import org.kie.workbench.common.stunner.bpmn.definition.property.background.BackgroundSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dimensions.RectangleDimensionsSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.font.FontSet;
-import org.kie.workbench.common.stunner.bpmn.definition.property.general.BPMNGeneralSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.simulation.SimulationSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.BaseAdHocSubprocessTaskExecutionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.variables.BaseProcessData;
@@ -27,12 +26,13 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.variables.HasPr
 public abstract class BaseAdHocSubprocess<P extends BaseProcessData, S extends BaseAdHocSubprocessTaskExecutionSet>
         extends BaseSubprocess implements HasProcessData<P> {
 
-    public BaseAdHocSubprocess(BPMNGeneralSet general,
+    public BaseAdHocSubprocess(String name,
+                               String documentation,
                                BackgroundSet backgroundSet,
                                FontSet fontSet,
                                RectangleDimensionsSet dimensionsSet,
                                SimulationSet simulationSet) {
-        super(general, backgroundSet, fontSet, dimensionsSet, simulationSet);
+        super(name, documentation, backgroundSet, fontSet, dimensionsSet, simulationSet);
     }
 
     public abstract S getExecutionSet();

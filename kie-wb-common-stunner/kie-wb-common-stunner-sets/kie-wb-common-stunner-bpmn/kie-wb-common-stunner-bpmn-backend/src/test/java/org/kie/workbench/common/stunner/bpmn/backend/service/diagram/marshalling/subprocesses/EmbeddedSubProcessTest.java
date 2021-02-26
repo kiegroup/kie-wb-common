@@ -91,7 +91,7 @@ public class EmbeddedSubProcessTest extends SubProcessTest<EmbeddedSubprocess> {
                                                                       EMPTY_INCOME_EDGES,
                                                                       EMPTY_OUTCOME_EDGES);
 
-        assertGeneralSet(topLevelSubProcess.getGeneral(), DEFAULT_NAME, DEFAULT_DOCUMENTATION);
+        assertGeneralSet(topLevelSubProcess, DEFAULT_NAME, DEFAULT_DOCUMENTATION);
         assertEmbeddedSubprocessExecutionSet(topLevelSubProcess.getExecutionSet(),
                                              IS_NOT_ASYNC,
                                              EMPTY_VALUE,
@@ -124,7 +124,7 @@ public class EmbeddedSubProcessTest extends SubProcessTest<EmbeddedSubprocess> {
                                                                           EMPTY_INCOME_EDGES,
                                                                           EMPTY_OUTCOME_EDGES);
 
-        assertGeneralSet(topLevelSubProcessJava.getGeneral(), SUB_PROCESS_NAME_JAVA, SUB_PROCESS_DOCUMENTATION_JAVA);
+        assertGeneralSet(topLevelSubProcessJava, SUB_PROCESS_NAME_JAVA, SUB_PROCESS_DOCUMENTATION_JAVA);
         assertEmbeddedSubprocessExecutionSet(topLevelSubProcessJava.getExecutionSet(),
                                              IS_ASYNC,
                                              SUBPROCESS_ON_ENTRY_ACTION_JAVA,
@@ -139,7 +139,7 @@ public class EmbeddedSubProcessTest extends SubProcessTest<EmbeddedSubprocess> {
                                                                                 EMPTY_INCOME_EDGES,
                                                                                 EMPTY_OUTCOME_EDGES);
 
-        assertGeneralSet(topLevelSubProcessJavascript.getGeneral(), SUB_PROCESS_NAME_JAVASCRIPT, SUB_PROCESS_DOCUMENTATION_JAVASCRIPT);
+        assertGeneralSet(topLevelSubProcessJavascript, SUB_PROCESS_NAME_JAVASCRIPT, SUB_PROCESS_DOCUMENTATION_JAVASCRIPT);
         assertEmbeddedSubprocessExecutionSet(topLevelSubProcessJavascript.getExecutionSet(),
                                              IS_ASYNC,
                                              SUBPROCESS_ON_ENTRY_ACTION_JAVASCRIPT,
@@ -154,7 +154,7 @@ public class EmbeddedSubProcessTest extends SubProcessTest<EmbeddedSubprocess> {
                                                                           EMPTY_INCOME_EDGES,
                                                                           EMPTY_OUTCOME_EDGES);
 
-        assertGeneralSet(topLevelSubProcessMVEL.getGeneral(), SUB_PROCESS_NAME_MVEL, SUB_PROCESS_DOCUMENTATION_MVEL);
+        assertGeneralSet(topLevelSubProcessMVEL, SUB_PROCESS_NAME_MVEL, SUB_PROCESS_DOCUMENTATION_MVEL);
         assertEmbeddedSubprocessExecutionSet(topLevelSubProcessMVEL.getExecutionSet(),
                                              IS_ASYNC,
                                              SUBPROCESS_ON_ENTRY_ACTION_MVEL,
@@ -178,7 +178,7 @@ public class EmbeddedSubProcessTest extends SubProcessTest<EmbeddedSubprocess> {
                                                                       ONE_INCOME_EDGE,
                                                                       FOUR_OUTCOME_EDGES);
 
-        assertGeneralSet(topLevelSubProcess.getGeneral(), SUB_PROCESS_NAME, DEFAULT_DOCUMENTATION);
+        assertGeneralSet(topLevelSubProcess, SUB_PROCESS_NAME, DEFAULT_DOCUMENTATION);
         assertEmbeddedSubprocessExecutionSet(topLevelSubProcess.getExecutionSet(),
                                              IS_NOT_ASYNC,
                                              EMPTY_VALUE,
@@ -200,7 +200,7 @@ public class EmbeddedSubProcessTest extends SubProcessTest<EmbeddedSubprocess> {
                                                                              EMPTY_INCOME_EDGES,
                                                                              EMPTY_OUTCOME_EDGES);
 
-        assertGeneralSet(subProcessLevelSubProcess.getGeneral(), DEFAULT_NAME, DEFAULT_DOCUMENTATION);
+        assertGeneralSet(subProcessLevelSubProcess, DEFAULT_NAME, DEFAULT_DOCUMENTATION);
         assertEmbeddedSubprocessExecutionSet(subProcessLevelSubProcess.getExecutionSet(),
                                              IS_NOT_ASYNC,
                                              EMPTY_VALUE,
@@ -233,7 +233,7 @@ public class EmbeddedSubProcessTest extends SubProcessTest<EmbeddedSubprocess> {
                                                                                  EMPTY_INCOME_EDGES,
                                                                                  EMPTY_OUTCOME_EDGES);
 
-        assertGeneralSet(subProcessLevelSubProcessJava.getGeneral(), SUB_PROCESS_NAME_JAVA, SUB_PROCESS_DOCUMENTATION_JAVA);
+        assertGeneralSet(subProcessLevelSubProcessJava, SUB_PROCESS_NAME_JAVA, SUB_PROCESS_DOCUMENTATION_JAVA);
         assertEmbeddedSubprocessExecutionSet(subProcessLevelSubProcessJava.getExecutionSet(),
                                              IS_ASYNC,
                                              SUBPROCESS_ON_ENTRY_ACTION_JAVA,
@@ -248,7 +248,7 @@ public class EmbeddedSubProcessTest extends SubProcessTest<EmbeddedSubprocess> {
                                                                                        EMPTY_INCOME_EDGES,
                                                                                        EMPTY_OUTCOME_EDGES);
 
-        assertGeneralSet(subProcessLevelSubProcessJavascript.getGeneral(), SUB_PROCESS_NAME_JAVASCRIPT, SUB_PROCESS_DOCUMENTATION_JAVASCRIPT);
+        assertGeneralSet(subProcessLevelSubProcessJavascript, SUB_PROCESS_NAME_JAVASCRIPT, SUB_PROCESS_DOCUMENTATION_JAVASCRIPT);
         assertEmbeddedSubprocessExecutionSet(subProcessLevelSubProcessJavascript.getExecutionSet(),
                                              IS_ASYNC,
                                              SUBPROCESS_ON_ENTRY_ACTION_JAVASCRIPT,
@@ -263,7 +263,7 @@ public class EmbeddedSubProcessTest extends SubProcessTest<EmbeddedSubprocess> {
                                                                                  EMPTY_INCOME_EDGES,
                                                                                  EMPTY_OUTCOME_EDGES);
 
-        assertGeneralSet(subProcessLevelSubProcessMVEL.getGeneral(), SUB_PROCESS_NAME_MVEL, SUB_PROCESS_DOCUMENTATION_MVEL);
+        assertGeneralSet(subProcessLevelSubProcessMVEL, SUB_PROCESS_NAME_MVEL, SUB_PROCESS_DOCUMENTATION_MVEL);
         assertEmbeddedSubprocessExecutionSet(subProcessLevelSubProcessMVEL.getExecutionSet(),
                                              IS_ASYNC,
                                              SUBPROCESS_ON_ENTRY_ACTION_MVEL,
@@ -287,7 +287,7 @@ public class EmbeddedSubProcessTest extends SubProcessTest<EmbeddedSubprocess> {
                                                                              ONE_INCOME_EDGE,
                                                                              FOUR_OUTCOME_EDGES);
 
-        assertGeneralSet(subProcessLevelSubProcess.getGeneral(), SUB_PROCESS_NAME, DEFAULT_DOCUMENTATION);
+        assertGeneralSet(subProcessLevelSubProcess, SUB_PROCESS_NAME, DEFAULT_DOCUMENTATION);
         assertEmbeddedSubprocessExecutionSet(subProcessLevelSubProcess.getExecutionSet(),
                                              IS_NOT_ASYNC,
                                              EMPTY_VALUE,

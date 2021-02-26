@@ -30,7 +30,7 @@ public class GenericServiceTaskTypeTest {
     public void equals() {
         GenericServiceTaskType a = new GenericServiceTaskType();
         GenericServiceTaskType b = new GenericServiceTaskType();
-        Assert.assertTrue(a.equals(b));
+        Assert.assertEquals(a, b);
     }
 
     @Test

@@ -26,7 +26,7 @@ import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.TypedFac
 import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.tostunner.BpmnNode;
 import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.tostunner.properties.DataObjectPropertyReader;
 import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.tostunner.properties.PropertyReaderFactory;
-import org.kie.workbench.common.stunner.bpmn.definition.BPMNViewDefinition;
+import org.kie.workbench.common.stunner.bpmn.definition.BPMNDefinition;
 import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
@@ -78,7 +78,7 @@ public class DataObjectConverterTest {
     @Test
     public void convert() {
         final Result<BpmnNode> node = tested.convert(element);
-        final Node<? extends View<? extends BPMNViewDefinition>, ?> value = node.value().value();
+        final Node<? extends View<? extends BPMNDefinition>, ?> value = node.value().value();
         assertEquals(content, value.getContent());
         assertEquals(def, value.getContent().getDefinition());
     }

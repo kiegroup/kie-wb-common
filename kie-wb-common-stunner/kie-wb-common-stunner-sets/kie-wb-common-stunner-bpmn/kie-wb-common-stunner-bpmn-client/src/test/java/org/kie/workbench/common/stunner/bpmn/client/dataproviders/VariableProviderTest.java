@@ -32,7 +32,6 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.cm.CaseFileVari
 import org.kie.workbench.common.stunner.bpmn.definition.property.cm.CaseIdPrefix;
 import org.kie.workbench.common.stunner.bpmn.definition.property.cm.CaseManagementSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.cm.CaseRoles;
-import org.kie.workbench.common.stunner.bpmn.definition.property.general.Name;
 import org.kie.workbench.common.stunner.bpmn.definition.property.variables.ProcessData;
 import org.kie.workbench.common.stunner.bpmn.definition.property.variables.ProcessVariables;
 import org.kie.workbench.common.stunner.core.diagram.Metadata;
@@ -83,7 +82,7 @@ public class VariableProviderTest
 
         DataObject dataObject = new DataObject();
         dataObject.getGeneral().setDocumentation("doc");
-        dataObject.setName(new Name("name"));
+        dataObject.setName("name");
         dataObject.setType(new DataObjectType(new DataObjectTypeValue("name")));
 
         dataObjectNode = new NodeImpl<>(UUID.uuid());
@@ -100,7 +99,7 @@ public class VariableProviderTest
 
         DataObject dataObject = new DataObject();
         dataObject.getGeneral().setDocumentation("doc");
-        dataObject.setName(new Name("name"));
+        dataObject.setName("name");
         dataObject.setType(new DataObjectType(new DataObjectTypeValue("name")));
 
         dataObjectNode = new NodeImpl<>(UUID.uuid());

@@ -21,7 +21,6 @@ import org.kie.workbench.common.stunner.bpmn.backend.service.diagram.marshalling
 import org.kie.workbench.common.stunner.bpmn.definition.BaseGateway;
 import org.kie.workbench.common.stunner.bpmn.definition.property.gateway.DefaultRoute;
 import org.kie.workbench.common.stunner.bpmn.definition.property.gateway.GatewayExecutionSet;
-import org.kie.workbench.common.stunner.bpmn.definition.property.general.BPMNGeneralSet;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.kie.workbench.common.stunner.core.diagram.Metadata;
 import org.kie.workbench.common.stunner.core.graph.Graph;
@@ -95,7 +94,7 @@ public abstract class GatewayNodeTest<T extends BaseGateway> extends BPMNDiagram
         assertNodesEqualsAfterMarshalling(initialDiagram, marshalledDiagram, nodeID, gatewayNodeType);
     }
 
-    void assertGeneralSet(BPMNGeneralSet generalSet, String nodeName, String documentation) {
+    void assertGeneralSet(BaseGateway generalSet, String nodeName, String documentation) {
         assertThat(generalSet).isNotNull();
         assertThat(generalSet.getName()).isNotNull();
         assertThat(generalSet.getDocumentation()).isNotNull();

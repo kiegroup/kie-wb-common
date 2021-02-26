@@ -51,7 +51,6 @@ import org.kie.workbench.common.stunner.bpmn.definition.UserTask;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.AssignmentsInfo;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.DataIOSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.BPMNGeneralSet;
-import org.kie.workbench.common.stunner.bpmn.definition.property.general.TaskGeneralSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.IsMultipleInstance;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.MultipleInstanceCollectionInput;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.MultipleInstanceCollectionOutput;
@@ -485,8 +484,7 @@ public class VariableUtilsTest {
 
     private BaseUserTask mockUserTask(String name, String assignmentsInfoValue, String inputCollection, String outputCollection) {
         UserTask result = mock(UserTask.class);
-        TaskGeneralSet generalSet = mockTaskGeneralSet(name);
-        when(result.getGeneral()).thenReturn(generalSet);
+        when(result.getName()).thenReturn(name);
         UserTaskExecutionSet executionSet = mock(UserTaskExecutionSet.class);
         when(result.getExecutionSet()).thenReturn(executionSet);
         AssignmentsInfo assignmentsInfo = mockAssignmentsInfo(assignmentsInfoValue);
@@ -509,8 +507,7 @@ public class VariableUtilsTest {
 
     private BusinessRuleTask mockBusinessRuleTask(String name, String assignmentsInfoValue) {
         BusinessRuleTask result = mock(BusinessRuleTask.class);
-        TaskGeneralSet generalSet = mockTaskGeneralSet(name);
-        when(result.getGeneral()).thenReturn(generalSet);
+        when(result.getName()).thenReturn(name);
         AssignmentsInfo assignmentsInfo = mockAssignmentsInfo(assignmentsInfoValue);
         DataIOSet dataIOSet = mockIOSet(assignmentsInfo);
         when(result.getDataIOSet()).thenReturn(dataIOSet);
@@ -519,8 +516,7 @@ public class VariableUtilsTest {
 
     private CustomTask mockServiceTask(String name, String assignmentsInfoValue) {
         CustomTask result = mock(CustomTask.class);
-        TaskGeneralSet generalSet = mockTaskGeneralSet(name);
-        when(result.getGeneral()).thenReturn(generalSet);
+        when(result.getName()).thenReturn(name);
         AssignmentsInfo assignmentsInfo = mockAssignmentsInfo(assignmentsInfoValue);
         DataIOSet dataIOSet = mockIOSet(assignmentsInfo);
         when(result.getDataIOSet()).thenReturn(dataIOSet);
@@ -561,8 +557,7 @@ public class VariableUtilsTest {
 
     private <T extends BaseEndEvent> T mockEndEvent(String name, Class<T> clazz) {
         T result = mock(clazz);
-        BPMNGeneralSet generalSet = mockGeneralSet(name);
-        when(result.getGeneral()).thenReturn(generalSet);
+        when(result.getName()).thenReturn(name);
         return result;
     }
 
@@ -600,8 +595,7 @@ public class VariableUtilsTest {
 
     private <T extends BaseCatchingIntermediateEvent> T mockCatchingEvent(String name, Class<T> clazz) {
         T result = mock(clazz);
-        BPMNGeneralSet generalSet = mockGeneralSet(name);
-        when(result.getGeneral()).thenReturn(generalSet);
+        when(result.getName()).thenReturn(name);
         return result;
     }
 
@@ -631,8 +625,7 @@ public class VariableUtilsTest {
 
     private <T extends BaseThrowingIntermediateEvent> T mockThrowingEvent(String name, Class<T> clazz) {
         T result = mock(clazz);
-        BPMNGeneralSet generalSet = mockGeneralSet(name);
-        when(result.getGeneral()).thenReturn(generalSet);
+        when(result.getName()).thenReturn(name);
         return result;
     }
 
@@ -670,8 +663,7 @@ public class VariableUtilsTest {
 
     private <T extends BaseStartEvent> T mockStartEvent(String name, Class<T> clazz) {
         T result = mock(clazz);
-        BPMNGeneralSet generalSet = mockGeneralSet(name);
-        when(result.getGeneral()).thenReturn(generalSet);
+        when(result.getName()).thenReturn(name);
         return result;
     }
 
@@ -681,8 +673,7 @@ public class VariableUtilsTest {
 
     private BaseReusableSubprocess mockReusableSubprocess(String name, String assignmentsInfoValue, String inputCollection, String outputCollection) {
         ReusableSubprocess result = mock(ReusableSubprocess.class);
-        BPMNGeneralSet generalSet = mockGeneralSet(name);
-        when(result.getGeneral()).thenReturn(generalSet);
+        when(result.getName()).thenReturn(name);
         AssignmentsInfo assignmentsInfo = mockAssignmentsInfo(assignmentsInfoValue);
         DataIOSet dataIOSet = mockIOSet(assignmentsInfo);
         when(result.getDataIOSet()).thenReturn(dataIOSet);
@@ -706,8 +697,7 @@ public class VariableUtilsTest {
 
     private MultipleInstanceSubprocess mockMultipleInstanceSubprocess(String name, String inputVariable, String outputVariable) {
         MultipleInstanceSubprocess result = mock(MultipleInstanceSubprocess.class);
-        BPMNGeneralSet generalSet = mockGeneralSet(name);
-        when(result.getGeneral()).thenReturn(generalSet);
+        when(result.getName()).thenReturn(name);
         MultipleInstanceSubprocessTaskExecutionSet executionSet = mock(MultipleInstanceSubprocessTaskExecutionSet.class);
         when(result.getExecutionSet()).thenReturn(executionSet);
         MultipleInstanceCollectionInput input = mock(MultipleInstanceCollectionInput.class);
@@ -720,12 +710,6 @@ public class VariableUtilsTest {
         when(executionSet.getMultipleInstanceCollectionOutput()).thenReturn(output);
         MultipleInstanceDataOutput dataOutput = mock(MultipleInstanceDataOutput.class);
         when(executionSet.getMultipleInstanceDataOutput()).thenReturn(dataOutput);
-        return result;
-    }
-
-    private TaskGeneralSet mockTaskGeneralSet(String name) {
-        TaskGeneralSet result = mock(TaskGeneralSet.class);
-        when(result.getName()).thenReturn(name);
         return result;
     }
 

@@ -22,7 +22,7 @@ public enum AssociationType {
     NOT_STARTED_NOTIFY("NotStartedNotify"),
     NOT_COMPLETED_NOTIFY("NotCompletedNotify");
 
-    private String name;
+    private final String name;
 
     AssociationType(String name) {
         this.name = name;

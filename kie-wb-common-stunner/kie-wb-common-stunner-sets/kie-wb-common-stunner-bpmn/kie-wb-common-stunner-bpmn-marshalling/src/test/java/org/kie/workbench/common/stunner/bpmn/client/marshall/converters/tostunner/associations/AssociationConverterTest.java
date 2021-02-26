@@ -31,7 +31,6 @@ import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.tostunne
 import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.tostunner.properties.PropertyReaderFactory;
 import org.kie.workbench.common.stunner.bpmn.definition.DirectionalAssociation;
 import org.kie.workbench.common.stunner.bpmn.definition.NonDirectionalAssociation;
-import org.kie.workbench.common.stunner.bpmn.definition.property.general.BPMNGeneralSet;
 import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.view.Connection;
@@ -74,7 +73,10 @@ public class AssociationConverterTest {
     private org.kie.workbench.common.stunner.bpmn.definition.Association definition;
 
     @Captor
-    private ArgumentCaptor<BPMNGeneralSet> generalSetCaptor;
+    private ArgumentCaptor<String> nameSetCaptor;
+
+    @Captor
+    private ArgumentCaptor<String> documentationSetCaptor;
 
     @Mock
     private Association association;
@@ -135,8 +137,9 @@ public class AssociationConverterTest {
     @Test
     public void testConvertEdge() {
         associationConverter.convertEdge(association, nodes);
-        verify(definition).setGeneral(generalSetCaptor.capture());
-        assertEquals(ASSOCIATION_DOCUMENTATION, generalSetCaptor.getValue().getDocumentation());
+        verify(definition).setName(nameSetCaptor.capture());
+        verify(definition).setDocumentation(documentationSetCaptor.capture());
+        assertEquals(ASSOCIATION_DOCUMENTATION, documentationSetCaptor.getValue());
         assertEdgeWithConnections();
     }
 

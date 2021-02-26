@@ -30,8 +30,6 @@ import org.kie.workbench.common.stunner.bpmn.definition.ExclusiveGateway;
 import org.kie.workbench.common.stunner.bpmn.definition.InclusiveGateway;
 import org.kie.workbench.common.stunner.bpmn.definition.ScriptTask;
 import org.kie.workbench.common.stunner.bpmn.definition.UserTask;
-import org.kie.workbench.common.stunner.bpmn.definition.property.general.BPMNGeneralSet;
-import org.kie.workbench.common.stunner.bpmn.definition.property.general.TaskGeneralSet;
 import org.kie.workbench.common.stunner.core.api.DefinitionManager;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.SelectionControl;
 import org.kie.workbench.common.stunner.core.definition.adapter.AdapterManager;
@@ -88,8 +86,8 @@ public class DefaultRouteFormProviderTest
 
         outEdges = new ArrayList<>();
 
-        UserTask userTask1 = new UserTask(new TaskGeneralSet("UserTask1",
-                                                             null),
+        UserTask userTask1 = new UserTask("UserTask1",
+                                          null,
                                           null,
                                           null,
                                           null,
@@ -100,8 +98,8 @@ public class DefaultRouteFormProviderTest
         outEdges.add(mockEdge("Edge1",
                               userTask1));
 
-        UserTask userTask2 = new UserTask(new TaskGeneralSet("UserTask2",
-                                                             null),
+        UserTask userTask2 = new UserTask("UserTask2",
+                                          null,
                                           null,
                                           null,
                                           null,
@@ -112,8 +110,8 @@ public class DefaultRouteFormProviderTest
         outEdges.add(mockEdge("Edge2",
                               userTask2));
 
-        ScriptTask scriptTask3 = new ScriptTask(new TaskGeneralSet("ScriptTask3",
-                                                                   null),
+        ScriptTask scriptTask3 = new ScriptTask("ScriptTask3",
+                                                null,
                                                 null,
                                                 null,
                                                 null,
@@ -124,7 +122,8 @@ public class DefaultRouteFormProviderTest
         outEdges.add(mockEdge("Edge3",
                               scriptTask3));
 
-        ExclusiveGateway gateway4 = new ExclusiveGateway(new BPMNGeneralSet("Gateway4"),
+        ExclusiveGateway gateway4 = new ExclusiveGateway("Gateway4",
+                                                         null,
                                                          null,
                                                          null,
                                                          null,
@@ -133,7 +132,8 @@ public class DefaultRouteFormProviderTest
         outEdges.add(mockEdge("Edge4",
                               gateway4));
 
-        InclusiveGateway gateway5 = new InclusiveGateway(new BPMNGeneralSet(""),
+        InclusiveGateway gateway5 = new InclusiveGateway("",
+                                                         null,
                                                          null,
                                                          null,
                                                          null,

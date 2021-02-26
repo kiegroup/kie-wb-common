@@ -56,7 +56,6 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.event.message.M
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.signal.ScopedSignalEventExecutionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.signal.SignalRef;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.signal.SignalScope;
-import org.kie.workbench.common.stunner.bpmn.definition.property.general.BPMNGeneralSet;
 import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
@@ -103,10 +102,8 @@ public class EndEventConverter extends AbstractConverter implements NodeConverte
         EndMessageEvent definition = node.getContent().getDefinition();
         EventPropertyReader p = propertyReaderFactory.of(event);
 
-        definition.setGeneral(new BPMNGeneralSet(
-                p.getName(),
-                p.getDocumentation()
-        ));
+        definition.setName(p.getName());
+        definition.setDocumentation(p.getDocumentation());
 
         definition.setDataIOSet(new DataIOSet(
                 p.getAssignmentsInfo()
@@ -133,10 +130,8 @@ public class EndEventConverter extends AbstractConverter implements NodeConverte
         EndSignalEvent definition = node.getContent().getDefinition();
         EventPropertyReader p = propertyReaderFactory.of(event);
 
-        definition.setGeneral(new BPMNGeneralSet(
-                p.getName(),
-                p.getDocumentation()
-        ));
+        definition.setName(p.getName());
+        definition.setDocumentation(p.getDocumentation());
 
         definition.setDataIOSet(new DataIOSet(
                 p.getAssignmentsInfo()
@@ -163,10 +158,8 @@ public class EndEventConverter extends AbstractConverter implements NodeConverte
         EndTerminateEvent definition = node.getContent().getDefinition();
         EventPropertyReader p = propertyReaderFactory.of(event);
 
-        definition.setGeneral(new BPMNGeneralSet(
-                p.getName(),
-                p.getDocumentation()
-        ));
+        definition.setName(p.getName());
+        definition.setDocumentation(p.getDocumentation());
 
         node.getContent().setBounds(p.getBounds());
 
@@ -183,10 +176,8 @@ public class EndEventConverter extends AbstractConverter implements NodeConverte
         EndNoneEvent definition = node.getContent().getDefinition();
         EventPropertyReader p = propertyReaderFactory.of(event);
 
-        definition.setGeneral(new BPMNGeneralSet(
-                p.getName(),
-                p.getDocumentation()
-        ));
+        definition.setName(p.getName());
+        definition.setDocumentation(p.getDocumentation());
 
         node.getContent().setBounds(p.getBounds());
 
@@ -204,10 +195,8 @@ public class EndEventConverter extends AbstractConverter implements NodeConverte
         EndErrorEvent definition = node.getContent().getDefinition();
         EventPropertyReader p = propertyReaderFactory.of(event);
 
-        definition.setGeneral(new BPMNGeneralSet(
-                p.getName(),
-                p.getDocumentation()
-        ));
+        definition.setName(p.getName());
+        definition.setDocumentation(p.getDocumentation());
 
         definition.setDataIOSet(new DataIOSet(
                 p.getAssignmentsInfo()
@@ -235,10 +224,8 @@ public class EndEventConverter extends AbstractConverter implements NodeConverte
         EndEscalationEvent definition = node.getContent().getDefinition();
         EventPropertyReader p = propertyReaderFactory.of(event);
 
-        definition.setGeneral(new BPMNGeneralSet(
-                p.getName(),
-                p.getDocumentation()
-        ));
+        definition.setName(p.getName());
+        definition.setDocumentation(p.getDocumentation());
 
         definition.setDataIOSet(new DataIOSet(
                 p.getAssignmentsInfo()
@@ -266,10 +253,8 @@ public class EndEventConverter extends AbstractConverter implements NodeConverte
         EndCompensationEvent definition = node.getContent().getDefinition();
         EventPropertyReader p = propertyReaderFactory.of(event);
 
-        definition.setGeneral(new BPMNGeneralSet(
-                p.getName(),
-                p.getDocumentation()
-        ));
+        definition.setName(p.getName());
+        definition.setDocumentation(p.getDocumentation());
 
         definition.setExecutionSet(new CompensationEventExecutionSet(
                 new ActivityRef(EventDefinitionReader.activityRefOf(eventDefinition))

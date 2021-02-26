@@ -55,7 +55,6 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.event.message.M
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.signal.ScopedSignalEventExecutionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.signal.SignalRef;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.signal.SignalScope;
-import org.kie.workbench.common.stunner.bpmn.definition.property.general.BPMNGeneralSet;
 import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
@@ -106,11 +105,8 @@ public class IntermediateThrowEventConverter extends AbstractConverter implement
         IntermediateLinkEventThrowing definition = node.getContent().getDefinition();
         EventPropertyReader p = propertyReaderFactory.of(event);
 
-        definition.setGeneral(new BPMNGeneralSet(
-                p.getName(),
-                p.getDocumentation()
-        ));
-
+        definition.setName(p.getName());
+        definition.setDocumentation(p.getDocumentation());
         definition.setDataIOSet(new DataIOSet(
                 p.getAssignmentsInfo()
         ));
@@ -135,11 +131,8 @@ public class IntermediateThrowEventConverter extends AbstractConverter implement
         IntermediateMessageEventThrowing definition = node.getContent().getDefinition();
         EventPropertyReader p = propertyReaderFactory.of(event);
 
-        definition.setGeneral(new BPMNGeneralSet(
-                p.getName(),
-                p.getDocumentation()
-        ));
-
+        definition.setName(p.getName());
+        definition.setDocumentation(p.getDocumentation());
         definition.setDataIOSet(new DataIOSet(
                 p.getAssignmentsInfo()
         ));
@@ -166,11 +159,8 @@ public class IntermediateThrowEventConverter extends AbstractConverter implement
         IntermediateSignalEventThrowing definition = node.getContent().getDefinition();
         EventPropertyReader p = propertyReaderFactory.of(event);
 
-        definition.setGeneral(new BPMNGeneralSet(
-                p.getName(),
-                p.getDocumentation()
-        ));
-
+        definition.setName(p.getName());
+        definition.setDocumentation(p.getDocumentation());
         definition.setDataIOSet(new DataIOSet(
                 p.getAssignmentsInfo()
         ));
@@ -198,11 +188,8 @@ public class IntermediateThrowEventConverter extends AbstractConverter implement
         IntermediateEscalationEventThrowing definition = node.getContent().getDefinition();
         EventPropertyReader p = propertyReaderFactory.of(event);
 
-        definition.setGeneral(new BPMNGeneralSet(
-                p.getName(),
-                p.getDocumentation()
-        ));
-
+        definition.setName(p.getName());
+        definition.setDocumentation(p.getDocumentation());
         definition.setDataIOSet(new DataIOSet(
                 p.getAssignmentsInfo()
         ));
@@ -229,11 +216,8 @@ public class IntermediateThrowEventConverter extends AbstractConverter implement
         IntermediateCompensationEventThrowing definition = node.getContent().getDefinition();
         EventPropertyReader p = propertyReaderFactory.of(event);
 
-        definition.setGeneral(new BPMNGeneralSet(
-                p.getName(),
-                p.getDocumentation()
-        ));
-
+        definition.setName(p.getName());
+        definition.setDocumentation(p.getDocumentation());
         definition.setDataIOSet(new DataIOSet(
                 p.getAssignmentsInfo()
         ));

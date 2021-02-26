@@ -30,7 +30,6 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.DataIOMo
 import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.DataIOSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dimensions.RectangleDimensionsSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.font.FontSet;
-import org.kie.workbench.common.stunner.bpmn.definition.property.general.BPMNGeneralSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.simulation.SimulationSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.ReusableSubprocessTaskExecutionSet;
 import org.kie.workbench.common.stunner.core.definition.annotation.Definition;
@@ -70,7 +69,8 @@ public class ReusableSubprocess
     protected DataIOSet dataIOSet;
 
     public ReusableSubprocess() {
-        this(new BPMNGeneralSet("Sub-process"),
+        this("Sub-process",
+             "",
              new ReusableSubprocessTaskExecutionSet(),
              new DataIOSet(),
              new BackgroundSet(),
@@ -79,14 +79,16 @@ public class ReusableSubprocess
              new SimulationSet());
     }
 
-    public ReusableSubprocess(final @MapsTo("general") BPMNGeneralSet general,
+    public ReusableSubprocess(final @MapsTo("name") String name,
+                              final @MapsTo("documentation") String documentation,
                               final @MapsTo("executionSet") ReusableSubprocessTaskExecutionSet executionSet,
                               final @MapsTo("dataIOSet") DataIOSet dataIOSet,
                               final @MapsTo("backgroundSet") BackgroundSet backgroundSet,
                               final @MapsTo("fontSet") FontSet fontSet,
                               final @MapsTo("dimensionsSet") RectangleDimensionsSet dimensionsSet,
                               final @MapsTo("simulationSet") SimulationSet simulationSet) {
-        super(general,
+        super(name,
+              documentation,
               backgroundSet,
               fontSet,
               dimensionsSet,

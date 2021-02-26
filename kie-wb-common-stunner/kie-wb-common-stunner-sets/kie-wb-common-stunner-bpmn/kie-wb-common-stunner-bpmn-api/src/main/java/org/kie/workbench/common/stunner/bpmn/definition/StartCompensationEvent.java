@@ -33,7 +33,6 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.dimensions.Radi
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.BaseStartEventExecutionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.IsInterrupting;
 import org.kie.workbench.common.stunner.bpmn.definition.property.font.FontSet;
-import org.kie.workbench.common.stunner.bpmn.definition.property.general.BPMNGeneralSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.SLADueDate;
 import org.kie.workbench.common.stunner.bpmn.definition.property.simulation.SimulationAttributeSet;
 import org.kie.workbench.common.stunner.core.definition.annotation.Definition;
@@ -61,7 +60,8 @@ public class StartCompensationEvent extends BaseStartEvent {
     protected BaseStartEventExecutionSet executionSet;
 
     public StartCompensationEvent() {
-        this(new BPMNGeneralSet(""),
+        this("",
+             "",
              new BackgroundSet(),
              new FontSet(),
              new CircleDimensionSet(new Radius()),
@@ -70,13 +70,15 @@ public class StartCompensationEvent extends BaseStartEvent {
                                             new SLADueDate()));
     }
 
-    public StartCompensationEvent(final @MapsTo("general") BPMNGeneralSet general,
+    public StartCompensationEvent(final @MapsTo("name") String name,
+                                  final @MapsTo("documentation") String documentation,
                                   final @MapsTo("backgroundSet") BackgroundSet backgroundSet,
                                   final @MapsTo("fontSet") FontSet fontSet,
                                   final @MapsTo("dimensionsSet") CircleDimensionSet dimensionsSet,
                                   final @MapsTo("simulationSet") SimulationAttributeSet simulationSet,
                                   final @MapsTo("executionSet") BaseStartEventExecutionSet executionSet) {
-        super(general,
+        super(name,
+              documentation,
               backgroundSet,
               fontSet,
               dimensionsSet,

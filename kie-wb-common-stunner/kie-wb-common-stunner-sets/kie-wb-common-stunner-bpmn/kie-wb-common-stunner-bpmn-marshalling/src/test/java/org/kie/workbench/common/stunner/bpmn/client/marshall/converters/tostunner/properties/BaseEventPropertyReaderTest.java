@@ -28,10 +28,8 @@ import org.eclipse.bpmn2.ConditionalEventDefinition;
 import org.eclipse.bpmn2.Event;
 import org.eclipse.bpmn2.EventDefinition;
 import org.eclipse.bpmn2.ExtensionAttributeValue;
-import org.eclipse.bpmn2.FormalExpression;
 import org.eclipse.bpmn2.LinkEventDefinition;
 import org.eclipse.bpmn2.SignalEventDefinition;
-import org.eclipse.bpmn2.TimerEventDefinition;
 import org.eclipse.bpmn2.di.BPMNDiagram;
 import org.eclipse.dd.dc.Bounds;
 import org.eclipse.emf.common.util.EList;
@@ -41,7 +39,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.tostunner.DefinitionResolver;
 import org.kie.workbench.common.stunner.bpmn.definition.property.common.ConditionExpression;
-import org.kie.workbench.common.stunner.bpmn.definition.property.event.timer.TimerSettingsValue;
 import org.kie.workbench.common.stunner.bpmn.definition.property.simulation.SimulationAttributeSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.ScriptTypeValue;
 import org.mockito.Mock;
@@ -51,7 +48,6 @@ import static org.junit.Assert.assertEquals;
 import static org.kie.workbench.common.stunner.bpmn.client.marshall.converters.TestUtils.assertBounds;
 import static org.kie.workbench.common.stunner.bpmn.client.marshall.converters.TestUtils.mockBounds;
 import static org.kie.workbench.common.stunner.bpmn.client.marshall.converters.TestUtils.mockExtensionValues;
-import static org.kie.workbench.common.stunner.bpmn.client.marshall.converters.TestUtils.mockFormalExpression;
 import static org.kie.workbench.common.stunner.bpmn.client.marshall.converters.TestUtils.mockNormalDistributionType;
 import static org.kie.workbench.common.stunner.bpmn.client.marshall.converters.TestUtils.mockPoissonDistributionType;
 import static org.kie.workbench.common.stunner.bpmn.client.marshall.converters.TestUtils.mockUniformDistributionType;
@@ -119,11 +115,6 @@ public abstract class BaseEventPropertyReaderTest {
         assertEquals(SIGNAL_NAME, propertyReader.getSignalRef());
     }
 
-    // TODO: Kogito - @Test
-    public void testGetSignalRefWithNoSignal() {
-        assertEquals("", propertyReader.getSignalRef());
-    }
-
     @Test
     public void testComputeBounds() {
         Bounds bounds = mockBounds(X, Y);
@@ -162,22 +153,6 @@ public abstract class BaseEventPropertyReaderTest {
         assertEquals("", propertyReader.getLinkRef());
     }
 
-    // TODO: Kogito - @Test
-    public void testGetTimerSettings() {
-        TimerEventDefinition eventDefinition = mock(TimerEventDefinition.class);
-        FormalExpression timeCycle = mockFormalExpression(TIME_CYCLE_LANGUAGE, TIME_CYCLE);
-        FormalExpression timeDate = mockFormalExpression(TIME_DATE);
-        FormalExpression timeDuration = mockFormalExpression(TIME_DURATION);
-        when(eventDefinition.getTimeCycle()).thenReturn(timeCycle);
-        when(eventDefinition.getTimeDate()).thenReturn(timeDate);
-        when(eventDefinition.getTimeDuration()).thenReturn(timeDuration);
-        TimerSettingsValue value = propertyReader.getTimerSettings(eventDefinition);
-        assertEquals(TIME_CYCLE_LANGUAGE, value.getTimeCycleLanguage());
-        assertEquals(TIME_CYCLE, value.getTimeCycle());
-        assertEquals(TIME_DATE, value.getTimeDate());
-        assertEquals(TIME_DURATION, value.getTimeDuration());
-    }
-
     @Test
     public void testGetSimulationSetNormalDistribution() {
         ParameterValue paramValue = mockNormalDistributionType(MEAN, STANDARD_DEVIATION);
@@ -210,20 +185,6 @@ public abstract class BaseEventPropertyReaderTest {
         when(parameterList.get(0)).thenReturn(distributionType);
         when(definitionResolver.resolveSimulationParameters(getCurrentEventMock().getId())).thenReturn(Optional.ofNullable(parameters));
         assertEquals(expectedResult, propertyReader.getSimulationSet());
-    }
-
-    // TODO: Kogito - @Test
-    public void testGetConditionExpression() {
-        for (Scripts.LANGUAGE language : Scripts.LANGUAGE.values()) {
-            testGetConditionExpression(new ConditionExpression(new ScriptTypeValue(language.language(), SCRIPT)), language.format(), SCRIPT);
-        }
-    }
-
-    private void testGetConditionExpression(ConditionExpression expectedValue, String languageFormat, String script) {
-        ConditionalEventDefinition eventDefinition = mock(ConditionalEventDefinition.class);
-        FormalExpression expression = mockFormalExpression(languageFormat, script);
-        when(eventDefinition.getCondition()).thenReturn(expression);
-        assertEquals(expectedValue, EventPropertyReader.getConditionExpression(eventDefinition));
     }
 
     @Test

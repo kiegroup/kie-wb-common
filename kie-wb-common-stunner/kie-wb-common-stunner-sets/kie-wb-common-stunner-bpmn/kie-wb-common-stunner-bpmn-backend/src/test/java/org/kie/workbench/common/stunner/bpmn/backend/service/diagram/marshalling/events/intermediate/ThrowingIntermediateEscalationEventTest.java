@@ -58,7 +58,7 @@ public class ThrowingIntermediateEscalationEventTest extends ThrowingIntermediat
         IntermediateEscalationEventThrowing filledTopEvent = getThrowingIntermediateNodeById(diagram,
                                                                                              FILLED_TOP_LEVEL_EVENT_ID,
                                                                                              HAS_NO_INCOME_EDGE, ZERO_OUTGOING_EDGES);
-        assertGeneralSet(filledTopEvent.getGeneral(), EVENT_NAME, EVENT_DOCUMENTATION);
+        assertGeneralSet(filledTopEvent, EVENT_NAME, EVENT_DOCUMENTATION);
         assertEscalationEventExecutionSet(filledTopEvent.getExecutionSet(), EVENT_REF);
         assertDataIOSet(filledTopEvent.getDataIOSet(), EVENT_DATA_INPUT);
     }
@@ -72,7 +72,7 @@ public class ThrowingIntermediateEscalationEventTest extends ThrowingIntermediat
         IntermediateEscalationEventThrowing emptyTopEvent = getThrowingIntermediateNodeById(diagram,
                                                                                             EMPTY_TOP_LEVEL_EVENT_ID,
                                                                                             HAS_NO_INCOME_EDGE, ZERO_OUTGOING_EDGES);
-        assertGeneralSet(emptyTopEvent.getGeneral(), EMPTY_VALUE, EMPTY_VALUE);
+        assertGeneralSet(emptyTopEvent, EMPTY_VALUE, EMPTY_VALUE);
         assertEscalationEventExecutionSet(emptyTopEvent.getExecutionSet(), EMPTY_VALUE);
         assertDataIOSet(emptyTopEvent.getDataIOSet(), EMPTY_VALUE);
     }
@@ -91,7 +91,7 @@ public class ThrowingIntermediateEscalationEventTest extends ThrowingIntermediat
         IntermediateEscalationEventThrowing filledSubprocessEvent = getThrowingIntermediateNodeById(diagram,
                                                                                                     FILLED_SUBPROCESS_LEVEL_EVENT_ID,
                                                                                                     HAS_NO_INCOME_EDGE, ZERO_OUTGOING_EDGES);
-        assertGeneralSet(filledSubprocessEvent.getGeneral(), EVENT_NAME, EVENT_DOCUMENTATION);
+        assertGeneralSet(filledSubprocessEvent, EVENT_NAME, EVENT_DOCUMENTATION);
         assertEscalationEventExecutionSet(filledSubprocessEvent.getExecutionSet(), EVENT_REF);
         assertDataIOSet(filledSubprocessEvent.getDataIOSet(), EVENT_DATA_INPUT);
     }
@@ -105,7 +105,7 @@ public class ThrowingIntermediateEscalationEventTest extends ThrowingIntermediat
         IntermediateEscalationEventThrowing emptySubprocessEvent = getThrowingIntermediateNodeById(diagram,
                                                                                                    EMPTY_SUBPROCESS_LEVEL_EVENT_ID,
                                                                                                    HAS_NO_INCOME_EDGE, ZERO_OUTGOING_EDGES);
-        assertGeneralSet(emptySubprocessEvent.getGeneral(), EMPTY_VALUE, EMPTY_VALUE);
+        assertGeneralSet(emptySubprocessEvent, EMPTY_VALUE, EMPTY_VALUE);
         assertEscalationEventExecutionSet(emptySubprocessEvent.getExecutionSet(), EMPTY_VALUE);
         assertDataIOSet(emptySubprocessEvent.getDataIOSet(), EMPTY_VALUE);
     }
@@ -124,7 +124,7 @@ public class ThrowingIntermediateEscalationEventTest extends ThrowingIntermediat
         IntermediateEscalationEventThrowing filledSubprocessEvent = getThrowingIntermediateNodeById(diagram,
                                                                                                     FILLED_WITH_EDGES_TOP_LEVEL_EVENT_ID,
                                                                                                     HAS_INCOME_EDGE, TWO_OUTGOING_EDGES);
-        assertGeneralSet(filledSubprocessEvent.getGeneral(), EVENT_NAME, EVENT_DOCUMENTATION);
+        assertGeneralSet(filledSubprocessEvent, EVENT_NAME, EVENT_DOCUMENTATION);
         assertEscalationEventExecutionSet(filledSubprocessEvent.getExecutionSet(), EVENT_REF);
         assertDataIOSet(filledSubprocessEvent.getDataIOSet(), EVENT_DATA_INPUT);
     }
@@ -138,7 +138,7 @@ public class ThrowingIntermediateEscalationEventTest extends ThrowingIntermediat
         IntermediateEscalationEventThrowing emptyEvent = getThrowingIntermediateNodeById(diagram,
                                                                                          EMPTY_WITH_EDGES_TOP_LEVEL_EVENT_ID,
                                                                                          HAS_INCOME_EDGE, TWO_OUTGOING_EDGES);
-        assertGeneralSet(emptyEvent.getGeneral(), EMPTY_VALUE, EMPTY_VALUE);
+        assertGeneralSet(emptyEvent, EMPTY_VALUE, EMPTY_VALUE);
         assertEscalationEventExecutionSet(emptyEvent.getExecutionSet(), EMPTY_VALUE);
         assertDataIOSet(emptyEvent.getDataIOSet(), EMPTY_VALUE);
     }
@@ -152,7 +152,7 @@ public class ThrowingIntermediateEscalationEventTest extends ThrowingIntermediat
         IntermediateEscalationEventThrowing emptySubprocessEvent = getThrowingIntermediateNodeById(diagram,
                                                                                                    EMPTY_WITH_EDGES_SUBPROCESS_LEVEL_EVENT_ID,
                                                                                                    HAS_INCOME_EDGE, TWO_OUTGOING_EDGES);
-        assertGeneralSet(emptySubprocessEvent.getGeneral(), EMPTY_VALUE, EMPTY_VALUE);
+        assertGeneralSet(emptySubprocessEvent, EMPTY_VALUE, EMPTY_VALUE);
         assertEscalationEventExecutionSet(emptySubprocessEvent.getExecutionSet(), EMPTY_VALUE);
         assertDataIOSet(emptySubprocessEvent.getDataIOSet(), EMPTY_VALUE);
     }
@@ -171,7 +171,7 @@ public class ThrowingIntermediateEscalationEventTest extends ThrowingIntermediat
         IntermediateEscalationEventThrowing filledSubprocessEvent = getThrowingIntermediateNodeById(diagram,
                                                                                                     FILLED_WITH_EDGES_SUBPROCESS_LEVEL_EVENT_ID,
                                                                                                     HAS_INCOME_EDGE, TWO_OUTGOING_EDGES);
-        assertGeneralSet(filledSubprocessEvent.getGeneral(), EVENT_NAME, EVENT_DOCUMENTATION);
+        assertGeneralSet(filledSubprocessEvent, EVENT_NAME, EVENT_DOCUMENTATION);
         assertEscalationEventExecutionSet(filledSubprocessEvent.getExecutionSet(), EVENT_REF);
         assertDataIOSet(filledSubprocessEvent.getDataIOSet(), EVENT_DATA_INPUT);
     }

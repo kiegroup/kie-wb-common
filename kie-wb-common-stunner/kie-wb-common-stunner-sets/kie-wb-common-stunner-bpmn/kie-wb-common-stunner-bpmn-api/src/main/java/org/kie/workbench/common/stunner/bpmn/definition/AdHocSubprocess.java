@@ -30,7 +30,6 @@ import org.kie.workbench.common.forms.adf.definitions.settings.FieldPolicy;
 import org.kie.workbench.common.stunner.bpmn.definition.property.background.BackgroundSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dimensions.RectangleDimensionsSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.font.FontSet;
-import org.kie.workbench.common.stunner.bpmn.definition.property.general.BPMNGeneralSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.simulation.SimulationSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.AdHocSubprocessTaskExecutionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.variables.ProcessData;
@@ -73,7 +72,8 @@ public class AdHocSubprocess
     }
 
     public AdHocSubprocess(String label) {
-        this(new BPMNGeneralSet(label),
+        this(label,
+             "",
              new BackgroundSet(),
              new FontSet(),
              new RectangleDimensionsSet(),
@@ -82,14 +82,16 @@ public class AdHocSubprocess
              new ProcessData());
     }
 
-    public AdHocSubprocess(final @MapsTo("general") BPMNGeneralSet general,
+    public AdHocSubprocess(final @MapsTo("name") String name,
+                           final @MapsTo("documentation") String documentation,
                            final @MapsTo("backgroundSet") BackgroundSet backgroundSet,
                            final @MapsTo("fontSet") FontSet fontSet,
                            final @MapsTo("dimensionsSet") RectangleDimensionsSet dimensionsSet,
                            final @MapsTo("simulationSet") SimulationSet simulationSet,
                            final @MapsTo("executionSet") AdHocSubprocessTaskExecutionSet executionSet,
                            final @MapsTo("processData") ProcessData processData) {
-        super(general,
+        super(name,
+              documentation,
               backgroundSet,
               fontSet,
               dimensionsSet,

@@ -21,7 +21,6 @@ import org.kie.workbench.common.stunner.bpmn.backend.service.diagram.marshalling
 import org.kie.workbench.common.stunner.bpmn.definition.BaseEndEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.AssignmentsInfo;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.DataIOSet;
-import org.kie.workbench.common.stunner.bpmn.definition.property.general.BPMNGeneralSet;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.kie.workbench.common.stunner.core.diagram.Metadata;
 import org.kie.workbench.common.stunner.core.graph.Graph;
@@ -147,7 +146,7 @@ public abstract class EndEventTest<T extends BaseEndEvent> extends BPMNDiagramMa
         assertNodesEqualsAfterMarshalling(initialDiagram, marshalledDiagram, nodeID, hasIncomeEdge);
     }
 
-    void assertGeneralSet(BPMNGeneralSet generalSet, String nodeName, String documentation) {
+    void assertGeneralSet(BaseEndEvent generalSet, String nodeName, String documentation) {
         assertNotNull(generalSet);
         assertNotNull(generalSet.getName());
         assertNotNull(generalSet.getDocumentation());

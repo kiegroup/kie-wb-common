@@ -46,7 +46,7 @@ public class ImportsTypeTest {
     public void testToString() {
         ImportsType tested = new ImportsType();
         String expected = "ImportsType{" +
-                "name='" + ImportsType.name + "\'" +
+                "name='" + ImportsType.name + "'" +
                 "}";
         assertEquals(expected, tested.toString());
     }

@@ -45,8 +45,8 @@ public class ReassignmentTypeListValueTest {
         List<ReassignmentValue> result = new ArrayList<>();
         result.add(new ReassignmentValue("AAA",
                                          "1h",
-                                         Arrays.asList(new String[]{"foo", "bar", "baz"}),
-                                         Arrays.asList(new String[]{"foo", "bar", "baz"})));
+                                         Arrays.asList("foo", "bar", "baz"),
+                                         Arrays.asList("foo", "bar", "baz")));
         return result;
     }
 }

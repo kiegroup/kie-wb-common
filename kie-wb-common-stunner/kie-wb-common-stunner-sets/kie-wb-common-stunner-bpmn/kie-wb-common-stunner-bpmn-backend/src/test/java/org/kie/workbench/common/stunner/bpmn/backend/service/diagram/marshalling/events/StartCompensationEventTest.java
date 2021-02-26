@@ -50,7 +50,7 @@ public class StartCompensationEventTest extends StartEventTest<StartCompensation
         assertDiagram(diagram, AMOUNT_OF_NODES_IN_DIAGRAM);
 
         StartCompensationEvent filledTopLevelEvent = getStartNodeById(diagram, FILLED_TOP_LEVEL_EVENT_ID);
-        assertGeneralSet(filledTopLevelEvent.getGeneral(), EVENT_NAME, EVENT_DOCUMENTATION);
+        assertGeneralSet(filledTopLevelEvent, EVENT_NAME, EVENT_DOCUMENTATION);
         assertNotNull(filledTopLevelEvent.getExecutionSet());
         assertStartEventSlaDueDate(filledTopLevelEvent.getExecutionSet(), SLA_DUE_DATE);
     }
@@ -62,7 +62,7 @@ public class StartCompensationEventTest extends StartEventTest<StartCompensation
         assertDiagram(diagram, AMOUNT_OF_NODES_IN_DIAGRAM);
 
         StartCompensationEvent emptyTopLevelEvent = getStartNodeById(diagram, EMPTY_TOP_LEVEL_EVENT_ID);
-        assertGeneralSet(emptyTopLevelEvent.getGeneral(), EMPTY_VALUE, EMPTY_VALUE);
+        assertGeneralSet(emptyTopLevelEvent, EMPTY_VALUE, EMPTY_VALUE);
         assertNotNull(emptyTopLevelEvent.getExecutionSet());
         assertStartEventSlaDueDate(emptyTopLevelEvent.getExecutionSet(), EMPTY_VALUE);
     }
@@ -77,7 +77,7 @@ public class StartCompensationEventTest extends StartEventTest<StartCompensation
         assertDiagram(diagram, AMOUNT_OF_NODES_IN_DIAGRAM);
 
         StartCompensationEvent filledSubprocessLevelEvent = getStartNodeById(diagram, FILLED_SUBPROCESS_LEVEL_EVENT_ID);
-        assertGeneralSet(filledSubprocessLevelEvent.getGeneral(), EVENT_NAME, EVENT_DOCUMENTATION);
+        assertGeneralSet(filledSubprocessLevelEvent, EVENT_NAME, EVENT_DOCUMENTATION);
         assertNotNull(filledSubprocessLevelEvent.getExecutionSet());
         assertStartEventSlaDueDate(filledSubprocessLevelEvent.getExecutionSet(), SLA_DUE_DATE);
     }
@@ -89,7 +89,7 @@ public class StartCompensationEventTest extends StartEventTest<StartCompensation
         assertDiagram(diagram, AMOUNT_OF_NODES_IN_DIAGRAM);
 
         StartCompensationEvent emptySubprocessLevelEvent = getStartNodeById(diagram, EMPTY_SUBPROCESS_LEVEL_EVENT_ID);
-        assertGeneralSet(emptySubprocessLevelEvent.getGeneral(), EMPTY_VALUE, EMPTY_VALUE);
+        assertGeneralSet(emptySubprocessLevelEvent, EMPTY_VALUE, EMPTY_VALUE);
 
         assertNotNull(emptySubprocessLevelEvent.getExecutionSet());
         assertStartEventSlaDueDate(emptySubprocessLevelEvent.getExecutionSet(), EMPTY_VALUE);

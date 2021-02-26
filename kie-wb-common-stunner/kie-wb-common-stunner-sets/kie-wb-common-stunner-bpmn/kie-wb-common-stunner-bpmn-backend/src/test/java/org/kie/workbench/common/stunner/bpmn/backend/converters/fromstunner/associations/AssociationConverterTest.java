@@ -25,7 +25,6 @@ import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.Elem
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.properties.AssociationPropertyWriter;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.properties.BasePropertyWriter;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.properties.PropertyWriterFactory;
-import org.kie.workbench.common.stunner.bpmn.definition.property.general.BPMNGeneralSet;
 import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.view.ViewConnector;
@@ -101,7 +100,8 @@ public class AssociationConverterTest {
     public void testToFlowElementSuccess() {
         org.kie.workbench.common.stunner.bpmn.definition.Association association =
                 new org.kie.workbench.common.stunner.bpmn.definition.DirectionalAssociation();
-        association.setGeneral(new BPMNGeneralSet("nameValue", "documentationValue"));
+        association.setName("nameValue");
+        association.setDocumentation("documentationValue");
         when(connector.getDefinition()).thenReturn(association);
 
         Result<BasePropertyWriter> result = converter.toFlowElement(edge, process);

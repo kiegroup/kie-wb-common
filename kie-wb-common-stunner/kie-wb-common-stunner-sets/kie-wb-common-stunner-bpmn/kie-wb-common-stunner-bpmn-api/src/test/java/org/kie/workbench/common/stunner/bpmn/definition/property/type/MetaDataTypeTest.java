@@ -49,7 +49,7 @@ public class MetaDataTypeTest {
     public void testToString() {
         MetaDataType tested = new MetaDataType();
         String expected = "MetadataType{" +
-                "name='" + MetaDataType.NAME + "\'" +
+                "name='" + MetaDataType.NAME + "'" +
                 "}";
         assertEquals(expected, tested.toString());
     }

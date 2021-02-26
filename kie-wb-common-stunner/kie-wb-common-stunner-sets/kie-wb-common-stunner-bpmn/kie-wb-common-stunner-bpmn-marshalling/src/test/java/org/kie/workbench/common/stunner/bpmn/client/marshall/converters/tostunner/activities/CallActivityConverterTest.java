@@ -30,7 +30,6 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.Assignme
 import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.DataIOSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dimensions.RectangleDimensionsSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.font.FontSet;
-import org.kie.workbench.common.stunner.bpmn.definition.property.general.BPMNGeneralSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.simulation.SimulationSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.ReusableSubprocessTaskExecutionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.ScriptTypeListValue;
@@ -93,7 +92,8 @@ public class CallActivityConverterTest {
 
     @Before
     public void setUp() {
-        final ReusableSubprocess definition = new ReusableSubprocess(new BPMNGeneralSet(),
+        final ReusableSubprocess definition = new ReusableSubprocess("",
+                                                                     "",
                                                                      new ReusableSubprocessTaskExecutionSet(),
                                                                      new DataIOSet(),
                                                                      new BackgroundSet(),
@@ -177,8 +177,8 @@ public class CallActivityConverterTest {
 
     private void assertCommonValues(Node<View<ReusableSubprocess>, Edge> result) {
         assertEquals(UUID, result.getUUID());
-        assertEquals(NAME, result.getContent().getDefinition().getGeneral().getName());
-        assertEquals(DOCUMENTATION, result.getContent().getDefinition().getGeneral().getDocumentation());
+        assertEquals(NAME, result.getContent().getDefinition().getName());
+        assertEquals(DOCUMENTATION, result.getContent().getDefinition().getDocumentation());
         assertEquals(ASSIGNMENTS_INFO, result.getContent().getDefinition().getDataIOSet().getAssignmentsinfo());
         assertEquals(BOUNDS, result.getContent().getBounds());
         assertEquals(SIMULATION_SET, result.getContent().getDefinition().getSimulationSet());

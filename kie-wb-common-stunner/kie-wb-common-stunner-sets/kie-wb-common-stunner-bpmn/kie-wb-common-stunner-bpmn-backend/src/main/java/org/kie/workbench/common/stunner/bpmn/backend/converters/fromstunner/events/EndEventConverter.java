@@ -32,7 +32,6 @@ import org.kie.workbench.common.stunner.bpmn.definition.EndTerminateEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.error.ErrorEventExecutionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.escalation.EscalationEventExecutionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.message.MessageEventExecutionSet;
-import org.kie.workbench.common.stunner.bpmn.definition.property.general.BPMNGeneralSet;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
 
@@ -65,9 +64,8 @@ public class EndEventConverter {
         EndErrorEvent definition = n.getContent().getDefinition();
         ThrowEventPropertyWriter p = propertyWriterFactory.of(event);
 
-        BPMNGeneralSet general = definition.getGeneral();
-        p.setName(general.getName());
-        p.setDocumentation(general.getDocumentation());
+        p.setName(definition.getName());
+        p.setDocumentation(definition.getDocumentation());
 
         p.setAssignmentsInfo(
                 definition.getDataIOSet().getAssignmentsinfo());
@@ -86,9 +84,8 @@ public class EndEventConverter {
         EndTerminateEvent definition = n.getContent().getDefinition();
         ThrowEventPropertyWriter p = propertyWriterFactory.of(event);
 
-        BPMNGeneralSet general = definition.getGeneral();
-        p.setName(general.getName());
-        p.setDocumentation(general.getDocumentation());
+        p.setName(definition.getName());
+        p.setDocumentation(definition.getDocumentation());
 
         p.addTerminate();
 
@@ -103,9 +100,8 @@ public class EndEventConverter {
         EndSignalEvent definition = n.getContent().getDefinition();
         ThrowEventPropertyWriter p = propertyWriterFactory.of(event);
 
-        BPMNGeneralSet general = definition.getGeneral();
-        p.setName(general.getName());
-        p.setDocumentation(general.getDocumentation());
+        p.setName(definition.getName());
+        p.setDocumentation(definition.getDocumentation());
 
         p.setAssignmentsInfo(
                 definition.getDataIOSet().getAssignmentsinfo());
@@ -124,9 +120,8 @@ public class EndEventConverter {
         EndMessageEvent definition = n.getContent().getDefinition();
         ThrowEventPropertyWriter p = propertyWriterFactory.of(event);
 
-        BPMNGeneralSet general = definition.getGeneral();
-        p.setName(general.getName());
-        p.setDocumentation(general.getDocumentation());
+        p.setName(definition.getName());
+        p.setDocumentation(definition.getDocumentation());
 
         p.setAssignmentsInfo(
                 definition.getDataIOSet().getAssignmentsinfo());
@@ -147,9 +142,8 @@ public class EndEventConverter {
         BaseEndEvent definition = n.getContent().getDefinition();
         ThrowEventPropertyWriter p = propertyWriterFactory.of(event);
 
-        BPMNGeneralSet general = definition.getGeneral();
-        p.setName(general.getName());
-        p.setDocumentation(general.getDocumentation());
+        p.setName(definition.getName());
+        p.setDocumentation(definition.getDocumentation());
 
         p.setAbsoluteBounds(n);
         return p;
@@ -162,9 +156,8 @@ public class EndEventConverter {
         EndEscalationEvent definition = n.getContent().getDefinition();
         ThrowEventPropertyWriter p = propertyWriterFactory.of(event);
 
-        BPMNGeneralSet general = definition.getGeneral();
-        p.setName(general.getName());
-        p.setDocumentation(general.getDocumentation());
+        p.setName(definition.getName());
+        p.setDocumentation(definition.getDocumentation());
 
         p.setAssignmentsInfo(
                 definition.getDataIOSet().getAssignmentsinfo());
@@ -183,9 +176,8 @@ public class EndEventConverter {
         EndCompensationEvent definition = n.getContent().getDefinition();
         ThrowEventPropertyWriter p = propertyWriterFactory.of(event);
 
-        BPMNGeneralSet general = definition.getGeneral();
-        p.setName(general.getName());
-        p.setDocumentation(general.getDocumentation());
+        p.setName(definition.getName());
+        p.setDocumentation(definition.getDocumentation());
 
         p.addCompensation();
 

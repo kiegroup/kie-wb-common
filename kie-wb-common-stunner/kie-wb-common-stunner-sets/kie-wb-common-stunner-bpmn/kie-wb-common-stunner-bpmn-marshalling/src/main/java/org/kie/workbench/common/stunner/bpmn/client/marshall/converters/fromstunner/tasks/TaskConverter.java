@@ -32,7 +32,6 @@ import org.kie.workbench.common.stunner.bpmn.definition.BusinessRuleTask;
 import org.kie.workbench.common.stunner.bpmn.definition.GenericServiceTask;
 import org.kie.workbench.common.stunner.bpmn.definition.NoneTask;
 import org.kie.workbench.common.stunner.bpmn.definition.ScriptTask;
-import org.kie.workbench.common.stunner.bpmn.definition.property.general.TaskGeneralSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.service.GenericServiceTaskExecutionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.BaseUserTaskExecutionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.BusinessRuleTaskExecutionSet;
@@ -84,12 +83,11 @@ public class TaskConverter {
         GenericServiceTask definition = n.getContent().getDefinition();
         GenericServiceTaskPropertyWriter p = propertyWriterFactory.of(task);
 
-        TaskGeneralSet general = definition.getGeneral();
         GenericServiceTaskExecutionSet executionSet =
                 definition.getExecutionSet();
 
-        p.setName(general.getName());
-        p.setDocumentation(general.getDocumentation());
+        p.setName(definition.getName());
+        p.setDocumentation(definition.getDocumentation());
         p.setAbsoluteBounds(n);
         p.setSimulationSet(definition.getSimulationSet());
         p.setValue(executionSet.getGenericServiceTaskInfo().getValue());
@@ -119,9 +117,8 @@ public class TaskConverter {
 
         p.setServiceTaskName(definition.getName());
 
-        TaskGeneralSet general = definition.getGeneral();
-        p.setName(general.getName());
-        p.setDocumentation(general.getDocumentation());
+        p.setName(definition.getName());
+        p.setDocumentation(definition.getDocumentation());
 
         p.setAssignmentsInfo(
                 definition.getDataIOSet().getAssignmentsinfo());
@@ -148,9 +145,8 @@ public class TaskConverter {
         BaseUserTask definition = n.getContent().getDefinition();
         UserTaskPropertyWriter p = propertyWriterFactory.of(task);
 
-        TaskGeneralSet general = definition.getGeneral();
-        p.setName(general.getName());
-        p.setDocumentation(general.getDocumentation());
+        p.setName(definition.getName());
+        p.setDocumentation(definition.getDocumentation());
 
         p.setSimulationSet(definition.getSimulationSet());
 
@@ -193,9 +189,8 @@ public class TaskConverter {
         BusinessRuleTask definition = n.getContent().getDefinition();
         BusinessRuleTaskPropertyWriter p = propertyWriterFactory.of(task);
 
-        TaskGeneralSet general = definition.getGeneral();
-        p.setName(general.getName());
-        p.setDocumentation(general.getDocumentation());
+        p.setName(definition.getName());
+        p.setDocumentation(definition.getDocumentation());
 
         BusinessRuleTaskExecutionSet executionSet =
                 definition.getExecutionSet();
@@ -231,9 +226,8 @@ public class TaskConverter {
         ScriptTask definition = n.getContent().getDefinition();
         ScriptTaskPropertyWriter p = propertyWriterFactory.of(task);
 
-        TaskGeneralSet general = definition.getGeneral();
-        p.setName(general.getName());
-        p.setDocumentation(general.getDocumentation());
+        p.setName(definition.getName());
+        p.setDocumentation(definition.getDocumentation());
 
         ScriptTaskExecutionSet executionSet = definition.getExecutionSet();
 
@@ -253,9 +247,8 @@ public class TaskConverter {
         NoneTask definition = n.getContent().getDefinition();
         ActivityPropertyWriter p = propertyWriterFactory.of(task);
 
-        TaskGeneralSet general = definition.getGeneral();
-        p.setName(general.getName());
-        p.setDocumentation(general.getDocumentation());
+        p.setName(definition.getName());
+        p.setDocumentation(definition.getDocumentation());
 
         p.setAbsoluteBounds(n);
 

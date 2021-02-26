@@ -111,7 +111,6 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.event.message.M
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.signal.SignalRef;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.timer.CancellingTimerEventExecutionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.timer.TimerSettings;
-import org.kie.workbench.common.stunner.bpmn.definition.property.general.BPMNGeneralSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.notification.NotificationValue;
 import org.kie.workbench.common.stunner.bpmn.definition.property.notification.NotificationsInfo;
 import org.kie.workbench.common.stunner.bpmn.definition.property.reassignment.ReassignmentValue;
@@ -253,7 +252,6 @@ public class BPMNDirectDiagramMarshallerTest {
 
     private static final String NEW_LINE = System.lineSeparator();
 
-    private StunnerTestingGraphAPI stunnerAPI;
     private XMLEncoderDiagramMetadataMarshaller xmlEncoder;
     private WorkItemDefinitionRegistry widRegistry;
     private WorkItemDefinitionLookupService widService;
@@ -267,8 +265,8 @@ public class BPMNDirectDiagramMarshallerTest {
         widRegistry = new WorkItemDefinitionMockRegistry();
         widService = mock(WorkItemDefinitionLookupService.class);
         when(widService.execute(any(Metadata.class))).thenReturn(widRegistry.items());
-        stunnerAPI = StunnerTestingGraphBackendAPI.build(BPMNDefinitionSet.class,
-                                                         new BPMNTestDefinitionFactory(widRegistry));
+        StunnerTestingGraphAPI stunnerAPI = StunnerTestingGraphBackendAPI.build(BPMNDefinitionSet.class,
+                                                                                new BPMNTestDefinitionFactory(widRegistry));
         xmlEncoder = new XMLEncoderDiagramMetadataMarshaller();
         // Setup tested instance.
         tested = new BPMNDirectDiagramMarshaller(xmlEncoder,
@@ -645,7 +643,7 @@ public class BPMNDirectDiagramMarshallerTest {
         UserTask userTask = (UserTask) node.getContent().getDefinition();
         assertNotNull(userTask);
         assertEquals(TaskTypes.USER, userTask.getTaskType().getValue());
-        assertEquals("TheUserTask", userTask.getGeneral().getName());
+        assertEquals("TheUserTask", userTask.getName());
         UserTaskExecutionSet executionSet = userTask.getExecutionSet();
         assertTrue(executionSet.getIsMultipleInstance().getValue());
         assertEquals("theInputCollection", executionSet.getMultipleInstanceCollectionInput().getValue());
@@ -683,11 +681,10 @@ public class BPMNDirectDiagramMarshallerTest {
                      diagram.getMetadata().getTitle());
         Node<? extends Definition, ?> startNoneEventNode = diagram.getGraph().getNode("processStartEvent");
         StartNoneEvent startNoneEvent = (StartNoneEvent) startNoneEventNode.getContent().getDefinition();
-        assertNotNull(startNoneEvent.getGeneral());
         assertEquals("MyStartNoneEvent",
-                     startNoneEvent.getGeneral().getName());
+                     startNoneEvent.getName());
         assertEquals("MyStartNoneEventDocumentation",
-                     startNoneEvent.getGeneral().getDocumentation());
+                     startNoneEvent.getDocumentation());
         assertEquals("12/25/1983", startNoneEvent.getExecutionSet().getSlaDueDate().getValue());
     }
 
@@ -732,11 +729,11 @@ public class BPMNDirectDiagramMarshallerTest {
                      diagram.getMetadata().getTitle());
         Node<? extends Definition, ?> startEventNode = diagram.getGraph().getNode("3BD5BBC8-F1C7-45DE-8BDF-A06D8464A61B");
         StartErrorEvent startErrorEvent = (StartErrorEvent) startEventNode.getContent().getDefinition();
-        assertNotNull(startErrorEvent.getGeneral());
+        assertNotNull(startErrorEvent);
         assertEquals("MyStartErrorEvent",
-                     startErrorEvent.getGeneral().getName());
+                     startErrorEvent.getName());
         assertEquals("MyStartErrorEventDocumentation",
-                     startErrorEvent.getGeneral().getDocumentation());
+                     startErrorEvent.getDocumentation());
         assertNotNull(startErrorEvent.getExecutionSet());
         assertNotNull(startErrorEvent.getExecutionSet().getErrorRef());
         assertEquals("MyError",
@@ -785,11 +782,11 @@ public class BPMNDirectDiagramMarshallerTest {
         assertNotNull(startEventNode);
         StartConditionalEvent startConditionalEvent = (StartConditionalEvent) startEventNode.getContent().getDefinition();
 
-        assertNotNull(startConditionalEvent.getGeneral());
+        assertNotNull(startConditionalEvent);
         assertEquals("StartConditionalEventName",
-                     startConditionalEvent.getGeneral().getName());
+                     startConditionalEvent.getName());
         assertEquals("StartConditionalEventDocumentation",
-                     startConditionalEvent.getGeneral().getDocumentation());
+                     startConditionalEvent.getDocumentation());
         assertNotNull(startConditionalEvent.getExecutionSet());
         assertEquals("drools",
                      startConditionalEvent.getExecutionSet().getConditionExpression().getValue().getLanguage());
@@ -812,11 +809,10 @@ public class BPMNDirectDiagramMarshallerTest {
         assertNotNull(startEventNode);
         StartEscalationEvent startEscalationEvent = (StartEscalationEvent) startEventNode.getContent().getDefinition();
 
-        assertNotNull(startEscalationEvent.getGeneral());
         assertEquals("StartEscalationEventName",
-                     startEscalationEvent.getGeneral().getName());
+                     startEscalationEvent.getName());
         assertEquals("StartEscalationEventDocumentation",
-                     startEscalationEvent.getGeneral().getDocumentation());
+                     startEscalationEvent.getDocumentation());
         assertNotNull(startEscalationEvent.getExecutionSet());
         assertEquals("EscalationCode",
                      startEscalationEvent.getExecutionSet().getEscalationRef().getValue());
@@ -842,11 +838,10 @@ public class BPMNDirectDiagramMarshallerTest {
         assertNotNull(startEventNode);
         StartCompensationEvent startCompensationEvent = (StartCompensationEvent) startEventNode.getContent().getDefinition();
 
-        assertNotNull(startCompensationEvent.getGeneral());
         assertEquals("StartCompensationEventName",
-                     startCompensationEvent.getGeneral().getName());
+                     startCompensationEvent.getName());
         assertEquals("StartCompensationEventDocumentation",
-                     startCompensationEvent.getGeneral().getDocumentation());
+                     startCompensationEvent.getDocumentation());
         assertFalse(startCompensationEvent.getExecutionSet().getIsInterrupting().getValue());
         assertEquals("12/25/1983", startCompensationEvent.getExecutionSet().getSlaDueDate().getValue());
     }
@@ -861,9 +856,8 @@ public class BPMNDirectDiagramMarshallerTest {
                      diagram.getMetadata().getTitle());
         Node<? extends Definition, ?> intermediateEventNode = diagram.getGraph().getNode("_8D881072-284F-4F0D-8CF2-AD1F4540FC4E");
         IntermediateTimerEvent intermediateTimerEvent = (IntermediateTimerEvent) intermediateEventNode.getContent().getDefinition();
-        assertNotNull(intermediateTimerEvent.getGeneral());
         assertEquals("MyTimer",
-                     intermediateTimerEvent.getGeneral().getName());
+                     intermediateTimerEvent.getName());
         assertNotNull(intermediateTimerEvent.getExecutionSet());
         assertEquals("abc",
                      intermediateTimerEvent.getExecutionSet().getTimerSettings().getValue().getTimeCycle());
@@ -888,11 +882,10 @@ public class BPMNDirectDiagramMarshallerTest {
         assertNotNull(catchingEventNode);
         IntermediateConditionalEvent catchingConditionalEvent = (IntermediateConditionalEvent) catchingEventNode.getContent().getDefinition();
 
-        assertNotNull(catchingConditionalEvent.getGeneral());
         assertEquals("CatchingIntermediateConditionalEventName",
-                     catchingConditionalEvent.getGeneral().getName());
+                     catchingConditionalEvent.getName());
         assertEquals("CatchingIntermediateConditionalDocumentation",
-                     catchingConditionalEvent.getGeneral().getDocumentation());
+                     catchingConditionalEvent.getDocumentation());
         assertNotNull(catchingConditionalEvent.getExecutionSet());
         assertEquals("drools",
                      catchingConditionalEvent.getExecutionSet().getConditionExpression().getValue().getLanguage());
@@ -906,11 +899,10 @@ public class BPMNDirectDiagramMarshallerTest {
         assertNotNull(boundaryEventNode);
         IntermediateConditionalEvent boundaryConditionalEvent = (IntermediateConditionalEvent) boundaryEventNode.getContent().getDefinition();
 
-        assertNotNull(boundaryConditionalEvent.getGeneral());
         assertEquals("BoundaryConditionalEventName",
-                     boundaryConditionalEvent.getGeneral().getName());
+                     boundaryConditionalEvent.getName());
         assertEquals("BoundaryConditionalEventDocumentation",
-                     boundaryConditionalEvent.getGeneral().getDocumentation());
+                     boundaryConditionalEvent.getDocumentation());
         assertNotNull(boundaryConditionalEvent.getExecutionSet());
         assertEquals("drools",
                      boundaryConditionalEvent.getExecutionSet().getConditionExpression().getValue().getLanguage());
@@ -933,11 +925,10 @@ public class BPMNDirectDiagramMarshallerTest {
         assertNotNull(catchingEventNode);
         IntermediateEscalationEvent intermediateEscalationEvent = (IntermediateEscalationEvent) catchingEventNode.getContent().getDefinition();
 
-        assertNotNull(intermediateEscalationEvent.getGeneral());
         assertEquals("BoundaryEscalationEventName",
-                     intermediateEscalationEvent.getGeneral().getName());
+                     intermediateEscalationEvent.getName());
         assertEquals("BoundaryEscalationEventDocumentation",
-                     intermediateEscalationEvent.getGeneral().getDocumentation());
+                     intermediateEscalationEvent.getDocumentation());
         assertNotNull(intermediateEscalationEvent.getExecutionSet());
         assertEquals(true,
                      intermediateEscalationEvent.getExecutionSet().getCancelActivity().getValue());
@@ -962,13 +953,12 @@ public class BPMNDirectDiagramMarshallerTest {
         assertNotNull(catchingEventNode);
         IntermediateCompensationEvent intermediateCompensationEvent = (IntermediateCompensationEvent) catchingEventNode.getContent().getDefinition();
 
-        assertNotNull(intermediateCompensationEvent.getGeneral());
         assertEquals("IntermediateCompensationEventName",
-                     intermediateCompensationEvent.getGeneral().getName());
+                     intermediateCompensationEvent.getName());
         assertEquals("IntermediateCompensationEventDocumentation",
-                     intermediateCompensationEvent.getGeneral().getDocumentation());
+                     intermediateCompensationEvent.getDocumentation());
         assertEquals("IntermediateCompensationEventDocumentation",
-                     intermediateCompensationEvent.getGeneral().getDocumentation());
+                     intermediateCompensationEvent.getDocumentation());
         assertEquals("12/25/1983", intermediateCompensationEvent.getExecutionSet().getSlaDueDate().getValue());
     }
 
@@ -985,11 +975,10 @@ public class BPMNDirectDiagramMarshallerTest {
         IntermediateCompensationEvent intermediateCompensationEvent = (IntermediateCompensationEvent) catchingEventNode.getContent().getDefinition();
 
         assertTrue(GraphUtils.isDockedNode(catchingEventNode));
-        assertNotNull(intermediateCompensationEvent.getGeneral());
         assertEquals("IntermediateCompensationEventName",
-                     intermediateCompensationEvent.getGeneral().getName());
+                     intermediateCompensationEvent.getName());
         assertEquals("IntermediateCompensationEventDocumentation",
-                     intermediateCompensationEvent.getGeneral().getDocumentation());
+                     intermediateCompensationEvent.getDocumentation());
 
         assertEquals("12/25/1983", intermediateCompensationEvent.getExecutionSet().getSlaDueDate().getValue());
 
@@ -997,9 +986,9 @@ public class BPMNDirectDiagramMarshallerTest {
         assertNotNull(userTask1Node);
         UserTask userTask1 = (UserTask) userTask1Node.getContent().getDefinition();
         assertEquals("Task1",
-                     userTask1.getGeneral().getName());
+                     userTask1.getName());
         assertEquals("Task1Documentation",
-                     userTask1.getGeneral().getDocumentation());
+                     userTask1.getDocumentation());
         assertEquals(userTask1Node,
                      GraphUtils.getDockParent(catchingEventNode).orElse(null));
 
@@ -1007,9 +996,9 @@ public class BPMNDirectDiagramMarshallerTest {
         assertNotNull(userTask2Node);
         UserTask userTask2 = (UserTask) userTask2Node.getContent().getDefinition();
         assertEquals("Task2",
-                     userTask2.getGeneral().getName());
+                     userTask2.getName());
         assertEquals("Task2Documentation",
-                     userTask2.getGeneral().getDocumentation());
+                     userTask2.getDocumentation());
 
         Edge associationEdge = userTask2Node.getInEdges().stream()
                 .filter(edge -> edge.getUUID().equals("_B41D28D1-FC39-40E8-BF89-C57649989014"))
@@ -1019,7 +1008,7 @@ public class BPMNDirectDiagramMarshallerTest {
         assertNotNull(associationEdge.getContent());
         Association association = (Association) ((View) associationEdge.getContent()).getDefinition();
         assertEquals("AssociationDocumentation",
-                     association.getGeneral().getDocumentation());
+                     association.getDocumentation());
 
         assertEquals(associationEdge.getSourceNode(),
                      catchingEventNode);
@@ -1037,11 +1026,10 @@ public class BPMNDirectDiagramMarshallerTest {
                      diagram.getMetadata().getTitle());
         Node<? extends Definition, ?> intermediateEventNode = diagram.getGraph().getNode("_2C9B14A3-F663-476D-9FDF-31590D3A9CC5");
         IntermediateSignalEventCatching intermediateSignalEventCatching = (IntermediateSignalEventCatching) intermediateEventNode.getContent().getDefinition();
-        assertNotNull(intermediateSignalEventCatching.getGeneral());
         assertEquals("MySignalCatchingEvent",
-                     intermediateSignalEventCatching.getGeneral().getName());
+                     intermediateSignalEventCatching.getName());
         assertEquals("MySignalCatchingEventDocumentation",
-                     intermediateSignalEventCatching.getGeneral().getDocumentation());
+                     intermediateSignalEventCatching.getDocumentation());
         assertNotNull(intermediateSignalEventCatching.getExecutionSet());
         assertEquals(true,
                      intermediateSignalEventCatching.getExecutionSet().getCancelActivity().getValue());
@@ -1065,11 +1053,10 @@ public class BPMNDirectDiagramMarshallerTest {
                      diagram.getMetadata().getTitle());
         Node<? extends Definition, ?> intermediateEventNode = diagram.getGraph().getNode("80A2A7A9-7C68-408C-BE3B-467562A2C139");
         IntermediateErrorEventCatching intermediateErrorEventCatching = (IntermediateErrorEventCatching) intermediateEventNode.getContent().getDefinition();
-        assertNotNull(intermediateErrorEventCatching.getGeneral());
         assertEquals("MyErrorCatchingEvent",
-                     intermediateErrorEventCatching.getGeneral().getName());
+                     intermediateErrorEventCatching.getName());
         assertEquals("MyErrorCatchingEventDocumentation",
-                     intermediateErrorEventCatching.getGeneral().getDocumentation());
+                     intermediateErrorEventCatching.getDocumentation());
         assertNotNull(intermediateErrorEventCatching.getExecutionSet());
         assertEquals(true,
                      intermediateErrorEventCatching.getExecutionSet().getCancelActivity().getValue());
@@ -1093,11 +1080,10 @@ public class BPMNDirectDiagramMarshallerTest {
                      diagram.getMetadata().getTitle());
         Node<? extends Definition, ?> intermediateEventNode = diagram.getGraph().getNode("_A45EC77D-5414-4348-BA8F-05C4FFD660EE");
         IntermediateSignalEventThrowing intermediateSignalEventThrowing = (IntermediateSignalEventThrowing) intermediateEventNode.getContent().getDefinition();
-        assertNotNull(intermediateSignalEventThrowing.getGeneral());
         assertEquals("MySignalThrowingEvent",
-                     intermediateSignalEventThrowing.getGeneral().getName());
+                     intermediateSignalEventThrowing.getName());
         assertEquals("MySignalThrowingEventDocumentation",
-                     intermediateSignalEventThrowing.getGeneral().getDocumentation());
+                     intermediateSignalEventThrowing.getDocumentation());
         assertNotNull(intermediateSignalEventThrowing.getExecutionSet());
         assertEquals("processInstance",
                      intermediateSignalEventThrowing.getExecutionSet().getSignalScope().getValue());
@@ -1122,11 +1108,10 @@ public class BPMNDirectDiagramMarshallerTest {
         assertNotNull(throwingEventNode);
         IntermediateEscalationEventThrowing throwingEscalationEvent = (IntermediateEscalationEventThrowing) throwingEventNode.getContent().getDefinition();
 
-        assertNotNull(throwingEscalationEvent.getGeneral());
         assertEquals("ThrowingEscalationEventName",
-                     throwingEscalationEvent.getGeneral().getName());
+                     throwingEscalationEvent.getName());
         assertEquals("ThrowingEscalationEventDocumentation",
-                     throwingEscalationEvent.getGeneral().getDocumentation());
+                     throwingEscalationEvent.getDocumentation());
         assertNotNull(throwingEscalationEvent.getExecutionSet());
         assertEquals("EscalationCode",
                      throwingEscalationEvent.getExecutionSet().getEscalationRef().getValue());
@@ -1148,11 +1133,10 @@ public class BPMNDirectDiagramMarshallerTest {
         assertNotNull(throwingEventNode);
         IntermediateCompensationEventThrowing throwingCompensationEvent = (IntermediateCompensationEventThrowing) throwingEventNode.getContent().getDefinition();
 
-        assertNotNull(throwingCompensationEvent.getGeneral());
         assertEquals("ThrowingCompensationEventName",
-                     throwingCompensationEvent.getGeneral().getName());
+                     throwingCompensationEvent.getName());
         assertEquals("ThrowingCompensationEventDocumentation",
-                     throwingCompensationEvent.getGeneral().getDocumentation());
+                     throwingCompensationEvent.getDocumentation());
         assertNotNull(throwingCompensationEvent.getExecutionSet());
         assertEquals("_E318295E-B0B6-4FB2-B5EB-A43BFD44FCBD",
                      throwingCompensationEvent.getExecutionSet().getActivityRef().getValue());
@@ -1211,11 +1195,10 @@ public class BPMNDirectDiagramMarshallerTest {
                      diagram.getMetadata().getTitle());
         Node<? extends Definition, ?> endNoneEventNode = diagram.getGraph().getNode("_9DF2C9D3-15DF-4436-B6C6-85B58B8696B6");
         EndNoneEvent endNoneEvent = (EndNoneEvent) endNoneEventNode.getContent().getDefinition();
-        assertNotNull(endNoneEvent.getGeneral());
         assertEquals("MyEndNoneEvent",
-                     endNoneEvent.getGeneral().getName());
+                     endNoneEvent.getName());
         assertEquals("MyEndNoneEventDocumentation",
-                     endNoneEvent.getGeneral().getDocumentation());
+                     endNoneEvent.getDocumentation());
     }
 
     @Test
@@ -1227,11 +1210,9 @@ public class BPMNDirectDiagramMarshallerTest {
         // Check first start event with all FILLED properties
         Node<? extends Definition, ?> startEventNode = diagram.getGraph().getNode("9ABD5C04-C6E2-4DF3-829F-ADB283330AD6");
         StartErrorEvent startErrorEvent = (StartErrorEvent) startEventNode.getContent().getDefinition();
-        BPMNGeneralSet eventGeneralSet = startErrorEvent.getGeneral();
-        assertNotNull(eventGeneralSet);
-        assertEquals("StartErrorEvent", eventGeneralSet.getName());
+        assertEquals("StartErrorEvent", startErrorEvent.getName());
         assertEquals("Some not empty\nDocumentation\n~`!@#$%^&*()_+=-{}|[]\\:\";'<>/?.,",
-                     eventGeneralSet.getDocumentation());
+                     startErrorEvent.getDocumentation());
 
         InterruptingErrorEventExecutionSet eventExecutionSet = startErrorEvent.getExecutionSet();
         assertNotNull(eventExecutionSet);
@@ -1247,10 +1228,8 @@ public class BPMNDirectDiagramMarshallerTest {
         // Check second start event with all EMPTY properties
         Node<? extends Definition, ?> emptyEventNode = diagram.getGraph().getNode("50B93E5E-C05D-40DD-BF48-2B6AE919763E");
         StartErrorEvent emptyErrorEvent = (StartErrorEvent) emptyEventNode.getContent().getDefinition();
-        BPMNGeneralSet emptyEventGeneralSet = emptyErrorEvent.getGeneral();
-        assertNotNull(emptyEventGeneralSet);
-        assertEquals("", emptyEventGeneralSet.getName());
-        assertEquals("", emptyEventGeneralSet.getDocumentation());
+        assertEquals("", emptyErrorEvent.getName());
+        assertEquals("", emptyErrorEvent.getDocumentation());
 
         InterruptingErrorEventExecutionSet emptyExecutionSet = emptyErrorEvent.getExecutionSet();
         assertNotNull(emptyExecutionSet);
@@ -1274,11 +1253,10 @@ public class BPMNDirectDiagramMarshallerTest {
                      diagram.getMetadata().getTitle());
         Node<? extends Definition, ?> endNoneEventNode = diagram.getGraph().getNode("_1B379E3E-E4ED-4BD2-AEE8-CD85374CEC78");
         EndTerminateEvent endTerminateEvent = (EndTerminateEvent) endNoneEventNode.getContent().getDefinition();
-        assertNotNull(endTerminateEvent.getGeneral());
         assertEquals("MyEndTerminateEvent",
-                     endTerminateEvent.getGeneral().getName());
+                     endTerminateEvent.getName());
         assertEquals("MyEndTerminateEventDocumentation",
-                     endTerminateEvent.getGeneral().getDocumentation());
+                     endTerminateEvent.getDocumentation());
     }
 
     @Test
@@ -1332,11 +1310,10 @@ public class BPMNDirectDiagramMarshallerTest {
                      diagram.getMetadata().getTitle());
         Node<? extends Definition, ?> endEventNode = diagram.getGraph().getNode("_E69BD781-AB7F-45C4-85DA-B1F3BAE5BCCB");
         EndErrorEvent endErrorEvent = (EndErrorEvent) endEventNode.getContent().getDefinition();
-        assertNotNull(endErrorEvent.getGeneral());
         assertEquals("MyErrorEventName",
-                     endErrorEvent.getGeneral().getName());
+                     endErrorEvent.getName());
         assertEquals("MyErrorEventDocumentation",
-                     endErrorEvent.getGeneral().getDocumentation());
+                     endErrorEvent.getDocumentation());
         assertNotNull(endErrorEvent.getExecutionSet());
         assertNotNull(endErrorEvent.getExecutionSet().getErrorRef());
         assertEquals("MyError",
@@ -1360,11 +1337,10 @@ public class BPMNDirectDiagramMarshallerTest {
         assertNotNull(endEventNode);
         EndEscalationEvent endEscalationEvent = (EndEscalationEvent) endEventNode.getContent().getDefinition();
 
-        assertNotNull(endEscalationEvent.getGeneral());
         assertEquals("EndEscalationEventName",
-                     endEscalationEvent.getGeneral().getName());
+                     endEscalationEvent.getName());
         assertEquals("EndEscalationEventDocumentation",
-                     endEscalationEvent.getGeneral().getDocumentation());
+                     endEscalationEvent.getDocumentation());
         assertNotNull(endEscalationEvent.getExecutionSet());
         assertEquals("EscalationCode",
                      endEscalationEvent.getExecutionSet().getEscalationRef().getValue());
@@ -1386,11 +1362,10 @@ public class BPMNDirectDiagramMarshallerTest {
         assertNotNull(endEventNode);
         EndCompensationEvent endCompensationEvent = (EndCompensationEvent) endEventNode.getContent().getDefinition();
 
-        assertNotNull(endCompensationEvent.getGeneral());
         assertEquals("EndCompensationEventName",
-                     endCompensationEvent.getGeneral().getName());
+                     endCompensationEvent.getName());
         assertEquals("EndCompensationEventDocumentation",
-                     endCompensationEvent.getGeneral().getDocumentation());
+                     endCompensationEvent.getDocumentation());
         assertNotNull(endCompensationEvent.getExecutionSet());
         assertEquals("_7795AFA7-E602-4D90-B4B6-249639C4D965",
                      endCompensationEvent.getExecutionSet().getActivityRef().getValue());
@@ -1602,9 +1577,9 @@ public class BPMNDirectDiagramMarshallerTest {
                 Object oDefinition = ((View) element.getContent()).getDefinition();
                 if (oDefinition instanceof ScriptTask) {
                     ScriptTask task = (ScriptTask) oDefinition;
-                    if ("Javascript Script Task".equals(task.getGeneral().getName())) {
+                    if ("Javascript Script Task".equals(task.getName())) {
                         javascriptScriptTask = task;
-                    } else if ("Java Script Task".equals(task.getGeneral().getName())) {
+                    } else if ("Java Script Task".equals(task.getName())) {
                         javaScriptTask = task;
                     }
                 }
@@ -1616,7 +1591,7 @@ public class BPMNDirectDiagramMarshallerTest {
         assertEquals(javascriptScriptTask.getTaskType().getValue(),
                      TaskTypes.SCRIPT);
         assertEquals("Javascript Script Task",
-                     javascriptScriptTask.getGeneral().getName());
+                     javascriptScriptTask.getName());
         assertEquals("var str = FirstName + LastName;",
                      javascriptScriptTask.getExecutionSet().getScript().getValue().getScript());
         assertEquals("javascript",
@@ -1632,7 +1607,7 @@ public class BPMNDirectDiagramMarshallerTest {
         assertEquals(javaScriptTask.getTaskType().getValue(),
                      TaskTypes.SCRIPT);
         assertEquals("Java Script Task",
-                     javaScriptTask.getGeneral().getName());
+                     javaScriptTask.getName());
         assertEquals("if (name.toString().equals(\"Jay\")) {\n" +
                              "\n" +
                              "      System.out.println(\"Hello\\n\" + name.toString() + \"\\n\");\n" +
@@ -1667,10 +1642,10 @@ public class BPMNDirectDiagramMarshallerTest {
                     List<Edge> outEdges = ((NodeImpl) element).getOutEdges();
                     for (Edge edge : outEdges) {
                         SequenceFlow flow = (SequenceFlow) ((ViewConnectorImpl) edge.getContent()).getDefinition();
-                        if ("route1".equals(flow.getGeneral().getName())) {
+                        if ("route1".equals(flow.getName())) {
                             sequenceFlow1 = flow;
                         }
-                        if ("route2".equals(flow.getGeneral().getName())) {
+                        if ("route2".equals(flow.getName())) {
                             sequenceFlow2 = flow;
                         }
                     }
@@ -1681,10 +1656,9 @@ public class BPMNDirectDiagramMarshallerTest {
         assertNotNull(sequenceFlow1.getExecutionSet());
         assertNotNull(sequenceFlow1.getExecutionSet().getConditionExpression());
         assertNotNull(sequenceFlow1.getExecutionSet().getPriority());
-        assertNotNull(sequenceFlow1.getGeneral());
-        assertNotNull(sequenceFlow1.getGeneral().getName());
+        assertNotNull(sequenceFlow1.getName());
         assertEquals("route1",
-                     sequenceFlow1.getGeneral().getName());
+                     sequenceFlow1.getName());
         assertEquals("age >= 10;",
                      sequenceFlow1.getExecutionSet().getConditionExpression().getValue().getScript());
         assertEquals("javascript",
@@ -1696,10 +1670,9 @@ public class BPMNDirectDiagramMarshallerTest {
         assertNotNull(sequenceFlow2.getExecutionSet());
         assertNotNull(sequenceFlow2.getExecutionSet().getConditionExpression());
         assertNotNull(sequenceFlow2.getExecutionSet().getPriority());
-        assertNotNull(sequenceFlow2.getGeneral());
-        assertNotNull(sequenceFlow2.getGeneral().getName());
+        assertNotNull(sequenceFlow2.getName());
         assertEquals("route2",
-                     sequenceFlow2.getGeneral().getName());
+                     sequenceFlow2.getName());
         assertEquals("age\n" +
                              "<\n" +
                              "10;",
@@ -1728,12 +1701,11 @@ public class BPMNDirectDiagramMarshallerTest {
         assertNotNull(businessRuleTask);
         assertNotNull(businessRuleTask.getExecutionSet());
         assertNotNull(businessRuleTask.getExecutionSet().getRuleFlowGroup());
-        assertNotNull(businessRuleTask.getGeneral());
-        assertNotNull(businessRuleTask.getGeneral().getName());
+        assertNotNull(businessRuleTask.getName());
         assertEquals(businessRuleTask.getTaskType().getValue(),
                      TaskTypes.BUSINESS_RULE);
         assertEquals("my business rule task",
-                     businessRuleTask.getGeneral().getName());
+                     businessRuleTask.getName());
         assertEquals("my-ruleflow-group",
                      businessRuleTask.getExecutionSet().getRuleFlowGroup().getName());
         assertEquals("true",
@@ -1767,7 +1739,7 @@ public class BPMNDirectDiagramMarshallerTest {
         Node<? extends Definition, ?> gatewayNode = graph.getNode("_877EA035-1A14-42E9-8CAA-43E9BF908C70");
         ExclusiveGateway xorGateway = (ExclusiveGateway) gatewayNode.getContent().getDefinition();
         assertEquals("AgeSplit",
-                     xorGateway.getGeneral().getName());
+                     xorGateway.getName());
         assertEquals("_5110D608-BDAD-47BF-A3F9-E1DBE43ED7CD",
                      xorGateway.getExecutionSet().getDefaultRoute().getValue());
         SequenceFlow sequenceFlow1 = null;
@@ -1784,10 +1756,10 @@ public class BPMNDirectDiagramMarshallerTest {
         }
         assertNotNull(sequenceFlow1);
         assertEquals("10 and over",
-                     sequenceFlow1.getGeneral().getName());
+                     sequenceFlow1.getName());
         assertNotNull(sequenceFlow2);
         assertEquals("under 10",
-                     sequenceFlow2.getGeneral().getName());
+                     sequenceFlow2.getName());
     }
 
     @Test
@@ -1803,7 +1775,7 @@ public class BPMNDirectDiagramMarshallerTest {
         assertTrue(gatewayNode.getContent().getDefinition() instanceof InclusiveGateway);
         InclusiveGateway inclusiveGateway = (InclusiveGateway) gatewayNode.getContent().getDefinition();
         assertEquals("InclusiveGatewayName",
-                     inclusiveGateway.getGeneral().getName());
+                     inclusiveGateway.getName());
         assertEquals("_3D5701E9-CFD3-4218-9200-897B6D4FF041",
                      inclusiveGateway.getExecutionSet().getDefaultRoute().getValue());
         SequenceFlow sequenceFlow1 = null;
@@ -1820,10 +1792,10 @@ public class BPMNDirectDiagramMarshallerTest {
         }
         assertNotNull(sequenceFlow1);
         assertEquals("OutSequence1",
-                     sequenceFlow1.getGeneral().getName());
+                     sequenceFlow1.getName());
         assertNotNull(sequenceFlow2);
         assertEquals("OutSequence2",
-                     sequenceFlow2.getGeneral().getName());
+                     sequenceFlow2.getName());
     }
 
     @Test
@@ -1844,15 +1816,12 @@ public class BPMNDirectDiagramMarshallerTest {
         assertNotNull(reusableSubprocess);
         assertNotNull(reusableSubprocess.getExecutionSet());
         assertNotNull(reusableSubprocess.getExecutionSet().getCalledElement());
-        assertNotNull(reusableSubprocess.getGeneral());
 
-        BPMNGeneralSet generalSet = reusableSubprocess.getGeneral();
         BaseReusableSubprocessTaskExecutionSet executionSet = reusableSubprocess.getExecutionSet();
-        assertNotNull(generalSet);
         assertNotNull(executionSet);
 
         assertEquals("my subprocess",
-                     generalSet.getName());
+                     reusableSubprocess.getName());
         assertEquals("my-called-element\" <&> \"",
                      executionSet.getCalledElement().getValue());
         assertEquals(false,
@@ -1881,7 +1850,7 @@ public class BPMNDirectDiagramMarshallerTest {
         assertNotNull(node);
         ReusableSubprocess subprocess = (ReusableSubprocess) node.getContent().getDefinition();
         assertNotNull(subprocess);
-        assertEquals("TheReusableSubProcess", subprocess.getGeneral().getName());
+        assertEquals("TheReusableSubProcess", subprocess.getName());
         ReusableSubprocessTaskExecutionSet executionSet = subprocess.getExecutionSet();
         assertEquals("test.SubProcess", executionSet.getCalledElement().getValue());
         assertTrue(executionSet.getIsMultipleInstance().getValue());
@@ -1913,17 +1882,15 @@ public class BPMNDirectDiagramMarshallerTest {
 
         assertNotNull(adHocSubprocess);
 
-        BPMNGeneralSet generalSet = adHocSubprocess.getGeneral();
         AdHocSubprocessTaskExecutionSet executionSet = adHocSubprocess.getExecutionSet();
         ProcessData processData = adHocSubprocess.getProcessData();
-        assertNotNull(generalSet);
         assertNotNull(executionSet);
         assertNotNull(processData);
 
         assertEquals("AdHocSubprocess1",
-                     generalSet.getName());
+                     adHocSubprocess.getName());
         assertEquals("AdHocSubprocess1Documentation",
-                     generalSet.getDocumentation());
+                     adHocSubprocess.getDocumentation());
 
         assertNotNull(executionSet.getAdHocCompletionCondition());
         assertNotNull(executionSet.getAdHocCompletionCondition().getValue());
@@ -3339,7 +3306,6 @@ public class BPMNDirectDiagramMarshallerTest {
             }
         }
         assertNotNull(timerEvent);
-        assertNotNull(timerEvent.getGeneral());
         assertNotNull(timerEvent.getExecutionSet());
 
         assertEquals("myTimeDateValue",
@@ -3646,9 +3612,9 @@ public class BPMNDirectDiagramMarshallerTest {
         assertEquals(WorkItemDefinitionMockRegistry.EMAIL.getDescription(),
                      email.getDescription());
         assertEquals(WorkItemDefinitionMockRegistry.EMAIL.getDisplayName(),
-                     email.getGeneral().getName());
+                     email.getName());
         assertEquals(WorkItemDefinitionMockRegistry.EMAIL.getDocumentation(),
-                     email.getGeneral().getDocumentation());
+                     email.getDocumentation());
         // Log service task assertions.
         Node<? extends Definition, ?> logNode = diagram.getGraph().getNode("_A940748F-A658-4FB8-84FD-B69F4B7A9205");
         assertTrue(logNode.getContent().getDefinition() instanceof CustomTask);
@@ -3662,9 +3628,9 @@ public class BPMNDirectDiagramMarshallerTest {
         assertEquals(WorkItemDefinitionMockRegistry.LOG.getDescription(),
                      log.getDescription());
         assertEquals(WorkItemDefinitionMockRegistry.LOG.getDisplayName(),
-                     log.getGeneral().getName());
+                     log.getName());
         assertEquals(WorkItemDefinitionMockRegistry.LOG.getDocumentation(),
-                     log.getGeneral().getDocumentation());
+                     log.getDocumentation());
     }
 
     @Test
@@ -3980,7 +3946,7 @@ public class BPMNDirectDiagramMarshallerTest {
         assertNotNull("Node: " + laneId + " was not found in diagram", laneNode);
         assertTrue("Node: " + laneId + " is not a Lane", laneNode.getContent().getDefinition() instanceof Lane);
         Lane lane = (Lane) laneNode.getContent().getDefinition();
-        assertEquals(laneName, lane.getGeneral().getName());
+        assertEquals(laneName, lane.getName());
         assertEquals(1, laneNode.getInEdges().size());
         assertEquals(parentNode, laneNode.getInEdges().get(0).getSourceNode());
 
@@ -4043,8 +4009,8 @@ public class BPMNDirectDiagramMarshallerTest {
         Node<? extends Definition, ?> gatewayNode = graph.getNode("_AFDF2596-C521-4753-AC22-2DCCAD391F98");
         assertTrue(gatewayNode.getContent().getDefinition() instanceof EventGateway);
         EventGateway eventGateway = (EventGateway) gatewayNode.getContent().getDefinition();
-        assertEquals("EventGatewayName", eventGateway.getGeneral().getName());
-        assertEquals("EventGatewayDocumentation", eventGateway.getGeneral().getDocumentation());
+        assertEquals("EventGatewayName", eventGateway.getName());
+        assertEquals("EventGatewayDocumentation", eventGateway.getDocumentation());
         SequenceFlow inSequenceFlow = gatewayNode.getInEdges().stream()
                 .filter(edge -> "_E805280D-5862-4F56-B02A-E34F7D519050".equals(edge.getUUID()))
                 .map(edge -> (SequenceFlow) ((ViewConnector) edge.getContent()).getDefinition())
@@ -4059,11 +4025,11 @@ public class BPMNDirectDiagramMarshallerTest {
                 .findFirst().orElseThrow(() -> new Exception("Expected sequenceFlow: _1CD28E0D-1910-45FE-9AEC-932FA28C77AA was not found"));
 
         assertNotNull(inSequenceFlow);
-        assertEquals("inSequence", inSequenceFlow.getGeneral().getName());
+        assertEquals("inSequence", inSequenceFlow.getName());
         assertNotNull(outSequenceFlow1);
-        assertEquals("outSequence1", outSequenceFlow1.getGeneral().getName());
+        assertEquals("outSequence1", outSequenceFlow1.getName());
         assertNotNull(outSequenceFlow2);
-        assertEquals("outSequence2", outSequenceFlow2.getGeneral().getName());
+        assertEquals("outSequence2", outSequenceFlow2.getName());
     }
 
     @Test

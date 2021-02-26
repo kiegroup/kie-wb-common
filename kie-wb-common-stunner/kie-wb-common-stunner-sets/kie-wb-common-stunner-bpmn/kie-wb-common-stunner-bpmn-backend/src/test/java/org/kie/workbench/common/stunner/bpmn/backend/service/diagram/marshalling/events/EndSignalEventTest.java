@@ -81,21 +81,21 @@ public class EndSignalEventTest extends EndEventTest<EndSignalEvent> {
         EndSignalEvent filledTopEventProcessInstance = getEndNodeById(diagram,
                                                                       FILLED_TOP_LEVEL_EVENT_PROCESS_INSTANCE_SCOPE_ID,
                                                                       HAS_NO_INCOME_EDGE);
-        assertGeneralSet(filledTopEventProcessInstance.getGeneral(), EVENT_NAME_PROCESS_INSTANCE_SCOPE, EVENT_DOCUMENTATION_PROCESS_INSTANCE_SCOPE);
+        assertGeneralSet(filledTopEventProcessInstance, EVENT_NAME_PROCESS_INSTANCE_SCOPE, EVENT_DOCUMENTATION_PROCESS_INSTANCE_SCOPE);
         assertSignalEventExecutionSet(filledTopEventProcessInstance.getExecutionSet(), EVENT_REF_PROCESS_INSTANCE_SCOPE, EVENT_SIGNAL_SCOPE_PROCESS_INSTANCE);
         assertDataIOSet(filledTopEventProcessInstance.getDataIOSet(), EVENT_DATA_INPUT_PROCESS_INSTANCE_SCOPE);
 
         EndSignalEvent filledTopEventProject = getEndNodeById(diagram,
                                                               FILLED_TOP_LEVEL_EVENT_PROJECT_SCOPE_ID,
                                                               HAS_NO_INCOME_EDGE);
-        assertGeneralSet(filledTopEventProject.getGeneral(), EVENT_NAME_PROJECT_SCOPE, EVENT_DOCUMENTATION_PROJECT_SCOPE);
+        assertGeneralSet(filledTopEventProject, EVENT_NAME_PROJECT_SCOPE, EVENT_DOCUMENTATION_PROJECT_SCOPE);
         assertSignalEventExecutionSet(filledTopEventProject.getExecutionSet(), EVENT_REF_PROJECT_SCOPE, EVENT_SIGNAL_SCOPE_PROJECT);
         assertDataIOSet(filledTopEventProject.getDataIOSet(), EVENT_DATA_INPUT_PROJECT_SCOPE);
 
         EndSignalEvent filledTopEventExternal = getEndNodeById(diagram,
                                                                FILLED_TOP_LEVEL_EVENT_EXTERNAL_SCOPE_ID,
                                                                HAS_NO_INCOME_EDGE);
-        assertGeneralSet(filledTopEventExternal.getGeneral(), EVENT_NAME_EXTERNAL_SCOPE, EVENT_DOCUMENTATION_EXTERNAL_SCOPE);
+        assertGeneralSet(filledTopEventExternal, EVENT_NAME_EXTERNAL_SCOPE, EVENT_DOCUMENTATION_EXTERNAL_SCOPE);
         assertSignalEventExecutionSet(filledTopEventExternal.getExecutionSet(), EVENT_REF_EXTERNAL_SCOPE, EVENT_SIGNAL_SCOPE_EXTERNAL);
         assertDataIOSet(filledTopEventExternal.getDataIOSet(), EVENT_DATA_INPUT_EXTERNAL_SCOPE);
     }
@@ -109,7 +109,7 @@ public class EndSignalEventTest extends EndEventTest<EndSignalEvent> {
         EndSignalEvent emptyTopEvent = getEndNodeById(diagram,
                                                       EMPTY_TOP_LEVEL_EVENT_ID,
                                                       HAS_NO_INCOME_EDGE);
-        assertGeneralSet(emptyTopEvent.getGeneral(), EMPTY_VALUE, EMPTY_VALUE);
+        assertGeneralSet(emptyTopEvent, EMPTY_VALUE, EMPTY_VALUE);
         assertSignalEventExecutionSet(emptyTopEvent.getExecutionSet(), EMPTY_VALUE, EVENT_SIGNAL_SCOPE_DEFAULT);
         assertDataIOSet(emptyTopEvent.getDataIOSet(), EMPTY_VALUE);
     }
@@ -138,21 +138,21 @@ public class EndSignalEventTest extends EndEventTest<EndSignalEvent> {
         EndSignalEvent filledSubprocessEventProcessInstance = getEndNodeById(diagram,
                                                                              FILLED_SUBPROCESS_LEVEL_PROCESS_INSTANCE_SCOPE_ID,
                                                                              HAS_NO_INCOME_EDGE);
-        assertGeneralSet(filledSubprocessEventProcessInstance.getGeneral(), EVENT_NAME_PROCESS_INSTANCE_SCOPE, EVENT_DOCUMENTATION_PROCESS_INSTANCE_SCOPE);
+        assertGeneralSet(filledSubprocessEventProcessInstance, EVENT_NAME_PROCESS_INSTANCE_SCOPE, EVENT_DOCUMENTATION_PROCESS_INSTANCE_SCOPE);
         assertSignalEventExecutionSet(filledSubprocessEventProcessInstance.getExecutionSet(), EVENT_REF_PROCESS_INSTANCE_SCOPE, EVENT_SIGNAL_SCOPE_PROCESS_INSTANCE);
         assertDataIOSet(filledSubprocessEventProcessInstance.getDataIOSet(), EVENT_DATA_INPUT_PROCESS_INSTANCE_SCOPE);
 
         EndSignalEvent filledSubprocessEventProject = getEndNodeById(diagram,
                                                                      FILLED_SUBPROCESS_LEVEL_PROJECT_SCOPE_ID,
                                                                      HAS_NO_INCOME_EDGE);
-        assertGeneralSet(filledSubprocessEventProject.getGeneral(), EVENT_NAME_PROJECT_SCOPE, EVENT_DOCUMENTATION_PROJECT_SCOPE);
+        assertGeneralSet(filledSubprocessEventProject, EVENT_NAME_PROJECT_SCOPE, EVENT_DOCUMENTATION_PROJECT_SCOPE);
         assertSignalEventExecutionSet(filledSubprocessEventProject.getExecutionSet(), EVENT_REF_PROJECT_SCOPE, EVENT_SIGNAL_SCOPE_PROJECT);
         assertDataIOSet(filledSubprocessEventProject.getDataIOSet(), EVENT_DATA_INPUT_PROJECT_SCOPE);
 
         EndSignalEvent filledSubprocessEventExternal = getEndNodeById(diagram,
                                                                       FILLED_SUBPROCESS_LEVEL_EVENT_EXTERNAL_SCOPE_ID,
                                                                       HAS_NO_INCOME_EDGE);
-        assertGeneralSet(filledSubprocessEventExternal.getGeneral(), EVENT_NAME_EXTERNAL_SCOPE, EVENT_DOCUMENTATION_EXTERNAL_SCOPE);
+        assertGeneralSet(filledSubprocessEventExternal, EVENT_NAME_EXTERNAL_SCOPE, EVENT_DOCUMENTATION_EXTERNAL_SCOPE);
         assertSignalEventExecutionSet(filledSubprocessEventExternal.getExecutionSet(), EVENT_REF_EXTERNAL_SCOPE, EVENT_SIGNAL_SCOPE_EXTERNAL);
         assertDataIOSet(filledSubprocessEventExternal.getDataIOSet(), EVENT_DATA_INPUT_EXTERNAL_SCOPE);
     }
@@ -166,7 +166,7 @@ public class EndSignalEventTest extends EndEventTest<EndSignalEvent> {
         EndSignalEvent emptySubprocessEvent = getEndNodeById(diagram,
                                                              EMPTY_SUBPROCESS_LEVEL_EVENT_ID,
                                                              HAS_NO_INCOME_EDGE);
-        assertGeneralSet(emptySubprocessEvent.getGeneral(), EMPTY_VALUE, EMPTY_VALUE);
+        assertGeneralSet(emptySubprocessEvent, EMPTY_VALUE, EMPTY_VALUE);
         assertSignalEventExecutionSet(emptySubprocessEvent.getExecutionSet(), EMPTY_VALUE, EVENT_SIGNAL_SCOPE_DEFAULT);
         assertDataIOSet(emptySubprocessEvent.getDataIOSet(), EMPTY_VALUE);
     }
@@ -195,21 +195,21 @@ public class EndSignalEventTest extends EndEventTest<EndSignalEvent> {
         EndSignalEvent filledTopEventProcessInstance = getEndNodeById(diagram,
                                                                       FILLED_WITH_INCOME_TOP_LEVEL_EVENT_PROCESS_INSTANCE_SCOPE_ID,
                                                                       HAS_INCOME_EDGE);
-        assertGeneralSet(filledTopEventProcessInstance.getGeneral(), EVENT_NAME_PROCESS_INSTANCE_SCOPE, EVENT_DOCUMENTATION_PROCESS_INSTANCE_SCOPE);
+        assertGeneralSet(filledTopEventProcessInstance, EVENT_NAME_PROCESS_INSTANCE_SCOPE, EVENT_DOCUMENTATION_PROCESS_INSTANCE_SCOPE);
         assertSignalEventExecutionSet(filledTopEventProcessInstance.getExecutionSet(), EVENT_REF_PROCESS_INSTANCE_SCOPE, EVENT_SIGNAL_SCOPE_PROCESS_INSTANCE);
         assertDataIOSet(filledTopEventProcessInstance.getDataIOSet(), EVENT_DATA_INPUT_PROCESS_INSTANCE_SCOPE);
 
         EndSignalEvent filledTopEventProject = getEndNodeById(diagram,
                                                               FILLED_WITH_INCOME_TOP_LEVEL_PROJECT_SCOPE_ID,
                                                               HAS_INCOME_EDGE);
-        assertGeneralSet(filledTopEventProject.getGeneral(), EVENT_NAME_PROJECT_SCOPE, EVENT_DOCUMENTATION_PROJECT_SCOPE);
+        assertGeneralSet(filledTopEventProject, EVENT_NAME_PROJECT_SCOPE, EVENT_DOCUMENTATION_PROJECT_SCOPE);
         assertSignalEventExecutionSet(filledTopEventProject.getExecutionSet(), EVENT_REF_PROJECT_SCOPE, EVENT_SIGNAL_SCOPE_PROJECT);
         assertDataIOSet(filledTopEventProject.getDataIOSet(), EVENT_DATA_INPUT_PROJECT_SCOPE);
 
         EndSignalEvent filledTopEventExternal = getEndNodeById(diagram,
                                                                FILLED_WITH_INCOME_TOP_LEVEL_EVENT_EXTERNAL_SCOPE_ID,
                                                                HAS_INCOME_EDGE);
-        assertGeneralSet(filledTopEventExternal.getGeneral(), EVENT_NAME_EXTERNAL_SCOPE, EVENT_DOCUMENTATION_EXTERNAL_SCOPE);
+        assertGeneralSet(filledTopEventExternal, EVENT_NAME_EXTERNAL_SCOPE, EVENT_DOCUMENTATION_EXTERNAL_SCOPE);
         assertSignalEventExecutionSet(filledTopEventExternal.getExecutionSet(), EVENT_REF_EXTERNAL_SCOPE, EVENT_SIGNAL_SCOPE_EXTERNAL);
         assertDataIOSet(filledTopEventExternal.getDataIOSet(), EVENT_DATA_INPUT_EXTERNAL_SCOPE);
     }
@@ -223,7 +223,7 @@ public class EndSignalEventTest extends EndEventTest<EndSignalEvent> {
         EndSignalEvent emptyEvent = getEndNodeById(diagram,
                                                    EMPTY_WITH_INCOME_TOP_LEVEL_EVENT_ID,
                                                    HAS_INCOME_EDGE);
-        assertGeneralSet(emptyEvent.getGeneral(), EMPTY_VALUE, EMPTY_VALUE);
+        assertGeneralSet(emptyEvent, EMPTY_VALUE, EMPTY_VALUE);
         assertSignalEventExecutionSet(emptyEvent.getExecutionSet(), EMPTY_VALUE, EVENT_SIGNAL_SCOPE_DEFAULT);
         assertDataIOSet(emptyEvent.getDataIOSet(), EMPTY_VALUE);
     }
@@ -237,7 +237,7 @@ public class EndSignalEventTest extends EndEventTest<EndSignalEvent> {
         EndSignalEvent emptySubprocessEvent = getEndNodeById(diagram,
                                                              EMPTY_WITH_INCOME_SUBPROCESS_LEVEL_EVENT_ID,
                                                              HAS_INCOME_EDGE);
-        assertGeneralSet(emptySubprocessEvent.getGeneral(), EMPTY_VALUE, EMPTY_VALUE);
+        assertGeneralSet(emptySubprocessEvent, EMPTY_VALUE, EMPTY_VALUE);
         assertSignalEventExecutionSet(emptySubprocessEvent.getExecutionSet(), EMPTY_VALUE, EVENT_SIGNAL_SCOPE_DEFAULT);
         assertDataIOSet(emptySubprocessEvent.getDataIOSet(), EMPTY_VALUE);
     }
@@ -266,21 +266,21 @@ public class EndSignalEventTest extends EndEventTest<EndSignalEvent> {
         EndSignalEvent filledSubprocessEventProcessInstance = getEndNodeById(diagram,
                                                                              FILLED_WITH_INCOME_SUBPROCESS_LEVEL_PROCESS_INSTANCE_SCOPE_ID,
                                                                              HAS_INCOME_EDGE);
-        assertGeneralSet(filledSubprocessEventProcessInstance.getGeneral(), EVENT_NAME_PROCESS_INSTANCE_SCOPE, EVENT_DOCUMENTATION_PROCESS_INSTANCE_SCOPE);
+        assertGeneralSet(filledSubprocessEventProcessInstance, EVENT_NAME_PROCESS_INSTANCE_SCOPE, EVENT_DOCUMENTATION_PROCESS_INSTANCE_SCOPE);
         assertSignalEventExecutionSet(filledSubprocessEventProcessInstance.getExecutionSet(), EVENT_REF_PROCESS_INSTANCE_SCOPE, EVENT_SIGNAL_SCOPE_PROCESS_INSTANCE);
         assertDataIOSet(filledSubprocessEventProcessInstance.getDataIOSet(), EVENT_DATA_INPUT_PROCESS_INSTANCE_SCOPE);
 
         EndSignalEvent filledSubprocessEventProject = getEndNodeById(diagram,
                                                                      FILLED_WITH_INCOME_SUBPROCESS_LEVEL_PROJECT_SCOPE_ID,
                                                                      HAS_INCOME_EDGE);
-        assertGeneralSet(filledSubprocessEventProject.getGeneral(), EVENT_NAME_PROJECT_SCOPE, EVENT_DOCUMENTATION_PROJECT_SCOPE);
+        assertGeneralSet(filledSubprocessEventProject, EVENT_NAME_PROJECT_SCOPE, EVENT_DOCUMENTATION_PROJECT_SCOPE);
         assertSignalEventExecutionSet(filledSubprocessEventProject.getExecutionSet(), EVENT_REF_PROJECT_SCOPE, EVENT_SIGNAL_SCOPE_PROJECT);
         assertDataIOSet(filledSubprocessEventProject.getDataIOSet(), EVENT_DATA_INPUT_PROJECT_SCOPE);
 
         EndSignalEvent filledSubprocessEventExternal = getEndNodeById(diagram,
                                                                       FILLED_WITH_INCOME_SUBPROCESS_LEVEL_EVENT_EXTERNAL_SCOPE_ID,
                                                                       HAS_INCOME_EDGE);
-        assertGeneralSet(filledSubprocessEventExternal.getGeneral(), EVENT_NAME_EXTERNAL_SCOPE, EVENT_DOCUMENTATION_EXTERNAL_SCOPE);
+        assertGeneralSet(filledSubprocessEventExternal, EVENT_NAME_EXTERNAL_SCOPE, EVENT_DOCUMENTATION_EXTERNAL_SCOPE);
         assertSignalEventExecutionSet(filledSubprocessEventExternal.getExecutionSet(), EVENT_REF_EXTERNAL_SCOPE, EVENT_SIGNAL_SCOPE_EXTERNAL);
         assertDataIOSet(filledSubprocessEventExternal.getDataIOSet(), EVENT_DATA_INPUT_EXTERNAL_SCOPE);
     }

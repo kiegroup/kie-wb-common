@@ -67,7 +67,6 @@ public class Simulations {
             simulationSet.getUnitCost().setValue(extractDouble(costParams.getUnitCost()));
         }
 
-        //controlParams(eleType, simulationSet);
         ResourceParameters resourceParams = eleType.getResourceParameters();
 
         if (resourceParams != null) {
@@ -92,19 +91,19 @@ public class Simulations {
         ParameterValue paramValue = processingTime.getParameterValue().get(0);
 
         return Match.<ParameterValue, SimulationAttributeSet>of()
-                .<NormalDistributionType>when(e -> e instanceof NormalDistributionType, ndt -> {
+                .<NormalDistributionType>when(NormalDistributionType.class::isInstance, ndt -> {
                     simulationSet.getMean().setValue(ndt.getMean());
                     simulationSet.getStandardDeviation().setValue(ndt.getStandardDeviation());
                     simulationSet.getDistributionType().setValue("normal");
                     return simulationSet;
                 })
-                .<UniformDistributionType>when(e -> e instanceof UniformDistributionType, udt -> {
+                .<UniformDistributionType>when(UniformDistributionType.class::isInstance, udt -> {
                     simulationSet.getMin().setValue(udt.getMin());
                     simulationSet.getMax().setValue(udt.getMax());
                     simulationSet.getDistributionType().setValue("uniform");
                     return simulationSet;
                 })
-                .<PoissonDistributionType>when(e -> e instanceof PoissonDistributionType, pdt -> {
+                .<PoissonDistributionType>when(PoissonDistributionType.class::isInstance, pdt -> {
                     simulationSet.getMean().setValue(pdt.getMean());
                     simulationSet.getDistributionType().setValue("poisson");
                     return simulationSet;

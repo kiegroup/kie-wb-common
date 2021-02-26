@@ -53,7 +53,7 @@ public abstract class BPMNDataObjectValidator implements DomainValidator {
             if (element.getContent() instanceof View && ((View) element.getContent()).getDefinition() instanceof DataObject) {
                 DataObject dataObject = (DataObject) ((View) element.getContent()).getDefinition();
 
-                String name = dataObject.getName().getValue();
+                String name = dataObject.getName();
                 String type = dataObject.getType().getValue().getType();
                 String containedType = dataObjectsMap.get(name);
 

@@ -18,7 +18,7 @@ package org.kie.workbench.common.stunner.bpmn.client.shape.view.handler;
 
 import java.util.Optional;
 
-import org.kie.workbench.common.stunner.bpmn.definition.BPMNViewDefinition;
+import org.kie.workbench.common.stunner.bpmn.definition.BPMNDefinition;
 import org.kie.workbench.common.stunner.core.client.shape.TextWrapperStrategy;
 import org.kie.workbench.common.stunner.core.client.shape.view.HasTitle.HorizontalAlignment;
 import org.kie.workbench.common.stunner.core.client.shape.view.HasTitle.Orientation;
@@ -35,16 +35,11 @@ public class BPMNShapeViewHandlers {
 
     public static final TitleHandler<ShapeView> TITLE_HANDLER = new TitleHandler<>();
 
-    public static class FontHandlerBuilder<W extends BPMNViewDefinition, V extends ShapeView>
+    public static class FontHandlerBuilder<W extends BPMNDefinition, V extends ShapeView>
             extends FontHandler.Builder<W, V> {
 
         public FontHandlerBuilder() {
-            this.fontFamily(bean -> bean.getFontSet().getFontFamily().getValue())
-                    .fontColor(bean -> bean.getFontSet().getFontColor().getValue())
-                    .fontSize(bean -> bean.getFontSet().getFontSize().getValue())
-                    .strokeColor(bean -> bean.getFontSet().getFontBorderColor().getValue())
-                    .strokeSize(bean -> bean.getFontSet().getFontBorderSize().getValue())
-                    .strokeAlpha(bean -> getStrokeAlpha(bean.getFontSet().getFontBorderSize().getValue()))
+            this
                     .verticalAlignment(bean -> VerticalAlignment.MIDDLE)
                     .horizontalAlignment(bean -> HorizontalAlignment.CENTER)
                     .referencePosition(bean -> ReferencePosition.INSIDE)
@@ -61,13 +56,11 @@ public class BPMNShapeViewHandlers {
         }
     }
 
-    public static class ViewAttributesHandlerBuilder<W extends BPMNViewDefinition, V extends ShapeView>
+    public static class ViewAttributesHandlerBuilder<W extends BPMNDefinition, V extends ShapeView>
             extends ViewAttributesHandler.Builder<W, V> {
 
         public ViewAttributesHandlerBuilder() {
-            this.fillColor(bean -> bean.getBackgroundSet().getBgColor().getValue())
-                    .strokeColor(bean -> bean.getBackgroundSet().getBorderColor().getValue())
-                    .strokeWidth(bean -> bean.getBackgroundSet().getBorderSize().getValue());
+            this.build();
         }
     }
 }

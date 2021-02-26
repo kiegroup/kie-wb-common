@@ -154,7 +154,7 @@ public class UserTaskTest extends TaskTest<UserTask> {
                                                      EMPTY_TOP_LEVEL_TASK_ID,
                                                      ZERO_INCOME_EDGES,
                                                      HAS_NO_OUTCOME_EDGE);
-        assertGeneralSet(emptyTopLevelTask.getGeneral(), TASK_NAME, EMPTY_VALUE);
+        assertGeneralSet(emptyTopLevelTask, TASK_NAME, EMPTY_VALUE);
         assertUserTaskExecutionSet(emptyTopLevelTask.getExecutionSet(),
                                    TASK_TASK_NAME,
                                    EMPTY_VALUE,
@@ -190,7 +190,7 @@ public class UserTaskTest extends TaskTest<UserTask> {
                                                      EMPTY_ONE_INCOME_TOP_LEVEL_TASK_ID,
                                                      ONE_INCOME_EDGE,
                                                      HAS_OUTCOME_EDGE);
-        assertGeneralSet(emptyTopLevelTask.getGeneral(), TASK_NAME, EMPTY_VALUE);
+        assertGeneralSet(emptyTopLevelTask, TASK_NAME, EMPTY_VALUE);
         assertUserTaskExecutionSet(emptyTopLevelTask.getExecutionSet(),
                                    TASK_TASK_NAME,
                                    EMPTY_VALUE,
@@ -226,7 +226,7 @@ public class UserTaskTest extends TaskTest<UserTask> {
                                                      EMPTY_TWO_INCOMES_TOP_LEVEL_TASK_ID,
                                                      TWO_INCOME_EDGES,
                                                      HAS_OUTCOME_EDGE);
-        assertGeneralSet(emptyTopLevelTask.getGeneral(), TASK_NAME, EMPTY_VALUE);
+        assertGeneralSet(emptyTopLevelTask, TASK_NAME, EMPTY_VALUE);
         assertUserTaskExecutionSet(emptyTopLevelTask.getExecutionSet(),
                                    TASK_TASK_NAME,
                                    EMPTY_VALUE,
@@ -302,7 +302,7 @@ public class UserTaskTest extends TaskTest<UserTask> {
                                                           FILLED_TOP_LEVEL_TASK_JAVA_ID,
                                                           ZERO_INCOME_EDGES,
                                                           HAS_NO_OUTCOME_EDGE);
-        assertGeneralSet(filledTopLevelTaskJava.getGeneral(), TASK_NAME_JAVA, TASK_DOCUMENTATION_JAVA);
+        assertGeneralSet(filledTopLevelTaskJava, TASK_NAME_JAVA, TASK_DOCUMENTATION_JAVA);
         assertUserTaskExecutionSet(filledTopLevelTaskJava.getExecutionSet(),
                                    TASK_TASK_NAME_JAVA,
                                    TASK_SUBJECT_JAVA,
@@ -326,7 +326,7 @@ public class UserTaskTest extends TaskTest<UserTask> {
                                                                 FILLED_TOP_LEVEL_TASK_JAVASCRIPT_ID,
                                                                 ZERO_INCOME_EDGES,
                                                                 HAS_NO_OUTCOME_EDGE);
-        assertGeneralSet(filledTopLevelTaskJavascript.getGeneral(), TASK_NAME_JAVASCRIPT, TASK_DOCUMENTATION_JAVASCRIPT);
+        assertGeneralSet(filledTopLevelTaskJavascript, TASK_NAME_JAVASCRIPT, TASK_DOCUMENTATION_JAVASCRIPT);
         assertUserTaskExecutionSet(filledTopLevelTaskJavascript.getExecutionSet(),
                                    TASK_TASK_NAME_JAVASCRIPT,
                                    TASK_SUBJECT_JAVASCRIPT,
@@ -350,7 +350,7 @@ public class UserTaskTest extends TaskTest<UserTask> {
                                                           FILLED_TOP_LEVEL_TASK_MVEL_ID,
                                                           ZERO_INCOME_EDGES,
                                                           HAS_NO_OUTCOME_EDGE);
-        assertGeneralSet(filledTopLevelTaskMvel.getGeneral(), TASK_NAME_MVEL, TASK_DOCUMENTATION_MVEL);
+        assertGeneralSet(filledTopLevelTaskMvel, TASK_NAME_MVEL, TASK_DOCUMENTATION_MVEL);
         assertUserTaskExecutionSet(filledTopLevelTaskMvel.getExecutionSet(),
                                    TASK_TASK_NAME_MVEL,
                                    TASK_SUBJECT_MVEL,
@@ -425,7 +425,7 @@ public class UserTaskTest extends TaskTest<UserTask> {
                                                           FILLED_ONE_INCOME_TOP_LEVEL_TASK_JAVA_ID,
                                                           ONE_INCOME_EDGE,
                                                           HAS_OUTCOME_EDGE);
-        assertGeneralSet(filledTopLevelTaskJava.getGeneral(), TASK_NAME_JAVA, TASK_DOCUMENTATION_JAVA);
+        assertGeneralSet(filledTopLevelTaskJava, TASK_NAME_JAVA, TASK_DOCUMENTATION_JAVA);
         assertUserTaskExecutionSet(filledTopLevelTaskJava.getExecutionSet(),
                                    TASK_TASK_NAME_JAVA,
                                    TASK_SUBJECT_JAVA,
@@ -449,7 +449,7 @@ public class UserTaskTest extends TaskTest<UserTask> {
                                                                 FILLED_ONE_INCOME_TOP_LEVEL_TASK_JAVASCRIPT_ID,
                                                                 ONE_INCOME_EDGE,
                                                                 HAS_OUTCOME_EDGE);
-        assertGeneralSet(filledTopLevelTaskJavascript.getGeneral(), TASK_NAME_JAVASCRIPT, TASK_DOCUMENTATION_JAVASCRIPT);
+        assertGeneralSet(filledTopLevelTaskJavascript, TASK_NAME_JAVASCRIPT, TASK_DOCUMENTATION_JAVASCRIPT);
         assertUserTaskExecutionSet(filledTopLevelTaskJavascript.getExecutionSet(),
                                    TASK_TASK_NAME_JAVASCRIPT,
                                    TASK_SUBJECT_JAVASCRIPT,
@@ -473,7 +473,7 @@ public class UserTaskTest extends TaskTest<UserTask> {
                                                           FILLED_ONE_INCOME_TOP_LEVEL_TASK_MVEL_ID,
                                                           ONE_INCOME_EDGE,
                                                           HAS_OUTCOME_EDGE);
-        assertGeneralSet(filledTopLevelTaskMvel.getGeneral(), TASK_NAME_MVEL, TASK_DOCUMENTATION_MVEL);
+        assertGeneralSet(filledTopLevelTaskMvel, TASK_NAME_MVEL, TASK_DOCUMENTATION_MVEL);
         assertUserTaskExecutionSet(filledTopLevelTaskMvel.getExecutionSet(),
                                    TASK_TASK_NAME_MVEL,
                                    TASK_SUBJECT_MVEL,
@@ -548,7 +548,7 @@ public class UserTaskTest extends TaskTest<UserTask> {
                                                           FILLED_TWO_INCOMES_TOP_LEVEL_TASK_JAVA_ID,
                                                           TWO_INCOME_EDGES,
                                                           HAS_OUTCOME_EDGE);
-        assertGeneralSet(filledTopLevelTaskJava.getGeneral(), TASK_NAME_JAVA, TASK_DOCUMENTATION_JAVA);
+        assertGeneralSet(filledTopLevelTaskJava, TASK_NAME_JAVA, TASK_DOCUMENTATION_JAVA);
         assertUserTaskExecutionSet(filledTopLevelTaskJava.getExecutionSet(),
                                    TASK_TASK_NAME_JAVA,
                                    TASK_SUBJECT_JAVA,
@@ -572,7 +572,7 @@ public class UserTaskTest extends TaskTest<UserTask> {
                                                                 FILLED_TWO_INCOMES_TOP_LEVEL_TASK_JAVASCRIPT_ID,
                                                                 TWO_INCOME_EDGES,
                                                                 HAS_OUTCOME_EDGE);
-        assertGeneralSet(filledTopLevelTaskJavascript.getGeneral(), TASK_NAME_JAVASCRIPT, TASK_DOCUMENTATION_JAVASCRIPT);
+        assertGeneralSet(filledTopLevelTaskJavascript, TASK_NAME_JAVASCRIPT, TASK_DOCUMENTATION_JAVASCRIPT);
         assertUserTaskExecutionSet(filledTopLevelTaskJavascript.getExecutionSet(),
                                    TASK_TASK_NAME_JAVASCRIPT,
                                    TASK_SUBJECT_JAVASCRIPT,
@@ -596,7 +596,7 @@ public class UserTaskTest extends TaskTest<UserTask> {
                                                           FILLED_TWO_INCOMES_TOP_LEVEL_TASK_MVEL_ID,
                                                           TWO_INCOME_EDGES,
                                                           HAS_OUTCOME_EDGE);
-        assertGeneralSet(filledTopLevelTaskMvel.getGeneral(), TASK_NAME_MVEL, TASK_DOCUMENTATION_MVEL);
+        assertGeneralSet(filledTopLevelTaskMvel, TASK_NAME_MVEL, TASK_DOCUMENTATION_MVEL);
         assertUserTaskExecutionSet(filledTopLevelTaskMvel.getExecutionSet(),
                                    TASK_TASK_NAME_MVEL,
                                    TASK_SUBJECT_MVEL,
@@ -631,7 +631,7 @@ public class UserTaskTest extends TaskTest<UserTask> {
                                                             EMPTY_SUBPROCESS_LEVEL_TASK_ID,
                                                             ZERO_INCOME_EDGES,
                                                             HAS_NO_OUTCOME_EDGE);
-        assertGeneralSet(emptySubprocessLevelTask.getGeneral(), TASK_NAME, EMPTY_VALUE);
+        assertGeneralSet(emptySubprocessLevelTask, TASK_NAME, EMPTY_VALUE);
         assertUserTaskExecutionSet(emptySubprocessLevelTask.getExecutionSet(),
                                    TASK_TASK_NAME,
                                    EMPTY_VALUE,
@@ -667,7 +667,7 @@ public class UserTaskTest extends TaskTest<UserTask> {
                                                             EMPTY_ONE_INCOME_SUBPROCESS_LEVEL_TASK_ID,
                                                             ONE_INCOME_EDGE,
                                                             HAS_OUTCOME_EDGE);
-        assertGeneralSet(emptySubprocessLevelTask.getGeneral(), TASK_NAME, EMPTY_VALUE);
+        assertGeneralSet(emptySubprocessLevelTask, TASK_NAME, EMPTY_VALUE);
         assertUserTaskExecutionSet(emptySubprocessLevelTask.getExecutionSet(),
                                    TASK_TASK_NAME,
                                    EMPTY_VALUE,
@@ -703,7 +703,7 @@ public class UserTaskTest extends TaskTest<UserTask> {
                                                             EMPTY_TWO_INCOMES_SUBPROCESS_LEVEL_TASK_ID,
                                                             TWO_INCOME_EDGES,
                                                             HAS_OUTCOME_EDGE);
-        assertGeneralSet(emptySubprocessLevelTask.getGeneral(), TASK_NAME, EMPTY_VALUE);
+        assertGeneralSet(emptySubprocessLevelTask, TASK_NAME, EMPTY_VALUE);
         assertUserTaskExecutionSet(emptySubprocessLevelTask.getExecutionSet(),
                                    TASK_TASK_NAME,
                                    EMPTY_VALUE,
@@ -779,7 +779,7 @@ public class UserTaskTest extends TaskTest<UserTask> {
                                                                  FILLED_SUBPROCESS_LEVEL_TASK_JAVA_ID,
                                                                  ZERO_INCOME_EDGES,
                                                                  HAS_NO_OUTCOME_EDGE);
-        assertGeneralSet(filledSubprocessLevelTaskJava.getGeneral(), TASK_NAME_JAVA, TASK_DOCUMENTATION_JAVA);
+        assertGeneralSet(filledSubprocessLevelTaskJava, TASK_NAME_JAVA, TASK_DOCUMENTATION_JAVA);
         assertUserTaskExecutionSet(filledSubprocessLevelTaskJava.getExecutionSet(),
                                    TASK_TASK_NAME_JAVA,
                                    TASK_SUBJECT_JAVA,
@@ -803,7 +803,7 @@ public class UserTaskTest extends TaskTest<UserTask> {
                                                                        FILLED_SUBPROCESS_LEVEL_TASK_JAVASCRIPT_ID,
                                                                        ZERO_INCOME_EDGES,
                                                                        HAS_NO_OUTCOME_EDGE);
-        assertGeneralSet(filledSubprocessLevelTaskJavascript.getGeneral(), TASK_NAME_JAVASCRIPT, TASK_DOCUMENTATION_JAVASCRIPT);
+        assertGeneralSet(filledSubprocessLevelTaskJavascript, TASK_NAME_JAVASCRIPT, TASK_DOCUMENTATION_JAVASCRIPT);
         assertUserTaskExecutionSet(filledSubprocessLevelTaskJavascript.getExecutionSet(),
                                    TASK_TASK_NAME_JAVASCRIPT,
                                    TASK_SUBJECT_JAVASCRIPT,
@@ -827,7 +827,7 @@ public class UserTaskTest extends TaskTest<UserTask> {
                                                                  FILLED_SUBPROCESS_LEVEL_TASK_MVEL_ID,
                                                                  ZERO_INCOME_EDGES,
                                                                  HAS_NO_OUTCOME_EDGE);
-        assertGeneralSet(filledSubprocessLevelTaskMvel.getGeneral(), TASK_NAME_MVEL, TASK_DOCUMENTATION_MVEL);
+        assertGeneralSet(filledSubprocessLevelTaskMvel, TASK_NAME_MVEL, TASK_DOCUMENTATION_MVEL);
         assertUserTaskExecutionSet(filledSubprocessLevelTaskMvel.getExecutionSet(),
                                    TASK_TASK_NAME_MVEL,
                                    TASK_SUBJECT_MVEL,
@@ -902,7 +902,7 @@ public class UserTaskTest extends TaskTest<UserTask> {
                                                                  FILLED_ONE_INCOME_SUBPROCESS_LEVEL_TASK_JAVA_ID,
                                                                  ONE_INCOME_EDGE,
                                                                  HAS_OUTCOME_EDGE);
-        assertGeneralSet(filledSubprocessLevelTaskJava.getGeneral(), TASK_NAME_JAVA, TASK_DOCUMENTATION_JAVA);
+        assertGeneralSet(filledSubprocessLevelTaskJava, TASK_NAME_JAVA, TASK_DOCUMENTATION_JAVA);
         assertUserTaskExecutionSet(filledSubprocessLevelTaskJava.getExecutionSet(),
                                    TASK_TASK_NAME_JAVA,
                                    TASK_SUBJECT_JAVA,
@@ -926,7 +926,7 @@ public class UserTaskTest extends TaskTest<UserTask> {
                                                                        FILLED_ONE_INCOME_SUBPROCESS_LEVEL_TASK_JAVASCRIPT_ID,
                                                                        ONE_INCOME_EDGE,
                                                                        HAS_OUTCOME_EDGE);
-        assertGeneralSet(filledSubprocessLevelTaskJavascript.getGeneral(), TASK_NAME_JAVASCRIPT, TASK_DOCUMENTATION_JAVASCRIPT);
+        assertGeneralSet(filledSubprocessLevelTaskJavascript, TASK_NAME_JAVASCRIPT, TASK_DOCUMENTATION_JAVASCRIPT);
         assertUserTaskExecutionSet(filledSubprocessLevelTaskJavascript.getExecutionSet(),
                                    TASK_TASK_NAME_JAVASCRIPT,
                                    TASK_SUBJECT_JAVASCRIPT,
@@ -950,7 +950,7 @@ public class UserTaskTest extends TaskTest<UserTask> {
                                                                  FILLED_ONE_INCOME_SUBPROCESS_LEVEL_TASK_MVEL_ID,
                                                                  ONE_INCOME_EDGE,
                                                                  HAS_OUTCOME_EDGE);
-        assertGeneralSet(filledSubprocessLevelTaskMvel.getGeneral(), TASK_NAME_MVEL, TASK_DOCUMENTATION_MVEL);
+        assertGeneralSet(filledSubprocessLevelTaskMvel, TASK_NAME_MVEL, TASK_DOCUMENTATION_MVEL);
         assertUserTaskExecutionSet(filledSubprocessLevelTaskMvel.getExecutionSet(),
                                    TASK_TASK_NAME_MVEL,
                                    TASK_SUBJECT_MVEL,
@@ -1025,7 +1025,7 @@ public class UserTaskTest extends TaskTest<UserTask> {
                                                                  FILLED_TWO_INCOMES_SUBPROCESS_LEVEL_TASK_JAVA_ID,
                                                                  TWO_INCOME_EDGES,
                                                                  HAS_OUTCOME_EDGE);
-        assertGeneralSet(filledSubprocessLevelTaskJava.getGeneral(), TASK_NAME_JAVA, TASK_DOCUMENTATION_JAVA);
+        assertGeneralSet(filledSubprocessLevelTaskJava, TASK_NAME_JAVA, TASK_DOCUMENTATION_JAVA);
         assertUserTaskExecutionSet(filledSubprocessLevelTaskJava.getExecutionSet(),
                                    TASK_TASK_NAME_JAVA,
                                    TASK_SUBJECT_JAVA,
@@ -1049,7 +1049,7 @@ public class UserTaskTest extends TaskTest<UserTask> {
                                                                        FILLED_TWO_INCOMES_SUBPROCESS_LEVEL_TASK_JAVASCRIPT_ID,
                                                                        TWO_INCOME_EDGES,
                                                                        HAS_OUTCOME_EDGE);
-        assertGeneralSet(filledSubprocessLevelTaskJavascript.getGeneral(), TASK_NAME_JAVASCRIPT, TASK_DOCUMENTATION_JAVASCRIPT);
+        assertGeneralSet(filledSubprocessLevelTaskJavascript, TASK_NAME_JAVASCRIPT, TASK_DOCUMENTATION_JAVASCRIPT);
         assertUserTaskExecutionSet(filledSubprocessLevelTaskJavascript.getExecutionSet(),
                                    TASK_TASK_NAME_JAVASCRIPT,
                                    TASK_SUBJECT_JAVASCRIPT,
@@ -1073,7 +1073,7 @@ public class UserTaskTest extends TaskTest<UserTask> {
                                                                  FILLED_TWO_INCOMES_SUBPROCESS_LEVEL_TASK_MVEL_ID,
                                                                  TWO_INCOME_EDGES,
                                                                  HAS_OUTCOME_EDGE);
-        assertGeneralSet(filledSubprocessLevelTaskMvel.getGeneral(), TASK_NAME_MVEL, TASK_DOCUMENTATION_MVEL);
+        assertGeneralSet(filledSubprocessLevelTaskMvel, TASK_NAME_MVEL, TASK_DOCUMENTATION_MVEL);
         assertUserTaskExecutionSet(filledSubprocessLevelTaskMvel.getExecutionSet(),
                                    TASK_TASK_NAME_MVEL,
                                    TASK_SUBJECT_MVEL,

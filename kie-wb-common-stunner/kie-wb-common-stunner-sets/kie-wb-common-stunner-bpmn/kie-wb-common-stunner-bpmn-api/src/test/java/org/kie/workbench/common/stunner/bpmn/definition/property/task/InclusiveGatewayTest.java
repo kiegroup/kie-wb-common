@@ -46,7 +46,7 @@ public class InclusiveGatewayTest {
     @Test
     public void testInclusiveDatabasedGatewayNameValid() {
         InclusiveGateway inclusiveGateway = new InclusiveGateway();
-        inclusiveGateway.getGeneral().setName(NAME_VALID);
+        inclusiveGateway.setName(NAME_VALID);
         Set<ConstraintViolation<InclusiveGateway>> violations = this.validator.validate(inclusiveGateway);
         assertTrue(violations.isEmpty());
     }
@@ -54,7 +54,7 @@ public class InclusiveGatewayTest {
     @Test
     public void testInclusiveDatabasedGatewayNameEmpty() {
         InclusiveGateway inclusiveGateway = new InclusiveGateway();
-        inclusiveGateway.getGeneral().setName(NAME_VALID);
+        inclusiveGateway.setName(NAME_VALID);
         Set<ConstraintViolation<InclusiveGateway>> violations = this.validator.validate(inclusiveGateway);
         assertTrue(violations.isEmpty());
     }

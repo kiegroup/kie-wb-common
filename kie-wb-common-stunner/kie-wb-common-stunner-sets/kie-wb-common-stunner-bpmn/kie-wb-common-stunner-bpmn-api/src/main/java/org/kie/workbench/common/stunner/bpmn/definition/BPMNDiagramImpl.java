@@ -199,11 +199,6 @@ public class BPMNDiagramImpl implements BPMNDiagram<DiagramSet, ProcessData, Adv
     }
 
     @Override
-    public BPMNBaseInfo getGeneral() {
-        return null;
-    }
-
-    @Override
     public AdvancedData getAdvancedData() {
         return advancedData;
     }
@@ -237,5 +232,15 @@ public class BPMNDiagramImpl implements BPMNDiagram<DiagramSet, ProcessData, Adv
                     advancedData.equals(other.advancedData);
         }
         return false;
+    }
+
+    @Override
+    public String getName() {
+        return null;
+    }
+
+    @Override
+    public String getDocumentation() {
+        return null;
     }
 }

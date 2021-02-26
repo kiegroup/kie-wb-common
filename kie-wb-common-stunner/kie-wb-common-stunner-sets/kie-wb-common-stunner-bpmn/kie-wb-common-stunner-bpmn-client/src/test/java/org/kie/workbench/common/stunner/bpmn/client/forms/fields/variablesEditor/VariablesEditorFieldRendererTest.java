@@ -34,7 +34,6 @@ import org.kie.workbench.common.stunner.bpmn.client.forms.fields.model.Variable;
 import org.kie.workbench.common.stunner.bpmn.client.forms.fields.model.VariableRow;
 import org.kie.workbench.common.stunner.bpmn.definition.UserTask;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.AssignmentsInfo;
-import org.kie.workbench.common.stunner.bpmn.definition.property.general.TaskGeneralSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.IsMultipleInstance;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.MultipleInstanceCollectionInput;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.MultipleInstanceCollectionOutput;
@@ -95,9 +94,6 @@ public class VariablesEditorFieldRendererTest {
 
     @Mock
     private EditorSession clientFullSession;
-
-    @Mock
-    private Iterable nodes;
 
     @Mock
     private ErrorPopupPresenter errorPopupPresenter;
@@ -186,9 +182,7 @@ public class VariablesEditorFieldRendererTest {
         Node node = mock(Node.class);
         when(node.getContent()).thenReturn(view);
         UserTask content = mock(UserTask.class);
-        TaskGeneralSet generalSet = mock(TaskGeneralSet.class);
-        when(generalSet.getName()).thenReturn("");
-        when(content.getGeneral()).thenReturn(generalSet);
+        when(content.getName()).thenReturn("");
         UserTaskExecutionSet executionSet = mock(UserTaskExecutionSet.class);
         when(content.getExecutionSet()).thenReturn(executionSet);
         when(executionSet.getIsMultipleInstance()).thenReturn(mock(IsMultipleInstance.class));

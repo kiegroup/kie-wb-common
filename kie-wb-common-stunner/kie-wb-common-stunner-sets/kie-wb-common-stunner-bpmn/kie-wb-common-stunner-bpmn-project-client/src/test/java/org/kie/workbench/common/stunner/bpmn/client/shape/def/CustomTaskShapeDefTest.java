@@ -86,7 +86,7 @@ public class CustomTaskShapeDefTest {
 
     @Before
     @SuppressWarnings("unchecked")
-    public void init() throws Exception {
+    public void init() {
         this.task = new CustomTask();
         task.getDimensionsSet().getWidth().setValue(WIDTH);
         task.getDimensionsSet().getHeight().setValue(HEIGHT);

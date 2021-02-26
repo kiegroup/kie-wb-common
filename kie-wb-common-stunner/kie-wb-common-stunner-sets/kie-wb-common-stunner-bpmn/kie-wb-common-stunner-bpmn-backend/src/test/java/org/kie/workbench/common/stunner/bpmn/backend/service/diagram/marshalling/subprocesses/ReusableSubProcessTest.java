@@ -96,7 +96,7 @@ public class ReusableSubProcessTest extends SubProcessTest<ReusableSubprocess> {
                                                                       EMPTY_INCOME_EDGES,
                                                                       EMPTY_OUTCOME_EDGES);
 
-        assertGeneralSet(topLevelSubProcess.getGeneral(), DEFAULT_NAME, DEFAULT_DOCUMENTATION);
+        assertGeneralSet(topLevelSubProcess, DEFAULT_NAME, DEFAULT_DOCUMENTATION);
         assertReusableSubProcessExecutionSet(topLevelSubProcess.getExecutionSet(),
                                              DEFAULT_CALLED_ELEMENT,
                                              IS_NOT_INDEPENDENT,
@@ -126,7 +126,7 @@ public class ReusableSubProcessTest extends SubProcessTest<ReusableSubprocess> {
                                                                           EMPTY_INCOME_EDGES,
                                                                           EMPTY_OUTCOME_EDGES);
 
-        assertGeneralSet(topLevelSubProcessJava.getGeneral(), SUB_PROCESS_NAME, SUB_PROCESS_DOCUMENTATION);
+        assertGeneralSet(topLevelSubProcessJava, SUB_PROCESS_NAME, SUB_PROCESS_DOCUMENTATION);
         assertReusableSubProcessExecutionSet(topLevelSubProcessJava.getExecutionSet(),
                                              CALLED_ELEMENT,
                                              IS_INDEPENDENT,
@@ -144,7 +144,7 @@ public class ReusableSubProcessTest extends SubProcessTest<ReusableSubprocess> {
                                                                                 EMPTY_INCOME_EDGES,
                                                                                 EMPTY_OUTCOME_EDGES);
 
-        assertGeneralSet(topLevelSubProcessJavascript.getGeneral(), SUB_PROCESS_NAME, SUB_PROCESS_DOCUMENTATION);
+        assertGeneralSet(topLevelSubProcessJavascript, SUB_PROCESS_NAME, SUB_PROCESS_DOCUMENTATION);
         assertReusableSubProcessExecutionSet(topLevelSubProcessJavascript.getExecutionSet(),
                                              CALLED_ELEMENT,
                                              IS_INDEPENDENT,
@@ -162,7 +162,7 @@ public class ReusableSubProcessTest extends SubProcessTest<ReusableSubprocess> {
                                                                           EMPTY_INCOME_EDGES,
                                                                           EMPTY_OUTCOME_EDGES);
 
-        assertGeneralSet(topLevelSubProcessMVEL.getGeneral(), SUB_PROCESS_NAME, SUB_PROCESS_DOCUMENTATION);
+        assertGeneralSet(topLevelSubProcessMVEL, SUB_PROCESS_NAME, SUB_PROCESS_DOCUMENTATION);
         assertReusableSubProcessExecutionSet(topLevelSubProcessMVEL.getExecutionSet(),
                                              CALLED_ELEMENT,
                                              IS_INDEPENDENT,
@@ -189,7 +189,7 @@ public class ReusableSubProcessTest extends SubProcessTest<ReusableSubprocess> {
                                                                           ONE_INCOME_EDGE,
                                                                           TWO_OUTCOME_EDGES);
 
-        assertGeneralSet(topLevelSubProcessJava.getGeneral(), SUB_PROCESS_NAME, DEFAULT_DOCUMENTATION);
+        assertGeneralSet(topLevelSubProcessJava, SUB_PROCESS_NAME, DEFAULT_DOCUMENTATION);
         assertReusableSubProcessExecutionSet(topLevelSubProcessJava.getExecutionSet(),
                                              DEFAULT_CALLED_ELEMENT,
                                              IS_NOT_INDEPENDENT,
@@ -214,7 +214,7 @@ public class ReusableSubProcessTest extends SubProcessTest<ReusableSubprocess> {
                                                                              EMPTY_INCOME_EDGES,
                                                                              EMPTY_OUTCOME_EDGES);
 
-        assertGeneralSet(subProcessLevelSubProcess.getGeneral(), DEFAULT_NAME, DEFAULT_DOCUMENTATION);
+        assertGeneralSet(subProcessLevelSubProcess, DEFAULT_NAME, DEFAULT_DOCUMENTATION);
         assertReusableSubProcessExecutionSet(subProcessLevelSubProcess.getExecutionSet(),
                                              DEFAULT_CALLED_ELEMENT,
                                              IS_NOT_INDEPENDENT,
@@ -244,7 +244,7 @@ public class ReusableSubProcessTest extends SubProcessTest<ReusableSubprocess> {
                                                                                  EMPTY_INCOME_EDGES,
                                                                                  EMPTY_OUTCOME_EDGES);
 
-        assertGeneralSet(subProcessLevelSubProcessJava.getGeneral(), SUB_PROCESS_NAME, SUB_PROCESS_DOCUMENTATION);
+        assertGeneralSet(subProcessLevelSubProcessJava, SUB_PROCESS_NAME, SUB_PROCESS_DOCUMENTATION);
         assertReusableSubProcessExecutionSet(subProcessLevelSubProcessJava.getExecutionSet(),
                                              CALLED_ELEMENT,
                                              IS_INDEPENDENT,
@@ -262,7 +262,7 @@ public class ReusableSubProcessTest extends SubProcessTest<ReusableSubprocess> {
                                                                                        EMPTY_INCOME_EDGES,
                                                                                        EMPTY_OUTCOME_EDGES);
 
-        assertGeneralSet(subProcessLevelSubProcessJavascript.getGeneral(), SUB_PROCESS_NAME, SUB_PROCESS_DOCUMENTATION);
+        assertGeneralSet(subProcessLevelSubProcessJavascript, SUB_PROCESS_NAME, SUB_PROCESS_DOCUMENTATION);
         assertReusableSubProcessExecutionSet(subProcessLevelSubProcessJavascript.getExecutionSet(),
                                              CALLED_ELEMENT,
                                              IS_INDEPENDENT,
@@ -280,7 +280,7 @@ public class ReusableSubProcessTest extends SubProcessTest<ReusableSubprocess> {
                                                                                  EMPTY_INCOME_EDGES,
                                                                                  EMPTY_OUTCOME_EDGES);
 
-        assertGeneralSet(subProcessLevelSubProcessMVEL.getGeneral(), SUB_PROCESS_NAME, SUB_PROCESS_DOCUMENTATION);
+        assertGeneralSet(subProcessLevelSubProcessMVEL, SUB_PROCESS_NAME, SUB_PROCESS_DOCUMENTATION);
         assertReusableSubProcessExecutionSet(subProcessLevelSubProcessMVEL.getExecutionSet(),
                                              CALLED_ELEMENT,
                                              IS_INDEPENDENT,
@@ -307,7 +307,7 @@ public class ReusableSubProcessTest extends SubProcessTest<ReusableSubprocess> {
                                                                                  ONE_INCOME_EDGE,
                                                                                  TWO_OUTCOME_EDGES);
 
-        assertGeneralSet(subProcessLevelSubProcessJava.getGeneral(), SUB_PROCESS_NAME, DEFAULT_DOCUMENTATION);
+        assertGeneralSet(subProcessLevelSubProcessJava, SUB_PROCESS_NAME, DEFAULT_DOCUMENTATION);
         assertReusableSubProcessExecutionSet(subProcessLevelSubProcessJava.getExecutionSet(),
                                              DEFAULT_CALLED_ELEMENT,
                                              IS_NOT_INDEPENDENT,

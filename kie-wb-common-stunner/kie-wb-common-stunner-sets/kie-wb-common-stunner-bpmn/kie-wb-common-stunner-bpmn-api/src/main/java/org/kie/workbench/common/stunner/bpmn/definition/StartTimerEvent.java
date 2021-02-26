@@ -30,7 +30,6 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.dimensions.Circ
 import org.kie.workbench.common.stunner.bpmn.definition.property.dimensions.Radius;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.timer.InterruptingTimerEventExecutionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.font.FontSet;
-import org.kie.workbench.common.stunner.bpmn.definition.property.general.BPMNGeneralSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.simulation.SimulationAttributeSet;
 import org.kie.workbench.common.stunner.core.definition.annotation.Definition;
 import org.kie.workbench.common.stunner.core.definition.annotation.Property;
@@ -57,7 +56,8 @@ public class StartTimerEvent extends BaseStartEvent {
     protected InterruptingTimerEventExecutionSet executionSet;
 
     public StartTimerEvent() {
-        this((new BPMNGeneralSet("")),
+        this("",
+             "",
              new BackgroundSet(),
              new FontSet(),
              new CircleDimensionSet(new Radius()),
@@ -65,13 +65,15 @@ public class StartTimerEvent extends BaseStartEvent {
              new InterruptingTimerEventExecutionSet());
     }
 
-    public StartTimerEvent(final @MapsTo("general") BPMNGeneralSet general,
+    public StartTimerEvent(final @MapsTo("name") String name,
+                           final @MapsTo("documentation") String documentation,
                            final @MapsTo("backgroundSet") BackgroundSet backgroundSet,
                            final @MapsTo("fontSet") FontSet fontSet,
                            final @MapsTo("dimensionsSet") CircleDimensionSet dimensionsSet,
                            final @MapsTo("simulationSet") SimulationAttributeSet simulationSet,
                            final @MapsTo("executionSet") InterruptingTimerEventExecutionSet executionSet) {
-        super(general,
+        super(name,
+              documentation,
               backgroundSet,
               fontSet,
               dimensionsSet,

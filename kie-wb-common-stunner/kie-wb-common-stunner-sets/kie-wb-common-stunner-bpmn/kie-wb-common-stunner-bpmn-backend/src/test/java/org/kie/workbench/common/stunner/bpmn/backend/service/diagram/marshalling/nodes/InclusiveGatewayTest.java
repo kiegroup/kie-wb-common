@@ -46,7 +46,7 @@ public class InclusiveGatewayTest extends GatewayNodeTest<InclusiveGateway> {
         assertDiagram(diagram, DIAGRAM_NODE_SIZE);
 
         InclusiveGateway filledTopLevelGateway = getGatewayNodeById(diagram, FILLED_TOP_LEVEL_GATEWAY_ID, getGatewayNodeType());
-        assertGeneralSet(filledTopLevelGateway.getGeneral(), NAME, DOCUMENTATION);
+        assertGeneralSet(filledTopLevelGateway, NAME, DOCUMENTATION);
         assertGatewayExecutionSet(filledTopLevelGateway.getExecutionSet(), DEFAULT_ROUTE_TOP_LEVEL_ID);
     }
 
@@ -56,7 +56,7 @@ public class InclusiveGatewayTest extends GatewayNodeTest<InclusiveGateway> {
         assertDiagram(diagram, DIAGRAM_NODE_SIZE);
 
         InclusiveGateway filledTopLevelGateway = getGatewayNodeById(diagram, EMPTY_TOP_LEVEL_GATEWAY_ID, getGatewayNodeType());
-        assertGeneralSet(filledTopLevelGateway.getGeneral(), EMPTY, EMPTY);
+        assertGeneralSet(filledTopLevelGateway, EMPTY, EMPTY);
         assertGatewayExecutionSet(filledTopLevelGateway.getExecutionSet(), null);
     }
 
@@ -66,7 +66,7 @@ public class InclusiveGatewayTest extends GatewayNodeTest<InclusiveGateway> {
         assertDiagram(diagram, DIAGRAM_NODE_SIZE);
 
         InclusiveGateway filledTopLevelGateway = getGatewayNodeById(diagram, FILLED_SUBPROCESS_LEVEL_GATEWAY_ID, getGatewayNodeType());
-        assertGeneralSet(filledTopLevelGateway.getGeneral(), NAME, DOCUMENTATION);
+        assertGeneralSet(filledTopLevelGateway, NAME, DOCUMENTATION);
         assertGatewayExecutionSet(filledTopLevelGateway.getExecutionSet(), DEFAULT_ROUTE_SUBPROCESS_LEVEL_ID);
     }
 
@@ -76,7 +76,7 @@ public class InclusiveGatewayTest extends GatewayNodeTest<InclusiveGateway> {
         assertDiagram(diagram, DIAGRAM_NODE_SIZE);
 
         InclusiveGateway filledTopLevelGateway = getGatewayNodeById(diagram, EMPTY_SUBPROCESS_LEVEL_GATEWAY_ID, getGatewayNodeType());
-        assertGeneralSet(filledTopLevelGateway.getGeneral(), EMPTY, EMPTY);
+        assertGeneralSet(filledTopLevelGateway, EMPTY, EMPTY);
         assertGatewayExecutionSet(filledTopLevelGateway.getExecutionSet(), null);
     }
 

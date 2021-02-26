@@ -69,13 +69,9 @@ public class SizeHandler<W, V extends ShapeView> implements ShapeViewHandler<Vie
     public void handle(final View<W> content,
                        final V view) {
         final W bean = content.getDefinition();
-        final double boundsWidth = content.getBounds().getWidth();
-        final double boundsHeight = content.getBounds().getHeight();
+        final double width = content.getBounds().getWidth();
+        final double height = content.getBounds().getHeight();
         if (view instanceof HasSize) {
-            final Double beanWidth = widthProvider.apply(bean);
-            final Double beanHeight = heightProvider.apply(bean);
-            final double width = null != beanWidth ? beanWidth : boundsWidth;
-            final double height = null != beanHeight ? beanHeight : boundsHeight;
             final Double minWidth = minWidthProvider.apply(bean);
             final Double maxWidth = maxWidthProvider.apply(bean);
             final Double minHeight = minHeightProvider.apply(bean);
@@ -106,7 +102,7 @@ public class SizeHandler<W, V extends ShapeView> implements ShapeViewHandler<Vie
         if (view instanceof HasRadius) {
             final Double beanRadius = radiusProvider.apply(bean);
             final double radius = null != beanRadius ? beanRadius :
-                    ShapeUtils.getRadiusForBoundingBox(boundsWidth, boundsHeight);
+                    ShapeUtils.getRadiusForBoundingBox(width, height);
             final Double minRadius = minRadiusProvider.apply(bean);
             final Double maxRadius = maxRadiusProvider.apply(bean);
             if (radius > 0) {
@@ -128,11 +124,7 @@ public class SizeHandler<W, V extends ShapeView> implements ShapeViewHandler<Vie
             return true;
         }
 
-        if (value > 0) {
-            return true;
-        }
-
-        return false;
+        return value > 0;
     }
 
     public static class Builder<W, V extends ShapeView> {

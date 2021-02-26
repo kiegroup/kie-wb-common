@@ -31,8 +31,8 @@ import org.kie.workbench.common.stunner.bpmn.client.marshall.MarshallingMessageK
 import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.Result;
 import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.tostunner.properties.BasePropertyReader;
 import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.tostunner.properties.SequenceFlowPropertyReader;
+import org.kie.workbench.common.stunner.bpmn.definition.BPMNDefinition;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNDiagramImpl;
-import org.kie.workbench.common.stunner.bpmn.definition.BPMNViewDefinition;
 import org.kie.workbench.common.stunner.bpmn.definition.EmbeddedSubprocess;
 import org.kie.workbench.common.stunner.bpmn.definition.EndNoneEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.IntermediateTimerEvent;
@@ -66,17 +66,15 @@ public class ProcessPostConverterTest {
         double laneY = 100;
         double laneWidth = 500;
         double laneHeight = 200;
-        RectangleDimensionsSet laneRectangleDimensionsSet = new RectangleDimensionsSet(laneWidth, laneHeight);
         Lane laneDefinition = mock(Lane.class);
-        when(laneDefinition.getDimensionsSet()).thenReturn(laneRectangleDimensionsSet);
-        Node<? extends View<? extends BPMNViewDefinition>, ?> lane = mockNode(laneDefinition, laneX, laneY, laneWidth, laneHeight);
+        Node<? extends View<? extends BPMNDefinition>, ?> lane = mockNode(laneDefinition, laneX, laneY, laneWidth, laneHeight);
         BpmnNode laneNode = mockBpmnNode(lane);
 
         double startEventX = 180;
         double startEventY = 130;
         double eventWidth = 56;
         double eventHeight = 56;
-        Node<? extends View<? extends BPMNViewDefinition>, ?> startEvent = mockNode(mock(StartNoneEvent.class), startEventX + laneX, startEventY + laneY, eventWidth, eventHeight);
+        Node<? extends View<? extends BPMNDefinition>, ?> startEvent = mockNode(mock(StartNoneEvent.class), startEventX + laneX, startEventY + laneY, eventWidth, eventHeight);
         BpmnNode startEventNode = mockBpmnNode(startEvent);
 
         //subprocess is collapsed and has a boundaryEvent, and contains task1 and task2 (task2 has a boundaryEvent)
@@ -87,51 +85,51 @@ public class ProcessPostConverterTest {
         RectangleDimensionsSet subprocessRectangleDimensionsSet = new RectangleDimensionsSet(subprocessWidth, subprocessHeight);
         EmbeddedSubprocess subprocessDefinition = mock(EmbeddedSubprocess.class);
         when(subprocessDefinition.getDimensionsSet()).thenReturn(subprocessRectangleDimensionsSet);
-        Node<? extends View<? extends BPMNViewDefinition>, ?> subprocess = mockNode(subprocessDefinition, subprocessX + laneX, subprocessY + laneY, subprocessWidth, subprocessHeight);
+        Node<? extends View<? extends BPMNDefinition>, ?> subprocess = mockNode(subprocessDefinition, subprocessX + laneX, subprocessY + laneY, subprocessWidth, subprocessHeight);
         BpmnNode subprocessNode = mockBpmnNode(subprocess);
         BasePropertyReader subprocessPropertyReader = subprocessNode.getPropertyReader();
         when(subprocessPropertyReader.isExpanded()).thenReturn(false);
 
         double subprocessBoundaryEventX = subprocessWidth - 28;
         double subprocessBoundaryEventY = (subprocessHeight / 2) - 28;
-        Node<? extends View<? extends BPMNViewDefinition>, ?> subprocessBoundaryEvent = mockNode(mock(IntermediateTimerEvent.class), subprocessBoundaryEventX, subprocessBoundaryEventY, eventWidth, eventHeight);
+        Node<? extends View<? extends BPMNDefinition>, ?> subprocessBoundaryEvent = mockNode(mock(IntermediateTimerEvent.class), subprocessBoundaryEventX, subprocessBoundaryEventY, eventWidth, eventHeight);
         BpmnNode subprocessBoundaryEventNode = mockBpmnNode(subprocessBoundaryEvent).docked();
 
         double task1X = 10;
         double task1Y = 10;
         double taskWidth = 200;
         double taskHeight = 100;
-        Node<? extends View<? extends BPMNViewDefinition>, ?> task1 = mockNode(mock(UserTask.class), task1X, task1Y, taskWidth, taskHeight);
+        Node<? extends View<? extends BPMNDefinition>, ?> task1 = mockNode(mock(UserTask.class), task1X, task1Y, taskWidth, taskHeight);
         BpmnNode task1Node = mockBpmnNode(task1);
 
         double task2X = 300;
         double task2Y = 200;
-        Node<? extends View<? extends BPMNViewDefinition>, ?> task2 = mockNode(mock(UserTask.class), task2X, task2Y, taskWidth, taskHeight);
+        Node<? extends View<? extends BPMNDefinition>, ?> task2 = mockNode(mock(UserTask.class), task2X, task2Y, taskWidth, taskHeight);
         BpmnNode task2Node = mockBpmnNode(task2);
 
         double task2BoundaryEventX = taskWidth - 28;
         double task2BoundaryEventY = taskHeight - 28;
-        Node<? extends View<? extends BPMNViewDefinition>, ?> task2BoundaryEvent = mockNode(mock(IntermediateTimerEvent.class), task2BoundaryEventX, task2BoundaryEventY, eventWidth, eventHeight);
+        Node<? extends View<? extends BPMNDefinition>, ?> task2BoundaryEvent = mockNode(mock(IntermediateTimerEvent.class), task2BoundaryEventX, task2BoundaryEventY, eventWidth, eventHeight);
         BpmnNode task2BoundaryEventNode = mockBpmnNode(task2BoundaryEvent).docked();
 
         double endEventX = 450;
         double endEventY = 230;
-        Node<? extends View<? extends BPMNViewDefinition>, ?> endEvent = mockNode(mock(EndNoneEvent.class), endEventX + laneX, endEventY + laneY, eventWidth, eventHeight);
+        Node<? extends View<? extends BPMNDefinition>, ?> endEvent = mockNode(mock(EndNoneEvent.class), endEventX + laneX, endEventY + laneY, eventWidth, eventHeight);
         BpmnNode endEventNode = mockBpmnNode(endEvent);
 
         double task3X = 500;
         double task3Y = 600;
-        Node<? extends View<? extends BPMNViewDefinition>, ?> task3 = mockNode(mock(UserTask.class), task3X + laneX, task3Y + laneY, taskWidth, taskHeight);
+        Node<? extends View<? extends BPMNDefinition>, ?> task3 = mockNode(mock(UserTask.class), task3X + laneX, task3Y + laneY, taskWidth, taskHeight);
         BpmnNode task3Node = mockBpmnNode(task3);
 
         double task3BoundaryEventX = taskWidth - 28;
         double task3BoundaryEventY = taskHeight - 28;
-        Node<? extends View<? extends BPMNViewDefinition>, ?> task3BoundaryEvent = mockNode(mock(IntermediateTimerEvent.class), task3BoundaryEventX, task3BoundaryEventY, eventWidth, eventHeight);
+        Node<? extends View<? extends BPMNDefinition>, ?> task3BoundaryEvent = mockNode(mock(IntermediateTimerEvent.class), task3BoundaryEventX, task3BoundaryEventY, eventWidth, eventHeight);
         BpmnNode task3BoundaryEventNode = mockBpmnNode(task3BoundaryEvent).docked();
 
         double task4X = 900;
         double task4Y = 1000;
-        Node<? extends View<? extends BPMNViewDefinition>, ?> task4 = mockNode(mock(UserTask.class), task4X + laneX, task4Y + laneY, taskWidth, taskHeight);
+        Node<? extends View<? extends BPMNDefinition>, ?> task4 = mockNode(mock(UserTask.class), task4X + laneX, task4Y + laneY, taskWidth, taskHeight);
         BpmnNode task4Node = mockBpmnNode(task4);
 
         List<Point2D> controlPoints = new ArrayList<>();
@@ -163,7 +161,7 @@ public class ProcessPostConverterTest {
 
         BpmnEdge.Simple edgeTask3BoundaryEventToTask4 = BpmnEdge.of(null, task3BoundaryEventNode, sourceConnection, controlPoints, task4Node, targetConnection, edgePropertyReader);
 
-        Node<? extends View<? extends BPMNViewDefinition>, ?> diagram = mockNode(mock(BPMNDiagramImpl.class), 0, 0, 10000, 10000);
+        Node<? extends View<? extends BPMNDefinition>, ?> diagram = mockNode(mock(BPMNDiagramImpl.class), 0, 0, 10000, 10000);
         BpmnNode rootNode = mockBpmnNode(diagram);
 
         rootNode.addChild(laneNode);

@@ -20,13 +20,13 @@ import java.util.Optional;
 import java.util.function.BiConsumer;
 
 import org.kie.workbench.common.stunner.bpmn.client.resources.BPMNSVGViewFactory;
-import org.kie.workbench.common.stunner.bpmn.definition.BPMNViewDefinition;
+import org.kie.workbench.common.stunner.bpmn.definition.BPMNDefinition;
 import org.kie.workbench.common.stunner.core.client.shape.view.handler.SizeHandler;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
 import org.kie.workbench.common.stunner.svg.client.shape.def.SVGShapeViewDef;
 import org.kie.workbench.common.stunner.svg.client.shape.view.SVGShapeView;
 
-public interface BPMNSvgShapeDef<W extends BPMNViewDefinition>
+public interface BPMNSvgShapeDef<W extends BPMNDefinition>
         extends BPMNShapeDef<W, SVGShapeView>,
                 SVGShapeViewDef<W, BPMNSVGViewFactory> {
 

@@ -59,7 +59,7 @@ public class BoundaryCatchingIntermediateCompensationEventTest extends BoundaryC
                                                                                        FILLED_TOP_LEVEL_EVENT_ID,
                                                                                        HAS_NO_INCOME_EDGE,
                                                                                        ZERO_OUTGOING_EDGES);
-        assertGeneralSet(filledTopEvent.getGeneral(), EVENT_NAME, EVENT_DOCUMENTATION);
+        assertGeneralSet(filledTopEvent, EVENT_NAME, EVENT_DOCUMENTATION);
         assertCompensationEventExecutionSet(filledTopEvent.getExecutionSet(),
                                             NON_CANCELLING,
                                             SLA_DUE_DATE);
@@ -75,7 +75,7 @@ public class BoundaryCatchingIntermediateCompensationEventTest extends BoundaryC
                                                                                       EMPTY_TOP_LEVEL_EVENT_ID,
                                                                                       HAS_NO_INCOME_EDGE,
                                                                                       ZERO_OUTGOING_EDGES);
-        assertGeneralSet(emptyTopEvent.getGeneral(), EMPTY_VALUE, EMPTY_VALUE);
+        assertGeneralSet(emptyTopEvent, EMPTY_VALUE, EMPTY_VALUE);
         assertCompensationEventExecutionSet(emptyTopEvent.getExecutionSet(),
                                             NON_CANCELLING,
                                             EMPTY_VALUE);
@@ -94,7 +94,7 @@ public class BoundaryCatchingIntermediateCompensationEventTest extends BoundaryC
                                                                                               FILLED_SUBPROCESS_LEVEL_EVENT_ID,
                                                                                               HAS_NO_INCOME_EDGE,
                                                                                               ZERO_OUTGOING_EDGES);
-        assertGeneralSet(filledSubprocessEvent.getGeneral(), EVENT_NAME, EVENT_DOCUMENTATION);
+        assertGeneralSet(filledSubprocessEvent, EVENT_NAME, EVENT_DOCUMENTATION);
         assertCompensationEventExecutionSet(filledSubprocessEvent.getExecutionSet(),
                                             NON_CANCELLING,
                                             SLA_DUE_DATE);
@@ -110,7 +110,7 @@ public class BoundaryCatchingIntermediateCompensationEventTest extends BoundaryC
                                                                                              EMPTY_SUBPROCESS_LEVEL_EVENT_ID,
                                                                                              HAS_NO_INCOME_EDGE,
                                                                                              ZERO_OUTGOING_EDGES);
-        assertGeneralSet(emptySubprocessEvent.getGeneral(), EMPTY_VALUE, EMPTY_VALUE);
+        assertGeneralSet(emptySubprocessEvent, EMPTY_VALUE, EMPTY_VALUE);
         assertCompensationEventExecutionSet(emptySubprocessEvent.getExecutionSet(),
                                             NON_CANCELLING,
                                             EMPTY_VALUE);
@@ -129,7 +129,7 @@ public class BoundaryCatchingIntermediateCompensationEventTest extends BoundaryC
                                                                                               FILLED_WITH_EDGES_TOP_LEVEL_EVENT_ID,
                                                                                               HAS_NO_INCOME_EDGE,
                                                                                               TWO_OUTGOING_EDGES);
-        assertGeneralSet(filledSubprocessEvent.getGeneral(), EVENT_NAME, EVENT_DOCUMENTATION);
+        assertGeneralSet(filledSubprocessEvent, EVENT_NAME, EVENT_DOCUMENTATION);
         assertCompensationEventExecutionSet(filledSubprocessEvent.getExecutionSet(),
                                             NON_CANCELLING,
                                             SLA_DUE_DATE);
@@ -145,7 +145,7 @@ public class BoundaryCatchingIntermediateCompensationEventTest extends BoundaryC
                                                                                    EMPTY_WITH_EDGES_TOP_LEVEL_EVENT_ID,
                                                                                    HAS_NO_INCOME_EDGE,
                                                                                    TWO_OUTGOING_EDGES);
-        assertGeneralSet(emptyEvent.getGeneral(), EMPTY_VALUE, EMPTY_VALUE);
+        assertGeneralSet(emptyEvent, EMPTY_VALUE, EMPTY_VALUE);
         assertCompensationEventExecutionSet(emptyEvent.getExecutionSet(),
                                             NON_CANCELLING,
                                             EMPTY_VALUE);
@@ -161,7 +161,7 @@ public class BoundaryCatchingIntermediateCompensationEventTest extends BoundaryC
                                                                                              EMPTY_WITH_EDGES_SUBPROCESS_LEVEL_EVENT_ID,
                                                                                              HAS_NO_INCOME_EDGE,
                                                                                              TWO_OUTGOING_EDGES);
-        assertGeneralSet(emptySubprocessEvent.getGeneral(), EMPTY_VALUE, EMPTY_VALUE);
+        assertGeneralSet(emptySubprocessEvent, EMPTY_VALUE, EMPTY_VALUE);
         assertCompensationEventExecutionSet(emptySubprocessEvent.getExecutionSet(),
                                             NON_CANCELLING,
                                             EMPTY_VALUE);
@@ -180,7 +180,7 @@ public class BoundaryCatchingIntermediateCompensationEventTest extends BoundaryC
                                                                                               FILLED_WITH_EDGES_SUBPROCESS_LEVEL_EVENT_ID,
                                                                                               HAS_NO_INCOME_EDGE,
                                                                                               TWO_OUTGOING_EDGES);
-        assertGeneralSet(filledSubprocessEvent.getGeneral(), EVENT_NAME, EVENT_DOCUMENTATION);
+        assertGeneralSet(filledSubprocessEvent, EVENT_NAME, EVENT_DOCUMENTATION);
         assertCompensationEventExecutionSet(filledSubprocessEvent.getExecutionSet(),
                                             NON_CANCELLING,
                                             SLA_DUE_DATE);

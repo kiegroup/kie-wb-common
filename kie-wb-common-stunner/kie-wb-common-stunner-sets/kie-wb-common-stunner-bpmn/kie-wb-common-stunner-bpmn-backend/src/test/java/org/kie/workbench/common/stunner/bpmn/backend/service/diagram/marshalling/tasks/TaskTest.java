@@ -19,7 +19,6 @@ package org.kie.workbench.common.stunner.bpmn.backend.service.diagram.marshallin
 import org.junit.Test;
 import org.kie.workbench.common.stunner.bpmn.backend.service.diagram.marshalling.BPMNDiagramMarshallerBaseTest;
 import org.kie.workbench.common.stunner.bpmn.definition.BaseTask;
-import org.kie.workbench.common.stunner.bpmn.definition.property.general.TaskGeneralSet;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.kie.workbench.common.stunner.core.diagram.Metadata;
 import org.kie.workbench.common.stunner.core.graph.Graph;
@@ -211,7 +210,7 @@ public abstract class TaskTest<T extends BaseTask> extends BPMNDiagramMarshaller
         assertNodesEqualsAfterMarshalling(initialDiagram, marshalledDiagram, nodeID, amountOfIncomeEdges, hasOutcomeEdge);
     }
 
-    void assertGeneralSet(TaskGeneralSet generalSet, String nodeName, String documentation) {
+    void assertGeneralSet(BaseTask generalSet, String nodeName, String documentation) {
         assertNotNull(generalSet);
         assertNotNull(generalSet.getName());
         assertNotNull(generalSet.getDocumentation());

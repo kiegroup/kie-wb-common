@@ -22,7 +22,6 @@ import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.fromstun
 import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.fromstunner.properties.BasePropertyWriter;
 import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.fromstunner.properties.PropertyWriterFactory;
 import org.kie.workbench.common.stunner.bpmn.definition.Association;
-import org.kie.workbench.common.stunner.bpmn.definition.property.general.BPMNGeneralSet;
 import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.content.view.ViewConnector;
 
@@ -58,8 +57,7 @@ public class AssociationConverter {
 
         p.setConnection(connector);
 
-        BPMNGeneralSet general = definition.getGeneral();
-        p.setDocumentation(general.getDocumentation());
+        p.setDocumentation(definition.getDocumentation());
         p.setDirectionAssociation(definition);
 
         return Result.of(p);

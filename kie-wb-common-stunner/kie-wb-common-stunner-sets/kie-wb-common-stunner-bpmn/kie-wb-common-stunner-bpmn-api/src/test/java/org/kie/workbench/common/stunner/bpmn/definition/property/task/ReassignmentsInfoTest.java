@@ -16,13 +16,8 @@
 
 package org.kie.workbench.common.stunner.bpmn.definition.property.task;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import org.junit.Test;
 import org.kie.workbench.common.stunner.bpmn.definition.property.reassignment.ReassignmentTypeListValue;
-import org.kie.workbench.common.stunner.bpmn.definition.property.reassignment.ReassignmentValue;
 import org.kie.workbench.common.stunner.bpmn.definition.property.reassignment.ReassignmentsInfo;
 import org.kie.workbench.common.stunner.core.util.EqualsAndHashCodeTestUtils;
 
@@ -38,14 +33,5 @@ public class ReassignmentsInfoTest {
                 .addTrueCase(new ReassignmentsInfo(),
                              new ReassignmentsInfo(new ReassignmentTypeListValue()))
                 .test();
-    }
-
-    private List<ReassignmentValue> getReassignmentValues() {
-        List<ReassignmentValue> result = new ArrayList<>();
-        result.add(new ReassignmentValue("AAA",
-                                         "1h",
-                                         Arrays.asList(new String[]{"foo", "bar", "baz"}),
-                                         Arrays.asList(new String[]{"foo", "bar", "baz"})));
-        return result;
     }
 }

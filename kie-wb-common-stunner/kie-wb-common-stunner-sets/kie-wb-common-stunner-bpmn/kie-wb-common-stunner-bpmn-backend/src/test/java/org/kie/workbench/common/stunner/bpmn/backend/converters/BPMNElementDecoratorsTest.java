@@ -21,7 +21,6 @@ import org.eclipse.bpmn2.FlowElement;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.BpmnNode;
-import org.kie.workbench.common.stunner.bpmn.definition.BPMNBaseInfo;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNViewDefinition;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
@@ -72,10 +71,7 @@ public class BPMNElementDecoratorsTest {
         when(node.getContent()).thenReturn(content);
         BPMNViewDefinition viewDefinition = mock(BPMNViewDefinition.class);
         when(content.getDefinition()).thenReturn(viewDefinition);
-        BPMNBaseInfo general = mock(BPMNBaseInfo.class);
-        when(viewDefinition.getGeneral()).thenReturn(general);
-        String name = NAME;
-        when(general.getName()).thenReturn(name);
+        when(viewDefinition.getName()).thenReturn(NAME);
         return element;
     }
 

@@ -29,7 +29,6 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.DataIOMo
 import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.DataIOSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dimensions.RectangleDimensionsSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.font.FontSet;
-import org.kie.workbench.common.stunner.bpmn.definition.property.general.TaskGeneralSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.simulation.SimulationSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.BusinessRuleTaskExecutionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.TaskType;
@@ -73,8 +72,8 @@ public class BusinessRuleTask extends BaseTask implements DataIOModel {
     protected DataIOSet dataIOSet;
 
     public BusinessRuleTask() {
-        this(new TaskGeneralSet("Task",
-                                ""),
+        this("Task",
+             "",
              new BusinessRuleTaskExecutionSet(),
              new DataIOSet(),
              new BackgroundSet(),
@@ -84,7 +83,8 @@ public class BusinessRuleTask extends BaseTask implements DataIOModel {
              new TaskType(TaskTypes.BUSINESS_RULE));
     }
 
-    public BusinessRuleTask(final @MapsTo("general") TaskGeneralSet general,
+    public BusinessRuleTask(final @MapsTo("name") String name,
+                            final @MapsTo("documentation") String documentation,
                             final @MapsTo("executionSet") BusinessRuleTaskExecutionSet executionSet,
                             final @MapsTo("dataIOSet") DataIOSet dataIOSet,
                             final @MapsTo("backgroundSet") BackgroundSet backgroundSet,
@@ -92,7 +92,8 @@ public class BusinessRuleTask extends BaseTask implements DataIOModel {
                             final @MapsTo("dimensionsSet") RectangleDimensionsSet dimensionsSet,
                             final @MapsTo("simulationSet") SimulationSet simulationSet,
                             final @MapsTo("taskType") TaskType taskType) {
-        super(general,
+        super(name,
+              documentation,
               backgroundSet,
               fontSet,
               dimensionsSet,

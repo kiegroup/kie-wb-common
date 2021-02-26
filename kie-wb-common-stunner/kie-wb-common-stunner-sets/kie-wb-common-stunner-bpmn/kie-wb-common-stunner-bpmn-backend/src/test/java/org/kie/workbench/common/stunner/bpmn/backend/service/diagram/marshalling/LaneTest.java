@@ -22,7 +22,6 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.kie.workbench.common.stunner.bpmn.definition.Lane;
-import org.kie.workbench.common.stunner.bpmn.definition.property.general.BPMNGeneralSet;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.kie.workbench.common.stunner.core.diagram.Metadata;
 import org.kie.workbench.common.stunner.core.graph.Edge;
@@ -80,7 +79,7 @@ public class LaneTest extends BPMNDiagramMarshallerBaseTest {
         assertDiagram(diagram, AMOUNT_OF_NODES_IN_DIAGRAM);
 
         Lane filledLane = getLaneNodeById(diagram, FILLED_LANE_ID);
-        assertGeneralSet(filledLane.getGeneral(), EVENT_NAME, EVENT_DOCUMENTATION);
+        assertGeneralSet(filledLane, EVENT_NAME, EVENT_DOCUMENTATION);
 
         assertLaneSubNodes(diagram, FILLED_LANE_ID);
     }
@@ -91,7 +90,7 @@ public class LaneTest extends BPMNDiagramMarshallerBaseTest {
         assertDiagram(diagram, AMOUNT_OF_NODES_IN_DIAGRAM);
 
         Lane emptyLane = getLaneNodeById(diagram, EMPTY_LANE_ID);
-        assertGeneralSet(emptyLane.getGeneral(), EMPTY_VALUE, EMPTY_VALUE);
+        assertGeneralSet(emptyLane, EMPTY_VALUE, EMPTY_VALUE);
 
         assertLaneSubNodes(diagram, EMPTY_LANE_ID);
     }
@@ -108,7 +107,7 @@ public class LaneTest extends BPMNDiagramMarshallerBaseTest {
         assertDiagram(diagram, AMOUNT_OF_NODES_IN_DIAGRAM);
 
         Lane laneWithNodes = getLaneNodeById(diagram, LANE_WITH_NODES_ID);
-        assertGeneralSet(laneWithNodes.getGeneral(), EVENT_NAME, EMPTY_VALUE);
+        assertGeneralSet(laneWithNodes, EVENT_NAME, EMPTY_VALUE);
 
         assertLaneSubNodes(diagram, LANE_WITH_NODES_ID,
                            START_EVENT_INSIDE_LANE_ID,
@@ -146,7 +145,7 @@ public class LaneTest extends BPMNDiagramMarshallerBaseTest {
         assertLaneSubNodes(marshalledDiagram, nodeID, nodesInsideLane);
     }
 
-    private void assertGeneralSet(BPMNGeneralSet generalSet, String nodeName, String documentation) {
+    private void assertGeneralSet(Lane generalSet, String nodeName, String documentation) {
         assertThat(generalSet).isNotNull();
         assertThat(generalSet.getName()).isNotNull();
         assertThat(generalSet.getDocumentation()).isNotNull();

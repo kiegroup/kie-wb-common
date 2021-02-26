@@ -27,7 +27,6 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.background.Back
 import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.DataIOModel;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dimensions.RectangleDimensionsSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.font.FontSet;
-import org.kie.workbench.common.stunner.bpmn.definition.property.general.TaskGeneralSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.service.GenericServiceTaskExecutionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.simulation.SimulationSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.TaskType;
@@ -60,8 +59,8 @@ public class GenericServiceTask extends BaseTask implements DataIOModel {
     protected GenericServiceTaskExecutionSet executionSet;
 
     public GenericServiceTask() {
-        this(new TaskGeneralSet("Service Task",
-                                ""),
+        this("Service Task",
+             "",
              new GenericServiceTaskExecutionSet(),
              new BackgroundSet(),
              new FontSet(),
@@ -70,14 +69,16 @@ public class GenericServiceTask extends BaseTask implements DataIOModel {
              new TaskType(TaskTypes.SERVICE_TASK));
     }
 
-    public GenericServiceTask(final @MapsTo("general") TaskGeneralSet general,
+    public GenericServiceTask(final @MapsTo("name") String name,
+                              final @MapsTo("documentation") String documentation,
                               final @MapsTo("executionSet") GenericServiceTaskExecutionSet executionSet,
                               final @MapsTo("backgroundSet") BackgroundSet backgroundSet,
                               final @MapsTo("fontSet") FontSet fontSet,
                               final @MapsTo("dimensionsSet") RectangleDimensionsSet dimensionsSet,
                               final @MapsTo("simulationSet") SimulationSet simulationSet,
                               final @MapsTo("taskType") TaskType taskType) {
-        super(general,
+        super(name,
+              documentation,
               backgroundSet,
               fontSet,
               dimensionsSet,

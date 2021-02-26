@@ -95,7 +95,6 @@ public class AssignmentsEditorWidgetTest extends AssignmentBaseTest {
     public static final String DATA_OUTPUT = "output1:com.test.Employee:";
     public static final String DATA_OUTPUT_SET = "output1:com.test.Employee:,output2:String:";
     public static final String PROCESS_VARS = "employee:java.lang.String:,reason:java.lang.String:,performance:java.lang.String:";
-    public static final String ASSIGNMENTS_SINGLE_INPUT = "[din]employee->input1";
     public static final String ASSIGNMENTS_SINGLE_OUTPUT = "[dout]output1->employee";
     public static final String ASSIGNMENTS_MULTIPLE = "[din]employee->input1,[din]input2=ab%7Ccd%7Cef,[din]input3=yes,[din]input4=%22Hello%22+then+%22Goodbye%22,[dout]output1->employee,[dout]output2->reason";
     public static final List<String> DATATYPES = new ArrayList<>(Arrays.asList("myorg.myproject1.Cardboard",
@@ -208,8 +207,7 @@ public class AssignmentsEditorWidgetTest extends AssignmentBaseTest {
         doCallRealMethod().when(widget).getTaskName();
         doCallRealMethod().when(widget).getDisallowedPropertyNames();
         doCallRealMethod().when(widget).setReadOnly(anyBoolean());
-        when(userTask.getGeneral()).thenReturn(taskGeneralSet);
-        when(taskGeneralSet.getName()).thenReturn(TASK_NAME);
+        when(userTask.getName()).thenReturn(TASK_NAME);
         doCallRealMethod().when(userTask).hasInputVars();
         doCallRealMethod().when(userTask).isSingleInputVar();
         doCallRealMethod().when(userTask).hasOutputVars();
@@ -457,8 +455,8 @@ public class AssignmentsEditorWidgetTest extends AssignmentBaseTest {
     @Test
     public void testDataObjectsNewLine() {
         DataObject dataObject = new DataObject();
-        dataObject.getName().setValue("Data\nObject");
-        String doNameFilter = widget.dataObjectToProcessVariableFormat(dataObject);
+        dataObject.setName("Data\nObject");
+        String doNameFilter = AssignmentsEditorWidget.dataObjectToProcessVariableFormat(dataObject);
         assertEquals("DataObject:Object", doNameFilter);
      }
 

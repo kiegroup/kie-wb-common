@@ -32,6 +32,6 @@ public abstract class BaseCustomTask extends BaseTask {
     public static final transient String category = BPMNCategories.CUSTOM_TASKS;
 
     public BaseCustomTask(TaskGeneralSet general, BackgroundSet backgroundSet, FontSet fontSet, RectangleDimensionsSet dimensionsSet, SimulationSet simulationSet, TaskType taskType) {
-        super(general, backgroundSet, fontSet, dimensionsSet, simulationSet, taskType);
+        super(general.getName(), general.getDocumentation(), backgroundSet, fontSet, dimensionsSet, simulationSet, taskType);
     }
 }

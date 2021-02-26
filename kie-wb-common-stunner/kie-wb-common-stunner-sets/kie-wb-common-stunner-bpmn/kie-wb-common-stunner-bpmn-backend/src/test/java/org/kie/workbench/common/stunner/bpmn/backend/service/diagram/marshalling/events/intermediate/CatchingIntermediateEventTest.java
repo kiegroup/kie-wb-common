@@ -19,10 +19,10 @@ package org.kie.workbench.common.stunner.bpmn.backend.service.diagram.marshallin
 import org.junit.Test;
 import org.kie.workbench.common.stunner.bpmn.backend.service.diagram.marshalling.BPMNDiagramMarshallerBaseTest;
 import org.kie.workbench.common.stunner.bpmn.definition.BaseCatchingIntermediateEvent;
+import org.kie.workbench.common.stunner.bpmn.definition.BaseIntermediateEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.AssignmentsInfo;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.DataIOSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.BaseCancellingEventExecutionSet;
-import org.kie.workbench.common.stunner.bpmn.definition.property.general.BPMNGeneralSet;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.kie.workbench.common.stunner.core.diagram.Metadata;
 import org.kie.workbench.common.stunner.core.graph.Graph;
@@ -199,7 +199,7 @@ public abstract class CatchingIntermediateEventTest<T extends BaseCatchingInterm
         assertThat(nodeAfterMarshalling).isEqualTo(nodeBeforeMarshalling);
     }
 
-    void assertGeneralSet(BPMNGeneralSet generalSet, String nodeName, String documentation) {
+    void assertGeneralSet(BaseIntermediateEvent generalSet, String nodeName, String documentation) {
         assertThat(generalSet).isNotNull();
         assertThat(generalSet.getName()).isNotNull();
         assertThat(generalSet.getDocumentation()).isNotNull();

@@ -94,7 +94,7 @@ public class MultipleInstanceSubProcessTest extends SubProcessTest<MultipleInsta
                                                                               EMPTY_INCOME_EDGES,
                                                                               EMPTY_OUTCOME_EDGES);
 
-        assertGeneralSet(topLevelSubProcess.getGeneral(), DEFAULT_NAME, DEFAULT_DOCUMENTATION);
+        assertGeneralSet(topLevelSubProcess, DEFAULT_NAME, DEFAULT_DOCUMENTATION);
         assertMultipleInstanceSubProcessExecutionSet(topLevelSubProcess.getExecutionSet(),
                                                      DEFAULT_MULTIPLE_INSTANCE_COLLECTION,
                                                      DEFAULT_MULTIPLE_INSTANCE_COLLECTION,
@@ -132,7 +132,7 @@ public class MultipleInstanceSubProcessTest extends SubProcessTest<MultipleInsta
                                                                                   EMPTY_INCOME_EDGES,
                                                                                   EMPTY_OUTCOME_EDGES);
 
-        assertGeneralSet(topLevelSubProcessJava.getGeneral(), SUB_PROCESS_NAME_JAVA, SUB_PROCESS_DOCUMENTATION_JAVA);
+        assertGeneralSet(topLevelSubProcessJava, SUB_PROCESS_NAME_JAVA, SUB_PROCESS_DOCUMENTATION_JAVA);
         assertMultipleInstanceSubProcessExecutionSet(topLevelSubProcessJava.getExecutionSet(),
                                                      MULTIPLE_INSTANCE_COLLECTION_INPUT,
                                                      MULTIPLE_INSTANCE_COLLECTION_OUTPUT,
@@ -152,7 +152,7 @@ public class MultipleInstanceSubProcessTest extends SubProcessTest<MultipleInsta
                                                                                         EMPTY_INCOME_EDGES,
                                                                                         EMPTY_OUTCOME_EDGES);
 
-        assertGeneralSet(topLevelSubProcessJavascript.getGeneral(), SUB_PROCESS_NAME_JAVASCRIPT, SUB_PROCESS_DOCUMENTATION_JAVASCRIPT);
+        assertGeneralSet(topLevelSubProcessJavascript, SUB_PROCESS_NAME_JAVASCRIPT, SUB_PROCESS_DOCUMENTATION_JAVASCRIPT);
         assertMultipleInstanceSubProcessExecutionSet(topLevelSubProcessJavascript.getExecutionSet(),
                                                      MULTIPLE_INSTANCE_COLLECTION_INPUT,
                                                      MULTIPLE_INSTANCE_COLLECTION_OUTPUT,
@@ -172,7 +172,7 @@ public class MultipleInstanceSubProcessTest extends SubProcessTest<MultipleInsta
                                                                                   EMPTY_INCOME_EDGES,
                                                                                   EMPTY_OUTCOME_EDGES);
 
-        assertGeneralSet(topLevelSubProcessMVEL.getGeneral(), SUB_PROCESS_NAME_MVEL, SUB_PROCESS_DOCUMENTATION_MVEL);
+        assertGeneralSet(topLevelSubProcessMVEL, SUB_PROCESS_NAME_MVEL, SUB_PROCESS_DOCUMENTATION_MVEL);
         assertMultipleInstanceSubProcessExecutionSet(topLevelSubProcessMVEL.getExecutionSet(),
                                                      MULTIPLE_INSTANCE_COLLECTION_INPUT,
                                                      MULTIPLE_INSTANCE_COLLECTION_OUTPUT,
@@ -201,7 +201,7 @@ public class MultipleInstanceSubProcessTest extends SubProcessTest<MultipleInsta
                                                                               ONE_INCOME_EDGE,
                                                                               FOUR_OUTCOME_EDGES);
 
-        assertGeneralSet(topLevelSubProcess.getGeneral(), SUB_PROCESS_NAME, DEFAULT_DOCUMENTATION);
+        assertGeneralSet(topLevelSubProcess, SUB_PROCESS_NAME, DEFAULT_DOCUMENTATION);
         assertMultipleInstanceSubProcessExecutionSet(topLevelSubProcess.getExecutionSet(),
                                                      DEFAULT_MULTIPLE_INSTANCE_COLLECTION,
                                                      DEFAULT_MULTIPLE_INSTANCE_COLLECTION,
@@ -228,7 +228,7 @@ public class MultipleInstanceSubProcessTest extends SubProcessTest<MultipleInsta
                                                                                      EMPTY_INCOME_EDGES,
                                                                                      EMPTY_OUTCOME_EDGES);
 
-        assertGeneralSet(subProcessLevelSubProcess.getGeneral(), DEFAULT_NAME, DEFAULT_DOCUMENTATION);
+        assertGeneralSet(subProcessLevelSubProcess, DEFAULT_NAME, DEFAULT_DOCUMENTATION);
         assertMultipleInstanceSubProcessExecutionSet(subProcessLevelSubProcess.getExecutionSet(),
                                                      DEFAULT_MULTIPLE_INSTANCE_COLLECTION,
                                                      DEFAULT_MULTIPLE_INSTANCE_COLLECTION,
@@ -266,7 +266,7 @@ public class MultipleInstanceSubProcessTest extends SubProcessTest<MultipleInsta
                                                                                          EMPTY_INCOME_EDGES,
                                                                                          EMPTY_OUTCOME_EDGES);
 
-        assertGeneralSet(subProcessLevelSubProcessJava.getGeneral(), SUB_PROCESS_NAME_JAVA, SUB_PROCESS_DOCUMENTATION_JAVA);
+        assertGeneralSet(subProcessLevelSubProcessJava, SUB_PROCESS_NAME_JAVA, SUB_PROCESS_DOCUMENTATION_JAVA);
         assertMultipleInstanceSubProcessExecutionSet(subProcessLevelSubProcessJava.getExecutionSet(),
                                                      MULTIPLE_INSTANCE_COLLECTION_INPUT,
                                                      MULTIPLE_INSTANCE_COLLECTION_OUTPUT,
@@ -286,7 +286,7 @@ public class MultipleInstanceSubProcessTest extends SubProcessTest<MultipleInsta
                                                                                                EMPTY_INCOME_EDGES,
                                                                                                EMPTY_OUTCOME_EDGES);
 
-        assertGeneralSet(subProcessLevelSubProcessJavascript.getGeneral(), SUB_PROCESS_NAME_JAVASCRIPT, SUB_PROCESS_DOCUMENTATION_JAVASCRIPT);
+        assertGeneralSet(subProcessLevelSubProcessJavascript, SUB_PROCESS_NAME_JAVASCRIPT, SUB_PROCESS_DOCUMENTATION_JAVASCRIPT);
         assertMultipleInstanceSubProcessExecutionSet(subProcessLevelSubProcessJavascript.getExecutionSet(),
                                                      MULTIPLE_INSTANCE_COLLECTION_INPUT,
                                                      MULTIPLE_INSTANCE_COLLECTION_OUTPUT,
@@ -306,7 +306,7 @@ public class MultipleInstanceSubProcessTest extends SubProcessTest<MultipleInsta
                                                                                          EMPTY_INCOME_EDGES,
                                                                                          EMPTY_OUTCOME_EDGES);
 
-        assertGeneralSet(subProcessLevelSubProcessMVEL.getGeneral(), SUB_PROCESS_NAME_MVEL, SUB_PROCESS_DOCUMENTATION_MVEL);
+        assertGeneralSet(subProcessLevelSubProcessMVEL, SUB_PROCESS_NAME_MVEL, SUB_PROCESS_DOCUMENTATION_MVEL);
         assertMultipleInstanceSubProcessExecutionSet(subProcessLevelSubProcessMVEL.getExecutionSet(),
                                                      MULTIPLE_INSTANCE_COLLECTION_INPUT,
                                                      MULTIPLE_INSTANCE_COLLECTION_OUTPUT,
@@ -335,7 +335,7 @@ public class MultipleInstanceSubProcessTest extends SubProcessTest<MultipleInsta
                                                                                      ONE_INCOME_EDGE,
                                                                                      FOUR_OUTCOME_EDGES);
 
-        assertGeneralSet(subProcessLevelSubProcess.getGeneral(), SUB_PROCESS_NAME, DEFAULT_DOCUMENTATION);
+        assertGeneralSet(subProcessLevelSubProcess, SUB_PROCESS_NAME, DEFAULT_DOCUMENTATION);
         assertMultipleInstanceSubProcessExecutionSet(subProcessLevelSubProcess.getExecutionSet(),
                                                      DEFAULT_MULTIPLE_INSTANCE_COLLECTION,
                                                      DEFAULT_MULTIPLE_INSTANCE_COLLECTION,

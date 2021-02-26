@@ -31,7 +31,6 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.Assignme
 import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.DataIOSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dimensions.RectangleDimensionsSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.font.FontSet;
-import org.kie.workbench.common.stunner.bpmn.definition.property.general.BPMNGeneralSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.SLADueDate;
 import org.kie.workbench.common.stunner.bpmn.definition.property.simulation.SimulationSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.subProcess.IsCase;
@@ -118,7 +117,8 @@ public class ReusableSubprocessConverterTest {
 
         DataIOSet ioSet = mock(DataIOSet.class);
         when(ioSet.getAssignmentsinfo()).thenReturn(ASSIGNMENTS_INFO);
-        final ReusableSubprocess definition = new ReusableSubprocess(new BPMNGeneralSet(NAME, DOCUMENTATION),
+        final ReusableSubprocess definition = new ReusableSubprocess(NAME,
+                                                                     DOCUMENTATION,
                                                                      new ReusableSubprocessTaskExecutionSet(new CalledElement(CALLED_ELEMENT),
                                                                                                             new IsCase(IS_CASE),
                                                                                                             new Independent(INDEPENDENT),

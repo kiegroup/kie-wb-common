@@ -31,7 +31,6 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.Assignme
 import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.DataIOSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dimensions.RectangleDimensionsSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.font.FontSet;
-import org.kie.workbench.common.stunner.bpmn.definition.property.general.BPMNGeneralSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.SLADueDate;
 import org.kie.workbench.common.stunner.bpmn.definition.property.simulation.SimulationSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.subProcess.IsCase;
@@ -64,11 +63,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.anyBoolean;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ReusableSubprocessConverterTest {
@@ -113,7 +108,8 @@ public class ReusableSubprocessConverterTest {
     @Before
     public void setUp() {
         DataIOSet ioSet = mock(DataIOSet.class);
-        final ReusableSubprocess definition = new ReusableSubprocess(new BPMNGeneralSet(NAME, DOCUMENTATION),
+        final ReusableSubprocess definition = new ReusableSubprocess(NAME,
+                                                                     DOCUMENTATION,
                                                                      new ReusableSubprocessTaskExecutionSet(new CalledElement(CALLED_ELEMENT),
                                                                                                             new IsCase(IS_CASE),
                                                                                                             new Independent(INDEPENDENT),
@@ -140,47 +136,6 @@ public class ReusableSubprocessConverterTest {
         node = new NodeImpl<>(UUID);
         node.setContent(view);
         converter = new ReusableSubprocessConverter(propertyWriterFactory);
-    }
-
-    // TODO: Kogito - @Test
-    public void testToFlowElementMI() {
-        assertEquals(propertyWriter, converter.toFlowElement(node));
-        verifyCommonValues();
-        verify(propertyWriter).setIsSequential(SEQUENTIAL);
-        verify(propertyWriter).setCollectionInput(COLLECTION_INPUT);
-        verify(propertyWriter).setInput(DATA_INPUT);
-        verify(propertyWriter).setCollectionOutput(COLLECTION_OUTPUT);
-        verify(propertyWriter).setOutput(DATA_OUTPUT);
-        verify(propertyWriter).setCompletionCondition(COMPLETION_CONDITION);
-    }
-
-    // TODO: Kogito - @Test
-    public void testToFlowElementNonMI() {
-        // TODO: Kogito - node.getContent().getDefinition().getExecutionSet().getIsMultipleInstance().setValue(false);
-        assertEquals(propertyWriter, converter.toFlowElement(node));
-        verifyCommonValues();
-        verify(propertyWriter, never()).setIsSequential(anyBoolean());
-        verify(propertyWriter, never()).setCollectionInput(anyString());
-        verify(propertyWriter, never()).setInput(anyString());
-        verify(propertyWriter, never()).setCollectionOutput(anyString());
-        verify(propertyWriter, never()).setOutput(anyString());
-        verify(propertyWriter, never()).setCompletionCondition(anyString());
-    }
-
-    private void verifyCommonValues() {
-        verify(propertyWriterFactory).of(activityCaptor.capture());
-        assertEquals(UUID, activityCaptor.getValue().getId());
-        verify(propertyWriter).setName(NAME);
-        verify(propertyWriter).setDocumentation(DOCUMENTATION);
-        verify(propertyWriter).setOnEntryAction(ON_ENTRY_ACTION);
-        verify(propertyWriter).setOnExitAction(ON_EXIT_ACTION);
-        verify(propertyWriter).setCalledElement(CALLED_ELEMENT);
-        verify(propertyWriter).setAsync(IS_ASYNC);
-        verify(propertyWriter).setIndependent(INDEPENDENT);
-        verify(propertyWriter).setWaitForCompletion(WAIT_FOR_COMPLETION);
-        verify(propertyWriter).setAssignmentsInfo(ASSIGNMENTS_INFO);
-        verify(propertyWriter).setSimulationSet(SIMULATION_SET);
-        verify(propertyWriter).setAbsoluteBounds(node);
     }
 
     private ReusableSubprocessConverter tested =

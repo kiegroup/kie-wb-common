@@ -175,7 +175,7 @@ public class VariableUtils {
     }
 
     private static String getDisplayName(BPMNDefinition definition) {
-        return definition.getGeneral() != null && definition.getGeneral().getName() != null ? definition.getGeneral().getName() : null;
+        return  definition.getName() != null ? definition.getName() : null;
     }
 
     private static Map<String, VariableUsage> decodeVariableUsages(String encodedAssignments, Node node, String displayName) {

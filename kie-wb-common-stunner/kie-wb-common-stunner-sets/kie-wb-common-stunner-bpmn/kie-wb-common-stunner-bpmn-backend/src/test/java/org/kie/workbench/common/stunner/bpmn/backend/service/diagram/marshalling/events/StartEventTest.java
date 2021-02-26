@@ -22,7 +22,6 @@ import org.kie.workbench.common.stunner.bpmn.definition.BaseStartEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.AssignmentsInfo;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.DataIOSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.BaseStartEventExecutionSet;
-import org.kie.workbench.common.stunner.bpmn.definition.property.general.BPMNGeneralSet;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.kie.workbench.common.stunner.core.diagram.Metadata;
 import org.kie.workbench.common.stunner.core.graph.Graph;
@@ -153,7 +152,7 @@ public abstract class StartEventTest<T extends BaseStartEvent> extends BPMNDiagr
         return node;
     }
 
-    void assertGeneralSet(BPMNGeneralSet generalSet, String nodeName, String documentation) {
+    void assertGeneralSet(BaseStartEvent generalSet, String nodeName, String documentation) {
         assertNotNull(generalSet);
         assertNotNull(generalSet.getName());
         assertNotNull(generalSet.getDocumentation());

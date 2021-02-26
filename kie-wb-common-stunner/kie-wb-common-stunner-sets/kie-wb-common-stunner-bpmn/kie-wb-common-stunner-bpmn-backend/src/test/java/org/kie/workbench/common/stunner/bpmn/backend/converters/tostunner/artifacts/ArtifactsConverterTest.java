@@ -28,7 +28,7 @@ import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.BpmnNo
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties.DataObjectPropertyReader;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties.PropertyReaderFactory;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties.TextAnnotationPropertyReader;
-import org.kie.workbench.common.stunner.bpmn.definition.BPMNViewDefinition;
+import org.kie.workbench.common.stunner.bpmn.definition.BPMNDefinition;
 import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
@@ -91,7 +91,7 @@ public class ArtifactsConverterTest {
         when(propertyReaderFactory.of(element)).thenReturn(readerTextAnnotation);
 
         final Result<BpmnNode> node = tested.convert(element);
-        final Node<? extends View<? extends BPMNViewDefinition>, ?> value = node.value().value();
+        final Node<? extends View<? extends BPMNDefinition>, ?> value = node.value().value();
         assertEquals(contentTextAnnotation, value.getContent());
         assertEquals(defTextAnnotation, value.getContent().getDefinition());
     }
@@ -106,7 +106,7 @@ public class ArtifactsConverterTest {
         when(propertyReaderFactory.of(element)).thenReturn(readerDataObject);
 
         final Result<BpmnNode> node = tested.convert(element);
-        final Node<? extends View<? extends BPMNViewDefinition>, ?> value = node.value().value();
+        final Node<? extends View<? extends BPMNDefinition>, ?> value = node.value().value();
         assertEquals(contentDataObject, value.getContent());
         assertEquals(defDataObject, value.getContent().getDefinition());
     }

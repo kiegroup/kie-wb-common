@@ -16,6 +16,8 @@
 
 package org.kie.workbench.common.stunner.bpmn.definition;
 
+import java.util.Objects;
+
 import javax.validation.Valid;
 
 import org.jboss.errai.common.client.api.annotations.MapsTo;
@@ -31,7 +33,6 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.dimensions.Circ
 import org.kie.workbench.common.stunner.bpmn.definition.property.dimensions.Radius;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.error.ErrorEventExecutionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.font.FontSet;
-import org.kie.workbench.common.stunner.bpmn.definition.property.general.BPMNGeneralSet;
 import org.kie.workbench.common.stunner.core.definition.annotation.Definition;
 import org.kie.workbench.common.stunner.core.definition.annotation.Property;
 import org.kie.workbench.common.stunner.core.definition.annotation.morph.Morph;
@@ -61,7 +62,8 @@ public class EndErrorEvent extends BaseEndEvent {
     protected DataIOSet dataIOSet;
 
     public EndErrorEvent() {
-        this(new BPMNGeneralSet(""),
+        this("",
+             "",
              new BackgroundSet(),
              new FontSet(),
              new CircleDimensionSet(new Radius()),
@@ -69,13 +71,15 @@ public class EndErrorEvent extends BaseEndEvent {
              new DataIOSet());
     }
 
-    public EndErrorEvent(final @MapsTo("general") BPMNGeneralSet general,
+    public EndErrorEvent(final @MapsTo("name") String name,
+                         final @MapsTo("documentation") String documentation,
                          final @MapsTo("backgroundSet") BackgroundSet backgroundSet,
                          final @MapsTo("fontSet") FontSet fontSet,
                          final @MapsTo("dimensionsSet") CircleDimensionSet dimensionsSet,
                          final @MapsTo("executionSet") ErrorEventExecutionSet executionSet,
                          final @MapsTo("dataIOSet") DataIOSet dataIOSet) {
-        super(general,
+        super(name,
+              documentation,
               backgroundSet,
               fontSet,
               dimensionsSet);
@@ -123,10 +127,10 @@ public class EndErrorEvent extends BaseEndEvent {
 
         EndErrorEvent that = (EndErrorEvent) o;
 
-        if (executionSet != null ? !executionSet.equals(that.executionSet) : that.executionSet != null) {
+        if (!Objects.equals(executionSet, that.executionSet)) {
             return false;
         }
-        return dataIOSet != null ? dataIOSet.equals(that.dataIOSet) : that.dataIOSet == null;
+        return Objects.equals(dataIOSet, that.dataIOSet);
     }
 
     @Override

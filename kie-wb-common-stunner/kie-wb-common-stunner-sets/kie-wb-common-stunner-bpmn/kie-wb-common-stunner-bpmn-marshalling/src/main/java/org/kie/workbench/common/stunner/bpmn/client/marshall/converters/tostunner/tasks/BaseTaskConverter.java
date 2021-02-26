@@ -46,7 +46,6 @@ import org.kie.workbench.common.stunner.bpmn.definition.NoneTask;
 import org.kie.workbench.common.stunner.bpmn.definition.ScriptTask;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.DataIOSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.SLADueDate;
-import org.kie.workbench.common.stunner.bpmn.definition.property.general.TaskGeneralSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.service.GenericServiceTaskExecutionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.service.GenericServiceTaskInfo;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.AdHocAutostart;
@@ -99,9 +98,9 @@ public abstract class BaseTaskConverter<U extends BaseUserTask<S>, S extends Bas
                 .when(e -> e instanceof org.eclipse.bpmn2.UserTask, this::userTask)
                 .when(e -> e instanceof org.eclipse.bpmn2.ServiceTask, this::serviceTaskResolver)
                 .when(e -> org.eclipse.bpmn2.impl.TaskImpl.class.equals(e.getClass()), this::defaultTaskResolver)
-                .missing(e -> e instanceof ManualTask, ManualTask.class)
-                .missing(e -> e instanceof CustomTask, SendTask.class)
-                .missing(e -> e instanceof ReceiveTask, ReceiveTask.class)
+                .missing(ManualTask.class::isInstance, ManualTask.class)
+                .missing(CustomTask.class::isInstance, SendTask.class)
+                .missing(ReceiveTask.class::isInstance, ReceiveTask.class)
                 .orElse(this::defaultTaskResolver)
                 .inputDecorator(BPMNElementDecorators.flowElementDecorator())
                 .outputDecorator(BPMNElementDecorators.bpmnNodeDecorator())
@@ -120,10 +119,8 @@ public abstract class BaseTaskConverter<U extends BaseUserTask<S>, S extends Bas
         definition.setCategory(serviceTaskPropertyReader.getServiceTaskCategory());
         definition.setDefaultHandler(serviceTaskPropertyReader.getServiceTaskDefaultHandler());
 
-        definition.setGeneral(new TaskGeneralSet(
-                serviceTaskPropertyReader.getName(),
-                serviceTaskPropertyReader.getDocumentation()
-        ));
+        definition.setName(serviceTaskPropertyReader.getName());
+        definition.setDocumentation(serviceTaskPropertyReader.getDocumentation());
 
         definition.setDataIOSet(new DataIOSet(
                 serviceTaskPropertyReader.getAssignmentsInfo()
@@ -159,11 +156,8 @@ public abstract class BaseTaskConverter<U extends BaseUserTask<S>, S extends Bas
             throw new NullPointerException(task.getClass().getCanonicalName());
         }
 
-        definition.setGeneral(new TaskGeneralSet(
-                p.getName(),
-                p.getDocumentation()
-        ));
-
+        definition.setName(p.getName());
+        definition.setDocumentation(p.getDocumentation());
         definition.setExecutionSet(new GenericServiceTaskExecutionSet(
                 new GenericServiceTaskInfo(p.getGenericServiceTask()),
                 p.getAssignmentsInfo(),
@@ -197,11 +191,8 @@ public abstract class BaseTaskConverter<U extends BaseUserTask<S>, S extends Bas
         BusinessRuleTask definition = node.getContent().getDefinition();
         BusinessRuleTaskPropertyReader p = propertyReaderFactory.of(task);
 
-        definition.setGeneral(new TaskGeneralSet(
-                p.getName(),
-                p.getDocumentation()
-        ));
-
+        definition.setName(p.getName());
+        definition.setDocumentation(p.getDocumentation());
         definition.setDataIOSet(new DataIOSet(
                 p.getAssignmentsInfo()
         ));
@@ -254,11 +245,8 @@ public abstract class BaseTaskConverter<U extends BaseUserTask<S>, S extends Bas
         ScriptTask definition = node.getContent().getDefinition();
         ScriptTaskPropertyReader p = propertyReaderFactory.of(task);
 
-        definition.setGeneral(new TaskGeneralSet(
-                p.getName(),
-                p.getDocumentation()
-        ));
-
+        definition.setName(p.getName());
+        definition.setDocumentation(p.getDocumentation());
         definition.setExecutionSet(new ScriptTaskExecutionSet(
                 new Script(p.getScript()),
                 new IsAsync(p.isAsync()),
@@ -282,11 +270,8 @@ public abstract class BaseTaskConverter<U extends BaseUserTask<S>, S extends Bas
         U definition = node.getContent().getDefinition();
         UserTaskPropertyReader p = propertyReaderFactory.of(task);
 
-        definition.setGeneral(new TaskGeneralSet(
-                p.getName(),
-                p.getDocumentation()
-        ));
-
+        definition.setName(p.getName());
+        definition.setDocumentation(p.getDocumentation());
         definition.setSimulationSet(
                 p.getSimulationSet()
         );
@@ -326,11 +311,8 @@ public abstract class BaseTaskConverter<U extends BaseUserTask<S>, S extends Bas
 
         NoneTask definition = node.getContent().getDefinition();
 
-        definition.setGeneral(new TaskGeneralSet(
-                p.getName(),
-                p.getDocumentation()
-        ));
-
+        definition.setName(p.getName());
+        definition.setDocumentation(p.getDocumentation());
         definition.setExecutionSet(new EmptyTaskExecutionSet());
 
         definition.setSimulationSet(

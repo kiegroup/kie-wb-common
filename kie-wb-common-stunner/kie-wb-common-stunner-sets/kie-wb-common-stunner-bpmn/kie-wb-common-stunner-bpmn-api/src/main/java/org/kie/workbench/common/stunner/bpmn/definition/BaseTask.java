@@ -29,7 +29,6 @@ import org.kie.workbench.common.forms.adf.definitions.annotations.FormField;
 import org.kie.workbench.common.stunner.bpmn.definition.property.background.BackgroundSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dimensions.RectangleDimensionsSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.font.FontSet;
-import org.kie.workbench.common.stunner.bpmn.definition.property.general.TaskGeneralSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.simulation.SimulationSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.TaskType;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.TaskTypes;
@@ -64,7 +63,12 @@ public abstract class BaseTask implements BPMNViewDefinition {
     @Property
     @FormField
     @Valid
-    protected TaskGeneralSet general;
+    protected String name;
+
+    @Property
+    @FormField
+    @Valid
+    protected String documentation;
 
     @Property
     @MorphProperty(binder = TaskTypeMorphPropertyBinding.class)
@@ -113,13 +117,15 @@ public abstract class BaseTask implements BPMNViewDefinition {
     @Labels
     protected final Set<String> labels = new HashSet<>(TASK_LABELS);
 
-    public BaseTask(final @MapsTo("general") TaskGeneralSet general,
+    public BaseTask(final @MapsTo("name") String name,
+                    final @MapsTo("documentation") String documentation,
                     final @MapsTo("backgroundSet") BackgroundSet backgroundSet,
                     final @MapsTo("fontSet") FontSet fontSet,
                     final @MapsTo("dimensionsSet") RectangleDimensionsSet dimensionsSet,
                     final @MapsTo("simulationSet") SimulationSet simulationSet,
                     final @MapsTo("taskType") TaskType taskType) {
-        this.general = general;
+        this.name = name;
+        this.documentation = documentation;
         this.backgroundSet = backgroundSet;
         this.fontSet = fontSet;
         this.dimensionsSet = dimensionsSet;
@@ -135,8 +141,12 @@ public abstract class BaseTask implements BPMNViewDefinition {
         return labels;
     }
 
-    public TaskGeneralSet getGeneral() {
-        return general;
+    public String getName() {
+        return name;
+    }
+
+    public String getDocumentation() {
+        return documentation;
     }
 
     public BackgroundSet getBackgroundSet() {
@@ -147,8 +157,12 @@ public abstract class BaseTask implements BPMNViewDefinition {
         return fontSet;
     }
 
-    public void setGeneral(final TaskGeneralSet general) {
-        this.general = general;
+    public void setName(final String name) {
+        this.name = name;
+    }
+
+    public void setDocumentation(final String documentation) {
+        this.documentation = documentation;
     }
 
     public void setBackgroundSet(final BackgroundSet backgroundSet) {
@@ -186,7 +200,8 @@ public abstract class BaseTask implements BPMNViewDefinition {
     @Override
     public int hashCode() {
         return HashUtil.combineHashCodes(Objects.hashCode(getClass()),
-                                         Objects.hashCode(general),
+                                         Objects.hashCode(name),
+                                         Objects.hashCode(documentation),
                                          Objects.hashCode(taskType),
                                          Objects.hashCode(backgroundSet),
                                          Objects.hashCode(fontSet),
@@ -199,7 +214,8 @@ public abstract class BaseTask implements BPMNViewDefinition {
     public boolean equals(Object o) {
         if (o instanceof BaseTask) {
             BaseTask other = (BaseTask) o;
-            return Objects.equals(general, other.general) &&
+            return Objects.equals(name, other.name) &&
+                    Objects.equals(documentation, other.documentation) &&
                     Objects.equals(taskType, other.taskType) &&
                     Objects.equals(backgroundSet, other.backgroundSet) &&
                     Objects.equals(fontSet, other.fontSet) &&

@@ -25,7 +25,6 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.dimensions.Rect
 import org.kie.workbench.common.stunner.bpmn.definition.property.font.FontSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.font.FontSize;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.BPMNGeneralSet;
-import org.kie.workbench.common.stunner.bpmn.definition.property.general.Name;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
@@ -57,7 +56,7 @@ public class DataObjectTest {
 
     @Test
     public void setName() {
-        Name name = new Name(this.getClass().getSimpleName());
+        String name = this.getClass().getSimpleName();
         dataObject.setName(name);
         assertEquals(name, dataObject.getName());
     }
@@ -84,12 +83,12 @@ public class DataObjectTest {
     public void testNotEquals() {
         DataObject dataObject1 = new DataObject();
         DataObject dataObject2 = new DataObject();
-        dataObject1.setName(new Name("dataObject1"));
-        dataObject2.setName(new Name("dataObject2"));
+        dataObject1.setName("dataObject1");
+        dataObject2.setName("dataObject2");
         // Test Name
         assertNotEquals(dataObject1, dataObject2);
         // Reset
-        dataObject2.setName(new Name("dataObject1"));
+        dataObject2.setName("dataObject1");
         assertEquals(dataObject1, dataObject2);
         // Test Type
         DataObjectType dataObjectType = new DataObjectType();

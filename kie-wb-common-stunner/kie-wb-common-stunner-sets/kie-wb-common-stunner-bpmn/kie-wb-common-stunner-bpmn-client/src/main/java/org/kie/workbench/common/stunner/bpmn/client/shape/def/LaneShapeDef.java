@@ -43,8 +43,6 @@ public class LaneShapeDef extends BaseDimensionedShapeDef
     @Override
     public SizeHandler<Lane, SVGShapeView> newSizeHandler() {
         return newSizeHandlerBuilder()
-                .width(e -> e.getDimensionsSet().getWidth().getValue())
-                .height(e -> e.getDimensionsSet().getHeight().getValue())
                 .minWidth(task -> 200d)
                 .minHeight(task -> 200d)
                 .build();
@@ -53,8 +51,8 @@ public class LaneShapeDef extends BaseDimensionedShapeDef
     @Override
     public SVGShapeView<?> newViewInstance(final BPMNSVGViewFactory factory,
                                            final Lane lane) {
-        return newViewInstance(Optional.ofNullable(lane.getDimensionsSet().getWidth()),
-                               Optional.ofNullable(lane.getDimensionsSet().getHeight()),
+        return newViewInstance(Optional.empty(),
+                               Optional.empty(),
                                factory.lane());
     }
 

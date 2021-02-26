@@ -26,7 +26,6 @@ import org.kie.workbench.common.stunner.bpmn.definition.DataObject;
 import org.kie.workbench.common.stunner.bpmn.definition.TextAnnotation;
 import org.kie.workbench.common.stunner.bpmn.definition.property.artifacts.DataObjectType;
 import org.kie.workbench.common.stunner.bpmn.definition.property.artifacts.DataObjectTypeValue;
-import org.kie.workbench.common.stunner.bpmn.definition.property.general.Name;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
 import org.kie.workbench.common.stunner.core.graph.impl.NodeImpl;
@@ -49,10 +48,6 @@ public class ArtifactsConverterTest {
     @Mock
     private PropertyWriterFactory propertyWriterFactory;
 
-    private Node<View<TextAnnotation>, ?> textAnnotationNode;
-
-    private Node<View<DataObject>, ?> dataObjectNode;
-
     @Mock
     private View<TextAnnotation> textAnnotationView;
 
@@ -68,10 +63,10 @@ public class ArtifactsConverterTest {
     @Test
     public void toTextAnnotationElement() {
         TextAnnotation textAnnotation = new TextAnnotation();
-        textAnnotation.getGeneral().setDocumentation(DOC);
-        textAnnotation.getGeneral().setName(NAME);
+        textAnnotation.setDocumentation(DOC);
+        textAnnotation.setName(NAME);
 
-        textAnnotationNode = new NodeImpl<>(UUID.uuid());
+        Node<View<TextAnnotation>, ?> textAnnotationNode = new NodeImpl<>(UUID.uuid());
         textAnnotationNode.setContent(textAnnotationView);
 
         when(textAnnotationView.getDefinition()).thenReturn(textAnnotation);
@@ -90,10 +85,10 @@ public class ArtifactsConverterTest {
     public void toDataObjectElement() {
         DataObject dataObject = new DataObject();
         dataObject.getGeneral().setDocumentation(DOC);
-        dataObject.setName(new Name(NAME));
+        dataObject.setName(NAME);
         dataObject.setType(new DataObjectType(new DataObjectTypeValue(NAME)));
 
-        dataObjectNode = new NodeImpl<>(UUID.uuid());
+        Node<View<DataObject>, ?> dataObjectNode = new NodeImpl<>(UUID.uuid());
         dataObjectNode.setContent(dataObjectView);
 
         when(dataObjectView.getDefinition()).thenReturn(dataObject);

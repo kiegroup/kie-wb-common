@@ -41,7 +41,6 @@ public class BPMNElementDecorators {
                                                       Optional.ofNullable(o.value()
                                                                                   .getContent()
                                                                                   .getDefinition()
-                                                                                  .getGeneral()
                                                                                   .getName())
                                                               .orElseGet(() -> o.value().getUUID()),
                                               bpmnNode -> bpmnNode.value()
@@ -58,7 +57,6 @@ public class BPMNElementDecorators {
                                                   return Optional.ofNullable(o.value()
                                                                                      .getContent()
                                                                                      .getDefinition()
-                                                                                     .getGeneral()
                                                                                      .getName())
                                                           .orElseGet(() -> o.value().getUUID());
                                               },

@@ -33,7 +33,6 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.dimensions.Circ
 import org.kie.workbench.common.stunner.bpmn.definition.property.dimensions.Radius;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.escalation.InterruptingEscalationEventExecutionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.font.FontSet;
-import org.kie.workbench.common.stunner.bpmn.definition.property.general.BPMNGeneralSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.simulation.SimulationAttributeSet;
 import org.kie.workbench.common.stunner.core.definition.annotation.Definition;
 import org.kie.workbench.common.stunner.core.definition.annotation.Property;
@@ -65,7 +64,8 @@ public class StartEscalationEvent extends BaseStartEvent {
     private DataIOSet dataIOSet;
 
     public StartEscalationEvent() {
-        this(new BPMNGeneralSet(""),
+        this("",
+             "",
              new BackgroundSet(),
              new FontSet(),
              new CircleDimensionSet(new Radius()),
@@ -74,14 +74,16 @@ public class StartEscalationEvent extends BaseStartEvent {
              new InterruptingEscalationEventExecutionSet());
     }
 
-    public StartEscalationEvent(final @MapsTo("general") BPMNGeneralSet general,
+    public StartEscalationEvent(final @MapsTo("name") String name,
+                                final @MapsTo("documentation") String documentation,
                                 final @MapsTo("backgroundSet") BackgroundSet backgroundSet,
                                 final @MapsTo("fontSet") FontSet fontSet,
                                 final @MapsTo("dimensionsSet") CircleDimensionSet dimensionsSet,
                                 final @MapsTo("simulationSet") SimulationAttributeSet simulationSet,
                                 final @MapsTo("dataIOSet") DataIOSet dataIOSet,
                                 final @MapsTo("executionSet") InterruptingEscalationEventExecutionSet executionSet) {
-        super(general,
+        super(name,
+              documentation,
               backgroundSet,
               fontSet,
               dimensionsSet,

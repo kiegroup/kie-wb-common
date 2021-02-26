@@ -21,7 +21,6 @@ import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.fromstun
 import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.fromstunner.properties.PropertyWriterFactory;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNViewDefinition;
 import org.kie.workbench.common.stunner.bpmn.definition.Lane;
-import org.kie.workbench.common.stunner.bpmn.definition.property.general.BPMNGeneralSet;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
 
@@ -44,9 +43,8 @@ public class LaneConverter {
 
             LanePropertyWriter p = propertyWriterFactory.of(lane);
 
-            BPMNGeneralSet general = definition.getGeneral();
-            p.setName(general.getName());
-            p.setDocumentation(general.getDocumentation());
+            p.setName(definition.getName());
+            p.setDocumentation(definition.getDocumentation());
 
             p.setAbsoluteBounds(node);
 

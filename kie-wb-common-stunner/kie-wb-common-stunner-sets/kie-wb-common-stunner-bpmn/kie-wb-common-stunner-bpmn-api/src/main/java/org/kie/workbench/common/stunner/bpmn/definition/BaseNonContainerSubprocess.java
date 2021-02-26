@@ -19,7 +19,6 @@ package org.kie.workbench.common.stunner.bpmn.definition;
 import org.kie.workbench.common.stunner.bpmn.definition.property.background.BackgroundSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dimensions.RectangleDimensionsSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.font.FontSet;
-import org.kie.workbench.common.stunner.bpmn.definition.property.general.BPMNGeneralSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.simulation.SimulationSet;
 import org.kie.workbench.common.stunner.core.definition.annotation.definition.Category;
 import org.kie.workbench.common.stunner.core.definition.annotation.morph.MorphBase;
@@ -30,7 +29,7 @@ public abstract class BaseNonContainerSubprocess extends BaseSubprocess {
     @Category
     public static final transient String category = BPMNCategories.SUB_PROCESSES;
 
-    public BaseNonContainerSubprocess(BPMNGeneralSet general, BackgroundSet backgroundSet, FontSet fontSet, RectangleDimensionsSet dimensionsSet, SimulationSet simulationSet) {
-        super(general, backgroundSet, fontSet, dimensionsSet, simulationSet);
+    public BaseNonContainerSubprocess(String name, String documentation, BackgroundSet backgroundSet, FontSet fontSet, RectangleDimensionsSet dimensionsSet, SimulationSet simulationSet) {
+        super(name, documentation, backgroundSet, fontSet, dimensionsSet, simulationSet);
     }
 }

@@ -26,7 +26,6 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.variables.HasPr
 
 public interface BPMNDiagram<D extends BaseDiagramSet, P extends BaseProcessData, S extends BaseAdvancedData> extends BPMNViewDefinition,
                                                                                                                       HasProcessData<P> {
-
     D getDiagramSet();
 
     void setDiagramSet(final D diagramSet);

@@ -32,7 +32,6 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.dimensions.Circ
 import org.kie.workbench.common.stunner.bpmn.definition.property.dimensions.Radius;
 import org.kie.workbench.common.stunner.bpmn.definition.property.font.FontSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.gateway.GatewayExecutionSet;
-import org.kie.workbench.common.stunner.bpmn.definition.property.general.BPMNGeneralSet;
 import org.kie.workbench.common.stunner.core.definition.annotation.Definition;
 import org.kie.workbench.common.stunner.core.definition.annotation.Property;
 import org.kie.workbench.common.stunner.core.definition.annotation.morph.Morph;
@@ -58,19 +57,22 @@ public class InclusiveGateway extends BaseGateway {
     private GatewayExecutionSet executionSet;
 
     public InclusiveGateway() {
-        this(new BPMNGeneralSet(""),
+        this("",
+             "",
              new BackgroundSet(),
              new FontSet(),
              new CircleDimensionSet(new Radius()),
              new GatewayExecutionSet());
     }
 
-    public InclusiveGateway(final @MapsTo("general") BPMNGeneralSet general,
+    public InclusiveGateway(final @MapsTo("name") String name,
+                            final @MapsTo("documentation") String documentation,
                             final @MapsTo("backgroundSet") BackgroundSet backgroundSet,
                             final @MapsTo("fontSet") FontSet fontSet,
                             final @MapsTo("dimensionsSet") CircleDimensionSet dimensionsSet,
                             final @MapsTo("executionSet") GatewayExecutionSet executionSet) {
-        super(general,
+        super(name,
+              documentation,
               backgroundSet,
               fontSet,
               dimensionsSet);

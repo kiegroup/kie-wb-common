@@ -37,7 +37,6 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.event.escalatio
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.message.InterruptingMessageEventExecutionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.signal.InterruptingSignalEventExecutionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.timer.InterruptingTimerEventExecutionSet;
-import org.kie.workbench.common.stunner.bpmn.definition.property.general.BPMNGeneralSet;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
 
@@ -88,9 +87,8 @@ public class StartEventConverter {
         StartNoneEvent definition = n.getContent().getDefinition();
         CatchEventPropertyWriter p = propertyWriterFactory.of(event);
 
-        BPMNGeneralSet general = definition.getGeneral();
-        p.setName(general.getName());
-        p.setDocumentation(general.getDocumentation());
+        p.setName(definition.getName());
+        p.setDocumentation(definition.getDocumentation());
 
         p.setSimulationSet(definition.getSimulationSet());
 
@@ -110,9 +108,8 @@ public class StartEventConverter {
         StartCompensationEvent definition = n.getContent().getDefinition();
         CatchEventPropertyWriter p = propertyWriterFactory.of(event);
 
-        BPMNGeneralSet general = definition.getGeneral();
-        p.setName(general.getName());
-        p.setDocumentation(general.getDocumentation());
+        p.setName(definition.getName());
+        p.setDocumentation(definition.getDocumentation());
 
         p.setSimulationSet(definition.getSimulationSet());
 
@@ -133,9 +130,8 @@ public class StartEventConverter {
         StartSignalEvent definition = n.getContent().getDefinition();
         CatchEventPropertyWriter p = propertyWriterFactory.of(event);
 
-        BPMNGeneralSet general = definition.getGeneral();
-        p.setName(general.getName());
-        p.setDocumentation(general.getDocumentation());
+        p.setName(definition.getName());
+        p.setDocumentation(definition.getDocumentation());
 
         p.setAssignmentsInfo(definition.getDataIOSet().getAssignmentsinfo());
 
@@ -156,9 +152,8 @@ public class StartEventConverter {
         StartTimerEvent definition = n.getContent().getDefinition();
         CatchEventPropertyWriter p = propertyWriterFactory.of(event);
 
-        BPMNGeneralSet general = definition.getGeneral();
-        p.setName(general.getName());
-        p.setDocumentation(general.getDocumentation());
+        p.setName(definition.getName());
+        p.setDocumentation(definition.getDocumentation());
 
         p.setSimulationSet(definition.getSimulationSet());
 
@@ -179,9 +174,8 @@ public class StartEventConverter {
         StartConditionalEvent definition = n.getContent().getDefinition();
         CatchEventPropertyWriter p = propertyWriterFactory.of(event);
 
-        BPMNGeneralSet general = definition.getGeneral();
-        p.setName(general.getName());
-        p.setDocumentation(general.getDocumentation());
+        p.setName(definition.getName());
+        p.setDocumentation(definition.getDocumentation());
 
         p.setSimulationSet(definition.getSimulationSet());
 
@@ -202,9 +196,8 @@ public class StartEventConverter {
         StartErrorEvent definition = n.getContent().getDefinition();
         CatchEventPropertyWriter p = propertyWriterFactory.of(event);
 
-        BPMNGeneralSet general = definition.getGeneral();
-        p.setName(general.getName());
-        p.setDocumentation(general.getDocumentation());
+        p.setName(definition.getName());
+        p.setDocumentation(definition.getDocumentation());
 
         p.setAssignmentsInfo(definition.getDataIOSet().getAssignmentsinfo());
 
@@ -225,9 +218,8 @@ public class StartEventConverter {
         StartEscalationEvent definition = n.getContent().getDefinition();
         CatchEventPropertyWriter p = propertyWriterFactory.of(event);
 
-        BPMNGeneralSet general = definition.getGeneral();
-        p.setName(general.getName());
-        p.setDocumentation(general.getDocumentation());
+        p.setName(definition.getName());
+        p.setDocumentation(definition.getDocumentation());
 
         p.setSimulationSet(definition.getSimulationSet());
 
@@ -250,9 +242,8 @@ public class StartEventConverter {
         StartMessageEvent definition = n.getContent().getDefinition();
         CatchEventPropertyWriter p = propertyWriterFactory.of(event);
 
-        BPMNGeneralSet general = definition.getGeneral();
-        p.setName(general.getName());
-        p.setDocumentation(general.getDocumentation());
+        p.setName(definition.getName());
+        p.setDocumentation(definition.getDocumentation());
 
         p.setAssignmentsInfo(definition.getDataIOSet().getAssignmentsinfo());
 

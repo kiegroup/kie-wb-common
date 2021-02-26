@@ -19,19 +19,19 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.background.Back
 import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.DataIOSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dimensions.RectangleDimensionsSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.font.FontSet;
-import org.kie.workbench.common.stunner.bpmn.definition.property.general.BPMNGeneralSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.simulation.SimulationSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.BaseReusableSubprocessTaskExecutionSet;
 
 public abstract class BaseReusableSubprocess<E extends BaseReusableSubprocessTaskExecutionSet>
         extends BaseNonContainerSubprocess {
 
-    public BaseReusableSubprocess(BPMNGeneralSet general,
+    public BaseReusableSubprocess(String name,
+                                  String documentation,
                                   BackgroundSet backgroundSet,
                                   FontSet fontSet,
                                   RectangleDimensionsSet dimensionsSet,
                                   SimulationSet simulationSet) {
-        super(general, backgroundSet, fontSet, dimensionsSet, simulationSet);
+        super(name, documentation, backgroundSet, fontSet, dimensionsSet, simulationSet);
     }
 
     public abstract DataIOSet getDataIOSet();

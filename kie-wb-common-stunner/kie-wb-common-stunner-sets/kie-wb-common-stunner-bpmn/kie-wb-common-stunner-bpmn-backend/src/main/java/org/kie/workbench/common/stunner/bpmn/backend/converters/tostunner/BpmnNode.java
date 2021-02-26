@@ -23,7 +23,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties.BasePropertyReader;
-import org.kie.workbench.common.stunner.bpmn.definition.BPMNViewDefinition;
+import org.kie.workbench.common.stunner.bpmn.definition.BPMNDefinition;
 import org.kie.workbench.common.stunner.core.graph.Element;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
@@ -43,13 +43,13 @@ public abstract class BpmnNode {
 
     private static final Logger LOG = LoggerFactory.getLogger(BpmnNode.class);
 
-    private final Node<? extends View<? extends BPMNViewDefinition>, ?> value;
+    private final Node<? extends View<? extends BPMNDefinition>, ?> value;
     private final List<BpmnNode> children = new ArrayList<>();
-    private List<BpmnEdge> edges = new ArrayList<>();
+    private final List<BpmnEdge> edges = new ArrayList<>();
     private BpmnNode parent;
-    private BasePropertyReader propertyReader;
+    private final BasePropertyReader propertyReader;
 
-    protected BpmnNode(Node<? extends View<? extends BPMNViewDefinition>, ?> value, BasePropertyReader propertyReader) {
+    protected BpmnNode(Node<? extends View<? extends BPMNDefinition>, ?> value, BasePropertyReader propertyReader) {
         this.value = value;
         this.propertyReader = propertyReader;
     }
@@ -58,7 +58,7 @@ public abstract class BpmnNode {
 
     public static class Simple extends BpmnNode {
 
-        public Simple(Node<? extends View<? extends BPMNViewDefinition>, ?> value, BasePropertyReader propertyReader) {
+        public Simple(Node<? extends View<? extends BPMNDefinition>, ?> value, BasePropertyReader propertyReader) {
             super(value, propertyReader);
         }
 
@@ -70,7 +70,7 @@ public abstract class BpmnNode {
 
     public static class Docked extends BpmnNode {
 
-        public Docked(Node<? extends View<? extends BPMNViewDefinition>, ?> value, BasePropertyReader propertyReader) {
+        public Docked(Node<? extends View<? extends BPMNDefinition>, ?> value, BasePropertyReader propertyReader) {
             super(value, propertyReader);
         }
 
@@ -80,7 +80,7 @@ public abstract class BpmnNode {
         }
     }
 
-    public static BpmnNode of(Node<? extends View<? extends BPMNViewDefinition>, ?> value, BasePropertyReader propertyReader) {
+    public static BpmnNode of(Node<? extends View<? extends BPMNDefinition>, ?> value, BasePropertyReader propertyReader) {
         return new BpmnNode.Simple(value, propertyReader);
     }
 
@@ -117,7 +117,7 @@ public abstract class BpmnNode {
         return !children.isEmpty();
     }
 
-    public Node<? extends View<? extends BPMNViewDefinition>, ?> value() {
+    public Node<? extends View<? extends BPMNDefinition>, ?> value() {
         return value;
     }
 
@@ -139,15 +139,13 @@ public abstract class BpmnNode {
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("BpmnNode{");
-        sb.append("value=").append(Optional.ofNullable(value)
-                                           .map(Element::getContent)
-                                           .filter(Objects::nonNull)
-                                           .map(View::getDefinition)
-                                           .filter(Objects::nonNull)
-                                           .map(BPMNViewDefinition::toString)
-                                           .orElse(""));
-        sb.append('}');
-        return sb.toString();
+        return "BpmnNode{" + "value=" + Optional.ofNullable(value)
+                .map(Element::getContent)
+                .filter(Objects::nonNull)
+                .map(View::getDefinition)
+                .filter(Objects::nonNull)
+                .map(BPMNDefinition::toString)
+                .orElse("") +
+                '}';
     }
 }

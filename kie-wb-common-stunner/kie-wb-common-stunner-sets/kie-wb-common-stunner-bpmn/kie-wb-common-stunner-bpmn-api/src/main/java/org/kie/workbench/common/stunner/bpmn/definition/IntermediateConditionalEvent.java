@@ -33,7 +33,6 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.dimensions.Circ
 import org.kie.workbench.common.stunner.bpmn.definition.property.dimensions.Radius;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.conditional.CancellingConditionalEventExecutionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.font.FontSet;
-import org.kie.workbench.common.stunner.bpmn.definition.property.general.BPMNGeneralSet;
 import org.kie.workbench.common.stunner.core.definition.annotation.Definition;
 import org.kie.workbench.common.stunner.core.definition.annotation.Property;
 import org.kie.workbench.common.stunner.core.definition.annotation.morph.Morph;
@@ -59,7 +58,8 @@ public class IntermediateConditionalEvent extends BaseCatchingIntermediateEvent 
     protected CancellingConditionalEventExecutionSet executionSet;
 
     public IntermediateConditionalEvent() {
-        this(new BPMNGeneralSet(""),
+        this("",
+             "",
              new BackgroundSet(),
              new FontSet(),
              new CircleDimensionSet(new Radius()),
@@ -67,13 +67,15 @@ public class IntermediateConditionalEvent extends BaseCatchingIntermediateEvent 
              new CancellingConditionalEventExecutionSet());
     }
 
-    public IntermediateConditionalEvent(final @MapsTo("general") BPMNGeneralSet general,
+    public IntermediateConditionalEvent(final @MapsTo("name") String name,
+                                        final @MapsTo("documentation") String documentation,
                                         final @MapsTo("backgroundSet") BackgroundSet backgroundSet,
                                         final @MapsTo("fontSet") FontSet fontSet,
                                         final @MapsTo("dimensionsSet") CircleDimensionSet dimensionsSet,
                                         final @MapsTo("dataIOSet") DataIOSet dataIOSet,
                                         final @MapsTo("executionSet") CancellingConditionalEventExecutionSet executionSet) {
-        super(general,
+        super(name,
+              documentation,
               backgroundSet,
               fontSet,
               dimensionsSet,

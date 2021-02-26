@@ -20,7 +20,7 @@ import com.ait.lienzo.test.LienzoMockitoTestRunner;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.kie.workbench.common.stunner.bpmn.definition.BPMNViewDefinition;
+import org.kie.workbench.common.stunner.bpmn.definition.BPMNDefinition;
 import org.kie.workbench.common.stunner.bpmn.definition.UserTask;
 import org.kie.workbench.common.stunner.client.lienzo.shape.view.wires.ext.WiresShapeViewExt;
 import org.kie.workbench.common.stunner.core.client.shape.TextWrapperStrategy;
@@ -45,7 +45,7 @@ public class BPMNShapeViewHandlersTest {
 
     private UserTask task;
 
-    private FontHandler<BPMNViewDefinition, ShapeView> fontHandler;
+    private FontHandler<BPMNDefinition, ShapeView> fontHandler;
 
     @Mock
     private WiresShapeViewExt text;
@@ -76,8 +76,8 @@ public class BPMNShapeViewHandlersTest {
         verify(text).setTextSizeConstraints(sizeConstraints.capture());
 
         final Size size = sizeConstraints.getValue();
-        assertEquals(size.getHeight(), 100, 0d);
-        assertEquals(size.getWidth(), 100, 0d);
-        assertEquals(size.getType(), Size.SizeType.PERCENTAGE);
+        assertEquals(100, size.getHeight(), 0d);
+        assertEquals(100, size.getWidth(), 0d);
+        assertEquals(Size.SizeType.PERCENTAGE, size.getType());
     }
 }

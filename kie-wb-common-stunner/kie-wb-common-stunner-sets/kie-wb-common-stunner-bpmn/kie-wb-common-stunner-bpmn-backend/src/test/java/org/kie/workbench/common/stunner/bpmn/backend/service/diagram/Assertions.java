@@ -83,7 +83,7 @@ public class Assertions {
                 .filter(view -> view.getDefinition() instanceof BPMNDefinition)
                 .map(view -> (BPMNDefinition) view.getDefinition())
                 .findFirst();
-        String documentationValue = (documentation.isPresent() ? documentation.get().getGeneral().getDocumentation() : null);
+        String documentationValue = documentation.map(BPMNDefinition::getDocumentation).orElse(null);
         assertEquals(value,
                      documentationValue);
     }

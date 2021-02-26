@@ -58,7 +58,7 @@ public class NoneTaskTest extends TaskTest<NoneTask> {
                                                       FILLED_TOP_LEVEL_TASK_ID,
                                                       ZERO_INCOME_EDGES,
                                                       HAS_NO_OUTCOME_EDGE);
-        assertGeneralSet(filledTopLevelTask.getGeneral(), TASK_NAME, TASK_DOCUMENTATION);
+        assertGeneralSet(filledTopLevelTask, TASK_NAME, TASK_DOCUMENTATION);
         assertNoneTaskExecutionSet(filledTopLevelTask.getExecutionSet());
     }
 
@@ -71,7 +71,7 @@ public class NoneTaskTest extends TaskTest<NoneTask> {
                                                      EMPTY_TOP_LEVEL_TASK_ID,
                                                      ZERO_INCOME_EDGES,
                                                      HAS_NO_OUTCOME_EDGE);
-        assertGeneralSet(emptyTopLevelTask.getGeneral(), EMPTY_VALUE, EMPTY_VALUE);
+        assertGeneralSet(emptyTopLevelTask, EMPTY_VALUE, EMPTY_VALUE);
         assertNoneTaskExecutionSet(emptyTopLevelTask.getExecutionSet());
     }
 
@@ -87,7 +87,7 @@ public class NoneTaskTest extends TaskTest<NoneTask> {
                                                              FILLED_SUBPROCESS_LEVEL_TASK_ID,
                                                              ZERO_INCOME_EDGES,
                                                              HAS_NO_OUTCOME_EDGE);
-        assertGeneralSet(filledSubprocessLevelTask.getGeneral(), TASK_NAME, TASK_DOCUMENTATION);
+        assertGeneralSet(filledSubprocessLevelTask, TASK_NAME, TASK_DOCUMENTATION);
         assertNoneTaskExecutionSet(filledSubprocessLevelTask.getExecutionSet());
     }
 
@@ -100,7 +100,7 @@ public class NoneTaskTest extends TaskTest<NoneTask> {
                                                             EMPTY_SUBPROCESS_LEVEL_TASK_ID,
                                                             ZERO_INCOME_EDGES,
                                                             HAS_NO_OUTCOME_EDGE);
-        assertGeneralSet(emptySubprocessLevelTask.getGeneral(), EMPTY_VALUE, EMPTY_VALUE);
+        assertGeneralSet(emptySubprocessLevelTask, EMPTY_VALUE, EMPTY_VALUE);
         assertNoneTaskExecutionSet(emptySubprocessLevelTask.getExecutionSet());
     }
 
@@ -116,7 +116,7 @@ public class NoneTaskTest extends TaskTest<NoneTask> {
                                                       FILLED_ONE_INCOME_TOP_LEVEL_TASK_ID,
                                                       ONE_INCOME_EDGE,
                                                       HAS_OUTCOME_EDGE);
-        assertGeneralSet(filledTopLevelTask.getGeneral(), TASK_NAME, TASK_DOCUMENTATION);
+        assertGeneralSet(filledTopLevelTask, TASK_NAME, TASK_DOCUMENTATION);
         assertNoneTaskExecutionSet(filledTopLevelTask.getExecutionSet());
     }
 
@@ -129,7 +129,7 @@ public class NoneTaskTest extends TaskTest<NoneTask> {
                                                      EMPTY_ONE_INCOME_TOP_LEVEL_TASK_ID,
                                                      ONE_INCOME_EDGE,
                                                      HAS_OUTCOME_EDGE);
-        assertGeneralSet(emptyTopLevelTask.getGeneral(), EMPTY_VALUE, EMPTY_VALUE);
+        assertGeneralSet(emptyTopLevelTask, EMPTY_VALUE, EMPTY_VALUE);
         assertNoneTaskExecutionSet(emptyTopLevelTask.getExecutionSet());
     }
 
@@ -142,7 +142,7 @@ public class NoneTaskTest extends TaskTest<NoneTask> {
                                                             EMPTY_ONE_INCOME_SUBPROCESS_LEVEL_TASK_ID,
                                                             ONE_INCOME_EDGE,
                                                             HAS_OUTCOME_EDGE);
-        assertGeneralSet(emptySubprocessLevelTask.getGeneral(), EMPTY_VALUE, EMPTY_VALUE);
+        assertGeneralSet(emptySubprocessLevelTask, EMPTY_VALUE, EMPTY_VALUE);
         assertNoneTaskExecutionSet(emptySubprocessLevelTask.getExecutionSet());
     }
 
@@ -158,7 +158,7 @@ public class NoneTaskTest extends TaskTest<NoneTask> {
                                                              FILLED_ONE_INCOME_SUBPROCESS_LEVEL_TASK_ID,
                                                              ONE_INCOME_EDGE,
                                                              HAS_OUTCOME_EDGE);
-        assertGeneralSet(filledSubprocessLevelTask.getGeneral(), TASK_NAME, TASK_DOCUMENTATION);
+        assertGeneralSet(filledSubprocessLevelTask, TASK_NAME, TASK_DOCUMENTATION);
         assertNoneTaskExecutionSet(filledSubprocessLevelTask.getExecutionSet());
     }
 
@@ -174,7 +174,7 @@ public class NoneTaskTest extends TaskTest<NoneTask> {
                                                       FILLED_TWO_INCOMES_TOP_LEVEL_TASK_ID,
                                                       TWO_INCOME_EDGES,
                                                       HAS_OUTCOME_EDGE);
-        assertGeneralSet(filledTopLevelTask.getGeneral(), TASK_NAME, TASK_DOCUMENTATION);
+        assertGeneralSet(filledTopLevelTask, TASK_NAME, TASK_DOCUMENTATION);
         assertNoneTaskExecutionSet(filledTopLevelTask.getExecutionSet());
     }
 
@@ -187,7 +187,7 @@ public class NoneTaskTest extends TaskTest<NoneTask> {
                                                       EMPTY_TWO_INCOMES_TOP_LEVEL_TASK_ID,
                                                       TWO_INCOME_EDGES,
                                                       HAS_OUTCOME_EDGE);
-        assertGeneralSet(filledTopLevelTask.getGeneral(), EMPTY_VALUE, EMPTY_VALUE);
+        assertGeneralSet(filledTopLevelTask, EMPTY_VALUE, EMPTY_VALUE);
         assertNoneTaskExecutionSet(filledTopLevelTask.getExecutionSet());
     }
 
@@ -200,7 +200,7 @@ public class NoneTaskTest extends TaskTest<NoneTask> {
                                                             EMPTY_TWO_INCOMES_SUBPROCESS_LEVEL_TASK_ID,
                                                             TWO_INCOME_EDGES,
                                                             HAS_OUTCOME_EDGE);
-        assertGeneralSet(emptySubprocessLevelTask.getGeneral(), EMPTY_VALUE, EMPTY_VALUE);
+        assertGeneralSet(emptySubprocessLevelTask, EMPTY_VALUE, EMPTY_VALUE);
         assertNoneTaskExecutionSet(emptySubprocessLevelTask.getExecutionSet());
     }
 
@@ -216,7 +216,7 @@ public class NoneTaskTest extends TaskTest<NoneTask> {
                                                              FILLED_TWO_INCOMES_SUBPROCESS_LEVEL_TASK_ID,
                                                              TWO_INCOME_EDGES,
                                                              HAS_OUTCOME_EDGE);
-        assertGeneralSet(filledSubprocessLevelTask.getGeneral(), TASK_NAME, TASK_DOCUMENTATION);
+        assertGeneralSet(filledSubprocessLevelTask, TASK_NAME, TASK_DOCUMENTATION);
         assertNoneTaskExecutionSet(filledSubprocessLevelTask.getExecutionSet());
     }
 

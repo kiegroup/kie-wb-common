@@ -81,6 +81,7 @@ public class CustomTaskShapeDef extends BaseDimensionedShapeDef
                                factory.serviceTask());
     }
 
+    @Override
     public Glyph getGlyph(final Class<? extends CustomTask> type,
                           final String defId) {
         final String name = defId.substring(defId.lastIndexOf(".") + 1, defId.length());

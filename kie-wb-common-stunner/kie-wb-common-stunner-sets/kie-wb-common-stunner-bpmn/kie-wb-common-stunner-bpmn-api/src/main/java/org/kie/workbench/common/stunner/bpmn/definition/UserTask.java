@@ -28,7 +28,6 @@ import org.kie.workbench.common.forms.adf.definitions.settings.FieldPolicy;
 import org.kie.workbench.common.stunner.bpmn.definition.property.background.BackgroundSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dimensions.RectangleDimensionsSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.font.FontSet;
-import org.kie.workbench.common.stunner.bpmn.definition.property.general.TaskGeneralSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.simulation.SimulationSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.TaskType;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.TaskTypes;
@@ -62,8 +61,8 @@ public class UserTask extends BaseUserTask<UserTaskExecutionSet> {
     protected UserTaskExecutionSet executionSet;
 
     public UserTask() {
-        this(new TaskGeneralSet("Task",
-                                ""),
+        this("Task",
+             "",
              new UserTaskExecutionSet(),
              new BackgroundSet(),
              new FontSet(),
@@ -72,14 +71,16 @@ public class UserTask extends BaseUserTask<UserTaskExecutionSet> {
              new TaskType(TaskTypes.USER));
     }
 
-    public UserTask(final @MapsTo("general") TaskGeneralSet general,
+    public UserTask(final @MapsTo("name") String name,
+                    final @MapsTo("documentation") String documentation,
                     final @MapsTo("executionSet") UserTaskExecutionSet executionSet,
                     final @MapsTo("backgroundSet") BackgroundSet backgroundSet,
                     final @MapsTo("fontSet") FontSet fontSet,
                     final @MapsTo("dimensionsSet") RectangleDimensionsSet dimensionsSet,
                     final @MapsTo("simulationSet") SimulationSet simulationSet,
                     final @MapsTo("taskType") TaskType taskType) {
-        super(general,
+        super(name,
+              documentation,
               backgroundSet,
               fontSet,
               dimensionsSet,

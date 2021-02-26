@@ -33,8 +33,7 @@ import org.kie.workbench.common.stunner.bpmn.client.marshall.MarshallingMessageK
 import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.Result;
 import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.tostunner.properties.EdgePropertyReader;
 import org.kie.workbench.common.stunner.bpmn.definition.AdHocSubprocess;
-import org.kie.workbench.common.stunner.bpmn.definition.BPMNBaseInfo;
-import org.kie.workbench.common.stunner.bpmn.definition.BPMNViewDefinition;
+import org.kie.workbench.common.stunner.bpmn.definition.BPMNDefinition;
 import org.kie.workbench.common.stunner.bpmn.definition.BaseSubprocess;
 import org.kie.workbench.common.stunner.bpmn.definition.EmbeddedSubprocess;
 import org.kie.workbench.common.stunner.bpmn.definition.EventSubprocess;
@@ -53,7 +52,7 @@ import org.kie.workbench.common.stunner.core.validation.Violation;
 
 public class ProcessPostConverter {
 
-    private static double PRECISION = 1;
+    private static final double PRECISION = 1;
     private PostConverterContext context;
 
     ProcessPostConverter() {
@@ -98,8 +97,7 @@ public class ProcessPostConverter {
                                                   Optional.ofNullable(n.value())
                                                           .map(Node::getContent)
                                                           .map(View::getDefinition)
-                                                          .map(BPMNViewDefinition::getGeneral)
-                                                          .map(BPMNBaseInfo::getName)
+                                                          .map(BPMNDefinition::getName)
                                                           .orElse(""))
                                 .type(Violation.Type.WARNING)
                                 .build())
@@ -111,8 +109,8 @@ public class ProcessPostConverter {
 
     private static class PostConverterContext {
 
-        private HashMap<BpmnNode, Boolean> collapsedNodes;
-        private HashMap<BpmnNode, Boolean> resizedNodes = new HashMap<>();
+        private final HashMap<BpmnNode, Boolean> collapsedNodes;
+        private final HashMap<BpmnNode, Boolean> resizedNodes = new HashMap<>();
 
         private PostConverterContext(HashMap<BpmnNode, Boolean> collapsedNodes) {
             this.collapsedNodes = collapsedNodes;
@@ -260,10 +258,6 @@ public class ProcessPostConverter {
             laneUl.setY(viewPort.getUpperLeftY() - padding.getTop());
             laneLr.setX(viewPort.getLowerRightX() + padding.getRight());
             laneLr.setY(viewPort.getLowerRightY() + padding.getBottom());
-
-            RectangleDimensionsSet laneRectangle = ((Lane) lane.value().getContent().getDefinition()).getDimensionsSet();
-            laneRectangle.setWidth(new Width(laneBounds.getWidth()));
-            laneRectangle.setHeight(new Height(laneBounds.getHeight()));
         }
     }
 
@@ -536,14 +530,6 @@ public class ProcessPostConverter {
                 .map(edge -> (BpmnEdge.Simple) edge);
     }
 
-    private static <X, T extends Object & Comparable<? super T>> T min(List<X> values, Function<X, T> mapper) {
-        return Collections.min(values.stream().map(mapper).collect(Collectors.toList()));
-    }
-
-    private static <X, T extends Object & Comparable<? super T>> T max(List<X> values, Function<X, T> mapper) {
-        return Collections.max(values.stream().map(mapper).collect(Collectors.toList()));
-    }
-
     private static boolean equals(double a, double b, double delta) {
         if (Double.compare(a, b) == 0) {
             return true;
@@ -554,9 +540,9 @@ public class ProcessPostConverter {
 
     private static class LaneInfo {
 
-        private BpmnNode lane;
-        private Padding padding;
-        private List<BpmnNode> children;
+        private final BpmnNode lane;
+        private final Padding padding;
+        private final List<BpmnNode> children;
 
         public LaneInfo(BpmnNode lane, Padding padding, List<BpmnNode> children) {
             this.lane = lane;
@@ -626,10 +612,10 @@ public class ProcessPostConverter {
 
     private static class ViewPort {
 
-        private double ulx;
-        private double uly;
-        private double lrx;
-        private double lry;
+        private final double ulx;
+        private final double uly;
+        private final double lrx;
+        private final double lry;
 
         public ViewPort(double ulx, double uly, double lrx, double lry) {
             this.ulx = ulx;
@@ -685,6 +671,14 @@ public class ProcessPostConverter {
                 lry = Math.max(lry, max(controlPoints, Point2D::getY));
             }
             return new ViewPort(ulx, uly, lrx, lry);
+        }
+
+        private static <X, T extends Object & Comparable<? super T>> T min(List<X> values, Function<X, T> mapper) {
+            return Collections.min(values.stream().map(mapper).collect(Collectors.toList()));
+        }
+
+        private static <X, T extends Object & Comparable<? super T>> T max(List<X> values, Function<X, T> mapper) {
+            return Collections.max(values.stream().map(mapper).collect(Collectors.toList()));
         }
     }
 }

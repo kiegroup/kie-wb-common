@@ -28,7 +28,6 @@ import org.kie.workbench.common.stunner.bpmn.definition.IntermediateLinkEventThr
 import org.kie.workbench.common.stunner.bpmn.definition.IntermediateMessageEventThrowing;
 import org.kie.workbench.common.stunner.bpmn.definition.IntermediateSignalEventThrowing;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.message.MessageEventExecutionSet;
-import org.kie.workbench.common.stunner.bpmn.definition.property.general.BPMNGeneralSet;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
 
@@ -73,9 +72,8 @@ public class IntermediateThrowEventConverter {
 
         p.setAbsoluteBounds(n);
 
-        BPMNGeneralSet general = definition.getGeneral();
-        p.setName(general.getName());
-        p.setDocumentation(general.getDocumentation());
+        p.setName(definition.getName());
+        p.setDocumentation(definition.getDocumentation());
 
         p.setAssignmentsInfo(definition.getDataIOSet().getAssignmentsinfo());
 
@@ -94,9 +92,8 @@ public class IntermediateThrowEventConverter {
 
         p.setAbsoluteBounds(n);
 
-        BPMNGeneralSet general = definition.getGeneral();
-        p.setName(general.getName());
-        p.setDocumentation(general.getDocumentation());
+        p.setName(definition.getName());
+        p.setDocumentation(definition.getDocumentation());
 
         p.setAssignmentsInfo(definition.getDataIOSet().getAssignmentsinfo());
 
@@ -115,9 +112,8 @@ public class IntermediateThrowEventConverter {
 
         p.setAbsoluteBounds(n);
 
-        BPMNGeneralSet general = definition.getGeneral();
-        p.setName(general.getName());
-        p.setDocumentation(general.getDocumentation());
+        p.setName(definition.getName());
+        p.setDocumentation(definition.getDocumentation());
 
         p.setAssignmentsInfo(definition.getDataIOSet().getAssignmentsinfo());
 
@@ -138,9 +134,8 @@ public class IntermediateThrowEventConverter {
 
         p.setAbsoluteBounds(n);
 
-        BPMNGeneralSet general = definition.getGeneral();
-        p.setName(general.getName());
-        p.setDocumentation(general.getDocumentation());
+        p.setName(definition.getName());
+        p.setDocumentation(definition.getDocumentation());
 
         p.setAssignmentsInfo(definition.getDataIOSet().getAssignmentsinfo());
 
@@ -159,9 +154,8 @@ public class IntermediateThrowEventConverter {
 
         p.setAbsoluteBounds(n);
 
-        BPMNGeneralSet general = definition.getGeneral();
-        p.setName(general.getName());
-        p.setDocumentation(general.getDocumentation());
+        p.setName(definition.getName());
+        p.setDocumentation(definition.getDocumentation());
 
         p.setAssignmentsInfo(definition.getDataIOSet().getAssignmentsinfo());
 

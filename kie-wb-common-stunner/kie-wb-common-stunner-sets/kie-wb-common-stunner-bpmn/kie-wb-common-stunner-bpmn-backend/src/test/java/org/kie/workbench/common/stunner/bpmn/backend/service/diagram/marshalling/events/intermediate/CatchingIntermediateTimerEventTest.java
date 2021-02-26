@@ -79,21 +79,21 @@ public class CatchingIntermediateTimerEventTest extends CatchingIntermediateEven
                                                                                              FILLED_TOP_LEVEL_EVENT_AFTER_DURATION_ID,
                                                                                              HAS_NO_INCOME_EDGE,
                                                                                              ZERO_OUTGOING_EDGES);
-        assertGeneralSet(filledTopEventAfterDuration.getGeneral(), EVENT_NAME_AFTER_DURATION, EVENT_DOCUMENTATION_AFTER_DURATION);
+        assertGeneralSet(filledTopEventAfterDuration, EVENT_NAME_AFTER_DURATION, EVENT_DOCUMENTATION_AFTER_DURATION);
         assertTimerEventAfterDuration(filledTopEventAfterDuration.getExecutionSet(), EVENT_TIMER_VALUE_AFTER_DURATION, CANCELLING, SLA_DUE_DATE);
 
         IntermediateTimerEvent filledTopEventMultiple = getCatchingIntermediateNodeById(diagram,
                                                                                         FILLED_TOP_LEVEL_EVENT_MULTIPLE_ID,
                                                                                         HAS_NO_INCOME_EDGE,
                                                                                         ZERO_OUTGOING_EDGES);
-        assertGeneralSet(filledTopEventMultiple.getGeneral(), EVENT_NAME_MULTIPLE, EVENT_DOCUMENTATION_MULTIPLE);
+        assertGeneralSet(filledTopEventMultiple, EVENT_NAME_MULTIPLE, EVENT_DOCUMENTATION_MULTIPLE);
         assertTimerEventMultiple(filledTopEventMultiple.getExecutionSet(), EVENT_TIMER_VALUE_MULTIPLE, EVENT_TIMER_VALUE_LANGUAGE_MULTIPLE, CANCELLING, SLA_DUE_DATE);
 
         IntermediateTimerEvent filledTopEventSpecificDate = getCatchingIntermediateNodeById(diagram,
                                                                                             FILLED_TOP_LEVEL_EVENT_SPECIFIC_DATE_ID,
                                                                                             HAS_NO_INCOME_EDGE,
                                                                                             ZERO_OUTGOING_EDGES);
-        assertGeneralSet(filledTopEventSpecificDate.getGeneral(), EVENT_NAME_SPECIFIC_DATE, EVENT_DOCUMENTATION_SPECIFIC_DATE);
+        assertGeneralSet(filledTopEventSpecificDate, EVENT_NAME_SPECIFIC_DATE, EVENT_DOCUMENTATION_SPECIFIC_DATE);
         assertTimerEventSpecificDate(filledTopEventSpecificDate.getExecutionSet(), EVENT_TIMER_VALUE_SPECIFIC_DATE, CANCELLING, SLA_DUE_DATE);
     }
 
@@ -107,7 +107,7 @@ public class CatchingIntermediateTimerEventTest extends CatchingIntermediateEven
                                                                                EMPTY_TOP_LEVEL_EVENT_ID,
                                                                                HAS_NO_INCOME_EDGE,
                                                                                ZERO_OUTGOING_EDGES);
-        assertGeneralSet(emptyTopEvent.getGeneral(), EMPTY_VALUE, EMPTY_VALUE);
+        assertGeneralSet(emptyTopEvent, EMPTY_VALUE, EMPTY_VALUE);
         assertTimerEventEmpty(emptyTopEvent.getExecutionSet(), CANCELLING, EMPTY_VALUE);
     }
 
@@ -135,21 +135,21 @@ public class CatchingIntermediateTimerEventTest extends CatchingIntermediateEven
                                                                                              FILLED_WITH_EDGES_TOP_LEVEL_EVENT_AFTER_DURATION_ID,
                                                                                              HAS_INCOME_EDGE,
                                                                                              TWO_OUTGOING_EDGES);
-        assertGeneralSet(filledTopEventAfterDuration.getGeneral(), EVENT_NAME_AFTER_DURATION, EVENT_DOCUMENTATION_AFTER_DURATION);
+        assertGeneralSet(filledTopEventAfterDuration, EVENT_NAME_AFTER_DURATION, EVENT_DOCUMENTATION_AFTER_DURATION);
         assertTimerEventAfterDuration(filledTopEventAfterDuration.getExecutionSet(), EVENT_TIMER_VALUE_AFTER_DURATION, CANCELLING, SLA_DUE_DATE);
 
         IntermediateTimerEvent filledTopEventMultiple = getCatchingIntermediateNodeById(diagram,
                                                                                         FILLED_WITH_EDGES_TOP_LEVEL_EVENT_MULTIPLE_ID,
                                                                                         HAS_INCOME_EDGE,
                                                                                         TWO_OUTGOING_EDGES);
-        assertGeneralSet(filledTopEventMultiple.getGeneral(), EVENT_NAME_MULTIPLE, EVENT_DOCUMENTATION_MULTIPLE);
+        assertGeneralSet(filledTopEventMultiple, EVENT_NAME_MULTIPLE, EVENT_DOCUMENTATION_MULTIPLE);
         assertTimerEventMultiple(filledTopEventMultiple.getExecutionSet(), EVENT_TIMER_VALUE_MULTIPLE, EVENT_TIMER_VALUE_LANGUAGE_MULTIPLE, CANCELLING, SLA_DUE_DATE);
 
         IntermediateTimerEvent filledTopEventSpecificDate = getCatchingIntermediateNodeById(diagram,
                                                                                             FILLED_WITH_EDGES_TOP_LEVEL_EVENT_SPECIFIC_DATE_ID,
                                                                                             HAS_INCOME_EDGE,
                                                                                             TWO_OUTGOING_EDGES);
-        assertGeneralSet(filledTopEventSpecificDate.getGeneral(), EVENT_NAME_SPECIFIC_DATE, EVENT_DOCUMENTATION_SPECIFIC_DATE);
+        assertGeneralSet(filledTopEventSpecificDate, EVENT_NAME_SPECIFIC_DATE, EVENT_DOCUMENTATION_SPECIFIC_DATE);
         assertTimerEventSpecificDate(filledTopEventSpecificDate.getExecutionSet(), EVENT_TIMER_VALUE_SPECIFIC_DATE, CANCELLING, SLA_DUE_DATE);
     }
 
@@ -163,7 +163,7 @@ public class CatchingIntermediateTimerEventTest extends CatchingIntermediateEven
                                                                             EMPTY_WITH_EDGES_TOP_LEVEL_EVENT_ID,
                                                                             HAS_INCOME_EDGE,
                                                                             TWO_OUTGOING_EDGES);
-        assertGeneralSet(emptyEvent.getGeneral(), EMPTY_VALUE, EMPTY_VALUE);
+        assertGeneralSet(emptyEvent, EMPTY_VALUE, EMPTY_VALUE);
         assertTimerEventEmpty(emptyEvent.getExecutionSet(), CANCELLING, EMPTY_VALUE);
     }
 
@@ -191,21 +191,21 @@ public class CatchingIntermediateTimerEventTest extends CatchingIntermediateEven
                                                                                                     FILLED_SUBPROCESS_LEVEL_EVENT_AFTER_DURATION_ID,
                                                                                                     HAS_NO_INCOME_EDGE,
                                                                                                     ZERO_OUTGOING_EDGES);
-        assertGeneralSet(filledSubprocessEventAfterDuration.getGeneral(), EVENT_NAME_AFTER_DURATION, EVENT_DOCUMENTATION_AFTER_DURATION);
+        assertGeneralSet(filledSubprocessEventAfterDuration, EVENT_NAME_AFTER_DURATION, EVENT_DOCUMENTATION_AFTER_DURATION);
         assertTimerEventAfterDuration(filledSubprocessEventAfterDuration.getExecutionSet(), EVENT_TIMER_VALUE_AFTER_DURATION, CANCELLING, SLA_DUE_DATE);
 
         IntermediateTimerEvent filledSubprocessEventMultiple = getCatchingIntermediateNodeById(diagram,
                                                                                                FILLED_SUBPROCESS_LEVEL_EVENT_MULTIPLE_ID,
                                                                                                HAS_NO_INCOME_EDGE,
                                                                                                ZERO_OUTGOING_EDGES);
-        assertGeneralSet(filledSubprocessEventMultiple.getGeneral(), EVENT_NAME_MULTIPLE, EVENT_DOCUMENTATION_MULTIPLE);
+        assertGeneralSet(filledSubprocessEventMultiple, EVENT_NAME_MULTIPLE, EVENT_DOCUMENTATION_MULTIPLE);
         assertTimerEventMultiple(filledSubprocessEventMultiple.getExecutionSet(), EVENT_TIMER_VALUE_MULTIPLE, EVENT_TIMER_VALUE_LANGUAGE_MULTIPLE, CANCELLING, SLA_DUE_DATE);
 
         IntermediateTimerEvent filledSubprocessEventSpecificDate = getCatchingIntermediateNodeById(diagram,
                                                                                                    FILLED_SUBPROCESS_LEVEL_EVENT_SPECIFIC_DATE_ID,
                                                                                                    HAS_NO_INCOME_EDGE,
                                                                                                    ZERO_OUTGOING_EDGES);
-        assertGeneralSet(filledSubprocessEventSpecificDate.getGeneral(), EVENT_NAME_SPECIFIC_DATE, EVENT_DOCUMENTATION_SPECIFIC_DATE);
+        assertGeneralSet(filledSubprocessEventSpecificDate, EVENT_NAME_SPECIFIC_DATE, EVENT_DOCUMENTATION_SPECIFIC_DATE);
         assertTimerEventSpecificDate(filledSubprocessEventSpecificDate.getExecutionSet(), EVENT_TIMER_VALUE_SPECIFIC_DATE, CANCELLING, SLA_DUE_DATE);
     }
 
@@ -219,7 +219,7 @@ public class CatchingIntermediateTimerEventTest extends CatchingIntermediateEven
                                                                                       EMPTY_SUBPROCESS_LEVEL_EVENT_ID,
                                                                                       HAS_NO_INCOME_EDGE,
                                                                                       ZERO_OUTGOING_EDGES);
-        assertGeneralSet(emptySubprocessEvent.getGeneral(), EMPTY_VALUE, EMPTY_VALUE);
+        assertGeneralSet(emptySubprocessEvent, EMPTY_VALUE, EMPTY_VALUE);
         assertTimerEventEmpty(emptySubprocessEvent.getExecutionSet(), CANCELLING, EMPTY_VALUE);
     }
 
@@ -233,7 +233,7 @@ public class CatchingIntermediateTimerEventTest extends CatchingIntermediateEven
                                                                                       EMPTY_WITH_EDGES_SUBPROCESS_LEVEL_EVENT_ID,
                                                                                       HAS_INCOME_EDGE,
                                                                                       TWO_OUTGOING_EDGES);
-        assertGeneralSet(emptySubprocessEvent.getGeneral(), EMPTY_VALUE, EMPTY_VALUE);
+        assertGeneralSet(emptySubprocessEvent, EMPTY_VALUE, EMPTY_VALUE);
         assertTimerEventEmpty(emptySubprocessEvent.getExecutionSet(), CANCELLING, EMPTY_VALUE);
     }
 
@@ -260,21 +260,21 @@ public class CatchingIntermediateTimerEventTest extends CatchingIntermediateEven
                                                                                              FILLED_WITH_EDGES_SUBPROCESS_LEVEL_EVENT_AFTER_DURATION_ID,
                                                                                              HAS_INCOME_EDGE,
                                                                                              TWO_OUTGOING_EDGES);
-        assertGeneralSet(filledTopEventAfterDuration.getGeneral(), EVENT_NAME_AFTER_DURATION, EVENT_DOCUMENTATION_AFTER_DURATION);
+        assertGeneralSet(filledTopEventAfterDuration, EVENT_NAME_AFTER_DURATION, EVENT_DOCUMENTATION_AFTER_DURATION);
         assertTimerEventAfterDuration(filledTopEventAfterDuration.getExecutionSet(), EVENT_TIMER_VALUE_AFTER_DURATION, CANCELLING, SLA_DUE_DATE);
 
         IntermediateTimerEvent filledTopEventMultiple = getCatchingIntermediateNodeById(diagram,
                                                                                         FILLED_WITH_EDGES_SUBPROCESS_LEVEL_EVENT_MULTIPLE_ID,
                                                                                         HAS_INCOME_EDGE,
                                                                                         TWO_OUTGOING_EDGES);
-        assertGeneralSet(filledTopEventMultiple.getGeneral(), EVENT_NAME_MULTIPLE, EVENT_DOCUMENTATION_MULTIPLE);
+        assertGeneralSet(filledTopEventMultiple, EVENT_NAME_MULTIPLE, EVENT_DOCUMENTATION_MULTIPLE);
         assertTimerEventMultiple(filledTopEventMultiple.getExecutionSet(), EVENT_TIMER_VALUE_MULTIPLE, EVENT_TIMER_VALUE_LANGUAGE_MULTIPLE, CANCELLING, SLA_DUE_DATE);
 
         IntermediateTimerEvent filledTopEventSpecificDate = getCatchingIntermediateNodeById(diagram,
                                                                                             FILLED_WITH_EDGES_SUBPROCESS_LEVEL_EVENT_SPECIFIC_DATE_ID,
                                                                                             HAS_INCOME_EDGE,
                                                                                             TWO_OUTGOING_EDGES);
-        assertGeneralSet(filledTopEventSpecificDate.getGeneral(), EVENT_NAME_SPECIFIC_DATE, EVENT_DOCUMENTATION_SPECIFIC_DATE);
+        assertGeneralSet(filledTopEventSpecificDate, EVENT_NAME_SPECIFIC_DATE, EVENT_DOCUMENTATION_SPECIFIC_DATE);
         assertTimerEventSpecificDate(filledTopEventSpecificDate.getExecutionSet(), EVENT_TIMER_VALUE_SPECIFIC_DATE, CANCELLING, SLA_DUE_DATE);
     }
 

@@ -19,7 +19,7 @@ package org.kie.workbench.common.stunner.bpmn.client.shape.view.handler;
 import com.ait.lienzo.test.LienzoMockitoTestRunner;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.kie.workbench.common.stunner.bpmn.definition.BPMNViewDefinition;
+import org.kie.workbench.common.stunner.bpmn.definition.BPMNDefinition;
 import org.kie.workbench.common.stunner.bpmn.definition.StartNoneEvent;
 import org.kie.workbench.common.stunner.client.lienzo.shape.view.wires.ext.WiresShapeViewExt;
 import org.kie.workbench.common.stunner.core.client.shape.view.HasFillGradient;
@@ -43,7 +43,7 @@ public class BPMNViewHandlersTest {
     @Test
     @SuppressWarnings("unchecked")
     public void testFontHandler() {
-        final FontHandler<BPMNViewDefinition, ShapeView> fontHandler =
+        final FontHandler<BPMNDefinition, ShapeView> fontHandler =
                 new BPMNShapeViewHandlers.FontHandlerBuilder<>().build();
         final StartNoneEvent bean = new StartNoneEvent();
         bean.getFontSet().getFontColor().setValue("fontColor");
@@ -62,7 +62,7 @@ public class BPMNViewHandlersTest {
     @Test
     @SuppressWarnings("unchecked")
     public void testViewHandler() {
-        final ViewAttributesHandler<BPMNViewDefinition, ShapeView> fontHandler =
+        final ViewAttributesHandler<BPMNDefinition, ShapeView> fontHandler =
                 new BPMNShapeViewHandlers.ViewAttributesHandlerBuilder<>().build();
         final StartNoneEvent bean = new StartNoneEvent();
         bean.getBackgroundSet().getBgColor().setValue("bgColor");

@@ -80,7 +80,7 @@ public class IntermediateLinkEventPostConverterTest {
     private static final String EVENT_ID = "EVENT_ID";
     private static final String LINK_NAME = "LINK_NAME";
 
-    private IntermediateLinkEventPostConverter converter = spy(new IntermediateLinkEventPostConverter());
+    private final IntermediateLinkEventPostConverter converter = spy(new IntermediateLinkEventPostConverter());
 
     private final List<EventDefinition> throwDefinitions = new ArrayList<>();
     private final List<EventDefinition> catchDefinitions = new ArrayList<>();

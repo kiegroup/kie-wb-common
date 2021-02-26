@@ -21,7 +21,6 @@ import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.fromstun
 import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.fromstunner.properties.TextAnnotationPropertyWriter;
 import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.util.ConverterUtils;
 import org.kie.workbench.common.stunner.bpmn.definition.TextAnnotation;
-import org.kie.workbench.common.stunner.bpmn.definition.property.general.BPMNGeneralSet;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
 
@@ -46,9 +45,8 @@ public class TextAnnotationConverter {
 
             TextAnnotationPropertyWriter writer = propertyWriterFactory.of(element);
 
-            BPMNGeneralSet general = definition.getGeneral();
-            writer.setName(general.getName());
-            writer.setDocumentation(general.getDocumentation());
+            writer.setName(definition.getName());
+            writer.setDocumentation(definition.getDocumentation());
             writer.setAbsoluteBounds(node);
 
             return writer;

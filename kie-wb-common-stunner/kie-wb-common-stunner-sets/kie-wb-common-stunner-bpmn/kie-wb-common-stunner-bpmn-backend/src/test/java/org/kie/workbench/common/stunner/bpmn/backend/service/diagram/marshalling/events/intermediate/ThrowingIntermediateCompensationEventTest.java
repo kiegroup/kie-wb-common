@@ -60,7 +60,7 @@ public class ThrowingIntermediateCompensationEventTest extends ThrowingIntermedi
         IntermediateCompensationEventThrowing filledTopEvent = getThrowingIntermediateNodeById(diagram,
                                                                                                FILLED_TOP_LEVEL_EVENT_ID,
                                                                                                HAS_NO_INCOME_EDGE, ZERO_OUTGOING_EDGES);
-        assertGeneralSet(filledTopEvent.getGeneral(), EVENT_NAME, EVENT_DOCUMENTATION);
+        assertGeneralSet(filledTopEvent, EVENT_NAME, EVENT_DOCUMENTATION);
         assertCompensationEventExecutionSet(filledTopEvent.getExecutionSet(), ACTIVITY_REFERENCE);
     }
 
@@ -73,7 +73,7 @@ public class ThrowingIntermediateCompensationEventTest extends ThrowingIntermedi
         IntermediateCompensationEventThrowing emptyTopEvent = getThrowingIntermediateNodeById(diagram,
                                                                                               EMPTY_TOP_LEVEL_EVENT_ID,
                                                                                               HAS_NO_INCOME_EDGE, ZERO_OUTGOING_EDGES);
-        assertGeneralSet(emptyTopEvent.getGeneral(), EMPTY_VALUE, EMPTY_VALUE);
+        assertGeneralSet(emptyTopEvent, EMPTY_VALUE, EMPTY_VALUE);
         assertCompensationEventExecutionSet(emptyTopEvent.getExecutionSet(), DEFAULT_REFERENCE_ACTIVITY);
     }
 
@@ -90,7 +90,7 @@ public class ThrowingIntermediateCompensationEventTest extends ThrowingIntermedi
         IntermediateCompensationEventThrowing filledSubprocessEvent = getThrowingIntermediateNodeById(diagram,
                                                                                                       FILLED_SUBPROCESS_LEVEL_EVENT_ID,
                                                                                                       HAS_NO_INCOME_EDGE, ZERO_OUTGOING_EDGES);
-        assertGeneralSet(filledSubprocessEvent.getGeneral(), EVENT_NAME, EVENT_DOCUMENTATION);
+        assertGeneralSet(filledSubprocessEvent, EVENT_NAME, EVENT_DOCUMENTATION);
         assertCompensationEventExecutionSet(filledSubprocessEvent.getExecutionSet(), ACTIVITY_REFERENCE);
     }
 
@@ -103,7 +103,7 @@ public class ThrowingIntermediateCompensationEventTest extends ThrowingIntermedi
         IntermediateCompensationEventThrowing emptySubprocessEvent = getThrowingIntermediateNodeById(diagram,
                                                                                                      EMPTY_SUBPROCESS_LEVEL_EVENT_ID,
                                                                                                      HAS_NO_INCOME_EDGE, ZERO_OUTGOING_EDGES);
-        assertGeneralSet(emptySubprocessEvent.getGeneral(), EMPTY_VALUE, EMPTY_VALUE);
+        assertGeneralSet(emptySubprocessEvent, EMPTY_VALUE, EMPTY_VALUE);
         assertCompensationEventExecutionSet(emptySubprocessEvent.getExecutionSet(), DEFAULT_REFERENCE_ACTIVITY);
     }
 
@@ -120,7 +120,7 @@ public class ThrowingIntermediateCompensationEventTest extends ThrowingIntermedi
         IntermediateCompensationEventThrowing filledSubprocessEvent = getThrowingIntermediateNodeById(diagram,
                                                                                                       FILLED_WITH_EDGES_TOP_LEVEL_EVENT_ID,
                                                                                                       HAS_INCOME_EDGE, TWO_OUTGOING_EDGES);
-        assertGeneralSet(filledSubprocessEvent.getGeneral(), EVENT_NAME, EVENT_DOCUMENTATION);
+        assertGeneralSet(filledSubprocessEvent, EVENT_NAME, EVENT_DOCUMENTATION);
         assertCompensationEventExecutionSet(filledSubprocessEvent.getExecutionSet(), ACTIVITY_REFERENCE);
     }
 
@@ -133,7 +133,7 @@ public class ThrowingIntermediateCompensationEventTest extends ThrowingIntermedi
         IntermediateCompensationEventThrowing emptyEvent = getThrowingIntermediateNodeById(diagram,
                                                                                            EMPTY_WITH_EDGES_TOP_LEVEL_EVENT_ID,
                                                                                            HAS_INCOME_EDGE, TWO_OUTGOING_EDGES);
-        assertGeneralSet(emptyEvent.getGeneral(), EMPTY_VALUE, EMPTY_VALUE);
+        assertGeneralSet(emptyEvent, EMPTY_VALUE, EMPTY_VALUE);
         assertCompensationEventExecutionSet(emptyEvent.getExecutionSet(), DEFAULT_REFERENCE_ACTIVITY);
     }
 
@@ -146,7 +146,7 @@ public class ThrowingIntermediateCompensationEventTest extends ThrowingIntermedi
         IntermediateCompensationEventThrowing emptySubprocessEvent = getThrowingIntermediateNodeById(diagram,
                                                                                                      EMPTY_WITH_EDGES_SUBPROCESS_LEVEL_EVENT_ID,
                                                                                                      HAS_INCOME_EDGE, TWO_OUTGOING_EDGES);
-        assertGeneralSet(emptySubprocessEvent.getGeneral(), EMPTY_VALUE, EMPTY_VALUE);
+        assertGeneralSet(emptySubprocessEvent, EMPTY_VALUE, EMPTY_VALUE);
         assertCompensationEventExecutionSet(emptySubprocessEvent.getExecutionSet(), DEFAULT_REFERENCE_ACTIVITY);
     }
 
@@ -163,7 +163,7 @@ public class ThrowingIntermediateCompensationEventTest extends ThrowingIntermedi
         IntermediateCompensationEventThrowing filledSubprocessEvent = getThrowingIntermediateNodeById(diagram,
                                                                                                       FILLED_WITH_EDGES_SUBPROCESS_LEVEL_EVENT_ID,
                                                                                                       HAS_INCOME_EDGE, TWO_OUTGOING_EDGES);
-        assertGeneralSet(filledSubprocessEvent.getGeneral(), EVENT_NAME, EVENT_DOCUMENTATION);
+        assertGeneralSet(filledSubprocessEvent, EVENT_NAME, EVENT_DOCUMENTATION);
         assertCompensationEventExecutionSet(filledSubprocessEvent.getExecutionSet(), ACTIVITY_REFERENCE);
     }
 

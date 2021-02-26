@@ -70,7 +70,7 @@ public class EventSubProcessTest extends SubProcessTest<EventSubprocess> {
                                                                    EMPTY_INCOME_EDGES,
                                                                    EMPTY_OUTCOME_EDGES);
 
-        assertGeneralSet(topLevelSubProcess.getGeneral(), DEFAULT_NAME, DEFAULT_DOCUMENTATION);
+        assertGeneralSet(topLevelSubProcess, DEFAULT_NAME, DEFAULT_DOCUMENTATION);
         assertEventSubProcessExecutionSet(topLevelSubProcess.getExecutionSet(),
                                           IS_NOT_ASYNC,
                                           EMPTY_VALUE);
@@ -92,7 +92,7 @@ public class EventSubProcessTest extends SubProcessTest<EventSubprocess> {
                                                                        EMPTY_INCOME_EDGES,
                                                                        EMPTY_OUTCOME_EDGES);
 
-        assertGeneralSet(topLevelSubProcessJava.getGeneral(), SUB_PROCESS_NAME, SUB_PROCESS_DOCUMENTATION);
+        assertGeneralSet(topLevelSubProcessJava, SUB_PROCESS_NAME, SUB_PROCESS_DOCUMENTATION);
         assertEventSubProcessExecutionSet(topLevelSubProcessJava.getExecutionSet(),
                                           IS_ASYNC,
                                           SLA_DUE_DATE);
@@ -112,7 +112,7 @@ public class EventSubProcessTest extends SubProcessTest<EventSubprocess> {
                                                                    EMPTY_INCOME_EDGES,
                                                                    FOUR_OUTCOME_EDGES);
 
-        assertGeneralSet(topLevelSubProcess.getGeneral(), SUB_PROCESS_NAME, DEFAULT_DOCUMENTATION);
+        assertGeneralSet(topLevelSubProcess, SUB_PROCESS_NAME, DEFAULT_DOCUMENTATION);
         assertEventSubProcessExecutionSet(topLevelSubProcess.getExecutionSet(),
                                           IS_NOT_ASYNC,
                                           EMPTY_VALUE);
@@ -130,7 +130,7 @@ public class EventSubProcessTest extends SubProcessTest<EventSubprocess> {
                                                                           EMPTY_INCOME_EDGES,
                                                                           EMPTY_OUTCOME_EDGES);
 
-        assertGeneralSet(subProcessLevelSubProcess.getGeneral(), DEFAULT_NAME, DEFAULT_DOCUMENTATION);
+        assertGeneralSet(subProcessLevelSubProcess, DEFAULT_NAME, DEFAULT_DOCUMENTATION);
         assertEventSubProcessExecutionSet(subProcessLevelSubProcess.getExecutionSet(),
                                           IS_NOT_ASYNC,
                                           EMPTY_VALUE);
@@ -152,7 +152,7 @@ public class EventSubProcessTest extends SubProcessTest<EventSubprocess> {
                                                                               EMPTY_INCOME_EDGES,
                                                                               EMPTY_OUTCOME_EDGES);
 
-        assertGeneralSet(subProcessLevelSubProcessJava.getGeneral(), SUB_PROCESS_NAME, SUB_PROCESS_DOCUMENTATION);
+        assertGeneralSet(subProcessLevelSubProcessJava, SUB_PROCESS_NAME, SUB_PROCESS_DOCUMENTATION);
         assertEventSubProcessExecutionSet(subProcessLevelSubProcessJava.getExecutionSet(),
                                           IS_ASYNC,
                                           SLA_DUE_DATE);
@@ -172,7 +172,7 @@ public class EventSubProcessTest extends SubProcessTest<EventSubprocess> {
                                                                           EMPTY_INCOME_EDGES,
                                                                           FOUR_OUTCOME_EDGES);
 
-        assertGeneralSet(subProcessLevelSubProcess.getGeneral(), SUB_PROCESS_NAME, DEFAULT_DOCUMENTATION);
+        assertGeneralSet(subProcessLevelSubProcess, SUB_PROCESS_NAME, DEFAULT_DOCUMENTATION);
         assertEventSubProcessExecutionSet(subProcessLevelSubProcess.getExecutionSet(),
                                           IS_NOT_ASYNC,
                                           EMPTY_VALUE);

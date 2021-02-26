@@ -94,7 +94,7 @@ public class EmailCustomTaskTest extends BaseCustomTaskTest<CustomTask> {
                                                             FILLED_TOP_LEVEL_TASK_JAVA_ID,
                                                             ZERO_INCOME_EDGES,
                                                             HAS_NO_OUTCOME_EDGE);
-        assertGeneralSet(filledTopLevelTaskJava.getGeneral(), TASK_NAME_JAVA, TASK_DOCUMENTATION_JAVA);
+        assertGeneralSet(filledTopLevelTaskJava, TASK_NAME_JAVA, TASK_DOCUMENTATION_JAVA);
         assertServiceTaskExecutionSet(filledTopLevelTaskJava.getExecutionSet(),
                                       TASK_ON_ENTRY_ACTION_JAVA,
                                       TASK_SCRIPT_JAVA_LANGUAGE,
@@ -109,7 +109,7 @@ public class EmailCustomTaskTest extends BaseCustomTaskTest<CustomTask> {
                                                                   FILLED_TOP_LEVEL_TASK_JAVASCRIPT_ID,
                                                                   ZERO_INCOME_EDGES,
                                                                   HAS_NO_OUTCOME_EDGE);
-        assertGeneralSet(filledTopLevelTaskJavascript.getGeneral(), TASK_NAME_JAVASCRIPT, TASK_DOCUMENTATION_JAVASCRIPT);
+        assertGeneralSet(filledTopLevelTaskJavascript, TASK_NAME_JAVASCRIPT, TASK_DOCUMENTATION_JAVASCRIPT);
         assertServiceTaskExecutionSet(filledTopLevelTaskJavascript.getExecutionSet(),
                                       TASK_ON_ENTRY_ACTION_JAVASCRIPT,
                                       TASK_SCRIPT_JAVASCRIPT_LANGUAGE,
@@ -124,7 +124,7 @@ public class EmailCustomTaskTest extends BaseCustomTaskTest<CustomTask> {
                                                             FILLED_TOP_LEVEL_TASK_MVEL_ID,
                                                             ZERO_INCOME_EDGES,
                                                             HAS_NO_OUTCOME_EDGE);
-        assertGeneralSet(filledTopLevelTaskMvel.getGeneral(), TASK_NAME_MVEL, TASK_DOCUMENTATION_MVEL);
+        assertGeneralSet(filledTopLevelTaskMvel, TASK_NAME_MVEL, TASK_DOCUMENTATION_MVEL);
         assertServiceTaskExecutionSet(filledTopLevelTaskMvel.getExecutionSet(),
                                       TASK_ON_ENTRY_ACTION_MVEL,
                                       TASK_SCRIPT_MVEL_LANGUAGE,
@@ -149,7 +149,7 @@ public class EmailCustomTaskTest extends BaseCustomTaskTest<CustomTask> {
                                                        EMPTY_TOP_LEVEL_TASK_ID,
                                                        ZERO_INCOME_EDGES,
                                                        HAS_NO_OUTCOME_EDGE);
-        assertGeneralSet(emptyTopLevelTask.getGeneral(), EMPTY_VALUE, EMPTY_VALUE);
+        assertGeneralSet(emptyTopLevelTask, EMPTY_VALUE, EMPTY_VALUE);
 
         assertServiceTaskExecutionSet(emptyTopLevelTask.getExecutionSet(),
                                       EMPTY_VALUE,
@@ -188,7 +188,7 @@ public class EmailCustomTaskTest extends BaseCustomTaskTest<CustomTask> {
                                                                    FILLED_SUBPROCESS_LEVEL_TASK_JAVA_ID,
                                                                    ZERO_INCOME_EDGES,
                                                                    HAS_NO_OUTCOME_EDGE);
-        assertGeneralSet(filledSubprocessLevelTaskJava.getGeneral(), TASK_NAME_JAVA, TASK_DOCUMENTATION_JAVA);
+        assertGeneralSet(filledSubprocessLevelTaskJava, TASK_NAME_JAVA, TASK_DOCUMENTATION_JAVA);
         assertServiceTaskExecutionSet(filledSubprocessLevelTaskJava.getExecutionSet(),
                                       TASK_ON_ENTRY_ACTION_JAVA,
                                       TASK_SCRIPT_JAVA_LANGUAGE,
@@ -203,7 +203,7 @@ public class EmailCustomTaskTest extends BaseCustomTaskTest<CustomTask> {
                                                                          FILLED_SUBPROCESS_LEVEL_TASK_JAVASCRIPT_ID,
                                                                          ZERO_INCOME_EDGES,
                                                                          HAS_NO_OUTCOME_EDGE);
-        assertGeneralSet(filledSubprocessLevelTaskJavascript.getGeneral(), TASK_NAME_JAVASCRIPT, TASK_DOCUMENTATION_JAVASCRIPT);
+        assertGeneralSet(filledSubprocessLevelTaskJavascript, TASK_NAME_JAVASCRIPT, TASK_DOCUMENTATION_JAVASCRIPT);
         assertServiceTaskExecutionSet(filledSubprocessLevelTaskJavascript.getExecutionSet(),
                                       TASK_ON_ENTRY_ACTION_JAVASCRIPT,
                                       TASK_SCRIPT_JAVASCRIPT_LANGUAGE,
@@ -218,7 +218,7 @@ public class EmailCustomTaskTest extends BaseCustomTaskTest<CustomTask> {
                                                                    FILLED_SUBPROCESS_LEVEL_TASK_MVEL_ID,
                                                                    ZERO_INCOME_EDGES,
                                                                    HAS_NO_OUTCOME_EDGE);
-        assertGeneralSet(filledSubprocessLevelTaskMvel.getGeneral(), TASK_NAME_MVEL, TASK_DOCUMENTATION_MVEL);
+        assertGeneralSet(filledSubprocessLevelTaskMvel, TASK_NAME_MVEL, TASK_DOCUMENTATION_MVEL);
         assertServiceTaskExecutionSet(filledSubprocessLevelTaskMvel.getExecutionSet(),
                                       TASK_ON_ENTRY_ACTION_MVEL,
                                       TASK_SCRIPT_MVEL_LANGUAGE,
@@ -243,7 +243,7 @@ public class EmailCustomTaskTest extends BaseCustomTaskTest<CustomTask> {
                                                               EMPTY_SUBPROCESS_LEVEL_TASK_ID,
                                                               ZERO_INCOME_EDGES,
                                                               HAS_NO_OUTCOME_EDGE);
-        assertGeneralSet(emptySubprocessLevelTask.getGeneral(), EMPTY_VALUE, EMPTY_VALUE);
+        assertGeneralSet(emptySubprocessLevelTask, EMPTY_VALUE, EMPTY_VALUE);
         assertServiceTaskExecutionSet(emptySubprocessLevelTask.getExecutionSet(),
                                       EMPTY_VALUE,
                                       TASK_SCRIPT_JAVA_LANGUAGE,
@@ -281,7 +281,7 @@ public class EmailCustomTaskTest extends BaseCustomTaskTest<CustomTask> {
                                                             FILLED_ONE_INCOME_TOP_LEVEL_TASK_JAVA_ID,
                                                             ONE_INCOME_EDGE,
                                                             HAS_OUTCOME_EDGE);
-        assertGeneralSet(filledTopLevelTaskJava.getGeneral(), TASK_NAME_JAVA, TASK_DOCUMENTATION_JAVA);
+        assertGeneralSet(filledTopLevelTaskJava, TASK_NAME_JAVA, TASK_DOCUMENTATION_JAVA);
         assertServiceTaskExecutionSet(filledTopLevelTaskJava.getExecutionSet(),
                                       TASK_ON_ENTRY_ACTION_JAVA,
                                       TASK_SCRIPT_JAVA_LANGUAGE,
@@ -296,7 +296,7 @@ public class EmailCustomTaskTest extends BaseCustomTaskTest<CustomTask> {
                                                                   FILLED_ONE_INCOME_TOP_LEVEL_TASK_JAVASCRIPT_ID,
                                                                   ONE_INCOME_EDGE,
                                                                   HAS_OUTCOME_EDGE);
-        assertGeneralSet(filledTopLevelTaskJavascript.getGeneral(), TASK_NAME_JAVASCRIPT, TASK_DOCUMENTATION_JAVASCRIPT);
+        assertGeneralSet(filledTopLevelTaskJavascript, TASK_NAME_JAVASCRIPT, TASK_DOCUMENTATION_JAVASCRIPT);
         assertServiceTaskExecutionSet(filledTopLevelTaskJavascript.getExecutionSet(),
                                       TASK_ON_ENTRY_ACTION_JAVASCRIPT,
                                       TASK_SCRIPT_JAVASCRIPT_LANGUAGE,
@@ -311,7 +311,7 @@ public class EmailCustomTaskTest extends BaseCustomTaskTest<CustomTask> {
                                                             FILLED_ONE_INCOME_TOP_LEVEL_TASK_MVEL_ID,
                                                             ONE_INCOME_EDGE,
                                                             HAS_OUTCOME_EDGE);
-        assertGeneralSet(filledTopLevelTaskMvel.getGeneral(), TASK_NAME_MVEL, TASK_DOCUMENTATION_MVEL);
+        assertGeneralSet(filledTopLevelTaskMvel, TASK_NAME_MVEL, TASK_DOCUMENTATION_MVEL);
         assertServiceTaskExecutionSet(filledTopLevelTaskMvel.getExecutionSet(),
                                       TASK_ON_ENTRY_ACTION_MVEL,
                                       TASK_SCRIPT_MVEL_LANGUAGE,
@@ -336,7 +336,7 @@ public class EmailCustomTaskTest extends BaseCustomTaskTest<CustomTask> {
                                                        EMPTY_ONE_INCOME_TOP_LEVEL_TASK_ID,
                                                        ONE_INCOME_EDGE,
                                                        HAS_OUTCOME_EDGE);
-        assertGeneralSet(emptyTopLevelTask.getGeneral(), EMPTY_VALUE, EMPTY_VALUE);
+        assertGeneralSet(emptyTopLevelTask, EMPTY_VALUE, EMPTY_VALUE);
         assertServiceTaskExecutionSet(emptyTopLevelTask.getExecutionSet(),
                                       EMPTY_VALUE,
                                       TASK_SCRIPT_JAVA_LANGUAGE,
@@ -361,7 +361,7 @@ public class EmailCustomTaskTest extends BaseCustomTaskTest<CustomTask> {
                                                               EMPTY_ONE_INCOME_SUBPROCESS_LEVEL_TASK_ID,
                                                               ONE_INCOME_EDGE,
                                                               HAS_OUTCOME_EDGE);
-        assertGeneralSet(emptySubprocessLevelTask.getGeneral(), EMPTY_VALUE, EMPTY_VALUE);
+        assertGeneralSet(emptySubprocessLevelTask, EMPTY_VALUE, EMPTY_VALUE);
         assertServiceTaskExecutionSet(emptySubprocessLevelTask.getExecutionSet(),
                                       EMPTY_VALUE,
                                       TASK_SCRIPT_JAVA_LANGUAGE,
@@ -399,7 +399,7 @@ public class EmailCustomTaskTest extends BaseCustomTaskTest<CustomTask> {
                                                                    FILLED_ONE_INCOME_SUBPROCESS_LEVEL_TASK_JAVA_ID,
                                                                    ONE_INCOME_EDGE,
                                                                    HAS_OUTCOME_EDGE);
-        assertGeneralSet(filledSubprocessLevelTaskJava.getGeneral(), TASK_NAME_JAVA, TASK_DOCUMENTATION_JAVA);
+        assertGeneralSet(filledSubprocessLevelTaskJava, TASK_NAME_JAVA, TASK_DOCUMENTATION_JAVA);
         assertServiceTaskExecutionSet(filledSubprocessLevelTaskJava.getExecutionSet(),
                                       TASK_ON_ENTRY_ACTION_JAVA,
                                       TASK_SCRIPT_JAVA_LANGUAGE,
@@ -414,7 +414,7 @@ public class EmailCustomTaskTest extends BaseCustomTaskTest<CustomTask> {
                                                                          FILLED_ONE_INCOME_SUBPROCESS_LEVEL_TASK_JAVASCRIPT_ID,
                                                                          ONE_INCOME_EDGE,
                                                                          HAS_OUTCOME_EDGE);
-        assertGeneralSet(filledSubprocessLevelTaskJavascript.getGeneral(), TASK_NAME_JAVASCRIPT, TASK_DOCUMENTATION_JAVASCRIPT);
+        assertGeneralSet(filledSubprocessLevelTaskJavascript, TASK_NAME_JAVASCRIPT, TASK_DOCUMENTATION_JAVASCRIPT);
         assertServiceTaskExecutionSet(filledSubprocessLevelTaskJavascript.getExecutionSet(),
                                       TASK_ON_ENTRY_ACTION_JAVASCRIPT,
                                       TASK_SCRIPT_JAVASCRIPT_LANGUAGE,
@@ -429,7 +429,7 @@ public class EmailCustomTaskTest extends BaseCustomTaskTest<CustomTask> {
                                                                    FILLED_ONE_INCOME_SUBPROCESS_LEVEL_TASK_MVEL_ID,
                                                                    ONE_INCOME_EDGE,
                                                                    HAS_OUTCOME_EDGE);
-        assertGeneralSet(filledSubprocessLevelTaskMvel.getGeneral(), TASK_NAME_MVEL, TASK_DOCUMENTATION_MVEL);
+        assertGeneralSet(filledSubprocessLevelTaskMvel, TASK_NAME_MVEL, TASK_DOCUMENTATION_MVEL);
         assertServiceTaskExecutionSet(filledSubprocessLevelTaskMvel.getExecutionSet(),
                                       TASK_ON_ENTRY_ACTION_MVEL,
                                       TASK_SCRIPT_MVEL_LANGUAGE,
@@ -467,7 +467,7 @@ public class EmailCustomTaskTest extends BaseCustomTaskTest<CustomTask> {
                                                             FILLED_TWO_INCOMES_TOP_LEVEL_TASK_JAVA_ID,
                                                             TWO_INCOME_EDGES,
                                                             HAS_OUTCOME_EDGE);
-        assertGeneralSet(filledTopLevelTaskJava.getGeneral(), TASK_NAME_JAVA, TASK_DOCUMENTATION_JAVA);
+        assertGeneralSet(filledTopLevelTaskJava, TASK_NAME_JAVA, TASK_DOCUMENTATION_JAVA);
         assertServiceTaskExecutionSet(filledTopLevelTaskJava.getExecutionSet(),
                                       TASK_ON_ENTRY_ACTION_JAVA,
                                       TASK_SCRIPT_JAVA_LANGUAGE,
@@ -482,7 +482,7 @@ public class EmailCustomTaskTest extends BaseCustomTaskTest<CustomTask> {
                                                                   FILLED_TWO_INCOMES_TOP_LEVEL_TASK_JAVASCRIPT_ID,
                                                                   TWO_INCOME_EDGES,
                                                                   HAS_OUTCOME_EDGE);
-        assertGeneralSet(filledTopLevelTaskJavascript.getGeneral(), TASK_NAME_JAVASCRIPT, TASK_DOCUMENTATION_JAVASCRIPT);
+        assertGeneralSet(filledTopLevelTaskJavascript, TASK_NAME_JAVASCRIPT, TASK_DOCUMENTATION_JAVASCRIPT);
         assertServiceTaskExecutionSet(filledTopLevelTaskJavascript.getExecutionSet(),
                                       TASK_ON_ENTRY_ACTION_JAVASCRIPT,
                                       TASK_SCRIPT_JAVASCRIPT_LANGUAGE,
@@ -497,7 +497,7 @@ public class EmailCustomTaskTest extends BaseCustomTaskTest<CustomTask> {
                                                             FILLED_TWO_INCOMES_TOP_LEVEL_TASK_MVEL_ID,
                                                             TWO_INCOME_EDGES,
                                                             HAS_OUTCOME_EDGE);
-        assertGeneralSet(filledTopLevelTaskMvel.getGeneral(), TASK_NAME_MVEL, TASK_DOCUMENTATION_MVEL);
+        assertGeneralSet(filledTopLevelTaskMvel, TASK_NAME_MVEL, TASK_DOCUMENTATION_MVEL);
         assertServiceTaskExecutionSet(filledTopLevelTaskMvel.getExecutionSet(),
                                       TASK_ON_ENTRY_ACTION_MVEL,
                                       TASK_SCRIPT_MVEL_LANGUAGE,
@@ -522,7 +522,7 @@ public class EmailCustomTaskTest extends BaseCustomTaskTest<CustomTask> {
                                                        EMPTY_TWO_INCOMES_TOP_LEVEL_TASK_ID,
                                                        TWO_INCOME_EDGES,
                                                        HAS_OUTCOME_EDGE);
-        assertGeneralSet(emptyTopLevelTask.getGeneral(), EMPTY_VALUE, EMPTY_VALUE);
+        assertGeneralSet(emptyTopLevelTask, EMPTY_VALUE, EMPTY_VALUE);
         assertServiceTaskExecutionSet(emptyTopLevelTask.getExecutionSet(),
                                       EMPTY_VALUE,
                                       TASK_SCRIPT_JAVA_LANGUAGE,
@@ -547,7 +547,7 @@ public class EmailCustomTaskTest extends BaseCustomTaskTest<CustomTask> {
                                                               EMPTY_TWO_INCOMES_SUBPROCESS_LEVEL_TASK_ID,
                                                               TWO_INCOME_EDGES,
                                                               HAS_OUTCOME_EDGE);
-        assertGeneralSet(emptySubprocessLevelTask.getGeneral(), EMPTY_VALUE, EMPTY_VALUE);
+        assertGeneralSet(emptySubprocessLevelTask, EMPTY_VALUE, EMPTY_VALUE);
         assertServiceTaskExecutionSet(emptySubprocessLevelTask.getExecutionSet(),
                                       EMPTY_VALUE,
                                       TASK_SCRIPT_JAVA_LANGUAGE,
@@ -585,7 +585,7 @@ public class EmailCustomTaskTest extends BaseCustomTaskTest<CustomTask> {
                                                                    FILLED_TWO_INCOMES_SUBPROCESS_LEVEL_TASK_JAVA_ID,
                                                                    TWO_INCOME_EDGES,
                                                                    HAS_OUTCOME_EDGE);
-        assertGeneralSet(filledSubprocessLevelTaskJava.getGeneral(), TASK_NAME_JAVA, TASK_DOCUMENTATION_JAVA);
+        assertGeneralSet(filledSubprocessLevelTaskJava, TASK_NAME_JAVA, TASK_DOCUMENTATION_JAVA);
         assertServiceTaskExecutionSet(filledSubprocessLevelTaskJava.getExecutionSet(),
                                       TASK_ON_ENTRY_ACTION_JAVA,
                                       TASK_SCRIPT_JAVA_LANGUAGE,
@@ -600,7 +600,7 @@ public class EmailCustomTaskTest extends BaseCustomTaskTest<CustomTask> {
                                                                          FILLED_TWO_INCOMES_SUBPROCESS_LEVEL_TASK_JAVASCRIPT_ID,
                                                                          TWO_INCOME_EDGES,
                                                                          HAS_OUTCOME_EDGE);
-        assertGeneralSet(filledSubprocessLevelTaskJavascript.getGeneral(), TASK_NAME_JAVASCRIPT, TASK_DOCUMENTATION_JAVASCRIPT);
+        assertGeneralSet(filledSubprocessLevelTaskJavascript, TASK_NAME_JAVASCRIPT, TASK_DOCUMENTATION_JAVASCRIPT);
         assertServiceTaskExecutionSet(filledSubprocessLevelTaskJavascript.getExecutionSet(),
                                       TASK_ON_ENTRY_ACTION_JAVASCRIPT,
                                       TASK_SCRIPT_JAVASCRIPT_LANGUAGE,
@@ -615,7 +615,7 @@ public class EmailCustomTaskTest extends BaseCustomTaskTest<CustomTask> {
                                                                    FILLED_TWO_INCOMES_SUBPROCESS_LEVEL_TASK_MVEL_ID,
                                                                    TWO_INCOME_EDGES,
                                                                    HAS_OUTCOME_EDGE);
-        assertGeneralSet(filledSubprocessLevelTaskMvel.getGeneral(), TASK_NAME_MVEL, TASK_DOCUMENTATION_MVEL);
+        assertGeneralSet(filledSubprocessLevelTaskMvel, TASK_NAME_MVEL, TASK_DOCUMENTATION_MVEL);
         assertServiceTaskExecutionSet(filledSubprocessLevelTaskMvel.getExecutionSet(),
                                       TASK_ON_ENTRY_ACTION_MVEL,
                                       TASK_SCRIPT_MVEL_LANGUAGE,
