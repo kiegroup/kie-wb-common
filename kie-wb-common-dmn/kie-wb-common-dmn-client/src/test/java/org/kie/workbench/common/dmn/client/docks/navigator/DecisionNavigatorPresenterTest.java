@@ -243,11 +243,8 @@ public class DecisionNavigatorPresenterTest {
 
     @Test
     public void testOnElementAdded() {
-
         presenter.onElementAdded(mock(CanvasElementAddedEvent.class));
-        presenter.onElementAdded(mock(CanvasElementAddedEvent.class));
-
-        verify(decisionComponents, times(2)).refresh();
+        verify(presenter).deferredRefresh();
     }
 
     @Test

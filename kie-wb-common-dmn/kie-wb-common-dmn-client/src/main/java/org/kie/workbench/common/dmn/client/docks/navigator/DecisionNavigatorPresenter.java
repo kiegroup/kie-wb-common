@@ -116,7 +116,7 @@ public class DecisionNavigatorPresenter {
     }
 
     public void onElementAdded(final @Observes CanvasElementAddedEvent event) {
-        refreshComponentsView();
+        deferredRefresh();
     }
 
     public DecisionNavigatorTreePresenter getTreePresenter() {
@@ -163,7 +163,7 @@ public class DecisionNavigatorPresenter {
         getTreePresenter().deselectItem();
     }
 
-    private void deferredRefresh() {
+    void deferredRefresh() {
         if (dmnDiagramsSession.isSessionStatePresent()) {
             defer(() -> {
                 refreshTreeView();
