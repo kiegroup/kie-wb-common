@@ -54,7 +54,8 @@ import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
 
-/** An Abstract Class to Handle Data Type Cache.
+/**
+ * An Abstract Class to Handle Data Type Cache.
  */
 public abstract class AbstractDataTypeCache {
 
@@ -159,7 +160,7 @@ public abstract class AbstractDataTypeCache {
 
     private void cacheImports(List<DefaultImport> defaultImports) {
         for (DefaultImport imported : defaultImports) {
-            allDataTypes.add(imported.getClassName());
+            allDataTypes.add(imported.getClassName() == null ? "Object" : imported.getClassName());
         }
     }
 
