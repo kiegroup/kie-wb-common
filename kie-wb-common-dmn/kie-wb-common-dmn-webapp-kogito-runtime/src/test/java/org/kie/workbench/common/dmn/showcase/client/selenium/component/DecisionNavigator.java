@@ -24,8 +24,6 @@ public class DecisionNavigator {
 
     private static final String NOT_PRESENT_IN_NAVIGATOR = "'%s' was not present in the decision navigator";
 
-    private static DecisionNavigator INSTANCE;
-
     private WaitUtils waitUtils;
 
     private DecisionNavigator(final WaitUtils waitUtils) {
@@ -33,16 +31,18 @@ public class DecisionNavigator {
     }
 
     public static DecisionNavigator initialize(final WaitUtils waitUtils) {
-        if (INSTANCE == null) {
-            waitUtils
-                    .waitUntilElementIsVisible(
-                            CommonCSSLocator.expandNavigator(),
-                            "Presence of decision navigator expand button is prerequisite for all tests")
+        if (waitUtils.isElementInvisible(CommonCSSLocator.expandedNavigator())) {
+            waitUtils.waitUntilElementIsVisible(
+                    CommonCSSLocator.expandNavigator(),
+                    "Decision navigator needs to be expanded before we start test")
                     .click();
-            INSTANCE = new DecisionNavigator(waitUtils);
+
+            waitUtils.waitUntilElementIsVisible(
+                    CommonCSSLocator.expandedNavigator(),
+                    "Decision navigator took too long time to expand");
         }
 
-        return INSTANCE;
+        return new DecisionNavigator(waitUtils);
     }
 
     public void assertItemIsPresent(final DecisionNavigatorXPathLocator item) {

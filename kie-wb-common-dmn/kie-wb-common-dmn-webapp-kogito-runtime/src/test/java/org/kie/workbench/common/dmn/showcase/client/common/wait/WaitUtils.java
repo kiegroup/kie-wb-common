@@ -24,6 +24,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import static org.openqa.selenium.support.ui.ExpectedConditions.invisibilityOfElementLocated;
 import static org.openqa.selenium.support.ui.ExpectedConditions.visibilityOfAllElementsLocatedBy;
 import static org.openqa.selenium.support.ui.ExpectedConditions.visibilityOfElementLocated;
 
@@ -51,5 +52,10 @@ public class WaitUtils {
         return waitOperation()
                 .withMessage(customErrorMessage)
                 .until(visibilityOfAllElementsLocatedBy(elementLocator.locator()));
+    }
+
+    public boolean isElementInvisible(final DMNDesignerLocator elementLocator) {
+        return waitOperation()
+                .until(invisibilityOfElementLocated(elementLocator.locator()));
     }
 }

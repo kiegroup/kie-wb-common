@@ -51,6 +51,16 @@ public class EditorXPathLocator implements XPathLocator {
         return new EditorXPathLocator("//div[@class='kie-dmn-expression-type']/span[@data-field='expressionName']");
     }
 
+    /**
+     * Such element exists when a diagram without layout information is opened.
+     * User is informed a layout was auto generated. However have an option to close this pop-up.
+     *
+     * @return XPath Locator for pop-up close button
+     */
+    public static EditorXPathLocator missingLayoutPopUpCloseButton() {
+        return new EditorXPathLocator("//div[contains(text(), 'The diagram had no layout information')]//button");
+    }
+
     @Override
     public String getXPathLocator() {
         return xPathLocator;
