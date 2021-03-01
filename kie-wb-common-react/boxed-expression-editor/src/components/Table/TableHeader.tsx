@@ -18,7 +18,7 @@ import * as React from "react";
 import { useCallback, useMemo } from "react";
 import { Th, Thead, Tr } from "@patternfly/react-table";
 import * as _ from "lodash";
-import { ColumnInstance, DataRecord, HeaderGroup, TableInstance } from "react-table";
+import { Column, ColumnInstance, DataRecord, HeaderGroup, TableInstance } from "react-table";
 import { EditExpressionMenu } from "../EditExpressionMenu";
 import { DataType } from "../../api";
 
@@ -35,6 +35,8 @@ export interface TableHeaderProps {
   editColumnLabel?: string;
   /** True to have only last level of header shown */
   isHeadless?: boolean;
+  /** Custom function for getting column key prop, and avoid using the column index */
+  getColumnKey: (column: Column) => string;
 }
 
 export const TableHeader: React.FunctionComponent<TableHeaderProps> = ({
@@ -44,6 +46,7 @@ export const TableHeader: React.FunctionComponent<TableHeaderProps> = ({
   setTableRows,
   editColumnLabel,
   isHeadless = false,
+  getColumnKey,
 }) => {
   const updateColumnNameInRows = useCallback(
     (prevColumnName: string, newColumnName: string) =>
@@ -79,13 +82,17 @@ export const TableHeader: React.FunctionComponent<TableHeaderProps> = ({
 
   const renderCountColumn = useCallback(
     (column: ColumnInstance, columnIndex: number) => (
-      <Th {...column.getHeaderProps()} className="fixed-column no-clickable-cell" key={columnIndex}>
+      <Th
+        {...column.getHeaderProps()}
+        className="fixed-column no-clickable-cell"
+        key={`${getColumnKey(column)}-${columnIndex}`}
+      >
         <div className="header-cell" data-ouia-component-type="expression-column-header">
           {column.label}
         </div>
       </Th>
     ),
-    []
+    [getColumnKey]
   );
 
   const renderResizableHeaderCell = useCallback(
@@ -94,7 +101,7 @@ export const TableHeader: React.FunctionComponent<TableHeaderProps> = ({
         {...column.getHeaderProps()}
         {...tableInstance.getThProps(column, columnIndex)}
         className={`resizable-column ${!column.dataType ? "no-clickable-cell" : null}`}
-        key={columnIndex}
+        key={`${getColumnKey(column)}-${columnIndex}`}
       >
         <div className="header-cell" data-ouia-component-type="expression-column-header">
           <div>
@@ -112,7 +119,7 @@ export const TableHeader: React.FunctionComponent<TableHeaderProps> = ({
         </div>
       </Th>
     ),
-    [tableInstance]
+    [getColumnKey, tableInstance]
   );
 
   const renderResizableColumn = useCallback(
@@ -123,14 +130,14 @@ export const TableHeader: React.FunctionComponent<TableHeaderProps> = ({
           selectedExpressionName={column.label}
           selectedDataType={column.dataType}
           onExpressionUpdate={onColumnNameOrDataTypeUpdate(columnIndex)}
-          key={columnIndex}
+          key={`${getColumnKey(column)}-${columnIndex}`}
         >
           {renderResizableHeaderCell(column, columnIndex)}
         </EditExpressionMenu>
       ) : (
         renderResizableHeaderCell(column, columnIndex)
       ),
-    [editColumnLabel, onColumnNameOrDataTypeUpdate, renderResizableHeaderCell]
+    [editColumnLabel, getColumnKey, onColumnNameOrDataTypeUpdate, renderResizableHeaderCell]
   );
 
   const renderColumn = useCallback(

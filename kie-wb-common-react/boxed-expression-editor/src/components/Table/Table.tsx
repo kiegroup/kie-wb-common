@@ -67,6 +67,10 @@ export interface TableProps {
   isHeadless?: boolean;
   /** True to support multiple levels in the header */
   headerHasMultipleLevels?: boolean;
+  /** Custom function for getting row key prop, and avoid using the row index */
+  getRowKey?: (row: Row) => string;
+  /** Custom function for getting column key prop, and avoid using the column index */
+  getColumnKey?: (column: Column) => string;
 }
 
 export const NO_TABLE_CONTEXT_MENU_CLASS = "no-table-context-menu";
@@ -86,6 +90,8 @@ export const Table: React.FunctionComponent<TableProps> = ({
   handlerConfiguration,
   isHeadless = false,
   headerHasMultipleLevels = false,
+  getRowKey = (row) => row.id as string,
+  getColumnKey = (column) => column.id as string,
 }: TableProps) => {
   const NUMBER_OF_ROWS_COLUMN = "#";
   const NUMBER_OF_ROWS_SUBCOLUMN = "0";
@@ -297,17 +303,23 @@ export const Table: React.FunctionComponent<TableProps> = ({
           tableColumns={tableColumns as ColumnInstance[]}
           setTableColumns={setTableColumns}
           setTableRows={setTableRows}
+          getColumnKey={getColumnKey}
         />
         <Tbody {...tableInstance.getTableBodyProps()}>
           {tableInstance.rows.map((row: Row, rowIndex: number) => {
             tableInstance.prepareRow(row);
             return (
-              <Tr className="table-row" {...row.getRowProps()} key={rowIndex} ouiaId={"expression-row-" + rowIndex}>
+              <Tr
+                className="table-row"
+                {...row.getRowProps()}
+                key={`${getRowKey(row)}-${rowIndex}`}
+                ouiaId={"expression-row-" + rowIndex}
+              >
                 {row.cells.map((cell: Cell, cellIndex: number) => (
                   <Td
                     {...(cellIndex === 0 ? {} : cell.getCellProps())}
                     {...tableInstance.getTdProps(cellIndex, rowIndex)}
-                    key={cellIndex}
+                    key={`${getColumnKey(cell.column)}-${cellIndex}`}
                     data-ouia-component-id={"expression-column-" + cellIndex}
                     className={cellIndex === 0 ? "counter-cell" : "data-cell"}
                   >

@@ -19,6 +19,7 @@ import * as React from "react";
 import { useCallback, useEffect, useState } from "react";
 import {
   ContextEntries,
+  ContextEntryRecord,
   ContextProps,
   DataType,
   ExpressionProps,
@@ -28,7 +29,7 @@ import {
 } from "../../api";
 import { Table } from "../Table";
 import { useBoxedExpressionEditorI18n } from "../../i18n";
-import { ColumnInstance, DataRecord } from "react-table";
+import { ColumnInstance, DataRecord, Row } from "react-table";
 import { ContextEntryExpressionCell } from "./ContextEntryExpressionCell";
 import * as _ from "lodash";
 import { ContextEntryExpression } from "./ContextEntryExpression";
@@ -201,6 +202,8 @@ export const ContextExpression: React.FunctionComponent<ContextProps> = ({
     [dragItHorizontally, setResizerElement, uid]
   );
 
+  const contextTableGetRowKey = useCallback((row: Row) => (row.original as ContextEntryRecord).entryInfo.name, []);
+
   const onSingleRowUpdate = useCallback(() => {
     const { isOverflow, contentWidth } = checkForOverflowingCell();
     const { isSpareSpace, spareSpace } = checkForSpareSpace();
@@ -246,6 +249,7 @@ export const ContextExpression: React.FunctionComponent<ContextProps> = ({
         onRowsUpdate={setRows}
         onSingleRowUpdate={onSingleRowUpdate}
         handlerConfiguration={handlerConfiguration}
+        getRowKey={contextTableGetRowKey}
       >
         <div className="context-result">{`<result>`}</div>
         <ContextEntryExpression
