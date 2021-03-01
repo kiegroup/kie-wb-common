@@ -154,7 +154,7 @@ export const ContextExpression: React.FunctionComponent<ContextProps> = ({
     () =>
       Array.from(
         document.querySelectorAll(
-          `.context-expression.${uid} > .table-component > table > tbody > tr > td:last-of-type`
+          `.context-expression.${uid} > .table-component > table > tbody > tr > td:last-of-type .table-component:first-of-type`
         )
       ).reduce(
         (acc, td: HTMLElement) => {
