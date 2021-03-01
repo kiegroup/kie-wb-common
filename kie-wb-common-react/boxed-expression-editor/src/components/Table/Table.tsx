@@ -105,6 +105,7 @@ export const Table: React.FunctionComponent<TableProps> = ({
       label: NUMBER_OF_ROWS_COLUMN,
       accessor: NUMBER_OF_ROWS_COLUMN,
       width: 60,
+      minWidth: 60,
       disableResizing: true,
       isCountColumn: true,
       hideFilter: true,
@@ -114,6 +115,7 @@ export const Table: React.FunctionComponent<TableProps> = ({
               {
                 label: NUMBER_OF_ROWS_SUBCOLUMN,
                 accessor: NUMBER_OF_ROWS_SUBCOLUMN,
+                minWidth: 60,
                 width: 60,
                 disableResizing: true,
                 isCountColumn: true,
@@ -155,7 +157,7 @@ export const Table: React.FunctionComponent<TableProps> = ({
   );
 
   const defaultColumn = {
-    minWidth: 38,
+    minWidth: 150,
     width: 150,
     Cell: useCallback((cellRef) => {
       const column = cellRef.column as ColumnInstance;

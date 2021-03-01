@@ -60,7 +60,7 @@
   background-color: #DEF3FF;
 }
 
-.expression-container .table-component table th:not(.no-clickable-cell) {
+.expression-container .table-component table th:not(.no-clickable-cell) .header-cell-info {
   cursor: pointer;
 }
 

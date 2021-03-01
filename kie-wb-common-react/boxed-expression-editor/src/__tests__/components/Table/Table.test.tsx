@@ -33,6 +33,7 @@ import { act } from "react-dom/test-utils";
 jest.useFakeTimers();
 
 const EXPRESSION_COLUMN_HEADER = "[data-ouia-component-type='expression-column-header']";
+const EXPRESSION_COLUMN_HEADER_CELL_INFO = "[data-ouia-component-type='expression-column-header-cell-info']";
 const EXPRESSION_POPOVER_MENU = "[data-ouia-component-id='expression-popover-menu']";
 const EXPRESSION_POPOVER_MENU_TITLE = "[data-ouia-component-id='expression-popover-menu-title']";
 const EXPRESSION_TABLE_HANDLER_MENU = "[data-ouia-component-id='expression-table-handler-menu']";
@@ -179,7 +180,7 @@ describe("Table tests", () => {
       );
 
       await activateNameAndDataTypePopover(
-        container.querySelectorAll(EXPRESSION_COLUMN_HEADER)[1] as HTMLTableHeaderCellElement
+        container.querySelectorAll(EXPRESSION_COLUMN_HEADER_CELL_INFO)[0] as HTMLTableHeaderCellElement
       );
 
       expect(baseElement.querySelector(EXPRESSION_POPOVER_MENU)).toBeTruthy();
@@ -208,7 +209,7 @@ describe("Table tests", () => {
         ).wrapper
       );
       await updateElementViaPopover(
-        container.querySelectorAll(EXPRESSION_COLUMN_HEADER)[1] as HTMLTableHeaderCellElement,
+        container.querySelectorAll(EXPRESSION_COLUMN_HEADER_CELL_INFO)[0] as HTMLTableHeaderCellElement,
         baseElement,
         EDIT_EXPRESSION_NAME,
         newColumnName
@@ -245,7 +246,7 @@ describe("Table tests", () => {
         ).wrapper
       );
       await updateElementViaPopover(
-        container.querySelectorAll(EXPRESSION_COLUMN_HEADER)[1] as HTMLTableHeaderCellElement,
+        container.querySelectorAll(EXPRESSION_COLUMN_HEADER_CELL_INFO)[0] as HTMLTableHeaderCellElement,
         baseElement,
         EDIT_EXPRESSION_NAME,
         newColumnName

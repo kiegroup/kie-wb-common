@@ -95,6 +95,16 @@ export const TableHeader: React.FunctionComponent<TableHeaderProps> = ({
     [getColumnKey]
   );
 
+  const renderHeaderCellInfo = useCallback(
+    (column) => (
+      <div className="header-cell-info" data-ouia-component-type="expression-column-header-cell-info">
+        <p className="pf-u-text-truncate">{column.label}</p>
+        {column.dataType ? <p className="pf-u-text-truncate data-type">({column.dataType})</p> : null}
+      </div>
+    ),
+    []
+  );
+
   const renderResizableHeaderCell = useCallback(
     (column, columnIndex) => (
       <Th
@@ -104,10 +114,19 @@ export const TableHeader: React.FunctionComponent<TableHeaderProps> = ({
         key={`${getColumnKey(column)}-${columnIndex}`}
       >
         <div className="header-cell" data-ouia-component-type="expression-column-header">
-          <div>
-            <p className="pf-u-text-truncate">{column.label}</p>
-            {column.dataType ? <p className="pf-u-text-truncate data-type">({column.dataType})</p> : null}
-          </div>
+          {column.dataType ? (
+            <EditExpressionMenu
+              title={editColumnLabel}
+              selectedExpressionName={column.label}
+              selectedDataType={column.dataType}
+              onExpressionUpdate={onColumnNameOrDataTypeUpdate(columnIndex)}
+              key={`${getColumnKey(column)}-${columnIndex}`}
+            >
+              {renderHeaderCellInfo(column)}
+            </EditExpressionMenu>
+          ) : (
+            renderHeaderCellInfo(column)
+          )}
           <div
             className={`pf-c-drawer ${!column.canResize ? "resizer-disabled" : ""}`}
             {...(column.canResize ? column.getResizerProps() : {})}
@@ -119,31 +138,13 @@ export const TableHeader: React.FunctionComponent<TableHeaderProps> = ({
         </div>
       </Th>
     ),
-    [getColumnKey, tableInstance]
-  );
-
-  const renderResizableColumn = useCallback(
-    (column: ColumnInstance, columnIndex: number) =>
-      column.dataType ? (
-        <EditExpressionMenu
-          title={editColumnLabel}
-          selectedExpressionName={column.label}
-          selectedDataType={column.dataType}
-          onExpressionUpdate={onColumnNameOrDataTypeUpdate(columnIndex)}
-          key={`${getColumnKey(column)}-${columnIndex}`}
-        >
-          {renderResizableHeaderCell(column, columnIndex)}
-        </EditExpressionMenu>
-      ) : (
-        renderResizableHeaderCell(column, columnIndex)
-      ),
-    [editColumnLabel, getColumnKey, onColumnNameOrDataTypeUpdate, renderResizableHeaderCell]
+    [editColumnLabel, getColumnKey, onColumnNameOrDataTypeUpdate, renderHeaderCellInfo, tableInstance]
   );
 
   const renderColumn = useCallback(
     (column: ColumnInstance, columnIndex: number) =>
-      column.isCountColumn ? renderCountColumn(column, columnIndex) : renderResizableColumn(column, columnIndex),
-    [renderCountColumn, renderResizableColumn]
+      column.isCountColumn ? renderCountColumn(column, columnIndex) : renderResizableHeaderCell(column, columnIndex),
+    [renderCountColumn, renderResizableHeaderCell]
   );
 
   const renderHeaderGroups = useMemo(
