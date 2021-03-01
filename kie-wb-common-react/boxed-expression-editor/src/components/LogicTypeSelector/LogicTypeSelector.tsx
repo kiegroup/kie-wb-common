@@ -23,7 +23,7 @@ import { RelationExpression } from "../RelationExpression";
 import { ContextExpression } from "../ContextExpression";
 import { useBoxedExpressionEditorI18n } from "../../i18n";
 import { PopoverMenu } from "../PopoverMenu";
-import { Button, ButtonVariant, SimpleList, SimpleListItem, SimpleListItemProps } from "@patternfly/react-core";
+import { Button, ButtonVariant, Menu, MenuItem, MenuList } from "@patternfly/react-core";
 import * as _ from "lodash";
 import { useContextMenuHandler } from "../../hooks";
 import { NO_TABLE_CONTEXT_MENU_CLASS } from "../Table";
@@ -104,16 +104,21 @@ export const LogicTypeSelector: React.FunctionComponent<LogicTypeSelectorProps> 
   );
 
   const renderLogicTypeItems = useCallback(
-    () => _.map(getLogicTypesWithoutUndefined(), (key) => <SimpleListItem key={key}>{key}</SimpleListItem>),
+    () =>
+      _.map(getLogicTypesWithoutUndefined(), (key) => (
+        <MenuItem key={key} itemId={key}>
+          {key}
+        </MenuItem>
+      )),
     [getLogicTypesWithoutUndefined]
   );
 
   const getLogicSelectionArrowPlacement = useCallback(() => getPlacementRef() as HTMLElement, [getPlacementRef]);
 
   const onLogicTypeSelect = useCallback(
-    (currentItem: React.RefObject<HTMLButtonElement>, currentItemProps: SimpleListItemProps) => {
+    (event: MouseEvent, itemId: string) => {
       setLogicTypeSelected(true);
-      const selectedLogicType = currentItemProps.children as LogicType;
+      const selectedLogicType = itemId as LogicType;
       onLogicTypeUpdating(selectedLogicType);
     },
     [onLogicTypeUpdating]
@@ -124,7 +129,13 @@ export const LogicTypeSelector: React.FunctionComponent<LogicTypeSelectorProps> 
       <PopoverMenu
         title={i18n.selectLogicType}
         arrowPlacement={getLogicSelectionArrowPlacement}
-        body={<SimpleList onSelect={onLogicTypeSelect}>{renderLogicTypeItems()}</SimpleList>}
+        className="logic-type-popover"
+        hasAutoWidth
+        body={
+          <Menu onSelect={onLogicTypeSelect}>
+            <MenuList>{renderLogicTypeItems()}</MenuList>
+          </Menu>
+        }
       />
     ),
     [i18n.selectLogicType, getLogicSelectionArrowPlacement, onLogicTypeSelect, renderLogicTypeItems]

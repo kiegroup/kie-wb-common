@@ -16,7 +16,6 @@
 
 .expression-container .logic-type-selector {
   display: flex;
-  justify-content: center;
   align-items: center;
   display: -webkit-box;
   display: -moz-box;
@@ -24,10 +23,12 @@
   display: -webkit-flex;
   min-width: 15em;
   min-height: 4em;
+  overflow-x: auto;
 }
 
 .expression-container .logic-type-selector.logic-type-not-present {
   cursor: pointer;
+  justify-content: center;
 }
 
 .expression-container .logic-type-selector.logic-type-selected {
