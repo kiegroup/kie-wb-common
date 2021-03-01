@@ -13,12 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-.literal-expression {
-  width: 100%;
-  height: 100%;
-}
-
 .expression-container .literal-expression .pf-c-drawer__splitter {
   background-color: inherit;
 }
