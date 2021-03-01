@@ -31,3 +31,7 @@
   justify-content: center;
 }
 
+.context-expression .entry-expression .literal-expression {
+  width: 100%
+}
+
