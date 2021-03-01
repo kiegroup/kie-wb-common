@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { ExpressionContainer } from "../../../components/ExpressionContainer";
+import { ExpressionContainer } from "../../../components";
 import { render } from "@testing-library/react";
 import * as React from "react";
 import { usingTestingBoxedExpressionI18nContext } from "../test-utils";

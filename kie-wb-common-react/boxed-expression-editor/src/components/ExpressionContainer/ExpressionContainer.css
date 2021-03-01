@@ -15,6 +15,7 @@
  */
 
 .expression-container .expression-container-box {
+  display: inline-block;
   border-style: ridge;
   border-color: #39A5DC;
 }

@@ -47,7 +47,7 @@ export const PopoverMenu: React.FunctionComponent<PopoverMenuProps> = ({
   return (
     <Popover
       data-ouia-component-id="expression-popover-menu"
-      className={`${className} popover-menu-selector`}
+      className={`popover-menu-selector${className ? " " + className : ""}`}
       hasAutoWidth={hasAutoWidth}
       position="bottom"
       distance={0}

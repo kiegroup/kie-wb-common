@@ -5,18 +5,22 @@ exports[`ExpressionContainer tests should render ExpressionContainer component 1
   <div
     class="expression-container"
   >
-    <span
-      class="expression-title"
+    <div
+      class="expression-name-and-logic-type"
     >
-      Test
-    </span>
-    <span
-      class="expression-type"
-    >
-      (
-      &lt;Undefined&gt;
-      )
-    </span>
+      <span
+        class="expression-title"
+      >
+        Test
+      </span>
+      <span
+        class="expression-type"
+      >
+        (
+        &lt;Undefined&gt;
+        )
+      </span>
+    </div>
     <div
       class="expression-container-box"
     >

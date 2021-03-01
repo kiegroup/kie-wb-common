@@ -65,8 +65,10 @@ export const ExpressionContainer: ({ selectedExpression }: ExpressionContainerPr
 
   return (
     <div className="expression-container">
-      <span className="expression-title">{selectedExpression.name}</span>
-      <span className="expression-type">({selectedExpression.logicType || LogicType.Undefined})</span>
+      <div className="expression-name-and-logic-type">
+        <span className="expression-title">{selectedExpression.name}</span>
+        <span className="expression-type">({selectedExpression.logicType || LogicType.Undefined})</span>
+      </div>
 
       <div className="expression-container-box" ref={expressionContainerRef}>
         <LogicTypeSelector
