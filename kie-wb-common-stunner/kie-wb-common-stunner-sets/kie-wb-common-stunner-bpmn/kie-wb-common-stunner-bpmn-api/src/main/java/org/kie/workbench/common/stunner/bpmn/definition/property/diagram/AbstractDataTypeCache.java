@@ -16,8 +16,9 @@
 
 package org.kie.workbench.common.stunner.bpmn.definition.property.diagram;
 
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.kie.workbench.common.stunner.bpmn.definition.AdHocSubprocess;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNDiagram;
@@ -62,7 +63,7 @@ public abstract class AbstractDataTypeCache {
     public AbstractDataTypeCache() {
     }
 
-    protected List<String> allDataTypes = new ArrayList<>();
+    protected Set<String> allDataTypes = new HashSet<>();
 
     public void extractFromItem(View view) {
         Object definition = view.getDefinition();
@@ -180,7 +181,7 @@ public abstract class AbstractDataTypeCache {
         allDataTypes.addAll(getDataTypes(globalVariables));
     }
 
-    public List<String> getCachedDataTypes() {
+    public Set<String> getCachedDataTypes() {
         allDataTypes.remove("Object");
         allDataTypes.remove("String");
         allDataTypes.remove("Integer");
