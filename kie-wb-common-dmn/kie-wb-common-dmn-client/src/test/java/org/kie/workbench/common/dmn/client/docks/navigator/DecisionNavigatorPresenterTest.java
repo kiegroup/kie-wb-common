@@ -29,7 +29,6 @@ import org.kie.workbench.common.dmn.client.docks.navigator.events.RefreshDecisio
 import org.kie.workbench.common.dmn.client.docks.navigator.included.components.DecisionComponents;
 import org.kie.workbench.common.dmn.client.docks.navigator.tree.DecisionNavigatorTreePresenter;
 import org.kie.workbench.common.dmn.client.editors.included.common.IncludedModelsContext;
-import org.kie.workbench.common.stunner.core.client.canvas.event.registration.CanvasElementAddedEvent;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.uberfire.mvp.Command;
@@ -239,12 +238,6 @@ public class DecisionNavigatorPresenterTest {
         presenter.onRefreshDecisionComponents(mock(RefreshDecisionComponents.class));
 
         verify(decisionComponents, times(2)).refresh();
-    }
-
-    @Test
-    public void testOnElementAdded() {
-        presenter.onElementAdded(mock(CanvasElementAddedEvent.class));
-        verify(presenter).deferredRefresh();
     }
 
     @Test

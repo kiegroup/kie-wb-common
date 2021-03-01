@@ -32,7 +32,6 @@ import org.kie.workbench.common.dmn.client.docks.navigator.events.RefreshDecisio
 import org.kie.workbench.common.dmn.client.docks.navigator.included.components.DecisionComponents;
 import org.kie.workbench.common.dmn.client.docks.navigator.tree.DecisionNavigatorTreePresenter;
 import org.kie.workbench.common.dmn.client.editors.included.common.IncludedModelsContext;
-import org.kie.workbench.common.stunner.core.client.canvas.event.registration.CanvasElementAddedEvent;
 import org.uberfire.client.annotations.DefaultPosition;
 import org.uberfire.client.annotations.WorkbenchPartTitle;
 import org.uberfire.client.annotations.WorkbenchPartView;
@@ -113,10 +112,6 @@ public class DecisionNavigatorPresenter {
 
     public void onRefreshDecisionComponents(final @Observes RefreshDecisionComponents events) {
         refreshComponentsView();
-    }
-
-    public void onElementAdded(final @Observes CanvasElementAddedEvent event) {
-        deferredRefresh();
     }
 
     public DecisionNavigatorTreePresenter getTreePresenter() {
