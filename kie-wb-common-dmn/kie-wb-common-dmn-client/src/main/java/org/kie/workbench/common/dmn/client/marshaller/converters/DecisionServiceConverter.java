@@ -18,6 +18,7 @@ package org.kie.workbench.common.dmn.client.marshaller.converters;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -174,8 +175,8 @@ public class DecisionServiceConverter implements NodeConverter<JSITDecisionServi
         final List<JSITDMNElementReference> candidate_inputDecision = new ArrayList<>();
         final List<JSITDMNElementReference> candidate_inputData = new ArrayList<>();
 
-        final List<InputData> reqInputs = new ArrayList<>();
-        final List<Decision> reqDecisions = new ArrayList<>();
+        final HashSet<InputData> reqInputs = new HashSet();
+        final HashSet<Decision> reqDecisions = new HashSet();
 
         // DMN spec table 2: Requirements connection rules
         final List<Edge<?, ?>> outEdges = (List<Edge<?, ?>>) node.getOutEdges();
@@ -270,8 +271,8 @@ public class DecisionServiceConverter implements NodeConverter<JSITDecisionServi
 
     @SuppressWarnings("unchecked")
     private void inspectDecisionForDSReqs(final Node<View<?>, ?> targetNode,
-                                          final List<InputData> reqInputs,
-                                          final List<Decision> reqDecisions) {
+                                          final HashSet<InputData> reqInputs,
+                                          final HashSet<Decision> reqDecisions) {
         final List<Edge<?, ?>> inEdges = (List<Edge<?, ?>>) targetNode.getInEdges();
         for (Edge<?, ?> e : inEdges) {
             final Node<?, ?> sourceNode = e.getSourceNode();
