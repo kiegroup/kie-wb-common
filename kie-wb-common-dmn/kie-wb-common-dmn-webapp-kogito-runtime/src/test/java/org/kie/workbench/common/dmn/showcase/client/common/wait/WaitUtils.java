@@ -25,6 +25,7 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import static org.openqa.selenium.support.ui.ExpectedConditions.invisibilityOfElementLocated;
+import static org.openqa.selenium.support.ui.ExpectedConditions.presenceOfElementLocated;
 import static org.openqa.selenium.support.ui.ExpectedConditions.visibilityOfAllElementsLocatedBy;
 import static org.openqa.selenium.support.ui.ExpectedConditions.visibilityOfElementLocated;
 
@@ -45,6 +46,13 @@ public class WaitUtils {
         return waitOperation()
                 .withMessage(customErrorMessage)
                 .until(visibilityOfElementLocated(elementLocator.locator()));
+    }
+
+    public WebElement waitUntilElementIsPresent(final DMNDesignerLocator elementLocator,
+                                                final String customErrorMessage) {
+        return waitOperation()
+                .withMessage(customErrorMessage)
+                .until(presenceOfElementLocated(elementLocator.locator()));
     }
 
     public List<WebElement> waitUntilAllElementsAreVisible(final DMNDesignerLocator elementLocator,

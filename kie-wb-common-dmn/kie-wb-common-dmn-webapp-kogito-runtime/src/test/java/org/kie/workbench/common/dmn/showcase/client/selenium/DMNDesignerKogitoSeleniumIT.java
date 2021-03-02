@@ -441,33 +441,11 @@ public class DMNDesignerKogitoSeleniumIT extends DMNDesignerBaseIT {
                 .withNamespaceContext(NAMESPACES)
                 .hasXPath("/dmn:definitions" +
                                   "/dmn:decision[@id='_395E1E92-765B-47F5-9387-179B839277B1']" +
-                                  "/dmn:decisionTable[@id='_1B2AE7B6-BF51-472E-99CB-A67875CE1B57']");
-        XmlAssert.assertThat(actual)
-                .withNamespaceContext(NAMESPACES)
-                .hasXPath("/dmn:definitions" +
-                                  "/dmn:decision[@id='_395E1E92-765B-47F5-9387-179B839277B1']" +
-                                  "/dmn:decisionTable[@id='_1B2AE7B6-BF51-472E-99CB-A67875CE1B57']" +
-                                  "/dmn:input[@id='_FCDB0235-3C5C-442D-B268-C6B34FC9967F']");
-        XmlAssert.assertThat(actual)
-                .withNamespaceContext(NAMESPACES)
-                .hasXPath("/dmn:definitions" +
-                                  "/dmn:decision[@id='_395E1E92-765B-47F5-9387-179B839277B1']" +
-                                  "/dmn:decisionTable[@id='_1B2AE7B6-BF51-472E-99CB-A67875CE1B57']" +
-                                  "/dmn:output[@id='_3C2E81E3-A8F7-4600-8FC1-7FACB5F85CB9']");
-        XmlAssert.assertThat(actual)
-                .withNamespaceContext(NAMESPACES)
-                .hasXPath("/dmn:definitions" +
-                                  "/dmn:decision[@id='_395E1E92-765B-47F5-9387-179B839277B1']" +
-                                  "/dmn:decisionTable[@id='_1B2AE7B6-BF51-472E-99CB-A67875CE1B57']" +
-                                  "/dmn:rule[@id='_2D2D5ABD-3C71-40E9-B493-73CDA49B3F53']");
-        XmlAssert.assertThat(actual)
-                .withNamespaceContext(NAMESPACES)
-                .hasXPath("/dmn:definitions" +
-                                  "/dmn:decision[@id='_395E1E92-765B-47F5-9387-179B839277B1']" +
-                                  "/dmn:decisionTable[@id='_1B2AE7B6-BF51-472E-99CB-A67875CE1B57']" +
-                                  "/dmn:output" +
-                                  "/dmn:defaultOutputEntry" +
-                                  "/dmn:text[text()='" + defaultDecisionTableOutput + "']");
+                                  "/dmn:decisionTable[@id='_1B2AE7B6-BF51-472E-99CB-A67875CE1B57']")
+                .containsAnyNodeHavingXPath("//dmn:input[@id='_FCDB0235-3C5C-442D-B268-C6B34FC9967F']")
+                .containsAnyNodeHavingXPath("//dmn:output[@id='_3C2E81E3-A8F7-4600-8FC1-7FACB5F85CB9']")
+                .containsAnyNodeHavingXPath("//dmn:rule[@id='_2D2D5ABD-3C71-40E9-B493-73CDA49B3F53']")
+                .containsAnyNodeHavingXPath("//dmn:output/dmn:defaultOutputEntry/dmn:text[text()='" + defaultDecisionTableOutput + "']");
     }
 
     @Test
@@ -2457,18 +2435,18 @@ public class DMNDesignerKogitoSeleniumIT extends DMNDesignerBaseIT {
     private void fillInProperty(final String propertyName, final String value) {
         waitUtils.waitUntilElementIsVisible(PropertiesPanelXPathLocator.property(propertyName),
                                             format("Property '%s' not found in Properties panel", propertyName))
-                .sendKeys(value);
+                .sendKeys(value + Keys.TAB); // TAB is used to flush the changes
     }
 
     private WebElement getEditor() {
-        final WebElement editor = waitUtils.waitUntilElementIsVisible(EditorXPathLocator.expressionEditor(),
+        final WebElement editor = waitUtils.waitUntilElementIsPresent(EditorXPathLocator.expressionEditor(),
                                                                       "Expression editor probably not activated");
 
         return editor;
     }
 
     private WebElement getAutocompleteEditor() {
-        final WebElement editor = waitUtils.waitUntilElementIsVisible(EditorXPathLocator.expressionAutocompleteEditor(),
+        final WebElement editor = waitUtils.waitUntilElementIsPresent(EditorXPathLocator.expressionAutocompleteEditor(),
                                                                       "Autocompletion not shown");
 
         return editor;
