@@ -54,7 +54,6 @@ public class DataTypeNamesProjectService implements DataTypeNamesService {
 
     @Override
     public void add(String value, String oldValue) {
-
         if (addedDataTypes.contains(oldValue)) {
             addedDataTypes.remove(oldValue);
         }

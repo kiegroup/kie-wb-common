@@ -51,7 +51,6 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.Assignme
 import org.kie.workbench.common.stunner.bpmn.workitem.CustomTask;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
 
-import static org.jgroups.util.Util.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
@@ -100,8 +99,8 @@ public class AbstractDataTypeCacheTest {
         dataTypeCache.extractFromItem(firstView);
         dataTypeCache.extractFromItem(lastView);
 
-        assertEquals(getFirstItem(), "MyType");
-        assertEquals(getLastItem(), "com.myspace.Person");
+        assertTrue(dataTypeCache.allDataTypes.contains("MyType"));
+        assertTrue(dataTypeCache.allDataTypes.contains("com.myspace.Person"));
     }
 
     @Test
@@ -115,8 +114,8 @@ public class AbstractDataTypeCacheTest {
         dataTypeCache.extractFromItem(firstView);
         dataTypeCache.extractFromItem(lastView);
 
-        assertEquals(getFirstItem(), "MyType");
-        assertEquals(getLastItem(), "com.myspace.Person");
+        assertTrue(dataTypeCache.allDataTypes.contains("MyType"));
+        assertTrue(dataTypeCache.allDataTypes.contains("com.myspace.Person"));
     }
 
     @Test
@@ -130,8 +129,8 @@ public class AbstractDataTypeCacheTest {
         dataTypeCache.extractFromItem(firstView);
         dataTypeCache.extractFromItem(lastView);
 
-        assertEquals(getFirstItem(), "MyType");
-        assertEquals(getLastItem(), "com.myspace.Person");
+        assertTrue(dataTypeCache.allDataTypes.contains("MyType"));
+        assertTrue(dataTypeCache.allDataTypes.contains("com.myspace.Person"));
     }
 
     @Test
@@ -145,8 +144,8 @@ public class AbstractDataTypeCacheTest {
         dataTypeCache.extractFromItem(firstView);
         dataTypeCache.extractFromItem(lastView);
 
-        assertEquals(getFirstItem(), "MyType");
-        assertEquals(getLastItem(), "com.myspace.Person");
+        assertTrue(dataTypeCache.allDataTypes.contains("MyType"));
+        assertTrue(dataTypeCache.allDataTypes.contains("com.myspace.Person"));
     }
 
     @Test
@@ -160,8 +159,8 @@ public class AbstractDataTypeCacheTest {
         dataTypeCache.extractFromItem(firstView);
         dataTypeCache.extractFromItem(lastView);
 
-        assertEquals(getFirstItem(), "MyType");
-        assertEquals(getLastItem(), "com.myspace.Person");
+        assertTrue(dataTypeCache.allDataTypes.contains("MyType"));
+        assertTrue(dataTypeCache.allDataTypes.contains("com.myspace.Person"));
     }
 
     @Test
@@ -175,8 +174,8 @@ public class AbstractDataTypeCacheTest {
         dataTypeCache.extractFromItem(firstView);
         dataTypeCache.extractFromItem(lastView);
 
-        assertEquals(getFirstItem(), "MyType");
-        assertEquals(getLastItem(), "com.myspace.Person");
+        assertTrue(dataTypeCache.allDataTypes.contains("MyType"));
+        assertTrue(dataTypeCache.allDataTypes.contains("com.myspace.Person"));
     }
 
     @Test
@@ -190,8 +189,8 @@ public class AbstractDataTypeCacheTest {
         dataTypeCache.extractFromItem(firstView);
         dataTypeCache.extractFromItem(lastView);
 
-        assertEquals(getFirstItem(), "MyType");
-        assertEquals(getLastItem(), "com.myspace.Person");
+        assertTrue(dataTypeCache.allDataTypes.contains("MyType"));
+        assertTrue(dataTypeCache.allDataTypes.contains("com.myspace.Person"));
     }
 
     @Test
@@ -205,8 +204,8 @@ public class AbstractDataTypeCacheTest {
         dataTypeCache.extractFromItem(firstView);
         dataTypeCache.extractFromItem(lastView);
 
-        assertEquals(getFirstItem(), "MyType");
-        assertEquals(getLastItem(), "com.myspace.Person");
+        assertTrue(dataTypeCache.allDataTypes.contains("MyType"));
+        assertTrue(dataTypeCache.allDataTypes.contains("com.myspace.Person"));
     }
 
     @Test
@@ -220,8 +219,8 @@ public class AbstractDataTypeCacheTest {
         dataTypeCache.extractFromItem(firstView);
         dataTypeCache.extractFromItem(lastView);
 
-        assertEquals(getFirstItem(), "MyType");
-        assertEquals(getLastItem(), "com.myspace.Person");
+        assertTrue(dataTypeCache.allDataTypes.contains("MyType"));
+        assertTrue(dataTypeCache.allDataTypes.contains("com.myspace.Person"));
     }
 
     @Test
@@ -235,8 +234,8 @@ public class AbstractDataTypeCacheTest {
         dataTypeCache.extractFromItem(firstView);
         dataTypeCache.extractFromItem(lastView);
 
-        assertEquals(getFirstItem(), "MyType");
-        assertEquals(getLastItem(), "com.myspace.Person");
+        assertTrue(dataTypeCache.allDataTypes.contains("MyType"));
+        assertTrue(dataTypeCache.allDataTypes.contains("com.myspace.Person"));
     }
 
     @Test
@@ -250,8 +249,8 @@ public class AbstractDataTypeCacheTest {
         dataTypeCache.extractFromItem(firstView);
         dataTypeCache.extractFromItem(lastView);
 
-        assertEquals(getFirstItem(), "MyType");
-        assertEquals(getLastItem(), "com.myspace.Person");
+        assertTrue(dataTypeCache.allDataTypes.contains("MyType"));
+        assertTrue(dataTypeCache.allDataTypes.contains("com.myspace.Person"));
     }
 
     @Test
@@ -265,8 +264,8 @@ public class AbstractDataTypeCacheTest {
         dataTypeCache.extractFromItem(firstView);
         dataTypeCache.extractFromItem(lastView);
 
-        assertEquals(getFirstItem(), "MyType");
-        assertEquals(getLastItem(), "com.myspace.Person");
+        assertTrue(dataTypeCache.allDataTypes.contains("MyType"));
+        assertTrue(dataTypeCache.allDataTypes.contains("com.myspace.Person"));
     }
 
     @Test
@@ -280,8 +279,8 @@ public class AbstractDataTypeCacheTest {
         dataTypeCache.extractFromItem(firstView);
         dataTypeCache.extractFromItem(lastView);
 
-        assertEquals(getFirstItem(), "MyType");
-        assertEquals(getLastItem(), "com.myspace.Person");
+        assertTrue(dataTypeCache.allDataTypes.contains("MyType"));
+        assertTrue(dataTypeCache.allDataTypes.contains("com.myspace.Person"));
     }
 
     @Test
@@ -295,8 +294,8 @@ public class AbstractDataTypeCacheTest {
         dataTypeCache.extractFromItem(firstView);
         dataTypeCache.extractFromItem(lastView);
 
-        assertEquals(getFirstItem(), "MyType");
-        assertEquals(getLastItem(), "com.myspace.Person");
+        assertTrue(dataTypeCache.allDataTypes.contains("MyType"));
+        assertTrue(dataTypeCache.allDataTypes.contains("com.myspace.Person"));
     }
 
     @Test
@@ -310,8 +309,8 @@ public class AbstractDataTypeCacheTest {
         dataTypeCache.extractFromItem(firstView);
         dataTypeCache.extractFromItem(lastView);
 
-        assertEquals(getFirstItem(), "MyType");
-        assertEquals(getLastItem(), "com.myspace.Person");
+        assertTrue(dataTypeCache.allDataTypes.contains("MyType"));
+        assertTrue(dataTypeCache.allDataTypes.contains("com.myspace.Person"));
     }
 
     @Test
@@ -325,8 +324,8 @@ public class AbstractDataTypeCacheTest {
         dataTypeCache.extractFromItem(firstView);
         dataTypeCache.extractFromItem(lastView);
 
-        assertEquals(getFirstItem(), "MyType");
-        assertEquals(getLastItem(), "com.myspace.Person");
+        assertTrue(dataTypeCache.allDataTypes.contains("MyType"));
+        assertTrue(dataTypeCache.allDataTypes.contains("com.myspace.Person"));
     }
 
     @Test
@@ -340,8 +339,8 @@ public class AbstractDataTypeCacheTest {
         dataTypeCache.extractFromItem(firstView);
         dataTypeCache.extractFromItem(lastView);
 
-        assertEquals(getFirstItem(), "MyType");
-        assertEquals(getLastItem(), "com.myspace.Person");
+        assertTrue(dataTypeCache.allDataTypes.contains("MyType"));
+        assertTrue(dataTypeCache.allDataTypes.contains("com.myspace.Person"));
     }
 
     public void testExtractBusinessRuleTask() {
@@ -354,8 +353,8 @@ public class AbstractDataTypeCacheTest {
         dataTypeCache.extractFromItem(firstView);
         dataTypeCache.extractFromItem(lastView);
 
-        assertEquals(getFirstItem(), "MyType");
-        assertEquals(getLastItem(), "com.myspace.Person");
+        assertTrue(dataTypeCache.allDataTypes.contains("MyType"));
+        assertTrue(dataTypeCache.allDataTypes.contains("com.myspace.Person"));
     }
 
     @Test
@@ -369,8 +368,8 @@ public class AbstractDataTypeCacheTest {
         dataTypeCache.extractFromItem(firstView);
         dataTypeCache.extractFromItem(lastView);
 
-        assertEquals(getFirstItem(), "MyType");
-        assertEquals(getLastItem(), "com.myspace.Person");
+        assertTrue(dataTypeCache.allDataTypes.contains("MyType"));
+        assertTrue(dataTypeCache.allDataTypes.contains("com.myspace.Person"));
     }
 
     @Test
@@ -384,8 +383,8 @@ public class AbstractDataTypeCacheTest {
         dataTypeCache.extractFromItem(firstView);
         dataTypeCache.extractFromItem(lastView);
 
-        assertEquals(getFirstItem(), "MyType");
-        assertEquals(getLastItem(), "com.myspace.Person");
+        assertTrue(dataTypeCache.allDataTypes.contains("MyType"));
+        assertTrue(dataTypeCache.allDataTypes.contains("com.myspace.Person"));
     }
 
     @Test
@@ -399,8 +398,8 @@ public class AbstractDataTypeCacheTest {
         dataTypeCache.extractFromItem(firstView);
         dataTypeCache.extractFromItem(lastView);
 
-        assertEquals(getFirstItem(), "MyType");
-        assertEquals(getLastItem(), "com.myspace.Person");
+        assertTrue(dataTypeCache.allDataTypes.contains("MyType"));
+        assertTrue(dataTypeCache.allDataTypes.contains("com.myspace.Person"));
     }
 
     @Test
@@ -414,8 +413,8 @@ public class AbstractDataTypeCacheTest {
         dataTypeCache.extractFromItem(firstView);
         dataTypeCache.extractFromItem(lastView);
 
-        assertEquals(getFirstItem(), "MyType");
-        assertEquals(getLastItem(), "com.myspace.Person");
+        assertTrue(dataTypeCache.allDataTypes.contains("MyType"));
+        assertTrue(dataTypeCache.allDataTypes.contains("com.myspace.Person"));
     }
 
     @Test
@@ -429,8 +428,8 @@ public class AbstractDataTypeCacheTest {
         dataTypeCache.extractFromItem(firstView);
         dataTypeCache.extractFromItem(lastView);
 
-        assertEquals(getFirstItem(), "MyType");
-        assertEquals(getLastItem(), "com.myspace.Person");
+        assertTrue(dataTypeCache.allDataTypes.contains("MyType"));
+        assertTrue(dataTypeCache.allDataTypes.contains("com.myspace.Person"));
     }
 
     @Test
@@ -444,8 +443,8 @@ public class AbstractDataTypeCacheTest {
         dataTypeCache.extractFromItem(firstView);
         dataTypeCache.extractFromItem(lastView);
 
-        assertEquals(getFirstItem(), "MyType");
-        assertEquals(getLastItem(), "com.myspace.Person");
+        assertTrue(dataTypeCache.allDataTypes.contains("MyType"));
+        assertTrue(dataTypeCache.allDataTypes.contains("com.myspace.Person"));
     }
 
     @Test
@@ -459,8 +458,8 @@ public class AbstractDataTypeCacheTest {
         dataTypeCache.extractFromItem(firstView);
         dataTypeCache.extractFromItem(lastView);
 
-        assertEquals(getFirstItem(), "MyType");
-        assertEquals(getLastItem(), "com.myspace.Person");
+        assertTrue(dataTypeCache.allDataTypes.contains("MyType"));
+        assertTrue(dataTypeCache.allDataTypes.contains("com.myspace.Person"));
     }
 
     @Test
@@ -474,15 +473,7 @@ public class AbstractDataTypeCacheTest {
         dataTypeCache.extractFromItem(firstView);
         dataTypeCache.extractFromItem(lastView);
 
-        assertEquals(getFirstItem(), object.getType().getValue().getType());
-        assertTrue(getLastItem().equals(object2.getType().getValue().getType()));
-    }
-
-    private String getLastItem() {
-        return dataTypeCache.allDataTypes.get(dataTypeCache.allDataTypes.size() - 1);
-    }
-
-    private String getFirstItem() {
-        return dataTypeCache.allDataTypes.get(0);
+        assertTrue(dataTypeCache.allDataTypes.contains(object.getType().getValue().getType()));
+        assertTrue(dataTypeCache.allDataTypes.contains(object2.getType().getValue().getType()));
     }
 }

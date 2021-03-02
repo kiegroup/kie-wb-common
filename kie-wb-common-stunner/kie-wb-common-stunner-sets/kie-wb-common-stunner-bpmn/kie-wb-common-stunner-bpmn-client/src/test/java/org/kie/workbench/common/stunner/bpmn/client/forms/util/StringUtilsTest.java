@@ -207,5 +207,7 @@ public class StringUtilsTest {
     public void testDataTypeDisplayName() {
         assertEquals("MyObject", StringUtils.createDataTypeDisplayName("MyObject"));
         assertEquals("MyClass [com.test]", StringUtils.createDataTypeDisplayName("com.test.MyClass"));
+        assertEquals("Applicant [mortages.mortages]", StringUtils.createDataTypeDisplayName("mortages.mortages.Applicant"));
+        assertEquals("Applicant [mortages.mortages]", StringUtils.createDataTypeDisplayName("Applicant [mortgages.mortgages]"));
     }
 }

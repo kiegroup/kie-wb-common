@@ -68,11 +68,11 @@ public class DefaultImportsEditorWidget extends ImportsEditorWidget<DefaultImpor
     }
 
     public String getDataType(String displayName) {
-        if (dataTypes.containsKey(displayName)) {
-            return dataTypes.get(displayName);
-        } else {
-            return displayName;
-        }
+        return dataTypes.keySet()
+                .stream()
+                .filter(key -> displayName.equals(dataTypes.get(key)))
+                .findFirst()
+                .orElse(displayName);
     }
 
     @Override

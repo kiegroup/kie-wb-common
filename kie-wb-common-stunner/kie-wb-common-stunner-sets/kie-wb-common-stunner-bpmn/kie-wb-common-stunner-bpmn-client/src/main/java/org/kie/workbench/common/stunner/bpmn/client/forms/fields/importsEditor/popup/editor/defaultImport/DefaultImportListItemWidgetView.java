@@ -160,8 +160,12 @@ public class DefaultImportListItemWidgetView extends Composite implements Import
         }
 
         String displayName = parentWidget.getDataType(className);
-        defaultClassNames.setValue(displayName);
 
+        if (displayName.equals(className)) {
+            displayName = parentWidget.getDataTypes().get(className);
+        }
+
+        defaultClassNames.setValue(displayName);
         classNamesComboBox.init(this,
                                 true,
                                 defaultClassNames,
