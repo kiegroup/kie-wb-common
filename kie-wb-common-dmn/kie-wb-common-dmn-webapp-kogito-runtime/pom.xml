@@ -32,7 +32,6 @@
   <properties>
     <skipITs>false</skipITs>
     <org.kie.dmn.kogito.browser.headless>true</org.kie.dmn.kogito.browser.headless>
-    <!-- We do not want to run selenium tests in default profile -->
     <kogito.large.model.it.tests>**/large/model/*IT.java</kogito.large.model.it.tests>
     <kogito.backward.compatibility.it.tests>**/backward/compatibility/*IT.java</kogito.backward.compatibility.it.tests>
     <kogito.selenium.it.tests>**/selenium/*IT.java</kogito.selenium.it.tests>
