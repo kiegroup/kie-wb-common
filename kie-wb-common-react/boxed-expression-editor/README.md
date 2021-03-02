@@ -51,3 +51,11 @@ yarn start
 # Compiles a production ready showcase application
 yarn build
 ```
+
+Furthermore, there are cypress tests for the showcase project, however they are not automated yet. You can run them as:
+```sh
+# Start a local server to see the 'BoxedExpressionEditor' in action
+yarn start
+# Wait until app is running and execute tests
+yarn cypress run
+```

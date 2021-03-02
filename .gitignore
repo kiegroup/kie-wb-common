@@ -24,3 +24,6 @@ target/
 /org.kie.workbench.widgets
 /org.kie.workbench.forms
 
+# Cypress tests recordings
+**/videos/**
+*.mp4
