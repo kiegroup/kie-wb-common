@@ -63,7 +63,7 @@ public abstract class AbstractDataTypeCache {
     public AbstractDataTypeCache() {
     }
 
-    protected Set<String> allDataTypes = new HashSet<>();
+    protected static Set<String> allDataTypes = new HashSet<>();
 
     public void extractFromItem(View view) {
         Object definition = view.getDefinition();
@@ -148,8 +148,6 @@ public abstract class AbstractDataTypeCache {
         } else if (definition instanceof CustomTask) {
             CustomTask bt = (CustomTask) view.getDefinition();
             allDataTypes.addAll(processAssignments(bt.getDataIOSet().getAssignmentsinfo()));
-        } else {
-            // Nothing to do. This simply means that the item does not contain a data type
         }
     }
 
