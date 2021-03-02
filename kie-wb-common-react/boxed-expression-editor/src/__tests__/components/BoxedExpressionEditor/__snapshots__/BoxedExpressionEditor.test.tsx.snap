@@ -23,6 +23,7 @@ exports[`BoxedExpressionEditor tests should render BoxedExpressionEditor compone
     </div>
     <div
       class="expression-container-box"
+      data-ouia-component-id="expression-container"
     >
       <div
         class="logic-type-selector no-table-context-menu logic-type-not-present"
