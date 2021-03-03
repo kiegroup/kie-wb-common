@@ -244,6 +244,7 @@ public class MonacoEditorViewTest {
         tested.onResize();
         verify(presenter, times(2)).requestRefresh();
         // Should not call resize
+        when(resizeRect.getWidth()).thenReturn(148.0);
         tested.onResize();
         verify(presenter, times(2)).requestRefresh();
     }
