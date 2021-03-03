@@ -143,8 +143,13 @@ public class MonacoEditorView implements UberElement<MonacoEditorPresenter> {
             return;
         }
 
+        if (presenter == null) {
+            resizeObserver.unobserve((elemental2.dom.Element) monacoEditor.getParentElement().getParentNode());
+            return;
+        }
         lastWidth = monacoEditor.getBoundingClientRect().getWidth().intValue();
-        presenter.setWidthPx(monacoEditor.getBoundingClientRect().getWidth().intValue());
+
+        presenter.setWidthPx(monacoEditor.getBoundingClientRect().getWidth().intValue() - 2);
         presenter.requestRefresh();
         presenter.onLanguageChanged(languageSelector.getValue());
     }
