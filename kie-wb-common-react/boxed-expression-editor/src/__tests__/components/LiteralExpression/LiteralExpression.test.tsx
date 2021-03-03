@@ -91,7 +91,9 @@ describe("LiteralExpression tests", () => {
       );
 
       await act(async () => {
-        const literalExpressionHeader = container.querySelector(".literal-expression-header")! as HTMLElement;
+        const literalExpressionHeader = container.querySelector(
+          ".literal-expression-header .expression-info"
+        )! as HTMLElement;
         literalExpressionHeader.click();
         await flushPromises();
         jest.runAllTimers();

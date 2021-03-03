@@ -73,11 +73,6 @@ export const LiteralExpression: React.FunctionComponent<LiteralExpressionProps> 
     setLiteralExpressionContent(updatedContent);
   }, []);
 
-  const getEditExpressionMenuArrowPlacement = useCallback(
-    () => document.querySelector(".literal-expression-header")! as HTMLElement,
-    []
-  );
-
   const onHorizontalResizeStop = useCallback((width) => setLiteralExpressionWidth(width), []);
 
   const renderElementWithResizeHandler = useCallback(
@@ -99,14 +94,20 @@ export const LiteralExpression: React.FunctionComponent<LiteralExpressionProps> 
     return (
       <div className="literal-expression-header">
         {renderElementWithResizeHandler(
-          <div className="expression-info">
-            <p className="expression-name pf-u-text-truncate">{expressionName}</p>
-            <p className="expression-data-type pf-u-text-truncate">({expressionDataType})</p>
-          </div>
+          <EditExpressionMenu
+            selectedExpressionName={expressionName}
+            selectedDataType={expressionDataType}
+            onExpressionUpdate={onExpressionUpdate}
+          >
+            <div className="expression-info">
+              <p className="expression-name pf-u-text-truncate">{expressionName}</p>
+              <p className="expression-data-type pf-u-text-truncate">({expressionDataType})</p>
+            </div>
+          </EditExpressionMenu>
         )}
       </div>
     );
-  }, [expressionDataType, expressionName, renderElementWithResizeHandler]);
+  }, [expressionDataType, expressionName, onExpressionUpdate, renderElementWithResizeHandler]);
 
   const getBodyContent = useMemo(
     () => (
@@ -123,12 +124,6 @@ export const LiteralExpression: React.FunctionComponent<LiteralExpressionProps> 
     <div className="literal-expression">
       {!isHeadless ? renderLiteralExpressionHeader : null}
       <div className="literal-expression-body">{getBodyContent}</div>
-      <EditExpressionMenu
-        arrowPlacement={getEditExpressionMenuArrowPlacement}
-        selectedExpressionName={expressionName}
-        selectedDataType={expressionDataType}
-        onExpressionUpdate={onExpressionUpdate}
-      />
     </div>
   );
 };

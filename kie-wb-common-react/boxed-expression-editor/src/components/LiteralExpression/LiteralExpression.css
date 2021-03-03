@@ -29,6 +29,7 @@
 }
 
 .literal-expression .literal-expression-header .expression-info {
+  cursor: pointer;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -44,11 +45,6 @@
   border-style: ridge;
   background-color: #DEF3FF;
   color: black;
-  cursor: pointer;
-}
-
-.literal-expression .literal-expression-header:active {
-  border: 2px solid black;
 }
 
 .literal-expression .literal-expression-header .expression-data-type {
