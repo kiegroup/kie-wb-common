@@ -4,7 +4,7 @@
   "scripts": {
     "prebuild": "rimraf dist",
     "build": "webpack --config webpack.prod.js",
-    "test": "jest",
+    "test": "jest --collect-coverage",
     "lint": "eslint --ext .ts,.tsx,.js ./src/",
     "type-check": "tsc --noEmit",
     "quality-checks": "npm run type-check && npm run lint && npm run test"
