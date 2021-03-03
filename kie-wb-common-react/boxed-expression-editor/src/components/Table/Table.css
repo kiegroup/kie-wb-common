@@ -44,6 +44,14 @@
 
 .expression-container .table-component table th .header-cell {
   height: 55px;
+  position: static;
+}
+
+.expression-container .table-component table th .header-cell .header-cell-info {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 
 .expression-container .table-component table th .data-type {
@@ -66,6 +74,17 @@
 
 .expression-container .table-component table thead tr:not(:first-of-type) {
   height: 4em;
+}
+
+.expression-container .table-component table tbody,
+.expression-container .table-component table thead tr + tr,
+.expression-container .table-component table tbody tr + tr {
+  margin-top: -1px;
+}
+
+.expression-container .table-component table thead th,
+.expression-container .table-component table tbody td {
+  border: 1px solid #CCC;
 }
 
 .expression-container .table-component table tbody tr {
