@@ -36,6 +36,8 @@ import org.kie.workbench.common.stunner.bpmn.definition.GenericServiceTask;
 import org.kie.workbench.common.stunner.bpmn.definition.IntermediateErrorEventCatching;
 import org.kie.workbench.common.stunner.bpmn.definition.IntermediateEscalationEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.IntermediateEscalationEventThrowing;
+import org.kie.workbench.common.stunner.bpmn.definition.IntermediateLinkEventCatching;
+import org.kie.workbench.common.stunner.bpmn.definition.IntermediateLinkEventThrowing;
 import org.kie.workbench.common.stunner.bpmn.definition.IntermediateMessageEventCatching;
 import org.kie.workbench.common.stunner.bpmn.definition.IntermediateMessageEventThrowing;
 import org.kie.workbench.common.stunner.bpmn.definition.IntermediateSignalEventCatching;
@@ -194,7 +196,7 @@ public class AbstractDataTypeCacheTest {
     }
 
     @Test
-    public void testExtractIntermediateSignalEventCatcing() {
+    public void testExtractIntermediateSignalEventCatching() {
         IntermediateSignalEventCatching intermediateSignalEventCatching = new IntermediateSignalEventCatching();
         IntermediateSignalEventCatching intermediateSignalEventCatching2 = new IntermediateSignalEventCatching();
 
@@ -284,6 +286,36 @@ public class AbstractDataTypeCacheTest {
     }
 
     @Test
+    public void testExtractIntermediateLinkEventThrowing() {
+        IntermediateLinkEventThrowing intermediateLinkEventThrowing = new IntermediateLinkEventThrowing();
+        IntermediateLinkEventThrowing intermediateLinkEventThrowing2 = new IntermediateLinkEventThrowing();
+
+        when(firstView.getDefinition()).thenReturn(intermediateLinkEventThrowing);
+        when(lastView.getDefinition()).thenReturn(intermediateLinkEventThrowing2);
+
+        dataTypeCache.extractFromItem(firstView);
+        dataTypeCache.extractFromItem(lastView);
+
+        assertTrue(dataTypeCache.allDataTypes.contains("MyType"));
+        assertTrue(dataTypeCache.allDataTypes.contains("com.myspace.Person"));
+    }
+
+    @Test
+    public void testExtractIntermediateLinkEventCatching() {
+        IntermediateLinkEventCatching intermediateLinkEventCatching = new IntermediateLinkEventCatching();
+        IntermediateLinkEventCatching intermediateLinkEventCatching2 = new IntermediateLinkEventCatching();
+
+        when(firstView.getDefinition()).thenReturn(intermediateLinkEventCatching);
+        when(lastView.getDefinition()).thenReturn(intermediateLinkEventCatching2);
+
+        dataTypeCache.extractFromItem(firstView);
+        dataTypeCache.extractFromItem(lastView);
+
+        assertTrue(dataTypeCache.allDataTypes.contains("MyType"));
+        assertTrue(dataTypeCache.allDataTypes.contains("com.myspace.Person"));
+    }
+
+    @Test
     public void testExtractEndSignalEvent() {
         EndSignalEvent endSignalEvent = new EndSignalEvent();
         EndSignalEvent endSignalEvent2 = new EndSignalEvent();
@@ -343,6 +375,7 @@ public class AbstractDataTypeCacheTest {
         assertTrue(dataTypeCache.allDataTypes.contains("com.myspace.Person"));
     }
 
+    @Test
     public void testExtractBusinessRuleTask() {
         BusinessRuleTask businessRuleTask = new BusinessRuleTask();
         BusinessRuleTask businessRuleTask2 = new BusinessRuleTask();

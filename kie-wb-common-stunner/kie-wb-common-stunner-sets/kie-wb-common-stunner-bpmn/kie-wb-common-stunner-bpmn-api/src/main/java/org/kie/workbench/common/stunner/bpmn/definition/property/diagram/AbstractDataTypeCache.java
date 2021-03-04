@@ -35,6 +35,8 @@ import org.kie.workbench.common.stunner.bpmn.definition.GenericServiceTask;
 import org.kie.workbench.common.stunner.bpmn.definition.IntermediateErrorEventCatching;
 import org.kie.workbench.common.stunner.bpmn.definition.IntermediateEscalationEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.IntermediateEscalationEventThrowing;
+import org.kie.workbench.common.stunner.bpmn.definition.IntermediateLinkEventCatching;
+import org.kie.workbench.common.stunner.bpmn.definition.IntermediateLinkEventThrowing;
 import org.kie.workbench.common.stunner.bpmn.definition.IntermediateMessageEventCatching;
 import org.kie.workbench.common.stunner.bpmn.definition.IntermediateMessageEventThrowing;
 import org.kie.workbench.common.stunner.bpmn.definition.IntermediateSignalEventCatching;
@@ -67,87 +69,92 @@ public abstract class AbstractDataTypeCache {
 
     public void extractFromItem(View view) {
         Object definition = view.getDefinition();
-
         if (definition instanceof DataObject) {
-            DataObject dataObject = (DataObject) view.getDefinition();
+            DataObject dataObject = (DataObject) definition;
             allDataTypes.add(dataObject.getType().getValue().getType());
         } else if (definition instanceof AdHocSubprocess) {
-            AdHocSubprocess mi = (AdHocSubprocess) view.getDefinition();
-            allDataTypes.addAll(getDataTypes(mi.getProcessData().getProcessVariables().getValue()));
+            AdHocSubprocess adhoc = (AdHocSubprocess) definition;
+            allDataTypes.addAll(getDataTypes(adhoc.getProcessData().getProcessVariables().getValue()));
         } else if (definition instanceof BPMNDiagramImpl) {
-            BPMNDiagramImpl mi = (BPMNDiagramImpl) view.getDefinition();
-            allDataTypes.addAll(getDataTypes(mi.getProcessData().getProcessVariables().getValue()));
+            BPMNDiagramImpl diagram = (BPMNDiagramImpl) definition;
+            allDataTypes.addAll(getDataTypes(diagram.getProcessData().getProcessVariables().getValue()));
         } else if (definition instanceof EmbeddedSubprocess) {
-            EmbeddedSubprocess mi = (EmbeddedSubprocess) view.getDefinition();
-            allDataTypes.addAll(getDataTypes(mi.getProcessData().getProcessVariables().getValue()));
+            EmbeddedSubprocess embeddedSubprocess = (EmbeddedSubprocess) definition;
+            allDataTypes.addAll(getDataTypes(embeddedSubprocess.getProcessData().getProcessVariables().getValue()));
         } else if (definition instanceof EventSubprocess) {
-            EventSubprocess mi = (EventSubprocess) view.getDefinition();
-            allDataTypes.addAll(getDataTypes(mi.getProcessData().getProcessVariables().getValue()));
+            EventSubprocess eventSubprocess = (EventSubprocess) definition;
+            allDataTypes.addAll(getDataTypes(eventSubprocess.getProcessData().getProcessVariables().getValue()));
         } else if (definition instanceof MultipleInstanceSubprocess) {
-            MultipleInstanceSubprocess mi = (MultipleInstanceSubprocess) view.getDefinition();
-            allDataTypes.addAll(getDataTypes(mi.getProcessData().getProcessVariables().getValue()));
-            allDataTypes.addAll(getDataTypes(mi.getExecutionSet().getMultipleInstanceDataInput().getValue()));
-            allDataTypes.addAll(getDataTypes(mi.getExecutionSet().getMultipleInstanceDataOutput().getValue()));
+            MultipleInstanceSubprocess multipleInstanceSubprocess = (MultipleInstanceSubprocess) definition;
+            allDataTypes.addAll(getDataTypes(multipleInstanceSubprocess.getProcessData().getProcessVariables().getValue()));
+            allDataTypes.addAll(getDataTypes(multipleInstanceSubprocess.getExecutionSet().getMultipleInstanceDataInput().getValue()));
+            allDataTypes.addAll(getDataTypes(multipleInstanceSubprocess.getExecutionSet().getMultipleInstanceDataOutput().getValue()));
         } else if (definition instanceof UserTask) {
-            UserTask ut = (UserTask) view.getDefinition();
-            allDataTypes.addAll(processAssignments(ut.getExecutionSet().getAssignmentsinfo()));
+            UserTask userTask = (UserTask) definition;
+            allDataTypes.addAll(processAssignments(userTask.getExecutionSet().getAssignmentsinfo()));
         } else if (definition instanceof GenericServiceTask) {
-            GenericServiceTask st = (GenericServiceTask) view.getDefinition();
-            allDataTypes.addAll(processAssignments(st.getExecutionSet().getAssignmentsinfo()));
+            GenericServiceTask genericServiceTask = (GenericServiceTask) definition;
+            allDataTypes.addAll(processAssignments(genericServiceTask.getExecutionSet().getAssignmentsinfo()));
         } else if (definition instanceof BusinessRuleTask) {
-            BusinessRuleTask bt = (BusinessRuleTask) view.getDefinition();
-            allDataTypes.addAll(processAssignments(bt.getDataIOSet().getAssignmentsinfo()));
+            BusinessRuleTask businessRuleTask = (BusinessRuleTask) definition;
+            allDataTypes.addAll(processAssignments(businessRuleTask.getDataIOSet().getAssignmentsinfo()));
         } else if (definition instanceof EndErrorEvent) {
-            EndErrorEvent bt = (EndErrorEvent) view.getDefinition();
-            allDataTypes.addAll(processAssignments(bt.getDataIOSet().getAssignmentsinfo()));
+            EndErrorEvent endErrorEvent = (EndErrorEvent) definition;
+            allDataTypes.addAll(processAssignments(endErrorEvent.getDataIOSet().getAssignmentsinfo()));
         } else if (definition instanceof EndEscalationEvent) {
-            EndEscalationEvent bt = (EndEscalationEvent) view.getDefinition();
-            allDataTypes.addAll(processAssignments(bt.getDataIOSet().getAssignmentsinfo()));
+            EndEscalationEvent endEscalationEvent = (EndEscalationEvent) definition;
+            allDataTypes.addAll(processAssignments(endEscalationEvent.getDataIOSet().getAssignmentsinfo()));
         } else if (definition instanceof EndMessageEvent) {
-            EndMessageEvent bt = (EndMessageEvent) view.getDefinition();
-            allDataTypes.addAll(processAssignments(bt.getDataIOSet().getAssignmentsinfo()));
+            EndMessageEvent endMessageEvent = (EndMessageEvent) definition;
+            allDataTypes.addAll(processAssignments(endMessageEvent.getDataIOSet().getAssignmentsinfo()));
         } else if (definition instanceof EndSignalEvent) {
-            EndSignalEvent bt = (EndSignalEvent) view.getDefinition();
-            allDataTypes.addAll(processAssignments(bt.getDataIOSet().getAssignmentsinfo()));
+            EndSignalEvent endSignalEvent = (EndSignalEvent) definition;
+            allDataTypes.addAll(processAssignments(endSignalEvent.getDataIOSet().getAssignmentsinfo()));
+        } else if (definition instanceof IntermediateLinkEventCatching) {
+            IntermediateLinkEventCatching intermediateLinkEventCatching = (IntermediateLinkEventCatching) definition;
+            allDataTypes.addAll(processAssignments(intermediateLinkEventCatching.getDataIOSet().getAssignmentsinfo()));
+        } else if (definition instanceof IntermediateLinkEventThrowing) {
+            IntermediateLinkEventThrowing intermediateLinkEventThrowing = (IntermediateLinkEventThrowing) definition;
+            allDataTypes.addAll(processAssignments(intermediateLinkEventThrowing.getDataIOSet().getAssignmentsinfo()));
         } else if (definition instanceof IntermediateErrorEventCatching) {
-            IntermediateErrorEventCatching bt = (IntermediateErrorEventCatching) view.getDefinition();
-            allDataTypes.addAll(processAssignments(bt.getDataIOSet().getAssignmentsinfo()));
+            IntermediateErrorEventCatching intermediateErrorEventCatching = (IntermediateErrorEventCatching) definition;
+            allDataTypes.addAll(processAssignments(intermediateErrorEventCatching.getDataIOSet().getAssignmentsinfo()));
         } else if (definition instanceof IntermediateEscalationEvent) {
-            IntermediateEscalationEvent bt = (IntermediateEscalationEvent) view.getDefinition();
-            allDataTypes.addAll(processAssignments(bt.getDataIOSet().getAssignmentsinfo()));
+            IntermediateEscalationEvent intermediateEscalationEvent = (IntermediateEscalationEvent) definition;
+            allDataTypes.addAll(processAssignments(intermediateEscalationEvent.getDataIOSet().getAssignmentsinfo()));
         } else if (definition instanceof IntermediateEscalationEventThrowing) {
-            IntermediateEscalationEventThrowing bt = (IntermediateEscalationEventThrowing) view.getDefinition();
-            allDataTypes.addAll(processAssignments(bt.getDataIOSet().getAssignmentsinfo()));
+            IntermediateEscalationEventThrowing intermediateEscalationEventThrowing = (IntermediateEscalationEventThrowing) definition;
+            allDataTypes.addAll(processAssignments(intermediateEscalationEventThrowing.getDataIOSet().getAssignmentsinfo()));
         } else if (definition instanceof IntermediateMessageEventCatching) {
-            IntermediateMessageEventCatching bt = (IntermediateMessageEventCatching) view.getDefinition();
-            allDataTypes.addAll(processAssignments(bt.getDataIOSet().getAssignmentsinfo()));
+            IntermediateMessageEventCatching intermediateMessageEventCatching = (IntermediateMessageEventCatching) definition;
+            allDataTypes.addAll(processAssignments(intermediateMessageEventCatching.getDataIOSet().getAssignmentsinfo()));
         } else if (definition instanceof IntermediateMessageEventThrowing) {
-            IntermediateMessageEventThrowing bt = (IntermediateMessageEventThrowing) view.getDefinition();
-            allDataTypes.addAll(processAssignments(bt.getDataIOSet().getAssignmentsinfo()));
+            IntermediateMessageEventThrowing intermediateMessageEventThrowing = (IntermediateMessageEventThrowing) definition;
+            allDataTypes.addAll(processAssignments(intermediateMessageEventThrowing.getDataIOSet().getAssignmentsinfo()));
         } else if (definition instanceof IntermediateSignalEventCatching) {
-            IntermediateSignalEventCatching bt = (IntermediateSignalEventCatching) view.getDefinition();
-            allDataTypes.addAll(processAssignments(bt.getDataIOSet().getAssignmentsinfo()));
+            IntermediateSignalEventCatching intermediateSignalEventCatching = (IntermediateSignalEventCatching) definition;
+            allDataTypes.addAll(processAssignments(intermediateSignalEventCatching.getDataIOSet().getAssignmentsinfo()));
         } else if (definition instanceof IntermediateSignalEventThrowing) {
-            IntermediateSignalEventThrowing bt = (IntermediateSignalEventThrowing) view.getDefinition();
-            allDataTypes.addAll(processAssignments(bt.getDataIOSet().getAssignmentsinfo()));
+            IntermediateSignalEventThrowing intermediateSignalEventThrowing = (IntermediateSignalEventThrowing) definition;
+            allDataTypes.addAll(processAssignments(intermediateSignalEventThrowing.getDataIOSet().getAssignmentsinfo()));
         } else if (definition instanceof ReusableSubprocess) {
-            ReusableSubprocess bt = (ReusableSubprocess) view.getDefinition();
-            allDataTypes.addAll(processAssignments(bt.getDataIOSet().getAssignmentsinfo()));
+            ReusableSubprocess reusableSubprocess = (ReusableSubprocess) definition;
+            allDataTypes.addAll(processAssignments(reusableSubprocess.getDataIOSet().getAssignmentsinfo()));
         } else if (definition instanceof StartErrorEvent) {
-            StartErrorEvent bt = (StartErrorEvent) view.getDefinition();
-            allDataTypes.addAll(processAssignments(bt.getDataIOSet().getAssignmentsinfo()));
+            StartErrorEvent startErrorEvent = (StartErrorEvent) definition;
+            allDataTypes.addAll(processAssignments(startErrorEvent.getDataIOSet().getAssignmentsinfo()));
         } else if (definition instanceof StartEscalationEvent) {
-            StartEscalationEvent bt = (StartEscalationEvent) view.getDefinition();
-            allDataTypes.addAll(processAssignments(bt.getDataIOSet().getAssignmentsinfo()));
+            StartEscalationEvent startEscalationEvent = (StartEscalationEvent) definition;
+            allDataTypes.addAll(processAssignments(startEscalationEvent.getDataIOSet().getAssignmentsinfo()));
         } else if (definition instanceof StartMessageEvent) {
-            StartMessageEvent bt = (StartMessageEvent) view.getDefinition();
-            allDataTypes.addAll(processAssignments(bt.getDataIOSet().getAssignmentsinfo()));
+            StartMessageEvent startMessageEvent = (StartMessageEvent) definition;
+            allDataTypes.addAll(processAssignments(startMessageEvent.getDataIOSet().getAssignmentsinfo()));
         } else if (definition instanceof StartSignalEvent) {
-            StartSignalEvent bt = (StartSignalEvent) view.getDefinition();
-            allDataTypes.addAll(processAssignments(bt.getDataIOSet().getAssignmentsinfo()));
+            StartSignalEvent startSignalEvent = (StartSignalEvent) definition;
+            allDataTypes.addAll(processAssignments(startSignalEvent.getDataIOSet().getAssignmentsinfo()));
         } else if (definition instanceof CustomTask) {
-            CustomTask bt = (CustomTask) view.getDefinition();
-            allDataTypes.addAll(processAssignments(bt.getDataIOSet().getAssignmentsinfo()));
+            CustomTask customTask = (CustomTask) definition;
+            allDataTypes.addAll(processAssignments(customTask.getDataIOSet().getAssignmentsinfo()));
         }
     }
 

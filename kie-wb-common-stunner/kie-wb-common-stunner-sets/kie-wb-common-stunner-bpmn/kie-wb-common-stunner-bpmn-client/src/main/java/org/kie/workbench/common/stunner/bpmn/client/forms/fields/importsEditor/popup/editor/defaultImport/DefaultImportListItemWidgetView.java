@@ -161,7 +161,7 @@ public class DefaultImportListItemWidgetView extends Composite implements Import
 
         String displayName = parentWidget.getDataType(className);
 
-        if (displayName.equals(className)) {
+        if ((className.equals(displayName))) {
             displayName = parentWidget.getDataTypes().get(className);
         }
 

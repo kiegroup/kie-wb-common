@@ -210,8 +210,8 @@ public class DefaultImportsEditorWidgetTest {
     public void testLoadServerTypes() {
 
         final List<String> list = new ArrayList<>();
-        list.add("Test 1");
-        list.add("Test 2");
+        list.add("com.myspace.DataTypeOfTypes1");
+        list.add("com.myspace.DataTypeOfTypes2");
 
         doReturn(PromiseMock.success(list))
                 .when(dataTypeNamesService)
@@ -219,8 +219,8 @@ public class DefaultImportsEditorWidgetTest {
 
         tested.loadServerDataTypes();
 
-        assertEquals("Test 1", tested.dataTypes.get("Test 1"));
-        assertEquals("Test 2", tested.dataTypes.get("Test 2"));
+        assertEquals("DataTypeOfTypes1 [com.myspace]", tested.dataTypes.get("com.myspace.DataTypeOfTypes1"));
+        assertEquals("DataTypeOfTypes2 [com.myspace]", tested.dataTypes.get("com.myspace.DataTypeOfTypes2"));
     }
 
     @Test
