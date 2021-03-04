@@ -58,6 +58,7 @@ public interface VariablesEditorWidgetView extends IsWidget {
         Button getLastOverlayOpened();
 
         void addDataType(String dataType, String oldType);
+
     }
 
     void init(final Presenter presenter);

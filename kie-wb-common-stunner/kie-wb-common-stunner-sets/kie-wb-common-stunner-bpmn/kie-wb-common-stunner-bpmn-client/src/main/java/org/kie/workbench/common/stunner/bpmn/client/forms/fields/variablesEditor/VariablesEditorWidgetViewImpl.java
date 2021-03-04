@@ -27,6 +27,7 @@ import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
+import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.dom.client.TableCellElement;
@@ -35,7 +36,6 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
-import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HasValue;
 import org.gwtbootstrap3.client.ui.Button;
@@ -357,13 +357,10 @@ public class VariablesEditorWidgetViewImpl extends Composite implements Variable
 
     protected void doAddDataType(String dataType, String oldType) {
         clientDataTypesService.add(dataType, oldType);
-        new Timer() {
-            @Override
-            public void run() {
-                refreshFormPropertiesEvent = new RefreshFormPropertiesEvent(sessionManager.getCurrentSession());
-                refreshFormsEvent.fire(refreshFormPropertiesEvent);
-            }
-        }.schedule(100);
+        Scheduler.get().scheduleDeferred(() -> {
+            refreshFormPropertiesEvent = new RefreshFormPropertiesEvent(sessionManager.getCurrentSession());
+            refreshFormsEvent.fire(refreshFormPropertiesEvent);
+        });
     }
 
     protected void checkTagsNotEnabled() {

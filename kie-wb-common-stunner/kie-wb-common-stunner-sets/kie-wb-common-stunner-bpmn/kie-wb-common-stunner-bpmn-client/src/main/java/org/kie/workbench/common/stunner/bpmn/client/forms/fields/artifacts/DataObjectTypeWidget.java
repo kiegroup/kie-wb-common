@@ -97,13 +97,11 @@ public class DataObjectTypeWidget extends Composite implements HasValue<DataObje
                                  StunnerFormsClientFieldsConstants.CONSTANTS.Invalid_character_in_name());
 
         ListBoxValues dataTypeListBoxValues = new ListBoxValues(CUSTOM_PROMPT, "Edit ", null);
-        doneLoading = false;
         clientDataTypesService
                 .call(getDiagramPath())
                 .then(getListObjectThenOnFulfilledCallbackFn(simpleDataTypes, dataTypeListBoxValues))
                 .catch_(exception -> {
                     dataTypeListBoxValues.addValues(simpleDataTypes);
-                    doneLoading = true;
                     return null;
                 });
         dataTypeComboBox.setCurrentTextValue("");
@@ -124,8 +122,6 @@ public class DataObjectTypeWidget extends Composite implements HasValue<DataObje
         return simpleDataTypes.stream().collect(toMap(x -> x, x -> x));
     }
 
-    static boolean doneLoading = false;
-
     static IThenable.ThenOnFulfilledCallbackFn<List<String>, Object> getListObjectThenOnFulfilledCallbackFn(List<String> simpleDataTypes, ListBoxValues dataTypeListBoxValues) {
         return serverDataTypes -> {
             List<String> mergedList = new ArrayList<>(simpleDataTypes);
@@ -139,7 +135,6 @@ public class DataObjectTypeWidget extends Composite implements HasValue<DataObje
             }
 
             dataTypeListBoxValues.addValues(mergedList);
-            doneLoading = true;
             return null;
         };
     }
@@ -162,18 +157,7 @@ public class DataObjectTypeWidget extends Composite implements HasValue<DataObje
 
     @Override
     public void setValue(DataObjectTypeValue value, boolean fireEvents) {
-
-        if (doneLoading) {
-            performSetValue(value, fireEvents);
-        } else {
-            final com.google.gwt.user.client.Timer t = new Timer() {
-                @Override
-                public void run() {
-                    performSetValue(value, fireEvents);
-                }
-            };
-            t.schedule(100);
-        }
+        performSetValue(value, fireEvents);
     }
 
     private void performSetValue(DataObjectTypeValue value, boolean fireEvents) {
