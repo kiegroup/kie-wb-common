@@ -17,7 +17,10 @@
 package org.kie.workbench.common.stunner.bpmn.project.client.service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -35,6 +38,12 @@ public class DataTypeNamesProjectService implements DataTypeNamesService {
     private final Promises promises;
     private final Caller<DataTypesService> dataTypesServiceCaller;
 
+    private Set<String> simpleDataTypes = new HashSet<>(Arrays.asList("Boolean",
+                                                                      "Float",
+                                                                      "Integer",
+                                                                      "Object",
+                                                                      "String"));
+
     @Inject
     public DataTypeNamesProjectService(final Promises promises,
                                        final Caller<DataTypesService> dataTypesServiceCaller) {
@@ -48,12 +57,14 @@ public class DataTypeNamesProjectService implements DataTypeNamesService {
     public Promise<List<String>> call(final Path path) {
         return promises.promisify(dataTypesServiceCaller,
                                   s -> {
+                                      addedDataTypes.removeAll(simpleDataTypes);
                                       s.getDataTypeNames(path, addedDataTypes);
                                   });
     }
 
     @Override
     public void add(String value, String oldValue) {
+
         if (addedDataTypes.contains(oldValue)) {
             addedDataTypes.remove(oldValue);
         }

@@ -17,6 +17,7 @@
 package org.kie.workbench.common.stunner.kogito.client.services;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -38,9 +39,16 @@ public class DataTypeNamesStandaloneService implements DataTypeNamesService {
     @Inject
     DataTypeCache cache;
 
+    private Set<String> simpleDataTypes = new HashSet<>(Arrays.asList("Boolean",
+                                                                      "Float",
+                                                                      "Integer",
+                                                                      "Object",
+                                                                      "String"));
+
     @Override
     public Promise<List<String>> call(final Path path) {
         if (!cacheRead && cache != null) {
+            cache.getCachedDataTypes().removeAll(simpleDataTypes);
             dataTypesSet.addAll(cache.getCachedDataTypes());
             cacheRead = true;
         }
@@ -53,6 +61,7 @@ public class DataTypeNamesStandaloneService implements DataTypeNamesService {
         if (dataTypesSet.contains(oldValue)) {
             dataTypesSet.remove(oldValue);
         }
+
         dataTypesSet.add(value);
     }
 }

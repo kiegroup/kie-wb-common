@@ -231,9 +231,9 @@ public class VariableListItemWidgetViewImpl implements VariableListItemWidgetVie
     public void setTextBoxModelValue(final TextBox textBox,
                                      final String value) {
         if (textBox == customDataType) {
+            parentWidget.addDataType(value, lastCustomValueForDataType);
             setCustomDataType(value);
             lastCustomValueForDataType = value;
-            parentWidget.addDataType(value, lastCustomValueForDataType);
         } else {
             lastCustomValueForTags = value;
         }
