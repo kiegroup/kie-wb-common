@@ -78,18 +78,7 @@ public class BPMNStaticResourceContentService implements ResourceContentService 
             "     \"displayName\" : \"Decision Task\",\n" +
             "     \"icon\" : \"defaultdecisionicon.png\",\n" +
             "     \"category\" : \"Decision tasks\"\n" +
-            "   ],\n" +
-            "\n" +
-            "   [\n" +
-            "    \"name\" : \"Milestone\",\n" +
-            "    \"parameters\" : [\n" +
-            "        \"Condition\" : new StringDataType()\n" +
-            "    ],\n" +
-            "    \"displayName\" : \"Milestone\",\n" +
-            "    \"icon\" : \"defaultmilestoneicon.png\",\n" +
-            "    \"category\" : \"Milestone\"\n" +
-            "    ]\n" +
-            "]";
+            "   ]]";
 
     static final String ANOTHER_DECLARATION = "[\n" +
             "  [\n" +

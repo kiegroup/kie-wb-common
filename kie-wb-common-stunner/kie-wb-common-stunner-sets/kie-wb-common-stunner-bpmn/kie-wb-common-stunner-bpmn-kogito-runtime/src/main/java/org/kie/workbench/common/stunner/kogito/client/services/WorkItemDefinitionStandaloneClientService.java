@@ -113,8 +113,9 @@ public class WorkItemDefinitionStandaloneClientService implements WorkItemDefini
                                         promises.all(asList(paths),
                                                      path -> workItemsLoader(path, loaded))
                                                 .then(wids -> {
-                                                    wids.forEach(registry::register);
-                                                    success.onInvoke(wids);
+                                                    Collection<WorkItemDefinition> widsWithPreset = addPresetWids(wids);
+                                                    widsWithPreset.forEach(registry::register);
+                                                    success.onInvoke(widsWithPreset);
                                                     return null;
                                                 })
                                                 .catch_(error -> {
@@ -157,23 +158,39 @@ public class WorkItemDefinitionStandaloneClientService implements WorkItemDefini
         if (nonEmpty(path)) {
             return resourceContentService
                     .get(path)
-                    .then(value -> getPromises(addPresetWids(parse(value)), loaded, directory));
+                    .then(value -> getPromises(parse(value), loaded, directory));
         }
         return promises.resolve(emptyList());
     }
 
-    private List<WorkItemDefinition> addPresetWids(final List<WorkItemDefinition> wids) {
-        String presets = WidPresetResources.INSTANCE.asText().getText();
-        if (null != presets && presets.startsWith("[")) {
-            List<WorkItemDefinition> presetWids = parse(presets);
+    private Collection<WorkItemDefinition> addPresetWids(final Collection<WorkItemDefinition> wids) {
+        if (wids.stream().noneMatch(wid -> wid.getName().equals(MILESTONE_NAME))) {
+            List<WorkItemDefinition> presetWids = parse(getPresetAsText());
+            presetWids.stream()
+                    .filter(wid -> wid.getName().equals(MILESTONE_NAME))
+                    .findFirst().ifPresent(wid -> {
+                wid.getIconDefinition().setIconData(
+                        getPresetIcon(wid.getIconDefinition().getUri())
+                );
+                wids.add(wid);
+            });
 
-            if (wids.stream().noneMatch(wid -> wid.getName().equals(MILESTONE_NAME))) {
-                presetWids.stream()
-                        .filter(wid -> wid.getName().equals(MILESTONE_NAME))
-                        .findFirst().ifPresent(wids::add);
-            }
+            presetWids.addAll(wids);
+            return presetWids;
         }
+
         return wids;
+    }
+
+    String getPresetAsText() {
+        return WidPresetResources.INSTANCE.asText().getText();
+    }
+
+    String getMilestoneIconAsBase64() {
+        return WidPresetResources.INSTANCE
+                .getMillestoneImage()
+                .getSafeUri()
+                .asString();
     }
 
     private Promise<Collection<WorkItemDefinition>> getPromises(final List<WorkItemDefinition> wids, final Collection<WorkItemDefinition> loaded, final String path) {
@@ -196,12 +213,8 @@ public class WorkItemDefinitionStandaloneClientService implements WorkItemDefini
         final String iconUri = wid.getIconDefinition().getUri();
         if (nonEmpty(iconUri)) {
             return workItemIconCache.getIcon(iconUri).then(iconData -> {
-                if (nonEmpty(iconData)) {
-                    if (!isIconDataUri(iconData)) {
-                        iconData = iconDataUri(iconUri, iconData);
-                    }
-                } else {
-                    iconData = getPresetIcon(iconUri);
+                if (nonEmpty(iconData) && !isIconDataUri(iconData)) {
+                    iconData = iconDataUri(iconUri, iconData);
                 }
 
                 if (nonEmpty(iconData)) {
@@ -214,12 +227,9 @@ public class WorkItemDefinitionStandaloneClientService implements WorkItemDefini
         return promises.resolve();
     }
 
-    protected static String getPresetIcon(final String iconUri) {
+    protected String getPresetIcon(final String iconUri) {
         if (iconUri.equals(MILESTONE_ICON)) {
-            return WidPresetResources.INSTANCE
-                    .getMillestoneImage()
-                    .getSafeUri()
-                    .asString();
+            return getMilestoneIconAsBase64();
         }
         return "";
     }
