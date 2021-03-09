@@ -39,7 +39,7 @@ public class DataTypeNamesStandaloneService implements DataTypeNamesService {
     @Inject
     DataTypeCache cache;
 
-    private Set<String> simpleDataTypes = new HashSet<>(Arrays.asList("Boolean",
+    private static Set<String> simpleDataTypes = new HashSet<>(Arrays.asList("Boolean",
                                                                       "Float",
                                                                       "Integer",
                                                                       "Object",
@@ -58,6 +58,11 @@ public class DataTypeNamesStandaloneService implements DataTypeNamesService {
 
     @Override
     public void add(String value, String oldValue) {
+
+        if (simpleDataTypes.contains(value)) {
+            return;
+        }
+
         if (dataTypesSet.contains(oldValue)) {
             dataTypesSet.remove(oldValue);
         }

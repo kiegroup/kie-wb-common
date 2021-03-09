@@ -38,7 +38,7 @@ public class DataTypeNamesProjectService implements DataTypeNamesService {
     private final Promises promises;
     private final Caller<DataTypesService> dataTypesServiceCaller;
 
-    private Set<String> simpleDataTypes = new HashSet<>(Arrays.asList("Boolean",
+    private static Set<String> simpleDataTypes = new HashSet<>(Arrays.asList("Boolean",
                                                                       "Float",
                                                                       "Integer",
                                                                       "Object",
@@ -57,13 +57,21 @@ public class DataTypeNamesProjectService implements DataTypeNamesService {
     public Promise<List<String>> call(final Path path) {
         return promises.promisify(dataTypesServiceCaller,
                                   s -> {
-                                      addedDataTypes.removeAll(simpleDataTypes);
+                                      extractDefaultDataTypes();
                                       s.getDataTypeNames(path, addedDataTypes);
                                   });
     }
 
+    protected void extractDefaultDataTypes() {
+        addedDataTypes.removeAll(simpleDataTypes);
+    }
+
     @Override
     public void add(String value, String oldValue) {
+
+        if (simpleDataTypes.contains(value)) {
+            return;
+        }
 
         if (addedDataTypes.contains(oldValue)) {
             addedDataTypes.remove(oldValue);

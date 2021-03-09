@@ -191,7 +191,7 @@ public abstract class AbstractDataTypeCache {
         allDataTypes.remove("String");
         allDataTypes.remove("Integer");
         allDataTypes.remove("Boolean");
-        allDataTypes.remove("Double");
+        allDataTypes.remove("Float");
         return allDataTypes;
     }
 }

@@ -26,6 +26,7 @@ import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import static org.jgroups.util.Util.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Matchers.anyString;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -47,5 +48,38 @@ public class DataTypeNamesProjectServiceTest {
 
         dataTypeNamesProjectService.add("Newest", "OldValueNonExistent");
         assertEquals(localTypes.get(1), dataTypeNamesProjectService.addedDataTypes.get(1));
+    }
+
+    @Test
+    public void testFilterDefaultDataTypes() {
+        Mockito.doCallRealMethod().when(dataTypeNamesProjectService).extractDefaultDataTypes();
+        List<String> localTypes = new ArrayList<>();
+
+        dataTypeNamesProjectService.addedDataTypes = localTypes;
+        localTypes.add("One");
+        localTypes.add("Float");
+        localTypes.add("Integer");
+        localTypes.add("Object");
+        localTypes.add("String");
+        localTypes.add("Boolean");
+
+        dataTypeNamesProjectService.extractDefaultDataTypes();
+        assertEquals(localTypes.size(), 1);
+    }
+
+    @Test
+    public void testTypesDefault() {
+        Mockito.doCallRealMethod().when(dataTypeNamesProjectService).add(any(), any());
+        List<String> localTypes = new ArrayList<>();
+
+        dataTypeNamesProjectService.addedDataTypes = localTypes;
+
+        dataTypeNamesProjectService.add("Float", null);
+        dataTypeNamesProjectService.add("Object", null);
+        dataTypeNamesProjectService.add("String", null);
+        dataTypeNamesProjectService.add("Boolean", null);
+        dataTypeNamesProjectService.add("Integer", null);
+
+        assertEquals(localTypes.size(), 0);
     }
 }
