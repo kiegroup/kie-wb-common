@@ -84,9 +84,9 @@ describe("ContextEntryExpressionCell tests", () => {
         dataType: entryDataType,
       },
       entryExpression: {
-        dataType: DataType.Boolean,
         logicType: LogicType.LiteralExpression,
         name,
+        dataType,
         onUpdatingNameAndDataType: undefined,
         onUpdatingRecursiveExpression: expect.any(Function),
       },

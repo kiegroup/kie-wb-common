@@ -85,39 +85,31 @@ describe("ContextExpression tests", () => {
     expect(container.querySelector(".context-expression")).toBeTruthy();
     expect(container.querySelector(".context-expression table")).toBeTruthy();
     expect(container.querySelectorAll(".context-expression table tbody tr")).toHaveLength(3);
-    checkFirstRow(container, firstEntry, firstDataType);
-    checkSecondRow(container, secondEntry, secondDataType);
-    checkResultRow(container, resultEntry, resultDataType);
+
+    checkEntryContent(contextEntry(container, 1), { name: firstEntry, dataType: firstDataType });
+    checkEntryContent(contextEntry(container, 2), { name: secondEntry, dataType: secondDataType });
+    checkEntryContent(contextEntry(container, 3), { name: "result", dataType: "" });
+
+    checkEntryStyle(contextEntry(container, 1), "logic-type-selected");
+    checkEntryLogicType(contextEntry(container, 1), "literal-expression");
+    checkEntryStyle(contextEntry(container, 2), "logic-type-not-present");
+    checkEntryStyle(contextEntry(container, 3), "logic-type-not-present");
   });
-
-  const checkFirstRow = (container: Element, firstEntry: string, firstDataType: DataType.Boolean) => {
-    expect(container.querySelector(".context-expression table tbody tr:first-of-type")).toContainHTML(firstEntry);
-    expect(container.querySelector(".context-expression table tbody tr:first-of-type")).toContainHTML(firstDataType);
-    expect(
-      container.querySelector(".context-expression table tbody tr:first-of-type .entry-expression")!.firstChild
-    ).toHaveClass("logic-type-selected");
-    expect(
-      container.querySelector(".context-expression table tbody tr:first-of-type .entry-expression")!.firstChild!
-        .firstChild
-    ).toHaveClass("literal-expression");
-  };
-
-  const checkSecondRow = (container: Element, secondEntry: string, secondDataType: DataType.Date) => {
-    expect(container.querySelector(".context-expression table tbody tr:nth-of-type(2)")).toContainHTML(secondEntry);
-    expect(container.querySelector(".context-expression table tbody tr:nth-of-type(2)")).toContainHTML(secondDataType);
-    expect(
-      container.querySelector(".context-expression table tbody tr:nth-of-type(2) .entry-expression")!.firstChild
-    ).toHaveClass("logic-type-not-present");
-  };
-
-  const checkResultRow = (container: Element, resultEntry: string, resultDataType: DataType.Undefined) => {
-    expect(container.querySelector(".context-expression table tbody tr:last-of-type")).not.toContainHTML(resultEntry);
-    expect(container.querySelector(".context-expression table tbody tr:last-of-type")).not.toContainHTML(
-      resultDataType
-    );
-    expect(container.querySelector(".context-expression table tbody tr:last-of-type")).toContainHTML("result");
-    expect(
-      container.querySelector(".context-expression table tbody tr:last-of-type .entry-expression")!.firstChild
-    ).toHaveClass("logic-type-not-present");
-  };
 });
+
+function contextEntry(container: Element, index: number): Element | null {
+  return container.querySelector(`.context-expression table tbody tr:nth-of-type(${index})`);
+}
+
+function checkEntryContent(entry: Element | null, entryRecordInfo: { name: string; dataType: string }): void {
+  expect(entry).toContainHTML(entryRecordInfo.name);
+  expect(entry).toContainHTML(entryRecordInfo.dataType);
+}
+
+function checkEntryStyle(entry: Element | null, cssClass: string): void {
+  expect(entry?.querySelector(".entry-expression")?.firstChild).toHaveClass(cssClass);
+}
+
+function checkEntryLogicType(entry: Element | null, cssClass: string): void {
+  expect(entry?.querySelector(".entry-expression")?.firstChild?.firstChild).toHaveClass(cssClass);
+}

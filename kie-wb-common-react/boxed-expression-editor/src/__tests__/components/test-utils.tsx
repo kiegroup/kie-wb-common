@@ -63,9 +63,13 @@ export async function activateNameAndDataTypePopover(element: HTMLElement): Prom
 }
 
 export async function updateElementViaPopover(
+  /** Element that when clicked will trigger the popover */
   triggerPoint: HTMLElement,
+  /** Base container used as reference for the test */
   baseElement: Element,
+  /** Selector used for get the input element */
   inputSelector: string,
+  /** New value passed to the input element */
   newName: string
 ): Promise<void> {
   await activateNameAndDataTypePopover(triggerPoint);
