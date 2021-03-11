@@ -4,7 +4,7 @@
   "scripts": {
     "prebuild": "rimraf dist",
     "build": "webpack --config webpack.prod.js",
-    "test": "jest",
+    "test": "jest --collect-coverage",
     "lint": "eslint --ext .ts,.tsx,.js ./src/",
     "type-check": "tsc --noEmit",
     "quality-checks": "npm run type-check && npm run lint && npm run test"
@@ -69,7 +69,10 @@
     "@patternfly/react-icons": "^4.7.11",
     "@patternfly/react-styles": "^4.7.8",
     "@patternfly/react-table": "^4.19.45",
+    "@types/react-resizable": "^1.7.2",
     "lodash": "^4.17.20",
+    "react-id-generator": "^3.0.1",
+    "react-resizable": "^1.11.0",
     "react-table": "^7.6.2"
   },
   "peerDependencies": {

@@ -14,8 +14,17 @@
  * limitations under the License.
  */
 
+.expression-container .table-component {
+  overflow-x: auto;
+}
+
 .expression-container .table-component table {
   font-style: normal;
+}
+
+.expression-container .table-component table thead,
+.expression-container .table-component table tbody {
+  display: table;
 }
 
 .expression-container .table-component table th {
@@ -29,8 +38,20 @@
   -ms-user-select: none;
 }
 
+.expression-container .table-component table th.fixed-column {
+  font-weight: 400;
+}
+
 .expression-container .table-component table th .header-cell {
-  height: 3em;
+  height: 55px;
+  position: static;
+}
+
+.expression-container .table-component table th .header-cell .header-cell-info {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 
 .expression-container .table-component table th .data-type {
@@ -38,30 +59,74 @@
   font-size: smaller;
 }
 
+.expression-container .table-component table th:first-child {
+  padding-left: 1.7em;
+}
+
 .expression-container .table-component table th:not(:first-child) {
-  cursor: pointer;
   text-align: center;
   background-color: #DEF3FF;
+}
+
+.expression-container .table-component table th:not(.no-clickable-cell) .header-cell-info {
+  cursor: pointer;
+}
+
+.expression-container .table-component table thead tr:not(:first-of-type) {
+  height: 4em;
+}
+
+.expression-container .table-component table tbody,
+.expression-container .table-component table thead tr + tr,
+.expression-container .table-component table tbody tr + tr {
+  margin-top: -1px;
+}
+
+.expression-container .table-component table thead th,
+.expression-container .table-component table tbody td {
+  border: 1px solid #CCC;
+}
+
+.expression-container .table-component table tbody tr {
+  display: flex;
 }
 
 .expression-container .table-component table tbody td {
   border-style: ridge;
   padding: 1.1em 0;
   text-align: center;
+  overflow: auto;
+}
+
+.expression-container .table-component tr > *:last-child {
+  padding-right: 0;
 }
 
 .expression-container .table-component table tbody td + td {
   padding: 0;
 }
 
-.expression-container .table-component table tbody td.row-count-cell {
+.expression-container .table-component table tbody td.counter-cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  min-width: 60px;
+}
+
+.expression-container .table-component table tbody .table-row .empty-cell {
   display: inline-block;
   box-sizing: border-box;
-  width: 60px;
+  min-width: 60px;
+}
+
+.expression-container .table-component table tbody tr.table-row,
+.expression-container .table-component table tbody td.data-cell {
+  width: 100%;
 }
 
 .expression-container .table-component table .pf-c-drawer__splitter {
-  background-color: #DEF3FF;
+  background-color: inherit;
 }
 
 .expression-container .table-component table .pf-c-drawer {
@@ -75,13 +140,25 @@
   bottom: 0;
 }
 
+.expression-container .table-component table .pf-c-drawer.resizer-disabled * {
+  cursor: not-allowed;
+}
+
+.expression-container .table-component table .pf-c-drawer.resizer-disabled .pf-c-drawer__splitter {
+  background-color: lightgray;
+}
+
 .expression-container .table-component table tbody td textarea {
   padding: 0.125em;
   margin: 0;
   border: 0;
   width: 100%;
-  height: 100%;
   resize: none;
+}
+
+.expression-container .table-component table tbody .table-row .row-remainder-content {
+  display: inline-block;
+  box-sizing: border-box;
 }
 
 .table-handler .pf-c-popover__arrow {

@@ -20,6 +20,7 @@ import * as ReactDOM from "react-dom";
 import "./index.css";
 import {
   BoxedExpressionEditor,
+  ContextProps,
   DataType,
   ExpressionContainerProps,
   ExpressionProps,
@@ -43,6 +44,7 @@ export const App: React.FunctionComponent = () => {
     resetExpressionDefinition: (definition: ExpressionProps) => setUpdatedExpression(definition),
     broadcastLiteralExpressionDefinition: (definition: LiteralExpressionProps) => setUpdatedExpression(definition),
     broadcastRelationExpressionDefinition: (definition: RelationProps) => setUpdatedExpression(definition),
+    broadcastContextExpressionDefinition: (definition: ContextProps) => setUpdatedExpression(definition),
   };
 
   return (
@@ -52,7 +54,7 @@ export const App: React.FunctionComponent = () => {
       </div>
       <div className="updated-json">
         <p className="disclaimer">
-          ⚠ Currently, JSON gets updated only for literal expression and relation logic types
+          ⚠ Currently, JSON gets updated only for literal expression, relation and context logic types
         </p>
         <pre>{JSON.stringify(updatedExpression, null, 2)}</pre>
       </div>

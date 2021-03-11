@@ -40,7 +40,7 @@
 }
 
 .popover-menu-selector .pf-c-title .selector-menu-title,
-.popover-menu-selector .pf-c-simple-list button {
+.popover-menu-selector .pf-c-menu__item-text {
   font-size: var(--small-font-size);
   font-style: normal;
 }

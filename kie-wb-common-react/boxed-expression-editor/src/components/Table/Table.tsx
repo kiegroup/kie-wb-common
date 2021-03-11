@@ -26,50 +26,104 @@ import {
   useResizeColumns,
   useTable,
 } from "react-table";
-import { TableComposable, Tbody, Td, Th, Thead, Tr } from "@patternfly/react-table";
-import { EditExpressionMenu } from "../EditExpressionMenu";
+import { TableComposable, Tbody, Td, Tr } from "@patternfly/react-table";
 import * as React from "react";
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { useBoxedExpressionEditorI18n } from "../../i18n";
-import { EditableCell, EditableCellProps } from "./EditableCell";
-import { DataType, TableHandlerConfiguration, TableOperation } from "../../api";
+import { useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
+import { EditableCell } from "./EditableCell";
+import { CellProps, TableHandlerConfiguration, TableOperation } from "../../api";
 import * as _ from "lodash";
-import { Popover } from "@patternfly/react-core";
-import { TableHandlerMenu } from "./TableHandlerMenu";
+import { TableHeader } from "./TableHeader";
+import { TableHandler } from "./TableHandler";
+import { BoxedExpressionGlobalContext } from "../../context";
 
 export interface TableProps {
+  /** Table identifier, useful for nested structures */
+  tableId?: string;
+  /** Optional children element to be appended below the table content */
+  children?: React.ReactElement[];
   /** The prefix to be used for the column name */
-  columnPrefix: string;
+  columnPrefix?: string;
+  /** Optional label to be used for the edit popover that appears when clicking on column header */
+  editColumnLabel?: string;
+  /** For each column there is a default component to be used to render the related cell */
+  defaultCell?: {
+    [columnName: string]: React.FunctionComponent<CellProps>;
+  };
   /** Table's columns */
   columns: Column[];
   /** Table's cells */
   rows: DataRecord[];
   /** Function to be executed when columns are modified */
   onColumnsUpdate: (columns: Column[]) => void;
-  /** Function to be executed when cells are modified */
-  onRowsUpdate: (rows: DataRecord[]) => void;
+  /** Function to be executed when one or more rows are modified */
+  onRowsUpdate?: (rows: DataRecord[]) => void;
+  /** Function to be executed when a single row gets modified */
+  onSingleRowUpdate?: (rowIndex: number, row: DataRecord) => void;
+  /** Function to be executed when adding a new row to the table */
+  onRowAdding?: () => DataRecord;
   /** Custom configuration for the table handler */
   handlerConfiguration: TableHandlerConfiguration;
+  /** True to have no header for this table */
+  isHeadless?: boolean;
+  /** True to support multiple levels in the header */
+  headerHasMultipleLevels?: boolean;
+  /** Custom function for getting row key prop, and avoid using the row index */
+  getRowKey?: (row: Row) => string;
+  /** Custom function for getting column key prop, and avoid using the column index */
+  getColumnKey?: (column: Column) => string;
 }
 
+export const NO_TABLE_CONTEXT_MENU_CLASS = "no-table-context-menu";
+
 export const Table: React.FunctionComponent<TableProps> = ({
-  columnPrefix,
-  onRowsUpdate,
+  tableId,
+  children,
+  columnPrefix = "column-",
+  editColumnLabel,
   onColumnsUpdate,
+  onRowsUpdate,
+  onSingleRowUpdate,
+  onRowAdding = () => ({}),
+  defaultCell,
   rows,
   columns,
   handlerConfiguration,
+  isHeadless = false,
+  headerHasMultipleLevels = false,
+  getRowKey = (row) => row.id as string,
+  getColumnKey = (column) => column.id as string,
 }: TableProps) => {
   const NUMBER_OF_ROWS_COLUMN = "#";
-  const { i18n } = useBoxedExpressionEditorI18n();
+  const NUMBER_OF_ROWS_SUBCOLUMN = "0";
+
+  const tableRef = useRef<HTMLTableElement>(null);
+
+  const globalContext = useContext(BoxedExpressionGlobalContext);
 
   const [tableColumns, setTableColumns] = useState([
     {
       label: NUMBER_OF_ROWS_COLUMN,
       accessor: NUMBER_OF_ROWS_COLUMN,
       width: 60,
+      minWidth: 60,
       disableResizing: true,
+      isCountColumn: true,
       hideFilter: true,
+      ...(headerHasMultipleLevels
+        ? {
+            columns: [
+              {
+                label: NUMBER_OF_ROWS_SUBCOLUMN,
+                accessor: NUMBER_OF_ROWS_SUBCOLUMN,
+                minWidth: 60,
+                width: 60,
+                disableResizing: true,
+                isCountColumn: true,
+                hideFilter: true,
+              },
+            ],
+          }
+        : {}),
     },
     ...columns,
   ]);
@@ -82,50 +136,6 @@ export const Table: React.FunctionComponent<TableProps> = ({
   const [lastSelectedColumnIndex, setLastSelectedColumnIndex] = useState(-1);
   const [lastSelectedRowIndex, setLastSelectedRowIndex] = useState(-1);
 
-  const insertBefore = <T extends unknown>(elements: T[], index: number, element: T) => {
-    return [...elements.slice(0, index), element, ...elements.slice(index)];
-  };
-
-  const insertAfter = <T extends unknown>(elements: T[], index: number, element: T) => {
-    return [...elements.slice(0, index + 1), element, ...elements.slice(index + 1)];
-  };
-
-  const deleteAt = <T extends unknown>(elements: T[], index: number) => {
-    return [...elements.slice(0, index), ...elements.slice(index + 1)];
-  };
-
-  const updateColumnNameInRows = useCallback(
-    (prevColumnName: string, newColumnName: string) =>
-      setTableRows((prevTableCells) => {
-        return _.map(prevTableCells, (tableCells) => {
-          const assignedCellValue = tableCells[prevColumnName]!;
-          delete tableCells[prevColumnName];
-          tableCells[newColumnName] = assignedCellValue;
-          return tableCells;
-        });
-      }),
-    []
-  );
-
-  const onColumnNameOrDataTypeUpdate = useCallback(
-    (columnIndex: number) => {
-      return ({ name = "", dataType = DataType.Undefined }) => {
-        const prevColumnName = (tableColumns[columnIndex] as ColumnInstance).accessor as string;
-        setTableColumns((prevTableColumns: ColumnInstance[]) => {
-          const updatedTableColumns = [...prevTableColumns];
-          updatedTableColumns[columnIndex].label = name;
-          updatedTableColumns[columnIndex].accessor = name;
-          updatedTableColumns[columnIndex].dataType = dataType;
-          return updatedTableColumns;
-        });
-        if (name !== prevColumnName) {
-          updateColumnNameInRows(prevColumnName, name);
-        }
-      };
-    },
-    [tableColumns, updateColumnNameInRows]
-  );
-
   const onCellUpdate = useCallback((rowIndex: number, columnId: string, value: string) => {
     setTableRows((prevTableCells) => {
       const updatedTableCells = [...prevTableCells];
@@ -134,96 +144,79 @@ export const Table: React.FunctionComponent<TableProps> = ({
     });
   }, []);
 
-  const generateNextAvailableColumnName: (lastIndex: number) => string = useCallback(
-    (lastIndex) => {
-      const candidateName = `${columnPrefix}${lastIndex}`;
-      const columnWithCandidateName = _.find(tableColumns, { accessor: candidateName });
-      return columnWithCandidateName ? generateNextAvailableColumnName(lastIndex + 1) : candidateName;
+  const onRowUpdate = useCallback(
+    (rowIndex: number, updatedRow: DataRecord) => {
+      onSingleRowUpdate?.(rowIndex, updatedRow);
+      setTableRows((prevTableCells) => {
+        const updatedRows = [...prevTableCells];
+        updatedRows[rowIndex] = updatedRow;
+        return updatedRows;
+      });
     },
-    [columnPrefix, tableColumns]
-  );
-
-  const generateNextAvailableColumn = useCallback(
-    (columns: Column[]) => {
-      return {
-        accessor: generateNextAvailableColumnName(columns.length),
-        label: generateNextAvailableColumnName(columns.length),
-        dataType: DataType.Undefined,
-      };
-    },
-    [generateNextAvailableColumnName]
-  );
-
-  const handlingOperation = useCallback(
-    (tableOperation: TableOperation) => {
-      switch (tableOperation) {
-        case TableOperation.ColumnInsertLeft:
-          setTableColumns((prevTableColumns) =>
-            insertBefore(prevTableColumns, lastSelectedColumnIndex, generateNextAvailableColumn(prevTableColumns))
-          );
-          break;
-        case TableOperation.ColumnInsertRight:
-          setTableColumns((prevTableColumns) =>
-            insertAfter(prevTableColumns, lastSelectedColumnIndex, generateNextAvailableColumn(prevTableColumns))
-          );
-          break;
-        case TableOperation.ColumnDelete:
-          setTableColumns((prevTableColumns) => deleteAt(prevTableColumns, lastSelectedColumnIndex));
-          break;
-        case TableOperation.RowInsertAbove:
-          setTableRows((prevTableRows) => insertBefore(prevTableRows, lastSelectedRowIndex, {}));
-          break;
-        case TableOperation.RowInsertBelow:
-          setTableRows((prevTableRows) => insertAfter(prevTableRows, lastSelectedRowIndex, {}));
-          break;
-        case TableOperation.RowDelete:
-          setTableRows((prevTableRows) => deleteAt(prevTableRows, lastSelectedRowIndex));
-          break;
-      }
-      setShowTableHandler(false);
-    },
-    [generateNextAvailableColumn, lastSelectedColumnIndex, lastSelectedRowIndex]
+    [onSingleRowUpdate]
   );
 
   const defaultColumn = {
-    minWidth: 38,
+    minWidth: 150,
     width: 150,
-    maxWidth: 600,
-    Cell: useCallback((cellRef: EditableCellProps) => {
+    Cell: useCallback((cellRef) => {
       const column = cellRef.column as ColumnInstance;
-      return column.canResize ? EditableCell(cellRef) : cellRef.value;
+      if (column.isCountColumn) {
+        return cellRef.value;
+      } else {
+        return defaultCell ? defaultCell[column.id](cellRef) : EditableCell(cellRef);
+      }
+      // Table performance optimization: no need to re-render cells, since nested component themselves will re-render
+      // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []),
   };
 
-  const getThProps = (columnIndex: number) => ({
+  const contextMenuIsAvailable = (target: HTMLElement) => {
+    const targetIsContainedInCurrentTable = target.closest("table") === tableRef.current;
+    const contextMenuAvailableForTarget = !target.classList.contains(NO_TABLE_CONTEXT_MENU_CLASS);
+    return targetIsContainedInCurrentTable && contextMenuAvailableForTarget;
+  };
+
+  const tableHandlerStateUpdate = (target: HTMLElement, columnIndex: number) => {
+    setTableHandlerTarget(target);
+    globalContext.currentlyOpenedHandlerCallback?.(false);
+    setShowTableHandler(true);
+    globalContext.setCurrentlyOpenedHandlerCallback?.(() => setShowTableHandler);
+    setLastSelectedColumnIndex(columnIndex);
+  };
+
+  const getThProps = (column: ColumnInstance, columnIndex: number) => ({
     onContextMenu: (e: ContextMenuEvent) => {
-      e.preventDefault();
-      setTableHandlerAllowedOperations([
-        TableOperation.ColumnInsertLeft,
-        TableOperation.ColumnInsertRight,
-        ...(tableColumns.length > 2 && columnIndex > 0 ? [TableOperation.ColumnDelete] : []),
-      ]);
-      setTableHandlerTarget(e.target as HTMLElement);
-      setShowTableHandler(true);
-      setLastSelectedColumnIndex(columnIndex);
+      const target = e.target as HTMLElement;
+      const handlerOnHeaderIsAvailable = !column.disableHandlerOnHeader;
+      if (contextMenuIsAvailable(target) && handlerOnHeaderIsAvailable) {
+        e.preventDefault();
+        setTableHandlerAllowedOperations([
+          TableOperation.ColumnInsertLeft,
+          TableOperation.ColumnInsertRight,
+          ...(tableColumns.length > 2 && columnIndex > 0 ? [TableOperation.ColumnDelete] : []),
+        ]);
+        tableHandlerStateUpdate(target, columnIndex);
+      }
     },
   });
 
   const getTdProps = (columnIndex: number, rowIndex: number) => ({
     onContextMenu: (e: ContextMenuEvent) => {
-      e.preventDefault();
-      setTableHandlerAllowedOperations([
-        TableOperation.ColumnInsertLeft,
-        TableOperation.ColumnInsertRight,
-        ...(tableColumns.length > 2 && columnIndex > 0 ? [TableOperation.ColumnDelete] : []),
-        TableOperation.RowInsertAbove,
-        TableOperation.RowInsertBelow,
-        ...(tableRows.length > 1 ? [TableOperation.RowDelete] : []),
-      ]);
-      setTableHandlerTarget(e.target as HTMLElement);
-      setShowTableHandler(true);
-      setLastSelectedColumnIndex(columnIndex);
-      setLastSelectedRowIndex(rowIndex);
+      const target = e.target as HTMLElement;
+      if (contextMenuIsAvailable(target)) {
+        e.preventDefault();
+        setTableHandlerAllowedOperations([
+          TableOperation.ColumnInsertLeft,
+          TableOperation.ColumnInsertRight,
+          ...(tableColumns.length > 2 && columnIndex > 0 ? [TableOperation.ColumnDelete] : []),
+          TableOperation.RowInsertAbove,
+          TableOperation.RowInsertBelow,
+          ...(tableRows.length > 1 ? [TableOperation.RowDelete] : []),
+        ]);
+        tableHandlerStateUpdate(target, columnIndex);
+        setLastSelectedRowIndex(rowIndex);
+      }
     },
   });
 
@@ -233,6 +226,7 @@ export const Table: React.FunctionComponent<TableProps> = ({
       data: tableRows,
       defaultColumn,
       onCellUpdate,
+      onRowUpdate,
       getThProps,
       getTdProps,
     },
@@ -240,115 +234,96 @@ export const Table: React.FunctionComponent<TableProps> = ({
     useResizeColumns
   );
 
-  const buildTableHandler = useMemo(
-    () => (
-      <Popover
-        className="table-handler"
-        hasNoPadding
-        showClose={false}
-        distance={5}
-        position={"right"}
-        isVisible={showTableHandler}
-        shouldClose={() => setShowTableHandler(false)}
-        shouldOpen={(showFunction) => showFunction?.()}
-        reference={() => tableHandlerTarget}
-        bodyContent={
-          <TableHandlerMenu
-            handlerConfiguration={handlerConfiguration}
-            allowedOperations={tableHandlerAllowedOperations}
-            onOperation={handlingOperation}
-          />
-        }
-      />
-    ),
-    [showTableHandler, handlerConfiguration, tableHandlerAllowedOperations, handlingOperation, tableHandlerTarget]
-  );
-
   useEffect(() => {
     onColumnsUpdate(tableColumns.slice(1)); //Removing "# of rows" column
   }, [onColumnsUpdate, tableColumns]);
 
   useEffect(() => {
-    onRowsUpdate(tableRows);
+    onRowsUpdate?.(tableRows);
   }, [onRowsUpdate, tableRows]);
+
+  const resizeNestedColumns = (columns: ColumnInstance[], accessor: string, updatedWidth: number) => {
+    const columnIndex = _.findIndex(columns, { accessor });
+    if (columnIndex >= 0) {
+      const updatedColumn = { ...columns[columnIndex] };
+      updatedColumn.width = updatedWidth;
+      columns.splice(columnIndex, 1, updatedColumn);
+    } else {
+      _.forEach(columns, (column) => resizeNestedColumns(column.columns, accessor, updatedWidth));
+    }
+  };
 
   const finishedResizing =
     tableInstance.state.columnResizing.isResizingColumn === null &&
     !_.isEmpty(tableInstance.state.columnResizing.columnWidths);
   useEffect(() => {
-    setTableColumns((prevTableColumns) => {
-      _.forEach(tableInstance.state.columnResizing.columnWidths, (updatedColumnWidth, accessor) => {
-        const columnIndex = _.findIndex(prevTableColumns, { accessor });
-        const updatedColumn = { ...prevTableColumns[columnIndex] };
-        updatedColumn.width = updatedColumnWidth;
-        prevTableColumns.splice(columnIndex, 1, updatedColumn);
+    if (finishedResizing) {
+      setTableColumns((prevTableColumns) => {
+        _.forEach(tableInstance.state.columnResizing.columnWidths, (updatedColumnWidth, accessor) =>
+          resizeNestedColumns(prevTableColumns as ColumnInstance[], accessor, updatedColumnWidth)
+        );
+        return [...prevTableColumns];
       });
-      return [...prevTableColumns];
-    });
+    }
     // Need to consider a change only when resizing is finished (no other dependencies to consider for this useEffect)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [finishedResizing]);
 
-  const renderFixedColumn = useCallback(
-    (column: ColumnInstance, columnIndex: number) => (
-      <Th {...column.getHeaderProps()} key={columnIndex}>
-        <div className="header-cell" data-ouia-component-type="expression-column-header">
-          {column.label}
-        </div>
-      </Th>
+  const renderAdditiveRow = useMemo(
+    () => (
+      <Tr className="table-row additive-row">
+        <Td role="cell" className="empty-cell">
+          <br />
+        </Td>
+        {children?.map((child, childIndex) => {
+          return (
+            <Td
+              role="cell"
+              key={childIndex}
+              className="row-remainder-content"
+              style={{
+                width: tableInstance.allColumns[childIndex + 1].width,
+                minWidth: tableInstance.allColumns[childIndex + 1].minWidth,
+              }}
+            >
+              {child}
+            </Td>
+          );
+        })}
+      </Tr>
     ),
-    []
-  );
-
-  const renderResizableColumn = useCallback(
-    (column: ColumnInstance, columnIndex: number) => (
-      <EditExpressionMenu
-        title={i18n.editRelation}
-        selectedExpressionName={column.label}
-        selectedDataType={column.dataType}
-        onExpressionUpdate={onColumnNameOrDataTypeUpdate(columnIndex)}
-        key={columnIndex}
-      >
-        <Th {...column.getHeaderProps()} {...tableInstance.getThProps(columnIndex)} key={columnIndex}>
-          <div className="header-cell" data-ouia-component-type="expression-column-header">
-            <div>
-              <p className="pf-u-text-truncate">{column.label}</p>
-              <p className="pf-u-text-truncate data-type">({column.dataType})</p>
-            </div>
-            <div className="pf-c-drawer" {...column.getResizerProps()}>
-              <div className="pf-c-drawer__splitter pf-m-vertical">
-                <div className="pf-c-drawer__splitter-handle" />
-              </div>
-            </div>
-          </div>
-        </Th>
-      </EditExpressionMenu>
-    ),
-    [i18n.editRelation, onColumnNameOrDataTypeUpdate, tableInstance]
+    [children, tableInstance.allColumns]
   );
 
   return (
-    <div className="table-component">
-      <TableComposable variant="compact" {...tableInstance.getTableProps()}>
-        <Thead noWrap>
-          <tr>
-            {tableInstance.headers.map((column: ColumnInstance, columnIndex: number) =>
-              column.canResize ? renderResizableColumn(column, columnIndex) : renderFixedColumn(column, columnIndex)
-            )}
-          </tr>
-        </Thead>
-
+    <div className={`table-component ${tableId}`}>
+      <TableComposable variant="compact" {...tableInstance.getTableProps()} ref={tableRef}>
+        <TableHeader
+          tableInstance={tableInstance}
+          editColumnLabel={editColumnLabel}
+          isHeadless={isHeadless}
+          tableColumns={tableColumns as ColumnInstance[]}
+          setTableColumns={setTableColumns}
+          setTableRows={setTableRows}
+          getColumnKey={getColumnKey}
+        />
         <Tbody {...tableInstance.getTableBodyProps()}>
           {tableInstance.rows.map((row: Row, rowIndex: number) => {
             tableInstance.prepareRow(row);
             return (
-              <Tr className="table-row" {...row.getRowProps()} key={rowIndex} ouiaId={"expression-row-" + rowIndex}>
+              <Tr
+                className="table-row"
+                {...row.getRowProps()}
+                key={`${getRowKey(row)}-${rowIndex}`}
+                ouiaId={"expression-row-" + rowIndex}
+              >
                 {row.cells.map((cell: Cell, cellIndex: number) => (
                   <Td
-                    {...cell.getCellProps()}
+                    {...(cellIndex === 0 ? {} : cell.getCellProps())}
                     {...tableInstance.getTdProps(cellIndex, rowIndex)}
-                    key={cellIndex}
+                    key={`${getColumnKey(cell.column)}-${cellIndex}`}
                     data-ouia-component-id={"expression-column-" + cellIndex}
+                    className={cellIndex === 0 ? "counter-cell" : "data-cell"}
                   >
                     {cellIndex === 0 ? rowIndex + 1 : cell.render("Cell")}
                   </Td>
@@ -356,9 +331,25 @@ export const Table: React.FunctionComponent<TableProps> = ({
               </Tr>
             );
           })}
+          {children ? renderAdditiveRow : null}
         </Tbody>
       </TableComposable>
-      {showTableHandler ? buildTableHandler : null}
+      {showTableHandler ? (
+        <TableHandler
+          tableColumns={tableColumns as ColumnInstance[]}
+          setTableColumns={setTableColumns}
+          setTableRows={setTableRows}
+          columnPrefix={columnPrefix}
+          handlerConfiguration={handlerConfiguration}
+          lastSelectedColumnIndex={lastSelectedColumnIndex}
+          lastSelectedRowIndex={lastSelectedRowIndex}
+          onRowAdding={onRowAdding}
+          showTableHandler={showTableHandler}
+          setShowTableHandler={setShowTableHandler}
+          tableHandlerAllowedOperations={tableHandlerAllowedOperations}
+          tableHandlerTarget={tableHandlerTarget}
+        />
+      ) : null}
     </div>
   );
 };

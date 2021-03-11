@@ -20,7 +20,7 @@ import { Menu, MenuGroup, MenuItem, MenuList } from "@patternfly/react-core";
 import { AllowedOperations, TableHandlerConfiguration, TableOperation } from "../../api";
 import * as _ from "lodash";
 
-export interface TableHandlerProps {
+export interface TableHandlerMenuProps {
   /** Handler menu groups and items */
   handlerConfiguration: TableHandlerConfiguration;
   /** Dynamic Allowed operations */
@@ -29,7 +29,7 @@ export interface TableHandlerProps {
   onOperation: (operation: TableOperation) => void;
 }
 
-export const TableHandlerMenu: React.FunctionComponent<TableHandlerProps> = ({
+export const TableHandlerMenu: React.FunctionComponent<TableHandlerMenuProps> = ({
   handlerConfiguration,
   allowedOperations,
   onOperation,

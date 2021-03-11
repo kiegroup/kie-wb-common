@@ -5,22 +5,31 @@ exports[`ExpressionContainer tests should render ExpressionContainer component 1
   <div
     class="expression-container"
   >
-    <span
-      class="expression-title"
-    >
-      Test
-    </span>
-    <span
-      class="expression-type"
-    >
-      (
-      &lt;Undefined&gt;
-      )
-    </span>
     <div
-      class="expression-container-box logic-type-not-present"
+      class="expression-name-and-logic-type"
     >
-      Select expression
+      <span
+        class="expression-title"
+      >
+        Test
+      </span>
+      <span
+        class="expression-type"
+      >
+        (
+        &lt;Undefined&gt;
+        )
+      </span>
+    </div>
+    <div
+      class="expression-container-box"
+      data-ouia-component-id="expression-container"
+    >
+      <div
+        class="logic-type-selector no-table-context-menu logic-type-not-present"
+      >
+        Select expression
+      </div>
     </div>
   </div>
 </div>

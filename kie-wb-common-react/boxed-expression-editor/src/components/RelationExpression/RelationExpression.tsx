@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import "./RelationExpression.css";
 import * as React from "react";
 import { useCallback, useEffect, useState } from "react";
 import "@patternfly/patternfly/utilities/Text/text.css";
@@ -55,11 +56,14 @@ export const RelationExpression: React.FunctionComponent<RelationProps> = (relat
   const [tableRows, setTableRows] = useState(relationProps.rows === undefined ? [[]] : relationProps.rows);
 
   useEffect(() => {
-    window.beeApi?.broadcastRelationExpressionDefinition?.({
+    const expressionDefinition = {
       ...relationProps,
       columns: tableColumns,
       rows: tableRows,
-    });
+    };
+    relationProps.isHeadless
+      ? relationProps.onUpdatingRecursiveExpression?.(expressionDefinition)
+      : window.beeApi?.broadcastRelationExpressionDefinition?.(expressionDefinition);
   }, [relationProps, tableColumns, tableRows]);
 
   const convertColumnsForTheTable = useCallback(
@@ -111,7 +115,7 @@ export const RelationExpression: React.FunctionComponent<RelationProps> = (relat
           _.reduce(
             tableColumns,
             (row: string[], column) => {
-              row.push(tableRow[column.name]! || "");
+              row.push((tableRow[column.name]! as string) || "");
               return row;
             },
             []
@@ -125,6 +129,7 @@ export const RelationExpression: React.FunctionComponent<RelationProps> = (relat
     <div className="relation-expression">
       <Table
         columnPrefix="column-"
+        editColumnLabel={i18n.editRelation}
         columns={convertColumnsForTheTable()}
         rows={convertRowsForTheTable()}
         onColumnsUpdate={onSavingColumns}

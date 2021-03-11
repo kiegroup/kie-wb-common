@@ -47,12 +47,19 @@ export type Row = string[];
 export type Rows = Row[];
 
 export interface Column {
-  /** Relation's column name */
+  /** Column name */
   name: string;
-  /** Relation's column data type */
+  /** Column data type */
   dataType: DataType;
   /** Column width */
   width?: string | number;
 }
 
 export type Columns = Column[];
+
+export interface CellProps {
+  /** Cell's row properties */
+  row: { index: number };
+  /** Cell's column properties */
+  column: { id: string };
+}

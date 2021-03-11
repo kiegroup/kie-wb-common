@@ -14,28 +14,23 @@
  * limitations under the License.
  */
 
-body {
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  display: -webkit-box;
-  display: -moz-box;
-  display: -ms-flexbox;
-  display: -webkit-flex;
-}
-
 .showcase {
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
+  padding: 2em;
+}
+
+.showcase .boxed-expression {
+  max-height: 55em;
+  overflow-y: auto;
 }
 
 .showcase .updated-json {
-  margin-left: 5em;
+  margin-top: 5em;
   border-style: inset;
   padding: 1em;
   max-height: 30em;
-  overflow-y: scroll;
+  overflow-y: auto;
 }
 
 .showcase .updated-json .disclaimer {

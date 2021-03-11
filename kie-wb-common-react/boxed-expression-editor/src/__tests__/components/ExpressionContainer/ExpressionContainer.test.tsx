@@ -14,15 +14,11 @@
  * limitations under the License.
  */
 
-import { ExpressionContainer } from "../../../components/ExpressionContainer";
+import { ExpressionContainer } from "../../../components";
 import { render } from "@testing-library/react";
 import * as React from "react";
 import { usingTestingBoxedExpressionI18nContext } from "../test-utils";
 import { DataType, LogicType } from "../../../api";
-import { act } from "react-dom/test-utils";
-
-jest.useFakeTimers();
-const flushPromises = () => new Promise((resolve) => process.nextTick(resolve));
 
 describe("ExpressionContainer tests", () => {
   test("should render ExpressionContainer component", () => {
@@ -47,13 +43,13 @@ describe("ExpressionContainer tests", () => {
   });
 
   test("should render expression type, when type prop is passed", () => {
-    const expression = { name: "Test", logicType: LogicType.Context, dataType: DataType.Undefined };
+    const expression = { name: "Test", logicType: LogicType.LiteralExpression, dataType: DataType.Undefined };
     const { container } = render(
       usingTestingBoxedExpressionI18nContext(<ExpressionContainer selectedExpression={expression} />).wrapper
     );
 
     expect(container.querySelector(".expression-type")).toBeTruthy();
-    expect(container.querySelector(".expression-type")!.innerHTML).toBe("(" + LogicType.Context + ")");
+    expect(container.querySelector(".expression-type")!.innerHTML).toBe("(" + LogicType.LiteralExpression + ")");
   });
 
   test("should render expression type as undefined, when type prop is not passed", () => {
@@ -65,86 +61,4 @@ describe("ExpressionContainer tests", () => {
     expect(container.querySelector(".expression-type")).toBeTruthy();
     expect(container.querySelector(".expression-type")!.innerHTML).toBe("(&lt;Undefined&gt;)");
   });
-
-  describe("Expression Actions dropdown", () => {
-    test("should have the clear action disabled on startup", async () => {
-      const expression = { name: "Test", dataType: DataType.Undefined };
-
-      const { container } = render(
-        usingTestingBoxedExpressionI18nContext(<ExpressionContainer selectedExpression={expression} />).wrapper
-      );
-
-      await triggerContextMenu(container as HTMLElement, ".expression-container-box");
-
-      expect(container.querySelector(".context-menu-container button.pf-m-disabled")).toBeTruthy();
-      expect(container.querySelector(".context-menu-container button.pf-m-disabled")!.innerHTML).toBe("Clear");
-    });
-
-    test("should have the clear action enabled, when logic type is selected", async () => {
-      const expression = { name: "Test", logicType: LogicType.LiteralExpression, dataType: DataType.Undefined };
-
-      const { container } = render(
-        usingTestingBoxedExpressionI18nContext(<ExpressionContainer selectedExpression={expression} />).wrapper
-      );
-
-      await triggerContextMenu(container as HTMLElement, ".expression-container-box");
-
-      expect(container.querySelector(".context-menu-container button.pf-m-disabled")).toBeFalsy();
-      expect(container.querySelector(".context-menu-container button")).toBeTruthy();
-      expect(container.querySelector(".context-menu-container button")!.innerHTML).toBe("Clear");
-    });
-  });
-
-  describe("Logic type selection", () => {
-    test("should show the pre-selection, when logic type prop is passed", () => {
-      const expression = { name: "Test", logicType: LogicType.Context, dataType: DataType.Undefined };
-
-      const { container } = render(
-        usingTestingBoxedExpressionI18nContext(<ExpressionContainer selectedExpression={expression} />).wrapper
-      );
-
-      expect(container.querySelector(".expression-container-box")).toBeTruthy();
-      expect(container.querySelector(".expression-container-box")!.innerHTML).toBe(expression.logicType);
-    });
-
-    test("should reset the selection, when logic type is selected and clear button gets clicked", async () => {
-      const expression = { name: "Test", logicType: LogicType.LiteralExpression, dataType: DataType.Undefined };
-
-      const { container } = render(
-        usingTestingBoxedExpressionI18nContext(<ExpressionContainer selectedExpression={expression} />).wrapper
-      );
-
-      await triggerContextMenu(container as HTMLElement, ".expression-container-box");
-
-      act(() => {
-        const clearButtonElement = container.querySelector(".context-menu-container button")!;
-        const clearButton = clearButtonElement as HTMLButtonElement;
-        clearButton.click();
-      });
-
-      expect(container.querySelector(".expression-container-box")).toBeTruthy();
-      expect(container.querySelector(".expression-container-box")!.innerHTML).not.toBe(expression.logicType);
-    });
-  });
 });
-
-const triggerContextMenu = async (container: HTMLElement, selector: string) => {
-  await act(async () => {
-    const element = container.querySelector(selector)!;
-
-    element.dispatchEvent(
-      new MouseEvent("contextmenu", {
-        bubbles: true,
-        cancelable: false,
-        view: window,
-        button: 2,
-        buttons: 0,
-        clientX: element.getBoundingClientRect().x,
-        clientY: element.getBoundingClientRect().y,
-      })
-    );
-
-    await flushPromises();
-    jest.runAllTimers();
-  });
-};

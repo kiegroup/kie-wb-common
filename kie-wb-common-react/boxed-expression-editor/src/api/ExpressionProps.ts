@@ -20,13 +20,17 @@ import { Columns, Rows } from "./Table";
 
 export interface ExpressionProps {
   /** Expression name (which, in DMN world, is equal to the Decision node's name) */
-  name: string;
+  name?: string;
   /** Expression data type */
-  dataType: DataType;
+  dataType?: DataType;
   /** Optional callback executed to update expression's name and data type */
   onUpdatingNameAndDataType?: (updatedName: string, updatedDataType: DataType) => void;
   /** Logic type should not be defined at this stage */
   logicType?: LogicType;
+  /** True to have no header for this specific expression component, used in a recursive expression */
+  isHeadless?: boolean;
+  /** When a component is headless, it will call this function to pass its most updated expression definition */
+  onUpdatingRecursiveExpression?: (expression: ExpressionProps) => void;
 }
 
 export interface LiteralExpressionProps extends ExpressionProps {
@@ -34,8 +38,8 @@ export interface LiteralExpressionProps extends ExpressionProps {
   logicType: LogicType.LiteralExpression;
   /** Optional content to display for this literal expression */
   content?: string;
-  /** True to have no header for this specific literal expression */
-  isHeadless?: boolean;
+  /** Optional width for this literal expression */
+  width?: number;
 }
 
 export interface RelationProps extends ExpressionProps {
@@ -45,4 +49,34 @@ export interface RelationProps extends ExpressionProps {
   columns?: Columns;
   /** Rows order is from top to bottom. Each row has a collection of cells, one for each column */
   rows?: Rows;
+}
+
+export interface ContextEntryRecord {
+  entryInfo: {
+    /** Entry name */
+    name: string;
+    /** Entry data type */
+    dataType: DataType;
+  };
+  /** Entry expression */
+  entryExpression: ExpressionProps;
+  /** Callback to be invoked on expression resetting */
+  onExpressionResetting?: () => void;
+}
+
+export type ContextEntries = ContextEntryRecord[];
+
+export interface ContextProps extends ExpressionProps {
+  /** Unique identifier used to distinguish all nested instance of context expression */
+  uid?: string;
+  /** Logic type must be Context */
+  logicType: LogicType.Context;
+  /** Collection of context entries */
+  contextEntries?: ContextEntries;
+  /** Context result */
+  result?: ExpressionProps;
+  /** Entry info width */
+  entryInfoWidth?: number;
+  /** Entry expression width */
+  entryExpressionWidth?: number;
 }

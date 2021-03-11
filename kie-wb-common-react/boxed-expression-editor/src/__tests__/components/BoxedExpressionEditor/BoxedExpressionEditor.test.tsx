@@ -16,8 +16,7 @@
 
 import * as React from "react";
 import { render } from "@testing-library/react";
-import { BoxedExpressionEditor } from "../../../components/BoxedExpressionEditor";
-import { ExpressionContainerProps } from "../../../components/ExpressionContainer";
+import { BoxedExpressionEditor, ExpressionContainerProps } from "../../../components";
 import { DataType, ExpressionProps } from "../../../api";
 
 describe("BoxedExpressionEditor tests", () => {

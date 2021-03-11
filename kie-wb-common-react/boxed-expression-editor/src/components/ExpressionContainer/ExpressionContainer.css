@@ -15,36 +15,20 @@
  */
 
 .expression-container .expression-container-box {
-  min-width: 170px;
-  min-height: 50px;
+  display: inline-block;
   border-style: ridge;
   border-color: #39A5DC;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  display: -webkit-box;
-  display: -moz-box;
-  display: -ms-flexbox;
-  display: -webkit-flex;
 }
 
 .expression-container .context-menu-container {
-  position: absolute;
+  position: fixed;
   z-index: 10000;
 }
 
-.expression-container > .expression-container-box.logic-type-not-present {
-  cursor: pointer;
-}
-
-.expression-container > .expression-container-box.logic-type-selected {
-  cursor: default;
-  padding: 10px;
-}
-
 .expression-container > .expression-container-box,
-.expression-container .expression-type {
-  font-size: smaller;
+.expression-container .expression-type,
+.expression-container .entry-expression {
+  font-size: 14px;
   font-style: italic;
   color: gray;
 }

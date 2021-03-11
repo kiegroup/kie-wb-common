@@ -44,6 +44,8 @@ export interface EditExpressionMenuProps {
   onExpressionUpdate: (expression: ExpressionProps) => void;
 }
 
+export const EXPRESSION_NAME = "Expression Name";
+
 export const EditExpressionMenu: React.FunctionComponent<EditExpressionMenuProps> = ({
   children,
   appendTo,
@@ -137,7 +139,7 @@ export const EditExpressionMenu: React.FunctionComponent<EditExpressionMenuProps
               onChange={onExpressionNameChange}
               onBlur={onExpressionNameChange}
               className="form-control pf-c-form-control"
-              placeholder="Expression Name"
+              placeholder={EXPRESSION_NAME}
             />
           </div>
           <div className="expression-data-type">

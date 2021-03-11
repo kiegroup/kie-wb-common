@@ -29,6 +29,10 @@ export interface PopoverMenuProps {
   body: React.ReactNode;
   /** The node where to append the popover content */
   appendTo?: HTMLElement | ((ref?: HTMLElement) => HTMLElement);
+  /** Additional classname to be used for the popover */
+  className?: string;
+  /** True to have width automatically computed */
+  hasAutoWidth?: boolean;
 }
 
 export const PopoverMenu: React.FunctionComponent<PopoverMenuProps> = ({
@@ -37,11 +41,14 @@ export const PopoverMenu: React.FunctionComponent<PopoverMenuProps> = ({
   body,
   title,
   appendTo,
+  className,
+  hasAutoWidth,
 }: PopoverMenuProps) => {
   return (
     <Popover
       data-ouia-component-id="expression-popover-menu"
-      className="popover-menu-selector"
+      className={`popover-menu-selector${className ? " " + className : ""}`}
+      hasAutoWidth={hasAutoWidth}
       position="bottom"
       distance={0}
       id="menu-selector"

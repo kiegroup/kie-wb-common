@@ -14,17 +14,19 @@
  * limitations under the License.
  */
 
-import { ExpressionProps, LiteralExpressionProps, RelationProps } from "./ExpressionProps";
+import { ContextProps, ExpressionProps, LiteralExpressionProps, RelationProps } from "./ExpressionProps";
 
 export {};
 
 declare global {
   //API that BoxedExpressionEditor (bee) is expecting to be defined in the Window namespace
   interface Window {
+    renderBoxedExpressionEditor: (selector: string, definition: ExpressionProps) => void;
     beeApi: {
       resetExpressionDefinition: (definition: ExpressionProps) => void;
       broadcastLiteralExpressionDefinition: (definition: LiteralExpressionProps) => void;
       broadcastRelationExpressionDefinition: (definition: RelationProps) => void;
+      broadcastContextExpressionDefinition: (definition: ContextProps) => void;
     };
   }
 }
