@@ -60,7 +60,7 @@ describe("ContextEntryExpressionCell tests", () => {
     const { container, baseElement } = render(
       usingTestingBoxedExpressionI18nContext(
         <ContextEntryExpressionCell
-          data={[{ entryInfo: { name: value, dataType: entryDataType }, entryExpression: emptyExpression }]}
+          data={[{ entryInfo: { name: value, dataType }, entryExpression: emptyExpression }]}
           row={{ index: rowIndex }}
           column={{ id: columnId }}
           onRowUpdate={mockedOnRowUpdate}
@@ -81,7 +81,7 @@ describe("ContextEntryExpressionCell tests", () => {
     expect(mockedOnRowUpdate).toHaveBeenCalledWith(rowIndex, {
       entryInfo: {
         name: value,
-        dataType: entryDataType,
+        dataType,
       },
       entryExpression: {
         logicType: LogicType.LiteralExpression,
