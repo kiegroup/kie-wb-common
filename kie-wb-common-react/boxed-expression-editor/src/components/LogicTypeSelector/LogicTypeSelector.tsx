@@ -16,7 +16,7 @@
 
 import "./LogicTypeSelector.css";
 import * as React from "react";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { ContextProps, DataType, ExpressionProps, LiteralExpressionProps, LogicType, RelationProps } from "../../api";
 import { LiteralExpression } from "../LiteralExpression";
 import { RelationExpression } from "../RelationExpression";
@@ -28,6 +28,7 @@ import * as _ from "lodash";
 import { useContextMenuHandler } from "../../hooks";
 import { NO_TABLE_CONTEXT_MENU_CLASS } from "../Table";
 import nextId from "react-id-generator";
+import { BoxedExpressionGlobalContext } from "../../context";
 
 export interface LogicTypeSelectorProps {
   /** Expression properties */
@@ -56,6 +57,8 @@ export const LogicTypeSelector: React.FunctionComponent<LogicTypeSelectorProps> 
   onUpdatingRecursiveExpression,
 }) => {
   const { i18n } = useBoxedExpressionEditorI18n();
+
+  const globalContext = useContext(BoxedExpressionGlobalContext);
 
   const expression = _.extend(selectedExpression, {
     isHeadless,
@@ -113,7 +116,11 @@ export const LogicTypeSelector: React.FunctionComponent<LogicTypeSelectorProps> 
     [getLogicTypesWithoutUndefined]
   );
 
-  const getLogicSelectionArrowPlacement = useCallback(() => getPlacementRef() as HTMLElement, [getPlacementRef]);
+  const getArrowPlacement = useCallback(() => getPlacementRef() as HTMLElement, [getPlacementRef]);
+
+  const getAppendToPlacement = useCallback(() => {
+    return globalContext.boxedExpressionEditorRef?.current ?? getArrowPlacement;
+  }, [getArrowPlacement, globalContext.boxedExpressionEditorRef]);
 
   const onLogicTypeSelect = useCallback(
     (event: MouseEvent, itemId: string) => {
@@ -128,8 +135,8 @@ export const LogicTypeSelector: React.FunctionComponent<LogicTypeSelectorProps> 
     () => (
       <PopoverMenu
         title={i18n.selectLogicType}
-        arrowPlacement={getLogicSelectionArrowPlacement}
-        appendTo={getLogicSelectionArrowPlacement}
+        arrowPlacement={getArrowPlacement}
+        appendTo={getAppendToPlacement()}
         className="logic-type-popover"
         hasAutoWidth
         body={
@@ -139,7 +146,7 @@ export const LogicTypeSelector: React.FunctionComponent<LogicTypeSelectorProps> 
         }
       />
     ),
-    [i18n.selectLogicType, getLogicSelectionArrowPlacement, onLogicTypeSelect, renderLogicTypeItems]
+    [i18n.selectLogicType, getArrowPlacement, getAppendToPlacement, onLogicTypeSelect, renderLogicTypeItems]
   );
 
   const executeClearAction = useCallback(() => {

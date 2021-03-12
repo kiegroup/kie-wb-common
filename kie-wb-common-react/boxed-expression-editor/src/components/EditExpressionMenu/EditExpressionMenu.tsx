@@ -16,12 +16,13 @@
 
 import "./EditExpressionMenu.css";
 import * as React from "react";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 import { PopoverMenu } from "../PopoverMenu";
 import { useBoxedExpressionEditorI18n } from "../../i18n";
 import { DataType, ExpressionProps } from "../../api";
 import { Select, SelectOption, SelectVariant } from "@patternfly/react-core";
 import * as _ from "lodash";
+import { BoxedExpressionGlobalContext } from "../../context";
 
 export interface EditExpressionMenuProps {
   /** Optional children element to be considered for triggering the edit expression menu */
@@ -57,10 +58,12 @@ export const EditExpressionMenu: React.FunctionComponent<EditExpressionMenuProps
   selectedExpressionName,
   onExpressionUpdate,
 }: EditExpressionMenuProps) => {
+  const globalContext = useContext(BoxedExpressionGlobalContext);
   const { i18n } = useBoxedExpressionEditorI18n();
   title = title ?? i18n.editExpression;
   nameField = nameField ?? i18n.name;
   dataTypeField = dataTypeField ?? i18n.dataType;
+  appendTo = appendTo ?? globalContext.boxedExpressionEditorRef?.current ?? undefined;
 
   const [dataTypeSelectOpen, setDataTypeSelectOpen] = useState(false);
   const [dataType, setDataType] = useState(selectedDataType);
