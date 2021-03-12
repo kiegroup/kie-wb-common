@@ -57,7 +57,7 @@ import org.kie.workbench.common.stunner.kogito.client.PromiseMock;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.uberfire.backend.vfs.Path;
 import org.uberfire.commons.data.Pair;
 import org.uberfire.ext.widgets.common.client.dropdown.LiveSearchCallback;
@@ -70,14 +70,14 @@ import static org.junit.Assert.assertTrue;
 import static org.kie.workbench.common.stunner.bpmn.client.forms.fields.conditionEditor.FunctionSearchServiceTest.verifyContains;
 import static org.kie.workbench.common.stunner.bpmn.client.forms.fields.conditionEditor.FunctionSearchServiceTest.verifyNotContains;
 import static org.kie.workbench.common.stunner.bpmn.client.forms.fields.conditionEditor.VariableSearchService.unboxDefaultType;
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(MockitoJUnitRunner.Silent.class)
 public class VariableSearchServiceTest {
 
     protected static final String CANVAS_ROOT_ID = "CANVAS_ROOT_ID";

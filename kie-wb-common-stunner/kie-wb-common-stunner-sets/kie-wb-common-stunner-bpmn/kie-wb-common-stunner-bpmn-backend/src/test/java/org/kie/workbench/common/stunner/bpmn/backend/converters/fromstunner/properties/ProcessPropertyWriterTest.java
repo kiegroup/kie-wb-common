@@ -39,7 +39,7 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.MetaDat
 import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.imports.DefaultImport;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.SLADueDate;
 import org.kie.workbench.common.stunner.bpmn.definition.property.variables.ProcessVariables;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -91,7 +91,6 @@ public class ProcessPropertyWriterTest {
         dataObject.getItemSubjectRef();
 
         ItemDefinition itemDefinition = mock(ItemDefinition.class);
-        when(itemDefinition.getId()).thenReturn("someId");
         dataObject.setItemSubjectRef(itemDefinition);
 
         dataObject.getItemSubjectRef();

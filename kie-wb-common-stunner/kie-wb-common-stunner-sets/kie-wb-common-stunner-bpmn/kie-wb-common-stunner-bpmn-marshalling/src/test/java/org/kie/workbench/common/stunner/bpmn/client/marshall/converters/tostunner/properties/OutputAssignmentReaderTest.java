@@ -31,7 +31,7 @@ import org.junit.runner.RunWith;
 import org.kie.workbench.common.stunner.bpmn.client.forms.util.StringUtils;
 import org.kie.workbench.common.stunner.bpmn.client.forms.util.URL;
 import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.customproperties.AssociationDeclaration;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import static junit.framework.TestCase.assertNull;
 import static org.junit.Assert.assertEquals;
@@ -77,7 +77,6 @@ public class OutputAssignmentReaderTest {
     @Test
     public void testFromAssociationWithExpression() {
         URL url = mock(URL.class);
-        when(url.encodeQueryString(SOURCE_NAME)).thenReturn(SOURCE_NAME);
         StringUtils.setURL(url);
 
         DataOutput output = spy(DataOutput.class);
@@ -85,7 +84,6 @@ public class OutputAssignmentReaderTest {
         Assignment assignment = spy(Assignment.class);
         FormalExpression to = mock(FormalExpression.class);
         when(assignment.getTo()).thenReturn(to);
-        when(to.getBody()).thenReturn("");
         EList<Assignment> assignments = mock(EList.class);
         when(assignments.get(0)).thenReturn(assignment);
         DataOutputAssociationImpl out = spy(DataOutputAssociationImpl.class);
@@ -102,7 +100,6 @@ public class OutputAssignmentReaderTest {
         outputReader = OutputAssignmentReader.fromAssociation(out);
         assertResult(TARGET_NAME, "", AssociationDeclaration.Type.FromTo, outputReader.getAssociationDeclaration());
 
-        when(to.getBody()).thenReturn("null");
         outputReader = OutputAssignmentReader.fromAssociation(out);
         assertResult(TARGET_NAME, "", AssociationDeclaration.Type.FromTo, outputReader.getAssociationDeclaration());
     }

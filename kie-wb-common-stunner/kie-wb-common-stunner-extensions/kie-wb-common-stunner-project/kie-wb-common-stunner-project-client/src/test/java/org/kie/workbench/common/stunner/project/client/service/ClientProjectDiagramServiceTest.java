@@ -33,20 +33,21 @@ import org.kie.workbench.common.stunner.project.diagram.ProjectDiagram;
 import org.kie.workbench.common.stunner.project.diagram.ProjectMetadata;
 import org.kie.workbench.common.stunner.project.diagram.impl.ProjectDiagramImpl;
 import org.kie.workbench.common.stunner.project.service.ProjectDiagramService;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.Mockito;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.uberfire.backend.vfs.Path;
 import org.uberfire.java.nio.file.FileAlreadyExistsException;
 import org.uberfire.mocks.CallerMock;
 
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(MockitoJUnitRunner.Silent.class)
 public class ClientProjectDiagramServiceTest extends AbstractClientDiagramServiceTest<ProjectMetadata, ProjectDiagram, ProjectDiagramService, ClientProjectDiagramService> {
 
     @Override
@@ -100,7 +101,7 @@ public class ClientProjectDiagramServiceTest extends AbstractClientDiagramServic
                                 eq(projPackage),
                                 eq(projectType));
         verify(callback,
-               times(1)).onSuccess(any(Path.class));
+               times(1)).onSuccess(Mockito.<Path>any());
         verify(callback,
                times(0)).onError(any(ClientRuntimeError.class));
     }

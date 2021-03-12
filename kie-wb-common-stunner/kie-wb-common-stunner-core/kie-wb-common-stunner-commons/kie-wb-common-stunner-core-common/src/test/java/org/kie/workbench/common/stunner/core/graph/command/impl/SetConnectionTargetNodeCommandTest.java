@@ -36,13 +36,13 @@ import org.kie.workbench.common.stunner.core.rule.context.ConnectorCardinalityCo
 import org.kie.workbench.common.stunner.core.rule.context.EdgeCardinalityContext;
 import org.kie.workbench.common.stunner.core.rule.context.GraphConnectionContext;
 import org.mockito.ArgumentCaptor;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import static org.junit.Assert.assertEquals;
 import static org.kie.workbench.common.stunner.core.TestingGraphUtils.verifyConnection;
 import static org.kie.workbench.common.stunner.core.TestingGraphUtils.verifyConnectorCardinality;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
@@ -50,7 +50,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(MockitoJUnitRunner.Silent.class)
 public class SetConnectionTargetNodeCommandTest extends AbstractGraphCommandTest {
 
     private static final String NODE_UUID = "nodeUUID";

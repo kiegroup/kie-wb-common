@@ -149,7 +149,7 @@ import org.kie.workbench.common.stunner.core.graph.content.view.ViewConnector;
 import org.kie.workbench.common.stunner.core.graph.content.view.ViewConnectorImpl;
 import org.kie.workbench.common.stunner.core.graph.impl.NodeImpl;
 import org.kie.workbench.common.stunner.core.graph.util.GraphUtils;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -159,11 +159,11 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.kie.workbench.common.stunner.bpmn.backend.service.diagram.Assertions.assertDiagram;
 import static org.kie.workbench.common.stunner.bpmn.backend.service.diagram.Assertions.assertDocumentation;
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(MockitoJUnitRunner.Silent.class)
 public class BPMNDirectDiagramMarshallerTest {
 
     private static final String PATH_DIAGRAM = "org/kie/workbench/common/stunner/bpmn/backend/service/diagram";

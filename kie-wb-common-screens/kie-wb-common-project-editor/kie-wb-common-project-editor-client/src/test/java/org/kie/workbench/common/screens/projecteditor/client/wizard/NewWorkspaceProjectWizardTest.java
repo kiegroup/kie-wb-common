@@ -16,8 +16,8 @@ package org.kie.workbench.common.screens.projecteditor.client.wizard;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -51,6 +51,7 @@ import org.kie.workbench.common.screens.projecteditor.client.util.KiePOMDefaultO
 import org.kie.workbench.common.services.shared.preferences.ApplicationPreferences;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.Spy;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
@@ -254,7 +255,7 @@ public class NewWorkspaceProjectWizardTest {
                times(1)).hideBusyIndicator();
         verify(conflictingRepositoriesPopup,
                times(1)).setContent(eq(gav),
-                                    any(Set.class),
+                                    Mockito.<Set>any(),
                                     commandArgumentCaptor.capture());
         verify(conflictingRepositoriesPopup,
                times(1)).show();

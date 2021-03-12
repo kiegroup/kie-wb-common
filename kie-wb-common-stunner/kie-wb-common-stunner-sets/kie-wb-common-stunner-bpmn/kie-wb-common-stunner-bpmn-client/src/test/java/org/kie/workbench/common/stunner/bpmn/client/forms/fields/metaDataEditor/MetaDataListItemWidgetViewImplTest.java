@@ -20,7 +20,6 @@ import javax.enterprise.event.Event;
 
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
-import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.google.gwt.event.dom.client.KeyDownHandler;
 import com.google.gwtmockito.GwtMock;
@@ -37,15 +36,15 @@ import org.kie.workbench.common.stunner.bpmn.client.forms.widgets.VariableNameTe
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.uberfire.client.workbench.widgets.common.ErrorPopupPresenter;
 import org.uberfire.mocks.EventSourceMock;
 import org.uberfire.workbench.events.NotificationEvent;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
-import static org.mockito.Matchers.anyBoolean;
-import static org.mockito.Matchers.anyString;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.doCallRealMethod;
 import static org.mockito.Mockito.doNothing;
@@ -104,9 +103,9 @@ public class MetaDataListItemWidgetViewImplTest {
         view.deleteButton = deleteButton;
         doCallRealMethod().when(view).init();
         doCallRealMethod().when(view).getModel();
-        doCallRealMethod().when(view).setModel(any(MetaDataRow.class));
-        doCallRealMethod().when(view).setParentWidget(any(MetaDataEditorWidgetView.Presenter.class));
-        doCallRealMethod().when(view).handleDeleteButton(any(ClickEvent.class));
+        doCallRealMethod().when(view).setModel(any());
+        doCallRealMethod().when(view).setParentWidget(any());
+        doCallRealMethod().when(view).handleDeleteButton(any());
         doCallRealMethod().when(view).setReadOnly(anyBoolean());
         doCallRealMethod().when(view).notifyModelChanged();
 
@@ -211,7 +210,6 @@ public class MetaDataListItemWidgetViewImplTest {
 
     @Test
     public void testNotifyModelChanged() {
-        doCallRealMethod().when(view).setValue(anyString());
         doCallRealMethod().when(view).getValue();
         doCallRealMethod().when(view).notifyModelChanged();
         doCallRealMethod().when(view).setParentWidget(parent);

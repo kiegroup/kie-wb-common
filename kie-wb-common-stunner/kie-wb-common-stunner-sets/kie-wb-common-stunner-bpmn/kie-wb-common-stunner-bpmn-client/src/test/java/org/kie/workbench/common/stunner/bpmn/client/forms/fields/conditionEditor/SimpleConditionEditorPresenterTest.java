@@ -33,7 +33,7 @@ import org.kie.workbench.common.stunner.core.client.session.ClientSession;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.uberfire.ext.widgets.common.client.dropdown.LiveSearchDropDown;
 import org.uberfire.ext.widgets.common.client.dropdown.SingleLiveSearchSelectionHandler;
 import org.uberfire.mvp.Command;
@@ -45,15 +45,15 @@ import static org.junit.Assert.assertTrue;
 import static org.kie.workbench.common.stunner.bpmn.client.forms.fields.conditionEditor.SimpleConditionEditorPresenter.CONDITION_MAL_FORMED;
 import static org.kie.workbench.common.stunner.bpmn.client.forms.fields.conditionEditor.SimpleConditionEditorPresenter.FUNCTION_NOT_SELECTED_ERROR;
 import static org.kie.workbench.common.stunner.bpmn.client.forms.fields.conditionEditor.SimpleConditionEditorPresenter.VARIABLE_NOT_SELECTED_ERROR;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(MockitoJUnitRunner.Silent.class)
 public class SimpleConditionEditorPresenterTest {
 
     private static final String TRANSLATED_MESSAGE = "TRANSLATED_MESSAGE";

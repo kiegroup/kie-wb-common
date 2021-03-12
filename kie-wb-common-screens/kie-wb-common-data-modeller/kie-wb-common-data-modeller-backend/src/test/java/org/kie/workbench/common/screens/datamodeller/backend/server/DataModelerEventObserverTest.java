@@ -34,12 +34,13 @@ import org.kie.workbench.common.services.datamodeller.core.impl.AnnotationImpl;
 import org.kie.workbench.common.services.datamodeller.core.impl.DataObjectImpl;
 import org.kie.workbench.common.services.datamodeller.util.DriverUtils;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.Mockito;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.uberfire.backend.vfs.Path;
 import org.uberfire.io.IOService;
 
 import static org.junit.Assert.*;
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -83,7 +84,7 @@ public class DataModelerEventObserverTest {
         DataObjectCreatedEvent createdEvent = new DataObjectCreatedEvent(module, dataObject);
         eventObserver.onDataObjectCreated(createdEvent);
 
-        verify(descriptorService, times(1)).save(eq(descriptorPath), eq(descriptorModel), any(Metadata.class), anyString());
+        verify(descriptorService, times(1)).save(eq(descriptorPath), eq(descriptorModel), Mockito.<Metadata> any(), anyString());
         assertTrue(descriptorModel.getPersistenceUnit().getClasses().contains(new PersistableDataObject(dataObject.getClassName())));
     }
 
@@ -94,7 +95,7 @@ public class DataModelerEventObserverTest {
         descriptorModel.getPersistenceUnit().getClasses().add(new PersistableDataObject(deletedEvent.getCurrentDataObject().getClassName()));
         eventObserver.onDataObjectDeleted(deletedEvent);
 
-        verify(descriptorService, times(1)).save(eq(descriptorPath), eq(descriptorModel), any(Metadata.class), anyString());
+        verify(descriptorService, times(1)).save(eq(descriptorPath), eq(descriptorModel), Mockito.<Metadata> any(), anyString());
         assertFalse(descriptorModel.getPersistenceUnit().getClasses().contains(new PersistableDataObject(dataObject.getClassName())));
     }
 
@@ -106,7 +107,7 @@ public class DataModelerEventObserverTest {
         DataObjectCreatedEvent createdEvent = new DataObjectCreatedEvent(module, dataObject);
         eventObserver.onDataObjectCreated(createdEvent);
 
-        verify(descriptorService, times(0)).save(eq(descriptorPath), eq(descriptorModel), any(Metadata.class), anyString());
+        verify(descriptorService, times(0)).save(eq(descriptorPath), eq(descriptorModel), Mockito.<Metadata> any(), anyString());
         assertEquals(1, descriptorModel.getPersistenceUnit().getClasses().size());
     }
 
@@ -118,7 +119,7 @@ public class DataModelerEventObserverTest {
         eventObserver.onDataObjectCreated(createdEvent);
 
         descriptorModel.getPersistenceUnit().getClasses().add(new PersistableDataObject(createdEvent.getCurrentDataObject().getClassName()));
-        verify(descriptorService, times(0)).save(eq(descriptorPath), eq(descriptorModel), any(Metadata.class), anyString());
+        verify(descriptorService, times(0)).save(eq(descriptorPath), eq(descriptorModel), Mockito.<Metadata> any(), anyString());
         assertEquals(1, descriptorModel.getPersistenceUnit().getClasses().size());
     }
 

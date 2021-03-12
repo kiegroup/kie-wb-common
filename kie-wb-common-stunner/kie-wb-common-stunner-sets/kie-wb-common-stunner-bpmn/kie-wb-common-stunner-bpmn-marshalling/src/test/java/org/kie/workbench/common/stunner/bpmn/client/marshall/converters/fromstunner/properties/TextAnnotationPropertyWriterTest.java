@@ -29,7 +29,7 @@ import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.custompr
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.verify;
@@ -64,7 +64,6 @@ public class TextAnnotationPropertyWriterTest {
     public void setUp() {
         when(element.getExtensionValues()).thenReturn(ECollections.asEList(extensionAttributeValue));
         when(extensionAttributeValue.getValue()).thenReturn(valueMap);
-        when(metaDataType.getName()).thenReturn(CustomElement.name.name());
         tested = new TextAnnotationPropertyWriter(element, variableScope);
     }
 

@@ -26,11 +26,11 @@ import org.kie.workbench.common.screens.defaulteditor.client.editor.NewFileUploa
 import org.kie.workbench.common.screens.library.client.util.LibraryPlaces;
 import org.kie.workbench.common.widgets.client.handlers.NewResourcePresenter;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.uberfire.mvp.Command;
 import org.uberfire.promise.SyncPromises;
 
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -94,7 +94,7 @@ public class EmptyAssetsScreenTest {
     public void testInitializeAcceptContentSuccess() {
         doReturn(promises.resolve(true)).when(this.projectController).canUpdateProject(any());
         doAnswer(invocation -> {
-            Callback<Boolean, Void> callback = invocation.getArgumentAt(0,
+            Callback<Boolean, Void> callback = invocation.getArgument(0,
                                                                         Callback.class);
             callback.onSuccess(false);
             return null;
@@ -108,7 +108,7 @@ public class EmptyAssetsScreenTest {
     public void testInitializeAcceptContentSuccessWithPermission() {
         doReturn(promises.resolve(true)).when(this.projectController).canUpdateProject(any());
         doAnswer(invocation -> {
-            Callback<Boolean, Void> callback = invocation.getArgumentAt(0,
+            Callback<Boolean, Void> callback = invocation.getArgument(0,
                                                                         Callback.class);
             callback.onSuccess(true);
             return null;
@@ -121,7 +121,7 @@ public class EmptyAssetsScreenTest {
     public void testInitializeAcceptContentSuccessWithoutPermission() {
         doReturn(promises.resolve(false)).when(this.projectController).canUpdateProject(any());
         doAnswer(invocation -> {
-            Callback<Boolean, Void> callback = invocation.getArgumentAt(0,
+            Callback<Boolean, Void> callback = invocation.getArgument(0,
                                                                         Callback.class);
             callback.onSuccess(true);
             return null;
@@ -134,7 +134,7 @@ public class EmptyAssetsScreenTest {
     public void testInitializeAcceptContentFailure() {
         doReturn(promises.resolve(true)).when(this.projectController).canUpdateProject(any());
         doAnswer(invocation -> {
-            Callback<Boolean, Void> callback = invocation.getArgumentAt(0,
+            Callback<Boolean, Void> callback = invocation.getArgument(0,
                                                                         Callback.class);
             callback.onFailure(null);
             return null;

@@ -37,7 +37,7 @@ import org.kie.workbench.common.services.refactoring.service.PackageServiceLoade
 import org.kie.workbench.common.services.shared.project.KieModulePackages;
 import org.kie.workbench.common.services.shared.project.PackageItem;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.uberfire.backend.vfs.Path;
 import org.uberfire.backend.vfs.PathFactory;
 import org.uberfire.io.IOService;
@@ -46,11 +46,11 @@ import org.uberfire.rpc.SessionInfo;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(MockitoJUnitRunner.Silent.class)
 public class KieModuleServiceImplTest {
 
     @Mock

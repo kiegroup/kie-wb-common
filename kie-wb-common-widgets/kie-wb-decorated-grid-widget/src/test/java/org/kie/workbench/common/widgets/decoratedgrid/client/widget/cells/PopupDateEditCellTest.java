@@ -32,12 +32,13 @@ import org.kie.workbench.common.services.shared.preferences.ApplicationPreferenc
 import org.kie.workbench.common.widgets.client.util.TimeZoneUtils;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
+import org.mockito.Mockito;
 import org.uberfire.ext.widgets.common.client.common.DatePicker;
 
 import static org.junit.Assert.assertEquals;
 import static org.kie.workbench.common.services.shared.preferences.ApplicationPreferences.DATE_FORMAT;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.mock;
@@ -124,7 +125,7 @@ public class PopupDateEditCellTest {
 
         cell.commit();
 
-        verify(cell).setValue(any(Cell.Context.class), any(Element.class), eq(serverDate));
+        verify(cell).setValue(Mockito.<Cell.Context>any(), Mockito.<Element>any(), eq(serverDate));
         verify(valueUpdater).update(eq(serverDate));
     }
 
@@ -140,7 +141,7 @@ public class PopupDateEditCellTest {
 
         cell.commit();
 
-        verify(cell).setValue(any(Cell.Context.class), any(Element.class), eq(serverDate));
+        verify(cell).setValue(Mockito.<Cell.Context>any(), Mockito.<Element>any(), eq(serverDate));
         verify(valueUpdater, never()).update(any(Date.class));
     }
 

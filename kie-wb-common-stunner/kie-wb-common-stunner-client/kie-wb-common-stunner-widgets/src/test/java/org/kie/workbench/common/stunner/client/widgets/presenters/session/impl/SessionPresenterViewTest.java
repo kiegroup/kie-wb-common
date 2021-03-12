@@ -45,7 +45,7 @@ import static org.kie.workbench.common.stunner.client.widgets.resources.i18n.Stu
 import static org.kie.workbench.common.stunner.client.widgets.resources.i18n.StunnerWidgetsConstants.SessionPresenterView_Info;
 import static org.kie.workbench.common.stunner.client.widgets.resources.i18n.StunnerWidgetsConstants.SessionPresenterView_Notifications;
 import static org.kie.workbench.common.stunner.client.widgets.resources.i18n.StunnerWidgetsConstants.SessionPresenterView_Warning;
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -148,7 +148,7 @@ public class SessionPresenterViewTest extends AbstractCanvasHandlerViewerTest {
 
         when(tested.addDomHandler(any(),
                                   any())).thenAnswer((invocation -> {
-            handler = invocation.getArgumentAt(0,
+            handler = invocation.getArgument(0,
                                                ContextMenuHandler.class);
             return null;
         }));

@@ -20,7 +20,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -45,7 +44,7 @@ import org.kie.workbench.common.stunner.core.graph.command.GraphCommandExecution
 import org.kie.workbench.common.stunner.core.graph.command.GraphCommandResultBuilder;
 import org.kie.workbench.common.stunner.core.rule.RuleViolation;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.uberfire.ext.wires.core.grids.client.model.GridData;
 import org.uberfire.ext.wires.core.grids.client.model.impl.BaseGridRow;
 import org.uberfire.ext.wires.core.grids.client.widget.grid.columns.RowNumberColumn;
@@ -58,7 +57,7 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(MockitoJUnitRunner.Silent.class)
 public class AddOutputClauseCommandTest {
 
     @Mock
@@ -94,14 +93,6 @@ public class AddOutputClauseCommandTest {
     private DecisionTableUIModelMapper uiModelMapper;
 
     private AddOutputClauseCommand command;
-
-    @Before
-    public void doNotRunTestsOnJdkEleven() {
-
-        final String javaVersion = "11";
-        final String javaVersionPropertyKey = "java.version";
-        Assume.assumeFalse(System.getProperty(javaVersionPropertyKey).contains(javaVersion));
-    }
 
     @Before
     public void setUp() throws Exception {

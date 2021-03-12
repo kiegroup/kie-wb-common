@@ -19,7 +19,6 @@ package org.kie.workbench.common.stunner.bpmn.client.dataproviders;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Spliterators;
 import java.util.function.Function;
 
 import org.junit.Before;
@@ -37,7 +36,7 @@ import org.kie.workbench.common.stunner.core.graph.Graph;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -84,8 +83,6 @@ public abstract class AbstractProcessFilteredNodeProviderBaseTest {
     public void testGetSelectorDataWithNoValues() {
         @SuppressWarnings("unchecked")
         Iterable<Element> nodes = mock(Iterable.class);
-        when(graph.nodes()).thenReturn(nodes);
-        when(nodes.spliterator()).thenReturn(Spliterators.emptySpliterator());
         SelectorData selectorData = provider.getSelectorData(renderingContext);
         Map values = selectorData.getValues();
         assertTrue(values.isEmpty());

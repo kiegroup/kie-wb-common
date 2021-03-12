@@ -56,8 +56,8 @@ import org.uberfire.mvp.Command;
 import org.uberfire.mvp.ParameterizedCommand;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
@@ -207,7 +207,7 @@ public abstract class BaseDMNSessionTest<S extends AbstractSession<AbstractCanva
         session.init(metadata, callback);
 
         canvasControlRegistrations.values().forEach(c -> verify(managedSession).registerCanvasControl(eq(c)));
-        canvasHandlerControlRegistrations.values().forEach(c -> verify(managedSession).registerCanvasHandlerControl(eq(c), any(Class.class)));
+        canvasHandlerControlRegistrations.values().forEach(c -> verify(managedSession).registerCanvasHandlerControl(eq(c), Mockito.<Class>any()));
         assertInitQualifiers();
 
         verify(managedSession).init(eq(metadata), eq(callback));

@@ -31,14 +31,14 @@ import org.kie.workbench.common.stunner.core.backend.service.BackendFileSystemMa
 import org.kie.workbench.common.stunner.core.diagram.Metadata;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.uberfire.backend.vfs.Path;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -81,7 +81,6 @@ public class WorkItemDefinitionRemoteDeployServiceTest {
 
     @Before
     public void init() {
-        when(metadata.getRoot()).thenReturn(root);
         when(remoteLookupService.execute(any(WorkItemDefinitionRemoteRequest.class)))
                 .thenReturn(Collections.singleton(WID));
         tested = new WorkItemDefinitionRemoteDeployService(remoteLookupService,

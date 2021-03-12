@@ -17,7 +17,7 @@
 package org.kie.workbench.common.screens.server.management.client.remote;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -35,8 +35,9 @@ import org.kie.server.controller.api.model.runtime.ServerInstanceKey;
 import org.kie.workbench.common.screens.server.management.client.remote.card.ContainerCardPresenter;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.Spy;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import com.google.gwt.user.client.ui.Widget;
 
@@ -75,6 +76,6 @@ public class RemoteStatusPresenterTest {
         presenter.setup( Collections.singletonList( container ) );
 
         verify( containerCardPresenter ).setup( container );
-        verify( view ).addCard( any( Widget.class ) );
+        verify( view ).addCard(Mockito.<Widget>any() );
     }
 }

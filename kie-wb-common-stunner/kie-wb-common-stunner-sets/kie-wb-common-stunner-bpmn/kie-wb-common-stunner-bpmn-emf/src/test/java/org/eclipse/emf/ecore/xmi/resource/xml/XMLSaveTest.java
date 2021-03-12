@@ -29,11 +29,11 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -68,7 +68,7 @@ public class XMLSaveTest {
         tested.featureTable = this.featureTable;
         tested.handler = xmldomHandler;
         EStructuralFeature[] features = new EStructuralFeature[0];
-        when(featureTable.getFeatures(any(EClass.class))).thenReturn(features);
+        when(featureTable.getFeatures(any())).thenReturn(features);
     }
 
     /*
@@ -79,9 +79,9 @@ public class XMLSaveTest {
         BaseElementImpl obj = mock(BaseElementImpl.class);
         FormalExpression expression = mock(FormalExpression.class);
         when(currentNode.getParentNode()).thenReturn(currentNode);
-        when(xmlHelper.getID(any(EObject.class))).thenReturn(null);
+        when(xmlHelper.getID(any())).thenReturn(null);
         Attr attr = mock(Attr.class);
-        when(gwtDOMHandler.createAttributeNS(anyString(), anyString())).thenReturn(attr);
+        when(gwtDOMHandler.createAttributeNS(any(), any())).thenReturn(attr);
         tested.saveElementID(obj);
         tested.saveElementID(expression);
         ArgumentCaptor<String> idCaptor = ArgumentCaptor.forClass(String.class);

@@ -72,6 +72,7 @@ import org.kie.workbench.common.stunner.forms.client.event.RefreshFormProperties
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.uberfire.ext.wires.core.grids.client.model.GridColumn;
 import org.uberfire.ext.wires.core.grids.client.model.GridData;
 import org.uberfire.ext.wires.core.grids.client.model.GridRow;
@@ -86,11 +87,10 @@ import org.uberfire.mvp.Command;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertFalse;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyBoolean;
-import static org.mockito.Matchers.anyInt;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doCallRealMethod;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -517,7 +517,7 @@ public class UndefinedExpressionGridTest {
     public void testOnExpressionTypeChangedWhenNested() {
         assertOnExpressionTypeChanged(1);
 
-        verify(expressionGridCache, never()).getExpressionGrid(anyString());
+        verify(expressionGridCache, never()).getExpressionGrid(Mockito.<String>any());
 
         verify(domainObjectSelectionEvent).fire(domainObjectSelectionArgumentEventCaptor.capture());
         final DomainObjectSelectionEvent domainObjectSelectionEvent = domainObjectSelectionArgumentEventCaptor.getValue();

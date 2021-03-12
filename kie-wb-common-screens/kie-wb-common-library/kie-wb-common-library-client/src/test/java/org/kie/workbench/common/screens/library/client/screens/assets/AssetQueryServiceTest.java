@@ -25,7 +25,7 @@ import org.junit.runner.RunWith;
 import org.kie.workbench.common.screens.library.api.LibraryService;
 import org.kie.workbench.common.screens.library.api.ProjectAssetsQuery;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
@@ -58,8 +58,8 @@ public class AssetQueryServiceTest {
 
         when(caller.call(any(), any()))
         .then(inv -> {
-            remoteCallbacks.add(inv.getArgumentAt(0, RemoteCallback.class));
-            errorCallbacks.add(inv.getArgumentAt(1, ErrorCallback.class));
+            remoteCallbacks.add(inv.getArgument(0, RemoteCallback.class));
+            errorCallbacks.add(inv.getArgument(1, ErrorCallback.class));
 
             return libraryService;
         });

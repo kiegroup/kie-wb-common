@@ -35,7 +35,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.invocation.InvocationOnMock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
 import org.slf4j.Logger;
 import org.uberfire.mocks.CallerMock;
@@ -89,7 +89,7 @@ public class ContainerRulesConfigPresenterTest {
         doAnswer(new Answer() {
             @Override
             public Object answer(InvocationOnMock invocation) throws Throwable {
-                releaseId.setVersion(invocation.getArgumentAt(1,
+                releaseId.setVersion(invocation.getArgument(1,
                                                               ReleaseId.class).getVersion());
                 return null;
             }

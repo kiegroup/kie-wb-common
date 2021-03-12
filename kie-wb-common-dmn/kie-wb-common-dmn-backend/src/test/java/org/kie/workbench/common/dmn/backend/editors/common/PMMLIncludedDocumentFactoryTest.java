@@ -32,7 +32,7 @@ import org.kie.workbench.common.dmn.api.editors.included.PMMLIncludedModel;
 import org.kie.workbench.common.dmn.api.editors.included.PMMLModelMetadata;
 import org.kie.workbench.common.dmn.api.editors.included.PMMLParameterMetadata;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.uberfire.backend.vfs.Path;
 import org.uberfire.io.IOService;
 import org.uberfire.java.nio.file.NoSuchFileException;
@@ -40,13 +40,13 @@ import org.uberfire.java.nio.file.NoSuchFileException;
 import static java.util.Comparator.comparing;
 import static java.util.Comparator.naturalOrder;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(MockitoJUnitRunner.Silent.class)
 public class PMMLIncludedDocumentFactoryTest {
 
     private static final String URI = "pmmlFileURI";

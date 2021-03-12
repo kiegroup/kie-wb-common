@@ -34,6 +34,7 @@ import org.kie.workbench.common.widgets.metadata.client.validation.AssetUpdateVa
 import org.kie.workbench.common.widgets.metadata.client.widget.OverviewWidgetPresenter;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.Spy;
 import org.uberfire.backend.vfs.ObservablePath;
 import org.uberfire.backend.vfs.Path;
@@ -46,8 +47,8 @@ import org.uberfire.promise.SyncPromises;
 import org.uberfire.workbench.events.NotificationEvent;
 import org.uberfire.workbench.model.menu.MenuItem;
 
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -129,13 +130,13 @@ public class GuvnorDefaultEditorPresenterTest {
 
         presenter.makeMenuBar();
 
-        verify(fileMenuBuilder).addSave(any(MenuItem.class));
-        verify(fileMenuBuilder).addCopy(any(Path.class),
-                                        any(AssetUpdateValidator.class));
-        verify(fileMenuBuilder).addRename(any(Path.class),
-                                          any(AssetUpdateValidator.class));
-        verify(fileMenuBuilder).addDelete(any(Path.class),
-                                          any(AssetUpdateValidator.class));
+        verify(fileMenuBuilder).addSave(Mockito.<MenuItem>any());
+        verify(fileMenuBuilder).addCopy(Mockito.<Path>any(),
+                                        Mockito.<AssetUpdateValidator>any());
+        verify(fileMenuBuilder).addRename(Mockito.<Path>any(),
+                                          Mockito.<AssetUpdateValidator>any());
+        verify(fileMenuBuilder).addDelete(Mockito.<Path>any(),
+                                          Mockito.<AssetUpdateValidator>any());
         verify(fileMenuBuilder).addNewTopLevelMenu(alertsButtonMenuItem);
         verify(presenter).addDownloadMenuItem(fileMenuBuilder);
     }
@@ -162,14 +163,14 @@ public class GuvnorDefaultEditorPresenterTest {
         presenter.makeMenuBar();
 
         verify(fileMenuBuilder,
-               never()).addCopy(any(Path.class),
-                                any(AssetUpdateValidator.class));
+               never()).addCopy(Mockito.<Path>any(),
+                                Mockito.<AssetUpdateValidator>any());
         verify(fileMenuBuilder,
-               never()).addRename(any(Path.class),
-                                  any(AssetUpdateValidator.class));
+               never()).addRename(Mockito.<Path>any(),
+                                  Mockito.<AssetUpdateValidator>any());
         verify(fileMenuBuilder,
-               never()).addDelete(any(Path.class),
-                                  any(AssetUpdateValidator.class));
+               never()).addDelete(Mockito.<Path>any(),
+                                  Mockito.<AssetUpdateValidator>any());
         verify(fileMenuBuilder).addNewTopLevelMenu(alertsButtonMenuItem);
         verify(presenter).addDownloadMenuItem(fileMenuBuilder);
     }

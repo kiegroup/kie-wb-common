@@ -52,7 +52,7 @@ import org.kie.workbench.common.stunner.core.graph.impl.NodeImpl;
 import org.kie.workbench.common.stunner.core.graph.store.GraphNodeStoreImpl;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.junit.Assert.assertEquals;
@@ -68,14 +68,14 @@ import static org.kie.workbench.common.stunner.core.TestingGraphInstanceBuilder2
 import static org.kie.workbench.common.stunner.core.TestingGraphInstanceBuilder2.NODES.LEVEL2_NODE1;
 import static org.kie.workbench.common.stunner.core.TestingGraphInstanceBuilder2.NODES.LEVEL2_NODE2;
 import static org.kie.workbench.common.stunner.core.TestingGraphInstanceBuilder2.NODES.LEVEL2_SUB_PROCESS1;
-import static org.mockito.Matchers.anyObject;
+import static org.mockito.ArgumentMatchers.anyObject;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(MockitoJUnitRunner.Silent.class)
 public class ProcessConverterDelegateTest {
 
     @Captor

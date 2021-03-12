@@ -42,7 +42,7 @@ import static org.kie.workbench.common.screens.projecteditor.client.build.exec.i
 import static org.kie.workbench.common.screens.projecteditor.client.build.exec.impl.util.BuildExecutionTestConstants.GROUP;
 import static org.kie.workbench.common.screens.projecteditor.client.build.exec.impl.util.BuildExecutionTestConstants.SNAPSHOT;
 import static org.kie.workbench.common.screens.projecteditor.client.build.exec.impl.util.BuildExecutionTestConstants.VERSION;
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.argThat;
 import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.mock;
@@ -113,7 +113,7 @@ public abstract class AbstractExecutorTest<RUNNER extends AbstractExecutor> {
     protected void verifyNotification(final String message, final NotificationEvent.NotificationType type) {
         verify(notificationEvent).fire(argThat(new ArgumentMatcher<NotificationEvent>() {
             @Override
-            public boolean matches(final Object argument) {
+            public boolean matches(final NotificationEvent argument) {
                 final NotificationEvent event = (NotificationEvent) argument;
                 final String notification = event.getNotification();
 

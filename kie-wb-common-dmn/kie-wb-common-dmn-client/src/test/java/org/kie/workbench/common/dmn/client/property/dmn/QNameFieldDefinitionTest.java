@@ -22,11 +22,11 @@ import org.junit.runner.RunWith;
 import org.kie.workbench.common.forms.model.FieldDefinition;
 import org.kie.workbench.common.forms.model.HasPlaceHolder;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.Mockito;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
@@ -72,7 +72,7 @@ public class QNameFieldDefinitionTest {
         final FieldDefinition other = mock(FieldDefinition.class);
         definition.doCopyFrom(other);
 
-        verify(definition, never()).setPlaceHolder(anyString());
+        verify(definition, never()).setPlaceHolder(Mockito.<String>any());
     }
 
     public interface PlaceHolderFieldDefinition extends FieldDefinition,

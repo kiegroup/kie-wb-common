@@ -26,7 +26,6 @@ import org.eclipse.bpmn2.di.BPMNEdge;
 import org.eclipse.bpmn2.di.BPMNShape;
 import org.eclipse.dd.dc.Bounds;
 import org.eclipse.dd.dc.Point;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.fromstunner.properties.BasePropertyWriter;
@@ -40,7 +39,7 @@ import org.kie.workbench.common.stunner.core.graph.content.view.Point2D;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
 import org.kie.workbench.common.stunner.core.graph.content.view.ViewConnector;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -65,12 +64,6 @@ public class PropertyWriterUtilsTest {
 
     @Mock
     private BaseElement targetElement;
-
-    @Before
-    public void setUp() {
-        when(sourceWriter.getElement()).thenReturn(sourceElement);
-        when(targetWriter.getElement()).thenReturn(targetElement);
-    }
 
     @Test
     public void testCreateBPMNEdge() {
@@ -125,8 +118,6 @@ public class PropertyWriterUtilsTest {
         Bounds bounds = mock(Bounds.class);
         when(bounds.getX()).thenReturn(x);
         when(bounds.getY()).thenReturn(y);
-        when(bounds.getHeight()).thenReturn(height);
-        when(bounds.getWidth()).thenReturn(width);
         when(shape.getBounds()).thenReturn(bounds);
         return shape;
     }

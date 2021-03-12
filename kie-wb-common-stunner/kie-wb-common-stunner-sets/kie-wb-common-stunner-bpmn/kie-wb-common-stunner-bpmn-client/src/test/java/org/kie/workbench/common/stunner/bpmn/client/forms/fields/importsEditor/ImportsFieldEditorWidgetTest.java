@@ -31,16 +31,16 @@ import org.kie.workbench.common.stunner.bpmn.client.forms.fields.importsEditor.p
 import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.imports.DefaultImport;
 import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.imports.ImportsValue;
 import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.imports.WSDLImport;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyBoolean;
-import static org.mockito.Matchers.anyInt;
-import static org.mockito.Matchers.anyString;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doCallRealMethod;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -65,20 +65,20 @@ public class ImportsFieldEditorWidgetTest {
         tested.importsTextBox = mock(TextBox.class);
 
         doCallRealMethod().when(tested).getValue();
-        doCallRealMethod().when(tested).setValue(any(ImportsValue.class));
-        doCallRealMethod().when(tested).setValue(any(ImportsValue.class), anyBoolean());
+        doCallRealMethod().when(tested).setValue(any());
+        doCallRealMethod().when(tested).setValue(any(), anyBoolean());
 
-        doCallRealMethod().when(tested).setImportsCount(any(ImportsValue.class));
+        doCallRealMethod().when(tested).setImportsCount(any());
         doCallRealMethod().when(tested).buildImportsCountString(anyInt(), anyInt());
         doCallRealMethod().when(tested).buildDefaultImportsCountString(anyInt());
         doCallRealMethod().when(tested).buildWSDLImportsCountString(anyInt());
 
-        doCallRealMethod().when(tested).copyImportsValue(any(ImportsValue.class));
+        doCallRealMethod().when(tested).copyImportsValue(any());
 
         doCallRealMethod().when(tested).showImportsEditor();
 
-        doCallRealMethod().when(tested).onClickImportsButton(any(ClickEvent.class));
-        doCallRealMethod().when(tested).onClickImportsTextBox(any(ClickEvent.class));
+        doCallRealMethod().when(tested).onClickImportsButton(any());
+        doCallRealMethod().when(tested).onClickImportsTextBox(any());
     }
 
     @Test
@@ -94,7 +94,7 @@ public class ImportsFieldEditorWidgetTest {
         ImportsValue importsValue = createImportsValue(3, 3);
         tested.setValue(importsValue);
 
-        verify(tested, times(1)).copyImportsValue(any(ImportsValue.class));
+        verify(tested, times(1)).copyImportsValue(any());
         assertEquals(tested.importsValue, importsValue);
         verify(tested, times(1)).setImportsCount(importsValue);
     }

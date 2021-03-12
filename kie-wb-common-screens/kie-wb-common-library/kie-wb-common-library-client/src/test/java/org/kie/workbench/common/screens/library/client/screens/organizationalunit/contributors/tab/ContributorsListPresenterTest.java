@@ -30,11 +30,11 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InOrder;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.uberfire.client.promise.Promises;
 import org.uberfire.promise.SyncPromises;
 
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -81,13 +81,13 @@ public class ContributorsListPresenterTest {
         contributors.add(new Contributor("user", ContributorType.CONTRIBUTOR));
         contributors.add(new Contributor("Director", ContributorType.ADMIN));
         doAnswer(invocationOnMock -> {
-            invocationOnMock.getArgumentAt(0, Consumer.class).accept(contributors);
+            invocationOnMock.getArgument(0, Consumer.class).accept(contributors);
             return null;
         }).when(contributorsListService).getContributors(any());
 
         final List<String> userNames = Arrays.asList("admin", "user", "Director");
         doAnswer(invocationOnMock -> {
-            invocationOnMock.getArgumentAt(0, Consumer.class).accept(userNames);
+            invocationOnMock.getArgument(0, Consumer.class).accept(userNames);
             return null;
         }).when(contributorsListService).getValidUsernames(any());
     }

@@ -23,7 +23,7 @@
   <parent>
     <artifactId>kie-wb-common-stunner-bpmn</artifactId>
     <groupId>org.kie.workbench.stunner</groupId>
-    <version>7.49.0-SNAPSHOT</version>
+    <version>7.52.0-SNAPSHOT</version>
   </parent>
 
   <artifactId>kie-wb-common-stunner-bpmn-project-showcase</artifactId>
@@ -1270,6 +1270,8 @@
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>gwt-maven-plugin</artifactId>
         <configuration>
+          <!-- Temporary disabling this gwt compilation as the CI environment complains about too many arguments when running the java process. -->
+          <skip>true</skip>
           <deploy>${project.build.directory}/gwt-symbols-deploy</deploy>
           <extraJvmArgs>-Xmx6G -Xms1G -Xss1M -XX:CompileThreshold=7000 -Derrai.jboss.home=${errai.jboss.home} -Derrai.marshalling.server.classOutput=${project.build.outputDirectory} -Derrai.dynamic_validation.enabled=true</extraJvmArgs>
           <module>org.kie.workbench.common.stunner.project.StunnerProjectShowcase</module>

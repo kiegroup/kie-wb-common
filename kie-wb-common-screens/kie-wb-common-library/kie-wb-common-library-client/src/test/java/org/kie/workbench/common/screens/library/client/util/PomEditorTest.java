@@ -37,6 +37,7 @@ import org.kie.workbench.common.widgets.client.resources.i18n.CommonConstants;
 import org.kie.workbench.common.widgets.metadata.client.widget.OverviewWidgetPresenter;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.uberfire.backend.vfs.ObservablePath;
 import org.uberfire.backend.vfs.Path;
 import org.uberfire.ext.editor.commons.client.history.VersionRecordManager;
@@ -48,8 +49,8 @@ import org.uberfire.mvp.PlaceRequest;
 import org.uberfire.workbench.events.NotificationEvent;
 
 import static org.junit.Assert.assertNotNull;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -128,9 +129,9 @@ public class PomEditorTest {
         presenter.save(comment);
 
         verify(service,
-               times(1)).save(any(ObservablePath.class),
+               times(1)).save(Mockito.<ObservablePath> any(),
                               eq(pomXml),
-                              any(Metadata.class),
+                              Mockito.<Metadata> any(),
                               eq(comment),
                               eq(DeploymentMode.VALIDATED));
         verify(view,
@@ -142,18 +143,18 @@ public class PomEditorTest {
     @Test
     public void testSaveInvalid() {
         doThrow(new InvalidPomException(10, 10))
-                .when(service).save(any(ObservablePath.class),
+                .when(service).save(Mockito.<ObservablePath> any(),
                                     eq(pomXml),
-                                    any(Metadata.class),
+                                    Mockito.<Metadata> any(),
                                     eq(comment),
                                     eq(DeploymentMode.VALIDATED));
 
         presenter.save(comment);
 
         verify(service,
-               times(1)).save(any(ObservablePath.class),
+               times(1)).save(Mockito.<ObservablePath> any(),
                               eq(pomXml),
-                              any(Metadata.class),
+                              Mockito.<Metadata> any(),
                               eq(comment),
                               eq(DeploymentMode.VALIDATED));
 
@@ -170,18 +171,18 @@ public class PomEditorTest {
     public void testSaveClashingGAV() {
         final GAVAlreadyExistsException gae = new GAVAlreadyExistsException(gav,
                                                                             Collections.<MavenRepositoryMetadata>emptySet());
-        doThrow(gae).when(service).save(any(ObservablePath.class),
+        doThrow(gae).when(service).save(Mockito.<ObservablePath> any(),
                                         eq(pomXml),
-                                        any(Metadata.class),
+                                        Mockito.<Metadata> any(),
                                         eq(comment),
                                         eq(DeploymentMode.VALIDATED));
 
         presenter.save(comment);
 
         verify(service,
-               times(1)).save(any(ObservablePath.class),
+               times(1)).save(Mockito.<ObservablePath> any(),
                               eq(pomXml),
-                              any(Metadata.class),
+                              Mockito.<Metadata> any(),
                               eq(comment),
                               eq(DeploymentMode.VALIDATED));
         verify(view,
@@ -204,9 +205,9 @@ public class PomEditorTest {
         commandArgumentCaptor.getValue().execute();
 
         verify(service,
-               times(1)).save(any(ObservablePath.class),
+               times(1)).save(Mockito.<ObservablePath> any(),
                               eq(pomXml),
-                              any(Metadata.class),
+                              Mockito.<Metadata> any(),
                               eq(comment),
                               eq(DeploymentMode.FORCED));
         //We attempted to save the POM twice

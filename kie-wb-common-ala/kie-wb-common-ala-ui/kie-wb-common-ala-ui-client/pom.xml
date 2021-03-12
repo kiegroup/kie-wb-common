@@ -23,7 +23,7 @@
   <parent>
     <groupId>org.kie.workbench</groupId>
     <artifactId>kie-wb-common-ala-ui</artifactId>
-    <version>7.49.0-SNAPSHOT</version>
+    <version>7.52.0-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
@@ -37,6 +37,10 @@
   </properties>
 
   <dependencies>
+    <dependency>
+      <groupId>javax.annotation</groupId>
+      <artifactId>javax.annotation-api</artifactId>
+    </dependency>
 
     <dependency>
       <groupId>com.google.gwt</groupId>
@@ -152,7 +156,7 @@
 
     <dependency>
       <groupId>org.powermock</groupId>
-      <artifactId>powermock-api-mockito</artifactId>
+      <artifactId>powermock-api-mockito2</artifactId>
       <scope>test</scope>
     </dependency>
 

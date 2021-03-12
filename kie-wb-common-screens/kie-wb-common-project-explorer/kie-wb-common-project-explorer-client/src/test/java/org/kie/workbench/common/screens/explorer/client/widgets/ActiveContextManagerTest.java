@@ -34,7 +34,8 @@ import org.kie.workbench.common.screens.explorer.service.ProjectExplorerContentQ
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.Mockito;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.uberfire.mocks.CallerMock;
 import org.uberfire.mocks.EventSourceMock;
 
@@ -118,7 +119,7 @@ public class ActiveContextManagerTest {
 
         final ProjectExplorerContent projectExplorerContent = mock(ProjectExplorerContent.class);
         doReturn(projectExplorerContent).when(explorerService).getContent(eq("path"),
-                                                                          any(ActiveOptions.class));
+                                                                          Mockito.<ActiveOptions>any());
 
         activeContextManager.initActiveContext("path");
 

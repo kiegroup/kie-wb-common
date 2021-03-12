@@ -19,13 +19,11 @@ package org.kie.workbench.common.stunner.bpmn.client.forms.fields.importsEditor.
 import java.util.Map;
 import java.util.TreeMap;
 
-import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.google.gwt.event.dom.client.KeyDownHandler;
 import com.google.gwtmockito.GwtMock;
 import com.google.gwtmockito.GwtMockito;
 import org.gwtbootstrap3.client.ui.Button;
-import org.gwtbootstrap3.client.ui.TextBox;
 import org.gwtbootstrap3.client.ui.ValueListBox;
 import org.jboss.errai.databinding.client.api.DataBinder;
 import org.junit.Before;
@@ -38,14 +36,14 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.imports
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.kie.workbench.common.stunner.bpmn.client.forms.fields.importsEditor.popup.editor.defaultImport.DefaultImportListItemWidgetView.CUSTOM_PROMPT;
 import static org.kie.workbench.common.stunner.bpmn.client.forms.fields.importsEditor.popup.editor.defaultImport.DefaultImportListItemWidgetView.ENTER_TYPE_PROMPT;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doCallRealMethod;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -105,14 +103,14 @@ public class DefaultImportListItemWidgetViewTest {
         doCallRealMethod().when(tested).init();
         doCallRealMethod().when(tested).initListItem();
         doCallRealMethod().when(tested).getModel();
-        doCallRealMethod().when(tested).setModel(any(DefaultImport.class));
-        doCallRealMethod().when(tested).getModelValue(any(ValueListBox.class));
-        doCallRealMethod().when(tested).setTextBoxModelValue(any(TextBox.class),
+        doCallRealMethod().when(tested).setModel(any());
+        doCallRealMethod().when(tested).getModelValue(any());
+        doCallRealMethod().when(tested).setTextBoxModelValue(any(),
                                                              anyString());
-        doCallRealMethod().when(tested).setListBoxModelValue(any(ValueListBox.class),
+        doCallRealMethod().when(tested).setListBoxModelValue(any(),
                                                              anyString());
-        doCallRealMethod().when(tested).setParentWidget(any(DefaultImportsEditorWidget.class));
-        doCallRealMethod().when(tested).handleDeleteButton(any(ClickEvent.class));
+        doCallRealMethod().when(tested).setParentWidget(any());
+        doCallRealMethod().when(tested).handleDeleteButton(any());
 
         DefaultImport defaultImport = new DefaultImport();
         doReturn(defaultImport).when(defaultImportDataBinder).getModel();

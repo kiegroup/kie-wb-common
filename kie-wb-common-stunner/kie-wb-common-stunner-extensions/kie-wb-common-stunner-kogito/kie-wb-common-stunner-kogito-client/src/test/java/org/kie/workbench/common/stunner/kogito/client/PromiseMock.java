@@ -21,9 +21,8 @@ import java.util.function.Supplier;
 import elemental2.promise.IThenable;
 import elemental2.promise.Promise;
 
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doAnswer;
-import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 
 public class PromiseMock<T> {
@@ -45,8 +44,6 @@ public class PromiseMock<T> {
     @SuppressWarnings("unchecked")
     public PromiseMock() {
         this.promise = mock(Promise.class);
-        doReturn(promise).when(promise).then(any(IThenable.ThenOnFulfilledCallbackFn.class));
-        doReturn(promise).when(promise).catch_(any(Promise.CatchOnRejectedCallbackFn.class));
     }
 
     @SuppressWarnings("unchecked")

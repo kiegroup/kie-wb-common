@@ -29,14 +29,12 @@ import org.kie.workbench.common.stunner.core.registry.definition.AdapterRegistry
 import org.kie.workbench.common.stunner.core.registry.definition.TypeDefinitionSetRegistry;
 import org.kie.workbench.common.stunner.core.registry.factory.FactoryRegistry;
 import org.kie.workbench.common.stunner.core.registry.impl.DefaultDefinitionsCacheRegistry;
-import org.kie.workbench.common.stunner.core.rule.RuleEvaluationContext;
 import org.kie.workbench.common.stunner.core.rule.RuleManager;
-import org.kie.workbench.common.stunner.core.rule.RuleSet;
 import org.kie.workbench.common.stunner.core.util.DefinitionUtils;
 
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyObject;
-import static org.mockito.Matchers.anyString;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyObject;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
@@ -90,7 +88,7 @@ public class StunnerTestingMockAPI extends StunnerTestingAPI {
         when(adapterRegistry.getDefinitionAdapter(any(Class.class))).thenReturn(definitionAdapter);
         when(adapterRegistry.getPropertyAdapter(any(Class.class))).thenReturn(propertyAdapter);
         when(adapterRegistry.getDefinitionSetRuleAdapter(any(Class.class))).thenReturn(ruleAdapter);
-        when(ruleManager.evaluate(any(RuleSet.class),
-                                  any(RuleEvaluationContext.class))).thenReturn(DEFAULT_RULE_VIOLATIONS);
+        when(ruleManager.evaluate(any(),
+                                  any())).thenReturn(DEFAULT_RULE_VIOLATIONS);
     }
 }

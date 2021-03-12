@@ -38,9 +38,9 @@ import org.kie.workbench.common.stunner.core.client.session.command.impl.VisitGr
 import org.kie.workbench.common.stunner.kogito.client.session.EditorSessionCommands;
 import org.kie.workbench.common.stunner.kogito.client.session.EditorSessionCommandsTest;
 import org.mockito.InOrder;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.verify;
 

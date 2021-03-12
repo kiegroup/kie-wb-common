@@ -33,7 +33,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.stunner.core.graph.content.Bounds;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import static org.junit.Assert.assertEquals;
 import static org.kie.workbench.common.stunner.bpmn.client.marshall.converters.TestUtils.mockBounds;
@@ -132,7 +132,6 @@ public class BoundaryEventPropertyReaderTest extends CatchEventPropertyReaderTes
         when(sourceActivity.getId()).thenReturn(activityId);
         when(sourceActivityShape.getBounds()).thenReturn(activityBounds);
         when(definitionResolver.getShape(activityId)).thenReturn(sourceActivityShape);
-        when(definitionResolver.getResolutionFactor()).thenReturn(1d);
         when(boundaryEvent.getAttachedToRef()).thenReturn(sourceActivity);
 
         float eventWidth = 56;

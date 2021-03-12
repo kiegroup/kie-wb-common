@@ -30,9 +30,9 @@ import org.mockito.Mock;
 import org.uberfire.mvp.Command;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
@@ -94,7 +94,7 @@ public class InlineTextEditorBoxViewImplTest {
         doAnswer(i -> {
             ((Scheduler.ScheduledCommand) i.getArguments()[0]).execute();
             return null;
-        }).when(tested).scheduleDeferredCommand(any(Scheduler.ScheduledCommand.class));
+        }).when(tested).scheduleDeferredCommand(any());
     }
 
     @Test
@@ -111,7 +111,7 @@ public class InlineTextEditorBoxViewImplTest {
         tested.onChangeName(event);
 
         verify(presenter,
-               times(1)).onChangeName(anyString());
+               times(1)).onChangeName(any());
         verify(presenter,
                times(1)).onSave();
     }
@@ -198,7 +198,7 @@ public class InlineTextEditorBoxViewImplTest {
         tested.onChangeName(event);
 
         verify(presenter,
-               times(1)).onChangeName(anyString());
+               times(1)).onChangeName(any());
         verify(presenter,
                times(1)).onSave();
     }

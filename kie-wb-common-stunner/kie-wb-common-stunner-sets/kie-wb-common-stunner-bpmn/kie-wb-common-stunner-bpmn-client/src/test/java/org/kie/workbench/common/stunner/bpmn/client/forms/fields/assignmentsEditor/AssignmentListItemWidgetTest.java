@@ -46,7 +46,7 @@ import org.mockito.Mockito;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.anyBoolean;
 import static org.mockito.Mockito.anyString;
@@ -339,7 +339,7 @@ public class AssignmentListItemWidgetTest {
                                                                   ActivityDataIOEditorViewImpl.EXPRESSION_MAX_DISPLAY_LENGTH);
         processVarComboBox.setAddCustomValues(true);
         processVarComboBox.setListBoxValues(processVarListBoxValues);
-        String sConstant = "\"abcdeabcde12345\"";
+        String sConstant = "\"abcdeabcdeabcdeabcdeabcdeabcdeabcdeabcdeabcdeabcdeabcdeabcde1234567890\"";
         widget.setExpression(sConstant);
         widget.setProcessVariables(processVarListBoxValues);
         verify(processVarComboBox,
@@ -348,6 +348,6 @@ public class AssignmentListItemWidgetTest {
                times(2)).setListBoxValues(any(ListBoxValues.class));
         verify(processVarComboBox).addCustomValueToListBoxValues(sConstant,
                                                                  "");
-        verify(processVar).setValue("\"abcdeabcde...\"");
+        verify(processVar).setValue("\"abcdeabcdeabcdeabcdeabcdeabcdeabcdeabcdeabcdeabcdeabcdeabcde12345...\"");
     }
 }

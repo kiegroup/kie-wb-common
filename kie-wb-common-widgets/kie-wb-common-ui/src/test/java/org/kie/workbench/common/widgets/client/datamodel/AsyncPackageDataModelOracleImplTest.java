@@ -51,8 +51,8 @@ import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.anyList;
 import static org.mockito.Mockito.mock;
@@ -556,7 +556,9 @@ public class AsyncPackageDataModelOracleImplTest {
         Callback<String[]> callback = spy(new Callback<String[]>() {
             @Override
             public void callback(String[] result) {
-                assertArrayEquals(new String[]{"==", "!=", "<", ">", "<=", ">=", "matches", "not matches", "soundslike", "not soundslike", "== null", "!= null", "in", "not in"},
+                assertArrayEquals(new String[]{"==", "!=", "<", ">", "<=", ">=", "contains", "not contains",
+                                          "matches", "not matches", "soundslike", "not soundslike",
+                                          "== null", "!= null", "in", "not in"},
                                   result);
             }
         });

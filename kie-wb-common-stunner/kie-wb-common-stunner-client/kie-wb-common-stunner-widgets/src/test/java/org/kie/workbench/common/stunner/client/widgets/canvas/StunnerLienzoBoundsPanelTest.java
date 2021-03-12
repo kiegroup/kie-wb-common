@@ -23,7 +23,6 @@ import com.ait.lienzo.client.widget.panel.LienzoPanel;
 import com.ait.lienzo.test.LienzoMockitoTestRunner;
 import com.google.gwt.event.dom.client.MouseDownHandler;
 import com.google.gwt.event.dom.client.MouseUpHandler;
-import com.google.gwt.event.shared.HandlerRegistration;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -45,8 +44,8 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -110,7 +109,7 @@ public class StunnerLienzoBoundsPanelTest {
         verify(view, times(1)).setPresenter(eq(tested));
         verify(lienzoPanel, times(1)).addMouseDownHandler(any(MouseDownHandler.class));
         verify(lienzoPanel, times(1)).addMouseUpHandler(any(MouseUpHandler.class));
-        verify(handlerRegistrationManager, times(2)).register(any(HandlerRegistration.class));
+        verify(handlerRegistrationManager, times(2)).register(any());
     }
 
     @Test
