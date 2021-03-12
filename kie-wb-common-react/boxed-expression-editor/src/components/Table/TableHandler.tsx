@@ -160,7 +160,7 @@ export const TableHandler: React.FunctionComponent<TableHandlerProps> = ({
         shouldClose={() => setShowTableHandler(false)}
         shouldOpen={(showFunction) => showFunction?.()}
         reference={() => tableHandlerTarget}
-        appendTo={globalContext.boxedExpressionEditorRef.current!}
+        appendTo={globalContext?.boxedExpressionEditorRef?.current ?? undefined}
         bodyContent={
           <TableHandlerMenu
             handlerConfiguration={handlerConfiguration}
