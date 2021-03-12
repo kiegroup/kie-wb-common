@@ -48,7 +48,7 @@ const BoxedExpressionEditor: (props: BoxedExpressionEditorProps) => JSX.Element 
       ctx={BoxedExpressionEditorI18nContext}
     >
       <BoxedExpressionGlobalContext.Provider
-        value={{ currentlyOpenedHandlerCallback, setCurrentlyOpenedHandlerCallback }}
+        value={{ boxedExpressionEditorRef, currentlyOpenedHandlerCallback, setCurrentlyOpenedHandlerCallback }}
       >
         <div className="boxed-expression-editor" ref={boxedExpressionEditorRef}>
           <ExpressionContainer {...props.expressionDefinition} />
