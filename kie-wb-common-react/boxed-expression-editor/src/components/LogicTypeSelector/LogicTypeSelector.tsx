@@ -129,6 +129,7 @@ export const LogicTypeSelector: React.FunctionComponent<LogicTypeSelectorProps> 
       <PopoverMenu
         title={i18n.selectLogicType}
         arrowPlacement={getLogicSelectionArrowPlacement}
+        appendTo={getLogicSelectionArrowPlacement}
         className="logic-type-popover"
         hasAutoWidth
         body={

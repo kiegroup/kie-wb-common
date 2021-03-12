@@ -15,12 +15,13 @@
  */
 
 import * as React from "react";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { DataType, TableHandlerConfiguration, TableOperation } from "../../api";
 import * as _ from "lodash";
 import { Column, ColumnInstance, DataRecord } from "react-table";
 import { Popover } from "@patternfly/react-core";
 import { TableHandlerMenu } from "./TableHandlerMenu";
+import { BoxedExpressionGlobalContext } from "../../context";
 
 export interface TableHandlerProps {
   /** The prefix to be used for the column name */
@@ -63,6 +64,8 @@ export const TableHandler: React.FunctionComponent<TableHandlerProps> = ({
   handlerConfiguration,
   tableHandlerAllowedOperations,
 }) => {
+  const globalContext = useContext(BoxedExpressionGlobalContext);
+
   const [selectedColumnIndex, setSelectedColumnIndex] = useState(lastSelectedColumnIndex);
   const [selectedRowIndex, setSelectedRowIndex] = useState(lastSelectedRowIndex);
 
@@ -157,6 +160,7 @@ export const TableHandler: React.FunctionComponent<TableHandlerProps> = ({
         shouldClose={() => setShowTableHandler(false)}
         shouldOpen={(showFunction) => showFunction?.()}
         reference={() => tableHandlerTarget}
+        appendTo={globalContext.boxedExpressionEditorRef.current!}
         bodyContent={
           <TableHandlerMenu
             handlerConfiguration={handlerConfiguration}
@@ -168,6 +172,7 @@ export const TableHandler: React.FunctionComponent<TableHandlerProps> = ({
     ),
     [
       showTableHandler,
+      globalContext.boxedExpressionEditorRef,
       handlerConfiguration,
       tableHandlerAllowedOperations,
       handlingOperation,
