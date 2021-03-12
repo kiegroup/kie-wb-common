@@ -15,9 +15,10 @@
  */
 
 import * as React from "react";
-import { useState } from "react";
-import "@patternfly/react-core/dist/styles/base.css";
+import { useRef, useState } from "react";
+import "@patternfly/react-core/dist/styles/base-no-reset.css";
 import "@patternfly/react-styles/css/components/Drawer/drawer.css";
+import "./BoxedExpressionEditor.css";
 import { I18nDictionariesProvider } from "@kogito-tooling/i18n/dist/react-components";
 import { ExpressionContainer, ExpressionContainerProps } from "../ExpressionContainer";
 import {
@@ -37,6 +38,7 @@ const BoxedExpressionEditor: (props: BoxedExpressionEditorProps) => JSX.Element 
   props: BoxedExpressionEditorProps
 ) => {
   const [currentlyOpenedHandlerCallback, setCurrentlyOpenedHandlerCallback] = useState(() => _.identity);
+  const boxedExpressionEditorRef = useRef<HTMLDivElement>(null);
 
   return (
     <I18nDictionariesProvider
@@ -48,7 +50,9 @@ const BoxedExpressionEditor: (props: BoxedExpressionEditorProps) => JSX.Element 
       <BoxedExpressionGlobalContext.Provider
         value={{ currentlyOpenedHandlerCallback, setCurrentlyOpenedHandlerCallback }}
       >
-        <ExpressionContainer {...props.expressionDefinition} />
+        <div className="boxed-expression-editor" ref={boxedExpressionEditorRef}>
+          <ExpressionContainer {...props.expressionDefinition} />
+        </div>
       </BoxedExpressionGlobalContext.Provider>
     </I18nDictionariesProvider>
   );
