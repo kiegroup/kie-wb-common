@@ -17,7 +17,7 @@
 .showcase {
   display: flex;
   flex-direction: column;
-  padding: 2em;
+  padding: 1.5em;
 }
 
 .showcase .boxed-expression {
@@ -36,4 +36,5 @@
 .showcase .updated-json .disclaimer {
   font-style: italic;
   color: #4d5258;
+  margin: 0;
 }
