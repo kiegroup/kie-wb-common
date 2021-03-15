@@ -47,13 +47,6 @@
   position: static;
 }
 
-.expression-container .table-component table th .header-cell .header-cell-info {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-}
-
 .expression-container .table-component table th .data-type {
   font-style: italic;
   font-size: smaller;
