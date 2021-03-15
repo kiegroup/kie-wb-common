@@ -92,7 +92,7 @@
 }
 
 .expression-container .table-component tr > *:last-child {
-  padding-right: 0;
+  padding-right: 0.6em;
 }
 
 .expression-container .table-component table tbody td + td {
