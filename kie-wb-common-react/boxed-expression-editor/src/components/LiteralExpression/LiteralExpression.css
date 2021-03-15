@@ -49,7 +49,7 @@
 }
 
 .literal-expression .literal-expression-header .expression-data-type {
-   font-style: normal;
+  font-style: normal;
 }
 
 .literal-expression .literal-expression-body {
@@ -57,7 +57,8 @@
 }
 
 .literal-expression .literal-expression-body textarea {
-  padding-bottom: 0;
+  font-style: normal;
+  padding: 0.5em 0.5em 0 0.5em;
   width: 100%;
   height: 100%;
   resize: none;
