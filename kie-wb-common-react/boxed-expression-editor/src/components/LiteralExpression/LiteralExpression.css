@@ -34,6 +34,7 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  font-weight: 700;
 }
 
 .literal-expression .literal-expression-header {
@@ -41,7 +42,7 @@
   justify-content: center;
   flex-wrap: wrap;
   position: relative;
-  padding: 5px;
+  padding: 0.5em 0.8em 0.5em 0.5em;
   border-style: ridge;
   background-color: #DEF3FF;
   color: black;
