@@ -145,6 +145,7 @@ public class VariablesEditorFieldRenderer extends FieldRenderer<VariablesEditorF
         dataTypeListBoxValues = new ListBoxValues(VariableListItemWidgetView.CUSTOM_PROMPT,
                                                   "Edit" + " ",
                                                   dataTypesTester());
+
         dataTypeListBoxValues.addValues(dataTypeDisplayNames);
         view.setVariablesDataTypes(dataTypeListBoxValues);
     }

@@ -18,8 +18,10 @@ package org.kie.workbench.common.stunner.bpmn.client.forms.fields.variablesEdito
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 
 import javax.enterprise.context.Dependent;
@@ -190,12 +192,14 @@ public class VariablesEditorWidgetViewImpl extends Composite implements Variable
                                                                                             "Object",
                                                                                             "String"));
 
+        Set<String> types = getSetDataTypes(value);
+
         clientDataTypesService
                 .call(presenter.getDiagramPath())
                 .then(serverDataTypes -> {
                     List<List<String>> mergedDataTypes = mergeDataTypes(simpleDataTypes,
                                                                         simpleDataTypeDisplayNames,
-                                                                        serverDataTypes);
+                                                                        serverDataTypes, types);
                     setDataTypes(mergedDataTypes.get(0),
                                  mergedDataTypes.get(1));
                     doSetValue(value,
@@ -215,9 +219,20 @@ public class VariablesEditorWidgetViewImpl extends Composite implements Variable
                 });
     }
 
+    private Set<String> getSetDataTypes(String value) {
+        final String[] split = value.split(",");
+        Set<String> types = new HashSet<>();
+        for (String string : split) {
+            String type = string.substring(string.indexOf(":")+1, string.lastIndexOf(":"));
+            types.add(type);
+        }
+        return types;
+    }
+
     private List<List<String>> mergeDataTypes(final List<String> simpleDataTypes,
                                               final List<String> simpleDataTypeDisplayNames,
-                                              final List<String> serverDataTypes) {
+                                              final List<String> serverDataTypes,
+                                              final Set<String> excludeValues) {
         List<List<String>> results = new ArrayList<List<String>>(2);
         List<String> allDataTypes = new ArrayList<String>();
         List<String> allDataTypeDisplayNames = new ArrayList<String>();
@@ -226,7 +241,11 @@ public class VariablesEditorWidgetViewImpl extends Composite implements Variable
 
         // Create sorted map with DataTypeDisplayNames as the keys
         Map<String, String> mapServerDataTypeDisplayNames = new TreeMap<String, String>();
+
         for (String serverDataType : serverDataTypes) {
+            if (excludeValues.contains(serverDataType)) {
+                continue;
+            }
             mapServerDataTypeDisplayNames.put(StringUtils.createDataTypeDisplayName(serverDataType),
                                               serverDataType);
         }
