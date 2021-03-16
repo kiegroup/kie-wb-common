@@ -27,6 +27,7 @@ import javax.annotation.PostConstruct;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
+import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
@@ -96,11 +97,13 @@ public class DataObjectTypeWidget extends Composite implements HasValue<DataObje
                                  StunnerFormsClientFieldsConstants.CONSTANTS.Invalid_character_in_name());
 
         ListBoxValues dataTypeListBoxValues = new ListBoxValues(CUSTOM_PROMPT, "Edit ", null);
+        doneLoading = false;
         clientDataTypesService
                 .call(getDiagramPath())
                 .then(getListObjectThenOnFulfilledCallbackFn(simpleDataTypes, dataTypeListBoxValues))
                 .catch_(exception -> {
                     dataTypeListBoxValues.addValues(simpleDataTypes);
+                    doneLoading = true;
                     return null;
                 });
         dataTypeComboBox.setCurrentTextValue("");
@@ -121,6 +124,8 @@ public class DataObjectTypeWidget extends Composite implements HasValue<DataObje
         return simpleDataTypes.stream().collect(toMap(x -> x, x -> x));
     }
 
+    static boolean doneLoading = false;
+
     static IThenable.ThenOnFulfilledCallbackFn<List<String>, Object> getListObjectThenOnFulfilledCallbackFn(List<String> simpleDataTypes, ListBoxValues dataTypeListBoxValues) {
         return serverDataTypes -> {
             List<String> mergedList = new ArrayList<>(simpleDataTypes);
@@ -134,6 +139,7 @@ public class DataObjectTypeWidget extends Composite implements HasValue<DataObje
             }
 
             dataTypeListBoxValues.addValues(mergedList);
+            doneLoading = true;
             return null;
         };
     }
@@ -156,7 +162,14 @@ public class DataObjectTypeWidget extends Composite implements HasValue<DataObje
 
     @Override
     public void setValue(DataObjectTypeValue value, boolean fireEvents) {
-        performSetValue(value, fireEvents);
+
+        if (doneLoading) {
+            performSetValue(value, fireEvents);
+        } else {
+            Scheduler.get().scheduleDeferred(() -> {
+                performSetValue(value, fireEvents);
+            });
+        }
     }
 
     private void performSetValue(DataObjectTypeValue value, boolean fireEvents) {
