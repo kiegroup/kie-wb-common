@@ -17,7 +17,15 @@
 import "./LogicTypeSelector.css";
 import * as React from "react";
 import { useCallback, useContext, useEffect, useMemo, useState } from "react";
-import { ContextProps, DataType, ExpressionProps, LiteralExpressionProps, LogicType, RelationProps } from "../../api";
+import {
+  ContextProps,
+  DataType,
+  DecisionTableProps,
+  ExpressionProps,
+  LiteralExpressionProps,
+  LogicType,
+  RelationProps,
+} from "../../api";
 import { LiteralExpression } from "../LiteralExpression";
 import { RelationExpression } from "../RelationExpression";
 import { ContextExpression } from "../ContextExpression";
@@ -29,6 +37,7 @@ import { useContextMenuHandler } from "../../hooks";
 import { NO_TABLE_CONTEXT_MENU_CLASS } from "../Table";
 import nextId from "react-id-generator";
 import { BoxedExpressionGlobalContext } from "../../context";
+import { DecisionTableExpression } from "../DecisionTableExpression";
 
 export interface LogicTypeSelectorProps {
   /** Expression properties */
@@ -91,6 +100,7 @@ export const LogicTypeSelector: React.FunctionComponent<LogicTypeSelectorProps> 
       case LogicType.Context:
         return <ContextExpression {...(expression as ContextProps)} uid={nextId()} />;
       case LogicType.DecisionTable:
+        return <DecisionTableExpression {...(expression as DecisionTableProps)} />;
       case LogicType.Function:
       case LogicType.Invocation:
       case LogicType.List:
