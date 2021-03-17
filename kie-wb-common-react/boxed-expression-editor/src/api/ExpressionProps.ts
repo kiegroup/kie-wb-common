@@ -18,6 +18,9 @@ import { LogicType } from "./LogicType";
 import { DataType } from "./DataType";
 import { Columns, Rows } from "./Table";
 import { ContextEntries } from "./ContextEntry";
+import { HitPolicy } from "./HitPolicy";
+import { BuiltinAggregation } from "./BuiltinAggregation";
+import { Clause, DecisionTableRule } from "./DecisionTableRule";
 
 export interface ExpressionProps {
   /** Expression name (which, in DMN world, is equal to the Decision node's name) */
@@ -65,4 +68,19 @@ export interface ContextProps extends ExpressionProps {
   entryInfoWidth?: number;
   /** Entry expression width */
   entryExpressionWidth?: number;
+}
+
+export interface DecisionTableProps extends ExpressionProps {
+  /** Hit policy for this particular decision table */
+  hitPolicy?: HitPolicy;
+  /** Aggregation policy, when the hit policy supports it */
+  aggregation?: BuiltinAggregation;
+  /** Annotation columns names */
+  annotations: string[];
+  /** Input columns definition */
+  input: Clause[];
+  /** Output columns definition */
+  output: Clause[];
+  /** Rules represent rows values */
+  rules: DecisionTableRule[];
 }
