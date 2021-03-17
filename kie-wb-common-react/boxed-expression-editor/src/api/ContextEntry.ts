@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2021 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,9 +14,20 @@
  * limitations under the License.
  */
 
-export * from "./BoxedExpressionEditor";
-export * from "./ContextEntry";
-export * from "./DataType";
-export * from "./ExpressionProps";
-export * from "./LogicType";
-export * from "./Table";
+import { DataType } from "./DataType";
+import { ExpressionProps } from "./ExpressionProps";
+
+export interface ContextEntryRecord {
+  entryInfo: {
+    /** Entry name */
+    name: string;
+    /** Entry data type */
+    dataType: DataType;
+  };
+  /** Entry expression */
+  entryExpression: ExpressionProps;
+  /** Callback to be invoked on expression resetting */
+  onExpressionResetting?: () => void;
+}
+
+export type ContextEntries = ContextEntryRecord[];

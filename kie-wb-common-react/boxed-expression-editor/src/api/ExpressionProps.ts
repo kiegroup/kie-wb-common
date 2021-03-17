@@ -17,6 +17,7 @@
 import { LogicType } from "./LogicType";
 import { DataType } from "./DataType";
 import { Columns, Rows } from "./Table";
+import { ContextEntries } from "./ContextEntry";
 
 export interface ExpressionProps {
   /** Expression name (which, in DMN world, is equal to the Decision node's name) */
@@ -50,21 +51,6 @@ export interface RelationProps extends ExpressionProps {
   /** Rows order is from top to bottom. Each row has a collection of cells, one for each column */
   rows?: Rows;
 }
-
-export interface ContextEntryRecord {
-  entryInfo: {
-    /** Entry name */
-    name: string;
-    /** Entry data type */
-    dataType: DataType;
-  };
-  /** Entry expression */
-  entryExpression: ExpressionProps;
-  /** Callback to be invoked on expression resetting */
-  onExpressionResetting?: () => void;
-}
-
-export type ContextEntries = ContextEntryRecord[];
 
 export interface ContextProps extends ExpressionProps {
   /** Unique identifier used to distinguish all nested instance of context expression */
