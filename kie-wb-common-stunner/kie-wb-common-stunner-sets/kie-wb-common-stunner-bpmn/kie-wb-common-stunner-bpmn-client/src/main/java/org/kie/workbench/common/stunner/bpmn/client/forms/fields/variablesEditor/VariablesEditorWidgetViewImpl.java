@@ -18,7 +18,6 @@ package org.kie.workbench.common.stunner.bpmn.client.forms.fields.variablesEdito
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -192,7 +191,7 @@ public class VariablesEditorWidgetViewImpl extends Composite implements Variable
                                                                                             "Object",
                                                                                             "String"));
 
-        Set<String> types = getSetDataTypes(value);
+        Set<String> types = StringUtils.getSetDataTypes(value);
 
         clientDataTypesService
                 .call(presenter.getDiagramPath())
@@ -217,16 +216,6 @@ public class VariablesEditorWidgetViewImpl extends Composite implements Variable
                                true);
                     return null;
                 });
-    }
-
-    private Set<String> getSetDataTypes(String value) {
-        final String[] split = value.split(",");
-        Set<String> types = new HashSet<>();
-        for (String string : split) {
-            String type = string.substring(string.indexOf(":")+1, string.lastIndexOf(":"));
-            types.add(type);
-        }
-        return types;
     }
 
     private List<List<String>> mergeDataTypes(final List<String> simpleDataTypes,
@@ -375,12 +364,13 @@ public class VariablesEditorWidgetViewImpl extends Composite implements Variable
     }
 
     protected void doAddDataType(String dataType, String oldType) {
-        clientDataTypesService.add(dataType, oldType);
-
-        Scheduler.get().scheduleDeferred(() -> {
-            refreshFormPropertiesEvent = new RefreshFormPropertiesEvent(sessionManager.getCurrentSession());
-            refreshFormsEvent.fire(refreshFormPropertiesEvent);
-        });
+        if (!dataType.equals(oldType) && oldType != null && !oldType.isEmpty()) {
+            clientDataTypesService.add(dataType, oldType);
+            Scheduler.get().scheduleDeferred(() -> {
+                refreshFormPropertiesEvent = new RefreshFormPropertiesEvent(sessionManager.getCurrentSession());
+                refreshFormsEvent.fire(refreshFormPropertiesEvent);
+            });
+        }
     }
 
     protected void checkTagsNotEnabled() {

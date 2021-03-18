@@ -19,7 +19,7 @@ package org.kie.workbench.common.stunner.bpmn.client.marshall.converters.tostunn
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.inject.Singleton;
+import javax.enterprise.context.Dependent;
 
 import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.customproperties.DeclarationList;
 import org.kie.workbench.common.stunner.bpmn.client.marshall.converters.customproperties.ParsedAssignmentsInfo;
@@ -35,7 +35,7 @@ import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
 import org.kie.workbench.common.stunner.core.graph.content.view.ViewImpl;
 
-@Singleton
+@Dependent
 public class DataTypeCache extends AbstractDataTypeCache {
 
     public DataTypeCache() {

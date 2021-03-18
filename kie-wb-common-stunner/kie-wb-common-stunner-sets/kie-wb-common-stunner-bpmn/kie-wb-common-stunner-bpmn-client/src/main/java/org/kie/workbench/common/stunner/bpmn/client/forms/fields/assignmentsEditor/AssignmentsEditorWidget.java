@@ -323,6 +323,20 @@ public class AssignmentsEditorWidget extends Composite implements HasValue<Strin
         return diagram.getMetadata().getPath();
     }
 
+    private Set<String> getSetDataTypes() {
+
+        Map<String, String> assignmentsProperties = AssignmentParser.parseAssignmentsInfo(assignmentsInfo);
+
+        String datainputset = assignmentsProperties.get(AssignmentParser.DATAINPUTSET);
+        String dataoutputset = assignmentsProperties.get(AssignmentParser.DATAOUTPUTSET);
+
+        Set<String> set = new HashSet<>();
+        set.addAll(StringUtils.getSetDataTypes(datainputset));
+        set.addAll(StringUtils.getSetDataTypes(dataoutputset));
+
+        return set;
+    }
+
     public void showDataIOEditor(final String datatypes) {
         String taskName = getTaskName();
         String processvars = getProcessVariables();
@@ -414,11 +428,16 @@ public class AssignmentsEditorWidget extends Composite implements HasValue<Strin
     }
 
     protected String formatDataTypes(final List<String> dataTypes) {
+
+        Set<String> set = getSetDataTypes();
         StringBuilder sb = new StringBuilder();
         if (dataTypes != null && !dataTypes.isEmpty()) {
             List<String> formattedDataTypes = new ArrayList<>(dataTypes.size());
             for (String dataType : dataTypes) {
-                formattedDataTypes.add(StringUtils.createDataTypeDisplayName(dataType) + ":" + dataType);
+                if (set.contains(dataType)) {
+                    continue;
+                }
+                formattedDataTypes.add(dataType + ":" + dataType);
             }
             Collections.sort(formattedDataTypes);
             for (String formattedDataType : formattedDataTypes) {

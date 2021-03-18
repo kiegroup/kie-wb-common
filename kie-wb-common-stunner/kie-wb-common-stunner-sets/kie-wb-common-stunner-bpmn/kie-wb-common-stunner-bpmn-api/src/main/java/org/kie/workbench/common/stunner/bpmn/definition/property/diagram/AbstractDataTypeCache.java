@@ -171,6 +171,7 @@ public abstract class AbstractDataTypeCache {
     }
 
     public void initCache(Object diagramRoot, Node<View<? extends BPMNDiagram<? extends BaseDiagramSet, ? extends BaseProcessData, ? extends BaseAdvancedData>>, Edge> value) {
+        allDataTypes.clear();
         final BPMNDiagram<? extends BaseDiagramSet, ? extends BaseProcessData, ? extends BaseAdvancedData> definition = value.getContent().getDefinition();
         cacheImports(definition.getDiagramSet().getImports().getValue().getDefaultImports());
         cacheProcessVariables(definition.getProcessData().getProcessVariables().getValue());

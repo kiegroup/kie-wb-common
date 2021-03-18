@@ -22,7 +22,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
 import elemental2.promise.Promise;
@@ -32,17 +32,17 @@ import org.kie.workbench.common.stunner.bpmn.project.service.DataTypesService;
 import org.uberfire.backend.vfs.Path;
 import org.uberfire.client.promise.Promises;
 
-@ApplicationScoped
+@Dependent
 public class DataTypeNamesProjectService implements DataTypeNamesService {
 
     private final Promises promises;
     private final Caller<DataTypesService> dataTypesServiceCaller;
 
     private static Set<String> simpleDataTypes = new HashSet<>(Arrays.asList("Boolean",
-                                                                      "Float",
-                                                                      "Integer",
-                                                                      "Object",
-                                                                      "String"));
+                                                                             "Float",
+                                                                             "Integer",
+                                                                             "Object",
+                                                                             "String"));
 
     @Inject
     public DataTypeNamesProjectService(final Promises promises,
