@@ -99,7 +99,7 @@ public class AssignmentsEditorWidgetTest extends AssignmentBaseTest {
     public static final List<String> DATATYPES = new ArrayList<>(Arrays.asList("myorg.myproject1.Cardboard",
                                                                                      "yourorg.materials.Paper",
                                                                                      "org.documents.Articles"));
-    public static final String FORMATTED_DATATYPES = "Articles [org.documents]:org.documents.Articles,Cardboard [myorg.myproject1]:myorg.myproject1.Cardboard,Paper [yourorg.materials]:yourorg.materials.Paper";
+    public static final String FORMATTED_DATATYPES = "myorg.myproject1.Cardboard:myorg.myproject1.Cardboard,org.documents.Articles:org.documents.Articles,yourorg.materials.Paper:yourorg.materials.Paper";
 
     public static final String SIMPLE_DATA_TYPES = "Boolean:Boolean,Float:Float,Integer:Integer,Object:Object,String:String";
     public static final String NORMAL_TASK_WITH_INPUTS_OUTPUTS_CASE = "|input1:Boolean:,input2:Object:||output1:Object:,output2:Integer:|[din]processVar1->input1,[din]processVar2->input2,[dout]output1->processVar3,[dout]output2->processVar4";
