@@ -48,7 +48,7 @@
   color: black;
 }
 
-.literal-expression .literal-expression-header .expression-data-type {
+.literal-expression .literal-expression-header .expression-name {
   font-style: normal;
 }
 
@@ -57,6 +57,7 @@
 }
 
 .literal-expression .literal-expression-body textarea {
+  border-style: groove;
   font-style: normal;
   padding: 0.5em 0.5em 0 0.5em;
   width: 100%;
