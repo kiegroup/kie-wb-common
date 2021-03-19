@@ -31,14 +31,21 @@ import javax.enterprise.event.Observes;
 import javax.enterprise.inject.Default;
 import javax.inject.Inject;
 
+import org.appformer.client.stateControl.registry.Registry;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.kie.workbench.common.dmn.api.definition.model.DMNDiagramElement;
 import org.kie.workbench.common.dmn.api.definition.model.DRGElement;
 import org.kie.workbench.common.dmn.api.definition.model.Import;
 import org.kie.workbench.common.dmn.api.graph.DMNDiagramUtils;
 import org.kie.workbench.common.stunner.core.client.api.SessionManager;
+import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
 import org.kie.workbench.common.stunner.core.client.canvas.CanvasHandler;
+import org.kie.workbench.common.stunner.core.client.canvas.event.registration.CurrentRegistryChangedEvent;
+import org.kie.workbench.common.stunner.core.client.command.CanvasViolation;
 import org.kie.workbench.common.stunner.core.client.session.ClientSession;
+import org.kie.workbench.common.stunner.core.client.session.event.SessionDiagramOpenedEvent;
+import org.kie.workbench.common.stunner.core.client.session.impl.EditorSession;
+import org.kie.workbench.common.stunner.core.command.Command;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.kie.workbench.common.stunner.core.diagram.Metadata;
 import org.kie.workbench.common.stunner.core.graph.Graph;
@@ -65,6 +72,9 @@ public class DMNDiagramsSession {
     private Map<String, DMNDiagramsSessionState> dmnSessionStatesByPathURI = new HashMap<>();
 
     private Event<LockRequiredEvent> locker;
+    private Map<String, List<Command<AbstractCanvasHandler, CanvasViolation>>> storedUndoHistories;
+    private Map<String, List<Command<AbstractCanvasHandler, CanvasViolation>>> storedRedoHistories;
+    private Event<CurrentRegistryChangedEvent> currentRegistryChangedEvent;
 
     public DMNDiagramsSession() {
         // CDI
@@ -74,11 +84,15 @@ public class DMNDiagramsSession {
     public DMNDiagramsSession(final ManagedInstance<DMNDiagramsSessionState> dmnDiagramsSessionStates,
                               final SessionManager sessionManager,
                               final DMNDiagramUtils dmnDiagramUtils,
-                              final Event<LockRequiredEvent> locker) {
+                              final Event<LockRequiredEvent> locker,
+                              final Event<CurrentRegistryChangedEvent> currentRegistryChangedEvent) {
         this.dmnDiagramsSessionStates = dmnDiagramsSessionStates;
         this.sessionManager = sessionManager;
         this.dmnDiagramUtils = dmnDiagramUtils;
         this.locker = locker;
+        this.storedUndoHistories = new HashMap<>();
+        this.storedRedoHistories = new HashMap<>();
+        this.currentRegistryChangedEvent = currentRegistryChangedEvent;
     }
 
     public void destroyState(final Metadata metadata) {
@@ -163,11 +177,60 @@ public class DMNDiagramsSession {
         return getSessionState().getDMNDiagrams();
     }
 
+    public void onSessionDiagramOpenedEvent(final @Observes SessionDiagramOpenedEvent sessionDiagramOpenedEvent) {
+        loadHistoryForTheCurrentDiagram();
+    }
+
     public void onDMNDiagramSelected(final @Observes DMNDiagramSelected selected) {
+
+        storeCurrentRegistryHistory();
+
         final DMNDiagramElement selectedDiagramElement = selected.getDiagramElement();
         if (belongsToCurrentSessionState(selectedDiagramElement)) {
             getSessionState().setCurrentDMNDiagramElement(selectedDiagramElement);
         }
+    }
+
+    private void loadHistoryForTheCurrentDiagram() {
+        getCurrentSession().ifPresent(session -> {
+            if (session instanceof EditorSession) {
+                if (storedRedoHistories.containsKey(getCurrentDiagramId())
+                        && storedUndoHistories.containsKey(getCurrentDiagramId())) {
+
+                    final Registry<Command<AbstractCanvasHandler, CanvasViolation>> undoRegistry = ((EditorSession) session).getCommandRegistry();
+                    final List<Command<AbstractCanvasHandler, CanvasViolation>> undoHistory = storedUndoHistories.get(getCurrentDiagramId());
+                    loadHistoryToTheRegistry(undoHistory, undoRegistry);
+
+                    final Registry<Command<AbstractCanvasHandler, CanvasViolation>> redoRegistry = ((EditorSession) session).getRedoCommandRegistry();
+                    final List<Command<AbstractCanvasHandler, CanvasViolation>> redoHistory = storedRedoHistories.get(getCurrentDiagramId());
+                    loadHistoryToTheRegistry(redoHistory, redoRegistry);
+                } else {
+                    ((EditorSession) session).getCommandRegistry().clear();
+                    ((EditorSession) session).getRedoCommandRegistry().clear();
+                }
+            }
+            notifyRegistryChanged();
+        });
+    }
+
+    void loadHistoryToTheRegistry(final List<Command<AbstractCanvasHandler, CanvasViolation>> history,
+                                  final Registry<Command<AbstractCanvasHandler, CanvasViolation>> registry) {
+        registry.clear();
+        for (final Command<AbstractCanvasHandler, CanvasViolation> command : history) {
+            registry.register(command);
+        }
+    }
+
+    private void storeCurrentRegistryHistory() {
+        getCurrentSession().ifPresent(session -> {
+            if (session instanceof EditorSession) {
+                final List<Command<AbstractCanvasHandler, CanvasViolation>> history = ((EditorSession) session).getCommandRegistry().getHistory();
+                storedUndoHistories.put(getCurrentDiagramId(), history);
+
+                final List<Command<AbstractCanvasHandler, CanvasViolation>> redoHistory = ((EditorSession) session).getRedoCommandRegistry().getHistory();
+                storedRedoHistories.put(getCurrentDiagramId(), redoHistory);
+            }
+        });
     }
 
     public boolean belongsToCurrentSessionState(final DMNDiagramElement diagramElement) {
@@ -264,5 +327,9 @@ public class DMNDiagramsSession {
 
     private Optional<CanvasHandler> getCanvasHandler(final ClientSession session) {
         return Optional.ofNullable(session.getCanvasHandler());
+    }
+
+    private void notifyRegistryChanged() {
+        currentRegistryChangedEvent.fire(new CurrentRegistryChangedEvent());
     }
 }

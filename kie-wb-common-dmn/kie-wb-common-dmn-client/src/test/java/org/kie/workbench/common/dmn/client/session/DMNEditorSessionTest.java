@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.google.gwtmockito.GwtMockitoTestRunner;
+import org.appformer.client.stateControl.registry.DefaultRegistry;
 import org.appformer.client.stateControl.registry.Registry;
 import org.junit.Before;
 import org.junit.Test;
@@ -62,6 +63,9 @@ public class DMNEditorSessionTest extends BaseDMNSessionTest<DMNEditorSession> {
 
     @Mock
     private Registry<Command<AbstractCanvasHandler, CanvasViolation>> commandRegistry;
+
+    @Mock
+    private DefaultRegistry<Command<AbstractCanvasHandler, CanvasViolation>> redoCommandRegistry;
 
     private EventSourceMock<RegisterChangedEvent> registerChangedEvent = new EventSourceMock<>();
 
@@ -124,6 +128,7 @@ public class DMNEditorSessionTest extends BaseDMNSessionTest<DMNEditorSession> {
                                                               canvasCommandManager,
                                                               sessionCommandManager,
                                                               commandRegistry,
+                                                              redoCommandRegistry,
                                                               registerChangedEvent,
                                                               registryProvider);
         session.constructInstance();
