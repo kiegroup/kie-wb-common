@@ -28,10 +28,10 @@
 }
 
 .expression-container .table-component table th {
+  min-height: 55px;
   position: relative;
+  padding: 0.7em;
   border-style: ridge;
-  /** Due to a glitch when resizing column, disabling user selection for header's cells */
-  user-select: none;
   -webkit-touch-callout: none;
   -webkit-user-select: none;
   -moz-user-select: none;
@@ -40,11 +40,6 @@
 
 .expression-container .table-component table th.fixed-column {
   font-weight: 400;
-}
-
-.expression-container .table-component table th .header-cell {
-  height: 55px;
-  position: static;
 }
 
 .expression-container .table-component table th .data-type {
@@ -59,6 +54,14 @@
 .expression-container .table-component table th:not(:first-child) {
   text-align: center;
   background-color: #DEF3FF;
+}
+
+.expression-container .table-component table th.no-clickable-cell:first-of-type .header-cell,
+.expression-container .table-component table th.no-clickable-cell .header-cell-info {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 
 .expression-container .table-component table th:not(.no-clickable-cell) .header-cell-info {
@@ -89,10 +92,6 @@
   padding: 1.1em 0;
   text-align: center;
   overflow: auto;
-}
-
-.expression-container .table-component tr > *:last-child {
-  padding-right: 0.6em;
 }
 
 .expression-container .table-component table tbody td + td {
