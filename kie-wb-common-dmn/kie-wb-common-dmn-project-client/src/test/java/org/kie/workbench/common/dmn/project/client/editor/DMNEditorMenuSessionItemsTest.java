@@ -37,6 +37,7 @@ import org.kie.workbench.common.stunner.core.client.session.command.impl.UndoSes
 import org.kie.workbench.common.stunner.core.client.session.command.impl.ValidateSessionCommand;
 import org.kie.workbench.common.stunner.core.client.session.command.impl.VisitGraphSessionCommand;
 import org.kie.workbench.common.widgets.client.menu.FileMenuBuilder;
+import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.uberfire.client.mvp.PlaceManager;
 import org.uberfire.workbench.model.menu.MenuItem;
@@ -44,6 +45,7 @@ import org.uberfire.workbench.model.menu.MenuItem;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
@@ -89,6 +91,7 @@ public class DMNEditorMenuSessionItemsTest {
 
         final DMNEditorMenuSessionItems menuItems = spy(new DMNEditorMenuSessionItems(builder, sessionCommands, placeManager));
 
+        final InOrder inOrder = inOrder(menuItems);
         menuItems.setEnabled(enabled);
         verify(menuItems).setItemEnabled(ClearSessionCommand.class, enabled);
         verify(menuItems).setItemEnabled(VisitGraphSessionCommand.class, enabled);
@@ -100,8 +103,12 @@ public class DMNEditorMenuSessionItemsTest {
         verify(menuItems).setItemEnabled(ExportToPdfSessionCommand.class, enabled);
         verify(menuItems).setItemEnabled(ExportToRawFormatSessionCommand.class, enabled);
         verify(menuItems).setItemEnabled(DeleteSelectionSessionCommand.class, false);
-        verify(menuItems).setItemEnabled(UndoSessionCommand.class, false);
-        verify(menuItems).setItemEnabled(RedoSessionCommand.class, false);
+
+        inOrder.verify(menuItems).setItemEnabled(UndoSessionCommand.class, false);
+        inOrder.verify(menuItems).setItemEnabled(RedoSessionCommand.class, false);
+        inOrder.verify(menuItems).setItemEnabled(UndoSessionCommand.class, enabled);
+        inOrder.verify(menuItems).setItemEnabled(RedoSessionCommand.class, enabled);
+
         verify(menuItems).setItemEnabled(CopySelectionSessionCommand.class, false);
         verify(menuItems).setItemEnabled(CutSelectionSessionCommand.class, false);
         verify(menuItems).setItemEnabled(PasteSelectionSessionCommand.class, false);

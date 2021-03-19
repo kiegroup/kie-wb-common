@@ -85,6 +85,9 @@ public class DMNDiagramsSessionTest {
     @Mock
     private EventSourceMock locker;
 
+    @Mock
+    private EventSourceMock currentRegistryChangedEvent;
+
     private String uri = "://cyber/v.dmn";
 
     private Map<String, Diagram> diagramsByDiagramElementId = new HashMap<>();
@@ -99,7 +102,7 @@ public class DMNDiagramsSessionTest {
     public void setup() {
 
         dmnDiagramsSessionState = spy(new DMNDiagramsSessionState(dmnDiagramUtils));
-        dmnDiagramsSession = spy(new DMNDiagramsSession(dmnDiagramsSessionStates, sessionManager, dmnDiagramUtils, locker));
+        dmnDiagramsSession = spy(new DMNDiagramsSession(dmnDiagramsSessionStates, sessionManager, dmnDiagramUtils, locker, currentRegistryChangedEvent));
 
         when(canvasHandler.getDiagram()).thenReturn(diagram);
         when(clientSession.getCanvasHandler()).thenReturn(canvasHandler);
