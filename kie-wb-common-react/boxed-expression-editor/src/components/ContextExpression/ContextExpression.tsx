@@ -25,6 +25,7 @@ import {
   ExpressionProps,
   LogicType,
   TableHandlerConfiguration,
+  TableHeaderVisibility,
   TableOperation,
 } from "../../api";
 import { Table } from "../Table";
@@ -235,12 +236,16 @@ export const ContextExpression: React.FunctionComponent<ContextProps> = ({
       : window.beeApi?.broadcastContextExpressionDefinition?.(updatedDefinition);
   }, [columns, isHeadless, onUpdatingRecursiveExpression, rows, resultExpression, infoWidth, expressionWidth]);
 
+  const getHeaderVisibility = useCallback(() => {
+    return isHeadless ? TableHeaderVisibility.OnlyLastLevel : TableHeaderVisibility.Full;
+  }, [isHeadless]);
+
   return (
     <div className={`context-expression ${uid}`}>
       <Table
         tableId={uid}
         headerHasMultipleLevels={true}
-        isHeadless={isHeadless}
+        headerVisibility={getHeaderVisibility()}
         defaultCell={{ entryInfo: ContextEntryInfoCell, entryExpression: ContextEntryExpressionCell }}
         columns={columns}
         rows={rows as DataRecord[]}

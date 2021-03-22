@@ -30,7 +30,7 @@ import { TableComposable, Tbody, Td, Tr } from "@patternfly/react-table";
 import * as React from "react";
 import { useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import { EditableCell } from "./EditableCell";
-import { CellProps, TableHandlerConfiguration, TableOperation } from "../../api";
+import { CellProps, TableHandlerConfiguration, TableHeaderVisibility, TableOperation } from "../../api";
 import * as _ from "lodash";
 import { TableHeader } from "./TableHeader";
 import { TableHandler } from "./TableHandler";
@@ -63,8 +63,8 @@ export interface TableProps {
   onRowAdding?: () => DataRecord;
   /** Custom configuration for the table handler */
   handlerConfiguration: TableHandlerConfiguration;
-  /** True to have no header for this table */
-  isHeadless?: boolean;
+  /** The way in which the header will be rendered */
+  headerVisibility?: TableHeaderVisibility;
   /** True to support multiple levels in the header */
   headerHasMultipleLevels?: boolean;
   /** Custom function for getting row key prop, and avoid using the row index */
@@ -88,7 +88,7 @@ export const Table: React.FunctionComponent<TableProps> = ({
   rows,
   columns,
   handlerConfiguration,
-  isHeadless = false,
+  headerVisibility,
   headerHasMultipleLevels = false,
   getRowKey = (row) => row.id as string,
   getColumnKey = (column) => column.id as string,
@@ -301,7 +301,7 @@ export const Table: React.FunctionComponent<TableProps> = ({
         <TableHeader
           tableInstance={tableInstance}
           editColumnLabel={editColumnLabel}
-          isHeadless={isHeadless}
+          headerVisibility={headerVisibility}
           tableColumns={tableColumns as ColumnInstance[]}
           setTableColumns={setTableColumns}
           setTableRows={setTableRows}
