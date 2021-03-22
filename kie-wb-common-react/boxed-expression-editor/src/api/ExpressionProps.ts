@@ -23,6 +23,8 @@ import { BuiltinAggregation } from "./BuiltinAggregation";
 import { Clause, DecisionTableRule } from "./DecisionTableRule";
 
 export interface ExpressionProps {
+  /** Unique identifier used to identify the expression */
+  uid?: string;
   /** Expression name (which, in DMN world, is equal to the Decision node's name) */
   name?: string;
   /** Expression data type */
@@ -56,8 +58,6 @@ export interface RelationProps extends ExpressionProps {
 }
 
 export interface ContextProps extends ExpressionProps {
-  /** Unique identifier used to distinguish all nested instance of context expression */
-  uid?: string;
   /** Logic type must be Context */
   logicType: LogicType.Context;
   /** Collection of context entries */
@@ -71,6 +71,8 @@ export interface ContextProps extends ExpressionProps {
 }
 
 export interface DecisionTableProps extends ExpressionProps {
+  /** Logic type must be Decision Table */
+  logicType: LogicType.DecisionTable;
   /** Hit policy for this particular decision table */
   hitPolicy?: HitPolicy;
   /** Aggregation policy, when the hit policy supports it */

@@ -70,6 +70,7 @@ export const LogicTypeSelector: React.FunctionComponent<LogicTypeSelectorProps> 
   const globalContext = useContext(BoxedExpressionGlobalContext);
 
   const expression = _.extend(selectedExpression, {
+    uid: selectedExpression.uid || nextId(),
     isHeadless,
     onUpdatingNameAndDataType,
     onUpdatingRecursiveExpression,
@@ -98,7 +99,7 @@ export const LogicTypeSelector: React.FunctionComponent<LogicTypeSelectorProps> 
       case LogicType.Relation:
         return <RelationExpression {...(expression as RelationProps)} />;
       case LogicType.Context:
-        return <ContextExpression {...(expression as ContextProps)} uid={nextId()} />;
+        return <ContextExpression {...(expression as ContextProps)} />;
       case LogicType.DecisionTable:
         return <DecisionTableExpression {...(expression as DecisionTableProps)} />;
       case LogicType.Function:
