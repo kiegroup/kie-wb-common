@@ -22,6 +22,7 @@ import {
   DataType,
   DecisionTableProps,
   ExpressionProps,
+  ListProps,
   LiteralExpressionProps,
   LogicType,
   RelationProps,
@@ -38,6 +39,7 @@ import { NO_TABLE_CONTEXT_MENU_CLASS } from "../Table";
 import nextId from "react-id-generator";
 import { BoxedExpressionGlobalContext } from "../../context";
 import { DecisionTableExpression } from "../DecisionTableExpression";
+import { ListExpression } from "../ListExpression";
 
 export interface LogicTypeSelectorProps {
   /** Expression properties */
@@ -105,6 +107,7 @@ export const LogicTypeSelector: React.FunctionComponent<LogicTypeSelectorProps> 
       case LogicType.Function:
       case LogicType.Invocation:
       case LogicType.List:
+        return <ListExpression {...(expression as ListProps)} />;
       default:
         return expression.logicType;
     }

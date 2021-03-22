@@ -86,3 +86,10 @@ export interface DecisionTableProps extends ExpressionProps {
   /** Rules represent rows values */
   rules: DecisionTableRule[];
 }
+
+export interface ListProps extends ExpressionProps {
+  /** Logic type must be List */
+  logicType: LogicType.List;
+  /** List items */
+  items?: ExpressionProps[];
+}
