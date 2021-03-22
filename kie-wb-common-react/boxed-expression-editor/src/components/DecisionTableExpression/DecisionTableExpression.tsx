@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 /*
  * Copyright 2021 Red Hat, Inc. and/or its affiliates.
  *
@@ -15,22 +14,9 @@
  * limitations under the License.
  */
 
-import { DecisionTableProps, HitPolicy } from "../../api";
+import { DecisionTableProps } from "../../api";
 import * as React from "react";
 
-export const DecisionTableExpression: React.FunctionComponent<DecisionTableProps> = ({
-  aggregation,
-  annotations,
-  dataType,
-  hitPolicy = HitPolicy.Unique,
-  input,
-  isHeadless,
-  logicType,
-  name,
-  onUpdatingNameAndDataType,
-  onUpdatingRecursiveExpression,
-  output,
-  rules,
-}: DecisionTableProps) => {
+export const DecisionTableExpression: React.FunctionComponent<DecisionTableProps> = () => {
   return <div>Decision Table</div>;
 };
