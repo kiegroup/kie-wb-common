@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import "./ContextEntryExpressionCell.css";
 import * as React from "react";
 import { useCallback, useEffect, useState } from "react";
 import { CellProps, ContextEntries, ExpressionProps } from "../../api";
