@@ -54,7 +54,7 @@ export interface TableProps {
   /** Table's cells */
   rows: DataRecord[];
   /** Function to be executed when columns are modified */
-  onColumnsUpdate: (columns: Column[]) => void;
+  onColumnsUpdate?: (columns: Column[]) => void;
   /** Function to be executed when one or more rows are modified */
   onRowsUpdate?: (rows: DataRecord[]) => void;
   /** Function to be executed when a single row gets modified */
@@ -235,7 +235,7 @@ export const Table: React.FunctionComponent<TableProps> = ({
   );
 
   useEffect(() => {
-    onColumnsUpdate(tableColumns.slice(1)); //Removing "# of rows" column
+    onColumnsUpdate?.(tableColumns.slice(1)); //Removing "# of rows" column
   }, [onColumnsUpdate, tableColumns]);
 
   useEffect(() => {
