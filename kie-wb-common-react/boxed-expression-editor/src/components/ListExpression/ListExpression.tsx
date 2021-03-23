@@ -16,20 +16,75 @@
 
 import "./ListExpression.css";
 import * as React from "react";
-import { useState } from "react";
-import { ListProps, LiteralExpressionProps, LogicType } from "../../api";
+import { useCallback, useState } from "react";
+import {
+  ContextEntryRecord,
+  ListProps,
+  LiteralExpressionProps,
+  LogicType,
+  TableHandlerConfiguration,
+  TableHeaderVisibility,
+  TableOperation,
+} from "../../api";
+import { ContextEntryExpressionCell } from "../ContextExpression";
 import nextId from "react-id-generator";
+import { Table } from "../Table";
+import { useBoxedExpressionEditorI18n } from "../../i18n";
+import { DataRecord, Row } from "react-table";
 
 export const ListExpression: React.FunctionComponent<ListProps> = ({
   dataType,
   isHeadless,
   items,
-  onUpdatingNameAndDataType,
   onUpdatingRecursiveExpression,
   uid,
 }: ListProps) => {
+  const { i18n } = useBoxedExpressionEditorI18n();
+
+  const handlerConfiguration: TableHandlerConfiguration = [
+    {
+      group: i18n.rows,
+      items: [
+        { name: i18n.rowOperations.insertAbove, type: TableOperation.RowInsertAbove },
+        { name: i18n.rowOperations.insertBelow, type: TableOperation.RowInsertBelow },
+        { name: i18n.rowOperations.delete, type: TableOperation.RowDelete },
+      ],
+    },
+  ];
+
+  const generateLiteralExpression = () =>
+    ({ uid: nextId(), logicType: LogicType.LiteralExpression } as LiteralExpressionProps);
+
   const [listItems, setListItems] = useState(
-    items || [{ uid: nextId(), logicType: LogicType.LiteralExpression } as LiteralExpressionProps]
+    items || [
+      {
+        entryExpression: generateLiteralExpression(),
+      } as DataRecord,
+    ]
   );
-  return <div className="list-expression"/>;
+
+  const listTableGetRowKey = useCallback((row: Row) => (row.original as ContextEntryRecord).entryExpression.uid!, []);
+
+  const onRowAdding = useCallback(
+    () => ({
+      entryExpression: generateLiteralExpression(),
+    }),
+    []
+  );
+
+  return (
+    <div className="list-expression">
+      <Table
+        tableId={uid}
+        headerVisibility={TableHeaderVisibility.None}
+        defaultCell={{ list: ContextEntryExpressionCell }}
+        columns={[{ accessor: "list", width: 370, minWidth: 370 }]}
+        rows={listItems as DataRecord[]}
+        onRowsUpdate={setListItems}
+        onRowAdding={onRowAdding}
+        handlerConfiguration={handlerConfiguration}
+        getRowKey={listTableGetRowKey}
+      />
+    </div>
+  );
 };
