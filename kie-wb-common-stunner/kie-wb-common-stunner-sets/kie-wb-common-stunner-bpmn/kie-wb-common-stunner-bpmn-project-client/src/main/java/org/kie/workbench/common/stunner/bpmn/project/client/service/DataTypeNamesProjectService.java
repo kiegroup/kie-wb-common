@@ -22,7 +22,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.enterprise.context.Dependent;
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import elemental2.promise.Promise;
@@ -32,7 +32,7 @@ import org.kie.workbench.common.stunner.bpmn.project.service.DataTypesService;
 import org.uberfire.backend.vfs.Path;
 import org.uberfire.client.promise.Promises;
 
-@Dependent
+@ApplicationScoped
 public class DataTypeNamesProjectService implements DataTypeNamesService {
 
     private final Promises promises;
@@ -55,10 +55,12 @@ public class DataTypeNamesProjectService implements DataTypeNamesService {
 
     @Override
     public Promise<List<String>> call(final Path path) {
+
         return promises.promisify(dataTypesServiceCaller,
-                                  s -> {
+                                  dataTypesService -> {
+
                                       extractDefaultDataTypes();
-                                      s.getDataTypeNames(path, addedDataTypes);
+                                      dataTypesService.getDataTypeNames(path, addedDataTypes);
                                   });
     }
 
@@ -68,7 +70,6 @@ public class DataTypeNamesProjectService implements DataTypeNamesService {
 
     @Override
     public void add(String value, String oldValue) {
-
         if (simpleDataTypes.contains(value)) {
             return;
         }
@@ -77,5 +78,9 @@ public class DataTypeNamesProjectService implements DataTypeNamesService {
             addedDataTypes.remove(oldValue);
         }
         addedDataTypes.add(value);
+    }
+
+    public void reset() {
+        addedDataTypes.clear();
     }
 }

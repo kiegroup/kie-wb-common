@@ -28,7 +28,6 @@ import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
-import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.dom.client.TableCellElement;
@@ -364,13 +363,7 @@ public class VariablesEditorWidgetViewImpl extends Composite implements Variable
     }
 
     protected void doAddDataType(String dataType, String oldType) {
-        if (!dataType.equals(oldType) && oldType != null && !oldType.isEmpty()) {
-            clientDataTypesService.add(dataType, oldType);
-            Scheduler.get().scheduleDeferred(() -> {
-                refreshFormPropertiesEvent = new RefreshFormPropertiesEvent(sessionManager.getCurrentSession());
-                refreshFormsEvent.fire(refreshFormPropertiesEvent);
-            });
-        }
+      clientDataTypesService.add(dataType, oldType);
     }
 
     protected void checkTagsNotEnabled() {

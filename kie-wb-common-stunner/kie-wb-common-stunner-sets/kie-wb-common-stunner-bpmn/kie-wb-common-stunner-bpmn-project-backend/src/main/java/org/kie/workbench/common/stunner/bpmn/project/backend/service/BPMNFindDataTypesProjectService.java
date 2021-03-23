@@ -51,7 +51,6 @@ public class BPMNFindDataTypesProjectService implements DataTypesService {
     }
 
     public List<String> getDataTypeNames(final Path path, final List<String> addedDataTypes) {
-
         if (null == path) {
             return Collections.emptyList();
         }
@@ -76,7 +75,6 @@ public class BPMNFindDataTypesProjectService implements DataTypesService {
         } catch (Exception e) {
             throw ExceptionUtilities.handleException(e);
         }
-
         return dataTypeNames;
     }
 }

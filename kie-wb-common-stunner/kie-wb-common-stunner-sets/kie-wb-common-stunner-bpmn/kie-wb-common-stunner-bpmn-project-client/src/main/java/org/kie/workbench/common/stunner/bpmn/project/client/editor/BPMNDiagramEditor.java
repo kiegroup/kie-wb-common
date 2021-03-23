@@ -26,6 +26,7 @@ import javax.inject.Inject;
 
 import com.google.gwt.user.client.ui.IsWidget;
 import org.jboss.errai.common.client.api.Caller;
+import org.kie.workbench.common.stunner.bpmn.client.forms.DataTypeNamesService;
 import org.kie.workbench.common.stunner.bpmn.project.client.type.BPMNDiagramResourceType;
 import org.kie.workbench.common.stunner.bpmn.qualifiers.BPMN;
 import org.kie.workbench.common.stunner.client.widgets.editor.StunnerEditor;
@@ -77,6 +78,8 @@ public class BPMNDiagramEditor extends AbstractProjectDiagramEditor<BPMNDiagramR
     private boolean isPropertiesOpenedBeforeMaximize = false;
     private boolean isExplorerOpenedBeforeMaximize = false;
 
+    private DataTypeNamesService clientDataTypesService;
+
     @Inject
     public BPMNDiagramEditor(final View view,
                              final Event<OnDiagramFocusEvent> onDiagramFocusEvent,
@@ -90,7 +93,8 @@ public class BPMNDiagramEditor extends AbstractProjectDiagramEditor<BPMNDiagramR
                              final Caller<ProjectDiagramResourceService> projectDiagramResourceServiceCaller,
                              final StunnerEditor stunnerEditor,
                              final UberfireDocks uberfireDocks,
-                             final StunnerDocksHandler stunnerDocksHandler) {
+                             final StunnerDocksHandler stunnerDocksHandler,
+                             final DataTypeNamesService clientDataTypesService) {
         super(view,
               onDiagramFocusEvent,
               onDiagramLostFocusEvent,
@@ -104,6 +108,7 @@ public class BPMNDiagramEditor extends AbstractProjectDiagramEditor<BPMNDiagramR
               stunnerEditor);
         this.uberfireDocks = uberfireDocks;
         this.stunnerDocksHandler = stunnerDocksHandler;
+        this.clientDataTypesService = clientDataTypesService;
     }
 
     @OnStartup
@@ -127,6 +132,7 @@ public class BPMNDiagramEditor extends AbstractProjectDiagramEditor<BPMNDiagramR
     @OnOpen
     public void onOpen() {
         openPropertiesDocks();
+        clientDataTypesService.reset();
     }
 
     private void performDockOperation(final String id, final Consumer<? super UberfireDock> action) {
