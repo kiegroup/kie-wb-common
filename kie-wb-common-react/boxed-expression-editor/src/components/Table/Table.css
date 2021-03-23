@@ -72,7 +72,7 @@
   height: 4em;
 }
 
-.expression-container .table-component table tbody,
+.expression-container .table-component table tbody:not(.missing-header),
 .expression-container .table-component table thead tr + tr,
 .expression-container .table-component table tbody tr + tr {
   margin-top: -1px;

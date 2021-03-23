@@ -307,7 +307,10 @@ export const Table: React.FunctionComponent<TableProps> = ({
           setTableRows={setTableRows}
           getColumnKey={getColumnKey}
         />
-        <Tbody {...tableInstance.getTableBodyProps()}>
+        <Tbody
+          className={`${headerVisibility === TableHeaderVisibility.None ? "missing-header" : ""}`}
+          {...tableInstance.getTableBodyProps()}
+        >
           {tableInstance.rows.map((row: Row, rowIndex: number) => {
             tableInstance.prepareRow(row);
             return (
