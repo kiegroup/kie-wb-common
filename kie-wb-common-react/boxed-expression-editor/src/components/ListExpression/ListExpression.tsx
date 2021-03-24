@@ -88,7 +88,7 @@ export const ListExpression: React.FunctionComponent<ListProps> = ({
     [isHeadless, onUpdatingRecursiveExpression]
   );
 
-  const resetRowAtIndex = useCallback((row: DataRecord) => {
+  const resetRowCustomFunction = useCallback((row: DataRecord) => {
     return { entryExpression: { uid: (row.entryExpression as ExpressionProps).uid } };
   }, []);
 
@@ -114,7 +114,7 @@ export const ListExpression: React.FunctionComponent<ListProps> = ({
         onRowAdding={onRowAdding}
         handlerConfiguration={handlerConfiguration}
         getRowKey={listTableGetRowKey}
-        resetRowAtIndex={resetRowAtIndex}
+        resetRowCustomFunction={resetRowCustomFunction}
       />
     </div>
   );

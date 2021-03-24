@@ -64,6 +64,7 @@ export const ContextExpression: React.FunctionComponent<ContextProps> = ({
         { name: i18n.rowOperations.insertAbove, type: TableOperation.RowInsertAbove },
         { name: i18n.rowOperations.insertBelow, type: TableOperation.RowInsertBelow },
         { name: i18n.rowOperations.delete, type: TableOperation.RowDelete },
+        { name: i18n.rowOperations.clear, type: TableOperation.RowClear },
       ],
     },
   ];
@@ -216,6 +217,14 @@ export const ContextExpression: React.FunctionComponent<ContextProps> = ({
     }
   }, [checkForOverflowingCell, checkForSpareSpace, updateValueColumnWidth]);
 
+  const getHeaderVisibility = useCallback(() => {
+    return isHeadless ? TableHeaderVisibility.OnlyLastLevel : TableHeaderVisibility.Full;
+  }, [isHeadless]);
+
+  const resetRowCustomFunction = useCallback((row: DataRecord) => {
+    return { entryInfo: row.entryInfo, entryExpression: { uid: (row.entryExpression as ExpressionProps).uid } };
+  }, []);
+
   useEffect(() => {
     onSingleRowUpdate();
   }, [onSingleRowUpdate]);
@@ -237,10 +246,6 @@ export const ContextExpression: React.FunctionComponent<ContextProps> = ({
       : window.beeApi?.broadcastContextExpressionDefinition?.(updatedDefinition);
   }, [columns, isHeadless, onUpdatingRecursiveExpression, rows, resultExpression, infoWidth, expressionWidth, uid]);
 
-  const getHeaderVisibility = useCallback(() => {
-    return isHeadless ? TableHeaderVisibility.OnlyLastLevel : TableHeaderVisibility.Full;
-  }, [isHeadless]);
-
   return (
     <div className={`context-expression ${uid}`}>
       <Table
@@ -256,6 +261,7 @@ export const ContextExpression: React.FunctionComponent<ContextProps> = ({
         onSingleRowUpdate={onSingleRowUpdate}
         handlerConfiguration={handlerConfiguration}
         getRowKey={contextTableGetRowKey}
+        resetRowCustomFunction={resetRowCustomFunction}
       >
         <div className="context-result">{`<result>`}</div>
         <ContextEntryExpression

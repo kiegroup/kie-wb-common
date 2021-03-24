@@ -49,7 +49,7 @@ export interface TableHandlerProps {
   /** Table handler allowed operations */
   tableHandlerAllowedOperations: TableOperation[];
   /** Custom function called for manually resetting a row */
-  resetRowAtIndex?: (row: DataRecord) => DataRecord;
+  resetRowCustomFunction?: (row: DataRecord) => DataRecord;
 }
 
 export const TableHandler: React.FunctionComponent<TableHandlerProps> = ({
@@ -65,7 +65,7 @@ export const TableHandler: React.FunctionComponent<TableHandlerProps> = ({
   tableHandlerTarget,
   handlerConfiguration,
   tableHandlerAllowedOperations,
-  resetRowAtIndex,
+  resetRowCustomFunction = () => ({}),
 }) => {
   const globalContext = useContext(BoxedExpressionGlobalContext);
 
@@ -95,7 +95,7 @@ export const TableHandler: React.FunctionComponent<TableHandlerProps> = ({
   const clearAt = <T extends unknown>(elements: T[], index: number) => {
     return [
       ...elements.slice(0, index),
-      resetRowAtIndex?.(elements[index] as DataRecord) || {},
+      resetRowCustomFunction(elements[index] as DataRecord),
       ...elements.slice(index + 1),
     ];
   };

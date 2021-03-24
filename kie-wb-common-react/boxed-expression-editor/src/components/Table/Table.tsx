@@ -72,7 +72,7 @@ export interface TableProps {
   /** Custom function for getting column key prop, and avoid using the column index */
   getColumnKey?: (column: Column) => string;
   /** Custom function called for manually resetting a row */
-  resetRowAtIndex?: (row: DataRecord) => DataRecord;
+  resetRowCustomFunction?: (row: DataRecord) => DataRecord;
 }
 
 export const NO_TABLE_CONTEXT_MENU_CLASS = "no-table-context-menu";
@@ -94,7 +94,7 @@ export const Table: React.FunctionComponent<TableProps> = ({
   headerHasMultipleLevels = false,
   getRowKey = (row) => row.id as string,
   getColumnKey = (column) => column.id as string,
-  resetRowAtIndex,
+  resetRowCustomFunction,
 }: TableProps) => {
   const NUMBER_OF_ROWS_COLUMN = "#";
   const NUMBER_OF_ROWS_SUBCOLUMN = "0";
@@ -355,7 +355,7 @@ export const Table: React.FunctionComponent<TableProps> = ({
           setShowTableHandler={setShowTableHandler}
           tableHandlerAllowedOperations={tableHandlerAllowedOperations}
           tableHandlerTarget={tableHandlerTarget}
-          resetRowAtIndex={resetRowAtIndex}
+          resetRowCustomFunction={resetRowCustomFunction}
         />
       ) : null}
     </div>
