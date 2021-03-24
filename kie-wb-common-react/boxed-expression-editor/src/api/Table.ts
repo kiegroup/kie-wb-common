@@ -31,6 +31,7 @@ export enum TableOperation {
   RowInsertAbove,
   RowInsertBelow,
   RowDelete,
+  RowClear,
 }
 
 export interface GroupOperations {

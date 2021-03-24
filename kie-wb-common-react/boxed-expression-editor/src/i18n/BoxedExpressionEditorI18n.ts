@@ -41,6 +41,7 @@ interface BoxedExpressionEditorDictionary extends ReferenceDictionary<BoxedExpre
   relation: string;
   rows: string;
   rowOperations: {
+    clear: string;
     delete: string;
     insertAbove: string;
     insertBelow: string;
