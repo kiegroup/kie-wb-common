@@ -70,9 +70,7 @@ public class OpenSubprocessToolboxAction implements ToolboxAction<AbstractCanvas
     public ToolboxAction<AbstractCanvasHandler> onMouseClick(final AbstractCanvasHandler canvasHandler,
                                                              final String uuid,
                                                              final MouseClickEvent event) {
-        Node<View<ReusableSubprocess>, ?> node = canvasHandler.getDiagram().getGraph().getNode(uuid);
-        ReusableSubprocess subprocess = node.getContent().getDefinition();
-        String processId = subprocess.getExecutionSet().getCalledElement().getValue();
+        String processId = getProcessId(canvasHandler, uuid);
         if (isEmpty(processId)) {
             showNotification(translationService.getValue(SubprocessIdNotSpecified));
             return this;
@@ -90,6 +88,14 @@ public class OpenSubprocessToolboxAction implements ToolboxAction<AbstractCanvas
                 });
 
         return this;
+    }
+
+    @SuppressWarnings("unchecked")
+    String getProcessId(final AbstractCanvasHandler canvasHandler,
+                        final String uuid) {
+        Node<View<ReusableSubprocess>, ?> node = canvasHandler.getDiagram().getGraph().getNode(uuid);
+        ReusableSubprocess subprocess = node.getContent().getDefinition();
+        return subprocess.getExecutionSet().getCalledElement().getValue();
     }
 
     void openSubprocess(final List<String> serverData,

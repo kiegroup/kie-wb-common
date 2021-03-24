@@ -37,9 +37,10 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class ProjectOpenReusableSubprocessServiceImplTest {
 
-    private static String PROCESS_ID = "processId";
-    private static String PROCESS_FILE_NAME = "File Name";
-    private static String PROCESS_URI = "URI";
+    private final static String PROCESS_ID = "processId";
+    private final static String NOT_REGISTERED_PROCESS_ID = "not_registered_process_id";
+    private final static String PROCESS_FILE_NAME = "File Name";
+    private final static String PROCESS_URI = "URI";
 
     @Mock
     private RefactoringQueryService serviceQuery;
@@ -87,5 +88,13 @@ public class ProjectOpenReusableSubprocessServiceImplTest {
         assertEquals(2, answer.size());
         assertEquals(PROCESS_FILE_NAME, answer.get(0));
         assertEquals(PROCESS_URI, answer.get(1));
+    }
+
+    @Test
+    public void testProcessWithIdNotFound() {
+        when(serviceQuery.query(service.getQueryName(), service.createQueryTerms())).thenReturn(rows);
+
+        List<String> answer = service.openReusableSubprocess(NOT_REGISTERED_PROCESS_ID);
+        assertEquals(0, answer.size());
     }
 }

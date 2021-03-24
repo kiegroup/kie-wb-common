@@ -29,13 +29,14 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
 
 @RunWith(MockitoJUnitRunner.class)
 public class GraphUtilsTest {
 
     @Test
     public void testContentIsNotSet() {
-        Element<Object> element = new NodeImpl<>("UUID");
+        Element<Object> element = mock(Element.class);
         assertFalse(GraphUtils.isReusableSubProcess(element));
     }
 
