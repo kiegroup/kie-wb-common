@@ -23,6 +23,7 @@ import { EditExpressionMenu, EXPRESSION_NAME } from "../EditExpressionMenu";
 import { Resizer } from "../Resizer";
 
 export const LiteralExpression: React.FunctionComponent<LiteralExpressionProps> = ({
+  uid,
   content,
   dataType,
   name = EXPRESSION_NAME,
