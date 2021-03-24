@@ -175,7 +175,7 @@ public class StringUtils {
         }
         final String[] split = value.split(",");
         for (String string : split) {
-            String type = string.substring(string.indexOf(":") + 1, string.lastIndexOf(":"));
+            String type = string.substring(string.indexOf(':') + 1, string.lastIndexOf(':'));
             types.add(type);
         }
 

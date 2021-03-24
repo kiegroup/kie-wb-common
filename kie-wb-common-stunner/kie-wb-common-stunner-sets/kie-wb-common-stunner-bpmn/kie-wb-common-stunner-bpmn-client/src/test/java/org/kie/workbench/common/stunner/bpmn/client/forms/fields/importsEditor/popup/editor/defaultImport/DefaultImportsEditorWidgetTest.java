@@ -238,12 +238,26 @@ public class DefaultImportsEditorWidgetTest {
         verify(dataTypeNamesService,
                times(1)).add(eq("MyString"), any());
 
+        value = new ImportsValue();
         defaultImport = new DefaultImport();
 
         defaultImport.setClassName("String");
         value.addImport(defaultImport);
 
+        tested.addDataTypes(value);
+
         verify(dataTypeNamesService,
                times(0)).add(eq("String"), anyString());
+
+        value = new ImportsValue();
+        defaultImport = new DefaultImport();
+
+        defaultImport.setClassName("Object");
+        value.addImport(defaultImport);
+
+        tested.addDataTypes(value);
+
+        verify(dataTypeNamesService,
+               times(0)).add(eq("Object"), anyString());
     }
 }
