@@ -16,7 +16,7 @@
 
 import "./ListExpression.css";
 import * as React from "react";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import {
   ContextEntryRecord,
   ExpressionProps,
@@ -28,7 +28,6 @@ import {
   TableOperation,
 } from "../../api";
 import { ContextEntryExpressionCell } from "../ContextExpression";
-import nextId from "react-id-generator";
 import { Table } from "../Table";
 import { useBoxedExpressionEditorI18n } from "../../i18n";
 import { DataRecord, Row } from "react-table";
@@ -49,13 +48,14 @@ export const ListExpression: React.FunctionComponent<ListProps> = ({
         { name: i18n.rowOperations.insertAbove, type: TableOperation.RowInsertAbove },
         { name: i18n.rowOperations.insertBelow, type: TableOperation.RowInsertBelow },
         { name: i18n.rowOperations.delete, type: TableOperation.RowDelete },
+        { name: i18n.rowOperations.clear, type: TableOperation.RowClear },
       ],
     },
   ];
 
   const generateLiteralExpression = () => ({ logicType: LogicType.LiteralExpression } as LiteralExpressionProps);
 
-  const [listItems, setListItems] = useState(
+  const listItems = useRef(
     _.isEmpty(items)
       ? [
           {
@@ -74,15 +74,33 @@ export const ListExpression: React.FunctionComponent<ListProps> = ({
     []
   );
 
+  const onRowsUpdate = useCallback(
+    (rows) => {
+      listItems.current = rows;
+      const updatedDefinition: ListProps = {
+        logicType: LogicType.List,
+        items: _.map(listItems.current, (listItem: DataRecord) => listItem.entryExpression as ExpressionProps),
+      };
+      isHeadless
+        ? onUpdatingRecursiveExpression?.(updatedDefinition)
+        : window.beeApi?.broadcastListExpressionDefinition?.(updatedDefinition);
+    },
+    [isHeadless, onUpdatingRecursiveExpression]
+  );
+
+  const resetRowAtIndex = useCallback((row: DataRecord) => {
+    return { entryExpression: { uid: (row.entryExpression as ExpressionProps).uid } };
+  }, []);
+
   useEffect(() => {
     const updatedDefinition: ListProps = {
       logicType: LogicType.List,
-      items: _.map(listItems, (listItem: DataRecord) => listItem.entryExpression as ExpressionProps),
+      items: _.map(listItems.current, (listItem: DataRecord) => listItem.entryExpression as ExpressionProps),
     };
     isHeadless
       ? onUpdatingRecursiveExpression?.(updatedDefinition)
       : window.beeApi?.broadcastListExpressionDefinition?.(updatedDefinition);
-  }, [isHeadless, listItems, onUpdatingRecursiveExpression]);
+  }, [isHeadless, onUpdatingRecursiveExpression]);
 
   return (
     <div className="list-expression">
@@ -91,11 +109,12 @@ export const ListExpression: React.FunctionComponent<ListProps> = ({
         headerVisibility={TableHeaderVisibility.None}
         defaultCell={{ list: ContextEntryExpressionCell }}
         columns={[{ accessor: "list", width: 370, minWidth: 370 }]}
-        rows={listItems as DataRecord[]}
-        onRowsUpdate={setListItems}
+        rows={listItems.current as DataRecord[]}
+        onRowsUpdate={onRowsUpdate}
         onRowAdding={onRowAdding}
         handlerConfiguration={handlerConfiguration}
         getRowKey={listTableGetRowKey}
+        resetRowAtIndex={resetRowAtIndex}
       />
     </div>
   );
