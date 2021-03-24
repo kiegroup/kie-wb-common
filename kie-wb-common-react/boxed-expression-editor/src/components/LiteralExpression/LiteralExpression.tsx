@@ -41,6 +41,7 @@ export const LiteralExpression: React.FunctionComponent<LiteralExpressionProps> 
 
   useEffect(() => {
     const expressionDefinition: LiteralExpressionProps = {
+      uid,
       name: expressionName,
       dataType: expressionDataType,
       logicType: LogicType.LiteralExpression,
@@ -57,6 +58,7 @@ export const LiteralExpression: React.FunctionComponent<LiteralExpressionProps> 
     isHeadless,
     onUpdatingRecursiveExpression,
     literalExpressionWidth,
+    uid,
   ]);
 
   const onExpressionUpdate = useCallback(

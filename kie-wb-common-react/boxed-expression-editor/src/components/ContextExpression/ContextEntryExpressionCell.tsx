@@ -20,6 +20,7 @@ import { useCallback, useEffect, useState } from "react";
 import { CellProps, ContextEntries, ExpressionProps } from "../../api";
 import { DataRecord } from "react-table";
 import { ContextEntryExpression } from "./ContextEntryExpression";
+import nextId from "react-id-generator";
 
 export interface ContextEntryExpressionCellProps extends CellProps {
   data: ContextEntries;
@@ -33,7 +34,10 @@ export const ContextEntryExpressionCell: React.FunctionComponent<ContextEntryExp
 }) => {
   const contextEntry = data[index];
 
-  const [entryExpression, setEntryExpression] = useState(contextEntry.entryExpression);
+  const [entryExpression, setEntryExpression] = useState({
+    uid: contextEntry.entryExpression.uid || nextId(),
+    ...contextEntry.entryExpression,
+  } as ExpressionProps);
 
   const expressionChangedExternally = contextEntry.entryExpression.logicType === undefined;
   useEffect(() => {

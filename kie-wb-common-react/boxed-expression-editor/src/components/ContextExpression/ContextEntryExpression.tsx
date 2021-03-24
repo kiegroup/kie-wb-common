@@ -65,6 +65,7 @@ export const ContextEntryExpression: React.FunctionComponent<ContextEntryExpress
 
   const onLogicTypeResetting = useCallback(() => {
     setEntryExpression((previousSelectedExpression: ExpressionProps) => ({
+      uid: previousSelectedExpression.uid,
       name: previousSelectedExpression.name,
       dataType: previousSelectedExpression.dataType,
       logicType: LogicType.Undefined,

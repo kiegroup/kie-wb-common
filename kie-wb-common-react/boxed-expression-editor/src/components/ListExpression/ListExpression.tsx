@@ -53,8 +53,7 @@ export const ListExpression: React.FunctionComponent<ListProps> = ({
     },
   ];
 
-  const generateLiteralExpression = () =>
-    ({ uid: nextId(), logicType: LogicType.LiteralExpression } as LiteralExpressionProps);
+  const generateLiteralExpression = () => ({ logicType: LogicType.LiteralExpression } as LiteralExpressionProps);
 
   const [listItems, setListItems] = useState(
     _.isEmpty(items)

@@ -223,6 +223,7 @@ export const ContextExpression: React.FunctionComponent<ContextProps> = ({
   useEffect(() => {
     const [expressionColumn] = columns;
     const updatedDefinition: ContextProps = {
+      uid,
       logicType: LogicType.Context,
       name: expressionColumn.accessor,
       dataType: expressionColumn.dataType,
@@ -234,7 +235,7 @@ export const ContextExpression: React.FunctionComponent<ContextProps> = ({
     isHeadless
       ? onUpdatingRecursiveExpression?.(_.omit(updatedDefinition, ["name", "dataType"]))
       : window.beeApi?.broadcastContextExpressionDefinition?.(updatedDefinition);
-  }, [columns, isHeadless, onUpdatingRecursiveExpression, rows, resultExpression, infoWidth, expressionWidth]);
+  }, [columns, isHeadless, onUpdatingRecursiveExpression, rows, resultExpression, infoWidth, expressionWidth, uid]);
 
   const getHeaderVisibility = useCallback(() => {
     return isHeadless ? TableHeaderVisibility.OnlyLastLevel : TableHeaderVisibility.Full;
