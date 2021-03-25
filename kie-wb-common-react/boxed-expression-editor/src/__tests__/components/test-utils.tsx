@@ -24,6 +24,7 @@ import {
 } from "../../i18n";
 import { act } from "react-dom/test-utils";
 import { fireEvent } from "@testing-library/react";
+import { resetId } from "react-id-generator";
 
 global.console = { ...global.console, warn: jest.fn() };
 
@@ -80,3 +81,7 @@ export async function updateElementViaPopover(
   });
   fireEvent.blur(inputElement);
 }
+
+beforeEach(() => {
+  resetId();
+});

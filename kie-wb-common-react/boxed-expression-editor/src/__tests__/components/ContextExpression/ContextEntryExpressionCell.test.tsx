@@ -22,7 +22,6 @@ import * as _ from "lodash";
 import * as React from "react";
 import { DataRecord } from "react-table";
 import { act } from "react-dom/test-utils";
-import { resetId } from "react-id-generator";
 
 jest.useFakeTimers();
 
@@ -56,9 +55,6 @@ describe("ContextEntryExpressionCell tests", () => {
   });
 
   test("should trigger onRowUpdate function when something in the context entry expression changes", async () => {
-    // Since we are asserting expression id, we need to reset id generation
-    resetId();
-
     const mockedOnRowUpdate = jest.fn(onRowUpdate);
 
     const { container, baseElement } = render(
