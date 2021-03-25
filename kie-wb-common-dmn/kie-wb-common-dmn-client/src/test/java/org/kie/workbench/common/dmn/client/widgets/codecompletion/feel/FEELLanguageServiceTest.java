@@ -18,17 +18,22 @@ package org.kie.workbench.common.dmn.client.widgets.codecompletion.feel;
 
 import java.util.List;
 
+import com.google.gwtmockito.GwtMockito;
 import com.google.gwtmockito.GwtMockitoTestRunner;
 import org.antlr.v4.runtime.tree.ParseTree;
+import org.assertj.core.api.Assertions;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.dmn.feel.gwt.functions.api.FunctionOverrideVariation;
 import org.kie.dmn.feel.gwt.functions.api.Parameter;
+import org.kie.dmn.feel.gwt.functions.client.FEELFunctionProvider;
 import org.kie.dmn.feel.lang.Type;
 import org.kie.dmn.feel.lang.ast.BaseNode;
 import org.kie.dmn.feel.lang.types.BuiltInType;
 import org.kie.dmn.feel.parser.feel11.FEEL_1_1Parser;
+import org.mockito.Mock;
 
 import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
@@ -43,12 +48,18 @@ public class FEELLanguageServiceTest {
 
     private List<FunctionOverrideVariation> functionOverrideVariations;
 
+    @Mock
+    private FEELFunctionProvider feelFunctionProviderMock;
+
     @Before
     public void setup() {
         service = spy(new FEELLanguageService(new TypeStackUtils()));
         functionOverrideVariations = getFunctionOverrideVariations();
 
+        GwtMockito.useProviderForType(FEELFunctionProvider.class, aClass -> feelFunctionProviderMock);
+
         doReturn(functionOverrideVariations).when(service).getFunctionOverrideVariations();
+        doReturn(functionOverrideVariations).when(feelFunctionProviderMock).getDefinitions();
     }
 
     @Test
@@ -60,21 +71,24 @@ public class FEELLanguageServiceTest {
         final List<Variable> variables = asList(new Variable("Decision-1", BuiltInType.STRING),
                                                 new Variable("Decision-2", BuiltInType.NUMBER),
                                                 new Variable("Decision-3", BuiltInType.BOOLEAN),
-                                                new Variable("Decision-4", BuiltInType.NUMBER));
+                                                new Variable("Decision-4", BuiltInType.NUMBER),
+                                                new Variable("Decision-5", BuiltInType.DATE));
 
         final List<Candidate> actualCandidates = service.getCandidates(expressionToParse, variables, position);
 
-        assertCandidate("Decision-2", "Decision-2", CompletionItemKind.Variable, actualCandidates.get(0));
-        assertCandidate("Decision-4", "Decision-4", CompletionItemKind.Variable, actualCandidates.get(1));
-        assertCandidate("abs(duration)", "abs($1)", CompletionItemKind.Function, actualCandidates.get(2));
-        assertCandidate("abs(number)", "abs($1)", CompletionItemKind.Function, actualCandidates.get(3));
-        assertCandidate("sum(list)", "sum($1)", CompletionItemKind.Function, actualCandidates.get(4));
-        assertCandidate("not", "not", CompletionItemKind.Keyword, actualCandidates.get(5));
-        assertCandidate("for", "for", CompletionItemKind.Keyword, actualCandidates.get(6));
-        assertCandidate("if", "if", CompletionItemKind.Keyword, actualCandidates.get(7));
-        assertCandidate("some", "some", CompletionItemKind.Keyword, actualCandidates.get(8));
-        assertCandidate("every", "every", CompletionItemKind.Keyword, actualCandidates.get(9));
-        assertCandidate("function", "function", CompletionItemKind.Keyword, actualCandidates.get(10));
+        Assertions.assertThat(actualCandidates).containsExactly(
+                new Candidate("Decision-2", "Decision-2", CompletionItemKind.Variable),
+                new Candidate("Decision-4", "Decision-4", CompletionItemKind.Variable),
+                new Candidate("abs(duration)", "abs($1)", CompletionItemKind.Function),
+                new Candidate("abs(number)", "abs($1)", CompletionItemKind.Function),
+                new Candidate("sum(list)", "sum($1)", CompletionItemKind.Function),
+                new Candidate("not", "not", CompletionItemKind.Keyword),
+                new Candidate("for", "for", CompletionItemKind.Keyword),
+                new Candidate("if", "if", CompletionItemKind.Keyword),
+                new Candidate("some", "some", CompletionItemKind.Keyword),
+                new Candidate("every", "every", CompletionItemKind.Keyword),
+                new Candidate("function", "function", CompletionItemKind.Keyword)
+        );
     }
 
     @Test
@@ -86,18 +100,129 @@ public class FEELLanguageServiceTest {
         final List<Variable> variables = asList(new Variable("Decision-1", BuiltInType.STRING),
                                                 new Variable("Decision-2", BuiltInType.NUMBER),
                                                 new Variable("Decision-3", BuiltInType.BOOLEAN),
-                                                new Variable("Decision-4", BuiltInType.NUMBER));
+                                                new Variable("Decision-4", BuiltInType.NUMBER),
+                                                new Variable("Decision-5", BuiltInType.DATE));
 
         final List<Candidate> actualCandidates = service.getCandidates(expressionToParse, variables, position);
 
-        assertCandidate("Decision-1", "Decision-1", CompletionItemKind.Variable, actualCandidates.get(0));
-        assertCandidate("string(number)", "string($1)", CompletionItemKind.Function, actualCandidates.get(1));
-        assertCandidate("not", "not", CompletionItemKind.Keyword, actualCandidates.get(2));
-        assertCandidate("for", "for", CompletionItemKind.Keyword, actualCandidates.get(3));
-        assertCandidate("if", "if", CompletionItemKind.Keyword, actualCandidates.get(4));
-        assertCandidate("some", "some", CompletionItemKind.Keyword, actualCandidates.get(5));
-        assertCandidate("every", "every", CompletionItemKind.Keyword, actualCandidates.get(6));
-        assertCandidate("function", "function", CompletionItemKind.Keyword, actualCandidates.get(7));
+        Assertions.assertThat(actualCandidates).containsExactly(
+                new Candidate("Decision-1", "Decision-1", CompletionItemKind.Variable),
+                new Candidate("string(number)", "string($1)", CompletionItemKind.Function),
+                new Candidate("not", "not", CompletionItemKind.Keyword),
+                new Candidate("for", "for", CompletionItemKind.Keyword),
+                new Candidate("if", "if", CompletionItemKind.Keyword),
+                new Candidate("some", "some", CompletionItemKind.Keyword),
+                new Candidate("every", "every", CompletionItemKind.Keyword),
+                new Candidate("function", "function", CompletionItemKind.Keyword)
+        );
+    }
+
+    @Test
+    public void testGetCandidatesForBooleanScenario() {
+
+        final String expression = "true and + |";
+        final Position position = new Position(1, expression.indexOf("|"));
+        final String expressionToParse = expression.replace("|", "");
+        final List<Variable> variables = asList(new Variable("Decision-1", BuiltInType.STRING),
+                                                new Variable("Decision-2", BuiltInType.NUMBER),
+                                                new Variable("Decision-3", BuiltInType.BOOLEAN),
+                                                new Variable("Decision-4", BuiltInType.NUMBER),
+                                                new Variable("Decision-5", BuiltInType.DATE));
+
+        final List<Candidate> actualCandidates = service.getCandidates(expressionToParse, variables, position);
+
+        Assertions.assertThat(actualCandidates).containsExactly(
+                new Candidate("Decision-3", "Decision-3", CompletionItemKind.Variable),
+                new Candidate("any(list)", "any($1)", CompletionItemKind.Function),
+                new Candidate("not", "not", CompletionItemKind.Keyword),
+                new Candidate("for", "for", CompletionItemKind.Keyword),
+                new Candidate("if", "if", CompletionItemKind.Keyword),
+                new Candidate("some", "some", CompletionItemKind.Keyword),
+                new Candidate("every", "every", CompletionItemKind.Keyword),
+                new Candidate("function", "function", CompletionItemKind.Keyword)
+        );
+    }
+
+    @Test
+    public void testGetCandidatesForDateScenario() {
+
+        final String expression = "now() + |";
+        final Position position = new Position(1, expression.indexOf("|"));
+        final String expressionToParse = expression.replace("|", "");
+        final List<Variable> variables = asList(new Variable("Decision-1", BuiltInType.STRING),
+                                                new Variable("Decision-2", BuiltInType.NUMBER),
+                                                new Variable("Decision-3", BuiltInType.BOOLEAN),
+                                                new Variable("Decision-4", BuiltInType.NUMBER),
+                                                new Variable("Decision-5", BuiltInType.DATE));
+
+        final List<Candidate> actualCandidates = service.getCandidates(expressionToParse, variables, position);
+
+        Assertions.assertThat(actualCandidates).containsExactly(
+                new Candidate("Decision-5", "Decision-5", CompletionItemKind.Variable),
+                new Candidate("date(string)", "date($1)", CompletionItemKind.Function),
+                new Candidate("date(number, number, number)", "date($1, $2, $3)", CompletionItemKind.Function),
+                new Candidate("now()", "now()", CompletionItemKind.Function),
+                new Candidate("not", "not", CompletionItemKind.Keyword),
+                new Candidate("for", "for", CompletionItemKind.Keyword),
+                new Candidate("if", "if", CompletionItemKind.Keyword),
+                new Candidate("some", "some", CompletionItemKind.Keyword),
+                new Candidate("every", "every", CompletionItemKind.Keyword),
+                new Candidate("function", "function", CompletionItemKind.Keyword)
+        );
+    }
+
+    @Test
+    @Ignore("DROOLS-6210")
+    public void testGetCandidatesForVariableScenario() {
+
+        final String expression = "Decision-2 + |";
+        final Position position = new Position(1, expression.indexOf("|"));
+        final String expressionToParse = expression.replace("|", "");
+        final List<Variable> variables = asList(new Variable("Decision-1", BuiltInType.STRING),
+                                                new Variable("Decision-2", BuiltInType.NUMBER),
+                                                new Variable("Decision-3", BuiltInType.BOOLEAN),
+                                                new Variable("Decision-4", BuiltInType.NUMBER),
+                                                new Variable("Decision-5", BuiltInType.DATE));
+
+        final List<Candidate> actualCandidates = service.getCandidates(expressionToParse, variables, position);
+
+        Assertions.assertThat(actualCandidates).containsExactly(
+                new Candidate("Decision-2", "Decision-2", CompletionItemKind.Variable),
+                new Candidate("Decision-4", "Decision-4", CompletionItemKind.Variable),
+                new Candidate("abs(duration)", "abs($1)", CompletionItemKind.Function),
+                new Candidate("abs(number)", "abs($1)", CompletionItemKind.Function),
+                new Candidate("sum(list)", "sum($1)", CompletionItemKind.Function),
+                new Candidate("not", "not", CompletionItemKind.Keyword),
+                new Candidate("for", "for", CompletionItemKind.Keyword),
+                new Candidate("if", "if", CompletionItemKind.Keyword),
+                new Candidate("some", "some", CompletionItemKind.Keyword),
+                new Candidate("every", "every", CompletionItemKind.Keyword),
+                new Candidate("function", "function", CompletionItemKind.Keyword)
+        );
+    }
+
+    @Test
+    public void testGetCandidatesWhenTypeDoesNotMatch() {
+
+        final String expression = "[1..10] |";
+        final Position position = new Position(1, expression.indexOf("|"));
+        final String expressionToParse = expression.replace("|", "");
+        final List<Variable> variables = asList(new Variable("Decision-1", BuiltInType.STRING),
+                                                new Variable("Decision-2", BuiltInType.NUMBER),
+                                                new Variable("Decision-3", BuiltInType.BOOLEAN),
+                                                new Variable("Decision-4", BuiltInType.NUMBER),
+                                                new Variable("Decision-5", BuiltInType.DATE));
+
+        final List<Candidate> actualCandidates = service.getCandidates(expressionToParse, variables, position);
+
+        Assertions.assertThat(actualCandidates).containsExactly(
+                new Candidate("not", "not", CompletionItemKind.Keyword),
+                new Candidate("for", "for", CompletionItemKind.Keyword),
+                new Candidate("if", "if", CompletionItemKind.Keyword),
+                new Candidate("some", "some", CompletionItemKind.Keyword),
+                new Candidate("every", "every", CompletionItemKind.Keyword),
+                new Candidate("function", "function", CompletionItemKind.Keyword)
+        );
     }
 
     @Test
@@ -163,6 +288,23 @@ public class FEELLanguageServiceTest {
                               "    )                \n" +
                               "  )                  \n" +
                               ")                    \n", BuiltInType.NUMBER);
+
+        assertGetType("" +
+                              "date(                \n" +
+                              "  2021,              \n" +
+                              "     1,              \n" +
+                              "     1               \n" +
+                              ")                   |\n", BuiltInType.DATE);
+
+        /*
+        DROOLS-6214
+        assertGetType("" +
+                              "date(                \n" +
+                              "  2021 |,            \n" +
+                              "     1,              \n" +
+                              "     1               \n" +
+                              ")                    \n", BuiltInType.NUMBER);
+         */
     }
 
     @Test
@@ -170,25 +312,29 @@ public class FEELLanguageServiceTest {
         assertGetType("\"\"           |", BuiltInType.STRING);
         assertGetType("[1, 2, 3]      |", BuiltInType.LIST);
         assertGetType("2              |", BuiltInType.NUMBER);
+        assertGetType("2 -            |", BuiltInType.NUMBER);
+        assertGetType("2 *            |", BuiltInType.NUMBER);
+        assertGetType("2 /            |", BuiltInType.NUMBER);
         assertGetType("false          |", BuiltInType.BOOLEAN);
+        assertGetType("false and      |", BuiltInType.BOOLEAN);
         assertGetType("[1..10]        |", BuiltInType.RANGE);
         assertGetType("function() { } |", BuiltInType.FUNCTION);
         assertGetType("\"\" + 2       |", BuiltInType.UNKNOWN);
     }
 
-    private void assertCandidate(final String expectedLabel,
-                                 final CompletionItemKind expectedKind,
-                                 final Candidate candidate) {
-        assertEquals(expectedLabel, candidate.getLabel());
-        assertEquals(expectedKind, candidate.getKind());
-    }
+    @Test
+    public void testAdvancedLiteralTypes() {
 
-    private void assertCandidate(final String expectedLabel,
-                                 final String expectedInsertText,
-                                 final CompletionItemKind expectedKind,
-                                 final Candidate candidate) {
-        assertEquals(expectedInsertText, candidate.getInsertText());
-        assertCandidate(expectedLabel, expectedKind, candidate);
+        // DROOLS-6207
+        // assertGetType("not false      |", BuiltInType.BOOLEAN);
+
+        // = DROOLS-6211 =
+        // assertGetType("sum([1,2,3]) + sum([3,2,1])                     |", BuiltInType.NUMBER);
+
+        // DROOLS-6209
+        // assertGetType("date( \"2012-12-25\" ) - date( \"2012-12-24\" ) |", BuiltInType.DURATION);
+        assertGetType("date(date and time( \"2012-12-25T11:00:00Z\" )) |", BuiltInType.DATE);
+        assertGetType("sum([1,2,3])                                    |", BuiltInType.NUMBER);
     }
 
     private void assertGetType(final String expression,
@@ -216,6 +362,13 @@ public class FEELLanguageServiceTest {
         return asList(
                 new FunctionOverrideVariation(BuiltInType.NUMBER, "abs", new Parameter("duration", BuiltInType.DURATION)),
                 new FunctionOverrideVariation(BuiltInType.NUMBER, "abs", new Parameter("number", BuiltInType.NUMBER)),
+                new FunctionOverrideVariation(BuiltInType.BOOLEAN, "any", new Parameter("list", BuiltInType.LIST)),
+                new FunctionOverrideVariation(BuiltInType.DATE, "date", new Parameter("from", BuiltInType.STRING)),
+                new FunctionOverrideVariation(BuiltInType.DATE, "date",
+                                              new Parameter("year", BuiltInType.NUMBER),
+                                              new Parameter("month", BuiltInType.NUMBER),
+                                              new Parameter("day", BuiltInType.NUMBER)),
+                new FunctionOverrideVariation(BuiltInType.DATE, "now"),
                 new FunctionOverrideVariation(BuiltInType.NUMBER, "sum", new Parameter("list", BuiltInType.LIST)),
                 new FunctionOverrideVariation(BuiltInType.STRING, "string", new Parameter("from", BuiltInType.NUMBER))
         );
