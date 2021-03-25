@@ -59,12 +59,14 @@ public class Candidate {
         }
 
         final Candidate candidate = (Candidate) o;
-        return Objects.equals(insertText, candidate.insertText);
+        return Objects.equals(insertText, candidate.insertText) &&
+                Objects.equals(label, candidate.label) &&
+                Objects.equals(kind, candidate.kind);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(insertText);
+        return Objects.hash(label, insertText,  kind);
     }
 
     @Override
