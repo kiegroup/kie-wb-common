@@ -16,7 +16,7 @@
 
 import "./ListExpression.css";
 import * as React from "react";
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useRef } from "react";
 import {
   ContextEntryRecord,
   ExpressionProps,
@@ -91,16 +91,6 @@ export const ListExpression: React.FunctionComponent<ListProps> = ({
   const resetRowCustomFunction = useCallback((row: DataRecord) => {
     return { entryExpression: { uid: (row.entryExpression as ExpressionProps).uid } };
   }, []);
-
-  useEffect(() => {
-    const updatedDefinition: ListProps = {
-      logicType: LogicType.List,
-      items: _.map(listItems.current, (listItem: DataRecord) => listItem.entryExpression as ExpressionProps),
-    };
-    isHeadless
-      ? onUpdatingRecursiveExpression?.(updatedDefinition)
-      : window.beeApi?.broadcastListExpressionDefinition?.(updatedDefinition);
-  }, [isHeadless, onUpdatingRecursiveExpression]);
 
   return (
     <div className="list-expression">
