@@ -14,15 +14,16 @@
  * limitations under the License.
  */
 
+import "./Resizer.css";
 import * as React from "react";
 import { useCallback, useMemo } from "react";
 import { ResizableBox } from "react-resizable";
 
 export interface ResizerProps {
   width: number;
-  height: number;
+  height: number | "100%";
   minWidth: number;
-  minHeight: number;
+  minHeight?: number;
   onHorizontalResizeStop: (width: number) => void;
   children?: React.ReactElement;
 }
@@ -30,11 +31,13 @@ export interface ResizerProps {
 export const Resizer: React.FunctionComponent<ResizerProps> = ({
   children,
   height,
-  minHeight,
+  minHeight = 0,
   minWidth,
   onHorizontalResizeStop,
   width,
 }) => {
+  const targetHeight = height === "100%" ? 0 : height;
+
   const resizerHandler = useMemo(
     () => (
       <div className="pf-c-drawer">
@@ -50,8 +53,9 @@ export const Resizer: React.FunctionComponent<ResizerProps> = ({
 
   return (
     <ResizableBox
+      className={`${height === "100%" ? "height-based-on-content" : ""}`}
       width={width}
-      height={height}
+      height={targetHeight}
       minConstraints={[minWidth, minHeight]}
       axis="x"
       onResizeStop={onResizeStop}
