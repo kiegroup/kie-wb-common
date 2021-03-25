@@ -91,14 +91,14 @@ public class OpenSubprocessToolboxAction implements ToolboxAction<AbstractCanvas
     }
 
     @SuppressWarnings("unchecked")
-    String getProcessId(final AbstractCanvasHandler canvasHandler,
+    public String getProcessId(final AbstractCanvasHandler canvasHandler,
                         final String uuid) {
         Node<View<ReusableSubprocess>, ?> node = canvasHandler.getDiagram().getGraph().getNode(uuid);
         ReusableSubprocess subprocess = node.getContent().getDefinition();
         return subprocess.getExecutionSet().getCalledElement().getValue();
     }
 
-    void openSubprocess(final List<String> serverData,
+    public void openSubprocess(final List<String> serverData,
                         final String processId) {
         if (serverData.size() == 2) {
             openSubprocessService.openReusableSubprocess(serverData);
@@ -107,7 +107,7 @@ public class OpenSubprocessToolboxAction implements ToolboxAction<AbstractCanvas
         }
     }
 
-    void showNotification(final String message) {
+    public void showNotification(final String message) {
         Notify.notify("",
                       buildHtmlEscapedText(message),
                       IconType.EXCLAMATION);
