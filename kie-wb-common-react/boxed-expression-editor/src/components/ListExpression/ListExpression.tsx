@@ -32,12 +32,16 @@ import { Table } from "../Table";
 import { useBoxedExpressionEditorI18n } from "../../i18n";
 import { DataRecord, Row } from "react-table";
 import * as _ from "lodash";
+import { Resizer } from "../Resizer";
+
+const LIST_EXPRESSION_MIN_WIDTH = 430;
 
 export const ListExpression: React.FunctionComponent<ListProps> = ({
   isHeadless,
   items,
   onUpdatingRecursiveExpression,
   uid,
+  width = LIST_EXPRESSION_MIN_WIDTH,
 }: ListProps) => {
   const { i18n } = useBoxedExpressionEditorI18n();
 
@@ -65,6 +69,8 @@ export const ListExpression: React.FunctionComponent<ListProps> = ({
       : _.map(items, (item) => ({ entryExpression: item } as DataRecord))
   );
 
+  const listExpressionWidth = useRef(width);
+
   const listTableGetRowKey = useCallback((row: Row) => (row.original as ContextEntryRecord).entryExpression.uid!, []);
 
   const onRowAdding = useCallback(
@@ -74,38 +80,61 @@ export const ListExpression: React.FunctionComponent<ListProps> = ({
     []
   );
 
+  const spreadListExpressionDefinition = useCallback(() => {
+    const updatedDefinition: ListProps = {
+      uid,
+      ...(!isHeadless && listExpressionWidth.current !== LIST_EXPRESSION_MIN_WIDTH
+        ? { width: listExpressionWidth.current }
+        : {}),
+      logicType: LogicType.List,
+      items: _.map(listItems.current, (listItem: DataRecord) => listItem.entryExpression as ExpressionProps),
+    };
+    isHeadless
+      ? onUpdatingRecursiveExpression?.(updatedDefinition)
+      : window.beeApi?.broadcastListExpressionDefinition?.(updatedDefinition);
+  }, [isHeadless, onUpdatingRecursiveExpression, uid]);
+
   const onRowsUpdate = useCallback(
     (rows) => {
       listItems.current = rows;
-      const updatedDefinition: ListProps = {
-        logicType: LogicType.List,
-        items: _.map(listItems.current, (listItem: DataRecord) => listItem.entryExpression as ExpressionProps),
-      };
-      isHeadless
-        ? onUpdatingRecursiveExpression?.(updatedDefinition)
-        : window.beeApi?.broadcastListExpressionDefinition?.(updatedDefinition);
+      spreadListExpressionDefinition();
     },
-    [isHeadless, onUpdatingRecursiveExpression]
+    [spreadListExpressionDefinition]
   );
 
   const resetRowCustomFunction = useCallback((row: DataRecord) => {
     return { entryExpression: { uid: (row.entryExpression as ExpressionProps).uid } };
   }, []);
 
+  const onHorizontalResizeStop = useCallback(
+    (width) => {
+      listExpressionWidth.current = width;
+      spreadListExpressionDefinition();
+    },
+    [spreadListExpressionDefinition]
+  );
+
   return (
     <div className="list-expression">
-      <Table
-        tableId={uid}
-        headerVisibility={TableHeaderVisibility.None}
-        defaultCell={{ list: ContextEntryExpressionCell }}
-        columns={[{ accessor: "list", width: 370, minWidth: 370 }]}
-        rows={listItems.current as DataRecord[]}
-        onRowsUpdate={onRowsUpdate}
-        onRowAdding={onRowAdding}
-        handlerConfiguration={handlerConfiguration}
-        getRowKey={listTableGetRowKey}
-        resetRowCustomFunction={resetRowCustomFunction}
-      />
+      <Resizer
+        width={listExpressionWidth.current}
+        height="100%"
+        minWidth={LIST_EXPRESSION_MIN_WIDTH}
+        onHorizontalResizeStop={onHorizontalResizeStop}
+      >
+        <Table
+          tableId={uid}
+          headerVisibility={TableHeaderVisibility.None}
+          defaultCell={{ list: ContextEntryExpressionCell }}
+          columns={[{ accessor: "list", width: "100%" }]}
+          rows={listItems.current as DataRecord[]}
+          onRowsUpdate={onRowsUpdate}
+          onRowAdding={onRowAdding}
+          handlerConfiguration={handlerConfiguration}
+          getRowKey={listTableGetRowKey}
+          resetRowCustomFunction={resetRowCustomFunction}
+        />
+      </Resizer>
     </div>
   );
 };

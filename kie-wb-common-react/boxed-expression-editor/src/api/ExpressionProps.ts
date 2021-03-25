@@ -92,4 +92,6 @@ export interface ListProps extends ExpressionProps {
   logicType: LogicType.List;
   /** List items */
   items?: ExpressionProps[];
+  /** Optional width for this list expression */
+  width?: number;
 }

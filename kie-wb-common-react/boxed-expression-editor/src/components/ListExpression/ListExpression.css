@@ -14,6 +14,24 @@
  * limitations under the License.
  */
 
-.list-expression {
+.expression-container .list-expression {
+  position: relative;
+}
+.expression-container .list-expression > .react-resizable > .table-component > table {
+  width: calc(100% - 9px);
+}
 
+.expression-container .list-expression > .react-resizable > .pf-c-drawer {
+  --pf-c-drawer__splitter--after--BorderLeftWidth: var(
+    --pf-global--BorderWidth--sm
+  );
+  min-width: 9px;
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+}
+
+.expression-container .list-expression > .react-resizable > .pf-c-drawer > .pf-c-drawer__splitter::after {
+  border-width: 1px;
 }

@@ -25,6 +25,7 @@
 .expression-container .table-component table thead,
 .expression-container .table-component table tbody {
   display: table;
+  width: 100%;
 }
 
 .expression-container .table-component table th {
@@ -73,9 +74,8 @@
 }
 
 .expression-container .table-component table tbody:not(.missing-header),
-.expression-container .table-component table thead tr + tr,
-.expression-container .table-component table tbody tr + tr {
-  margin-top: -1px;
+.expression-container .table-component table thead tr + tr {
+  margin-top: -2px;
 }
 
 .expression-container .table-component table thead th,
@@ -85,6 +85,7 @@
 
 .expression-container .table-component table tbody tr {
   display: flex;
+  border: 0;
 }
 
 .expression-container .table-component table tbody td {
