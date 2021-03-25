@@ -16,11 +16,10 @@
 
 import "./ContextEntryExpressionCell.css";
 import * as React from "react";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { CellProps, ContextEntries, ExpressionProps } from "../../api";
 import { DataRecord } from "react-table";
 import { ContextEntryExpression } from "./ContextEntryExpression";
-import nextId from "react-id-generator";
 
 export interface ContextEntryExpressionCellProps extends CellProps {
   data: ContextEntries;
@@ -34,32 +33,30 @@ export const ContextEntryExpressionCell: React.FunctionComponent<ContextEntryExp
 }) => {
   const contextEntry = data[index];
 
-  const [entryExpression, setEntryExpression] = useState({
-    uid: contextEntry.entryExpression.uid || nextId(),
+  const entryExpression = useRef({
+    uid: contextEntry.entryExpression.uid,
     ...contextEntry.entryExpression,
   } as ExpressionProps);
 
   const expressionChangedExternally = contextEntry.entryExpression.logicType === undefined;
   useEffect(() => {
-    setEntryExpression(contextEntry.entryExpression);
+    entryExpression.current = contextEntry.entryExpression;
+    onRowUpdate(index, { ...contextEntry, entryExpression: entryExpression.current });
     // Every time, for an expression, its logic type is undefined, it means that corresponding entry has been just added
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [expressionChangedExternally]);
 
-  useEffect(() => {
-    onRowUpdate(index, { ...contextEntry, entryExpression });
-    // Purpose is to update the row every time the expression wrapped in the entry changes
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [entryExpression]);
-
   const onUpdatingRecursiveExpression = useCallback((expression: ExpressionProps) => {
-    setEntryExpression(expression);
+    entryExpression.current = expression;
+    onRowUpdate(index, { ...contextEntry, entryExpression: expression });
+    // Callback should never change
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
     <div className="context-entry-expression-cell">
       <ContextEntryExpression
-        expression={entryExpression}
+        expression={entryExpression.current}
         onUpdatingRecursiveExpression={onUpdatingRecursiveExpression}
         onExpressionResetting={contextEntry.onExpressionResetting}
       />

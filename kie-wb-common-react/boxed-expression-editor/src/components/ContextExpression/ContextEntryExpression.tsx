@@ -16,7 +16,7 @@
 
 import { ExpressionProps, LogicType } from "../../api";
 import * as React from "react";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { LogicTypeSelector } from "../LogicTypeSelector";
 import * as _ from "lodash";
 
@@ -36,49 +36,39 @@ export const ContextEntryExpression: React.FunctionComponent<ContextEntryExpress
 }) => {
   const expressionContainerRef = useRef<HTMLDivElement>(null);
 
-  const [entryExpression, setEntryExpression] = useState(expression);
+  const entryExpression = useRef(expression);
 
   const expressionChangedExternally = expression.logicType === undefined;
   useEffect(() => {
-    setEntryExpression(_.omit(expression, "isHeadless"));
+    entryExpression.current = _.omit(expression, "isHeadless");
     // Every time, for an expression, its logic type is undefined, it means that corresponding entry has been just added
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [expressionChangedExternally]);
-
-  useEffect(() => {
-    onUpdatingRecursiveExpression(_.omit(entryExpression, "isHeadless"));
-  }, [onUpdatingRecursiveExpression, entryExpression]);
 
   const getLogicTypeSelectorRef = useCallback(() => {
     return expressionContainerRef.current!;
   }, []);
 
-  const onLogicTypeUpdating = useCallback((logicType) => {
-    setEntryExpression((previousSelectedExpression: ExpressionProps) => {
-      const updatedExpression = {
-        ...previousSelectedExpression,
-        logicType: logicType,
-      };
-      return _.omit(updatedExpression, "isHeadless");
-    });
-  }, []);
+  const onLogicTypeUpdating = useCallback(
+    (logicType) => {
+      entryExpression.current.logicType = logicType;
+      onUpdatingRecursiveExpression(_.omit(entryExpression.current, "isHeadless"));
+    },
+    [onUpdatingRecursiveExpression]
+  );
 
   const onLogicTypeResetting = useCallback(() => {
-    setEntryExpression((previousSelectedExpression: ExpressionProps) => ({
-      uid: previousSelectedExpression.uid,
-      name: previousSelectedExpression.name,
-      dataType: previousSelectedExpression.dataType,
-      logicType: LogicType.Undefined,
-    }));
+    entryExpression.current.logicType = LogicType.Undefined;
     onExpressionResetting?.();
-  }, [onExpressionResetting]);
+    onUpdatingRecursiveExpression(_.omit(entryExpression.current, "isHeadless"));
+  }, [onExpressionResetting, onUpdatingRecursiveExpression]);
 
   return (
     <div className="entry-expression" ref={expressionContainerRef}>
       <LogicTypeSelector
         isHeadless={true}
         onUpdatingRecursiveExpression={onUpdatingRecursiveExpression}
-        selectedExpression={entryExpression}
+        selectedExpression={entryExpression.current}
         onLogicTypeUpdating={onLogicTypeUpdating}
         onLogicTypeResetting={onLogicTypeResetting}
         getPlacementRef={getLogicTypeSelectorRef}
