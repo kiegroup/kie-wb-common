@@ -268,6 +268,23 @@ public class WorkItemDefinitionParser {
         return workDefinition;
     }
 
+    public static WorkItemDefinition emptyWid() {
+        WorkItemDefinition wid = new WorkItemDefinition();
+        wid.setIconDefinition(new IconDefinition());
+        wid.getIconDefinition().setUri("");
+        wid.setUri("");
+        wid.setName("");
+        wid.setCategory("");
+        wid.setDescription("");
+        wid.setDocumentation("");
+        wid.setDisplayName("");
+        wid.setResults("");
+        wid.setDefaultHandler("");
+        wid.setDependencies(new Dependencies(Collections.emptyList()));
+        wid.setParameters("");
+        return wid;
+    }
+
     private static void set(final Map<String, Object> map,
                             final String key,
                             final Consumer<String> consumer) {

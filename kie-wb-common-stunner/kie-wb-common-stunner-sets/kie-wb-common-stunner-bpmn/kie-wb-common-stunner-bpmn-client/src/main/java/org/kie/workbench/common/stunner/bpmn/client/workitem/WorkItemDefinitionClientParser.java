@@ -149,7 +149,7 @@ public class WorkItemDefinitionClientParser {
         return wids;
     }
 
-    private static WorkItemDefinition emptyWid() {
+    public static WorkItemDefinition emptyWid() {
         WorkItemDefinition wid = new WorkItemDefinition();
         wid.setIconDefinition(new IconDefinition());
         wid.getIconDefinition().setUri("");
