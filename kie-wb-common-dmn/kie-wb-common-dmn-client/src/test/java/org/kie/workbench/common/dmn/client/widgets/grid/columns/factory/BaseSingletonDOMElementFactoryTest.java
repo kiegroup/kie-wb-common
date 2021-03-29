@@ -125,7 +125,7 @@ public abstract class BaseSingletonDOMElementFactoryTest<F extends BaseSingleton
                      domElementOnDisplay);
     }
 
-    //@Test
+    @Test
     @SuppressWarnings("unchecked")
     public void checkFlush() {
         final F factory = getFactoryForFlushTest();
