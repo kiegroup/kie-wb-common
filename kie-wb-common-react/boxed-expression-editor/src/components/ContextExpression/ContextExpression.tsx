@@ -35,7 +35,6 @@ import { ContextEntryExpressionCell } from "./ContextEntryExpressionCell";
 import * as _ from "lodash";
 import { ContextEntryExpression } from "./ContextEntryExpression";
 import { ContextEntryInfoCell } from "./ContextEntryInfoCell";
-import { useDragEvents } from "../../hooks";
 
 const DEFAULT_CONTEXT_ENTRY_NAME = "ContextEntry-1";
 const DEFAULT_CONTEXT_ENTRY_DATA_TYPE = DataType.Undefined;
@@ -55,7 +54,6 @@ export const ContextExpression: React.FunctionComponent<ContextProps> = ({
   onUpdatingRecursiveExpression,
 }) => {
   const { i18n } = useBoxedExpressionEditorI18n();
-  const { setResizerElement, dragItHorizontally } = useDragEvents();
 
   const handlerConfiguration: TableHandlerConfiguration = [
     {
@@ -153,69 +151,7 @@ export const ContextExpression: React.FunctionComponent<ContextProps> = ({
     [generateNextAvailableEntryName, onExpressionResetting, rows.length]
   );
 
-  const checkForOverflowingCell = useCallback(
-    () =>
-      Array.from(
-        document.querySelectorAll(
-          `.context-expression.${uid} > .table-component > table > tbody > tr > td:last-of-type .table-component:first-of-type`
-        )
-      ).reduce(
-        (acc, td: HTMLElement) => {
-          const { clientWidth, scrollWidth } = td;
-          return {
-            isOverflow: acc.isOverflow || scrollWidth > clientWidth,
-            contentWidth: Math.max(acc.contentWidth, scrollWidth - clientWidth),
-          };
-        },
-        { isOverflow: false, contentWidth: 0 }
-      ),
-    [uid]
-  );
-
-  const checkForSpareSpace = useCallback(() => {
-    const tableWidth = (document.querySelector(
-      `.context-expression.${uid} > .table-component > table`
-    ) as HTMLTableElement).getBoundingClientRect().width;
-    const tableHeaderWidth = (document.querySelector(
-      `.context-expression.${uid} > .table-component > table > thead`
-    ) as HTMLTableElement).getBoundingClientRect().width;
-    const spareSpace = tableWidth - tableHeaderWidth;
-    if (spareSpace > 0) {
-      return {
-        isSpareSpace: true,
-        spareSpace,
-      };
-    }
-    return {
-      isSpareSpace: false,
-      spareSpace: 0,
-    };
-  }, [uid]);
-
-  const updateValueColumnWidth = useCallback(
-    (shiftWidth: number) => {
-      setResizerElement(
-        document.querySelector(
-          `.table-component.${uid} > table > thead > tr:last-of-type > th:last-of-type div.pf-c-drawer`
-        )! as HTMLDivElement
-      );
-      dragItHorizontally(shiftWidth);
-    },
-    [dragItHorizontally, setResizerElement, uid]
-  );
-
   const contextTableGetRowKey = useCallback((row: Row) => (row.original as ContextEntryRecord).entryInfo.name, []);
-
-  const onSingleRowUpdate = useCallback(() => {
-    const { isOverflow, contentWidth } = checkForOverflowingCell();
-    const { isSpareSpace, spareSpace } = checkForSpareSpace();
-    if (isOverflow) {
-      const contentWidthPlusPadding = contentWidth + 7;
-      updateValueColumnWidth(contentWidthPlusPadding);
-    } else if (isSpareSpace) {
-      updateValueColumnWidth(spareSpace);
-    }
-  }, [checkForOverflowingCell, checkForSpareSpace, updateValueColumnWidth]);
 
   const getHeaderVisibility = useCallback(() => {
     return isHeadless ? TableHeaderVisibility.OnlyLastLevel : TableHeaderVisibility.Full;
@@ -224,10 +160,6 @@ export const ContextExpression: React.FunctionComponent<ContextProps> = ({
   const resetRowCustomFunction = useCallback((row: DataRecord) => {
     return { entryInfo: row.entryInfo, entryExpression: { uid: (row.entryExpression as ExpressionProps).uid } };
   }, []);
-
-  useEffect(() => {
-    onSingleRowUpdate();
-  }, [onSingleRowUpdate]);
 
   useEffect(() => {
     const [expressionColumn] = columns;
@@ -258,7 +190,6 @@ export const ContextExpression: React.FunctionComponent<ContextProps> = ({
         onColumnsUpdate={onColumnsUpdate}
         onRowAdding={onRowAdding}
         onRowsUpdate={setRows}
-        onSingleRowUpdate={onSingleRowUpdate}
         handlerConfiguration={handlerConfiguration}
         getRowKey={contextTableGetRowKey}
         resetRowCustomFunction={resetRowCustomFunction}
