@@ -32,6 +32,11 @@
   bottom: 0;
 }
 
+.expression-container .list-expression > .react-resizable > .pf-c-drawer > .pf-c-drawer__splitter > .pf-c-drawer__splitter-handle {
+  z-index: 1;
+}
+
 .expression-container .list-expression > .react-resizable > .pf-c-drawer > .pf-c-drawer__splitter::after {
   border-width: 1px;
+  background-color: white;
 }
