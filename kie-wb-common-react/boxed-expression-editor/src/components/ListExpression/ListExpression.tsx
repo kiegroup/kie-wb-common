@@ -83,9 +83,7 @@ export const ListExpression: React.FunctionComponent<ListProps> = ({
   const spreadListExpressionDefinition = useCallback(() => {
     const updatedDefinition: ListProps = {
       uid,
-      ...(!isHeadless && listExpressionWidth.current !== LIST_EXPRESSION_MIN_WIDTH
-        ? { width: listExpressionWidth.current }
-        : {}),
+      ...(listExpressionWidth.current !== LIST_EXPRESSION_MIN_WIDTH ? { width: listExpressionWidth.current } : {}),
       logicType: LogicType.List,
       items: _.map(listItems.current, (listItem: DataRecord) => listItem.entryExpression as ExpressionProps),
     };
