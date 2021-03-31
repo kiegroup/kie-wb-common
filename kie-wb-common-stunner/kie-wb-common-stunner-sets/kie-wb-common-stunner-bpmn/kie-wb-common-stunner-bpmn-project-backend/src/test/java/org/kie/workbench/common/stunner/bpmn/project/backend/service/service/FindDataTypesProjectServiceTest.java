@@ -100,8 +100,8 @@ public class FindDataTypesProjectServiceTest {
 
         assertNotNull(dataTypeNames);
         assertEquals(2, dataTypeNames.size());
-        assertEquals("org.Antelope", dataTypeNames.get(0));
-        assertEquals("org.Zebra", dataTypeNames.get(1));
+        assertEquals("Asset-org.Antelope", dataTypeNames.get(0));
+        assertEquals("Asset-org.Zebra", dataTypeNames.get(1));
 
         List<String> addedTypes = new ArrayList<>();
         addedTypes.add("com.addedType");
@@ -109,8 +109,8 @@ public class FindDataTypesProjectServiceTest {
 
         assertNotNull(dataTypeNames);
         assertEquals(3, dataTypeNames.size());
-        assertEquals("com.addedType", dataTypeNames.get(0));
-        assertEquals("org.Antelope", dataTypeNames.get(1));
-        assertEquals("org.Zebra", dataTypeNames.get(2));
+        assertEquals("Asset-org.Antelope", dataTypeNames.get(0));
+        assertEquals("Asset-org.Zebra", dataTypeNames.get(1));
+        assertEquals("com.addedType", dataTypeNames.get(2));
     }
 }
