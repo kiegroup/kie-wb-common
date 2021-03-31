@@ -55,12 +55,14 @@ public class BPMNFindDataTypesProjectService implements DataTypesService {
             return Collections.emptyList();
         }
         final List<String> dataTypeNames = new ArrayList<>();
-
         dataTypeNames.addAll(dataTypeCacheServer.getCachedDataTypes());
-
         try {
             final PackageDataModelOracle oracle = dataModelService.getDataModel(path);
             final String[] fullyQualifiedClassNames = DataModelOracleUtilities.getFactTypes(oracle);
+
+            for (int i = 0; i < fullyQualifiedClassNames.length; i++) {
+                fullyQualifiedClassNames[i] = "Asset-" + fullyQualifiedClassNames[i];
+            }
 
             dataTypeNames.addAll(Arrays.asList(fullyQualifiedClassNames));
             if (addedDataTypes != null) {
@@ -69,7 +71,6 @@ public class BPMNFindDataTypesProjectService implements DataTypesService {
             // remove duplicates
             final List<String> collect = dataTypeNames.stream().distinct().collect(Collectors.toList());
             Collections.sort(collect);
-
             dataTypeNames.clear();
             dataTypeNames.addAll(collect);
         } catch (Exception e) {

@@ -102,6 +102,10 @@ public class DefaultImportsEditorWidget extends ImportsEditorWidget<DefaultImpor
 
     protected void addDataTypes(List<String> dataTypesList, boolean useDisplayNames) {
         for (String dataType : dataTypesList) {
+            if (dataType.contains("Asset-")) {
+                dataType = dataType.substring(6);
+            }
+
             String displayName = useDisplayNames ? createDataTypeDisplayName(dataType) : dataType;
             dataTypes.put(dataType, displayName);
         }

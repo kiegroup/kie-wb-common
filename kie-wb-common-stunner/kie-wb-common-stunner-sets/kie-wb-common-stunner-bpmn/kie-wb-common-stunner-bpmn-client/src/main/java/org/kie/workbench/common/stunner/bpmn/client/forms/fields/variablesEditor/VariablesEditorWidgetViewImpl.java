@@ -231,7 +231,13 @@ public class VariablesEditorWidgetViewImpl extends Composite implements Variable
         Map<String, String> mapServerDataTypeDisplayNames = new TreeMap<String, String>();
 
         for (String serverDataType : serverDataTypes) {
-            if (excludeValues.contains(serverDataType)) {
+            boolean isAsset = false;
+            if (serverDataType.contains("Asset-")) {
+                serverDataType = serverDataType.substring(6);
+                isAsset = true;
+            }
+
+            if (!isAsset && excludeValues.contains(serverDataType)) {
                 continue;
             }
             mapServerDataTypeDisplayNames.put(StringUtils.createDataTypeDisplayName(serverDataType),

@@ -434,7 +434,13 @@ public class AssignmentsEditorWidget extends Composite implements HasValue<Strin
         if (dataTypes != null && !dataTypes.isEmpty()) {
             List<String> formattedDataTypes = new ArrayList<>(dataTypes.size());
             for (String dataType : dataTypes) {
-                if (set.contains(dataType)) {
+                boolean isAsset = false;
+
+                if (dataType.contains("Asset-")) {
+                    dataType = dataType.substring(6);
+                    isAsset = true;
+                }
+                if (!isAsset && set.contains(dataType)) {
                     continue;
                 }
                 formattedDataTypes.add(dataType + ":" + dataType);

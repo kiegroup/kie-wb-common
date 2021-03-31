@@ -130,6 +130,10 @@ public class DataObjectTypeWidget extends Composite implements HasValue<DataObje
         return serverDataTypes -> {
             List<String> mergedList = new ArrayList<>(simpleDataTypes);
             for (String type : serverDataTypes) {
+                if (type.contains("Asset-")) {
+                    type = type.substring(6);
+                }
+
                 String displayType = StringUtils.createDataTypeDisplayName(type);
                 getMapDataTypeNamesToDisplayNames().put(
                         displayType,

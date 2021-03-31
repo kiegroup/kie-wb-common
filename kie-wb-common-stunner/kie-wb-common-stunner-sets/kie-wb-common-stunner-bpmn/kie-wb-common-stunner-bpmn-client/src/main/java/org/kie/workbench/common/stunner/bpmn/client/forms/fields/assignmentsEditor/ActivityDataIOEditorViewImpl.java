@@ -222,8 +222,6 @@ public class ActivityDataIOEditorViewImpl extends BaseModal implements ActivityD
 
     @Override
     public void notifyAdd(String dataType, String oldType, final ListBoxValues dataTypeListBoxValues) {
-        inputAssignmentsWidget.setDataTypes(dataTypeListBoxValues);
-        outputAssignmentsWidget.setDataTypes(dataTypeListBoxValues);
         presenter.addDataType(dataType, oldType);
     }
 }
