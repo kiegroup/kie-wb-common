@@ -22,6 +22,7 @@ import {
   DataType,
   DecisionTableProps,
   ExpressionProps,
+  InvocationProps,
   ListProps,
   LiteralExpressionProps,
   LogicType,
@@ -40,6 +41,7 @@ import nextId from "react-id-generator";
 import { BoxedExpressionGlobalContext } from "../../context";
 import { DecisionTableExpression } from "../DecisionTableExpression";
 import { ListExpression } from "../ListExpression";
+import { InvocationExpression } from "../InvocationExpression";
 
 export interface LogicTypeSelectorProps {
   /** Expression properties */
@@ -104,10 +106,11 @@ export const LogicTypeSelector: React.FunctionComponent<LogicTypeSelectorProps> 
         return <ContextExpression {...(expression as ContextProps)} />;
       case LogicType.DecisionTable:
         return <DecisionTableExpression {...(expression as DecisionTableProps)} />;
-      case LogicType.Function:
       case LogicType.Invocation:
+        return <InvocationExpression {...(expression as InvocationProps)} />;
       case LogicType.List:
         return <ListExpression {...(expression as ListProps)} />;
+      case LogicType.Function:
       default:
         return expression.logicType;
     }
