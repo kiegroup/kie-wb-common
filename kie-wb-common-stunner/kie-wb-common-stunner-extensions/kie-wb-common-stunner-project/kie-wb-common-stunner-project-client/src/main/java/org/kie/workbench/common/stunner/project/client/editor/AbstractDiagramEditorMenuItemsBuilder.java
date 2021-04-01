@@ -18,6 +18,7 @@ package org.kie.workbench.common.stunner.project.client.editor;
 import java.util.Optional;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.IsWidget;
 import org.gwtbootstrap3.client.ui.AnchorListItem;
 import org.gwtbootstrap3.client.ui.Button;
@@ -59,12 +60,13 @@ public abstract class AbstractDiagramEditorMenuItemsBuilder {
 
     private IsWidget buildVisitGraphItem(final Command command) {
         return MenuUtils.buildHasEnabledWidget(
-                new Button() {{
-                    setSize(ButtonSize.SMALL);
-                    setIcon(IconType.PLAY);
-                    setTitle(translationService.getValue(CoreTranslationMessages.VISIT_GRAPH));
-                    addClickHandler(clickEvent -> command.execute());
-                }});
+                new ButtonBuilder()
+                        .size(ButtonSize.SMALL)
+                        .icon(IconType.PLAY)
+                        .title(translationService.getValue(CoreTranslationMessages.VISIT_GRAPH))
+                        .clickHandler(clickEvent -> command.execute())
+                        .build()
+        );
     }
 
     public MenuItem newSwitchGridItem(final Command command) {
@@ -73,12 +75,13 @@ public abstract class AbstractDiagramEditorMenuItemsBuilder {
 
     private IsWidget buildSwitchGridItem(final Command command) {
         return MenuUtils.buildHasEnabledWidget(
-                new Button() {{
-                    setSize(ButtonSize.SMALL);
-                    setIcon(IconType.TH);
-                    setTitle(translationService.getValue(CoreTranslationMessages.SWITCH_GRID));
-                    addClickHandler(clickEvent -> command.execute());
-                }});
+                new ButtonBuilder()
+                        .size(ButtonSize.SMALL)
+                        .icon(IconType.TH)
+                        .title(translationService.getValue(CoreTranslationMessages.SWITCH_GRID))
+                        .clickHandler(clickEvent -> command.execute())
+                        .build()
+        );
     }
 
     /**
@@ -92,16 +95,17 @@ public abstract class AbstractDiagramEditorMenuItemsBuilder {
 
     private IsWidget buildClearItem(final Command command) {
         return MenuUtils.buildHasEnabledWidget(
-                new Button() {{
-                    setSize(ButtonSize.SMALL);
-                    setIcon(IconType.ERASER);
-                    setTitle(translationService.getValue(CoreTranslationMessages.CLEAR_DIAGRAM));
-                    addClickHandler(clickEvent ->
-                                            AbstractDiagramEditorMenuItemsBuilder.this.executeWithConfirm(command,
-                                                                                                          translationService.getValue(CoreTranslationMessages.CLEAR_DIAGRAM),
-                                                                                                          translationService.getValue(CoreTranslationMessages.CLEAR_DIAGRAM),
-                                                                                                          translationService.getValue(CoreTranslationMessages.CONFIRM_CLEAR_DIAGRAM)));
-                }});
+                new ButtonBuilder()
+                        .size(ButtonSize.SMALL)
+                        .icon(IconType.ERASER)
+                        .title(translationService.getValue(CoreTranslationMessages.CLEAR_DIAGRAM))
+                        .clickHandler(clickEvent ->
+                                              AbstractDiagramEditorMenuItemsBuilder.this.executeWithConfirm(command,
+                                                                                                            translationService.getValue(CoreTranslationMessages.CLEAR_DIAGRAM),
+                                                                                                            translationService.getValue(CoreTranslationMessages.CLEAR_DIAGRAM),
+                                                                                                            translationService.getValue(CoreTranslationMessages.CONFIRM_CLEAR_DIAGRAM)))
+                        .build()
+        );
     }
 
     public MenuItem newCopyItem(final Command command) {
@@ -110,12 +114,13 @@ public abstract class AbstractDiagramEditorMenuItemsBuilder {
 
     private IsWidget buildCopyItem(final Command command) {
         return MenuUtils.buildHasEnabledWidget(
-                new Button() {{
-                    setSize(ButtonSize.SMALL);
-                    setIcon(IconType.COPY);
-                    setTitle(translationService.getValue(CoreTranslationMessages.COPY_SELECTION));
-                    addClickHandler(clickEvent -> command.execute());
-                }});
+                new ButtonBuilder()
+                        .size(ButtonSize.SMALL)
+                        .icon(IconType.COPY)
+                        .title(translationService.getValue(CoreTranslationMessages.COPY_SELECTION))
+                        .clickHandler(clickEvent -> command.execute())
+                        .build()
+        );
     }
 
     public MenuItem newPasteItem(final Command command) {
@@ -124,12 +129,13 @@ public abstract class AbstractDiagramEditorMenuItemsBuilder {
 
     private IsWidget buildPasteItem(final Command command) {
         return MenuUtils.buildHasEnabledWidget(
-                new Button() {{
-                    setSize(ButtonSize.SMALL);
-                    setIcon(IconType.PASTE);
-                    setTitle(translationService.getValue(CoreTranslationMessages.PASTE_SELECTION));
-                    addClickHandler(clickEvent -> command.execute());
-                }});
+                new ButtonBuilder()
+                        .size(ButtonSize.SMALL)
+                        .icon(IconType.PASTE)
+                        .title(translationService.getValue(CoreTranslationMessages.PASTE_SELECTION))
+                        .clickHandler(clickEvent -> command.execute())
+                        .build()
+        );
     }
 
     public MenuItem newCutItem(final Command command) {
@@ -138,12 +144,13 @@ public abstract class AbstractDiagramEditorMenuItemsBuilder {
 
     private IsWidget buildCutItem(final Command command) {
         return MenuUtils.buildHasEnabledWidget(
-                new Button() {{
-                    setSize(ButtonSize.SMALL);
-                    setIcon(IconType.CUT);
-                    setTitle(translationService.getValue(CoreTranslationMessages.CUT_SELECTION));
-                    addClickHandler(clickEvent -> command.execute());
-                }});
+                new ButtonBuilder()
+                        .size(ButtonSize.SMALL)
+                        .icon(IconType.CUT)
+                        .title(translationService.getValue(CoreTranslationMessages.CUT_SELECTION))
+                        .clickHandler(clickEvent -> command.execute())
+                        .build()
+        );
     }
 
     public MenuItem newDeleteSelectionItem(final Command command) {
@@ -152,12 +159,13 @@ public abstract class AbstractDiagramEditorMenuItemsBuilder {
 
     private IsWidget buildDeleteSelectionItem(final Command command) {
         return MenuUtils.buildHasEnabledWidget(
-                new Button() {{
-                    setSize(ButtonSize.SMALL);
-                    setIcon(IconType.TRASH_O);
-                    setTitle(translationService.getValue(CoreTranslationMessages.DELETE_SELECTION));
-                    addClickHandler(clickEvent -> command.execute());
-                }});
+                new ButtonBuilder()
+                        .size(ButtonSize.SMALL)
+                        .icon(IconType.TRASH_O)
+                        .title(translationService.getValue(CoreTranslationMessages.DELETE_SELECTION))
+                        .clickHandler(clickEvent -> command.execute())
+                        .build()
+        );
     }
 
     public MenuItem newUndoItem(final Command command) {
@@ -166,12 +174,13 @@ public abstract class AbstractDiagramEditorMenuItemsBuilder {
 
     private IsWidget buildUndoItem(final Command command) {
         return MenuUtils.buildHasEnabledWidget(
-                new Button() {{
-                    setSize(ButtonSize.SMALL);
-                    setIcon(IconType.UNDO);
-                    setTitle(translationService.getValue(CoreTranslationMessages.UNDO));
-                    addClickHandler(clickEvent -> command.execute());
-                }});
+                new ButtonBuilder()
+                        .size(ButtonSize.SMALL)
+                        .icon(IconType.UNDO)
+                        .title(translationService.getValue(CoreTranslationMessages.UNDO))
+                        .clickHandler(clickEvent -> command.execute())
+                        .build()
+        );
     }
 
     public MenuItem newRedoItem(final Command command) {
@@ -180,16 +189,17 @@ public abstract class AbstractDiagramEditorMenuItemsBuilder {
 
     private IsWidget buildRedoItem(final Command command) {
         return MenuUtils.buildHasEnabledWidget(
-                new Button() {{
-                    setSize(ButtonSize.SMALL);
-                    setIcon(IconType.UNDO);
-                    //Let's add the icon "manually" since the required icon is not available as IconType value. But the icon
-                    //class is available. This assignment is ok for now, since this stuff will sooner or later be refactored to
-                    //elemental2.
-                    addStyleName("fa-flip-horizontal");
-                    setTitle(translationService.getValue(CoreTranslationMessages.REDO));
-                    addClickHandler(clickEvent -> command.execute());
-                }});
+                new ButtonBuilder()
+                        .size(ButtonSize.SMALL)
+                        .icon(IconType.UNDO)
+                        //Let's add the icon "manually" since the required icon is not available as IconType value. But the icon
+                        //class is available. This assignment is ok for now, since this stuff will sooner or later be refactored to
+                        //elemental2.
+                        .styleName("fa-flip-horizontal")
+                        .title(translationService.getValue(CoreTranslationMessages.REDO))
+                        .clickHandler(clickEvent -> command.execute())
+                        .build()
+        );
     }
 
     public MenuItem newExportsItem(final Command exportPNGCommand,
@@ -247,12 +257,13 @@ public abstract class AbstractDiagramEditorMenuItemsBuilder {
 
     private IsWidget buildValidateItem(final Command command) {
         return MenuUtils.buildHasEnabledWidget(
-                new Button() {{
-                    setSize(ButtonSize.SMALL);
-                    setIcon(IconType.CHECK);
-                    setTitle(translationService.getValue(CoreTranslationMessages.VALIDATE));
-                    addClickHandler(clickEvent -> command.execute());
-                }});
+                new ButtonBuilder()
+                        .size(ButtonSize.SMALL)
+                        .icon(IconType.CHECK)
+                        .title(translationService.getValue(CoreTranslationMessages.VALIDATE))
+                        .clickHandler(clickEvent -> command.execute())
+                        .build()
+        );
     }
 
     private void executeWithConfirm(final Command command,
@@ -275,5 +286,43 @@ public abstract class AbstractDiagramEditorMenuItemsBuilder {
 
     public PopupUtil getPopupUtil() {
         return popupUtil;
+    }
+
+    private static class ButtonBuilder {
+
+        private Button result;
+
+        public ButtonBuilder() {
+            result = new Button();
+        }
+
+        public ButtonBuilder clickHandler(final ClickHandler clickHandler) {
+            result.addClickHandler(clickHandler);
+            return this;
+        }
+
+        public ButtonBuilder icon(final IconType icon) {
+            result.setIcon(icon);
+            return this;
+        }
+
+        public ButtonBuilder title(final String title) {
+            result.setTitle(title);
+            return this;
+        }
+
+        public ButtonBuilder size(final ButtonSize size) {
+            result.setSize(size);
+            return this;
+        }
+
+        public ButtonBuilder styleName(final String styleName) {
+            result.addStyleName(styleName);
+            return this;
+        }
+
+        public Button build() {
+            return result;
+        }
     }
 }
