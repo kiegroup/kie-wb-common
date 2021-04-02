@@ -28,6 +28,10 @@
   bottom: 0;
 }
 
+.expression-container .literal-expression {
+  width: 100%;
+}
+
 .literal-expression .literal-expression-header .expression-info {
   cursor: pointer;
   display: flex;
@@ -54,6 +58,7 @@
 
 .literal-expression .literal-expression-body {
   height: 4em;
+  width: 100%;
 }
 
 .literal-expression .literal-expression-body textarea {
