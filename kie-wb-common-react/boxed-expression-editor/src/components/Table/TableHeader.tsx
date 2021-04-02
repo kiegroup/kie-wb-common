@@ -98,7 +98,7 @@ export const TableHeader: React.FunctionComponent<TableHeaderProps> = ({
   const renderHeaderCellInfo = useCallback(
     (column) => (
       <div className="header-cell-info" data-ouia-component-type="expression-column-header-cell-info">
-        <p className="pf-u-text-truncate">{column.label}</p>
+        {column.headerCellElement ? column.headerCellElement : <p className="pf-u-text-truncate">{column.label}</p>}
         {column.dataType ? <p className="pf-u-text-truncate data-type">({column.dataType})</p> : null}
       </div>
     ),

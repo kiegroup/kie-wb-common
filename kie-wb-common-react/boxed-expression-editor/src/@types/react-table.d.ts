@@ -56,6 +56,8 @@ declare module "react-table" {
     accessor: string;
     /** Column label */
     label: string;
+    /** Custom Element to be rendered in place of the column label */
+    headerCellElement?: JSX.Element;
     /** Column data type */
     dataType: DataType;
     /** When resizable, this function returns the resizer props  */
