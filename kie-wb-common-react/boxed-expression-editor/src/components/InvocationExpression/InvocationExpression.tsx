@@ -30,5 +30,5 @@ export const InvocationExpression: React.FunctionComponent<InvocationProps> = ({
   onUpdatingRecursiveExpression,
   uid,
 }: InvocationProps) => {
-  return <div>Invocation</div>;
+  return <div className={`invocation-expression ${uid}`}></div>;
 };
