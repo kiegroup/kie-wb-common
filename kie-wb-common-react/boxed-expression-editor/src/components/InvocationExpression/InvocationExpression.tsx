@@ -14,8 +14,12 @@
  * limitations under the License.
  */
 
+import "./InvocationExpression.css";
 import * as React from "react";
-import { InvocationProps } from "../../api";
+import { InvocationProps, TableHandlerConfiguration, TableOperation } from "../../api";
+import { Table } from "../Table";
+import { useBoxedExpressionEditorI18n } from "../../i18n";
+import { ColumnInstance } from "react-table";
 
 export const InvocationExpression: React.FunctionComponent<InvocationProps> = ({
   bindingEntries,
@@ -30,5 +34,61 @@ export const InvocationExpression: React.FunctionComponent<InvocationProps> = ({
   onUpdatingRecursiveExpression,
   uid,
 }: InvocationProps) => {
-  return <div className={`invocation-expression ${uid}`}></div>;
+  const { i18n } = useBoxedExpressionEditorI18n();
+
+  const handlerConfiguration: TableHandlerConfiguration = [
+    {
+      group: "Parameters",
+      items: [
+        { name: i18n.rowOperations.insertAbove, type: TableOperation.RowInsertAbove },
+        { name: i18n.rowOperations.insertBelow, type: TableOperation.RowInsertBelow },
+        { name: i18n.rowOperations.delete, type: TableOperation.RowDelete },
+        { name: i18n.rowOperations.clear, type: TableOperation.RowClear },
+      ],
+    },
+  ];
+
+  return (
+    <div className={`invocation-expression ${uid}`}>
+      <Table
+        tableId={uid}
+        columns={
+          [
+            {
+              label: name,
+              accessor: name,
+              dataType,
+              disableHandlerOnHeader: true,
+              columns: [
+                {
+                  label: "Parameter",
+                  accessor: "entryInfo",
+                  disableHandlerOnHeader: true,
+                  width: 150,
+                  minWidth: 150,
+                },
+                {
+                  headerCellElement: (
+                    <div className="function-definition-container">
+                      <input
+                        className="function-definition pf-u-text-truncate"
+                        type="text"
+                        placeholder="Enter function"
+                      />
+                    </div>
+                  ),
+                  accessor: "entryExpression",
+                  disableHandlerOnHeader: true,
+                  width: 370,
+                  minWidth: 370,
+                },
+              ] as ColumnInstance[],
+            },
+          ] as ColumnInstance[]
+        }
+        rows={[{}]}
+        handlerConfiguration={handlerConfiguration}
+      />
+    </div>
+  );
 };
