@@ -15,7 +15,11 @@
  */
 
 export * from "./BoxedExpressionEditor";
+export * from "./BuiltinAggregation";
+export * from "./ContextEntry";
 export * from "./DataType";
+export * from "./DecisionTableRule";
 export * from "./ExpressionProps";
+export * from "./HitPolicy";
 export * from "./LogicType";
 export * from "./Table";

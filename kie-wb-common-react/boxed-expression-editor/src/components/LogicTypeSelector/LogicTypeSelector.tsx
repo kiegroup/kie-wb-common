@@ -17,7 +17,16 @@
 import "./LogicTypeSelector.css";
 import * as React from "react";
 import { useCallback, useContext, useEffect, useMemo, useState } from "react";
-import { ContextProps, DataType, ExpressionProps, LiteralExpressionProps, LogicType, RelationProps } from "../../api";
+import {
+  ContextProps,
+  DataType,
+  DecisionTableProps,
+  ExpressionProps,
+  ListProps,
+  LiteralExpressionProps,
+  LogicType,
+  RelationProps,
+} from "../../api";
 import { LiteralExpression } from "../LiteralExpression";
 import { RelationExpression } from "../RelationExpression";
 import { ContextExpression } from "../ContextExpression";
@@ -29,6 +38,8 @@ import { useContextMenuHandler } from "../../hooks";
 import { NO_TABLE_CONTEXT_MENU_CLASS } from "../Table";
 import nextId from "react-id-generator";
 import { BoxedExpressionGlobalContext } from "../../context";
+import { DecisionTableExpression } from "../DecisionTableExpression";
+import { ListExpression } from "../ListExpression";
 
 export interface LogicTypeSelectorProps {
   /** Expression properties */
@@ -61,6 +72,7 @@ export const LogicTypeSelector: React.FunctionComponent<LogicTypeSelectorProps> 
   const globalContext = useContext(BoxedExpressionGlobalContext);
 
   const expression = _.extend(selectedExpression, {
+    uid: selectedExpression.uid || nextId(),
     isHeadless,
     onUpdatingNameAndDataType,
     onUpdatingRecursiveExpression,
@@ -89,11 +101,13 @@ export const LogicTypeSelector: React.FunctionComponent<LogicTypeSelectorProps> 
       case LogicType.Relation:
         return <RelationExpression {...(expression as RelationProps)} />;
       case LogicType.Context:
-        return <ContextExpression {...(expression as ContextProps)} uid={nextId()} />;
+        return <ContextExpression {...(expression as ContextProps)} />;
       case LogicType.DecisionTable:
+        return <DecisionTableExpression {...(expression as DecisionTableProps)} />;
       case LogicType.Function:
       case LogicType.Invocation:
       case LogicType.List:
+        return <ListExpression {...(expression as ListProps)} />;
       default:
         return expression.logicType;
     }

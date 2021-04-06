@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *        http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,21 +14,21 @@
  * limitations under the License.
  */
 
-.context-expression {
-  width: 100%;
-}
+/// <reference types="Cypress" />
 
-.context-expression .context-result {
-  font-style: italic;
-  color: gray;
-}
+describe("List Expression Tests", () => {
+  beforeEach(() => {
+    cy.visit("/");
+  });
 
-.context-expression .context-entry-info-cell,
-.context-expression .context-result {
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
+  it("Define List expression", () => {
+    // Entry point for each new expression
+    cy.ouiaId("expression-container").click();
 
+    // Define new expression as List
+    cy.ouiaId("expression-popover-menu").contains("List").click({ force: true });
 
+    // Assert some content
+    cy.ouiaId("expression-row-0").should("contain.text", "1");
+  });
+});

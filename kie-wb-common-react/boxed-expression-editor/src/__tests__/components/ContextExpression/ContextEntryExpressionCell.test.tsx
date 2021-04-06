@@ -84,6 +84,7 @@ describe("ContextEntryExpressionCell tests", () => {
         dataType,
       },
       entryExpression: {
+        uid: "id1",
         logicType: LogicType.LiteralExpression,
         name,
         dataType,

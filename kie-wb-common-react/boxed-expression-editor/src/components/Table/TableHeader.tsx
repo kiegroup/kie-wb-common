@@ -20,7 +20,7 @@ import { Th, Thead, Tr } from "@patternfly/react-table";
 import * as _ from "lodash";
 import { Column, ColumnInstance, DataRecord, HeaderGroup, TableInstance } from "react-table";
 import { EditExpressionMenu } from "../EditExpressionMenu";
-import { DataType } from "../../api";
+import { DataType, TableHeaderVisibility } from "../../api";
 
 export interface TableHeaderProps {
   /** Table instance */
@@ -33,8 +33,8 @@ export interface TableHeaderProps {
   setTableRows: React.Dispatch<React.SetStateAction<DataRecord[]>>;
   /** Optional label to be used for the edit popover that appears when clicking on column header */
   editColumnLabel?: string;
-  /** True to have only last level of header shown */
-  isHeadless?: boolean;
+  /** The way in which the header will be rendered */
+  headerVisibility?: TableHeaderVisibility;
   /** Custom function for getting column key prop, and avoid using the column index */
   getColumnKey: (column: Column) => string;
 }
@@ -45,7 +45,7 @@ export const TableHeader: React.FunctionComponent<TableHeaderProps> = ({
   setTableColumns,
   setTableRows,
   editColumnLabel,
-  isHeadless = false,
+  headerVisibility = TableHeaderVisibility.Full,
   getColumnKey,
 }) => {
   const updateColumnNameInRows = useCallback(
@@ -168,5 +168,9 @@ export const TableHeader: React.FunctionComponent<TableHeaderProps> = ({
     [renderColumn, tableInstance.headerGroups]
   );
 
-  return <Thead noWrap>{isHeadless ? renderLastLevelInHeaderGroups : renderHeaderGroups}</Thead>;
+  return headerVisibility === TableHeaderVisibility.None ? null : (
+    <Thead noWrap>
+      {headerVisibility === TableHeaderVisibility.OnlyLastLevel ? renderLastLevelInHeaderGroups : renderHeaderGroups}
+    </Thead>
+  );
 };

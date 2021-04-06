@@ -50,6 +50,7 @@ export const ExpressionContainer: ({ selectedExpression }: ExpressionContainerPr
   const onLogicTypeResetting = useCallback(() => {
     setSelectedExpression((previousSelectedExpression: ExpressionProps) => {
       const updatedExpression = {
+        uid: previousSelectedExpression.uid,
         name: previousSelectedExpression.name,
         dataType: previousSelectedExpression.dataType,
         logicType: LogicType.Undefined,

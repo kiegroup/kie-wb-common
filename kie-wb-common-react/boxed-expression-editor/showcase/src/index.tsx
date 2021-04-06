@@ -24,13 +24,14 @@ import {
   DataType,
   ExpressionContainerProps,
   ExpressionProps,
+  ListProps,
   LiteralExpressionProps,
   RelationProps,
 } from "./boxed_expression_editor";
 
 export const App: React.FunctionComponent = () => {
   //This definition comes directly from the decision node
-  const selectedExpression = {
+  const selectedExpression: ExpressionProps = {
     name: "Expression Name",
     dataType: DataType.Undefined,
   };
@@ -45,6 +46,7 @@ export const App: React.FunctionComponent = () => {
     broadcastLiteralExpressionDefinition: (definition: LiteralExpressionProps) => setUpdatedExpression(definition),
     broadcastRelationExpressionDefinition: (definition: RelationProps) => setUpdatedExpression(definition),
     broadcastContextExpressionDefinition: (definition: ContextProps) => setUpdatedExpression(definition),
+    broadcastListExpressionDefinition: (definition: ListProps) => setUpdatedExpression(definition),
   };
 
   return (
@@ -54,7 +56,7 @@ export const App: React.FunctionComponent = () => {
       </div>
       <div className="updated-json">
         <p className="disclaimer">
-          ⚠ Currently, JSON gets updated only for literal expression, relation and context logic types
+          ⚠ Currently, JSON gets updated only for literal expression, relation, context and list logic types
         </p>
         <pre>{JSON.stringify(updatedExpression, null, 2)}</pre>
       </div>

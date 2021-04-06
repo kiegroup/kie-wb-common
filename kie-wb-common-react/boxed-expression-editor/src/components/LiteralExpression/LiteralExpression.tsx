@@ -23,6 +23,7 @@ import { EditExpressionMenu, EXPRESSION_NAME } from "../EditExpressionMenu";
 import { Resizer } from "../Resizer";
 
 export const LiteralExpression: React.FunctionComponent<LiteralExpressionProps> = ({
+  uid,
   content,
   dataType,
   name = EXPRESSION_NAME,
@@ -41,6 +42,7 @@ export const LiteralExpression: React.FunctionComponent<LiteralExpressionProps> 
 
   useEffect(() => {
     const expressionDefinition: LiteralExpressionProps = {
+      uid,
       name: expressionName,
       dataType: expressionDataType,
       logicType: LogicType.LiteralExpression,
@@ -57,6 +59,7 @@ export const LiteralExpression: React.FunctionComponent<LiteralExpressionProps> 
     isHeadless,
     onUpdatingRecursiveExpression,
     literalExpressionWidth,
+    uid,
   ]);
 
   const onExpressionUpdate = useCallback(

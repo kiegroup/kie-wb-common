@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *        http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,21 +14,12 @@
  * limitations under the License.
  */
 
-.context-expression {
-  width: 100%;
+export enum HitPolicy {
+  Unique = "UNIQUE",
+  First = "FIRST",
+  Priority = "PRIORITY",
+  Any = "ANY",
+  Collect = "COLLECT",
+  RuleOrder = "RULE ORDER",
+  OutputOrder = "OUTPUT ORDER",
 }
-
-.context-expression .context-result {
-  font-style: italic;
-  color: gray;
-}
-
-.context-expression .context-entry-info-cell,
-.context-expression .context-result {
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-

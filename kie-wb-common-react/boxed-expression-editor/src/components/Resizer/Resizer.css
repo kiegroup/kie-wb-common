@@ -14,21 +14,11 @@
  * limitations under the License.
  */
 
-.context-expression {
-  width: 100%;
+.expression-container .react-resizable.height-based-on-content {
+  /**
+    It seems that react-resizable is always expecting an height, even if we are interested in having 100% for it.
+    Since react-resizable specifies inline style, the only way to overwrite it, was to assign a specific class (height-based-on-content)
+    with the !important card
+    */
+  height: 100% !important;
 }
-
-.context-expression .context-result {
-  font-style: italic;
-  color: gray;
-}
-
-.context-expression .context-entry-info-cell,
-.context-expression .context-result {
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-

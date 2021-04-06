@@ -48,6 +48,8 @@ export interface TableHandlerProps {
   handlerConfiguration: TableHandlerConfiguration;
   /** Table handler allowed operations */
   tableHandlerAllowedOperations: TableOperation[];
+  /** Custom function called for manually resetting a row */
+  resetRowCustomFunction?: (row: DataRecord) => DataRecord;
 }
 
 export const TableHandler: React.FunctionComponent<TableHandlerProps> = ({
@@ -63,6 +65,7 @@ export const TableHandler: React.FunctionComponent<TableHandlerProps> = ({
   tableHandlerTarget,
   handlerConfiguration,
   tableHandlerAllowedOperations,
+  resetRowCustomFunction = () => ({}),
 }) => {
   const globalContext = useContext(BoxedExpressionGlobalContext);
 
@@ -87,6 +90,14 @@ export const TableHandler: React.FunctionComponent<TableHandlerProps> = ({
 
   const deleteAt = <T extends unknown>(elements: T[], index: number) => {
     return [...elements.slice(0, index), ...elements.slice(index + 1)];
+  };
+
+  const clearAt = <T extends unknown>(elements: T[], index: number) => {
+    return [
+      ...elements.slice(0, index),
+      resetRowCustomFunction(elements[index] as DataRecord),
+      ...elements.slice(index + 1),
+    ];
   };
 
   const generateNextAvailableColumnName: (lastIndex: number) => string = useCallback(
@@ -134,9 +145,12 @@ export const TableHandler: React.FunctionComponent<TableHandlerProps> = ({
         case TableOperation.RowDelete:
           setTableRows((prevTableRows) => deleteAt(prevTableRows, selectedRowIndex));
           break;
+        case TableOperation.RowClear:
+          setTableRows((prevTableRows) => clearAt(prevTableRows, selectedRowIndex));
       }
       setShowTableHandler(false);
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [
       setShowTableHandler,
       setTableColumns,

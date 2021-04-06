@@ -17,8 +17,14 @@
 import { LogicType } from "./LogicType";
 import { DataType } from "./DataType";
 import { Columns, Rows } from "./Table";
+import { ContextEntries } from "./ContextEntry";
+import { HitPolicy } from "./HitPolicy";
+import { BuiltinAggregation } from "./BuiltinAggregation";
+import { Clause, DecisionTableRule } from "./DecisionTableRule";
 
 export interface ExpressionProps {
+  /** Unique identifier used to identify the expression */
+  uid?: string;
   /** Expression name (which, in DMN world, is equal to the Decision node's name) */
   name?: string;
   /** Expression data type */
@@ -51,24 +57,7 @@ export interface RelationProps extends ExpressionProps {
   rows?: Rows;
 }
 
-export interface ContextEntryRecord {
-  entryInfo: {
-    /** Entry name */
-    name: string;
-    /** Entry data type */
-    dataType: DataType;
-  };
-  /** Entry expression */
-  entryExpression: ExpressionProps;
-  /** Callback to be invoked on expression resetting */
-  onExpressionResetting?: () => void;
-}
-
-export type ContextEntries = ContextEntryRecord[];
-
 export interface ContextProps extends ExpressionProps {
-  /** Unique identifier used to distinguish all nested instance of context expression */
-  uid?: string;
   /** Logic type must be Context */
   logicType: LogicType.Context;
   /** Collection of context entries */
@@ -79,4 +68,30 @@ export interface ContextProps extends ExpressionProps {
   entryInfoWidth?: number;
   /** Entry expression width */
   entryExpressionWidth?: number;
+}
+
+export interface DecisionTableProps extends ExpressionProps {
+  /** Logic type must be Decision Table */
+  logicType: LogicType.DecisionTable;
+  /** Hit policy for this particular decision table */
+  hitPolicy?: HitPolicy;
+  /** Aggregation policy, when the hit policy supports it */
+  aggregation?: BuiltinAggregation;
+  /** Annotation columns names */
+  annotations: string[];
+  /** Input columns definition */
+  input: Clause[];
+  /** Output columns definition */
+  output: Clause[];
+  /** Rules represent rows values */
+  rules: DecisionTableRule[];
+}
+
+export interface ListProps extends ExpressionProps {
+  /** Logic type must be List */
+  logicType: LogicType.List;
+  /** List items */
+  items?: ExpressionProps[];
+  /** Optional width for this list expression */
+  width?: number;
 }

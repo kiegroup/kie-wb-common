@@ -30,7 +30,7 @@ import { TableComposable, Tbody, Td, Tr } from "@patternfly/react-table";
 import * as React from "react";
 import { useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import { EditableCell } from "./EditableCell";
-import { CellProps, TableHandlerConfiguration, TableOperation } from "../../api";
+import { CellProps, TableHandlerConfiguration, TableHeaderVisibility, TableOperation } from "../../api";
 import * as _ from "lodash";
 import { TableHeader } from "./TableHeader";
 import { TableHandler } from "./TableHandler";
@@ -54,7 +54,7 @@ export interface TableProps {
   /** Table's cells */
   rows: DataRecord[];
   /** Function to be executed when columns are modified */
-  onColumnsUpdate: (columns: Column[]) => void;
+  onColumnsUpdate?: (columns: Column[]) => void;
   /** Function to be executed when one or more rows are modified */
   onRowsUpdate?: (rows: DataRecord[]) => void;
   /** Function to be executed when a single row gets modified */
@@ -63,14 +63,16 @@ export interface TableProps {
   onRowAdding?: () => DataRecord;
   /** Custom configuration for the table handler */
   handlerConfiguration: TableHandlerConfiguration;
-  /** True to have no header for this table */
-  isHeadless?: boolean;
+  /** The way in which the header will be rendered */
+  headerVisibility?: TableHeaderVisibility;
   /** True to support multiple levels in the header */
   headerHasMultipleLevels?: boolean;
   /** Custom function for getting row key prop, and avoid using the row index */
   getRowKey?: (row: Row) => string;
   /** Custom function for getting column key prop, and avoid using the column index */
   getColumnKey?: (column: Column) => string;
+  /** Custom function called for manually resetting a row */
+  resetRowCustomFunction?: (row: DataRecord) => DataRecord;
 }
 
 export const NO_TABLE_CONTEXT_MENU_CLASS = "no-table-context-menu";
@@ -88,10 +90,11 @@ export const Table: React.FunctionComponent<TableProps> = ({
   rows,
   columns,
   handlerConfiguration,
-  isHeadless = false,
+  headerVisibility,
   headerHasMultipleLevels = false,
   getRowKey = (row) => row.id as string,
   getColumnKey = (column) => column.id as string,
+  resetRowCustomFunction,
 }: TableProps) => {
   const NUMBER_OF_ROWS_COLUMN = "#";
   const NUMBER_OF_ROWS_SUBCOLUMN = "0";
@@ -213,6 +216,7 @@ export const Table: React.FunctionComponent<TableProps> = ({
           TableOperation.RowInsertAbove,
           TableOperation.RowInsertBelow,
           ...(tableRows.length > 1 ? [TableOperation.RowDelete] : []),
+          TableOperation.RowClear,
         ]);
         tableHandlerStateUpdate(target, columnIndex);
         setLastSelectedRowIndex(rowIndex);
@@ -235,7 +239,7 @@ export const Table: React.FunctionComponent<TableProps> = ({
   );
 
   useEffect(() => {
-    onColumnsUpdate(tableColumns.slice(1)); //Removing "# of rows" column
+    onColumnsUpdate?.(tableColumns.slice(1)); //Removing "# of rows" column
   }, [onColumnsUpdate, tableColumns]);
 
   useEffect(() => {
@@ -301,13 +305,16 @@ export const Table: React.FunctionComponent<TableProps> = ({
         <TableHeader
           tableInstance={tableInstance}
           editColumnLabel={editColumnLabel}
-          isHeadless={isHeadless}
+          headerVisibility={headerVisibility}
           tableColumns={tableColumns as ColumnInstance[]}
           setTableColumns={setTableColumns}
           setTableRows={setTableRows}
           getColumnKey={getColumnKey}
         />
-        <Tbody {...tableInstance.getTableBodyProps()}>
+        <Tbody
+          className={`${headerVisibility === TableHeaderVisibility.None ? "missing-header" : ""}`}
+          {...tableInstance.getTableBodyProps()}
+        >
           {tableInstance.rows.map((row: Row, rowIndex: number) => {
             tableInstance.prepareRow(row);
             return (
@@ -348,6 +355,7 @@ export const Table: React.FunctionComponent<TableProps> = ({
           setShowTableHandler={setShowTableHandler}
           tableHandlerAllowedOperations={tableHandlerAllowedOperations}
           tableHandlerTarget={tableHandlerTarget}
+          resetRowCustomFunction={resetRowCustomFunction}
         />
       ) : null}
     </div>

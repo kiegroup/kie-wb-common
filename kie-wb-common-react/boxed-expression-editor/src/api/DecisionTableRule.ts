@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *        http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,21 +14,20 @@
  * limitations under the License.
  */
 
-.context-expression {
-  width: 100%;
+import { DataType } from "./DataType";
+
+export interface Clause {
+  /** Clause name */
+  name: string;
+  /** Clause data type */
+  dataType: DataType;
 }
 
-.context-expression .context-result {
-  font-style: italic;
-  color: gray;
+export interface DecisionTableRule {
+  /** Values for the input columns */
+  inputEntries: string[];
+  /** Values for the output columns */
+  outputEntries: string[];
+  /** Values for the annotation columns */
+  annotationEntries: string[];
 }
-
-.context-expression .context-entry-info-cell,
-.context-expression .context-result {
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-

@@ -14,21 +14,20 @@
  * limitations under the License.
  */
 
-.context-expression {
-  width: 100%;
+import { DataType } from "./DataType";
+import { ExpressionProps } from "./ExpressionProps";
+
+export interface ContextEntryRecord {
+  entryInfo: {
+    /** Entry name */
+    name: string;
+    /** Entry data type */
+    dataType: DataType;
+  };
+  /** Entry expression */
+  entryExpression: ExpressionProps;
+  /** Callback to be invoked on expression resetting */
+  onExpressionResetting?: () => void;
 }
 
-.context-expression .context-result {
-  font-style: italic;
-  color: gray;
-}
-
-.context-expression .context-entry-info-cell,
-.context-expression .context-result {
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-
+export type ContextEntries = ContextEntryRecord[];

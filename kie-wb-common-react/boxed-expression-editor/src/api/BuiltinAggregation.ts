@@ -14,21 +14,9 @@
  * limitations under the License.
  */
 
-.context-expression {
-  width: 100%;
+export enum BuiltinAggregation {
+  Sum = "+",
+  Count = "#",
+  Min = "<",
+  Max = ">",
 }
-
-.context-expression .context-result {
-  font-style: italic;
-  color: gray;
-}
-
-.context-expression .context-entry-info-cell,
-.context-expression .context-result {
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-

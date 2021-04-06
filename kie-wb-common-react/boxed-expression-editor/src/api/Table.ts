@@ -16,6 +16,13 @@
 
 import { DataType } from "./DataType";
 
+/** Possible status for the visibility of the Table's Header */
+export enum TableHeaderVisibility {
+  Full,
+  OnlyLastLevel,
+  None,
+}
+
 /** Table allowed operations */
 export enum TableOperation {
   ColumnInsertLeft,
@@ -24,6 +31,7 @@ export enum TableOperation {
   RowInsertAbove,
   RowInsertBelow,
   RowDelete,
+  RowClear,
 }
 
 export interface GroupOperations {

@@ -41,6 +41,7 @@ export const en: BoxedExpressionEditorI18n = {
   name: "Name",
   relation: "Relation",
   rowOperations: {
+    clear: "Clear",
     delete: "Delete",
     insertAbove: "Insert above",
     insertBelow: "Insert below",
