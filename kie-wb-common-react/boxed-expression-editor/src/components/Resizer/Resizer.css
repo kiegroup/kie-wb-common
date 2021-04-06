@@ -15,5 +15,10 @@
  */
 
 .expression-container .react-resizable.height-based-on-content {
+  /**
+    It seems that react-resizable is always expecting an height, even if we are interested in having 100% for it.
+    Since react-resizable specifies inline style, the only way to overwrite it, was to assign a specific class (height-based-on-content)
+    with the !important card
+    */
   height: 100% !important;
 }
