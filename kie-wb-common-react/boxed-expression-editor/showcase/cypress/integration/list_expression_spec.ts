@@ -26,9 +26,9 @@ describe("List Expression Tests", () => {
     cy.ouiaId("expression-container").click();
 
     // Define new expression as List
-    cy.ouiaId("expression-popover-menu").contains("List").click({force: true});
+    cy.ouiaId("expression-popover-menu").contains("List").click({ force: true });
 
-    // Assert some conten
+    // Assert some content
     cy.ouiaId("expression-row-0").should("contain.text", "1");
   });
 });
