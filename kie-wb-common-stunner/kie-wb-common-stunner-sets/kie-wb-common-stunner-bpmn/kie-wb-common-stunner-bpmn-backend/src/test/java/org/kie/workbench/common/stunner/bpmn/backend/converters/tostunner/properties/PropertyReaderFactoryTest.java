@@ -20,16 +20,23 @@ import java.util.Collections;
 
 import org.eclipse.bpmn2.Definitions;
 import org.eclipse.bpmn2.Process;
+import org.eclipse.bpmn2.ServiceTask;
 import org.eclipse.bpmn2.di.BPMNDiagram;
+import org.eclipse.emf.ecore.util.FeatureMap;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.DefinitionResolver;
+import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.Factories.bpmn2;
 import static org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.Factories.di;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class PropertyReaderFactoryTest {
@@ -41,6 +48,12 @@ public class PropertyReaderFactoryTest {
     private Process process;
 
     private PropertyReaderFactory tested;
+
+    @Mock
+    private ServiceTask task;
+
+    @Mock
+    private FeatureMap attributes;
 
     @Before
     public void setUp() {
@@ -59,5 +72,17 @@ public class PropertyReaderFactoryTest {
     @Test
     public void ofDefinition() {
         assertTrue(tested.of(definitions) instanceof DefinitionsPropertyReader);
+    }
+
+    @Test
+    public void testOfCustom() {
+        when(task.getName()).thenReturn("MyCustomTask");
+        when(task.getAnyAttribute()).thenReturn(attributes);
+
+        final ServiceTaskPropertyReader serviceTaskPropertyReader = tested.ofCustom(task);
+
+        assertSame(serviceTaskPropertyReader.task, task);
+        assertEquals(serviceTaskPropertyReader.getName(), task.getName());
+        verify(task).getAnyAttribute();
     }
 }

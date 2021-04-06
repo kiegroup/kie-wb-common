@@ -27,6 +27,7 @@ import com.ait.lienzo.test.LienzoMockitoTestRunner;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.kie.workbench.common.stunner.bpmn.client.workitem.WorkItemDefinitionClientUtils;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dimensions.Height;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dimensions.RectangleDimensionsSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dimensions.Width;
@@ -40,6 +41,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
@@ -110,6 +112,39 @@ public class CustomTaskShapeViewHandlerTest {
     @Test
     @SuppressWarnings("unchecked")
     public void testHandle() {
+        checkIconLoad(WID_ICON_DATA);
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void testHandleWIDNull() {
+        when(registry.get(eq(WID_ID))).thenReturn(null);
+        checkIconLoad(WorkItemDefinitionClientUtils.getDefaultIconData());
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void testHandleIconDefinitionNull() {
+        final WorkItemDefinition wid = mock(WorkItemDefinition.class);
+
+        when(wid.getIconDefinition()).thenReturn(null);
+        when(registry.get(eq(WID_ID))).thenReturn(wid);
+        checkIconLoad(WorkItemDefinitionClientUtils.getDefaultIconData());
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void testHandleIconDataNull() {
+        final WorkItemDefinition wid = mock(WorkItemDefinition.class);
+        final IconDefinition iconDef = mock(IconDefinition.class);
+
+        when(iconDef.getIconData()).thenReturn(null);
+        when(wid.getIconDefinition()).thenReturn(iconDef);
+        when(registry.get(eq(WID_ID))).thenReturn(wid);
+        checkIconLoad(WorkItemDefinitionClientUtils.getDefaultIconData());
+    }
+
+    private void checkIconLoad(final String IconData) {
         when(imageProxy.isLoaded()).thenReturn(true);
         when(icon.getBoundingBox()).thenReturn(new BoundingBox(0d,
                                                                0d,
@@ -119,7 +154,7 @@ public class CustomTaskShapeViewHandlerTest {
         ArgumentCaptor<ImageShapeLoadedHandler> loadedHandlerArgumentCaptor =
                 ArgumentCaptor.forClass(ImageShapeLoadedHandler.class);
         verify(imageProxy, times(1)).setImageShapeLoadedHandler(loadedHandlerArgumentCaptor.capture());
-        verify(imageProxy, times(1)).load(eq(WID_ICON_DATA));
+        verify(imageProxy, times(1)).load(eq(IconData));
         ImageShapeLoadedHandler loadedHandler = loadedHandlerArgumentCaptor.getValue();
         loadedHandler.onImageShapeLoaded(icon);
         verify(icon, times(1)).setScale(eq(0.5d), eq(0.5d));
