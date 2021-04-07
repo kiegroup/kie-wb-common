@@ -65,8 +65,8 @@ export interface TableProps {
   handlerConfiguration: TableHandlerConfiguration;
   /** The way in which the header will be rendered */
   headerVisibility?: TableHeaderVisibility;
-  /** True to support multiple levels in the header */
-  headerHasMultipleLevels?: boolean;
+  /** Number of levels in the header, 0-based */
+  headerLevels?: number;
   /** Custom function for getting row key prop, and avoid using the row index */
   getRowKey?: (row: Row) => string;
   /** Custom function for getting column key prop, and avoid using the column index */
@@ -91,7 +91,7 @@ export const Table: React.FunctionComponent<TableProps> = ({
   columns,
   handlerConfiguration,
   headerVisibility,
-  headerHasMultipleLevels = false,
+  headerLevels = 0,
   getRowKey = (row) => row.id as string,
   getColumnKey = (column) => column.id as string,
   resetRowCustomFunction,
@@ -103,33 +103,38 @@ export const Table: React.FunctionComponent<TableProps> = ({
 
   const globalContext = useContext(BoxedExpressionGlobalContext);
 
-  const [tableColumns, setTableColumns] = useState([
-    {
-      label: NUMBER_OF_ROWS_COLUMN,
-      accessor: NUMBER_OF_ROWS_COLUMN,
-      width: 60,
-      minWidth: 60,
-      disableResizing: true,
-      isCountColumn: true,
-      hideFilter: true,
-      ...(headerHasMultipleLevels
-        ? {
-            columns: [
-              {
-                label: NUMBER_OF_ROWS_SUBCOLUMN,
-                accessor: NUMBER_OF_ROWS_SUBCOLUMN,
-                minWidth: 60,
-                width: 60,
-                disableResizing: true,
-                isCountColumn: true,
-                hideFilter: true,
-              },
-            ],
-          }
-        : {}),
-    },
-    ...columns,
-  ]);
+  const generateNumberOfRowsSubColumnRecursively: (column: ColumnInstance, headerLevels: number) => void = (
+    column,
+    headerLevels
+  ) => {
+    if (headerLevels > 0) {
+      _.assign(column, {
+        columns: [
+          {
+            label: NUMBER_OF_ROWS_SUBCOLUMN,
+            accessor: NUMBER_OF_ROWS_SUBCOLUMN,
+            minWidth: 60,
+            width: 60,
+            disableResizing: true,
+            isCountColumn: true,
+            hideFilter: true,
+          },
+        ],
+      });
+
+      generateNumberOfRowsSubColumnRecursively(column.columns[0], headerLevels - 1);
+    }
+  };
+
+  const numberOfRowsColumn = {
+    label: NUMBER_OF_ROWS_COLUMN,
+    accessor: NUMBER_OF_ROWS_COLUMN,
+    width: 60,
+    minWidth: 60,
+    isCountColumn: true,
+  } as ColumnInstance;
+  generateNumberOfRowsSubColumnRecursively(numberOfRowsColumn, headerLevels);
+  const [tableColumns, setTableColumns] = useState([numberOfRowsColumn, ...columns]);
   const [tableRows, setTableRows] = useState(rows);
   const [showTableHandler, setShowTableHandler] = useState(false);
   const [tableHandlerTarget, setTableHandlerTarget] = useState(document.body);
