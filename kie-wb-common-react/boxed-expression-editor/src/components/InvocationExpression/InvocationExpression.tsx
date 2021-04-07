@@ -16,10 +16,12 @@
 
 import "./InvocationExpression.css";
 import * as React from "react";
-import { InvocationProps, TableHandlerConfiguration, TableOperation } from "../../api";
+import { useState } from "react";
+import { DataType, InvocationProps, TableHandlerConfiguration, TableOperation } from "../../api";
 import { Table } from "../Table";
 import { useBoxedExpressionEditorI18n } from "../../i18n";
-import { ColumnInstance } from "react-table";
+import { ColumnInstance, DataRecord } from "react-table";
+import { ContextEntryExpressionCell, ContextEntryInfoCell } from "../ContextExpression";
 
 export const InvocationExpression: React.FunctionComponent<InvocationProps> = ({
   bindingEntries,
@@ -48,10 +50,24 @@ export const InvocationExpression: React.FunctionComponent<InvocationProps> = ({
     },
   ];
 
+  const [rows] = useState(
+    bindingEntries || [
+      {
+        entryInfo: {
+          name: "p-1",
+          dataType: DataType.Undefined,
+        },
+        entryExpression: {},
+      } as DataRecord,
+    ]
+  );
+
   return (
     <div className={`invocation-expression ${uid}`}>
       <Table
         tableId={uid}
+        headerLevels={2}
+        defaultCell={{ entryInfo: ContextEntryInfoCell, entryExpression: ContextEntryExpressionCell }}
         columns={
           [
             {
@@ -60,13 +76,6 @@ export const InvocationExpression: React.FunctionComponent<InvocationProps> = ({
               dataType,
               disableHandlerOnHeader: true,
               columns: [
-                {
-                  label: "Parameter",
-                  accessor: "entryInfo",
-                  disableHandlerOnHeader: true,
-                  width: 150,
-                  minWidth: 150,
-                },
                 {
                   headerCellElement: (
                     <div className="function-definition-container">
@@ -77,16 +86,29 @@ export const InvocationExpression: React.FunctionComponent<InvocationProps> = ({
                       />
                     </div>
                   ),
-                  accessor: "entryExpression",
+                  accessor: "functionDefinition",
+                  canResize: false,
                   disableHandlerOnHeader: true,
-                  width: 370,
-                  minWidth: 370,
+                  columns: [
+                    {
+                      accessor: "entryInfo",
+                      disableHandlerOnHeader: true,
+                      minWidth: 100,
+                      maxWidth: 100,
+                    },
+                    {
+                      accessor: "entryExpression",
+                      disableHandlerOnHeader: true,
+                      minWidth: 225,
+                      width: 225,
+                    },
+                  ],
                 },
               ] as ColumnInstance[],
             },
           ] as ColumnInstance[]
         }
-        rows={[{}]}
+        rows={rows as DataRecord[]}
         handlerConfiguration={handlerConfiguration}
       />
     </div>
