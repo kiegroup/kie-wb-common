@@ -95,6 +95,14 @@ public class DMNDiagramsSession {
         this.currentRegistryChangedEvent = currentRegistryChangedEvent;
     }
 
+    public Map<String, List<Command<AbstractCanvasHandler, CanvasViolation>>> getStoredUndoHistories() {
+        return storedUndoHistories;
+    }
+
+    public Map<String, List<Command<AbstractCanvasHandler, CanvasViolation>>> getStoredRedoHistories() {
+        return storedRedoHistories;
+    }
+
     public void destroyState(final Metadata metadata) {
         dmnSessionStatesByPathURI.remove(getSessionKey(metadata));
     }
@@ -191,25 +199,25 @@ public class DMNDiagramsSession {
         }
     }
 
-    private void loadHistoryForTheCurrentDiagram() {
+    void loadHistoryForTheCurrentDiagram() {
         getCurrentSession().ifPresent(session -> {
             if (session instanceof EditorSession) {
-                if (storedRedoHistories.containsKey(getCurrentDiagramId())
-                        && storedUndoHistories.containsKey(getCurrentDiagramId())) {
+                if (getStoredRedoHistories().containsKey(getCurrentDiagramId())
+                        && getStoredUndoHistories().containsKey(getCurrentDiagramId())) {
 
                     final Registry<Command<AbstractCanvasHandler, CanvasViolation>> undoRegistry = ((EditorSession) session).getCommandRegistry();
-                    final List<Command<AbstractCanvasHandler, CanvasViolation>> undoHistory = storedUndoHistories.get(getCurrentDiagramId());
+                    final List<Command<AbstractCanvasHandler, CanvasViolation>> undoHistory = getStoredUndoHistories().get(getCurrentDiagramId());
                     loadHistoryToTheRegistry(undoHistory, undoRegistry);
 
                     final Registry<Command<AbstractCanvasHandler, CanvasViolation>> redoRegistry = ((EditorSession) session).getRedoCommandRegistry();
-                    final List<Command<AbstractCanvasHandler, CanvasViolation>> redoHistory = storedRedoHistories.get(getCurrentDiagramId());
+                    final List<Command<AbstractCanvasHandler, CanvasViolation>> redoHistory = getStoredRedoHistories().get(getCurrentDiagramId());
                     loadHistoryToTheRegistry(redoHistory, redoRegistry);
                 } else {
                     ((EditorSession) session).getCommandRegistry().clear();
                     ((EditorSession) session).getRedoCommandRegistry().clear();
                 }
+                notifyRegistryChanged();
             }
-            notifyRegistryChanged();
         });
     }
 
@@ -221,14 +229,14 @@ public class DMNDiagramsSession {
         }
     }
 
-    private void storeCurrentRegistryHistory() {
+    void storeCurrentRegistryHistory() {
         getCurrentSession().ifPresent(session -> {
             if (session instanceof EditorSession) {
                 final List<Command<AbstractCanvasHandler, CanvasViolation>> history = ((EditorSession) session).getCommandRegistry().getHistory();
-                storedUndoHistories.put(getCurrentDiagramId(), history);
+                getStoredUndoHistories().put(getCurrentDiagramId(), history);
 
                 final List<Command<AbstractCanvasHandler, CanvasViolation>> redoHistory = ((EditorSession) session).getRedoCommandRegistry().getHistory();
-                storedRedoHistories.put(getCurrentDiagramId(), redoHistory);
+                getStoredRedoHistories().put(getCurrentDiagramId(), redoHistory);
             }
         });
     }
@@ -321,7 +329,7 @@ public class DMNDiagramsSession {
                 .collect(Collectors.toList());
     }
 
-    private Optional<ClientSession> getCurrentSession() {
+    Optional<ClientSession> getCurrentSession() {
         return Optional.ofNullable(sessionManager.getCurrentSession());
     }
 
@@ -329,7 +337,7 @@ public class DMNDiagramsSession {
         return Optional.ofNullable(session.getCanvasHandler());
     }
 
-    private void notifyRegistryChanged() {
+    void notifyRegistryChanged() {
         currentRegistryChangedEvent.fire(new CurrentRegistryChangedEvent());
     }
 }

@@ -83,7 +83,6 @@ public class ApplicationCommandManagerTest {
     @Test
     public void testStart() {
         tested.start();
-        //verify(commandManager, times(1)).init(eq(session));
         verify(commandManager, times(1)).start();
         verify(commandManager, never()).rollback();
         verify(commandManager, never()).complete();
