@@ -284,7 +284,7 @@ public class LienzoMultipleSelectionControlTest {
         when(selectionManager.getSelectedItems().isSelectionGroup()).thenReturn(true);
         tested.onCanvasSelection(new CanvasSelectionEvent(canvasHandler, Arrays.asList(ELEMENT_UUID)));
         verify(selectionControl, never()).clearSelection();
-        verify(selectionManager, times(1)).clearSelection();
+        verify(selectionManager, never()).clearSelection();
     }
 
     @Test
