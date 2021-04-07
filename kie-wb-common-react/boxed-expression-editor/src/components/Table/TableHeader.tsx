@@ -150,7 +150,7 @@ export const TableHeader: React.FunctionComponent<TableHeaderProps> = ({
   const renderHeaderGroups = useMemo(
     () =>
       tableInstance.headerGroups.map((headerGroup: HeaderGroup) => (
-        <Tr key={headerGroup.accessor} {...headerGroup.getHeaderGroupProps()}>
+        <Tr key={headerGroup.getHeaderGroupProps().key} {...headerGroup.getHeaderGroupProps()}>
           {headerGroup.headers.map((column: ColumnInstance, columnIndex: number) => renderColumn(column, columnIndex))}
         </Tr>
       )),
