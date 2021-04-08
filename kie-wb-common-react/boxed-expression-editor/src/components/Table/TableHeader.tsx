@@ -21,6 +21,7 @@ import * as _ from "lodash";
 import { Column, ColumnInstance, DataRecord, HeaderGroup, TableInstance } from "react-table";
 import { EditExpressionMenu } from "../EditExpressionMenu";
 import { DataType, TableHeaderVisibility } from "../../api";
+import { DRAWER_SPLITTER_ELEMENT } from "../Resizer";
 
 export interface TableHeaderProps {
   /** Table instance */
@@ -131,9 +132,7 @@ export const TableHeader: React.FunctionComponent<TableHeaderProps> = ({
             className={`pf-c-drawer ${!column.canResize ? "resizer-disabled" : ""}`}
             {...(column.canResize ? column.getResizerProps() : {})}
           >
-            <div className="pf-c-drawer__splitter pf-m-vertical">
-              <div className="pf-c-drawer__splitter-handle" />
-            </div>
+            {DRAWER_SPLITTER_ELEMENT}
           </div>
         </div>
       </Th>
