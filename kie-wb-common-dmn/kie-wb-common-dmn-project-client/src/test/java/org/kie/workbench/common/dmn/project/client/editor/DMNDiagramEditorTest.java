@@ -351,10 +351,33 @@ public class DMNDiagramEditorTest extends AbstractProjectDiagramEditorTest {
     }
 
     @Test
+    public void testOnFocusWithClosedEditor() {
+        when(stunnerEditor.isClosed()).thenReturn(true);
+        diagramEditor.onFocus();
+        verify(stunnerEditor, never()).focus();
+        verify(stunnerEditor, never()).lostFocus();
+        verify(diagramEditor, never()).onDiagramLoad();
+        verify(dataTypesPage).onFocus();
+        verify(dataTypesPage).enableShortcuts();
+        verify(dataTypesPage, never()).onLostFocus();
+        verify(dataTypesPage, never()).disableShortcuts();
+    }
+
+    @Test
     public void testOnLostFocus() {
         when(stunnerEditor.isClosed()).thenReturn(false);
         diagramEditor.onLostFocus();
         verify(stunnerEditor).lostFocus();
+        verify(stunnerEditor, never()).focus();
+        verify(dataTypesPage).onLostFocus();
+        verify(dataTypesPage, never()).onFocus();
+    }
+
+    @Test
+    public void testOnLostFocusWithClosedEditor() {
+        when(stunnerEditor.isClosed()).thenReturn(true);
+        diagramEditor.onLostFocus();
+        verify(stunnerEditor, never()).lostFocus();
         verify(stunnerEditor, never()).focus();
         verify(dataTypesPage).onLostFocus();
         verify(dataTypesPage, never()).onFocus();
