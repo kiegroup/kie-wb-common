@@ -156,20 +156,26 @@ export const TableHeader: React.FunctionComponent<TableHeaderProps> = ({
     [renderColumn, tableInstance.headerGroups]
   );
 
-  const renderLastLevelInHeaderGroups = useMemo(
-    () => (
+  const renderAtLevelInHeaderGroups = useCallback(
+    (level: number) => (
       <Tr>
-        {_.last(
-          tableInstance.headerGroups as HeaderGroup[]
+        {_.nth(
+          tableInstance.headerGroups as HeaderGroup[],
+          level
         )!.headers.map((column: ColumnInstance, columnIndex: number) => renderColumn(column, columnIndex))}
       </Tr>
     ),
     [renderColumn, tableInstance.headerGroups]
   );
 
-  return headerVisibility === TableHeaderVisibility.None ? null : (
-    <Thead noWrap>
-      {headerVisibility === TableHeaderVisibility.OnlyLastLevel ? renderLastLevelInHeaderGroups : renderHeaderGroups}
-    </Thead>
-  );
+  switch (headerVisibility) {
+    case TableHeaderVisibility.Full:
+      return <Thead noWrap>{renderHeaderGroups}</Thead>;
+    case TableHeaderVisibility.LastLevel:
+      return <Thead noWrap>{renderAtLevelInHeaderGroups(-1)}</Thead>;
+    case TableHeaderVisibility.SecondToLastLevel:
+      return <Thead noWrap>{renderAtLevelInHeaderGroups(-2)}</Thead>;
+    default:
+      return null;
+  }
 };

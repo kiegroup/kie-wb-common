@@ -19,7 +19,8 @@ import { DataType } from "./DataType";
 /** Possible status for the visibility of the Table's Header */
 export enum TableHeaderVisibility {
   Full,
-  OnlyLastLevel,
+  LastLevel,
+  SecondToLastLevel,
   None,
 }
 

@@ -148,7 +148,7 @@ export const ContextExpression: React.FunctionComponent<ContextProps> = ({
   const contextTableGetRowKey = useCallback((row: Row) => (row.original as ContextEntryRecord).entryInfo.name, []);
 
   const getHeaderVisibility = useCallback(() => {
-    return isHeadless ? TableHeaderVisibility.OnlyLastLevel : TableHeaderVisibility.Full;
+    return isHeadless ? TableHeaderVisibility.LastLevel : TableHeaderVisibility.Full;
   }, [isHeadless]);
 
   const resetRowCustomFunction = useCallback((row: DataRecord) => {
