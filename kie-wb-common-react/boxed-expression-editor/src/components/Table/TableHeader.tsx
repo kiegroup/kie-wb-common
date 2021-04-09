@@ -27,9 +27,7 @@ export interface TableHeaderProps {
   /** Table instance */
   tableInstance: TableInstance;
   /** Columns instance */
-  tableColumns: ColumnInstance[];
-  /** Function for setting table columns */
-  setTableColumns: React.Dispatch<React.SetStateAction<ColumnInstance[]>>;
+  tableColumns: React.MutableRefObject<Column[]>;
   /** Function for setting table rows */
   setTableRows: React.Dispatch<React.SetStateAction<DataRecord[]>>;
   /** Optional label to be used for the edit popover that appears when clicking on column header */
@@ -38,16 +36,18 @@ export interface TableHeaderProps {
   headerVisibility?: TableHeaderVisibility;
   /** Custom function for getting column key prop, and avoid using the column index */
   getColumnKey: (column: Column) => string;
+  /** Function to be executed when columns are modified */
+  onColumnsUpdate: (columns: Column[]) => void;
 }
 
 export const TableHeader: React.FunctionComponent<TableHeaderProps> = ({
   tableInstance,
   tableColumns,
-  setTableColumns,
   setTableRows,
   editColumnLabel,
   headerVisibility = TableHeaderVisibility.Full,
   getColumnKey,
+  onColumnsUpdate,
 }) => {
   const updateColumnNameInRows = useCallback(
     (prevColumnName: string, newColumnName: string) =>
@@ -65,20 +65,18 @@ export const TableHeader: React.FunctionComponent<TableHeaderProps> = ({
   const onColumnNameOrDataTypeUpdate = useCallback(
     (columnIndex: number) => {
       return ({ name = "", dataType = DataType.Undefined }) => {
-        const prevColumnName = (tableColumns[columnIndex] as ColumnInstance).accessor as string;
-        setTableColumns((prevTableColumns: ColumnInstance[]) => {
-          const updatedTableColumns = [...prevTableColumns];
-          updatedTableColumns[columnIndex].label = name;
-          updatedTableColumns[columnIndex].accessor = name;
-          updatedTableColumns[columnIndex].dataType = dataType;
-          return updatedTableColumns;
-        });
+        const prevColumnName = (tableColumns.current[columnIndex] as ColumnInstance).accessor as string;
+        const updatedTableColumns = [...tableColumns.current] as ColumnInstance[];
+        updatedTableColumns[columnIndex].label = name;
+        updatedTableColumns[columnIndex].accessor = name;
+        updatedTableColumns[columnIndex].dataType = dataType;
+        onColumnsUpdate(updatedTableColumns);
         if (name !== prevColumnName) {
           updateColumnNameInRows(prevColumnName, name);
         }
       };
     },
-    [setTableColumns, tableColumns, updateColumnNameInRows]
+    [onColumnsUpdate, tableColumns, updateColumnNameInRows]
   );
 
   const renderCountColumn = useCallback(

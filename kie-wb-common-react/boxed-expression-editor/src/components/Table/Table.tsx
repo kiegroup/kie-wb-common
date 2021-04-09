@@ -15,7 +15,15 @@
  */
 
 import "./Table.css";
-import { ColumnInstance, ContextMenuEvent, DataRecord, useBlockLayout, useResizeColumns, useTable } from "react-table";
+import {
+  Column,
+  ColumnInstance,
+  ContextMenuEvent,
+  DataRecord,
+  useBlockLayout,
+  useResizeColumns,
+  useTable,
+} from "react-table";
 import { TableComposable } from "@patternfly/react-table";
 import * as React from "react";
 import { useCallback, useContext, useEffect, useRef, useState } from "react";
@@ -86,7 +94,7 @@ export const Table: React.FunctionComponent<TableProps> = ({
     isCountColumn: true,
   } as ColumnInstance;
   generateNumberOfRowsSubColumnRecursively(numberOfRowsColumn, headerLevels);
-  const [tableColumns, setTableColumns] = useState([numberOfRowsColumn, ...columns]);
+  const tableColumns = useRef<Column[]>([numberOfRowsColumn, ...columns]);
   const [tableRows, setTableRows] = useState(rows);
   const [showTableHandler, setShowTableHandler] = useState(false);
   const [tableHandlerTarget, setTableHandlerTarget] = useState(document.body);
@@ -154,7 +162,7 @@ export const Table: React.FunctionComponent<TableProps> = ({
         setTableHandlerAllowedOperations([
           TableOperation.ColumnInsertLeft,
           TableOperation.ColumnInsertRight,
-          ...(tableColumns.length > 2 && columnIndex > 0 ? [TableOperation.ColumnDelete] : []),
+          ...(tableColumns.current.length > 2 && columnIndex > 0 ? [TableOperation.ColumnDelete] : []),
         ]);
         tableHandlerStateUpdate(target, columnIndex);
       }
@@ -169,7 +177,7 @@ export const Table: React.FunctionComponent<TableProps> = ({
         setTableHandlerAllowedOperations([
           TableOperation.ColumnInsertLeft,
           TableOperation.ColumnInsertRight,
-          ...(tableColumns.length > 2 && columnIndex > 0 ? [TableOperation.ColumnDelete] : []),
+          ...(tableColumns.current.length > 2 && columnIndex > 0 ? [TableOperation.ColumnDelete] : []),
           TableOperation.RowInsertAbove,
           TableOperation.RowInsertBelow,
           ...(tableRows.length > 1 ? [TableOperation.RowDelete] : []),
@@ -181,9 +189,17 @@ export const Table: React.FunctionComponent<TableProps> = ({
     },
   });
 
+  const onColumnsUpdateCallback = useCallback(
+    (columns: Column[]) => {
+      tableColumns.current = columns;
+      onColumnsUpdate?.(columns.slice(1)); //Removing "# of rows" column
+    },
+    [onColumnsUpdate]
+  );
+
   const tableInstance = useTable(
     {
-      columns: tableColumns,
+      columns: tableColumns.current,
       data: tableRows,
       defaultColumn,
       onCellUpdate,
@@ -194,10 +210,6 @@ export const Table: React.FunctionComponent<TableProps> = ({
     useBlockLayout,
     useResizeColumns
   );
-
-  useEffect(() => {
-    onColumnsUpdate?.(tableColumns.slice(1)); //Removing "# of rows" column
-  }, [onColumnsUpdate, tableColumns]);
 
   useEffect(() => {
     onRowsUpdate?.(tableRows);
@@ -219,12 +231,10 @@ export const Table: React.FunctionComponent<TableProps> = ({
     !_.isEmpty(tableInstance.state.columnResizing.columnWidths);
   useEffect(() => {
     if (finishedResizing) {
-      setTableColumns((prevTableColumns) => {
-        _.forEach(tableInstance.state.columnResizing.columnWidths, (updatedColumnWidth, accessor) =>
-          resizeNestedColumns(prevTableColumns as ColumnInstance[], accessor, updatedColumnWidth)
-        );
-        return [...prevTableColumns];
-      });
+      _.forEach(tableInstance.state.columnResizing.columnWidths, (updatedColumnWidth, accessor) =>
+        resizeNestedColumns(tableColumns.current as ColumnInstance[], accessor, updatedColumnWidth)
+      );
+      onColumnsUpdateCallback(tableColumns.current);
     }
     // Need to consider a change only when resizing is finished (no other dependencies to consider for this useEffect)
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -237,10 +247,10 @@ export const Table: React.FunctionComponent<TableProps> = ({
           tableInstance={tableInstance}
           editColumnLabel={editColumnLabel}
           headerVisibility={headerVisibility}
-          tableColumns={tableColumns as ColumnInstance[]}
-          setTableColumns={setTableColumns}
+          tableColumns={tableColumns}
           setTableRows={setTableRows}
           getColumnKey={getColumnKey}
+          onColumnsUpdate={onColumnsUpdateCallback}
         />
         <TableBody
           tableInstance={tableInstance}
@@ -253,8 +263,7 @@ export const Table: React.FunctionComponent<TableProps> = ({
       </TableComposable>
       {showTableHandler ? (
         <TableHandler
-          tableColumns={tableColumns as ColumnInstance[]}
-          setTableColumns={setTableColumns}
+          tableColumns={tableColumns}
           setTableRows={setTableRows}
           columnPrefix={columnPrefix}
           handlerConfiguration={handlerConfiguration}
@@ -266,6 +275,7 @@ export const Table: React.FunctionComponent<TableProps> = ({
           tableHandlerAllowedOperations={tableHandlerAllowedOperations}
           tableHandlerTarget={tableHandlerTarget}
           resetRowCustomFunction={resetRowCustomFunction}
+          onColumnsUpdate={onColumnsUpdateCallback}
         />
       ) : null}
     </div>

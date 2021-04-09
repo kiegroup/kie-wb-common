@@ -445,7 +445,7 @@ describe("Table tests", () => {
       await openContextMenu(container.querySelector(expressionCell(0, 0))!);
       await selectMenuEntryIfNotDisabled(baseElement, "Delete");
 
-      expect(mockedOnColumnUpdate).toHaveBeenCalledWith([firstColumn, secondColumn]);
+      expect(mockedOnColumnUpdate).toHaveBeenCalledTimes(0);
     });
 
     test("should trigger onRowsUpdate, when inserting a new row above", async () => {
