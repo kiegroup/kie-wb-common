@@ -15,65 +15,17 @@
  */
 
 import "./Table.css";
-import {
-  Column,
-  ColumnInstance,
-  ContextMenuEvent,
-  DataRecord,
-  Row,
-  useBlockLayout,
-  useResizeColumns,
-  useTable,
-} from "react-table";
+import { ColumnInstance, ContextMenuEvent, DataRecord, useBlockLayout, useResizeColumns, useTable } from "react-table";
 import { TableComposable } from "@patternfly/react-table";
 import * as React from "react";
 import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import { EditableCell } from "./EditableCell";
-import { CellProps, TableHandlerConfiguration, TableHeaderVisibility, TableOperation } from "../../api";
+import { TableOperation, TableProps } from "../../api";
 import * as _ from "lodash";
 import { TableBody } from "./TableBody";
 import { TableHandler } from "./TableHandler";
 import { TableHeader } from "./TableHeader";
 import { BoxedExpressionGlobalContext } from "../../context";
-
-export interface TableProps {
-  /** Table identifier, useful for nested structures */
-  tableId?: string;
-  /** Optional children element to be appended below the table content */
-  children?: React.ReactElement[];
-  /** The prefix to be used for the column name */
-  columnPrefix?: string;
-  /** Optional label to be used for the edit popover that appears when clicking on column header */
-  editColumnLabel?: string;
-  /** For each column there is a default component to be used to render the related cell */
-  defaultCell?: {
-    [columnName: string]: React.FunctionComponent<CellProps>;
-  };
-  /** Table's columns */
-  columns: Column[];
-  /** Table's cells */
-  rows: DataRecord[];
-  /** Function to be executed when columns are modified */
-  onColumnsUpdate?: (columns: Column[]) => void;
-  /** Function to be executed when one or more rows are modified */
-  onRowsUpdate?: (rows: DataRecord[]) => void;
-  /** Function to be executed when a single row gets modified */
-  onSingleRowUpdate?: (rowIndex: number, row: DataRecord) => void;
-  /** Function to be executed when adding a new row to the table */
-  onRowAdding?: () => DataRecord;
-  /** Custom configuration for the table handler */
-  handlerConfiguration: TableHandlerConfiguration;
-  /** The way in which the header will be rendered */
-  headerVisibility?: TableHeaderVisibility;
-  /** Number of levels in the header, 0-based */
-  headerLevels?: number;
-  /** Custom function for getting row key prop, and avoid using the row index */
-  getRowKey?: (row: Row) => string;
-  /** Custom function for getting column key prop, and avoid using the column index */
-  getColumnKey?: (column: Column) => string;
-  /** Custom function called for manually resetting a row */
-  resetRowCustomFunction?: (row: DataRecord) => DataRecord;
-}
 
 export const NO_TABLE_CONTEXT_MENU_CLASS = "no-table-context-menu";
 
