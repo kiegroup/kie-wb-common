@@ -60,6 +60,7 @@ public class KogitoUndoSessionCommandTest {
     @Before
     public void setup() {
         when(session.getKeyboardControl()).thenReturn(keyboardControl);
+        when(sessionManager.getCurrentSession()).thenReturn(session);
 
         undoSessionCommand = new KogitoUndoSessionCommand(sessionCommandManager, () -> envelopeAvailable, () -> stateControl, sessionManager);
     }
