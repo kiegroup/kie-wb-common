@@ -16,22 +16,25 @@
 
 import "./InvocationExpression.css";
 import * as React from "react";
-import { useState } from "react";
-import { DataType, InvocationProps, TableHandlerConfiguration, TableOperation } from "../../api";
+import { useCallback, useState } from "react";
+import { DataType, InvocationProps, TableHandlerConfiguration, TableHeaderVisibility, TableOperation } from "../../api";
 import { Table } from "../Table";
 import { useBoxedExpressionEditorI18n } from "../../i18n";
 import { ColumnInstance, DataRecord } from "react-table";
 import { ContextEntryExpressionCell, ContextEntryInfoCell } from "../ContextExpression";
 
+const DEFAULT_PARAMETER_NAME = "p-1";
+const DEFAULT_PARAMETER_DATA_TYPE = DataType.Undefined;
+
 export const InvocationExpression: React.FunctionComponent<InvocationProps> = ({
   bindingEntries,
-  dataType,
+  dataType = DEFAULT_PARAMETER_DATA_TYPE,
   entryExpressionWidth,
   entryInfoWidth,
   invokedFunction,
   isHeadless,
   logicType,
-  name,
+  name = DEFAULT_PARAMETER_NAME,
   onUpdatingNameAndDataType,
   onUpdatingRecursiveExpression,
   uid,
@@ -54,13 +57,28 @@ export const InvocationExpression: React.FunctionComponent<InvocationProps> = ({
     bindingEntries || [
       {
         entryInfo: {
-          name: "p-1",
-          dataType: DataType.Undefined,
+          name: DEFAULT_PARAMETER_NAME,
+          dataType: DEFAULT_PARAMETER_DATA_TYPE,
         },
         entryExpression: {},
       } as DataRecord,
     ]
   );
+
+  const onRowAdding = useCallback(
+    () => ({
+      entryInfo: {
+        name: "p-2",
+        dataType: DEFAULT_PARAMETER_DATA_TYPE,
+      },
+      entryExpression: {},
+    }),
+    []
+  );
+
+  const getHeaderVisibility = useCallback(() => {
+    return isHeadless ? TableHeaderVisibility.SecondToLastLevel : TableHeaderVisibility.Full;
+  }, [isHeadless]);
 
   return (
     <div className={`invocation-expression ${uid}`}>
@@ -68,6 +86,8 @@ export const InvocationExpression: React.FunctionComponent<InvocationProps> = ({
         tableId={uid}
         headerLevels={2}
         defaultCell={{ entryInfo: ContextEntryInfoCell, entryExpression: ContextEntryExpressionCell }}
+        onRowAdding={onRowAdding}
+        headerVisibility={getHeaderVisibility()}
         columns={
           [
             {
@@ -87,18 +107,19 @@ export const InvocationExpression: React.FunctionComponent<InvocationProps> = ({
                     </div>
                   ),
                   accessor: "functionDefinition",
-                  canResize: false,
                   disableHandlerOnHeader: true,
                   columns: [
                     {
                       accessor: "entryInfo",
                       disableHandlerOnHeader: true,
-                      minWidth: 100,
-                      maxWidth: 100,
+                      canResizeOnCell: true,
+                      minWidth: 130,
+                      width: 130,
                     },
                     {
                       accessor: "entryExpression",
                       disableHandlerOnHeader: true,
+                      canResizeOnCell: true,
                       minWidth: 225,
                       width: 225,
                     },
