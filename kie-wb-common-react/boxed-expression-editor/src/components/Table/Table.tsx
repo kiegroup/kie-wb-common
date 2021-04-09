@@ -16,7 +16,6 @@
 
 import "./Table.css";
 import {
-  Cell,
   Column,
   ColumnInstance,
   ContextMenuEvent,
@@ -26,16 +25,16 @@ import {
   useResizeColumns,
   useTable,
 } from "react-table";
-import { TableComposable, Tbody, Td, Tr } from "@patternfly/react-table";
+import { TableComposable } from "@patternfly/react-table";
 import * as React from "react";
-import { useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import { EditableCell } from "./EditableCell";
 import { CellProps, TableHandlerConfiguration, TableHeaderVisibility, TableOperation } from "../../api";
 import * as _ from "lodash";
-import { TableHeader } from "./TableHeader";
+import { TableBody } from "./TableBody";
 import { TableHandler } from "./TableHandler";
+import { TableHeader } from "./TableHeader";
 import { BoxedExpressionGlobalContext } from "../../context";
-import { DRAWER_SPLITTER_ELEMENT } from "../Resizer";
 
 export interface TableProps {
   /** Table identifier, useful for nested structures */
@@ -279,74 +278,6 @@ export const Table: React.FunctionComponent<TableProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [finishedResizing]);
 
-  const renderAdditiveRow = useMemo(
-    () => (
-      <Tr className="table-row additive-row">
-        <Td role="cell" className="empty-cell">
-          <br />
-        </Td>
-        {children?.map((child, childIndex) => {
-          return (
-            <Td
-              role="cell"
-              key={childIndex}
-              className="row-remainder-content"
-              style={{
-                width: tableInstance.allColumns[childIndex + 1].width,
-                minWidth: tableInstance.allColumns[childIndex + 1].minWidth,
-              }}
-            >
-              {child}
-            </Td>
-          );
-        })}
-      </Tr>
-    ),
-    [children, tableInstance.allColumns]
-  );
-
-  const renderCellResizer = useCallback(
-    (cell: Cell) => (
-      <div
-        className="pf-c-drawer drawer-on-body"
-        {...(cell.column.canResizeOnCell ? cell.column.getResizerProps() : {})}
-      >
-        {DRAWER_SPLITTER_ELEMENT}
-      </div>
-    ),
-    []
-  );
-
-  const renderCell = useCallback(
-    (cellIndex: number, cell: Cell, rowIndex: number) => (
-      <Td
-        {...(cellIndex === 0 ? {} : cell.getCellProps())}
-        {...tableInstance.getTdProps(cellIndex, rowIndex)}
-        key={`${getColumnKey(cell.column)}-${cellIndex}`}
-        data-ouia-component-id={"expression-column-" + cellIndex}
-        className={cellIndex === 0 ? "counter-cell" : "data-cell"}
-      >
-        {cellIndex === 0 ? rowIndex + 1 : cell.render("Cell")}
-        {cell.column.canResizeOnCell ? renderCellResizer(cell) : null}
-      </Td>
-    ),
-    [getColumnKey, renderCellResizer, tableInstance]
-  );
-
-  const renderBodyRow = useCallback(
-    (row: Row, rowIndex: number) => (
-      <Tr
-        className="table-row"
-        {...row.getRowProps()}
-        key={`${getRowKey(row)}-${rowIndex}`}
-        ouiaId={"expression-row-" + rowIndex}
-      >
-        {row.cells.map((cell: Cell, cellIndex: number) => renderCell(cellIndex, cell, rowIndex))}
-      </Tr>
-    ),
-    [getRowKey, renderCell]
-  );
-
   return (
     <div className={`table-component ${tableId}`}>
       <TableComposable variant="compact" {...tableInstance.getTableProps()} ref={tableRef}>
@@ -359,16 +290,14 @@ export const Table: React.FunctionComponent<TableProps> = ({
           setTableRows={setTableRows}
           getColumnKey={getColumnKey}
         />
-        <Tbody
-          className={`${headerVisibility === TableHeaderVisibility.None ? "missing-header" : ""}`}
-          {...tableInstance.getTableBodyProps()}
+        <TableBody
+          tableInstance={tableInstance}
+          getRowKey={getRowKey}
+          getColumnKey={getColumnKey}
+          headerVisibility={headerVisibility}
         >
-          {tableInstance.rows.map((row: Row, rowIndex: number) => {
-            tableInstance.prepareRow(row);
-            return renderBodyRow(row, rowIndex);
-          })}
-          {children ? renderAdditiveRow : null}
-        </Tbody>
+          {children}
+        </TableBody>
       </TableComposable>
       {showTableHandler ? (
         <TableHandler
