@@ -120,21 +120,30 @@ export const TableHandler: React.FunctionComponent<TableHandlerProps> = ({
     [generateNextAvailableColumnName]
   );
 
+  /** These column operations have impact also on the collection of cells */
+  const updateColumnsThenRows = useCallback(
+    (columns) => {
+      onColumnsUpdate(columns);
+      onRowsUpdate(tableRows.current);
+    },
+    [onColumnsUpdate, onRowsUpdate, tableRows]
+  );
+
   const handlingOperation = useCallback(
     (tableOperation: TableOperation) => {
       switch (tableOperation) {
         case TableOperation.ColumnInsertLeft:
-          onColumnsUpdate(
+          updateColumnsThenRows(
             insertBefore(tableColumns.current, selectedColumnIndex, generateNextAvailableColumn(tableColumns.current))
           );
           break;
         case TableOperation.ColumnInsertRight:
-          onColumnsUpdate(
+          updateColumnsThenRows(
             insertAfter(tableColumns.current, selectedColumnIndex, generateNextAvailableColumn(tableColumns.current))
           );
           break;
         case TableOperation.ColumnDelete:
-          onColumnsUpdate(deleteAt(tableColumns.current, selectedColumnIndex));
+          updateColumnsThenRows(deleteAt(tableColumns.current, selectedColumnIndex));
           break;
         case TableOperation.RowInsertAbove:
           setTableRows((prevTableRows) => insertBefore(prevTableRows, selectedRowIndex, onRowAdding()));
@@ -154,7 +163,7 @@ export const TableHandler: React.FunctionComponent<TableHandlerProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [
       generateNextAvailableColumn,
-      onColumnsUpdate,
+      updateColumnsThenRows,
       onRowAdding,
       selectedColumnIndex,
       selectedRowIndex,
