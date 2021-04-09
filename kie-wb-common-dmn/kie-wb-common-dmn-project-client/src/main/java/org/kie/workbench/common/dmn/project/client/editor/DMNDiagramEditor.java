@@ -363,17 +363,17 @@ public class DMNDiagramEditor extends AbstractProjectDiagramEditor<DMNDiagramRes
         if (!getStunnerEditor().isClosed()) {
             getStunnerEditor().focus();
             onDiagramLoad();
-            dataTypesPage.onFocus();
-            dataTypesPage.enableShortcuts();
         }
+        dataTypesPage.onFocus();
+        dataTypesPage.enableShortcuts();
     }
 
     @OnLostFocus
     public void onLostFocus() {
         if (!getStunnerEditor().isClosed()) {
             getStunnerEditor().lostFocus();
-            dataTypesPage.onLostFocus();
         }
+        dataTypesPage.onLostFocus();
     }
 
     @Override
