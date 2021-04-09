@@ -44,7 +44,6 @@ export const Table: React.FunctionComponent<TableProps> = ({
   editColumnLabel,
   onColumnsUpdate,
   onRowsUpdate,
-  onSingleRowUpdate,
   onRowAdding = () => ({}),
   defaultCell,
   rows,
@@ -112,17 +111,13 @@ export const Table: React.FunctionComponent<TableProps> = ({
     });
   }, []);
 
-  const onRowUpdate = useCallback(
-    (rowIndex: number, updatedRow: DataRecord) => {
-      onSingleRowUpdate?.(rowIndex, updatedRow);
-      setTableRows((prevTableCells) => {
-        const updatedRows = [...prevTableCells];
-        updatedRows[rowIndex] = updatedRow;
-        return updatedRows;
-      });
-    },
-    [onSingleRowUpdate]
-  );
+  const onRowUpdate = useCallback((rowIndex: number, updatedRow: DataRecord) => {
+    setTableRows((prevTableCells) => {
+      const updatedRows = [...prevTableCells];
+      updatedRows[rowIndex] = updatedRow;
+      return updatedRows;
+    });
+  }, []);
 
   const defaultColumn = {
     minWidth: 150,
