@@ -28,6 +28,8 @@ import org.kie.workbench.common.dmn.api.qualifiers.DMNEditor;
 import org.kie.workbench.common.dmn.client.widgets.toolbar.DMNPerformAutomaticLayoutCommand;
 import org.kie.workbench.common.dmn.project.client.session.DMNEditorSessionCommands;
 import org.kie.workbench.common.stunner.client.widgets.menu.MenuUtils;
+import org.kie.workbench.common.stunner.core.client.session.command.impl.RedoSessionCommand;
+import org.kie.workbench.common.stunner.core.client.session.command.impl.UndoSessionCommand;
 import org.kie.workbench.common.stunner.core.i18n.CoreTranslationMessages;
 import org.kie.workbench.common.stunner.project.client.editor.AbstractDiagramEditorMenuSessionItems;
 import org.kie.workbench.common.stunner.project.client.editor.ValidationAction;
@@ -79,6 +81,8 @@ public class DMNEditorMenuSessionItems extends AbstractDiagramEditorMenuSessionI
     @Override
     public void setEnabled(final boolean enabled) {
         superSetEnabled(enabled);
+        setItemEnabled(UndoSessionCommand.class, enabled);
+        setItemEnabled(RedoSessionCommand.class, enabled);
         setItemEnabled(DMNPerformAutomaticLayoutCommand.class, enabled);
     }
 
