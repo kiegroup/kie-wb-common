@@ -28,12 +28,14 @@ export interface TableHandlerProps {
   columnPrefix: string;
   /** Columns instance */
   tableColumns: React.MutableRefObject<Column[]>;
-  /** Function for setting table rows */
-  setTableRows: React.Dispatch<React.SetStateAction<DataRecord[]>>;
   /** Last selected column index */
   lastSelectedColumnIndex: number;
   /** Last selected row index */
   lastSelectedRowIndex: number;
+  /** Rows instance */
+  tableRows: React.MutableRefObject<DataRecord[]>;
+  /** Function to be executed when one or more rows are modified */
+  onRowsUpdate: (rows: DataRecord[]) => void;
   /** Function to be executed when adding a new row to the table */
   onRowAdding: () => DataRecord;
   /** Show/hide table handler */
@@ -55,9 +57,10 @@ export interface TableHandlerProps {
 export const TableHandler: React.FunctionComponent<TableHandlerProps> = ({
   columnPrefix,
   tableColumns,
-  setTableRows,
   lastSelectedColumnIndex,
   lastSelectedRowIndex,
+  tableRows,
+  onRowsUpdate,
   onRowAdding,
   showTableHandler,
   setShowTableHandler,
@@ -146,16 +149,16 @@ export const TableHandler: React.FunctionComponent<TableHandlerProps> = ({
           updateColumnsThenRows(deleteAt(tableColumns.current, selectedColumnIndex));
           break;
         case TableOperation.RowInsertAbove:
-          setTableRows((prevTableRows) => insertBefore(prevTableRows, selectedRowIndex, onRowAdding()));
+          onRowsUpdate(insertBefore(tableRows.current, selectedRowIndex, onRowAdding()));
           break;
         case TableOperation.RowInsertBelow:
-          setTableRows((prevTableRows) => insertAfter(prevTableRows, selectedRowIndex, onRowAdding()));
+          onRowsUpdate(insertAfter(tableRows.current, selectedRowIndex, onRowAdding()));
           break;
         case TableOperation.RowDelete:
-          setTableRows((prevTableRows) => deleteAt(prevTableRows, selectedRowIndex));
+          onRowsUpdate(deleteAt(tableRows.current, selectedRowIndex));
           break;
         case TableOperation.RowClear:
-          setTableRows((prevTableRows) => clearAt(prevTableRows, selectedRowIndex));
+          onRowsUpdate(clearAt(tableRows.current, selectedRowIndex));
           break;
       }
       setShowTableHandler(false);
@@ -165,11 +168,12 @@ export const TableHandler: React.FunctionComponent<TableHandlerProps> = ({
       generateNextAvailableColumn,
       updateColumnsThenRows,
       onRowAdding,
+      onRowsUpdate,
       selectedColumnIndex,
       selectedRowIndex,
       setShowTableHandler,
-      setTableRows,
       tableColumns,
+      tableRows,
     ]
   );
 

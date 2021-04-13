@@ -94,7 +94,7 @@ export const Table: React.FunctionComponent<TableProps> = ({
   } as ColumnInstance;
   generateNumberOfRowsSubColumnRecursively(numberOfRowsColumn, headerLevels);
   const tableColumns = useRef<Column[]>([numberOfRowsColumn, ...columns]);
-  const [tableRows, setTableRows] = useState(rows);
+  const tableRows = useRef<DataRecord[]>(rows);
   const [showTableHandler, setShowTableHandler] = useState(false);
   const [tableHandlerTarget, setTableHandlerTarget] = useState(document.body);
   const [tableHandlerAllowedOperations, setTableHandlerAllowedOperations] = useState(
@@ -103,21 +103,39 @@ export const Table: React.FunctionComponent<TableProps> = ({
   const [lastSelectedColumnIndex, setLastSelectedColumnIndex] = useState(-1);
   const [lastSelectedRowIndex, setLastSelectedRowIndex] = useState(-1);
 
-  const onCellUpdate = useCallback((rowIndex: number, columnId: string, value: string) => {
-    setTableRows((prevTableCells) => {
-      const updatedTableCells = [...prevTableCells];
-      updatedTableCells[rowIndex][columnId] = value;
-      return updatedTableCells;
-    });
-  }, []);
+  const onColumnsUpdateCallback = useCallback(
+    (columns: Column[]) => {
+      tableColumns.current = columns;
+      onColumnsUpdate?.(columns.slice(1)); //Removing "# of rows" column
+    },
+    [onColumnsUpdate]
+  );
 
-  const onRowUpdate = useCallback((rowIndex: number, updatedRow: DataRecord) => {
-    setTableRows((prevTableCells) => {
-      const updatedRows = [...prevTableCells];
+  const onRowsUpdateCallback = useCallback(
+    (rows: DataRecord[]) => {
+      tableRows.current = rows;
+      onRowsUpdate?.(rows);
+    },
+    [onRowsUpdate]
+  );
+
+  const onCellUpdate = useCallback(
+    (rowIndex: number, columnId: string, value: string) => {
+      const updatedTableCells = [...tableRows.current];
+      updatedTableCells[rowIndex][columnId] = value;
+      onRowsUpdateCallback(updatedTableCells);
+    },
+    [onRowsUpdateCallback]
+  );
+
+  const onRowUpdate = useCallback(
+    (rowIndex: number, updatedRow: DataRecord) => {
+      const updatedRows = [...tableRows.current];
       updatedRows[rowIndex] = updatedRow;
-      return updatedRows;
-    });
-  }, []);
+      onRowsUpdateCallback(updatedRows);
+    },
+    [onRowsUpdateCallback]
+  );
 
   const defaultColumn = {
     minWidth: 150,
@@ -175,7 +193,7 @@ export const Table: React.FunctionComponent<TableProps> = ({
           ...(tableColumns.current.length > 2 && columnIndex > 0 ? [TableOperation.ColumnDelete] : []),
           TableOperation.RowInsertAbove,
           TableOperation.RowInsertBelow,
-          ...(tableRows.length > 1 ? [TableOperation.RowDelete] : []),
+          ...(tableRows.current.length > 1 ? [TableOperation.RowDelete] : []),
           TableOperation.RowClear,
         ]);
         tableHandlerStateUpdate(target, columnIndex);
@@ -184,18 +202,10 @@ export const Table: React.FunctionComponent<TableProps> = ({
     },
   });
 
-  const onColumnsUpdateCallback = useCallback(
-    (columns: Column[]) => {
-      tableColumns.current = columns;
-      onColumnsUpdate?.(columns.slice(1)); //Removing "# of rows" column
-    },
-    [onColumnsUpdate]
-  );
-
   const tableInstance = useTable(
     {
       columns: tableColumns.current,
-      data: tableRows,
+      data: tableRows.current,
       defaultColumn,
       onCellUpdate,
       onRowUpdate,
@@ -205,10 +215,6 @@ export const Table: React.FunctionComponent<TableProps> = ({
     useBlockLayout,
     useResizeColumns
   );
-
-  useEffect(() => {
-    onRowsUpdate?.(tableRows);
-  }, [onRowsUpdate, tableRows]);
 
   const resizeNestedColumns = (columns: ColumnInstance[], accessor: string, updatedWidth: number) => {
     const columnIndex = _.findIndex(columns, { accessor });
@@ -242,8 +248,9 @@ export const Table: React.FunctionComponent<TableProps> = ({
           tableInstance={tableInstance}
           editColumnLabel={editColumnLabel}
           headerVisibility={headerVisibility}
+          tableRows={tableRows}
+          onRowsUpdate={onRowsUpdateCallback}
           tableColumns={tableColumns}
-          setTableRows={setTableRows}
           getColumnKey={getColumnKey}
           onColumnsUpdate={onColumnsUpdateCallback}
         />
@@ -259,11 +266,12 @@ export const Table: React.FunctionComponent<TableProps> = ({
       {showTableHandler ? (
         <TableHandler
           tableColumns={tableColumns}
-          setTableRows={setTableRows}
           columnPrefix={columnPrefix}
           handlerConfiguration={handlerConfiguration}
           lastSelectedColumnIndex={lastSelectedColumnIndex}
           lastSelectedRowIndex={lastSelectedRowIndex}
+          tableRows={tableRows}
+          onRowsUpdate={onRowsUpdateCallback}
           onRowAdding={onRowAdding}
           showTableHandler={showTableHandler}
           setShowTableHandler={setShowTableHandler}

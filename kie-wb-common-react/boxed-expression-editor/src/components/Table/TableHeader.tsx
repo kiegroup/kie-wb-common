@@ -26,40 +26,43 @@ import { DRAWER_SPLITTER_ELEMENT } from "../Resizer";
 export interface TableHeaderProps {
   /** Table instance */
   tableInstance: TableInstance;
-  /** Columns instance */
-  tableColumns: React.MutableRefObject<Column[]>;
-  /** Function for setting table rows */
-  setTableRows: React.Dispatch<React.SetStateAction<DataRecord[]>>;
+  /** Rows instance */
+  tableRows: React.MutableRefObject<DataRecord[]>;
+  /** Function to be executed when one or more rows are modified */
+  onRowsUpdate: (rows: DataRecord[]) => void;
   /** Optional label to be used for the edit popover that appears when clicking on column header */
   editColumnLabel?: string;
   /** The way in which the header will be rendered */
   headerVisibility?: TableHeaderVisibility;
   /** Custom function for getting column key prop, and avoid using the column index */
   getColumnKey: (column: Column) => string;
+  /** Columns instance */
+  tableColumns: React.MutableRefObject<Column[]>;
   /** Function to be executed when columns are modified */
   onColumnsUpdate: (columns: Column[]) => void;
 }
 
 export const TableHeader: React.FunctionComponent<TableHeaderProps> = ({
   tableInstance,
-  tableColumns,
-  setTableRows,
+  tableRows,
+  onRowsUpdate,
   editColumnLabel,
   headerVisibility = TableHeaderVisibility.Full,
   getColumnKey,
+  tableColumns,
   onColumnsUpdate,
 }) => {
   const updateColumnNameInRows = useCallback(
     (prevColumnName: string, newColumnName: string) =>
-      setTableRows((prevTableCells) => {
-        return _.map(prevTableCells, (tableCells) => {
+      onRowsUpdate(
+        _.map(tableRows.current, (tableCells) => {
           const assignedCellValue = tableCells[prevColumnName]!;
           delete tableCells[prevColumnName];
           tableCells[newColumnName] = assignedCellValue;
           return tableCells;
-        });
-      }),
-    [setTableRows]
+        })
+      ),
+    [onRowsUpdate, tableRows]
   );
 
   const onColumnNameOrDataTypeUpdate = useCallback(
