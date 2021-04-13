@@ -16,9 +16,9 @@
 
 import "./RelationExpression.css";
 import * as React from "react";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import "@patternfly/patternfly/utilities/Text/text.css";
-import { DataType, RelationProps, TableOperation } from "../../api";
+import { Column as RelationColumn, DataType, RelationProps, Row, TableOperation } from "../../api";
 import { Table } from "../Table";
 import { useBoxedExpressionEditorI18n } from "../../i18n";
 import * as _ from "lodash";
@@ -47,30 +47,30 @@ export const RelationExpression: React.FunctionComponent<RelationProps> = (relat
     },
   ];
 
-  const [tableColumns, setTableColumns] = useState(
+  const tableColumns = useRef<RelationColumn[]>(
     relationProps.columns === undefined
       ? [{ name: FIRST_COLUMN_NAME, dataType: DataType.Undefined }]
       : relationProps.columns
   );
 
-  const [tableRows, setTableRows] = useState(relationProps.rows === undefined ? [[]] : relationProps.rows);
+  const tableRows = useRef<Row[]>(relationProps.rows === undefined ? [[""]] : relationProps.rows);
 
-  useEffect(() => {
+  const spreadRelationExpressionDefinition = useCallback(() => {
     const expressionDefinition = {
       ...relationProps,
-      columns: tableColumns,
-      rows: tableRows,
+      columns: tableColumns.current,
+      rows: tableRows.current,
     };
     relationProps.isHeadless
       ? relationProps.onUpdatingRecursiveExpression?.(expressionDefinition)
       : window.beeApi?.broadcastRelationExpressionDefinition?.(expressionDefinition);
-  }, [relationProps, tableColumns, tableRows]);
+  }, [relationProps]);
 
   const convertColumnsForTheTable = useCallback(
     () =>
       _.map(
-        tableColumns,
-        (column) =>
+        tableColumns.current,
+        (column: RelationColumn) =>
           ({
             label: column.name,
             accessor: column.name,
@@ -81,23 +81,11 @@ export const RelationExpression: React.FunctionComponent<RelationProps> = (relat
     [tableColumns]
   );
 
-  const onSavingColumns = useCallback(
-    (columns) =>
-      setTableColumns(
-        _.map(columns, (columnInstance: ColumnInstance) => ({
-          name: columnInstance.accessor,
-          dataType: columnInstance.dataType,
-          width: columnInstance.width,
-        }))
-      ),
-    []
-  );
-
   const convertRowsForTheTable = useCallback(
     () =>
       _.map(tableRows, (row) =>
         _.reduce(
-          tableColumns,
+          tableColumns.current,
           (tableRow: DataRecord, column, columnIndex) => {
             tableRow[column.name] = row[columnIndex] || "";
             return tableRow;
@@ -109,21 +97,38 @@ export const RelationExpression: React.FunctionComponent<RelationProps> = (relat
   );
 
   const onSavingRows = useCallback(
-    (rows) =>
-      setTableRows(
-        _.map(rows, (tableRow: DataRecord) =>
-          _.reduce(
-            tableColumns,
-            (row: string[], column) => {
-              row.push((tableRow[column.name]! as string) || "");
-              return row;
-            },
-            []
-          )
+    (rows: DataRecord[]) => {
+      tableRows.current = _.map(rows, (tableRow: DataRecord) =>
+        _.reduce(
+          tableColumns.current,
+          (row: string[], column: RelationColumn) => {
+            row.push((tableRow[column.name]! as string) || "");
+            return row;
+          },
+          []
         )
-      ),
-    [tableColumns]
+      );
+      spreadRelationExpressionDefinition();
+    },
+    [spreadRelationExpressionDefinition]
   );
+
+  const onSavingColumns = useCallback(
+    (columns) => {
+      tableColumns.current = _.map(columns, (columnInstance: ColumnInstance) => ({
+        name: columnInstance.accessor,
+        dataType: columnInstance.dataType,
+        width: columnInstance.width,
+      }));
+      spreadRelationExpressionDefinition();
+    },
+    [spreadRelationExpressionDefinition]
+  );
+
+  useEffect(() => {
+    /** Function executed only the first time the component is loaded */
+    spreadRelationExpressionDefinition();
+  }, [spreadRelationExpressionDefinition]);
 
   return (
     <div className="relation-expression">
