@@ -78,12 +78,12 @@ export const RelationExpression: React.FunctionComponent<RelationProps> = (relat
             ...(column.width ? { width: column.width } : {}),
           } as Column)
       ),
-    [tableColumns]
+    []
   );
 
   const convertRowsForTheTable = useCallback(
     () =>
-      _.map(tableRows, (row) =>
+      _.map(tableRows.current, (row) =>
         _.reduce(
           tableColumns.current,
           (tableRow: DataRecord, column, columnIndex) => {
@@ -93,7 +93,7 @@ export const RelationExpression: React.FunctionComponent<RelationProps> = (relat
           {}
         )
       ),
-    [tableColumns, tableRows]
+    []
   );
 
   const onSavingRows = useCallback(
