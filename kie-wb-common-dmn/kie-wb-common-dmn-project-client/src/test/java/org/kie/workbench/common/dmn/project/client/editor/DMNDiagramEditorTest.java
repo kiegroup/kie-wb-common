@@ -86,6 +86,7 @@ import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -442,6 +443,16 @@ public class DMNDiagramEditorTest extends AbstractProjectDiagramEditorTest {
         verify(searchBarComponent).disableSearch();
         verify(sessionCommandManager).execute(eq(canvasHandler),
                                               Mockito.<NavigateToExpressionEditorCommand>any());
+    }
+
+    @Test
+    public void testCloseExistingSessionIfAny() {
+        when(sessionManager.getCurrentSession()).thenReturn(dmnEditorSession);
+        when(dmnEditorSession.getCanvasHandler()).thenReturn(canvasHandler);
+        when(stunnerEditor.isClosed()).thenReturn(false);
+        when(stunnerEditor.getSession()).thenReturn(dmnEditorSession);
+        diagramEditor.open(diagram);
+        verify(dmnEditorSession, times(1)).close();
     }
 
     @Test

@@ -148,6 +148,13 @@ public class DefaultEditorSessionTest {
     }
 
     @Test
+    public void testClose() {
+        tested.close();
+        verify(commandRegistry, times(1)).clear();
+        verify(managedSession, times(1)).close();
+    }
+
+    @Test
     public void testDestroy() {
         tested.destroy();
         verify(commandRegistry, times(1)).clear();
