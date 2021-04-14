@@ -124,6 +124,10 @@
   overflow-y: hidden;
 }
 
+.expression-container .table-component table tbody td.data-cell.has-resizer .logic-type-selector.logic-type-selected {
+  padding: .5em 1.2em .5em .5em;
+}
+
 /** Drawer for resizing columns */
 
 .expression-container .table-component table .pf-c-drawer__splitter {

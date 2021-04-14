@@ -54,18 +54,22 @@ export const TableBody: React.FunctionComponent<TableBodyProps> = ({
   );
 
   const renderCell = useCallback(
-    (cellIndex: number, cell: Cell, rowIndex: number) => (
-      <Td
-        {...(cellIndex === 0 ? {} : cell.getCellProps())}
-        {...tableInstance.getTdProps(cellIndex, rowIndex)}
-        key={`${getColumnKey(cell.column)}-${cellIndex}`}
-        data-ouia-component-id={"expression-column-" + cellIndex}
-        className={cellIndex === 0 ? "counter-cell" : "data-cell"}
-      >
-        {cellIndex === 0 ? rowIndex + 1 : cell.render("Cell")}
-        {cell.column.canResizeOnCell ? renderCellResizer(cell) : null}
-      </Td>
-    ),
+    (cellIndex: number, cell: Cell, rowIndex: number) => {
+      const cellType = cellIndex === 0 ? "counter-cell" : "data-cell";
+      const canResize = cell.column.canResizeOnCell ? "has-resizer" : "";
+      return (
+        <Td
+          {...(cellIndex === 0 ? {} : cell.getCellProps())}
+          {...tableInstance.getTdProps(cellIndex, rowIndex)}
+          key={`${getColumnKey(cell.column)}-${cellIndex}`}
+          data-ouia-component-id={"expression-column-" + cellIndex}
+          className={`${cellType} ${canResize}`}
+        >
+          {cellIndex === 0 ? rowIndex + 1 : cell.render("Cell")}
+          {cell.column.canResizeOnCell ? renderCellResizer(cell) : null}
+        </Td>
+      );
+    },
     [getColumnKey, renderCellResizer, tableInstance]
   );
 
