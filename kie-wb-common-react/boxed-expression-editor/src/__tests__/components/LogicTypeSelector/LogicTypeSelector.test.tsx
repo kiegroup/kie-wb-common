@@ -69,7 +69,7 @@ describe("LogicTypeSelector tests", () => {
 
 describe("Logic type selection", () => {
   test("should show the pre-selection, when logic type prop is passed", () => {
-    const expression = { name: "Test", logicType: LogicType.Invocation, dataType: DataType.Undefined };
+    const expression = { name: "Test", logicType: LogicType.List, dataType: DataType.Undefined };
 
     const { baseElement } = render(
       usingTestingBoxedExpressionI18nContext(

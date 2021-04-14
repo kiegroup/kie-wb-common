@@ -19,18 +19,21 @@ import * as React from "react";
 import { useCallback, useEffect, useState } from "react";
 import {
   ContextEntries,
-  ContextEntryRecord,
   ContextProps,
   DataType,
+  DEFAULT_ENTRY_EXPRESSION_MIN_WIDTH,
+  DEFAULT_ENTRY_INFO_MIN_WIDTH,
   ExpressionProps,
+  generateNextAvailableEntryName,
+  getEntryKey,
+  getHandlerConfiguration,
   LogicType,
-  TableHandlerConfiguration,
+  resetEntry,
   TableHeaderVisibility,
-  TableOperation,
 } from "../../api";
 import { Table } from "../Table";
 import { useBoxedExpressionEditorI18n } from "../../i18n";
-import { ColumnInstance, DataRecord, Row } from "react-table";
+import { ColumnInstance, DataRecord } from "react-table";
 import { ContextEntryExpressionCell } from "./ContextEntryExpressionCell";
 import * as _ from "lodash";
 import { ContextEntryExpression } from "./ContextEntryExpression";
@@ -38,8 +41,6 @@ import { ContextEntryInfoCell } from "./ContextEntryInfoCell";
 
 const DEFAULT_CONTEXT_ENTRY_NAME = "ContextEntry-1";
 const DEFAULT_CONTEXT_ENTRY_DATA_TYPE = DataType.Undefined;
-const DEFAULT_ENTRY_INFO_MIN_WIDTH = 150;
-const DEFAULT_ENTRY_EXPRESSION_MIN_WIDTH = 370;
 
 export const ContextExpression: React.FunctionComponent<ContextProps> = ({
   uid,
@@ -54,18 +55,6 @@ export const ContextExpression: React.FunctionComponent<ContextProps> = ({
   onUpdatingRecursiveExpression,
 }) => {
   const { i18n } = useBoxedExpressionEditorI18n();
-
-  const handlerConfiguration: TableHandlerConfiguration = [
-    {
-      group: i18n.contextEntry,
-      items: [
-        { name: i18n.rowOperations.insertAbove, type: TableOperation.RowInsertAbove },
-        { name: i18n.rowOperations.insertBelow, type: TableOperation.RowInsertBelow },
-        { name: i18n.rowOperations.delete, type: TableOperation.RowDelete },
-        { name: i18n.rowOperations.clear, type: TableOperation.RowClear },
-      ],
-    },
-  ];
 
   const [resultExpression, setResultExpression] = useState(result);
   const [infoWidth, setInfoWidth] = useState(entryInfoWidth);
@@ -125,35 +114,20 @@ export const ContextExpression: React.FunctionComponent<ContextProps> = ({
     [onUpdatingNameAndDataType]
   );
 
-  const generateNextAvailableEntryName: (lastIndex: number) => string = useCallback(
-    (lastIndex) => {
-      const candidateName = `ContextEntry-${lastIndex}`;
-      const entryWithCandidateName = _.find(rows, { entryInfo: { name: candidateName } });
-      return entryWithCandidateName ? generateNextAvailableEntryName(lastIndex + 1) : candidateName;
-    },
-    [rows]
-  );
-
   const onRowAdding = useCallback(
     () => ({
       entryInfo: {
-        name: generateNextAvailableEntryName(rows.length),
+        name: generateNextAvailableEntryName(rows as ContextEntries, "ContextEntry"),
         dataType: DataType.Undefined,
       },
       entryExpression: {},
     }),
-    [generateNextAvailableEntryName, rows.length]
+    [rows]
   );
-
-  const contextTableGetRowKey = useCallback((row: Row) => (row.original as ContextEntryRecord).entryInfo.name, []);
 
   const getHeaderVisibility = useCallback(() => {
     return isHeadless ? TableHeaderVisibility.LastLevel : TableHeaderVisibility.Full;
   }, [isHeadless]);
-
-  const resetRowCustomFunction = useCallback((row: DataRecord) => {
-    return { entryInfo: row.entryInfo, entryExpression: { uid: (row.entryExpression as ExpressionProps).uid } };
-  }, []);
 
   useEffect(() => {
     const [expressionColumn] = columns;
@@ -184,9 +158,9 @@ export const ContextExpression: React.FunctionComponent<ContextProps> = ({
         onColumnsUpdate={onColumnsUpdate}
         onRowAdding={onRowAdding}
         onRowsUpdate={setRows}
-        handlerConfiguration={handlerConfiguration}
-        getRowKey={contextTableGetRowKey}
-        resetRowCustomFunction={resetRowCustomFunction}
+        handlerConfiguration={getHandlerConfiguration(i18n, i18n.contextEntry)}
+        getRowKey={useCallback(getEntryKey, [])}
+        resetRowCustomFunction={useCallback(resetEntry, [])}
       >
         <div className="context-result">{`<result>`}</div>
         <ContextEntryExpression expression={resultExpression} onUpdatingRecursiveExpression={setResultExpression} />

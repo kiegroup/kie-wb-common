@@ -20,6 +20,11 @@ import { ContextExpression } from "../../../components/ContextExpression";
 import * as React from "react";
 import { DataType, LogicType } from "../../../api";
 
+jest.mock("../../../api", () => ({
+  ...(jest.requireActual("../../../api") as Record<string, unknown>),
+  getHandlerConfiguration: jest.fn(),
+}));
+
 describe("ContextExpression tests", () => {
   const name = "contextName";
   const dataType = DataType.Boolean;
