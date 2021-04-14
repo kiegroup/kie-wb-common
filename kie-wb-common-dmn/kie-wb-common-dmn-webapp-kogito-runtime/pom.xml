@@ -451,8 +451,8 @@
       <artifactId>xmlunit-core</artifactId>
       <exclusions>
         <exclusion>
-          <groupId>javax.xml.bind</groupId>
-          <artifactId>jaxb-api</artifactId>
+          <groupId>jakarta.xml.bind</groupId>
+          <artifactId>jakarta.xml.bind-api</artifactId>
         </exclusion>
       </exclusions>
       <scope>test</scope>
@@ -472,21 +472,29 @@
     <!-- Client side FEEL -->
     <dependency>
       <groupId>org.kie</groupId>
+      <artifactId>kie-dmn-feel-gwt-functions</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.kie</groupId>
       <artifactId>kie-dmn-feel-gwt</artifactId>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.kie</groupId>
       <artifactId>kie-dmn-feel-gwt</artifactId>
+      <scope>provided</scope>
       <classifier>sources</classifier>
     </dependency>
     <dependency>
       <groupId>org.kie</groupId>
       <artifactId>kie-dmn-feel</artifactId>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.kie</groupId>
       <artifactId>kie-dmn-feel</artifactId>
+      <scope>provided</scope>
       <classifier>sources</classifier>
     </dependency>
     <dependency>
