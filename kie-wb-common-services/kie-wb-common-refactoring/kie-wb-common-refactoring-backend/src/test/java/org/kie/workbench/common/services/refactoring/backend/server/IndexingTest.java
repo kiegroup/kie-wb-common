@@ -174,7 +174,8 @@ public abstract class IndexingTest<T extends ResourceTypeDefinition> {
                 config = configBuilder.build();
             }
 
-            ExecutorService executorService = Executors.newCachedThreadPool(new DescriptiveThreadFactory());
+            ExecutorService indexingExecutorService = Executors.newCachedThreadPool(new DescriptiveThreadFactory());
+            ExecutorService fsWatchExecutorService = Executors.newCachedThreadPool(new DescriptiveThreadFactory());
 
             indexersFactory = new IndexersFactory();
             Factory schedulerFactory = new ConstraintBuilder().createFactory();
@@ -183,7 +184,8 @@ public abstract class IndexingTest<T extends ResourceTypeDefinition> {
                                                                        testEvent(),
                                                                        LoggerFactory.getLogger(IndexerDispatcher.class));
             ioService = new IOServiceIndexedImpl(config.getIndexEngine(),
-                                                 executorService,
+                                                 indexingExecutorService,
+                                                 fsWatchExecutorService,
                                                  indexersFactory,
                                                  indexerDispatcherFactory);
             final TestIndexer indexer = getIndexer();
