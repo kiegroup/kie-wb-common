@@ -18,12 +18,14 @@ import * as React from "react";
 import { useState } from "react";
 import * as ReactDOM from "react-dom";
 import "./index.css";
+// noinspection ES6PreferShortImport
 import {
   BoxedExpressionEditor,
   ContextProps,
   DataType,
   ExpressionContainerProps,
   ExpressionProps,
+  InvocationProps,
   ListProps,
   LiteralExpressionProps,
   RelationProps,
@@ -47,6 +49,7 @@ export const App: React.FunctionComponent = () => {
     broadcastRelationExpressionDefinition: (definition: RelationProps) => setUpdatedExpression(definition),
     broadcastContextExpressionDefinition: (definition: ContextProps) => setUpdatedExpression(definition),
     broadcastListExpressionDefinition: (definition: ListProps) => setUpdatedExpression(definition),
+    broadcastInvocationExpressionDefinition: (definition: InvocationProps) => setUpdatedExpression(definition),
   };
 
   return (
@@ -56,7 +59,7 @@ export const App: React.FunctionComponent = () => {
       </div>
       <div className="updated-json">
         <p className="disclaimer">
-          ⚠ Currently, JSON gets updated only for literal expression, relation, context and list logic types
+          ⚠ Currently, JSON gets updated only for literal expression, relation, context, list and invocation logic types
         </p>
         <pre>{JSON.stringify(updatedExpression, null, 2)}</pre>
       </div>
