@@ -34,11 +34,13 @@ export const en: BoxedExpressionEditorI18n = {
   editContextEntry: "Edit Context Entry",
   editExpression: "Edit Expression",
   editRelation: "Edit Relation",
+  enterFunction: "Enter function",
   function: "Function",
   invocation: "Invocation",
   list: "List",
   literalExpression: "Literal expression",
   name: "Name",
+  parameters: "PARAMETERS",
   relation: "Relation",
   rowOperations: {
     clear: "Clear",

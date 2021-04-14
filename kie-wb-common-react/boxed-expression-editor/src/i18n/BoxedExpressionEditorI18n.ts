@@ -33,11 +33,13 @@ interface BoxedExpressionEditorDictionary extends ReferenceDictionary<BoxedExpre
   editContextEntry: string;
   editExpression: string;
   editRelation: string;
+  enterFunction: string;
   function: string;
   invocation: string;
   list: string;
   literalExpression: string;
   name: string;
+  parameters: string;
   relation: string;
   rows: string;
   rowOperations: {
