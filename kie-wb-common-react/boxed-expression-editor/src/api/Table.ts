@@ -47,6 +47,8 @@ export interface TableProps {
   headerVisibility?: TableHeaderVisibility;
   /** Number of levels in the header, 0-based */
   headerLevels?: number;
+  /** True, for skipping the creation in the DOM of the last defined header group */
+  skipLastHeaderGroup?: boolean;
   /** Custom function for getting row key prop, and avoid using the row index */
   getRowKey?: (row: ReactTableRow) => string;
   /** Custom function for getting column key prop, and avoid using the column index */

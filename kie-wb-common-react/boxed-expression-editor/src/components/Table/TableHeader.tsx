@@ -34,6 +34,8 @@ export interface TableHeaderProps {
   editColumnLabel?: string;
   /** The way in which the header will be rendered */
   headerVisibility?: TableHeaderVisibility;
+  /** True, for skipping the creation in the DOM of the last defined header group */
+  skipLastHeaderGroup: boolean;
   /** Custom function for getting column key prop, and avoid using the column index */
   getColumnKey: (column: Column) => string;
   /** Columns instance */
@@ -48,6 +50,7 @@ export const TableHeader: React.FunctionComponent<TableHeaderProps> = ({
   onRowsUpdate,
   editColumnLabel,
   headerVisibility = TableHeaderVisibility.Full,
+  skipLastHeaderGroup,
   getColumnKey,
   tableColumns,
   onColumnsUpdate,
@@ -147,14 +150,21 @@ export const TableHeader: React.FunctionComponent<TableHeaderProps> = ({
     [renderCountColumn, renderResizableHeaderCell]
   );
 
+  const getHeaderGroups = useCallback(
+    (tableInstance) => {
+      return skipLastHeaderGroup ? _.dropRight(tableInstance.headerGroups) : tableInstance.headerGroups;
+    },
+    [skipLastHeaderGroup]
+  );
+
   const renderHeaderGroups = useMemo(
     () =>
-      tableInstance.headerGroups.map((headerGroup: HeaderGroup) => (
+      getHeaderGroups(tableInstance).map((headerGroup: HeaderGroup) => (
         <Tr key={headerGroup.getHeaderGroupProps().key} {...headerGroup.getHeaderGroupProps()}>
           {headerGroup.headers.map((column: ColumnInstance, columnIndex: number) => renderColumn(column, columnIndex))}
         </Tr>
       )),
-    [renderColumn, tableInstance.headerGroups]
+    [getHeaderGroups, renderColumn, tableInstance]
   );
 
   const renderAtLevelInHeaderGroups = useCallback(

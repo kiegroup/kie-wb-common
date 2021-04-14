@@ -51,6 +51,7 @@ export const Table: React.FunctionComponent<TableProps> = ({
   handlerConfiguration,
   headerVisibility,
   headerLevels = 0,
+  skipLastHeaderGroup = false,
   getRowKey = (row) => row.id as string,
   getColumnKey = (column) => column.id as string,
   resetRowCustomFunction,
@@ -248,6 +249,7 @@ export const Table: React.FunctionComponent<TableProps> = ({
           tableInstance={tableInstance}
           editColumnLabel={editColumnLabel}
           headerVisibility={headerVisibility}
+          skipLastHeaderGroup={skipLastHeaderGroup}
           tableRows={tableRows}
           onRowsUpdate={onRowsUpdateCallback}
           tableColumns={tableColumns}
