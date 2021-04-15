@@ -55,6 +55,7 @@ import org.uberfire.mvp.Command;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -150,7 +151,7 @@ public class DefaultEditorSessionTest {
     @Test
     public void testClose() {
         tested.close();
-        verify(commandRegistry, times(1)).clear();
+        verify(commandRegistry, never()).clear();
         verify(managedSession, times(1)).close();
     }
 

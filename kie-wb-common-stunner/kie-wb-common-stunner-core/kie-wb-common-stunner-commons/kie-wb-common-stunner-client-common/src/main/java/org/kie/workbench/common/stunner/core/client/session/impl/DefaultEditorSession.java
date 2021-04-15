@@ -138,7 +138,6 @@ public class DefaultEditorSession
 
     @Override
     public void close() {
-        commandRegistry.clear();
         session.close();
     }
 
