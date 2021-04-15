@@ -24,13 +24,20 @@ import org.kie.workbench.common.stunner.bpmn.definition.StartNoneEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.UserTask;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.Bounds;
+import org.kie.workbench.common.stunner.core.graph.content.view.MagnetConnection;
 import org.kie.workbench.common.stunner.core.graph.content.view.ViewImpl;
 import org.kie.workbench.common.stunner.core.graph.impl.NodeImpl;
+import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.kie.workbench.common.stunner.bpmn.client.canvas.controls.BPMNCreateNodeAction.isAutoMagnetConnection;
+import static org.kie.workbench.common.stunner.bpmn.client.canvas.controls.BPMNCreateNodeAction.isGatewaySourceOrTarget;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doCallRealMethod;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.powermock.api.mockito.PowerMockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class BPMNCreateNodeActionTest {
@@ -38,6 +45,12 @@ public class BPMNCreateNodeActionTest {
     private Node gatewayNode;
     private Node eventNode;
     private Node taskNode;
+
+    @Mock
+    private BPMNCreateNodeAction connection;
+
+    @Mock
+    private MagnetConnection magnetConnection;
 
     @Before
     @SuppressWarnings("unchecked")
@@ -55,15 +68,50 @@ public class BPMNCreateNodeActionTest {
 
     @Test
     @SuppressWarnings("unchecked")
-    public void testIsAutoConnection() {
-        assertFalse(isAutoMagnetConnection(gatewayNode, taskNode));
-        assertFalse(isAutoMagnetConnection(gatewayNode, eventNode));
-        assertFalse(isAutoMagnetConnection(taskNode, gatewayNode));
-        assertFalse(isAutoMagnetConnection(eventNode, gatewayNode));
-        assertFalse(isAutoMagnetConnection(gatewayNode, gatewayNode));
-        assertTrue(isAutoMagnetConnection(taskNode, taskNode));
-        assertTrue(isAutoMagnetConnection(eventNode, taskNode));
-        assertTrue(isAutoMagnetConnection(taskNode, eventNode));
-        assertTrue(isAutoMagnetConnection(eventNode, eventNode));
+    public void testIsGatewayFixedConnection() {
+        assertTrue(isGatewaySourceOrTarget(gatewayNode, taskNode));
+        assertTrue(isGatewaySourceOrTarget(gatewayNode, eventNode));
+        assertTrue(isGatewaySourceOrTarget(taskNode, gatewayNode));
+        assertTrue(isGatewaySourceOrTarget(eventNode, gatewayNode));
+        assertTrue(isGatewaySourceOrTarget(gatewayNode, gatewayNode));
+        assertFalse(isGatewaySourceOrTarget(taskNode, taskNode));
+        assertFalse(isGatewaySourceOrTarget(eventNode, taskNode));
+        assertFalse(isGatewaySourceOrTarget(taskNode, eventNode));
+        assertFalse(isGatewaySourceOrTarget(eventNode, eventNode));
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void testbuildConnectionBetween() {
+        doCallRealMethod().when(connection).buildConnectionBetween(any(), any());
+        when(connection.getMagnetConnectionFixed(any(), any())).thenReturn(magnetConnection);
+        when(connection.getMagnetConnectionCenter(any(), any())).thenReturn(magnetConnection);
+
+        connection.buildConnectionBetween(gatewayNode, taskNode);
+        verify(connection, times(1)).getMagnetConnectionFixed(gatewayNode, taskNode);
+
+        connection.buildConnectionBetween(gatewayNode, eventNode);
+        verify(connection, times(1)).getMagnetConnectionFixed(gatewayNode, eventNode);
+
+        connection.buildConnectionBetween(taskNode, gatewayNode);
+        verify(connection, times(1)).getMagnetConnectionFixed(taskNode, gatewayNode);
+
+        connection.buildConnectionBetween(eventNode, gatewayNode);
+        verify(connection, times(1)).getMagnetConnectionFixed(eventNode, gatewayNode);
+
+        connection.buildConnectionBetween(gatewayNode, gatewayNode);
+        verify(connection, times(1)).getMagnetConnectionFixed(gatewayNode, gatewayNode);
+
+        connection.buildConnectionBetween(taskNode, taskNode);
+        verify(connection, times(1)).getMagnetConnectionCenter(taskNode, taskNode);
+
+        connection.buildConnectionBetween(eventNode, taskNode);
+        verify(connection, times(1)).getMagnetConnectionCenter(eventNode, taskNode);
+
+        connection.buildConnectionBetween(taskNode, eventNode);
+        verify(connection, times(1)).getMagnetConnectionCenter(taskNode, eventNode);
+
+        connection.buildConnectionBetween(eventNode, eventNode);
+        verify(connection, times(1)).getMagnetConnectionCenter(eventNode, eventNode);
     }
 }
