@@ -82,6 +82,22 @@ export async function updateElementViaPopover(
   fireEvent.blur(inputElement);
 }
 
+export const contextEntry = (container: Element, index: number): Element | null =>
+  container.querySelector(`table tbody tr:nth-of-type(${index})`);
+
+export const checkEntryContent = (entry: Element | null, entryRecordInfo: { name: string; dataType: string }): void => {
+  expect(entry).toContainHTML(entryRecordInfo.name);
+  expect(entry).toContainHTML(entryRecordInfo.dataType);
+};
+
+export const checkEntryStyle = (entry: Element | null, cssClass: string): void => {
+  expect(entry?.querySelector(".entry-expression")?.firstChild).toHaveClass(cssClass);
+};
+
+export const checkEntryLogicType = (entry: Element | null, cssClass: string): void => {
+  expect(entry?.querySelector(".entry-expression")?.firstChild?.firstChild).toHaveClass(cssClass);
+};
+
 beforeEach(() => {
   resetId();
 });

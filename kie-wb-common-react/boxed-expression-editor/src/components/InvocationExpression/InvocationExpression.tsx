@@ -16,12 +16,24 @@
 
 import "./InvocationExpression.css";
 import * as React from "react";
-import { useCallback, useState } from "react";
-import { DataType, InvocationProps, TableHandlerConfiguration, TableHeaderVisibility, TableOperation } from "../../api";
+import { ChangeEvent, useCallback, useEffect, useRef, useState } from "react";
+import {
+  ContextEntries,
+  DataType,
+  DEFAULT_ENTRY_EXPRESSION_MIN_WIDTH,
+  DEFAULT_ENTRY_INFO_MIN_WIDTH,
+  generateNextAvailableEntryName,
+  getEntryKey,
+  getHandlerConfiguration,
+  InvocationProps,
+  resetEntry,
+  TableHeaderVisibility,
+} from "../../api";
 import { Table } from "../Table";
 import { useBoxedExpressionEditorI18n } from "../../i18n";
 import { ColumnInstance, DataRecord } from "react-table";
 import { ContextEntryExpressionCell, ContextEntryInfoCell } from "../ContextExpression";
+import * as _ from "lodash";
 
 const DEFAULT_PARAMETER_NAME = "p-1";
 const DEFAULT_PARAMETER_DATA_TYPE = DataType.Undefined;
@@ -29,9 +41,9 @@ const DEFAULT_PARAMETER_DATA_TYPE = DataType.Undefined;
 export const InvocationExpression: React.FunctionComponent<InvocationProps> = ({
   bindingEntries,
   dataType = DEFAULT_PARAMETER_DATA_TYPE,
-  entryExpressionWidth,
-  entryInfoWidth,
-  invokedFunction,
+  entryInfoWidth = DEFAULT_ENTRY_INFO_MIN_WIDTH,
+  entryExpressionWidth = DEFAULT_ENTRY_EXPRESSION_MIN_WIDTH,
+  invokedFunction = "",
   isHeadless,
   logicType,
   name = DEFAULT_PARAMETER_NAME,
@@ -41,19 +53,7 @@ export const InvocationExpression: React.FunctionComponent<InvocationProps> = ({
 }: InvocationProps) => {
   const { i18n } = useBoxedExpressionEditorI18n();
 
-  const handlerConfiguration: TableHandlerConfiguration = [
-    {
-      group: "Parameters",
-      items: [
-        { name: i18n.rowOperations.insertAbove, type: TableOperation.RowInsertAbove },
-        { name: i18n.rowOperations.insertBelow, type: TableOperation.RowInsertBelow },
-        { name: i18n.rowOperations.delete, type: TableOperation.RowDelete },
-        { name: i18n.rowOperations.clear, type: TableOperation.RowClear },
-      ],
-    },
-  ];
-
-  const [rows] = useState(
+  const [rows, setRows] = useState(
     bindingEntries || [
       {
         entryInfo: {
@@ -65,72 +65,135 @@ export const InvocationExpression: React.FunctionComponent<InvocationProps> = ({
     ]
   );
 
+  const functionDefinition = useRef<string>(invokedFunction);
+
+  const infoWidth = useRef<number>(entryInfoWidth);
+
+  const expressionWidth = useRef<number>(entryExpressionWidth);
+
+  const spreadInvocationExpressionDefinition = useCallback(() => {
+    const [expressionColumn] = columns.current;
+
+    const updatedDefinition: InvocationProps = {
+      uid,
+      logicType,
+      name: expressionColumn.accessor,
+      dataType: expressionColumn.dataType,
+      bindingEntries: rows as ContextEntries,
+      invokedFunction: functionDefinition.current,
+      ...(infoWidth.current > DEFAULT_ENTRY_INFO_MIN_WIDTH ? { entryInfoWidth: infoWidth.current } : {}),
+      ...(expressionWidth.current > DEFAULT_ENTRY_EXPRESSION_MIN_WIDTH
+        ? { entryExpressionWidth: expressionWidth.current }
+        : {}),
+    };
+    isHeadless
+      ? onUpdatingRecursiveExpression?.(_.omit(updatedDefinition, ["name", "dataType"]))
+      : window.beeApi?.broadcastInvocationExpressionDefinition?.(updatedDefinition);
+  }, [functionDefinition, isHeadless, logicType, onUpdatingRecursiveExpression, rows, uid]);
+
+  const onFunctionDefinitionChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
+    functionDefinition.current = e.target.value;
+  }, []);
+
+  const onFunctionDefinitionBlur = useCallback(() => {
+    spreadInvocationExpressionDefinition();
+  }, [spreadInvocationExpressionDefinition]);
+
+  const headerCellElement = (
+    <div className="function-definition-container">
+      <input
+        className="function-definition pf-u-text-truncate"
+        type="text"
+        placeholder={i18n.enterFunction}
+        onChange={onFunctionDefinitionChange}
+        onBlur={onFunctionDefinitionBlur}
+        defaultValue={functionDefinition.current}
+      />
+    </div>
+  );
+
+  const columns = useRef<ColumnInstance[]>([
+    {
+      label: name,
+      accessor: name,
+      dataType,
+      disableHandlerOnHeader: true,
+      columns: [
+        {
+          headerCellElement,
+          accessor: "functionDefinition",
+          disableHandlerOnHeader: true,
+          columns: [
+            {
+              accessor: "entryInfo",
+              disableHandlerOnHeader: true,
+              canResizeOnCell: true,
+              width: infoWidth.current,
+              minWidth: DEFAULT_ENTRY_INFO_MIN_WIDTH,
+            },
+            {
+              accessor: "entryExpression",
+              disableHandlerOnHeader: true,
+              canResizeOnCell: true,
+              width: expressionWidth.current,
+              minWidth: DEFAULT_ENTRY_EXPRESSION_MIN_WIDTH,
+            },
+          ],
+        },
+      ],
+    },
+  ] as ColumnInstance[]);
+
+  const onColumnsUpdate = useCallback(
+    ([expressionColumn]: [ColumnInstance]) => {
+      onUpdatingNameAndDataType?.(expressionColumn.label, expressionColumn.dataType);
+      infoWidth.current = _.find(expressionColumn.columns, { accessor: "entryInfo" })?.width as number;
+      expressionWidth.current = _.find(expressionColumn.columns, { accessor: "entryExpression" })?.width as number;
+      const [updatedExpressionColumn] = columns.current;
+      updatedExpressionColumn.label = expressionColumn.label;
+      updatedExpressionColumn.accessor = expressionColumn.accessor;
+      updatedExpressionColumn.dataType = expressionColumn.dataType;
+      spreadInvocationExpressionDefinition();
+    },
+    [onUpdatingNameAndDataType, spreadInvocationExpressionDefinition]
+  );
+
   const onRowAdding = useCallback(
     () => ({
       entryInfo: {
-        name: "p-2",
+        name: generateNextAvailableEntryName(rows as ContextEntries, "p"),
         dataType: DEFAULT_PARAMETER_DATA_TYPE,
       },
       entryExpression: {},
     }),
-    []
+    [rows]
   );
 
   const getHeaderVisibility = useCallback(() => {
     return isHeadless ? TableHeaderVisibility.SecondToLastLevel : TableHeaderVisibility.Full;
   }, [isHeadless]);
 
+  useEffect(() => {
+    /** Everytime the list of items or the function definition change, we need to spread expression's updated definition */
+    spreadInvocationExpressionDefinition();
+  }, [rows, spreadInvocationExpressionDefinition]);
+
   return (
     <div className={`invocation-expression ${uid}`}>
       <Table
         tableId={uid}
         headerLevels={2}
-        defaultCell={{ entryInfo: ContextEntryInfoCell, entryExpression: ContextEntryExpressionCell }}
-        onRowAdding={onRowAdding}
         headerVisibility={getHeaderVisibility()}
-        columns={
-          [
-            {
-              label: name,
-              accessor: name,
-              dataType,
-              disableHandlerOnHeader: true,
-              columns: [
-                {
-                  headerCellElement: (
-                    <div className="function-definition-container">
-                      <input
-                        className="function-definition pf-u-text-truncate"
-                        type="text"
-                        placeholder="Enter function"
-                      />
-                    </div>
-                  ),
-                  accessor: "functionDefinition",
-                  disableHandlerOnHeader: true,
-                  columns: [
-                    {
-                      accessor: "entryInfo",
-                      disableHandlerOnHeader: true,
-                      canResizeOnCell: true,
-                      minWidth: 130,
-                      width: 130,
-                    },
-                    {
-                      accessor: "entryExpression",
-                      disableHandlerOnHeader: true,
-                      canResizeOnCell: true,
-                      minWidth: 225,
-                      width: 225,
-                    },
-                  ],
-                },
-              ] as ColumnInstance[],
-            },
-          ] as ColumnInstance[]
-        }
+        skipLastHeaderGroup
+        defaultCell={{ entryInfo: ContextEntryInfoCell, entryExpression: ContextEntryExpressionCell }}
+        columns={columns.current}
         rows={rows as DataRecord[]}
-        handlerConfiguration={handlerConfiguration}
+        onColumnsUpdate={onColumnsUpdate}
+        onRowAdding={onRowAdding}
+        onRowsUpdate={setRows}
+        handlerConfiguration={getHandlerConfiguration(i18n, i18n.parameters)}
+        getRowKey={useCallback(getEntryKey, [])}
+        resetRowCustomFunction={useCallback(resetEntry, [])}
       />
     </div>
   );

@@ -22,14 +22,6 @@
   height: 100%;
 }
 
-.expression-container .invocation-expression > .table-component > table > thead > tr:nth-child(3) {
-  /**
-    Hiding last row in the header since it is useless for the Invocation expression
-    Using !important because of the inline style
-  */
-  display: none !important;
-}
-
 .expression-container .invocation-expression .function-definition-container {
   padding-right: 0.75em;
 }
