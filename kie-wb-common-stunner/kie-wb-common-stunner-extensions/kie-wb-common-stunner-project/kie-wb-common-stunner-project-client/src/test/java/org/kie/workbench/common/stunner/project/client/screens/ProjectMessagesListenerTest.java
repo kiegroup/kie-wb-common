@@ -22,6 +22,8 @@ import java.util.Optional;
 
 import javax.enterprise.event.Event;
 
+import org.guvnor.common.services.project.client.context.WorkspaceProjectContext;
+import org.guvnor.common.services.project.model.Module;
 import org.guvnor.common.services.shared.message.Level;
 import org.guvnor.messageconsole.events.PublishMessagesEvent;
 import org.guvnor.messageconsole.events.SystemMessage;
@@ -78,6 +80,8 @@ public class ProjectMessagesListenerTest {
     @Mock
     private SessionManager clientSessionManager;
     @Mock
+    private WorkspaceProjectContext workspaceProjectContext;
+    @Mock
     private Path path;
     @Mock
     private ClientSession session;
@@ -87,13 +91,15 @@ public class ProjectMessagesListenerTest {
     private Diagram diagram;
     @Mock
     private Metadata metadata;
-
+    @Mock
+    private Module module;
     @Before
     @SuppressWarnings("unchecked")
     public void setup() throws Exception {
         this.projectMessagesListener = spy(new ProjectMessagesListener(notificationsObserver,
                                                                        publishMessagesEvent,
                                                                        unpublishMessagesEvent,
+                                                                       workspaceProjectContext,
                                                                        clientSessionManager));
         when(clientSessionManager.getCurrentSession()).thenReturn(session);
         when(session.getCanvasHandler()).thenReturn(canvasHandler);
@@ -101,6 +107,8 @@ public class ProjectMessagesListenerTest {
         when(diagram.getMetadata()).thenReturn(metadata);
         when(metadata.getPath()).thenReturn(path);
         when(path.toURI()).thenReturn(PATH);
+        when(module.getRootPath()).thenReturn(path);
+        when(workspaceProjectContext.getActiveModule()).thenReturn(Optional.of(module));
     }
 
     @Test

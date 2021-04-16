@@ -22,6 +22,7 @@ import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
+import org.guvnor.common.services.project.client.context.WorkspaceProjectContext;
 import org.guvnor.common.services.shared.message.Level;
 import org.guvnor.messageconsole.events.PublishMessagesEvent;
 import org.guvnor.messageconsole.events.SystemMessage;
@@ -43,9 +44,11 @@ public class ProjectMessagesListener {
     private final Event<UnpublishMessagesEvent> unpublishMessagesEvent;
     private final NotificationsObserver notificationsObserver;
     private final SessionManager clientSessionManager;
+    private WorkspaceProjectContext workspaceProjectContext;
 
     protected ProjectMessagesListener() {
         this(null,
+             null,
              null,
              null,
              null);
@@ -55,10 +58,12 @@ public class ProjectMessagesListener {
     public ProjectMessagesListener(final NotificationsObserver notificationsObserver,
                                    final Event<PublishMessagesEvent> publishMessagesEvent,
                                    final Event<UnpublishMessagesEvent> unpublishMessagesEvent,
+                                   final WorkspaceProjectContext workspaceProjectContext,
                                    final SessionManager clientSessionManager) {
         this.notificationsObserver = notificationsObserver;
         this.publishMessagesEvent = publishMessagesEvent;
         this.unpublishMessagesEvent = unpublishMessagesEvent;
+        this.workspaceProjectContext = workspaceProjectContext;
         this.clientSessionManager = clientSessionManager;
     }
 
@@ -99,6 +104,7 @@ public class ProjectMessagesListener {
         PublishMessagesEvent messages = new PublishMessagesEvent();
         messages.setShowSystemConsole(false);
         messages.setMessagesToPublish(messagesList);
+        messages.setRootPath(workspaceProjectContext.getActiveModule().get().getRootPath().toURI());
         publishMessagesEvent.fire(messages);
     }
 
@@ -110,6 +116,7 @@ public class ProjectMessagesListener {
         final UnpublishMessagesEvent unpublishMessagesEvent = new UnpublishMessagesEvent();
         unpublishMessagesEvent.setMessageType(getMessageType(getDiagramPath()));
         unpublishMessagesEvent.setShowSystemConsole(false);
+        unpublishMessagesEvent.setRootPath(workspaceProjectContext.getActiveModule().get().getRootPath().toURI());
         this.unpublishMessagesEvent.fire(unpublishMessagesEvent);
     }
 }
