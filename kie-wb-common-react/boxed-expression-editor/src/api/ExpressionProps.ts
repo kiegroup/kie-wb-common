@@ -17,10 +17,11 @@
 import { LogicType } from "./LogicType";
 import { DataType } from "./DataType";
 import { Columns, Rows } from "./Table";
-import { ContextEntries } from "./ContextEntry";
+import { ContextEntries, EntryInfo } from "./ContextEntry";
 import { HitPolicy } from "./HitPolicy";
 import { BuiltinAggregation } from "./BuiltinAggregation";
 import { Clause, DecisionTableRule } from "./DecisionTableRule";
+import { FunctionKind } from "./FunctionKind";
 
 export interface ExpressionProps {
   /** Unique identifier used to identify the expression */
@@ -108,3 +109,33 @@ export interface InvocationProps extends ExpressionProps {
   /** Entry expression width */
   entryExpressionWidth?: number;
 }
+
+export type FunctionProps = {
+  /** Logic type must be Function */
+  logicType: LogicType.Function;
+  /** List of parameters passed to the function */
+  formalParameters?: EntryInfo[];
+} & (
+  | {
+      /** Feel Function */
+      functionKind: FunctionKind.Feel;
+      /** The Expression related to the function */
+      expression?: ExpressionProps;
+    }
+  | {
+      /** Java Function */
+      functionKind: FunctionKind.Java;
+      /** Java class */
+      class?: string;
+      /** Method signature */
+      method?: string;
+    }
+  | {
+      /** Pmml Function */
+      functionKind: FunctionKind.Pmml;
+      /** PMML document */
+      document?: string;
+      /** PMML model */
+      model?: string;
+    }
+);

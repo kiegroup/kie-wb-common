@@ -21,13 +21,15 @@ import { DataRecord, Row } from "react-table";
 import { TableHandlerConfiguration, TableOperation } from "./Table";
 import { BoxedExpressionEditorI18n } from "../i18n";
 
+export interface EntryInfo {
+  /** Entry name */
+  name: string;
+  /** Entry data type */
+  dataType: DataType;
+}
+
 export interface ContextEntryRecord {
-  entryInfo: {
-    /** Entry name */
-    name: string;
-    /** Entry data type */
-    dataType: DataType;
-  };
+  entryInfo: EntryInfo;
   /** Entry expression */
   entryExpression: ExpressionProps;
   /** Label used for the popover triggered when editing info section */

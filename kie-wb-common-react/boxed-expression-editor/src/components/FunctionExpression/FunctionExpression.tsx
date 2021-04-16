@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2021 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,13 +14,9 @@
  * limitations under the License.
  */
 
-export * from "./BoxedExpressionEditor";
-export * from "./BuiltinAggregation";
-export * from "./ContextEntry";
-export * from "./DataType";
-export * from "./DecisionTableRule";
-export * from "./ExpressionProps";
-export * from "./FunctionKind";
-export * from "./HitPolicy";
-export * from "./LogicType";
-export * from "./Table";
+import * as React from "react";
+import { FunctionProps } from "../../api";
+
+export const FunctionExpression: React.FunctionComponent<FunctionProps> = () => {
+  return <div>Function expression</div>;
+};
