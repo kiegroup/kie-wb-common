@@ -242,7 +242,7 @@ public class DMNEditorConstants {
     public static final String DecisionTableEditor_BuiltinAggregatorLabel = "DecisionTableEditor.BuiltinAggregatorLabel";
 
     @TranslationKey(defaultValue = "")
-    public static final String DecisionTableEditor_EnterAnnotation =  "DecisionTableEditor.EnterAnnotation";
+    public static final String DecisionTableEditor_EnterAnnotation = "DecisionTableEditor.EnterAnnotation";
 
     @TranslationKey(defaultValue = "")
     public static final String DecisionTableEditor_InputClauseColumnHeaderMetaData_ValueLabel = "DecisionTableEditor.InputClauseColumnHeaderMetaData.ValueLabel";
@@ -504,4 +504,10 @@ public class DMNEditorConstants {
 
     @TranslationKey(defaultValue = "")
     public static final String DecisionServiceParameters_EncapsulatedDecisions = "DecisionServiceParameters.EncapsulatedDecisions";
+
+    @TranslationKey(defaultValue = "")
+    public static final String StructureTypesTooltipView_Description = "StructureTypesTooltipView.Description";
+
+    @TranslationKey(defaultValue = "")
+    public static final String StructureTypesTooltipView_DescriptionEmptyState = "StructureTypesTooltipView.DescriptionEmptyState";
 }
