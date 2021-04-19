@@ -61,6 +61,7 @@ export const InvocationExpression: React.FunctionComponent<InvocationProps> = ({
           dataType: DEFAULT_PARAMETER_DATA_TYPE,
         },
         entryExpression: {},
+        editInfoPopoverLabel: i18n.editParameter,
       } as DataRecord,
     ]
   );
@@ -165,8 +166,9 @@ export const InvocationExpression: React.FunctionComponent<InvocationProps> = ({
         dataType: DEFAULT_PARAMETER_DATA_TYPE,
       },
       entryExpression: {},
+      editInfoPopoverLabel: i18n.editParameter,
     }),
-    [rows]
+    [i18n.editParameter, rows]
   );
 
   const getHeaderVisibility = useCallback(() => {

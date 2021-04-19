@@ -42,7 +42,13 @@ describe("ContextEntryExpressionCell tests", () => {
     const { container } = render(
       usingTestingBoxedExpressionI18nContext(
         <ContextEntryExpressionCell
-          data={[{ entryInfo: { name: entryName, dataType: entryDataType }, entryExpression: emptyExpression }]}
+          data={[
+            {
+              entryInfo: { name: entryName, dataType: entryDataType },
+              entryExpression: emptyExpression,
+              editInfoPopoverLabel: "Edit entry",
+            },
+          ]}
           row={{ index: 0 }}
           column={{ id: "col1" }}
           onRowUpdate={_.identity}
@@ -60,7 +66,13 @@ describe("ContextEntryExpressionCell tests", () => {
     const { container, baseElement } = render(
       usingTestingBoxedExpressionI18nContext(
         <ContextEntryExpressionCell
-          data={[{ entryInfo: { name: value, dataType }, entryExpression: emptyExpression }]}
+          data={[
+            {
+              entryInfo: { name: value, dataType },
+              entryExpression: emptyExpression,
+              editInfoPopoverLabel: "Edit entry",
+            },
+          ]}
           row={{ index: rowIndex }}
           column={{ id: columnId }}
           onRowUpdate={mockedOnRowUpdate}
@@ -91,6 +103,7 @@ describe("ContextEntryExpressionCell tests", () => {
         onUpdatingNameAndDataType: undefined,
         onUpdatingRecursiveExpression: expect.any(Function),
       },
+      editInfoPopoverLabel: "Edit entry",
     });
   });
 });

@@ -65,6 +65,7 @@ describe("ContextExpression tests", () => {
           dataType: firstDataType,
         },
         entryExpression: firstExpression,
+        editInfoPopoverLabel: "Edit entry",
       },
       {
         entryInfo: {
@@ -72,6 +73,7 @@ describe("ContextExpression tests", () => {
           dataType: secondDataType,
         },
         entryExpression: secondExpression,
+        editInfoPopoverLabel: "Edit entry",
       },
     ];
 

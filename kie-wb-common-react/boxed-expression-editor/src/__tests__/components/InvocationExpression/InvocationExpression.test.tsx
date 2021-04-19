@@ -71,10 +71,18 @@ describe("InvocationExpression tests", () => {
   test("should display a row in the table body, for each given binding entries", () => {
     const firstEntryName = "param1";
     const firstEntryDataType = DataType.Boolean;
-    const firstEntry = { entryInfo: { name: firstEntryName, dataType: firstEntryDataType }, entryExpression: {} };
+    const firstEntry = {
+      entryInfo: { name: firstEntryName, dataType: firstEntryDataType },
+      entryExpression: {},
+      editInfoPopoverLabel: "Edit parameter",
+    };
     const secondEntryName = "param2";
     const secondEntryDataType = DataType.Any;
-    const secondEntry = { entryInfo: { name: secondEntryName, dataType: secondEntryDataType }, entryExpression: {} };
+    const secondEntry = {
+      entryInfo: { name: secondEntryName, dataType: secondEntryDataType },
+      entryExpression: {},
+      editInfoPopoverLabel: "Edit parameter",
+    };
     const bindingEntries = [firstEntry, secondEntry];
 
     const { container } = render(

@@ -31,7 +31,12 @@ describe("ContextEntryInfo tests", () => {
   test("should show a context entry info element with passed name and dataType, when rendering it", () => {
     const { container } = render(
       usingTestingBoxedExpressionI18nContext(
-        <ContextEntryInfo name={name} dataType={dataType} onContextEntryUpdate={_.identity} />
+        <ContextEntryInfo
+          name={name}
+          dataType={dataType}
+          editInfoPopoverLabel="Edit entry"
+          onContextEntryUpdate={_.identity}
+        />
       ).wrapper
     );
 
@@ -48,7 +53,12 @@ describe("ContextEntryInfo tests", () => {
 
     const { container, baseElement } = render(
       usingTestingBoxedExpressionI18nContext(
-        <ContextEntryInfo name={name} dataType={dataType} onContextEntryUpdate={mockedOnContextEntryUpdate} />
+        <ContextEntryInfo
+          name={name}
+          dataType={dataType}
+          editInfoPopoverLabel="Edit entry"
+          onContextEntryUpdate={mockedOnContextEntryUpdate}
+        />
       ).wrapper
     );
 

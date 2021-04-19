@@ -18,7 +18,6 @@ import "./ContextEntryInfo.css";
 import * as React from "react";
 import { useCallback, useEffect, useState } from "react";
 import { EditExpressionMenu } from "../EditExpressionMenu";
-import { useBoxedExpressionEditorI18n } from "../../i18n";
 import { DataType } from "../../api";
 
 export interface ContextEntryInfoProps {
@@ -28,15 +27,16 @@ export interface ContextEntryInfoProps {
   dataType: DataType;
   /** Callback to be executed when name or dataType get updated */
   onContextEntryUpdate: (name: string, dataType: DataType) => void;
+  /** Label used for the popover triggered when editing info section */
+  editInfoPopoverLabel: string;
 }
 
 export const ContextEntryInfo: React.FunctionComponent<ContextEntryInfoProps> = ({
   name,
   dataType,
   onContextEntryUpdate,
+  editInfoPopoverLabel,
 }) => {
-  const { i18n } = useBoxedExpressionEditorI18n();
-
   const [entryName, setEntryName] = useState(name);
 
   const [entryDataType, setEntryDataType] = useState(dataType);
@@ -61,7 +61,7 @@ export const ContextEntryInfo: React.FunctionComponent<ContextEntryInfoProps> = 
   return (
     <div className="entry-info">
       <EditExpressionMenu
-        title={i18n.editContextEntry}
+        title={editInfoPopoverLabel}
         selectedExpressionName={entryName}
         selectedDataType={entryDataType}
         onExpressionUpdate={onEntryNameOrDataTypeUpdate}

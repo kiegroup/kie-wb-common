@@ -93,6 +93,7 @@ export const ContextExpression: React.FunctionComponent<ContextProps> = ({
           dataType: DEFAULT_CONTEXT_ENTRY_DATA_TYPE,
         },
         entryExpression: {},
+        editInfoPopoverLabel: i18n.editContextEntry,
       } as DataRecord,
     ]
   );
@@ -121,8 +122,9 @@ export const ContextExpression: React.FunctionComponent<ContextProps> = ({
         dataType: DataType.Undefined,
       },
       entryExpression: {},
+      editInfoPopoverLabel: i18n.editContextEntry,
     }),
-    [rows]
+    [i18n.editContextEntry, rows]
   );
 
   const getHeaderVisibility = useCallback(() => {
