@@ -261,7 +261,7 @@ public class PackageDataModelOracleCompletionsTest {
             @Override
             public void callback(final String[] personThisOperators) {
 
-                assertArrayEquals(new String[]{"==", "!=", "== null", "!= null"},
+                assertArrayEquals(new String[]{"==", "!=", "== null", "!= null", "memberOf", "not memberOf"},
                                   personThisOperators);
             }
         });
@@ -274,7 +274,7 @@ public class PackageDataModelOracleCompletionsTest {
         Callback<String[]> personAgeCallback = spy(new Callback<String[]>() {
             @Override
             public void callback(final String[] personAgeOperators) {
-                assertArrayEquals(new String[]{"==", "!=", "<", ">", "<=", ">=", "== null", "!= null", "in", "not in"},
+                assertArrayEquals(new String[]{"==", "!=", "<", ">", "<=", ">=", "== null", "!= null", "memberOf", "not memberOf", "in", "not in"},
                                   personAgeOperators);
             }
         });
@@ -287,7 +287,7 @@ public class PackageDataModelOracleCompletionsTest {
         Callback<String[]> personRankCallback = spy(new Callback<String[]>() {
             @Override
             public void callback(final String[] personRankOperators) {
-                assertArrayEquals(new String[]{"==", "!=", "<", ">", "<=", ">=", "== null", "!= null"},
+                assertArrayEquals(new String[]{"==", "!=", "<", ">", "<=", ">=", "== null", "!= null", "memberOf", "not memberOf"},
                                   personRankOperators);
             }
         });
@@ -301,7 +301,7 @@ public class PackageDataModelOracleCompletionsTest {
             @Override
             public void callback(final String[] personNameOperators) {
                 assertArrayEquals(new String[]{"==", "!=", "<", ">", "<=", ">=", "contains", "not contains",
-                                          "matches", "not matches", "soundslike", "not soundslike",
+                                          "matches", "not matches", "soundslike", "not soundslike", "memberOf", "not memberOf",
                                           "== null", "!= null", "in", "not in"},
                                   personNameOperators);
             }
@@ -356,7 +356,7 @@ public class PackageDataModelOracleCompletionsTest {
         Callback<String[]> personThisCallback = spy(new Callback<String[]>() {
             @Override
             public void callback(final String[] personThisConnectiveOperators) {
-                assertEquals(3,
+                assertEquals(5,
                              personThisConnectiveOperators.length);
                 assertEquals(personThisConnectiveOperators[0],
                              "|| ==");
@@ -364,6 +364,10 @@ public class PackageDataModelOracleCompletionsTest {
                              "|| !=");
                 assertEquals(personThisConnectiveOperators[2],
                              "&& !=");
+                assertEquals(personThisConnectiveOperators[3],
+                             "memberOf");
+                assertEquals(personThisConnectiveOperators[4],
+                             "not memberOf");
             }
         });
         oracle.getConnectiveOperatorCompletions("Person",
@@ -445,7 +449,7 @@ public class PackageDataModelOracleCompletionsTest {
         Callback<String[]> personNameCallback2 = spy(new Callback<String[]>() {
             @Override
             public void callback(final String[] personNameConnectiveOperators) {
-                assertEquals(13,
+                assertEquals(15,
                              personNameConnectiveOperators.length);
                 assertEquals(personNameConnectiveOperators[0],
                              "|| ==");
@@ -473,6 +477,10 @@ public class PackageDataModelOracleCompletionsTest {
                              "&& matches");
                 assertEquals(personNameConnectiveOperators[12],
                              "|| matches");
+                assertEquals(personNameConnectiveOperators[13],
+                             "memberOf");
+                assertEquals(personNameConnectiveOperators[14],
+                             "not memberOf");
             }
         });
         oracle.getConnectiveOperatorCompletions("Person",
