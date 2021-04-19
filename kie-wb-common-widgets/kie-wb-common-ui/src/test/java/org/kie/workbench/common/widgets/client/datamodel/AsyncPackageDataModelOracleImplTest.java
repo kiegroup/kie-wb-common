@@ -557,7 +557,7 @@ public class AsyncPackageDataModelOracleImplTest {
             @Override
             public void callback(String[] result) {
                 assertArrayEquals(new String[]{"==", "!=", "<", ">", "<=", ">=", "contains", "not contains",
-                                          "matches", "not matches", "soundslike", "not soundslike",
+                                          "matches", "not matches", "soundslike", "not soundslike", "memberOf", "not memberOf",
                                           "== null", "!= null", "in", "not in"},
                                   result);
             }
@@ -577,7 +577,7 @@ public class AsyncPackageDataModelOracleImplTest {
         Callback<String[]> callback = spy(new Callback<String[]>() {
             @Override
             public void callback(String[] result) {
-                assertArrayEquals(new String[]{"==", "!=", "<", ">", "<=", ">=", "== null", "!= null", "in", "not in"},
+                assertArrayEquals(new String[]{"==", "!=", "<", ">", "<=", ">=", "== null", "!= null", "memberOf", "not memberOf", "in", "not in"},
                                   result);
             }
         });
@@ -596,7 +596,7 @@ public class AsyncPackageDataModelOracleImplTest {
         Callback<String[]> callback = spy(new Callback<String[]>() {
             @Override
             public void callback(String[] result) {
-                assertArrayEquals(new String[]{"==", "!=", "== null", "!= null"},
+                assertArrayEquals(new String[]{"==", "!=", "== null", "!= null", "memberOf", "not memberOf"},
                                   result);
             }
         });
@@ -636,7 +636,7 @@ public class AsyncPackageDataModelOracleImplTest {
         Callback<String[]> callback = spy(new Callback<String[]>() {
             @Override
             public void callback(String[] result) {
-                assertArrayEquals(new String[]{"==", "!=", "== null", "!= null"},
+                assertArrayEquals(new String[]{"==", "!=", "== null", "!= null", "memberOf", "not memberOf"},
                                   result);
             }
         });
