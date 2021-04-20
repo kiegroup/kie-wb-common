@@ -55,6 +55,13 @@ const expressionTableHandlerMenuEntry = (menuEntry: string) => {
   return "[data-ouia-component-id='expression-table-handler-menu-" + menuEntry + "']";
 };
 
+const assertHeaderCell = (container: Element, expectedCells: number, content: string) => {
+  expect(container.querySelector(".table-component table thead")).toBeTruthy();
+  expect(container.querySelector(".table-component table thead tr")).toBeTruthy();
+  expect(container.querySelectorAll(EXPRESSION_COLUMN_HEADER).length).toBe(expectedCells);
+  expect(container.querySelectorAll(EXPRESSION_COLUMN_HEADER)[expectedCells - 1].innerHTML).toContain(content);
+};
+
 describe("Table tests", () => {
   const columnName = "column-1";
   const handlerConfiguration: TableHandlerConfiguration = [];
@@ -91,13 +98,10 @@ describe("Table tests", () => {
         ).wrapper
       );
 
-      expect(container.querySelector(".table-component table thead")).toBeTruthy();
-      expect(container.querySelector(".table-component table thead tr")).toBeTruthy();
-      expect(container.querySelectorAll(EXPRESSION_COLUMN_HEADER).length).toBe(1);
-      expect(container.querySelectorAll(EXPRESSION_COLUMN_HEADER)[0].innerHTML).toContain("#");
+      assertHeaderCell(container, 1, "#");
     });
 
-    test("should show a table head with one configured column", () => {
+    test("should show a table head with one configured column, rendering its label", () => {
       const { container } = render(
         usingTestingBoxedExpressionI18nContext(
           <Table
@@ -111,10 +115,33 @@ describe("Table tests", () => {
         ).wrapper
       );
 
-      expect(container.querySelector(".table-component table thead")).toBeTruthy();
-      expect(container.querySelector(".table-component table thead tr")).toBeTruthy();
-      expect(container.querySelectorAll(EXPRESSION_COLUMN_HEADER).length).toBe(2);
-      expect(container.querySelectorAll(EXPRESSION_COLUMN_HEADER)[1].innerHTML).toContain(columnName);
+      assertHeaderCell(container, 2, columnName);
+    });
+
+    test("should show a table head with one configured column, rendering its custom element", () => {
+      const customElementContent = "Custom Element";
+      const headerCellElement = <div>`${customElementContent}`</div>;
+
+      const { container } = render(
+        usingTestingBoxedExpressionI18nContext(
+          <Table
+            columnPrefix="column-"
+            columns={[
+              {
+                accessor: columnName,
+                headerCellElement,
+                dataType: DataType.Undefined,
+              } as ColumnInstance,
+            ]}
+            rows={[]}
+            onColumnsUpdate={_.identity}
+            onRowsUpdate={_.identity}
+            handlerConfiguration={handlerConfiguration}
+          />
+        ).wrapper
+      );
+
+      assertHeaderCell(container, 2, customElementContent);
     });
 
     test("should show a table body with no rows", () => {
@@ -418,7 +445,7 @@ describe("Table tests", () => {
       await openContextMenu(container.querySelector(expressionCell(0, 0))!);
       await selectMenuEntryIfNotDisabled(baseElement, "Delete");
 
-      expect(mockedOnColumnUpdate).toHaveBeenCalledWith([firstColumn, secondColumn]);
+      expect(mockedOnColumnUpdate).toHaveBeenCalledTimes(0);
     });
 
     test("should trigger onRowsUpdate, when inserting a new row above", async () => {

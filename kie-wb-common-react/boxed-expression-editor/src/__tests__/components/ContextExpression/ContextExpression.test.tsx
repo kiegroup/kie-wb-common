@@ -15,10 +15,21 @@
  */
 
 import { render } from "@testing-library/react";
-import { usingTestingBoxedExpressionI18nContext } from "../test-utils";
+import {
+  checkEntryContent,
+  checkEntryLogicType,
+  checkEntryStyle,
+  contextEntry,
+  usingTestingBoxedExpressionI18nContext,
+} from "../test-utils";
 import { ContextExpression } from "../../../components/ContextExpression";
 import * as React from "react";
 import { DataType, LogicType } from "../../../api";
+
+jest.mock("../../../api", () => ({
+  ...(jest.requireActual("../../../api") as Record<string, unknown>),
+  getHandlerConfiguration: jest.fn(),
+}));
 
 describe("ContextExpression tests", () => {
   const name = "contextName";
@@ -54,6 +65,7 @@ describe("ContextExpression tests", () => {
           dataType: firstDataType,
         },
         entryExpression: firstExpression,
+        editInfoPopoverLabel: "Edit entry",
       },
       {
         entryInfo: {
@@ -61,6 +73,7 @@ describe("ContextExpression tests", () => {
           dataType: secondDataType,
         },
         entryExpression: secondExpression,
+        editInfoPopoverLabel: "Edit entry",
       },
     ];
 
@@ -96,20 +109,3 @@ describe("ContextExpression tests", () => {
     checkEntryStyle(contextEntry(container, 3), "logic-type-not-present");
   });
 });
-
-function contextEntry(container: Element, index: number): Element | null {
-  return container.querySelector(`.context-expression table tbody tr:nth-of-type(${index})`);
-}
-
-function checkEntryContent(entry: Element | null, entryRecordInfo: { name: string; dataType: string }): void {
-  expect(entry).toContainHTML(entryRecordInfo.name);
-  expect(entry).toContainHTML(entryRecordInfo.dataType);
-}
-
-function checkEntryStyle(entry: Element | null, cssClass: string): void {
-  expect(entry?.querySelector(".entry-expression")?.firstChild).toHaveClass(cssClass);
-}
-
-function checkEntryLogicType(entry: Element | null, cssClass: string): void {
-  expect(entry?.querySelector(".entry-expression")?.firstChild?.firstChild).toHaveClass(cssClass);
-}

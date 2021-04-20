@@ -16,6 +16,10 @@
 
 import { DataType } from "./DataType";
 import { ExpressionProps } from "./ExpressionProps";
+import * as _ from "lodash";
+import { DataRecord, Row } from "react-table";
+import { TableHandlerConfiguration, TableOperation } from "./Table";
+import { BoxedExpressionEditorI18n } from "../i18n";
 
 export interface ContextEntryRecord {
   entryInfo: {
@@ -26,8 +30,47 @@ export interface ContextEntryRecord {
   };
   /** Entry expression */
   entryExpression: ExpressionProps;
+  /** Label used for the popover triggered when editing info section */
+  editInfoPopoverLabel: string;
   /** Callback to be invoked on expression resetting */
   onExpressionResetting?: () => void;
 }
 
 export type ContextEntries = ContextEntryRecord[];
+
+export const DEFAULT_ENTRY_INFO_MIN_WIDTH = 150;
+export const DEFAULT_ENTRY_EXPRESSION_MIN_WIDTH = 370;
+
+export const getHandlerConfiguration = (
+  i18n: BoxedExpressionEditorI18n,
+  groupName: string
+): TableHandlerConfiguration => [
+  {
+    group: groupName,
+    items: [
+      { name: i18n.rowOperations.insertAbove, type: TableOperation.RowInsertAbove },
+      { name: i18n.rowOperations.insertBelow, type: TableOperation.RowInsertBelow },
+      { name: i18n.rowOperations.delete, type: TableOperation.RowDelete },
+      { name: i18n.rowOperations.clear, type: TableOperation.RowClear },
+    ],
+  },
+];
+
+export const generateNextAvailableEntryName = (
+  contextEntries: ContextEntries,
+  namePrefix: string,
+  lastIndex: number = contextEntries.length
+): string => {
+  const candidateName = `${namePrefix}-${lastIndex}`;
+  const entryWithCandidateName = _.find(contextEntries, { entryInfo: { name: candidateName } });
+  return entryWithCandidateName
+    ? generateNextAvailableEntryName(contextEntries, namePrefix, lastIndex + 1)
+    : candidateName;
+};
+
+export const getEntryKey = (row: Row): string => (row.original as ContextEntryRecord).entryInfo.name;
+
+export const resetEntry = (row: DataRecord): DataRecord => ({
+  entryInfo: row.entryInfo,
+  entryExpression: { uid: (row.entryExpression as ExpressionProps).uid },
+});

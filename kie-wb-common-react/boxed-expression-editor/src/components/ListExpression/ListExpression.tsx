@@ -16,7 +16,7 @@
 
 import "./ListExpression.css";
 import * as React from "react";
-import { useCallback, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
   ContextEntryRecord,
   ExpressionProps,
@@ -59,7 +59,7 @@ export const ListExpression: React.FunctionComponent<ListProps> = ({
 
   const generateLiteralExpression = () => ({ logicType: LogicType.LiteralExpression } as LiteralExpressionProps);
 
-  const listItems = useRef(
+  const [listItems, setListItems] = useState(
     _.isEmpty(items)
       ? [
           {
@@ -85,20 +85,16 @@ export const ListExpression: React.FunctionComponent<ListProps> = ({
       uid,
       ...(listExpressionWidth.current !== LIST_EXPRESSION_MIN_WIDTH ? { width: listExpressionWidth.current } : {}),
       logicType: LogicType.List,
-      items: _.map(listItems.current, (listItem: DataRecord) => listItem.entryExpression as ExpressionProps),
+      items: _.map(listItems, (listItem: DataRecord) => listItem.entryExpression as ExpressionProps),
     };
     isHeadless
       ? onUpdatingRecursiveExpression?.(updatedDefinition)
       : window.beeApi?.broadcastListExpressionDefinition?.(updatedDefinition);
-  }, [isHeadless, onUpdatingRecursiveExpression, uid]);
+  }, [isHeadless, listItems, onUpdatingRecursiveExpression, uid]);
 
-  const onRowsUpdate = useCallback(
-    (rows) => {
-      listItems.current = rows;
-      spreadListExpressionDefinition();
-    },
-    [spreadListExpressionDefinition]
-  );
+  const onRowsUpdate = useCallback((rows) => {
+    setListItems(rows);
+  }, []);
 
   const resetRowCustomFunction = useCallback((row: DataRecord) => {
     return { entryExpression: { uid: (row.entryExpression as ExpressionProps).uid } };
@@ -111,6 +107,11 @@ export const ListExpression: React.FunctionComponent<ListProps> = ({
     },
     [spreadListExpressionDefinition]
   );
+
+  useEffect(() => {
+    /** Everytime the list of items changes, we need to spread expression's updated definition */
+    spreadListExpressionDefinition();
+  }, [listItems, spreadListExpressionDefinition]);
 
   return (
     <div className="list-expression">
@@ -125,7 +126,7 @@ export const ListExpression: React.FunctionComponent<ListProps> = ({
           headerVisibility={TableHeaderVisibility.None}
           defaultCell={{ list: ContextEntryExpressionCell }}
           columns={[{ accessor: "list", width: "100%" }]}
-          rows={listItems.current as DataRecord[]}
+          rows={listItems as DataRecord[]}
           onRowsUpdate={onRowsUpdate}
           onRowAdding={onRowAdding}
           handlerConfiguration={handlerConfiguration}

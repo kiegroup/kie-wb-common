@@ -51,6 +51,7 @@ export const ContextEntryInfoCell: React.FunctionComponent<ContextEntryInfoCellP
         name={entryInfo.name}
         dataType={entryInfo.dataType}
         onContextEntryUpdate={onContextEntryUpdate}
+        editInfoPopoverLabel={contextEntry.editInfoPopoverLabel}
       />
     </div>
   );

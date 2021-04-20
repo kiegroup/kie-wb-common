@@ -14,24 +14,21 @@
  * limitations under the License.
  */
 
-.context-expression .entry-info {
+.expression-container .entry-info {
   width: 100%;
 }
 
-.context-expression .entry-info .entry-definition {
+.expression-container .entry-info .entry-definition {
   cursor: pointer;
   padding: 0.25em;
 }
 
-.context-expression .entry-info .entry-definition .entry-name {
+.expression-container .entry-info .entry-definition .entry-name {
   white-space: nowrap;
 }
 
-.context-expression .entry-info .entry-definition .entry-data-type {
+.expression-container .entry-info .entry-definition .entry-data-type {
+  white-space: nowrap;
   font-style: italic;
   font-size: smaller;
-}
-
-.context-expression .context-expression table th .header-cell {
-  height: 24px;
 }

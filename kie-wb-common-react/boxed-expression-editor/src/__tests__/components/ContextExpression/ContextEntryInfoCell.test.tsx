@@ -36,7 +36,9 @@ describe("ContextEntryInfoCell tests", () => {
     const { container } = render(
       usingTestingBoxedExpressionI18nContext(
         <ContextEntryInfoCell
-          data={[{ entryInfo: { name, dataType }, entryExpression: emptyExpression }]}
+          data={[
+            { entryInfo: { name, dataType }, entryExpression: emptyExpression, editInfoPopoverLabel: "Edit entry" },
+          ]}
           row={{ index: 0 }}
           column={{ id: "col1" }}
           onRowUpdate={_.identity}
@@ -61,7 +63,9 @@ describe("ContextEntryInfoCell tests", () => {
     const { container, baseElement } = render(
       usingTestingBoxedExpressionI18nContext(
         <ContextEntryInfoCell
-          data={[{ entryInfo: { name, dataType }, entryExpression: emptyExpression }]}
+          data={[
+            { entryInfo: { name, dataType }, entryExpression: emptyExpression, editInfoPopoverLabel: "Edit entry" },
+          ]}
           row={{ index: 0 }}
           column={{ id: "col1" }}
           onRowUpdate={mockedOnRowUpdate}
@@ -83,6 +87,7 @@ describe("ContextEntryInfoCell tests", () => {
         dataType,
       },
       entryExpression: emptyExpression,
+      editInfoPopoverLabel: "Edit entry",
     });
   });
 });

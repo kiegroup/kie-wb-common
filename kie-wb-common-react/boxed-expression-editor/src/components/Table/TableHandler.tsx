@@ -27,15 +27,15 @@ export interface TableHandlerProps {
   /** The prefix to be used for the column name */
   columnPrefix: string;
   /** Columns instance */
-  tableColumns: ColumnInstance[];
-  /** Function for setting table columns */
-  setTableColumns: React.Dispatch<React.SetStateAction<ColumnInstance[]>>;
-  /** Function for setting table rows */
-  setTableRows: React.Dispatch<React.SetStateAction<DataRecord[]>>;
+  tableColumns: React.MutableRefObject<Column[]>;
   /** Last selected column index */
   lastSelectedColumnIndex: number;
   /** Last selected row index */
   lastSelectedRowIndex: number;
+  /** Rows instance */
+  tableRows: React.MutableRefObject<DataRecord[]>;
+  /** Function to be executed when one or more rows are modified */
+  onRowsUpdate: (rows: DataRecord[]) => void;
   /** Function to be executed when adding a new row to the table */
   onRowAdding: () => DataRecord;
   /** Show/hide table handler */
@@ -50,15 +50,17 @@ export interface TableHandlerProps {
   tableHandlerAllowedOperations: TableOperation[];
   /** Custom function called for manually resetting a row */
   resetRowCustomFunction?: (row: DataRecord) => DataRecord;
+  /** Function to be executed when columns are modified */
+  onColumnsUpdate: (columns: Column[]) => void;
 }
 
 export const TableHandler: React.FunctionComponent<TableHandlerProps> = ({
   columnPrefix,
   tableColumns,
-  setTableColumns,
-  setTableRows,
   lastSelectedColumnIndex,
   lastSelectedRowIndex,
+  tableRows,
+  onRowsUpdate,
   onRowAdding,
   showTableHandler,
   setShowTableHandler,
@@ -66,6 +68,7 @@ export const TableHandler: React.FunctionComponent<TableHandlerProps> = ({
   handlerConfiguration,
   tableHandlerAllowedOperations,
   resetRowCustomFunction = () => ({}),
+  onColumnsUpdate,
 }) => {
   const globalContext = useContext(BoxedExpressionGlobalContext);
 
@@ -103,7 +106,7 @@ export const TableHandler: React.FunctionComponent<TableHandlerProps> = ({
   const generateNextAvailableColumnName: (lastIndex: number) => string = useCallback(
     (lastIndex) => {
       const candidateName = `${columnPrefix}${lastIndex}`;
-      const columnWithCandidateName = _.find(tableColumns, { accessor: candidateName });
+      const columnWithCandidateName = _.find(tableColumns.current, { accessor: candidateName });
       return columnWithCandidateName ? generateNextAvailableColumnName(lastIndex + 1) : candidateName;
     },
     [columnPrefix, tableColumns]
@@ -120,45 +123,57 @@ export const TableHandler: React.FunctionComponent<TableHandlerProps> = ({
     [generateNextAvailableColumnName]
   );
 
+  /** These column operations have impact also on the collection of cells */
+  const updateColumnsThenRows = useCallback(
+    (columns) => {
+      onColumnsUpdate(columns);
+      onRowsUpdate(tableRows.current);
+    },
+    [onColumnsUpdate, onRowsUpdate, tableRows]
+  );
+
   const handlingOperation = useCallback(
     (tableOperation: TableOperation) => {
       switch (tableOperation) {
         case TableOperation.ColumnInsertLeft:
-          setTableColumns((prevTableColumns) =>
-            insertBefore(prevTableColumns, selectedColumnIndex, generateNextAvailableColumn(prevTableColumns))
+          updateColumnsThenRows(
+            insertBefore(tableColumns.current, selectedColumnIndex, generateNextAvailableColumn(tableColumns.current))
           );
           break;
         case TableOperation.ColumnInsertRight:
-          setTableColumns((prevTableColumns) =>
-            insertAfter(prevTableColumns, selectedColumnIndex, generateNextAvailableColumn(prevTableColumns))
+          updateColumnsThenRows(
+            insertAfter(tableColumns.current, selectedColumnIndex, generateNextAvailableColumn(tableColumns.current))
           );
           break;
         case TableOperation.ColumnDelete:
-          setTableColumns((prevTableColumns) => deleteAt(prevTableColumns, selectedColumnIndex));
+          updateColumnsThenRows(deleteAt(tableColumns.current, selectedColumnIndex));
           break;
         case TableOperation.RowInsertAbove:
-          setTableRows((prevTableRows) => insertBefore(prevTableRows, selectedRowIndex, onRowAdding()));
+          onRowsUpdate(insertBefore(tableRows.current, selectedRowIndex, onRowAdding()));
           break;
         case TableOperation.RowInsertBelow:
-          setTableRows((prevTableRows) => insertAfter(prevTableRows, selectedRowIndex, onRowAdding()));
+          onRowsUpdate(insertAfter(tableRows.current, selectedRowIndex, onRowAdding()));
           break;
         case TableOperation.RowDelete:
-          setTableRows((prevTableRows) => deleteAt(prevTableRows, selectedRowIndex));
+          onRowsUpdate(deleteAt(tableRows.current, selectedRowIndex));
           break;
         case TableOperation.RowClear:
-          setTableRows((prevTableRows) => clearAt(prevTableRows, selectedRowIndex));
+          onRowsUpdate(clearAt(tableRows.current, selectedRowIndex));
+          break;
       }
       setShowTableHandler(false);
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [
-      setShowTableHandler,
-      setTableColumns,
-      setTableRows,
-      selectedColumnIndex,
       generateNextAvailableColumn,
-      selectedRowIndex,
+      updateColumnsThenRows,
       onRowAdding,
+      onRowsUpdate,
+      selectedColumnIndex,
+      selectedRowIndex,
+      setShowTableHandler,
+      tableColumns,
+      tableRows,
     ]
   );
 

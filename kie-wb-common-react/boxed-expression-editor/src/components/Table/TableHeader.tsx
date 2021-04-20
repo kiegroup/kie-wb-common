@@ -21,63 +21,68 @@ import * as _ from "lodash";
 import { Column, ColumnInstance, DataRecord, HeaderGroup, TableInstance } from "react-table";
 import { EditExpressionMenu } from "../EditExpressionMenu";
 import { DataType, TableHeaderVisibility } from "../../api";
+import { DRAWER_SPLITTER_ELEMENT } from "../Resizer";
 
 export interface TableHeaderProps {
   /** Table instance */
   tableInstance: TableInstance;
-  /** Columns instance */
-  tableColumns: ColumnInstance[];
-  /** Function for setting table columns */
-  setTableColumns: React.Dispatch<React.SetStateAction<ColumnInstance[]>>;
-  /** Function for setting table rows */
-  setTableRows: React.Dispatch<React.SetStateAction<DataRecord[]>>;
+  /** Rows instance */
+  tableRows: React.MutableRefObject<DataRecord[]>;
+  /** Function to be executed when one or more rows are modified */
+  onRowsUpdate: (rows: DataRecord[]) => void;
   /** Optional label to be used for the edit popover that appears when clicking on column header */
   editColumnLabel?: string;
   /** The way in which the header will be rendered */
   headerVisibility?: TableHeaderVisibility;
+  /** True, for skipping the creation in the DOM of the last defined header group */
+  skipLastHeaderGroup: boolean;
   /** Custom function for getting column key prop, and avoid using the column index */
   getColumnKey: (column: Column) => string;
+  /** Columns instance */
+  tableColumns: React.MutableRefObject<Column[]>;
+  /** Function to be executed when columns are modified */
+  onColumnsUpdate: (columns: Column[]) => void;
 }
 
 export const TableHeader: React.FunctionComponent<TableHeaderProps> = ({
   tableInstance,
-  tableColumns,
-  setTableColumns,
-  setTableRows,
+  tableRows,
+  onRowsUpdate,
   editColumnLabel,
   headerVisibility = TableHeaderVisibility.Full,
+  skipLastHeaderGroup,
   getColumnKey,
+  tableColumns,
+  onColumnsUpdate,
 }) => {
   const updateColumnNameInRows = useCallback(
     (prevColumnName: string, newColumnName: string) =>
-      setTableRows((prevTableCells) => {
-        return _.map(prevTableCells, (tableCells) => {
+      onRowsUpdate(
+        _.map(tableRows.current, (tableCells) => {
           const assignedCellValue = tableCells[prevColumnName]!;
           delete tableCells[prevColumnName];
           tableCells[newColumnName] = assignedCellValue;
           return tableCells;
-        });
-      }),
-    [setTableRows]
+        })
+      ),
+    [onRowsUpdate, tableRows]
   );
 
   const onColumnNameOrDataTypeUpdate = useCallback(
     (columnIndex: number) => {
       return ({ name = "", dataType = DataType.Undefined }) => {
-        const prevColumnName = (tableColumns[columnIndex] as ColumnInstance).accessor as string;
-        setTableColumns((prevTableColumns: ColumnInstance[]) => {
-          const updatedTableColumns = [...prevTableColumns];
-          updatedTableColumns[columnIndex].label = name;
-          updatedTableColumns[columnIndex].accessor = name;
-          updatedTableColumns[columnIndex].dataType = dataType;
-          return updatedTableColumns;
-        });
+        const prevColumnName = (tableColumns.current[columnIndex] as ColumnInstance).accessor as string;
+        const updatedTableColumns = [...tableColumns.current] as ColumnInstance[];
+        updatedTableColumns[columnIndex].label = name;
+        updatedTableColumns[columnIndex].accessor = name;
+        updatedTableColumns[columnIndex].dataType = dataType;
+        onColumnsUpdate(updatedTableColumns);
         if (name !== prevColumnName) {
           updateColumnNameInRows(prevColumnName, name);
         }
       };
     },
-    [setTableColumns, tableColumns, updateColumnNameInRows]
+    [onColumnsUpdate, tableColumns, updateColumnNameInRows]
   );
 
   const renderCountColumn = useCallback(
@@ -98,7 +103,7 @@ export const TableHeader: React.FunctionComponent<TableHeaderProps> = ({
   const renderHeaderCellInfo = useCallback(
     (column) => (
       <div className="header-cell-info" data-ouia-component-type="expression-column-header-cell-info">
-        <p className="pf-u-text-truncate">{column.label}</p>
+        {column.headerCellElement ? column.headerCellElement : <p className="pf-u-text-truncate">{column.label}</p>}
         {column.dataType ? <p className="pf-u-text-truncate data-type">({column.dataType})</p> : null}
       </div>
     ),
@@ -131,9 +136,7 @@ export const TableHeader: React.FunctionComponent<TableHeaderProps> = ({
             className={`pf-c-drawer ${!column.canResize ? "resizer-disabled" : ""}`}
             {...(column.canResize ? column.getResizerProps() : {})}
           >
-            <div className="pf-c-drawer__splitter pf-m-vertical">
-              <div className="pf-c-drawer__splitter-handle" />
-            </div>
+            {DRAWER_SPLITTER_ELEMENT}
           </div>
         </div>
       </Th>
@@ -147,30 +150,43 @@ export const TableHeader: React.FunctionComponent<TableHeaderProps> = ({
     [renderCountColumn, renderResizableHeaderCell]
   );
 
+  const getHeaderGroups = useCallback(
+    (tableInstance) => {
+      return skipLastHeaderGroup ? _.dropRight(tableInstance.headerGroups) : tableInstance.headerGroups;
+    },
+    [skipLastHeaderGroup]
+  );
+
   const renderHeaderGroups = useMemo(
     () =>
-      tableInstance.headerGroups.map((headerGroup: HeaderGroup) => (
-        <Tr key={headerGroup.accessor} {...headerGroup.getHeaderGroupProps()}>
+      getHeaderGroups(tableInstance).map((headerGroup: HeaderGroup) => (
+        <Tr key={headerGroup.getHeaderGroupProps().key} {...headerGroup.getHeaderGroupProps()}>
           {headerGroup.headers.map((column: ColumnInstance, columnIndex: number) => renderColumn(column, columnIndex))}
         </Tr>
       )),
-    [renderColumn, tableInstance.headerGroups]
+    [getHeaderGroups, renderColumn, tableInstance]
   );
 
-  const renderLastLevelInHeaderGroups = useMemo(
-    () => (
+  const renderAtLevelInHeaderGroups = useCallback(
+    (level: number) => (
       <Tr>
-        {_.last(
-          tableInstance.headerGroups as HeaderGroup[]
+        {_.nth(
+          tableInstance.headerGroups as HeaderGroup[],
+          level
         )!.headers.map((column: ColumnInstance, columnIndex: number) => renderColumn(column, columnIndex))}
       </Tr>
     ),
     [renderColumn, tableInstance.headerGroups]
   );
 
-  return headerVisibility === TableHeaderVisibility.None ? null : (
-    <Thead noWrap>
-      {headerVisibility === TableHeaderVisibility.OnlyLastLevel ? renderLastLevelInHeaderGroups : renderHeaderGroups}
-    </Thead>
-  );
+  switch (headerVisibility) {
+    case TableHeaderVisibility.Full:
+      return <Thead noWrap>{renderHeaderGroups}</Thead>;
+    case TableHeaderVisibility.LastLevel:
+      return <Thead noWrap>{renderAtLevelInHeaderGroups(-1)}</Thead>;
+    case TableHeaderVisibility.SecondToLastLevel:
+      return <Thead noWrap>{renderAtLevelInHeaderGroups(-2)}</Thead>;
+    default:
+      return null;
+  }
 };

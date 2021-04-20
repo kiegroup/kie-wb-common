@@ -28,6 +28,8 @@
   width: 100%;
 }
 
+/** Table Header rules */
+
 .expression-container .table-component table th {
   min-height: 55px;
   position: relative;
@@ -84,6 +86,8 @@
   border: 1px solid #CCC;
 }
 
+/** Table Body rules */
+
 .expression-container .table-component table tbody tr {
   display: flex;
   border: 0;
@@ -120,6 +124,12 @@
   overflow-y: hidden;
 }
 
+.expression-container .table-component table tbody td.data-cell.has-resizer .logic-type-selector.logic-type-selected {
+  padding: .5em 1.2em .5em .5em;
+}
+
+/** Drawer for resizing columns */
+
 .expression-container .table-component table .pf-c-drawer__splitter {
   background-color: inherit;
 }
@@ -143,6 +153,17 @@
   background-color: lightgray;
 }
 
+.expression-container .table-component table .pf-c-drawer.drawer-on-body > .pf-c-drawer__splitter > .pf-c-drawer__splitter-handle {
+  z-index: 1;
+}
+
+.expression-container .table-component table .pf-c-drawer.drawer-on-body > .pf-c-drawer__splitter::after {
+  border-width: 1px;
+  background-color: white;
+}
+
+/** Text-area used as a cell */
+
 .expression-container .table-component table tbody td textarea {
   padding: 0.125em;
   margin: 0;
@@ -152,11 +173,15 @@
   resize: none;
 }
 
+/** Row-remainder section */
+
 .expression-container .table-component table tbody .table-row .row-remainder-content {
   display: inline-block;
   box-sizing: border-box;
 }
 
-.table-handler .pf-c-popover__arrow {
+/** Hiding popover arrow for the Table Handler */
+
+.boxed-expression-editor .table-handler .pf-c-popover__arrow {
   display: none;
 }

@@ -28,6 +28,12 @@ export interface ResizerProps {
   children?: React.ReactElement;
 }
 
+export const DRAWER_SPLITTER_ELEMENT = (
+  <div className="pf-c-drawer__splitter pf-m-vertical">
+    <div className="pf-c-drawer__splitter-handle" />
+  </div>
+);
+
 export const Resizer: React.FunctionComponent<ResizerProps> = ({
   children,
   height,
@@ -38,16 +44,7 @@ export const Resizer: React.FunctionComponent<ResizerProps> = ({
 }) => {
   const targetHeight = height === "100%" ? 0 : height;
 
-  const resizerHandler = useMemo(
-    () => (
-      <div className="pf-c-drawer">
-        <div className="pf-c-drawer__splitter pf-m-vertical">
-          <div className="pf-c-drawer__splitter-handle" />
-        </div>
-      </div>
-    ),
-    []
-  );
+  const resizerHandler = useMemo(() => <div className="pf-c-drawer">{DRAWER_SPLITTER_ELEMENT}</div>, []);
 
   const onResizeStop = useCallback((e, data) => onHorizontalResizeStop(data.size.width), [onHorizontalResizeStop]);
 
