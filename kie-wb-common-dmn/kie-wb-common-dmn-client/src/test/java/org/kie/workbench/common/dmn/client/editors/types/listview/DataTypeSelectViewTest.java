@@ -41,6 +41,7 @@ import org.kie.workbench.common.dmn.client.editors.types.common.DataTypeManager;
 import org.kie.workbench.common.dmn.client.editors.types.common.DataTypeUtils;
 import org.kie.workbench.common.dmn.client.editors.types.listview.tooltip.StructureTypesTooltip;
 import org.kie.workbench.common.dmn.client.editors.types.persistence.DataTypeStore;
+import org.kie.workbench.common.dmn.client.graph.DMNGraphUtils;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.InOrder;
@@ -97,6 +98,9 @@ public class DataTypeSelectViewTest {
     private DataTypeManager dataTypeManager;
 
     @Mock
+    private DMNGraphUtils dmnGraphUtils;
+
+    @Mock
     private StructureTypesTooltip structureTypesTooltip;
 
     @Captor
@@ -109,7 +113,7 @@ public class DataTypeSelectViewTest {
     @Before
     public void setup() {
         view = spy(new DataTypeSelectView(typeText, typeSelect, typeSelectOptGroup, typeSelectOption, null, translationService, structureTypesTooltip));
-        dataTypeUtils = new DataTypeUtils(dataTypeStore, dataTypeManager);
+        dataTypeUtils = new DataTypeUtils(dataTypeStore, dataTypeManager, dmnGraphUtils);
 
         view.init(presenter);
     }

@@ -18,6 +18,7 @@ package org.kie.workbench.common.dmn.client.editors.types.listview.tooltip;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwtmockito.GwtMockitoTestRunner;
@@ -40,6 +41,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.dmn.client.editors.types.common.DataType;
+import org.kie.workbench.common.dmn.client.editors.types.common.DataTypeKind;
 import org.mockito.Mock;
 
 import static com.google.gwt.dom.client.BrowserEvents.CLICK;
@@ -51,8 +53,9 @@ import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.kie.workbench.common.dmn.client.editors.types.listview.tooltip.StructureTypesTooltipView.DISPLAY_BLOCK;
 import static org.kie.workbench.common.dmn.client.editors.types.listview.tooltip.StructureTypesTooltipView.DISPLAY_NONE;
-import static org.kie.workbench.common.dmn.client.resources.i18n.DMNEditorConstants.StructureTypesTooltipView_Description;
-import static org.kie.workbench.common.dmn.client.resources.i18n.DMNEditorConstants.StructureTypesTooltipView_DescriptionEmptyState;
+import static org.kie.workbench.common.dmn.client.resources.i18n.DMNEditorConstants.StructureTypesTooltipView_DescriptionCustom;
+import static org.kie.workbench.common.dmn.client.resources.i18n.DMNEditorConstants.StructureTypesTooltipView_DescriptionIncluded;
+import static org.kie.workbench.common.dmn.client.resources.i18n.DMNEditorConstants.StructureTypesTooltipView_DescriptionStructured;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doNothing;
@@ -193,7 +196,7 @@ public class StructureTypesTooltipViewTest {
         final String typeName = "tPerson";
         final String message = "tPerson is a custom, structured data type without fields";
 
-        when(translationService.format(StructureTypesTooltipView_DescriptionEmptyState, typeName)).thenReturn(message);
+        doReturn(Optional.of(message)).when(view).getDescriptionText();
         when(presenter.getTypeName()).thenReturn(typeName);
         when(presenter.getTypeFields()).thenReturn(dataTypes);
 
@@ -214,43 +217,65 @@ public class StructureTypesTooltipViewTest {
     }
 
     @Test
-    public void testUpdateContentWhenDataTypeHasManyFields() {
+    public void testGetDescriptionTextWhenKindIsCustom() {
 
-        final DataType dataType1 = mock(DataType.class);
-        final DataType dataType2 = mock(DataType.class);
-        final DataType dataType3 = mock(DataType.class);
-        final HTMLLIElement dataTypeLi1 = mock(HTMLLIElement.class);
-        final HTMLLIElement dataTypeLi2 = mock(HTMLLIElement.class);
-        final HTMLLIElement dataTypeLi3 = mock(HTMLLIElement.class);
-        final List<DataType> dataTypes = asList(dataType1, dataType2, dataType3);
-        final Node dataTypeFieldsFirstChild = mock(Node.class);
         final String typeName = "tPerson";
-        final String message = "tPerson is a custom, structured data type with 3 fields";
+        final String expectedDescription = "message";
 
-        when(translationService.format(StructureTypesTooltipView_Description, typeName, 3)).thenReturn(message);
         when(presenter.getTypeName()).thenReturn(typeName);
-        when(presenter.getTypeFields()).thenReturn(dataTypes);
+        when(presenter.getDataTypeKind()).thenReturn(DataTypeKind.CUSTOM);
+        when(translationService.format(StructureTypesTooltipView_DescriptionCustom, typeName)).thenReturn(expectedDescription);
 
-        doReturn(dataTypeLi1).when(view).makeFieldElement(dataType1);
-        doReturn(dataTypeLi2).when(view).makeFieldElement(dataType2);
-        doReturn(dataTypeLi3).when(view).makeFieldElement(dataType3);
+        final Optional<String> actualDescription = view.getDescriptionText();
 
-        dataTypeFields.firstChild = dataTypeFieldsFirstChild;
+        assertTrue(actualDescription.isPresent());
+        assertEquals(expectedDescription, actualDescription.get());
+    }
 
-        doAnswer((e) -> {
-            dataTypeFields.firstChild = null;
-            return null;
-        }).when(dataTypeFields).removeChild(dataTypeFieldsFirstChild);
+    @Test
+    public void testGetDescriptionTextWhenKindIsStructure() {
 
-        view.updateContent();
+        final String typeName = "tPerson";
+        final String expectedDescription = "message";
+        final List<DataType> typeFields = asList(mock(DataType.class), mock(DataType.class));
 
-        assertEquals(message, description.textContent);
-        assertEquals(typeName, dataTypeName.textContent);
+        when(presenter.getTypeName()).thenReturn(typeName);
+        when(presenter.getDataTypeKind()).thenReturn(DataTypeKind.STRUCTURE);
+        when(presenter.getTypeFields()).thenReturn(typeFields);
+        when(translationService.format(StructureTypesTooltipView_DescriptionStructured, typeName, typeFields.size())).thenReturn(expectedDescription);
 
-        verify(dataTypeFields).removeChild(dataTypeFieldsFirstChild);
-        verify(dataTypeFields).appendChild(dataTypeLi1);
-        verify(dataTypeFields).appendChild(dataTypeLi2);
-        verify(dataTypeFields).appendChild(dataTypeLi3);
+        final Optional<String> actualDescription = view.getDescriptionText();
+
+        assertTrue(actualDescription.isPresent());
+        assertEquals(expectedDescription, actualDescription.get());
+    }
+
+    @Test
+    public void testGetDescriptionTextWhenKindIsIncluded() {
+
+        final String typeName = "tPerson";
+        final String expectedDescription = "message";
+
+        when(presenter.getTypeName()).thenReturn(typeName);
+        when(presenter.getDataTypeKind()).thenReturn(DataTypeKind.INCLUDED);
+        when(translationService.format(StructureTypesTooltipView_DescriptionIncluded, typeName)).thenReturn(expectedDescription);
+
+        final Optional<String> actualDescription = view.getDescriptionText();
+
+        assertTrue(actualDescription.isPresent());
+        assertEquals(expectedDescription, actualDescription.get());
+    }
+
+    @Test
+    public void testGetDescriptionTextWhenKindIsAnother() {
+
+        final String typeName = "tPerson";
+        when(presenter.getTypeName()).thenReturn(typeName);
+        when(presenter.getDataTypeKind()).thenReturn(DataTypeKind.BUILT_IN);
+
+        final Optional<String> actualDescription = view.getDescriptionText();
+
+        assertFalse(actualDescription.isPresent());
     }
 
     @Test

@@ -506,8 +506,14 @@ public class DMNEditorConstants {
     public static final String DecisionServiceParameters_EncapsulatedDecisions = "DecisionServiceParameters.EncapsulatedDecisions";
 
     @TranslationKey(defaultValue = "")
-    public static final String StructureTypesTooltipView_Description = "StructureTypesTooltipView.Description";
+    public static final String StructureTypesTooltipView_DescriptionStructured = "StructureTypesTooltipView.DescriptionStructured";
 
     @TranslationKey(defaultValue = "")
-    public static final String StructureTypesTooltipView_DescriptionEmptyState = "StructureTypesTooltipView.DescriptionEmptyState";
+    public static final String StructureTypesTooltipView_DescriptionCustom = "StructureTypesTooltipView.DescriptionCustom";
+
+    @TranslationKey(defaultValue = "")
+    public static final String StructureTypesTooltipView_DescriptionIncluded = "StructureTypesTooltipView.DescriptionIncluded";
+
+    @TranslationKey(defaultValue = "")
+    public static final String StructureTypesTooltipView_ViewDataType = "StructureTypesTooltipView.ViewDataType";
 }

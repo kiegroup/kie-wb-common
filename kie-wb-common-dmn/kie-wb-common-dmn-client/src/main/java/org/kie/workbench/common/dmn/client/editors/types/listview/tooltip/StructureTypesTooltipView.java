@@ -17,6 +17,7 @@
 package org.kie.workbench.common.dmn.client.editors.types.listview.tooltip;
 
 import java.util.List;
+import java.util.Optional;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
@@ -42,12 +43,14 @@ import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.kie.workbench.common.dmn.client.editors.types.common.DataType;
+import org.kie.workbench.common.dmn.client.editors.types.common.DataTypeKind;
 
 import static com.google.gwt.dom.client.BrowserEvents.CLICK;
 import static com.google.gwt.dom.client.BrowserEvents.SCROLL;
 import static org.kie.workbench.common.dmn.client.editors.common.RemoveHelper.removeChildren;
-import static org.kie.workbench.common.dmn.client.resources.i18n.DMNEditorConstants.StructureTypesTooltipView_Description;
-import static org.kie.workbench.common.dmn.client.resources.i18n.DMNEditorConstants.StructureTypesTooltipView_DescriptionEmptyState;
+import static org.kie.workbench.common.dmn.client.resources.i18n.DMNEditorConstants.StructureTypesTooltipView_DescriptionCustom;
+import static org.kie.workbench.common.dmn.client.resources.i18n.DMNEditorConstants.StructureTypesTooltipView_DescriptionIncluded;
+import static org.kie.workbench.common.dmn.client.resources.i18n.DMNEditorConstants.StructureTypesTooltipView_DescriptionStructured;
 
 @ApplicationScoped
 @Templated
@@ -65,7 +68,7 @@ public class StructureTypesTooltipView implements StructureTypesTooltip.View {
         }
     };
 
-    @DataField("tooltip")
+    @DataField("data-type-details-tooltip")
     private final HTMLDivElement tooltip;
 
     @DataField("close")
@@ -154,25 +157,30 @@ public class StructureTypesTooltipView implements StructureTypesTooltip.View {
 
     void updateContent() {
 
-        final String typeName = presenter.getTypeName();
         final List<DataType> typeFields = presenter.getTypeFields();
 
-        description.textContent = getDescriptionText(typeName, typeFields);
-        dataTypeName.textContent = typeName;
+        dataTypeName.textContent = presenter.getTypeName();
 
+        getDescriptionText().ifPresent(text -> description.textContent = text);
         removeChildren(dataTypeFields);
         typeFields.forEach(field -> dataTypeFields.appendChild(makeFieldElement(field)));
     }
 
-    private String getDescriptionText(final String typeName,
-                                      final List<DataType> typeFields) {
+    Optional<String> getDescriptionText() {
 
-        final int numberOfFields = typeFields.size();
+        final String typeName = presenter.getTypeName();
+        final DataTypeKind dataTypeKind = presenter.getDataTypeKind();
 
-        if (numberOfFields == 0) {
-            return translationService.format(StructureTypesTooltipView_DescriptionEmptyState, typeName);
-        } else {
-            return translationService.format(StructureTypesTooltipView_Description, typeName, numberOfFields);
+        switch (dataTypeKind) {
+            case CUSTOM:
+                return Optional.ofNullable(translationService.format(StructureTypesTooltipView_DescriptionCustom, typeName));
+            case STRUCTURE:
+                final int numberOfFields = presenter.getTypeFields().size();
+                return Optional.ofNullable(translationService.format(StructureTypesTooltipView_DescriptionStructured, typeName, numberOfFields));
+            case INCLUDED:
+                return Optional.ofNullable(translationService.format(StructureTypesTooltipView_DescriptionIncluded, typeName));
+            default:
+                return Optional.empty();
         }
     }
 

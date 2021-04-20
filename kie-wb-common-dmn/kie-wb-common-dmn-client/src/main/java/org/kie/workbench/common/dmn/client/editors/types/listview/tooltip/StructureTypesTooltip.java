@@ -25,7 +25,9 @@ import javax.inject.Inject;
 import elemental2.dom.HTMLElement;
 import org.jboss.errai.ui.client.local.api.elemental2.IsElement;
 import org.kie.workbench.common.dmn.client.editors.types.common.DataType;
+import org.kie.workbench.common.dmn.client.editors.types.common.DataTypeKind;
 import org.kie.workbench.common.dmn.client.editors.types.common.DataTypeManager;
+import org.kie.workbench.common.dmn.client.editors.types.common.DataTypeUtils;
 import org.kie.workbench.common.dmn.client.editors.types.listview.DataTypeList;
 import org.kie.workbench.common.dmn.client.editors.types.listview.DataTypeListItem;
 import org.uberfire.client.mvp.UberElemental;
@@ -37,6 +39,8 @@ public class StructureTypesTooltip {
 
     private final View view;
 
+    private final DataTypeUtils dataTypeUtils;
+
     private final DataTypeList dataTypeList;
 
     private final DataTypeManager dataTypeManager;
@@ -45,9 +49,11 @@ public class StructureTypesTooltip {
 
     @Inject
     public StructureTypesTooltip(final View view,
+                                 final DataTypeUtils dataTypeUtils,
                                  final DataTypeList dataTypeList,
                                  final DataTypeManager dataTypeManager) {
         this.view = view;
+        this.dataTypeUtils = dataTypeUtils;
         this.dataTypeList = dataTypeList;
         this.dataTypeManager = dataTypeManager;
     }
@@ -72,6 +78,10 @@ public class StructureTypesTooltip {
                 .getTopLevelDataTypeWithName(getTypeName())
                 .map(DataType::getSubDataTypes)
                 .orElse(emptyList());
+    }
+
+    DataTypeKind getDataTypeKind() {
+        return dataTypeUtils.getDataTypeKind(typeName);
     }
 
     void goToDataType() {

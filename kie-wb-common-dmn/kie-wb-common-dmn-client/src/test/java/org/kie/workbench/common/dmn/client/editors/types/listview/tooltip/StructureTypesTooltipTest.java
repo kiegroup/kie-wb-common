@@ -24,10 +24,10 @@ import elemental2.dom.HTMLElement;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.kie.workbench.common.dmn.api.definition.model.ItemDefinition;
-import org.kie.workbench.common.dmn.api.property.dmn.Name;
 import org.kie.workbench.common.dmn.client.editors.types.common.DataType;
+import org.kie.workbench.common.dmn.client.editors.types.common.DataTypeKind;
 import org.kie.workbench.common.dmn.client.editors.types.common.DataTypeManager;
+import org.kie.workbench.common.dmn.client.editors.types.common.DataTypeUtils;
 import org.kie.workbench.common.dmn.client.editors.types.listview.DataTypeList;
 import org.kie.workbench.common.dmn.client.editors.types.listview.DataTypeListItem;
 import org.mockito.Mock;
@@ -35,6 +35,7 @@ import org.mockito.Mock;
 import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
@@ -48,6 +49,9 @@ public class StructureTypesTooltipTest {
     private StructureTypesTooltip.View view;
 
     @Mock
+    private DataTypeUtils dataTypeUtils;
+
+    @Mock
     private DataTypeList dataTypeList;
 
     @Mock
@@ -57,7 +61,7 @@ public class StructureTypesTooltipTest {
 
     @Before
     public void setup() {
-        presenter = spy(new StructureTypesTooltip(view, dataTypeList, dataTypeManager));
+        presenter = spy(new StructureTypesTooltip(view, dataTypeUtils, dataTypeList, dataTypeManager));
     }
 
     @Test
@@ -124,16 +128,13 @@ public class StructureTypesTooltipTest {
         verify(dataTypeListItem).enableShortcutsHighlight();
     }
 
-    private Optional<ItemDefinition> makeItemDefinition(final String itemDefinitionName,
-                                                        final String... itemComponents) {
+    @Test
+    public void testGetDataTypeKind() {
+        final DataTypeKind expectedKind = DataTypeKind.CUSTOM;
+        when(dataTypeUtils.getDataTypeKind(any())).thenReturn(expectedKind);
 
-        final ItemDefinition itemDefinition = new ItemDefinition();
-        itemDefinition.setName(new Name(itemDefinitionName));
+        final DataTypeKind actualKind = presenter.getDataTypeKind();
 
-        for (final String itemComponent : itemComponents) {
-            itemDefinition.getItemComponent().add(makeItemDefinition(itemComponent).orElse(null));
-        }
-
-        return Optional.of(itemDefinition);
+        assertEquals(expectedKind, actualKind);
     }
 }
