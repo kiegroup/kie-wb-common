@@ -27,6 +27,9 @@ import org.uberfire.preferences.shared.impl.validation.NumberPropertyValidator;
         bundleKey = "LibraryProjectPreferences.Label")
 public class LibraryProjectPreferences implements BasePreference<LibraryProjectPreferences> {
 
+    public static final String ASSETS_PER_PAGE_KEY = "org.kie.library.assets_per_page";
+    public static final int ASSETS_PER_PAGE_VALUE = 15;
+
     @Property(bundleKey = "LibraryProjectPreferences.Version",
             helpBundleKey = "LibraryProjectPreferences.Version.Help",
             validators = {NotEmptyValidator.class, VersionValidator.class})
@@ -40,7 +43,7 @@ public class LibraryProjectPreferences implements BasePreference<LibraryProjectP
             helpBundleKey = "LibraryProjectPreferences.Branch.Help",
             formOptions = PropertyFormOptions.DISABLED)
     String branch;
-    
+
     @Property(bundleKey = "LibraryProjectPreferences.AssetsPerPage",
             helpBundleKey = "LibraryProjectPreferences.AssetsPerPage.Help",
             validators = {NumberPropertyValidator.class})
@@ -57,8 +60,24 @@ public class LibraryProjectPreferences implements BasePreference<LibraryProjectP
     public String getBranch() {
         return branch;
     }
-    
-    public String getAssetsPerPage() {
-        return assetsPerPage;
+
+    public int getAssetsPerPage() {
+
+        String systemProperty = System.getProperty(ASSETS_PER_PAGE_KEY, String.valueOf(ASSETS_PER_PAGE_VALUE));
+        int externalAssetsPerPage = 0;
+        try {
+            if (systemProperty.length() > 0) {
+                externalAssetsPerPage = Integer.parseInt(systemProperty);
+            }
+            externalAssetsPerPage = externalAssetsPerPage > 0 ? externalAssetsPerPage : ASSETS_PER_PAGE_VALUE;
+
+            if (assetsPerPage != null && !assetsPerPage.isEmpty()) {
+                return Integer.parseInt(assetsPerPage);
+            } else {
+                return externalAssetsPerPage;
+            }
+        } catch (NumberFormatException e) {
+            return externalAssetsPerPage;
+        }
     }
 }
