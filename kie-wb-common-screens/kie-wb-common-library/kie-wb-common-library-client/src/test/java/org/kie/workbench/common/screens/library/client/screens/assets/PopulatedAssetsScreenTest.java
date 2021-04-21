@@ -573,7 +573,7 @@ public class PopulatedAssetsScreenTest extends ProjectScreenTestBase {
         LibraryProjectPreferences mockLibraryProjectPreferences = mock(LibraryProjectPreferences.class);
         
         when(mockLibraryPreferences.getProjectPreferences()).thenReturn(mockLibraryProjectPreferences);
-        when(mockLibraryProjectPreferences.getAssetsPerPage()).thenReturn("15");
+        when(mockLibraryProjectPreferences.getAssetsPerPage()).thenReturn(15);
         doReturn(promises.resolve(false)).when(this.projectController).canUpdateProject(any());
         
         this.populatedAssetsScreen.init();
