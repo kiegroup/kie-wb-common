@@ -147,7 +147,7 @@ export const InvocationExpression: React.FunctionComponent<InvocationProps> = ({
 
   const onColumnsUpdate = useCallback(
     ([expressionColumn]: [ColumnInstance]) => {
-      onUpdatingNameAndDataType?.(expressionColumn.label, expressionColumn.dataType);
+      onUpdatingNameAndDataType?.(expressionColumn.label as string, expressionColumn.dataType);
       infoWidth.current = _.find(expressionColumn.columns, { accessor: "entryInfo" })?.width as number;
       expressionWidth.current = _.find(expressionColumn.columns, { accessor: "entryExpression" })?.width as number;
       const [updatedExpressionColumn] = columns.current;

@@ -100,13 +100,13 @@ export const ContextExpression: React.FunctionComponent<ContextProps> = ({
 
   const onColumnsUpdate = useCallback(
     ([expressionColumn]: [ColumnInstance]) => {
-      onUpdatingNameAndDataType?.(expressionColumn.label, expressionColumn.dataType);
+      onUpdatingNameAndDataType?.(expressionColumn.label as string, expressionColumn.dataType);
       setExpressionWidth(_.find(expressionColumn.columns, { accessor: "entryExpression" })?.width as number);
       setInfoWidth(_.find(expressionColumn.columns, { accessor: "entryInfo" })?.width as number);
       setColumns(([prevExpressionColumn]) => [
         {
           ...prevExpressionColumn,
-          label: expressionColumn.label,
+          label: expressionColumn.label as string,
           accessor: expressionColumn.accessor,
           dataType: expressionColumn.dataType,
         },

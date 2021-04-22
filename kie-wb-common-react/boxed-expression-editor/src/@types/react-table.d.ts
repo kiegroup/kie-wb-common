@@ -55,7 +55,7 @@ declare module "react-table" {
     /** Column identifier */
     accessor: string;
     /** Column label */
-    label: string;
+    label: string | JSX.Element;
     /** Custom Element to be rendered in place of the column label */
     headerCellElement?: JSX.Element;
     /** Column data type */
