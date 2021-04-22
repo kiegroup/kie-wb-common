@@ -15,6 +15,7 @@
  */
 package org.kie.workbench.common.stunner.bpmn.project.backend.service.service;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -27,6 +28,7 @@ import org.kie.soup.project.datamodel.oracle.FieldAccessorsAndMutators;
 import org.kie.soup.project.datamodel.oracle.ModelField;
 import org.kie.soup.project.datamodel.oracle.PackageDataModelOracle;
 import org.kie.workbench.common.services.datamodel.backend.server.service.DataModelService;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.processes.DataTypeCacheServer;
 import org.kie.workbench.common.stunner.bpmn.project.backend.service.BPMNFindDataTypesProjectService;
 import org.kie.workbench.common.stunner.bpmn.project.service.DataTypesService;
 import org.mockito.Mock;
@@ -49,11 +51,14 @@ public class FindDataTypesProjectServiceTest {
     @Mock
     private Path path;
 
+    @Mock
+    private DataTypeCacheServer dataTypeCacheServer;
+
     private DataTypesService service;
 
     @Before
     public void setup() {
-        this.service = new BPMNFindDataTypesProjectService(dataModelService);
+        this.service = new BPMNFindDataTypesProjectService(dataModelService, dataTypeCacheServer);
     }
 
     @Test
@@ -91,11 +96,21 @@ public class FindDataTypesProjectServiceTest {
 
         when(oracle.getModuleModelFields()).thenReturn(fields);
 
-        final List<String> dataTypeNames = service.getDataTypeNames(path);
+        List<String> dataTypeNames = service.getDataTypeNames(path, null);
 
         assertNotNull(dataTypeNames);
         assertEquals(2, dataTypeNames.size());
-        assertEquals("org.Antelope", dataTypeNames.get(0));
-        assertEquals("org.Zebra", dataTypeNames.get(1));
+        assertEquals("Asset-org.Antelope", dataTypeNames.get(0));
+        assertEquals("Asset-org.Zebra", dataTypeNames.get(1));
+
+        List<String> addedTypes = new ArrayList<>();
+        addedTypes.add("com.addedType");
+        dataTypeNames = service.getDataTypeNames(path, addedTypes);
+
+        assertNotNull(dataTypeNames);
+        assertEquals(3, dataTypeNames.size());
+        assertEquals("Asset-org.Antelope", dataTypeNames.get(0));
+        assertEquals("Asset-org.Zebra", dataTypeNames.get(1));
+        assertEquals("com.addedType", dataTypeNames.get(2));
     }
 }

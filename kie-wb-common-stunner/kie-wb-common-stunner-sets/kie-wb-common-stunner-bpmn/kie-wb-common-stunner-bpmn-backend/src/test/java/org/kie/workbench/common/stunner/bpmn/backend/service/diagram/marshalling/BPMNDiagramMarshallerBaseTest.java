@@ -29,6 +29,7 @@ import org.kie.workbench.common.stunner.bpmn.BPMNTestDefinitionFactory;
 import org.kie.workbench.common.stunner.bpmn.WorkItemDefinitionMockRegistry;
 import org.kie.workbench.common.stunner.bpmn.backend.BPMNDirectDiagramMarshaller;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.DefinitionsConverter;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.processes.DataTypeCacheServer;
 import org.kie.workbench.common.stunner.bpmn.backend.service.diagram.Unmarshalling;
 import org.kie.workbench.common.stunner.bpmn.definition.BusinessRuleTask;
 import org.kie.workbench.common.stunner.bpmn.definition.NoneTask;
@@ -67,6 +68,9 @@ public abstract class BPMNDiagramMarshallerBaseTest {
     protected WorkItemDefinitionMockRegistry workItemDefinitionMockRegistry;
     protected BPMNDirectDiagramMarshaller marshaller;
 
+    @Mock
+    private DataTypeCacheServer dataTypeCacheServer;
+
     @SuppressWarnings("unchecked")
     protected void init() {
         initMocks(this);
@@ -101,7 +105,8 @@ public abstract class BPMNDiagramMarshallerBaseTest {
                 widService,
                 api.getFactoryManager(),
                 api.commandFactory,
-                api.commandManager);
+                api.commandManager,
+                dataTypeCacheServer);
     }
 
     protected void assertDiagram(Diagram<Graph, Metadata> diagram, int nodesSize) {

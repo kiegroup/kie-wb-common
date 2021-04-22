@@ -22,6 +22,7 @@ import elemental2.promise.Promise;
 import org.uberfire.backend.vfs.Path;
 
 public interface DataTypeNamesService {
-
+    void add(String value, String oldValue);
     Promise<List<String>> call(Path input);
+    default void reset(){}
 }

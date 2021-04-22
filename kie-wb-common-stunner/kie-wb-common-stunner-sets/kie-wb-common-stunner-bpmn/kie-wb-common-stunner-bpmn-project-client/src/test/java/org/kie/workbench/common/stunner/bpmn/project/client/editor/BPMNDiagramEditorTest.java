@@ -23,6 +23,7 @@ import com.google.gwtmockito.GwtMockitoTestRunner;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.kie.workbench.common.stunner.bpmn.client.forms.DataTypeNamesService;
 import org.kie.workbench.common.stunner.bpmn.project.client.type.BPMNDiagramResourceType;
 import org.kie.workbench.common.stunner.client.widgets.presenters.Viewer;
 import org.kie.workbench.common.stunner.client.widgets.presenters.session.SessionPresenter;
@@ -96,6 +97,9 @@ public class BPMNDiagramEditorTest extends AbstractProjectDiagramEditorTest {
     @Mock
     private ScreenPreMaximizedStateEvent preMaximizedStateEvent;
 
+    @Mock
+    private DataTypeNamesService clientDataTypeNamesService;
+
     private BPMNDiagramEditor diagramEditor;
 
     @Before
@@ -124,7 +128,8 @@ public class BPMNDiagramEditorTest extends AbstractProjectDiagramEditorTest {
                                                   projectDiagramResourceServiceCaller,
                                                   stunnerEditor,
                                                   uberfireDocks,
-                                                  stunnerDocksHandler) {
+                                                  stunnerDocksHandler,
+                                                  clientDataTypeNamesService) {
             {
                 fileMenuBuilder = BPMNDiagramEditorTest.this.fileMenuBuilder;
                 projectController = BPMNDiagramEditorTest.this.projectController;
