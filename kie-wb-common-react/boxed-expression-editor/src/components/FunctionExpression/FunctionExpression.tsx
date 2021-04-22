@@ -16,7 +16,7 @@
 
 import "./FunctionExpression.css";
 import * as React from "react";
-import { useCallback, useMemo, useRef, useState } from "react";
+import { useCallback, useContext, useMemo, useRef, useState } from "react";
 import {
   DEFAULT_ENTRY_EXPRESSION_MIN_WIDTH,
   FunctionKind,
@@ -33,6 +33,7 @@ import { useBoxedExpressionEditorI18n } from "../../i18n";
 import { PopoverMenu } from "../PopoverMenu";
 import { Menu, MenuItem, MenuList } from "@patternfly/react-core";
 import * as _ from "lodash";
+import { BoxedExpressionGlobalContext } from "../../context";
 
 export const FunctionExpression: React.FunctionComponent<FunctionProps> = ({
   children,
@@ -48,8 +49,8 @@ export const FunctionExpression: React.FunctionComponent<FunctionProps> = ({
 }) => {
   const { i18n } = useBoxedExpressionEditorI18n();
 
-  const functionExpressionRef = useRef<HTMLDivElement>(null);
-  const selectedFunctionKindRef = useRef<HTMLDivElement>(null);
+  const globalContext = useContext(BoxedExpressionGlobalContext);
+
   const columns = useRef<ColumnInstance[]>([
     {
       label: name,
@@ -98,14 +99,11 @@ export const FunctionExpression: React.FunctionComponent<FunctionProps> = ({
     []
   );
 
-  const getFunctionKindSelectorArrowPlacement = useCallback(() => () => selectedFunctionKindRef.current!, []);
-
-  const renderFunctionKindSelectorPopover = useMemo(
-    () => (
+  const renderFunctionKindCell = useMemo(() => {
+    return (
       <PopoverMenu
         title={i18n.selectFunctionKind}
-        arrowPlacement={getFunctionKindSelectorArrowPlacement()}
-        appendTo={functionExpressionRef.current ?? undefined}
+        appendTo={globalContext.boxedExpressionEditorRef?.current ?? undefined}
         className="function-kind-popover"
         hasAutoWidth
         body={(hide: () => void) => (
@@ -113,35 +111,20 @@ export const FunctionExpression: React.FunctionComponent<FunctionProps> = ({
             <MenuList>{renderFunctionKindItems()}</MenuList>
           </Menu>
         )}
-      />
-    ),
-    [
-      getFunctionKindSelectorArrowPlacement,
-      i18n.selectFunctionKind,
-      functionKindSelectionCallback,
-      renderFunctionKindItems,
-    ]
-  );
-
-  const renderSelectedFunctionKind = useMemo(() => {
-    return (
-      <div className="selected-function-kind" ref={selectedFunctionKindRef}>
-        {_.first(selectedFunctionKind)}
-      </div>
+      >
+        <div className="selected-function-kind">{_.first(selectedFunctionKind)}</div>
+      </PopoverMenu>
     );
-  }, [selectedFunctionKind]);
-
-  const renderFunctionKindCell = useMemo(() => {
-    return (
-      <React.Fragment>
-        {renderFunctionKindSelectorPopover}
-        {renderSelectedFunctionKind}
-      </React.Fragment>
-    );
-  }, [renderFunctionKindSelectorPopover, renderSelectedFunctionKind]);
+  }, [
+    functionKindSelectionCallback,
+    globalContext.boxedExpressionEditorRef,
+    i18n.selectFunctionKind,
+    renderFunctionKindItems,
+    selectedFunctionKind,
+  ]);
 
   return (
-    <div className={`function-expression ${uid}`} ref={functionExpressionRef}>
+    <div className={`function-expression ${uid}`}>
       <Table
         handlerConfiguration={[
           {
