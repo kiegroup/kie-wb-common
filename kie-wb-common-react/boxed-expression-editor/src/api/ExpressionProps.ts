@@ -110,32 +110,32 @@ export interface InvocationProps extends ExpressionProps {
   entryExpressionWidth?: number;
 }
 
-export type FunctionProps = {
+export type FunctionProps = ExpressionProps & {
   /** Logic type must be Function */
   logicType: LogicType.Function;
   /** List of parameters passed to the function */
   formalParameters?: EntryInfo[];
 } & (
-  | {
-      /** Feel Function */
-      functionKind: FunctionKind.Feel;
-      /** The Expression related to the function */
-      expression?: ExpressionProps;
-    }
-  | {
-      /** Java Function */
-      functionKind: FunctionKind.Java;
-      /** Java class */
-      class?: string;
-      /** Method signature */
-      method?: string;
-    }
-  | {
-      /** Pmml Function */
-      functionKind: FunctionKind.Pmml;
-      /** PMML document */
-      document?: string;
-      /** PMML model */
-      model?: string;
-    }
-);
+    | {
+        /** Feel Function */
+        functionKind: FunctionKind.Feel;
+        /** The Expression related to the function */
+        expression?: ExpressionProps;
+      }
+    | {
+        /** Java Function */
+        functionKind: FunctionKind.Java;
+        /** Java class */
+        class?: string;
+        /** Method signature */
+        method?: string;
+      }
+    | {
+        /** Pmml Function */
+        functionKind: FunctionKind.Pmml;
+        /** PMML document */
+        document?: string;
+        /** PMML model */
+        model?: string;
+      }
+  );

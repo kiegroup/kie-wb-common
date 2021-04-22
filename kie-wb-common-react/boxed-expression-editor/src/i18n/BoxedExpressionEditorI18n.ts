@@ -50,6 +50,7 @@ interface BoxedExpressionEditorDictionary extends ReferenceDictionary<BoxedExpre
     insertBelow: string;
   };
   selectExpression: string;
+  selectFunctionKind: string;
   selectLogicType: string;
 }
 

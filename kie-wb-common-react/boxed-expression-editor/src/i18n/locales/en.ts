@@ -51,5 +51,6 @@ export const en: BoxedExpressionEditorI18n = {
   },
   rows: "ROWS",
   selectExpression: "Select expression",
+  selectFunctionKind: "Select Function Kind",
   selectLogicType: "Select logic type",
 };

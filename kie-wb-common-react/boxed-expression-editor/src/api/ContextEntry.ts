@@ -73,6 +73,6 @@ export const generateNextAvailableEntryName = (
 export const getEntryKey = (row: Row): string => (row.original as ContextEntryRecord).entryInfo.name;
 
 export const resetEntry = (row: DataRecord): DataRecord => ({
-  entryInfo: row.entryInfo,
+  ...row,
   entryExpression: { uid: (row.entryExpression as ExpressionProps).uid },
 });
