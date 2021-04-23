@@ -45,12 +45,9 @@ import org.kie.workbench.common.stunner.core.client.shape.view.event.TextEnterHa
 import org.kie.workbench.common.stunner.core.client.shape.view.event.TextExitEvent;
 import org.kie.workbench.common.stunner.core.client.shape.view.event.TextExitHandler;
 import org.kie.workbench.common.stunner.core.client.shape.view.event.ViewEventType;
-import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Element;
-import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.definition.Definition;
 import org.kie.workbench.common.stunner.core.graph.content.view.Point2D;
-import org.kie.workbench.common.stunner.core.graph.content.view.View;
 
 import static org.kie.workbench.common.stunner.core.client.event.keyboard.KeyboardEvent.Key.ESC;
 
@@ -170,25 +167,7 @@ public abstract class AbstractCanvasInlineTextEditorControl
                                     clickHandler);
         registerHandler(shape.getUUID(),
                         clickHandler);
-        Node<View<?>, Edge> sourceNode = (Node<View<?>, Edge>) element;
-
-        final Object sourceDefinition = null != sourceNode ? sourceNode.getContent().getDefinition() : null;
-        final boolean isSourceGateway = isGateway(sourceDefinition);
-        if (!isSourceGateway) {
-            scheduleDeferredCommand(() -> AbstractCanvasInlineTextEditorControl.this.show(element));
-        }
-    }
-
-    private static boolean isGateway(final Object bean) {
-        switch (bean.getClass() + "") {
-            case "class org.kie.workbench.common.stunner.bpmn.definition.ParallelGateway":
-            case "class org.kie.workbench.common.stunner.bpmn.definition.ExclusiveGateway":
-            case "class org.kie.workbench.common.stunner.bpmn.definition.InclusiveGateway":
-            case "class org.kie.workbench.common.stunner.bpmn.definition.EventGateway":
-                return false;
-            default:
-        }
-        return false;
+        scheduleDeferredCommand(() -> AbstractCanvasInlineTextEditorControl.this.show(element));
     }
 
     private void changeMouseCursorOnTextEnter(final Shape<?> shape, final HasEventHandlers hasEventHandlers) {

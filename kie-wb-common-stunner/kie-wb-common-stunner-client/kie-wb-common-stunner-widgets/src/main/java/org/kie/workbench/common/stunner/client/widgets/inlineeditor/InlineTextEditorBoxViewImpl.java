@@ -142,7 +142,7 @@ public class InlineTextEditorBoxViewImpl
         });
     }
 
-    public static native void selectText(Object node) /*-{
+    public native void selectText(Object node) /*-{
         $wnd.getSelection().selectAllChildren(node);
     }-*/;
 

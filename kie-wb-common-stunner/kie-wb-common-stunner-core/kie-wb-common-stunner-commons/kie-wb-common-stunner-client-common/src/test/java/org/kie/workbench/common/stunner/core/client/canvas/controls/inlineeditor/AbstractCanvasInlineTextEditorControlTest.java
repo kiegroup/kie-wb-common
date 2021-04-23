@@ -327,6 +327,20 @@ public abstract class AbstractCanvasInlineTextEditorControlTest<C extends Abstra
     }
 
     @Test
+    public void testEditOnRegister() {
+        initCanvas(CANVAS_X, CANVAS_Y, CANVAS_WIDTH, CANVAS_HEIGHT);
+        initShape(SHAPE_X, SHAPE_Y, SCROLL_X, SCROLL_Y, ZOOM);
+        initHasTitle(POSITION_INSIDE, ORIENTATION_HORIZONTAL, FONT_FAMILY, ALIGN_MIDDLE, FONT_SIZE, 0);
+        control.bind(session);
+        control.init(canvasHandler);
+
+        when(testShapeView.supports(ViewEventType.TEXT_DBL_CLICK)).thenReturn(true);
+
+        control.register(element);
+        verify(control).show(eq(element));
+    }
+
+    @Test
     public void testRegisterTextEnter() {
         control.init(canvasHandler);
         when(testShapeView.supports(ViewEventType.TEXT_ENTER)).thenReturn(true);

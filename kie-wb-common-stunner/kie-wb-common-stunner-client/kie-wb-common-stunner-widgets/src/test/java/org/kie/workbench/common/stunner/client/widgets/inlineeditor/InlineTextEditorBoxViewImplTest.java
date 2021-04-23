@@ -286,6 +286,17 @@ public class InlineTextEditorBoxViewImplTest {
     }
 
     @Test
+    public void testSelectedTextOnEdit() {
+        tested.setTextBoxInternalAlignment(ALIGN_MIDDLE);
+        tested.show("Task", BOX_WIDTH, BOX_HEIGHT);
+
+        verify(nameField,
+               times(1)).setTextContent(eq("Task"));
+        verify(showCommand, times(1)).execute();
+        verify(tested, times(1)).selectText(any());
+    }
+
+    @Test
     public void testShowNullName() {
         tested.setTextBoxInternalAlignment(ALIGN_MIDDLE);
         tested.show(null, BOX_WIDTH, BOX_HEIGHT);
