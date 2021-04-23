@@ -136,8 +136,15 @@ public class InlineTextEditorBoxViewImpl
         nameField.setAttribute("data-text", placeholder);
 
         setVisible();
-        scheduleDeferredCommand(() -> nameField.focus());
+        scheduleDeferredCommand(() -> {
+            nameField.focus();
+            selectText(nameField);
+        });
     }
+
+    public static native void selectText(Object node) /*-{
+        $wnd.getSelection().selectAllChildren(node);
+    }-*/;
 
     String buildStyle(final double width, final double height) {
         StringBuilder style = new StringBuilder();
