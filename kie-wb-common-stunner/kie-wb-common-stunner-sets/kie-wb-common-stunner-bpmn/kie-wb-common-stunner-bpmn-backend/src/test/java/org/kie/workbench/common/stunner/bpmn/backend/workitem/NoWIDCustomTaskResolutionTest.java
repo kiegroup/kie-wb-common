@@ -25,6 +25,7 @@ import org.junit.runner.RunWith;
 import org.kie.workbench.common.stunner.bpmn.BPMNDefinitionSet;
 import org.kie.workbench.common.stunner.bpmn.BPMNTestDefinitionFactory;
 import org.kie.workbench.common.stunner.bpmn.backend.BPMNDirectDiagramMarshaller;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.processes.DataTypeCacheServer;
 import org.kie.workbench.common.stunner.bpmn.backend.service.diagram.Unmarshalling;
 import org.kie.workbench.common.stunner.bpmn.workitem.CustomTask;
 import org.kie.workbench.common.stunner.bpmn.workitem.WorkItemDefinition;
@@ -38,6 +39,7 @@ import org.kie.workbench.common.stunner.core.diagram.Metadata;
 import org.kie.workbench.common.stunner.core.graph.Graph;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
+import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import static org.junit.Assert.assertEquals;
@@ -70,6 +72,9 @@ public class NoWIDCustomTaskResolutionTest {
     private static final String ON_ENTRY_SCRIPT = "java : System.out.Println(\"On entry!\");";
     private static final String ON_EXIT_SCRIPT = "java : System.out.Println(\"On exit!\");";
 
+    @Mock
+    private DataTypeCacheServer dataTypeCacheServer;
+
     @Before
     @SuppressWarnings("unchecked")
     public void setup() throws Exception {
@@ -98,7 +103,8 @@ public class NoWIDCustomTaskResolutionTest {
                                                  widService,
                                                  stunnerAPI.getFactoryManager(),
                                                  stunnerAPI.commandFactory,
-                                                 stunnerAPI.commandManager);
+                                                 stunnerAPI.commandManager,
+                                                 dataTypeCacheServer);
 
         diagram = Unmarshalling.unmarshall(tested, BPMN_CUSTOM_TASK);
     }
