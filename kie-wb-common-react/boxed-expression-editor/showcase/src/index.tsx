@@ -25,6 +25,7 @@ import {
   DataType,
   ExpressionContainerProps,
   ExpressionProps,
+  FunctionProps,
   InvocationProps,
   ListProps,
   LiteralExpressionProps,
@@ -50,6 +51,7 @@ export const App: React.FunctionComponent = () => {
     broadcastContextExpressionDefinition: (definition: ContextProps) => setUpdatedExpression(definition),
     broadcastListExpressionDefinition: (definition: ListProps) => setUpdatedExpression(definition),
     broadcastInvocationExpressionDefinition: (definition: InvocationProps) => setUpdatedExpression(definition),
+    broadcastFunctionExpressionDefinition: (definition: FunctionProps) => setUpdatedExpression(definition),
   };
 
   return (
@@ -59,7 +61,8 @@ export const App: React.FunctionComponent = () => {
       </div>
       <div className="updated-json">
         <p className="disclaimer">
-          ⚠ Currently, JSON gets updated only for literal expression, relation, context, list and invocation logic types
+          ⚠ Currently, JSON gets updated only for literal expression, relation, context, list, invocation and function
+          logic types
         </p>
         <pre>{JSON.stringify(updatedExpression, null, 2)}</pre>
       </div>

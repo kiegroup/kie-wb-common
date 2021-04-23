@@ -16,7 +16,7 @@
 
 import "./FunctionExpression.css";
 import * as React from "react";
-import { useCallback, useContext, useMemo, useRef, useState } from "react";
+import { useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import {
   DEFAULT_ENTRY_EXPRESSION_MIN_WIDTH,
   FunctionKind,
@@ -36,8 +36,8 @@ import * as _ from "lodash";
 import { BoxedExpressionGlobalContext } from "../../context";
 
 export const FunctionExpression: React.FunctionComponent<FunctionProps> = ({
-  children,
   dataType,
+  parametersWidth = DEFAULT_ENTRY_EXPRESSION_MIN_WIDTH,
   formalParameters,
   functionKind = FunctionKind.Feel,
   isHeadless,
@@ -51,6 +51,8 @@ export const FunctionExpression: React.FunctionComponent<FunctionProps> = ({
 
   const globalContext = useContext(BoxedExpressionGlobalContext);
 
+  const width = useRef<number>(parametersWidth);
+
   const columns = useRef<ColumnInstance[]>([
     {
       label: name,
@@ -62,7 +64,7 @@ export const FunctionExpression: React.FunctionComponent<FunctionProps> = ({
           headerCellElement: <div>Parameters list</div>, //TODO parameters retrieved from `formalParameters`
           accessor: "parameters",
           disableHandlerOnHeader: true,
-          width: DEFAULT_ENTRY_EXPRESSION_MIN_WIDTH, //TODO width as external param
+          width: width.current,
           minWidth: DEFAULT_ENTRY_EXPRESSION_MIN_WIDTH,
         },
       ],
@@ -71,6 +73,22 @@ export const FunctionExpression: React.FunctionComponent<FunctionProps> = ({
 
   const [selectedFunctionKind, setSelectedFunctionKind] = useState(functionKind);
   const [rows, setRows] = useState([{ entryExpression: { logicType: LogicType.LiteralExpression } } as DataRecord]); //TODO compose default row based on selected function kind
+
+  const spreadFunctionExpressionDefinition = useCallback(() => {
+    const [expressionColumn] = columns.current;
+
+    const updatedDefinition: FunctionProps = {
+      uid,
+      logicType,
+      name: expressionColumn.accessor,
+      dataType: expressionColumn.dataType,
+      functionKind: selectedFunctionKind,
+      ...(width.current > DEFAULT_ENTRY_EXPRESSION_MIN_WIDTH ? { parametersWidth: width.current } : {}),
+    };
+    isHeadless
+      ? onUpdatingRecursiveExpression?.(_.omit(updatedDefinition, ["name", "dataType"]))
+      : window.beeApi?.broadcastFunctionExpressionDefinition?.(updatedDefinition);
+  }, [isHeadless, logicType, onUpdatingRecursiveExpression, selectedFunctionKind, uid]);
 
   const getHeaderVisibility = useCallback(() => {
     return isHeadless ? TableHeaderVisibility.LastLevel : TableHeaderVisibility.Full;
@@ -123,6 +141,24 @@ export const FunctionExpression: React.FunctionComponent<FunctionProps> = ({
     selectedFunctionKind,
   ]);
 
+  const onColumnsUpdate = useCallback(
+    ([expressionColumn]: [ColumnInstance]) => {
+      onUpdatingNameAndDataType?.(expressionColumn.label as string, expressionColumn.dataType);
+      width.current = _.find(expressionColumn.columns, { accessor: "parameters" })?.width as number;
+      const [updatedExpressionColumn] = columns.current;
+      updatedExpressionColumn.label = expressionColumn.label;
+      updatedExpressionColumn.accessor = expressionColumn.accessor;
+      updatedExpressionColumn.dataType = expressionColumn.dataType;
+      spreadFunctionExpressionDefinition();
+    },
+    [onUpdatingNameAndDataType, spreadFunctionExpressionDefinition]
+  );
+
+  useEffect(() => {
+    /** Everytime the list of parameters or the function definition change, we need to spread expression's updated definition */
+    spreadFunctionExpressionDefinition();
+  }, [rows, spreadFunctionExpressionDefinition]);
+
   return (
     <div className={`function-expression ${uid}`}>
       <Table
@@ -133,13 +169,14 @@ export const FunctionExpression: React.FunctionComponent<FunctionProps> = ({
           },
         ]}
         columns={columns.current}
+        onColumnsUpdate={onColumnsUpdate}
         rows={rows}
         onRowsUpdate={setRows}
         headerLevels={1}
         headerVisibility={getHeaderVisibility()}
         controllerCell={renderFunctionKindCell}
         defaultCell={{ parameters: ContextEntryExpressionCell }}
-        resetRowCustomFunction={useCallback(resetEntry, [])} //TODO check that when spreading expression definition, clear action gets immediately executed
+        resetRowCustomFunction={useCallback(resetEntry, [])}
       />
     </div>
   );

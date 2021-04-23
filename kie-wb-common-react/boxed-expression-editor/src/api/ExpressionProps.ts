@@ -115,6 +115,8 @@ export type FunctionProps = ExpressionProps & {
   logicType: LogicType.Function;
   /** List of parameters passed to the function */
   formalParameters?: EntryInfo[];
+  /** Parameters column width */
+  parametersWidth?: number;
 } & (
     | {
         /** Feel Function */

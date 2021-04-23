@@ -17,6 +17,7 @@
 import {
   ContextProps,
   ExpressionProps,
+  FunctionProps,
   InvocationProps,
   ListProps,
   LiteralExpressionProps,
@@ -36,6 +37,7 @@ declare global {
       broadcastContextExpressionDefinition: (definition: ContextProps) => void;
       broadcastListExpressionDefinition: (definition: ListProps) => void;
       broadcastInvocationExpressionDefinition: (definition: InvocationProps) => void;
+      broadcastFunctionExpressionDefinition: (definition: FunctionProps) => void;
     };
   }
 }
