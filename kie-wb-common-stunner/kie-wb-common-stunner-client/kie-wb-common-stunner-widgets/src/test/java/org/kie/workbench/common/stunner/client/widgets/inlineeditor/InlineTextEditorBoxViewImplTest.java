@@ -91,6 +91,7 @@ public class InlineTextEditorBoxViewImplTest {
         this.tested.init(presenter);
         when(editNameBox.getStyle()).thenReturn(editNameBoxStyle);
         when(nameField.getStyle()).thenReturn(nameFieldStyle);
+
         doAnswer(i -> {
             ((Scheduler.ScheduledCommand) i.getArguments()[0]).execute();
             return null;

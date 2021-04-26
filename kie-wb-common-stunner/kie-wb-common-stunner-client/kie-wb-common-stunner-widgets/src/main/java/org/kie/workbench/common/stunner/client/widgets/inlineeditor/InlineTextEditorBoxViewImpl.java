@@ -145,7 +145,9 @@ public class InlineTextEditorBoxViewImpl
     }
 
     public void selectText(Div node) {
-        DomGlobal.window.getSelection().selectAllChildren(Js.cast(node));
+        if (DomGlobal.window != null) {
+            DomGlobal.window.getSelection().selectAllChildren(Js.cast(node));
+        }
     }
 
     String buildStyle(final double width, final double height) {

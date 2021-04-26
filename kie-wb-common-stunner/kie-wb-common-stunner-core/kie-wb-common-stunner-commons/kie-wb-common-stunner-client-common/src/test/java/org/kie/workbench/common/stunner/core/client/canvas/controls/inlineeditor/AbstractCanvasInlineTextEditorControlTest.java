@@ -323,7 +323,7 @@ public abstract class AbstractCanvasInlineTextEditorControlTest<C extends Abstra
 
         final TextDoubleClickHandler textDoubleClickHandler = textDoubleClickHandlerCaptor.getValue();
         textDoubleClickHandler.handle(new TextDoubleClickEvent(0, 1, SHAPE_X, SHAPE_Y));
-        verify(control).show(eq(element));
+        verify(control, times(2)).show(eq(element));
     }
 
     @Test
