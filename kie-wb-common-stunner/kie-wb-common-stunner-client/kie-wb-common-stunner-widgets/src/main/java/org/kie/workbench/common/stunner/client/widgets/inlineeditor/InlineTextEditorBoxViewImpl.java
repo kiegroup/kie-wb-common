@@ -21,6 +21,8 @@ import javax.inject.Inject;
 
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.user.client.Event;
+import elemental2.dom.DomGlobal;
+import jsinterop.base.Js;
 import org.jboss.errai.common.client.dom.Div;
 import org.jboss.errai.ui.client.local.api.IsElement;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
@@ -142,9 +144,9 @@ public class InlineTextEditorBoxViewImpl
         });
     }
 
-    public native void selectText(Object node) /*-{
-        $wnd.getSelection().selectAllChildren(node);
-    }-*/;
+    public void selectText(Div node) {
+        DomGlobal.window.getSelection().selectAllChildren(Js.cast(node));
+    }
 
     String buildStyle(final double width, final double height) {
         StringBuilder style = new StringBuilder();
