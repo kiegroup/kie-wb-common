@@ -17,6 +17,7 @@ package org.kie.workbench.common.dmn.webapp.kogito.common.client;
 
 import javax.annotation.PostConstruct;
 
+import com.ait.lienzo.client.core.config.LienzoCore;
 import org.jboss.errai.ioc.client.api.EntryPoint;
 import org.uberfire.client.views.pfly.sys.PatternFlyBootstrapper;
 
@@ -27,5 +28,6 @@ public class DMNKogitoCommonEntryPoint {
     public void init() {
         PatternFlyBootstrapper.ensureMomentIsAvailable();
         PatternFlyBootstrapper.ensureMomentTimeZoneIsAvailable();
+        LienzoCore.get().setHidpiEnabled(true);
     }
 }
