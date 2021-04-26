@@ -167,6 +167,7 @@ public abstract class AbstractCanvasInlineTextEditorControl
                                     clickHandler);
         registerHandler(shape.getUUID(),
                         clickHandler);
+
         scheduleDeferredCommand(() -> AbstractCanvasInlineTextEditorControl.this.show(element));
     }
 
