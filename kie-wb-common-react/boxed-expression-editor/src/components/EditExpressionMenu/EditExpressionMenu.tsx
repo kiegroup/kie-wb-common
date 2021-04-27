@@ -20,9 +20,8 @@ import { useCallback, useContext, useEffect, useState } from "react";
 import { PopoverMenu } from "../PopoverMenu";
 import { useBoxedExpressionEditorI18n } from "../../i18n";
 import { DataType, ExpressionProps } from "../../api";
-import { Select, SelectOption, SelectVariant } from "@patternfly/react-core";
-import * as _ from "lodash";
 import { BoxedExpressionGlobalContext } from "../../context";
+import { DataTypeSelector } from "./DataTypeSelector";
 
 export interface EditExpressionMenuProps {
   /** Optional children element to be considered for triggering the edit expression menu */
@@ -65,7 +64,6 @@ export const EditExpressionMenu: React.FunctionComponent<EditExpressionMenuProps
   dataTypeField = dataTypeField ?? i18n.dataType;
   appendTo = appendTo ?? globalContext.boxedExpressionEditorRef?.current ?? undefined;
 
-  const [dataTypeSelectOpen, setDataTypeSelectOpen] = useState(false);
   const [dataType, setDataType] = useState(selectedDataType);
   const [expressionName, setExpressionName] = useState(selectedExpressionName);
 
@@ -90,40 +88,16 @@ export const EditExpressionMenu: React.FunctionComponent<EditExpressionMenuProps
     [dataType, onExpressionUpdate]
   );
 
-  const onDataTypeSelect = useCallback(
-    (event, selection) => {
-      setDataTypeSelectOpen(false);
-      setDataType(selection);
+  const onDataTypeChange = useCallback(
+    (dataType: DataType) => {
+      setDataType(dataType);
       onExpressionUpdate({
         name: expressionName,
-        dataType: selection,
+        dataType: dataType,
       });
     },
     [expressionName, onExpressionUpdate]
   );
-
-  const getDataTypes = useCallback(() => {
-    return _.map(Object.values(DataType), (key) => (
-      <SelectOption key={key} value={key}>
-        {key}
-      </SelectOption>
-    ));
-  }, []);
-
-  const onDataTypeFilter = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      let input: RegExp;
-      try {
-        input = new RegExp(e.target.value, "i");
-      } catch (exception) {
-        return getDataTypes();
-      }
-      return e.target.value !== "" ? getDataTypes().filter((child) => input.test(child.props.value)) : getDataTypes();
-    },
-    [getDataTypes]
-  );
-
-  const onDataTypeSelectToggle = useCallback((isOpen) => setDataTypeSelectOpen(isOpen), []);
 
   return (
     <PopoverMenu
@@ -147,20 +121,7 @@ export const EditExpressionMenu: React.FunctionComponent<EditExpressionMenuProps
           </div>
           <div className="expression-data-type">
             <label>{dataTypeField}</label>
-            <Select
-              ouiaId="edit-expression-data-type"
-              variant={SelectVariant.typeahead}
-              typeAheadAriaLabel={i18n.choose}
-              onToggle={onDataTypeSelectToggle}
-              onSelect={onDataTypeSelect}
-              onFilter={onDataTypeFilter}
-              isOpen={dataTypeSelectOpen}
-              selections={dataType}
-              hasInlineFilter
-              inlineFilterPlaceholderText={i18n.choose}
-            >
-              {getDataTypes()}
-            </Select>
+            <DataTypeSelector selectedDataType={dataType} onDataTypeChange={onDataTypeChange} />
           </div>
         </div>
       }
