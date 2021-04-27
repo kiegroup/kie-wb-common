@@ -16,7 +16,7 @@
 
 import "./LiteralExpression.css";
 import * as React from "react";
-import { useCallback, useEffect, useMemo, useRef } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { DataType, ExpressionProps, LiteralExpressionProps, LogicType } from "../../api";
 import { TextArea } from "@patternfly/react-core";
 import { EditExpressionMenu, EXPRESSION_NAME } from "../EditExpressionMenu";
@@ -35,16 +35,16 @@ export const LiteralExpression: React.FunctionComponent<LiteralExpressionProps> 
   const HEADER_WIDTH = 250;
   const HEADER_HEIGHT = 40;
 
-  const expressionName = useRef<string>(name);
-  const expressionDataType = useRef<DataType>(dataType);
+  const [expressionName, setExpressionName] = useState<string>(name);
+  const [expressionDataType, setExpressionDataType] = useState<DataType>(dataType);
   const literalExpressionContent = useRef<string>(content);
   const literalExpressionWidth = useRef<number>(width || HEADER_WIDTH);
 
   const spreadLiteralExpressionDefinition = useCallback(() => {
     const expressionDefinition: LiteralExpressionProps = {
       uid,
-      name: expressionName.current,
-      dataType: expressionDataType.current,
+      name: expressionName,
+      dataType: expressionDataType,
       logicType: LogicType.LiteralExpression,
       content: literalExpressionContent.current,
       ...(!isHeadless && literalExpressionWidth.current !== HEADER_WIDTH
@@ -54,12 +54,12 @@ export const LiteralExpression: React.FunctionComponent<LiteralExpressionProps> 
     isHeadless
       ? onUpdatingRecursiveExpression?.(expressionDefinition)
       : window.beeApi?.broadcastLiteralExpressionDefinition?.(expressionDefinition);
-  }, [isHeadless, onUpdatingRecursiveExpression, uid]);
+  }, [expressionDataType, expressionName, isHeadless, onUpdatingRecursiveExpression, uid]);
 
   const onExpressionUpdate = useCallback(
     ({ dataType = DataType.Undefined, name = EXPRESSION_NAME }: ExpressionProps) => {
-      expressionName.current = name;
-      expressionDataType.current = dataType;
+      setExpressionName(name);
+      setExpressionDataType(dataType);
       onUpdatingNameAndDataType?.(name, dataType);
       spreadLiteralExpressionDefinition();
     },
@@ -102,19 +102,19 @@ export const LiteralExpression: React.FunctionComponent<LiteralExpressionProps> 
       <div className="literal-expression-header">
         {renderElementWithResizeHandler(
           <EditExpressionMenu
-            selectedExpressionName={expressionName.current}
-            selectedDataType={expressionDataType.current}
+            selectedExpressionName={expressionName}
+            selectedDataType={expressionDataType}
             onExpressionUpdate={onExpressionUpdate}
           >
             <div className="expression-info">
-              <p className="expression-name pf-u-text-truncate">{expressionName.current}</p>
-              <p className="expression-data-type pf-u-text-truncate">({expressionDataType.current})</p>
+              <p className="expression-name pf-u-text-truncate">{expressionName}</p>
+              <p className="expression-data-type pf-u-text-truncate">({expressionDataType})</p>
             </div>
           </EditExpressionMenu>
         )}
       </div>
     );
-  }, [onExpressionUpdate, renderElementWithResizeHandler]);
+  }, [expressionDataType, expressionName, onExpressionUpdate, renderElementWithResizeHandler]);
 
   const getBodyContent = useMemo(
     () => (
