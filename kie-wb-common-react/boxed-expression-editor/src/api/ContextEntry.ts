@@ -63,7 +63,7 @@ export const generateNextAvailableEntryName = (
   namePrefix: string,
   lastIndex: number = entryInfos.length
 ): string => {
-  const candidateName = `${namePrefix}-${lastIndex}`;
+  const candidateName = `${namePrefix}-${lastIndex === 0 ? 1 : lastIndex}`;
   const entryWithCandidateName = _.find(entryInfos, { name: candidateName });
   return entryWithCandidateName ? generateNextAvailableEntryName(entryInfos, namePrefix, lastIndex + 1) : candidateName;
 };
