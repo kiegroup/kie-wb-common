@@ -19,10 +19,12 @@ import * as React from "react";
 import { useCallback, useEffect, useState } from "react";
 import {
   ContextEntries,
+  ContextEntryRecord,
   ContextProps,
   DataType,
   DEFAULT_ENTRY_EXPRESSION_MIN_WIDTH,
   DEFAULT_ENTRY_INFO_MIN_WIDTH,
+  EntryInfo,
   ExpressionProps,
   generateNextAvailableEntryName,
   getEntryKey,
@@ -118,7 +120,10 @@ export const ContextExpression: React.FunctionComponent<ContextProps> = ({
   const onRowAdding = useCallback(
     () => ({
       entryInfo: {
-        name: generateNextAvailableEntryName(rows as ContextEntries, "ContextEntry"),
+        name: generateNextAvailableEntryName(
+          _.map(rows, (row: ContextEntryRecord) => row.entryInfo) as EntryInfo[],
+          "ContextEntry"
+        ),
         dataType: DataType.Undefined,
       },
       entryExpression: {},
