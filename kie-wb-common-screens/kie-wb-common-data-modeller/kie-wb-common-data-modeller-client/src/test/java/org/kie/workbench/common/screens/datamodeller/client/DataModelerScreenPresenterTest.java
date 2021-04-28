@@ -51,6 +51,7 @@ import org.uberfire.workbench.model.menu.MenuItem;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.mockito.ArgumentMatchers.anyObject;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.any;
@@ -77,7 +78,7 @@ public class DataModelerScreenPresenterTest
     private ArgumentCaptor<Command> yesCommandCaptor;
     private ArgumentCaptor<Command> noCommandCaptor;
     private ArgumentCaptor<ParameterizedCommand> parameterizedCommandCaptor;
-    
+
     @Mock
     private FileNameAndCommitMessage commitMessage;
 
@@ -137,6 +138,7 @@ public class DataModelerScreenPresenterTest
 
     /**
      * Tests that a java file without parse errors was successfully loaded.
+     *
      * @param loadTypesInfo indicates if the types and annotations definitions loading should be simulated.
      */
     private void loadFileSuccessfulTest(boolean loadTypesInfo) {
@@ -242,6 +244,7 @@ public class DataModelerScreenPresenterTest
 
     /**
      * Tests that a java file with parse errors was successfully loaded.
+     *
      * @param loadTypesInfo indicates if the types and annotations definitions loading should be simulated.
      */
     private void loadFileUnSuccessfulTest(boolean loadTypesInfo) {
@@ -444,7 +447,7 @@ public class DataModelerScreenPresenterTest
                                           Mockito.<String>any(),
                                           eq(ButtonType.DANGER));
     }
-    
+
     @Test
     public void testSaveSuccessCallbackWithPathChange() {
         final String commitMessage = "testCommitMessage";
@@ -483,7 +486,7 @@ public class DataModelerScreenPresenterTest
                 .fire(Mockito.<DataModelStatusChangeEvent>any());
         verify(versionRecordManager).reloadVersions(Mockito.<Path>any());
     }
-    
+
     @Test
     public void testSaveSuccessCallbackRejectingPathChange() {
         final String commitMessage = "testCommitMessage";
@@ -520,7 +523,7 @@ public class DataModelerScreenPresenterTest
                 .fire(Mockito.<DataModelStatusChangeEvent>any());
         verify(versionRecordManager).reloadVersions(Mockito.<Path>any());
     }
-    
+
     private GenerationResult setupSave() {
         presenter.context = mock(DataModelerContext.class);
 
@@ -535,14 +538,14 @@ public class DataModelerScreenPresenterTest
         final ObservablePath mockPath = mock(ObservablePath.class);
         when(versionRecordManager.getPathToLatest()).thenReturn(mockPath);
         when(mockPath.getFileName()).thenReturn("testCurrentFile.java");
-        
+
         final GenerationResult result = mock(GenerationResult.class);
         when(result.hasErrors()).thenReturn(false);
-        
+
         when(presenter.getSource()).thenReturn("testSource");
         return result;
     }
-    
+
     @Test
     public void onSafeDeleteWithOriginalClassName() {
         loadFileSuccessfulTest(false);
@@ -856,6 +859,18 @@ public class DataModelerScreenPresenterTest
 
         verify(docks).hide();
         verify(dataModelerFocusEvent).fire(any());
+    }
+
+    @Test
+    public void testGetModifiedDataObject() {
+        presenter.context = mock(DataModelerContext.class);
+        when(presenter.context.getDataObject()).thenReturn(testObject1);
+
+        when(presenter.context.isEditorChanged()).thenReturn(false);
+        assertNull(presenter.getModifiedDataObject());
+
+        when(presenter.context.isEditorChanged()).thenReturn(true);
+        assertEquals(testObject1, presenter.getModifiedDataObject());
     }
 
     @Test
