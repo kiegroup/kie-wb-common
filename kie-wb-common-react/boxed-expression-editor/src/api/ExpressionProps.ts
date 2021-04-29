@@ -21,7 +21,7 @@ import { ContextEntries, EntryInfo } from "./ContextEntry";
 import { HitPolicy } from "./HitPolicy";
 import { BuiltinAggregation } from "./BuiltinAggregation";
 import { Clause, DecisionTableRule } from "./DecisionTableRule";
-import { FunctionKind } from "./FunctionKind";
+import { FeelFunctionProps, JavaFunctionProps, PmmlFunctionProps } from "./FunctionKind";
 
 export interface ExpressionProps {
   /** Unique identifier used to identify the expression */
@@ -117,27 +117,4 @@ export type FunctionProps = ExpressionProps & {
   formalParameters?: EntryInfo[];
   /** Parameters column width */
   parametersWidth?: number;
-} & (
-    | {
-        /** Feel Function */
-        functionKind: FunctionKind.Feel;
-        /** The Expression related to the function */
-        expression?: ExpressionProps;
-      }
-    | {
-        /** Java Function */
-        functionKind: FunctionKind.Java;
-        /** Java class */
-        class?: string;
-        /** Method signature */
-        method?: string;
-      }
-    | {
-        /** Pmml Function */
-        functionKind: FunctionKind.Pmml;
-        /** PMML document */
-        document?: string;
-        /** PMML model */
-        model?: string;
-      }
-  );
+} & (FeelFunctionProps | JavaFunctionProps | PmmlFunctionProps);

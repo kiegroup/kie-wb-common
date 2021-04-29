@@ -14,8 +14,35 @@
  * limitations under the License.
  */
 
+import { ExpressionProps } from "./ExpressionProps";
+
 export enum FunctionKind {
   Feel = "FEEL",
   Java = "JAVA",
   Pmml = "PMML",
+}
+
+export interface FeelFunctionProps {
+  /** Feel Function */
+  functionKind: FunctionKind.Feel;
+  /** The Expression related to the function */
+  expression?: ExpressionProps;
+}
+
+export interface JavaFunctionProps {
+  /** Java Function */
+  functionKind: FunctionKind.Java;
+  /** Java class */
+  class?: string;
+  /** Method signature */
+  method?: string;
+}
+
+export interface PmmlFunctionProps {
+  /** Pmml Function */
+  functionKind: FunctionKind.Pmml;
+  /** PMML document */
+  document?: string;
+  /** PMML model */
+  model?: string;
 }
