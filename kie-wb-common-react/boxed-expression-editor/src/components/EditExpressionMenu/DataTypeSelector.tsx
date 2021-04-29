@@ -26,11 +26,14 @@ export interface DataTypeSelectorProps {
   selectedDataType: DataType;
   /** On DataType selection callback */
   onDataTypeChange: (dataType: DataType) => void;
+  /** By default the menu will be appended inline, but it is possible to append on the parent or on other elements */
+  menuAppendTo?: HTMLElement | "inline" | (() => HTMLElement) | "parent";
 }
 
 export const DataTypeSelector: React.FunctionComponent<DataTypeSelectorProps> = ({
   selectedDataType,
   onDataTypeChange,
+  menuAppendTo,
 }) => {
   const { i18n } = useBoxedExpressionEditorI18n();
 
@@ -69,6 +72,7 @@ export const DataTypeSelector: React.FunctionComponent<DataTypeSelectorProps> = 
 
   return (
     <Select
+      menuAppendTo={menuAppendTo}
       ouiaId="edit-expression-data-type"
       variant={SelectVariant.typeahead}
       typeAheadAriaLabel={i18n.choose}
