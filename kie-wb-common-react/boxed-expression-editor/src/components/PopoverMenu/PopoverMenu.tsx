@@ -33,6 +33,8 @@ export interface PopoverMenuProps {
   className?: string;
   /** True to have width automatically computed */
   hasAutoWidth?: boolean;
+  /** Popover min width */
+  minWidth?: string;
 }
 
 export const PopoverMenu: React.FunctionComponent<PopoverMenuProps> = ({
@@ -43,12 +45,14 @@ export const PopoverMenu: React.FunctionComponent<PopoverMenuProps> = ({
   appendTo,
   className,
   hasAutoWidth,
+  minWidth,
 }: PopoverMenuProps) => {
   return (
     <Popover
       data-ouia-component-id="expression-popover-menu"
       className={`popover-menu-selector${className ? " " + className : ""}`}
       hasAutoWidth={hasAutoWidth}
+      minWidth={minWidth}
       position="bottom"
       distance={0}
       id="menu-selector"
