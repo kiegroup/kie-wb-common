@@ -118,6 +118,12 @@ export const Table: React.FunctionComponent<TableProps> = ({
     setCurrentControllerCell(controllerCell);
   }, [controllerCell, generateNumberOfRowsColumn]);
 
+  useEffect(() => {
+    tableColumns.current = generateNumberOfRowsColumn(currentControllerCell, columns);
+    // Watching for external changes of the columns
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [columns]);
+
   const onColumnsUpdateCallback = useCallback(
     (columns: Column[]) => {
       tableColumns.current = columns;
