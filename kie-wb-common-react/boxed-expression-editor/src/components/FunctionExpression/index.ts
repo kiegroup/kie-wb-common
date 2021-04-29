@@ -15,3 +15,4 @@
  */
 
 export * from "./FunctionExpression";
+export * from "./FunctionKindSelector";
