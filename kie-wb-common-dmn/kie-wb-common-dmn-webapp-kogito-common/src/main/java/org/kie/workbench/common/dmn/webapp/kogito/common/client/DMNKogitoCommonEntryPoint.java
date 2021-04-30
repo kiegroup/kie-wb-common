@@ -28,6 +28,11 @@ public class DMNKogitoCommonEntryPoint {
     public void init() {
         PatternFlyBootstrapper.ensureMomentIsAvailable();
         PatternFlyBootstrapper.ensureMomentTimeZoneIsAvailable();
+        initializeLienzoCore();
+    }
+
+    void initializeLienzoCore() {
+        // This method must be removed by https://issues.redhat.com/browse/KOGITO-5006.
         LienzoCore.get().setHidpiEnabled(true);
     }
 }
