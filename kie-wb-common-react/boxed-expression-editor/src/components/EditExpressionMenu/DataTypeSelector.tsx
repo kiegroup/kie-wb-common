@@ -49,7 +49,7 @@ export const DataTypeSelector: React.FunctionComponent<DataTypeSelectorProps> = 
 
   const getDataTypes = useCallback(() => {
     return _.map(Object.values(DataType), (key) => (
-      <SelectOption key={key} value={key}>
+      <SelectOption key={key} value={key} data-ouia-component-id={key}>
         {key}
       </SelectOption>
     ));
