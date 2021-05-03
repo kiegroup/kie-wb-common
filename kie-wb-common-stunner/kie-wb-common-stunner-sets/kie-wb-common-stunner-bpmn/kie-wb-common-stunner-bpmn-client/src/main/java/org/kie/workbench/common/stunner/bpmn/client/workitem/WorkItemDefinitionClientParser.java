@@ -45,13 +45,6 @@ public class WorkItemDefinitionClientParser {
     private static final String DEFAULT_HANDLER = "defaultHandler";
     private static final String DESCRIPTION = "description";
 
-    // KOGITO-4372. Properties supported by the engine but not supported by Designer    .
-    private static final String CUSTOM_EDITOR = "customEditor";
-    private static final String PARAMETER_VALUES = "parameterValues";
-    private static final String DEPENDENCIES = "dependencies";
-    private static final String VERSION = "version";
-    private static final String MAVEN_DEPENDENCIES = "mavenDependencies";
-
     private static final String ICON_PREFIX = "data:image";
     private static final String NEW = "new";
 

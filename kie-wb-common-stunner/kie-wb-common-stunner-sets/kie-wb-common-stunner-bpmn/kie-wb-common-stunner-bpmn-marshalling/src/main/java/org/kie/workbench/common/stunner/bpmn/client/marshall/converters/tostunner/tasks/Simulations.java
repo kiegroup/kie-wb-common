@@ -58,7 +58,6 @@ public class Simulations {
             simulationSet.getMean().setValue(pdt.getMean());
             simulationSet.getDistributionType().setValue("poisson");
         } else {
-            // TODO: Kogito
             throw new UnsupportedOperationException(paramValue.getClass().toString());
         }
 

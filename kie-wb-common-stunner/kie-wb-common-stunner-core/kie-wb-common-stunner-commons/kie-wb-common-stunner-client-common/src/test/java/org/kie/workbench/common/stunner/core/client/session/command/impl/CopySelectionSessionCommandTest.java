@@ -230,6 +230,6 @@ public class CopySelectionSessionCommandTest extends BaseSessionCommandKeyboardS
 
     @Override
     protected int getExpectedKeyBoardControlRegistrationCalls() {
-        return 2;
+        return 1;
     }
 }

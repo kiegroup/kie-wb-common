@@ -24,7 +24,7 @@ import org.kie.workbench.common.command.client.Command;
 /**
  * This bean provides two Registries which can be used to manage the Undo/Redo functionality for an editor
  * Registry doneCommands contains executed commands by the user, while undoneCommand registry holds the undo commands
- * by the user, which can be redo. Used registries are compatible with Kogito and StateControlAPI.
+ * by the user, which can be redo.
  * @param <C>
  */
 public abstract class AbstractCommandRegistryManager<C extends Command> {

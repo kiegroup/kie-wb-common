@@ -26,7 +26,6 @@ import javax.inject.Inject;
 import org.kie.workbench.common.stunner.core.client.api.SessionManager;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.ClipboardControl;
-import org.kie.workbench.common.stunner.core.client.canvas.controls.keyboard.KeyboardControl.KogitoKeyPress;
 import org.kie.workbench.common.stunner.core.client.canvas.event.registration.CanvasElementsClearEvent;
 import org.kie.workbench.common.stunner.core.client.canvas.event.selection.CanvasClearSelectionEvent;
 import org.kie.workbench.common.stunner.core.client.canvas.event.selection.CanvasSelectionEvent;
@@ -38,7 +37,6 @@ import org.kie.workbench.common.stunner.core.command.Command;
 
 import static org.kie.workbench.common.stunner.core.client.canvas.controls.keyboard.KeysMatcher.doKeysMatch;
 import static org.kie.workbench.common.stunner.core.client.event.keyboard.KeyboardEvent.Key.CONTROL;
-import static org.kie.workbench.common.stunner.core.client.event.keyboard.KeyboardEvent.Key.X;
 
 /**
  * This session command copy to the clipboard using {@link CopySelectionSessionCommand} selected elements and delete them using the {@link DeleteSelectionSessionCommand}. *
@@ -69,11 +67,6 @@ public class CutSelectionSessionCommand extends AbstractSelectionAwareSessionCom
 
     @Override
     public void bind(final EditorSession session) {
-        session.getKeyboardControl().addKeyShortcutCallback(new KogitoKeyPress(new Key[]{CONTROL, X}, "Edit | Cut selection", () -> {
-            if (isEnabled()) {
-                execute();
-            }
-        }));
         session.getKeyboardControl().addKeyShortcutCallback(this::onKeyDownEvent);
 
         super.bind(session);

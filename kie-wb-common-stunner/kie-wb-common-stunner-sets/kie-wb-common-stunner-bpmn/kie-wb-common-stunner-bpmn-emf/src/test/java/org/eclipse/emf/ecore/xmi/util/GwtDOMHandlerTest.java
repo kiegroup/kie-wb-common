@@ -131,10 +131,6 @@ public class GwtDOMHandlerTest {
         verify(document, times(1)).createProcessingInstruction(eq("target"), eq("data"));
     }
 
-    // TODO: Kogito - @Test
-    public void testCreateElementNS() {
-    }
-
     @Test
     public void testGwtDOMAttr() {
         String namespaceURI = "uri1";

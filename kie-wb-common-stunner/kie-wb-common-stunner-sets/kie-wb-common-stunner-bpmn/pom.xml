@@ -40,7 +40,6 @@
     <module>kie-wb-common-stunner-bpmn-project-client</module>
     <module>kie-wb-common-stunner-bpmn-project-backend</module>
     <module>kie-wb-common-stunner-bpmn-project-showcase</module>
-    <module>kie-wb-common-stunner-bpmn-kogito-runtime</module>
   </modules>
 
 </project>

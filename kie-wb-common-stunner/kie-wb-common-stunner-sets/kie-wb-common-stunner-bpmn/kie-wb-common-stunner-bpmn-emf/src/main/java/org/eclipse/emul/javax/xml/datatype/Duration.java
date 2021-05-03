@@ -18,12 +18,8 @@ package javax.xml.datatype;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.Date;
 
 import javax.xml.namespace.QName;
-
-// import java.util.Calendar;
-// import java.util.GregorianCalendar;
 
 public abstract class Duration {
 
@@ -240,83 +236,6 @@ public abstract class Duration {
     }
 
     /**
-     * <p>Returns the length of the duration in milli-seconds.</p>
-     *
-     * <p>If the seconds field carries more digits than milli-second order,
-     * those will be simply discarded (or in other words, rounded to zero.)
-     * For example, for any Calendar value <code>x</code>,</p>
-     * <pre>
-     * <code>new Duration("PT10.00099S").getTimeInMills(x) == 10000</code>.
-     * <code>new Duration("-PT10.00099S").getTimeInMills(x) == -10000</code>.
-     * </pre>
-     *
-     * <p>
-     * Note that this method uses the {@link #addTo(Calendar)} method,
-     * which may work incorrectly with <code>Duration</code> objects with
-     * very large values in its fields. See the {@link #addTo(Calendar)}
-     * method for details.
-     *
-     * @param startInstant
-     *      The length of a month/year varies. The <code>startInstant</code> is
-     *      used to disambiguate this variance. Specifically, this method
-     *      returns the difference between <code>startInstant</code> and
-     *      <code>startInstant+duration</code>
-     *
-     * @return milliseconds between <code>startInstant</code> and
-     *   <code>startInstant</code> plus this <code>Duration</code>
-     *
-     * @throws NullPointerException if <code>startInstant</code> parameter
-     * is null.
-     *
-     */
-    // TODO: Kogito
-    /*public long getTimeInMillis(final Calendar startInstant) {
-        Calendar cal = (Calendar) startInstant.clone();
-        addTo(cal);
-        return getCalendarTimeInMillis(cal)
-                - getCalendarTimeInMillis(startInstant);
-    }*/
-
-    /**
-     * <p>Returns the length of the duration in milli-seconds.</p>
-     *
-     * <p>If the seconds field carries more digits than milli-second order,
-     * those will be simply discarded (or in other words, rounded to zero.)
-     * For example, for any <code>Date</code> value <code>x</code>,</p>
-     * <pre>
-     * <code>new Duration("PT10.00099S").getTimeInMills(x) == 10000</code>.
-     * <code>new Duration("-PT10.00099S").getTimeInMills(x) == -10000</code>.
-     * </pre>
-     *
-     * <p>
-     * Note that this method uses the {@link #addTo(Date)} method,
-     * which may work incorrectly with <code>Duration</code> objects with
-     * very large values in its fields. See the {@link #addTo(Date)}
-     * method for details.
-     *
-     * @param startInstant
-     *      The length of a month/year varies. The <code>startInstant</code> is
-     *      used to disambiguate this variance. Specifically, this method
-     *      returns the difference between <code>startInstant</code> and
-     *      <code>startInstant+duration</code>.
-     *
-     * @throws NullPointerException
-     *      If the startInstant parameter is null.
-     *
-     * @return milliseconds between <code>startInstant</code> and
-     *   <code>startInstant</code> plus this <code>Duration</code>
-     *
-     * @see #getTimeInMillis(Calendar)
-     */
-    // TODO: Kogito
-    /*public long getTimeInMillis(final Date startInstant) {
-        Calendar cal = new GregorianCalendar();
-        cal.setTime(startInstant);
-        this.addTo(cal);
-        return getCalendarTimeInMillis(cal) - startInstant.getTime();
-    }*/
-
-    /**
      * Gets the value of a field.
      * <p>
      * Fields of a duration object may contain arbitrary large value.
@@ -392,87 +311,6 @@ public abstract class Duration {
      * @see #subtract(Duration)
      */
     public abstract Duration add(final Duration rhs);
-
-    /**
-     * Adds this duration to a {@link Calendar} object.
-     *
-     * <p>
-     * Calls {@link java.util.Calendar#add(int, int)} in the
-     * order of YEARS, MONTHS, DAYS, HOURS, MINUTES, SECONDS, and MILLISECONDS
-     * if those fields are present. Because the {@link Calendar} class
-     * uses int to hold values, there are cases where this method
-     * won't work correctly (for example if values of fields
-     * exceed the range of int.)
-     * </p>
-     *
-     * <p>
-     * Also, since this duration class is a Gregorian duration, this
-     * method will not work correctly if the given {@link Calendar}
-     * object is based on some other calendar systems.
-     * </p>
-     *
-     * <p>
-     * Any fractional parts of this <code>Duration</code> object
-     * beyond milliseconds will be simply ignored. For example, if
-     * this duration is "P1.23456S", then 1 is added to SECONDS,
-     * 234 is added to MILLISECONDS, and the rest will be unused.
-     * </p>
-     *
-     * <p>
-     * Note that because {@link Calendar#add(int, int)} is using
-     * <code>int</code>, <code>Duration</code> with values beyond the
-     * range of <code>int</code> in its fields
-     * will cause overflow/underflow to the given {@link Calendar}.
-     * {@link XMLGregorianCalendar#add(Duration)} provides the same
-     * basic operation as this method while avoiding
-     * the overflow/underflow issues.
-     *
-     * @param calendar
-     *      A calendar object whose value will be modified.
-     * @throws NullPointerException
-     *      if the calendar parameter is null.
-     */
-    // TODO: Kogito
-    /*public abstract void addTo(Calendar calendar);*/
-
-    /**
-     * Adds this duration to a {@link Date} object.
-     *
-     * <p>
-     * The given date is first converted into
-     * a {@link java.util.GregorianCalendar}, then the duration
-     * is added exactly like the {@link #addTo(Calendar)} method.
-     *
-     * <p>
-     * The updated time instant is then converted back into a
-     * {@link Date} object and used to update the given {@link Date} object.
-     *
-     * <p>
-     * This somewhat redundant computation is necessary to unambiguously
-     * determine the duration of months and years.
-     *
-     * @param date
-     *      A date object whose value will be modified.
-     * @throws NullPointerException
-     *      if the date parameter is null.
-     */
-    // TODO: Kogito
-    /*public void addTo(Date date) {
-
-        // check data parameter
-        if (date == null) {
-            throw new NullPointerException(
-                    "Cannot call "
-                            + this.getClass().getName()
-                            + "#addTo(Date date) with date == null."
-            );
-        }
-
-        Calendar cal = new GregorianCalendar();
-        cal.setTime(date);
-        this.addTo(cal);
-        date.setTime(getCalendarTimeInMillis(cal));
-    }*/
 
     /**
      * <p>Computes a new duration whose value is <code>this-rhs</code>.</p>
@@ -591,39 +429,6 @@ public abstract class Duration {
      * @return always return a non-null valid <code>Duration</code> object.
      */
     public abstract Duration negate();
-
-    /**
-     * <p>Converts the years and months fields into the days field
-     * by using a specific time instant as the reference point.</p>
-     *
-     * <p>For example, duration of one month normalizes to 31 days
-     * given the start time instance "July 8th 2003, 17:40:32".</p>
-     *
-     * <p>Formally, the computation is done as follows:</p>
-     * <ol>
-     *  <li>the given Calendar object is cloned</li>
-     *  <li>the years, months and days fields will be added to the {@link Calendar} object
-     *      by using the {@link Calendar#add(int, int)} method</li>
-     *  <li>the difference between the two Calendars in computed in milliseconds and converted to days,
-     *     if a remainder occurs due to Daylight Savings Time, it is discarded</li>
-     *  <li>the computed days, along with the hours, minutes and seconds
-     *      fields of this duration object is used to construct a new
-     *      Duration object.</li>
-     * </ol>
-     *
-     * <p>Note that since the Calendar class uses <code>int</code> to
-     * hold the value of year and month, this method may produce
-     * an unexpected result if this duration object holds
-     * a very large value in the years or months fields.</p>
-     *
-     * @param startTimeInstant <code>Calendar</code> reference point.
-     *
-     * @return <code>Duration</code> of years and months of this <code>Duration</code> as days.
-     *
-     * @throws NullPointerException If the startTimeInstant parameter is null.
-     */
-    // TODO: Kogito
-    /*public abstract Duration normalizeWith(final Calendar startTimeInstant);*/
 
     /**
      * <p>Partial order relation comparison with this <code>Duration</code> instance.</p>
@@ -833,20 +638,4 @@ public abstract class Duration {
         }
         return buf.toString();
     }
-
-    /**
-     * <p>Calls the {@link Calendar#getTimeInMillis} method.
-     * Prior to JDK1.4, this method was protected and therefore
-     * cannot be invoked directly.</p>
-     *
-     * <p>TODO: In future, this should be replaced by <code>cal.getTimeInMillis()</code>.</p>
-     *
-     * @param cal <code>Calendar</code> to get time in milliseconds.
-     *
-     * @return Milliseconds of <code>cal</code>.
-     */
-    // TODO: Kogito
-    /*private static long getCalendarTimeInMillis(final Calendar cal) {
-        return cal.getTime().getTime();
-    }*/
 }
