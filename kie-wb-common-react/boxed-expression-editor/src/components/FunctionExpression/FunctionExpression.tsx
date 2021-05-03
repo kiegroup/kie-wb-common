@@ -16,9 +16,11 @@
 
 import "./FunctionExpression.css";
 import * as React from "react";
-import { useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
+import { PropsWithChildren, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import {
   DEFAULT_ENTRY_EXPRESSION_MIN_WIDTH,
+  ExpressionProps,
+  FeelFunctionProps,
   FunctionKind,
   FunctionProps,
   LogicType,
@@ -31,119 +33,141 @@ import { ColumnInstance, DataRecord } from "react-table";
 import { ContextEntryExpressionCell } from "../ContextExpression";
 import { useBoxedExpressionEditorI18n } from "../../i18n";
 import { PopoverMenu } from "../PopoverMenu";
-import { Menu, MenuItem, MenuList } from "@patternfly/react-core";
 import * as _ from "lodash";
 import { BoxedExpressionGlobalContext } from "../../context";
+import { FunctionKindSelector } from "./FunctionKindSelector";
+import { EditParameters } from "./EditParameters";
 
-export const FunctionExpression: React.FunctionComponent<FunctionProps> = ({
-  dataType,
-  parametersWidth = DEFAULT_ENTRY_EXPRESSION_MIN_WIDTH,
-  formalParameters,
-  functionKind = FunctionKind.Feel,
-  isHeadless,
-  logicType,
-  name = "p-1",
-  onUpdatingNameAndDataType,
-  onUpdatingRecursiveExpression,
-  uid,
-}) => {
+export const DEFAULT_FIRST_PARAM_NAME = "p-1";
+
+export const FunctionExpression: React.FunctionComponent<FunctionProps> = (props: PropsWithChildren<FunctionProps>) => {
+  const parametersWidth =
+    props.parametersWidth === undefined ? DEFAULT_ENTRY_EXPRESSION_MIN_WIDTH : props.parametersWidth;
+  const formalParameters = props.formalParameters === undefined ? [] : props.formalParameters;
+  const functionKind = props.functionKind === undefined ? FunctionKind.Feel : props.functionKind;
+  const name = props.name === undefined ? DEFAULT_FIRST_PARAM_NAME : props.name;
+
   const { i18n } = useBoxedExpressionEditorI18n();
 
   const globalContext = useContext(BoxedExpressionGlobalContext);
 
-  const width = useRef<number>(parametersWidth);
+  const [parameters, setParameters] = useState(formalParameters);
 
-  const columns = useRef<ColumnInstance[]>([
-    {
-      label: name,
-      accessor: name,
-      dataType,
-      disableHandlerOnHeader: true,
-      columns: [
+  const headerCellElement = useMemo(
+    () => (
+      <PopoverMenu
+        title={i18n.editParameters}
+        appendTo={globalContext.boxedExpressionEditorRef?.current ?? undefined}
+        className="parameters-editor-popover"
+        minWidth="400px"
+        body={<EditParameters parameters={parameters} setParameters={setParameters} />}
+      >
+        <div className={`parameters-list ${_.isEmpty(parameters) ? "empty-parameters" : ""}`}>
+          <p className="pf-u-text-truncate">
+            {_.isEmpty(parameters)
+              ? i18n.editParameters
+              : `(${_.join(
+                  _.map(parameters, (parameter) => parameter.name),
+                  ", "
+                )})`}
+          </p>
+        </div>
+      </PopoverMenu>
+    ),
+    [globalContext.boxedExpressionEditorRef, i18n.editParameters, parameters]
+  );
+
+  const evaluateColumns = useCallback(
+    () =>
+      [
         {
-          headerCellElement: <div>Parameters list</div>, //TODO parameters retrieved from `formalParameters`
-          accessor: "parameters",
+          label: name,
+          accessor: name,
+          dataType: props.dataType,
           disableHandlerOnHeader: true,
-          width: width.current,
-          minWidth: DEFAULT_ENTRY_EXPRESSION_MIN_WIDTH,
+          columns: [
+            {
+              headerCellElement,
+              accessor: "parameters",
+              disableHandlerOnHeader: true,
+              width: width.current,
+              minWidth: DEFAULT_ENTRY_EXPRESSION_MIN_WIDTH,
+            },
+          ],
         },
-      ],
-    },
-  ] as ColumnInstance[]);
+      ] as ColumnInstance[],
+    [props.dataType, headerCellElement, name]
+  );
 
+  const evaluateRows = useCallback(
+    (functionKind: FunctionKind) => {
+      //TODO for first task, only FEEL (default) is available
+      switch (functionKind) {
+        case FunctionKind.Java:
+        case FunctionKind.Pmml:
+        case FunctionKind.Feel:
+        default: {
+          const feelProps: PropsWithChildren<FeelFunctionProps> = props as PropsWithChildren<FeelFunctionProps>;
+          return [
+            { entryExpression: feelProps.expression || { logicType: LogicType.LiteralExpression } } as DataRecord,
+          ];
+        }
+      }
+    },
+    [props]
+  );
+
+  const width = useRef<number>(parametersWidth);
+  const columns = useRef(evaluateColumns());
   const [selectedFunctionKind, setSelectedFunctionKind] = useState(functionKind);
-  const [rows, setRows] = useState([{ entryExpression: { logicType: LogicType.LiteralExpression } } as DataRecord]); //TODO compose default row based on selected function kind
+  const [rows, setRows] = useState(evaluateRows(selectedFunctionKind));
+
+  const extendDefinitionBasedOnFunctionKind = useCallback(
+    (definition: FunctionProps, functionKind: FunctionKind) => {
+      //TODO for first task, only FEEL (default) is available
+      switch (functionKind) {
+        case FunctionKind.Java:
+        case FunctionKind.Pmml:
+        case FunctionKind.Feel:
+        default: {
+          return _.extend(definition, { expression: _.first(rows)?.entryExpression as ExpressionProps });
+        }
+      }
+    },
+    [rows]
+  );
 
   const spreadFunctionExpressionDefinition = useCallback(() => {
     const [expressionColumn] = columns.current;
 
-    const updatedDefinition: FunctionProps = {
-      uid,
-      logicType,
-      name: expressionColumn.accessor,
-      dataType: expressionColumn.dataType,
-      functionKind: selectedFunctionKind,
-      ...(width.current > DEFAULT_ENTRY_EXPRESSION_MIN_WIDTH ? { parametersWidth: width.current } : {}),
-    };
-    isHeadless
-      ? onUpdatingRecursiveExpression?.(_.omit(updatedDefinition, ["name", "dataType"]))
+    const updatedDefinition: FunctionProps = extendDefinitionBasedOnFunctionKind(
+      {
+        uid: props.uid,
+        logicType: props.logicType,
+        name: expressionColumn.accessor,
+        dataType: expressionColumn.dataType,
+        functionKind: selectedFunctionKind,
+        formalParameters: parameters,
+        ...(width.current > DEFAULT_ENTRY_EXPRESSION_MIN_WIDTH ? { parametersWidth: width.current } : {}),
+      },
+      selectedFunctionKind
+    );
+    props.isHeadless
+      ? props.onUpdatingRecursiveExpression?.(_.omit(updatedDefinition, ["name", "dataType"]))
       : window.beeApi?.broadcastFunctionExpressionDefinition?.(updatedDefinition);
-  }, [isHeadless, logicType, onUpdatingRecursiveExpression, selectedFunctionKind, uid]);
+  }, [extendDefinitionBasedOnFunctionKind, parameters, props, selectedFunctionKind]);
 
   const getHeaderVisibility = useCallback(() => {
-    return isHeadless ? TableHeaderVisibility.LastLevel : TableHeaderVisibility.Full;
-  }, [isHeadless]);
+    return props.isHeadless ? TableHeaderVisibility.LastLevel : TableHeaderVisibility.Full;
+  }, [props.isHeadless]);
 
-  const onFunctionKindSelect = useCallback((event: MouseEvent, itemId: string) => {
+  const onFunctionKindSelect = useCallback((itemId: string) => {
     setSelectedFunctionKind(itemId as FunctionKind);
-    //TODO for first task, only FEEL (default) is available
   }, []);
-
-  const functionKindSelectionCallback = useCallback(
-    (hide: () => void) => (event: MouseEvent, itemId: string) => {
-      onFunctionKindSelect(event, itemId);
-      hide();
-    },
-    [onFunctionKindSelect]
-  );
-
-  const renderFunctionKindItems = useCallback(
-    () =>
-      _.map(Object.values(FunctionKind), (key) => (
-        <MenuItem key={key} itemId={key}>
-          {key}
-        </MenuItem>
-      )),
-    []
-  );
-
-  const renderFunctionKindCell = useMemo(() => {
-    return (
-      <PopoverMenu
-        title={i18n.selectFunctionKind}
-        appendTo={globalContext.boxedExpressionEditorRef?.current ?? undefined}
-        className="function-kind-popover"
-        hasAutoWidth
-        body={(hide: () => void) => (
-          <Menu onSelect={functionKindSelectionCallback(hide)}>
-            <MenuList>{renderFunctionKindItems()}</MenuList>
-          </Menu>
-        )}
-      >
-        <div className="selected-function-kind">{_.first(selectedFunctionKind)}</div>
-      </PopoverMenu>
-    );
-  }, [
-    functionKindSelectionCallback,
-    globalContext.boxedExpressionEditorRef,
-    i18n.selectFunctionKind,
-    renderFunctionKindItems,
-    selectedFunctionKind,
-  ]);
 
   const onColumnsUpdate = useCallback(
     ([expressionColumn]: [ColumnInstance]) => {
-      onUpdatingNameAndDataType?.(expressionColumn.label as string, expressionColumn.dataType);
+      props.onUpdatingNameAndDataType?.(expressionColumn.label as string, expressionColumn.dataType);
       width.current = _.find(expressionColumn.columns, { accessor: "parameters" })?.width as number;
       const [updatedExpressionColumn] = columns.current;
       updatedExpressionColumn.label = expressionColumn.label;
@@ -151,7 +175,7 @@ export const FunctionExpression: React.FunctionComponent<FunctionProps> = ({
       updatedExpressionColumn.dataType = expressionColumn.dataType;
       spreadFunctionExpressionDefinition();
     },
-    [onUpdatingNameAndDataType, spreadFunctionExpressionDefinition]
+    [columns, props, spreadFunctionExpressionDefinition]
   );
 
   useEffect(() => {
@@ -159,8 +183,14 @@ export const FunctionExpression: React.FunctionComponent<FunctionProps> = ({
     spreadFunctionExpressionDefinition();
   }, [rows, spreadFunctionExpressionDefinition]);
 
+  useEffect(() => {
+    columns.current = evaluateColumns();
+    // Watching for changes of the parameters, in order to update the columns passed to the table
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [parameters]);
+
   return (
-    <div className={`function-expression ${uid}`}>
+    <div className={`function-expression ${props.uid}`}>
       <Table
         handlerConfiguration={[
           {
@@ -174,7 +204,12 @@ export const FunctionExpression: React.FunctionComponent<FunctionProps> = ({
         onRowsUpdate={setRows}
         headerLevels={1}
         headerVisibility={getHeaderVisibility()}
-        controllerCell={renderFunctionKindCell}
+        controllerCell={
+          <FunctionKindSelector
+            selectedFunctionKind={selectedFunctionKind}
+            onFunctionKindSelect={onFunctionKindSelect}
+          />
+        }
         defaultCell={{ parameters: ContextEntryExpressionCell }}
         resetRowCustomFunction={useCallback(resetEntry, [])}
       />

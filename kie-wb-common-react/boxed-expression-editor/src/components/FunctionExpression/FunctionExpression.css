@@ -18,3 +18,20 @@
   cursor: pointer;
   padding: 1em;
 }
+
+/** Styling .parameters-list container */
+.expression-container .function-expression > .table-component > table > thead > tr:last-of-type > th:last-of-type > .header-cell > .header-cell-info {
+  width: 100%;
+}
+
+.expression-container .function-expression .parameters-list {
+  cursor: pointer;
+  padding: 0.75em;
+}
+
+.expression-container .function-expression .parameters-list.empty-parameters {
+  color: gray;
+  font-style: italic;
+  font-weight: var(--pf-global--FontWeight--normal);
+  text-align: center;
+}
