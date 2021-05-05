@@ -19,6 +19,7 @@ import { en as en_common } from "@kogito-tooling/i18n-common-dictionary";
 
 export const en: BoxedExpressionEditorI18n = {
   ...en_common,
+  addParameter: "Add parameter",
   choose: "Choose...",
   clear: "Clear",
   columnOperations: {
@@ -31,9 +32,11 @@ export const en: BoxedExpressionEditorI18n = {
   contextEntry: "CONTEXT ENTRY",
   dataType: "Data Type",
   decisionTable: "Decision Table",
+  delete: "Delete",
   editContextEntry: "Edit Context Entry",
   editExpression: "Edit Expression",
   editParameter: "Edit Parameter",
+  editParameters: "Edit parameters",
   editRelation: "Edit Relation",
   enterFunction: "Enter function",
   function: "Function",
@@ -51,5 +54,6 @@ export const en: BoxedExpressionEditorI18n = {
   },
   rows: "ROWS",
   selectExpression: "Select expression",
+  selectFunctionKind: "Select Function Kind",
   selectLogicType: "Select logic type",
 };

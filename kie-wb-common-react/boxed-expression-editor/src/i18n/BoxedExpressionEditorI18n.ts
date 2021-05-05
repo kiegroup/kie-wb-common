@@ -18,6 +18,7 @@ import { ReferenceDictionary } from "@kogito-tooling/i18n/dist/core";
 import { CommonI18n } from "@kogito-tooling/i18n-common-dictionary";
 
 interface BoxedExpressionEditorDictionary extends ReferenceDictionary<BoxedExpressionEditorDictionary> {
+  addParameter: string;
   choose: string;
   columns: string;
   columnOperations: {
@@ -33,8 +34,10 @@ interface BoxedExpressionEditorDictionary extends ReferenceDictionary<BoxedExpre
   editContextEntry: string;
   editExpression: string;
   editParameter: string;
+  editParameters: string;
   editRelation: string;
   enterFunction: string;
+  delete: string;
   function: string;
   invocation: string;
   list: string;
@@ -50,6 +53,7 @@ interface BoxedExpressionEditorDictionary extends ReferenceDictionary<BoxedExpre
     insertBelow: string;
   };
   selectExpression: string;
+  selectFunctionKind: string;
   selectLogicType: string;
 }
 

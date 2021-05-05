@@ -55,6 +55,15 @@ export function usingTestingBoxedExpressionI18nContext(
   };
 }
 
+export async function activateSelector(container: HTMLElement, query: string): Promise<void> {
+  await act(async () => {
+    const selector = container.querySelector(query)! as HTMLElement;
+    selector.click();
+    await flushPromises();
+    jest.runAllTimers();
+  });
+}
+
 export async function activateNameAndDataTypePopover(element: HTMLElement): Promise<void> {
   await act(async () => {
     element.click();

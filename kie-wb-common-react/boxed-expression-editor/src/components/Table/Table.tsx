@@ -28,7 +28,7 @@ import { TableComposable } from "@patternfly/react-table";
 import * as React from "react";
 import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import { EditableCell } from "./EditableCell";
-import { TableOperation, TableProps } from "../../api";
+import { TableHeaderVisibility, TableOperation, TableProps } from "../../api";
 import * as _ from "lodash";
 import { TableBody } from "./TableBody";
 import { TableHandler } from "./TableHandler";
@@ -36,6 +36,8 @@ import { TableHeader } from "./TableHeader";
 import { BoxedExpressionGlobalContext } from "../../context";
 
 export const NO_TABLE_CONTEXT_MENU_CLASS = "no-table-context-menu";
+const NUMBER_OF_ROWS_COLUMN = "#";
+const NUMBER_OF_ROWS_SUBCOLUMN = "0";
 
 export const Table: React.FunctionComponent<TableProps> = ({
   tableId,
@@ -45,6 +47,7 @@ export const Table: React.FunctionComponent<TableProps> = ({
   onColumnsUpdate,
   onRowsUpdate,
   onRowAdding = () => ({}),
+  controllerCell = NUMBER_OF_ROWS_COLUMN,
   defaultCell,
   rows,
   columns,
@@ -56,45 +59,51 @@ export const Table: React.FunctionComponent<TableProps> = ({
   getColumnKey = (column) => column.id as string,
   resetRowCustomFunction,
 }: TableProps) => {
-  const NUMBER_OF_ROWS_COLUMN = "#";
-  const NUMBER_OF_ROWS_SUBCOLUMN = "0";
-
   const tableRef = useRef<HTMLTableElement>(null);
 
   const globalContext = useContext(BoxedExpressionGlobalContext);
 
-  const generateNumberOfRowsSubColumnRecursively: (column: ColumnInstance, headerLevels: number) => void = (
-    column,
-    headerLevels
-  ) => {
-    if (headerLevels > 0) {
-      _.assign(column, {
-        columns: [
-          {
-            label: NUMBER_OF_ROWS_SUBCOLUMN,
-            accessor: NUMBER_OF_ROWS_SUBCOLUMN,
-            minWidth: 60,
-            width: 60,
-            disableResizing: true,
-            isCountColumn: true,
-            hideFilter: true,
-          },
-        ],
-      });
+  const [currentControllerCell, setCurrentControllerCell] = useState(controllerCell);
 
-      generateNumberOfRowsSubColumnRecursively(column.columns[0], headerLevels - 1);
-    }
-  };
+  const generateNumberOfRowsSubColumnRecursively: (column: ColumnInstance, headerLevels: number) => void = useCallback(
+    (column, headerLevels) => {
+      if (headerLevels > 0) {
+        _.assign(column, {
+          columns: [
+            {
+              label: headerVisibility === TableHeaderVisibility.Full ? NUMBER_OF_ROWS_SUBCOLUMN : currentControllerCell,
+              accessor: NUMBER_OF_ROWS_SUBCOLUMN,
+              minWidth: 60,
+              width: 60,
+              disableResizing: true,
+              isCountColumn: true,
+              hideFilter: true,
+            },
+          ],
+        });
 
-  const numberOfRowsColumn = {
-    label: NUMBER_OF_ROWS_COLUMN,
-    accessor: NUMBER_OF_ROWS_COLUMN,
-    width: 60,
-    minWidth: 60,
-    isCountColumn: true,
-  } as ColumnInstance;
-  generateNumberOfRowsSubColumnRecursively(numberOfRowsColumn, headerLevels);
-  const tableColumns = useRef<Column[]>([numberOfRowsColumn, ...columns]);
+        generateNumberOfRowsSubColumnRecursively(column.columns[0], headerLevels - 1);
+      }
+    },
+    [currentControllerCell, headerVisibility]
+  );
+
+  const generateNumberOfRowsColumn = useCallback(
+    (currentControllerCell: string | JSX.Element, columns: Column[]) => {
+      const numberOfRowsColumn = {
+        label: currentControllerCell,
+        accessor: NUMBER_OF_ROWS_COLUMN,
+        width: 60,
+        minWidth: 60,
+        isCountColumn: true,
+      } as ColumnInstance;
+      generateNumberOfRowsSubColumnRecursively(numberOfRowsColumn, headerLevels);
+      return [numberOfRowsColumn, ...columns];
+    },
+    [generateNumberOfRowsSubColumnRecursively, headerLevels]
+  );
+
+  const tableColumns = useRef<Column[]>(generateNumberOfRowsColumn(currentControllerCell, columns));
   const tableRows = useRef<DataRecord[]>(rows);
   const [showTableHandler, setShowTableHandler] = useState(false);
   const [tableHandlerTarget, setTableHandlerTarget] = useState(document.body);
@@ -103,6 +112,17 @@ export const Table: React.FunctionComponent<TableProps> = ({
   );
   const [lastSelectedColumnIndex, setLastSelectedColumnIndex] = useState(-1);
   const [lastSelectedRowIndex, setLastSelectedRowIndex] = useState(-1);
+
+  useEffect(() => {
+    tableColumns.current = generateNumberOfRowsColumn(controllerCell, tableColumns.current.slice(1));
+    setCurrentControllerCell(controllerCell);
+  }, [controllerCell, generateNumberOfRowsColumn]);
+
+  useEffect(() => {
+    tableColumns.current = generateNumberOfRowsColumn(currentControllerCell, columns);
+    // Watching for external changes of the columns
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [columns]);
 
   const onColumnsUpdateCallback = useCallback(
     (columns: Column[]) => {
@@ -265,7 +285,7 @@ export const Table: React.FunctionComponent<TableProps> = ({
           {children}
         </TableBody>
       </TableComposable>
-      {showTableHandler ? (
+      {showTableHandler && handlerConfiguration ? (
         <TableHandler
           tableColumns={tableColumns}
           columnPrefix={columnPrefix}

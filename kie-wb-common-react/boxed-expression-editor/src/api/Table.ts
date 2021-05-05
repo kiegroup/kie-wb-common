@@ -27,6 +27,8 @@ export interface TableProps {
   columnPrefix?: string;
   /** Optional label to be used for the edit popover that appears when clicking on column header */
   editColumnLabel?: string;
+  /** Top-left cell custom content */
+  controllerCell?: string | JSX.Element;
   /** For each column there is a default component to be used to render the related cell */
   defaultCell?: {
     [columnName: string]: React.FunctionComponent<CellProps>;
@@ -42,7 +44,7 @@ export interface TableProps {
   /** Function to be executed when adding a new row to the table */
   onRowAdding?: () => DataRecord;
   /** Custom configuration for the table handler */
-  handlerConfiguration: TableHandlerConfiguration;
+  handlerConfiguration?: TableHandlerConfiguration;
   /** The way in which the header will be rendered */
   headerVisibility?: TableHeaderVisibility;
   /** Number of levels in the header, 0-based */

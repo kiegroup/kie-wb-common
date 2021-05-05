@@ -19,10 +19,12 @@ import * as React from "react";
 import { useCallback, useEffect, useState } from "react";
 import {
   ContextEntries,
+  ContextEntryRecord,
   ContextProps,
   DataType,
   DEFAULT_ENTRY_EXPRESSION_MIN_WIDTH,
   DEFAULT_ENTRY_INFO_MIN_WIDTH,
+  EntryInfo,
   ExpressionProps,
   generateNextAvailableEntryName,
   getEntryKey,
@@ -100,13 +102,13 @@ export const ContextExpression: React.FunctionComponent<ContextProps> = ({
 
   const onColumnsUpdate = useCallback(
     ([expressionColumn]: [ColumnInstance]) => {
-      onUpdatingNameAndDataType?.(expressionColumn.label, expressionColumn.dataType);
+      onUpdatingNameAndDataType?.(expressionColumn.label as string, expressionColumn.dataType);
       setExpressionWidth(_.find(expressionColumn.columns, { accessor: "entryExpression" })?.width as number);
       setInfoWidth(_.find(expressionColumn.columns, { accessor: "entryInfo" })?.width as number);
       setColumns(([prevExpressionColumn]) => [
         {
           ...prevExpressionColumn,
-          label: expressionColumn.label,
+          label: expressionColumn.label as string,
           accessor: expressionColumn.accessor,
           dataType: expressionColumn.dataType,
         },
@@ -118,7 +120,10 @@ export const ContextExpression: React.FunctionComponent<ContextProps> = ({
   const onRowAdding = useCallback(
     () => ({
       entryInfo: {
-        name: generateNextAvailableEntryName(rows as ContextEntries, "ContextEntry"),
+        name: generateNextAvailableEntryName(
+          _.map(rows, (row: ContextEntryRecord) => row.entryInfo) as EntryInfo[],
+          "ContextEntry"
+        ),
         dataType: DataType.Undefined,
       },
       entryExpression: {},

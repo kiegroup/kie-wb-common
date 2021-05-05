@@ -17,10 +17,11 @@
 import { LogicType } from "./LogicType";
 import { DataType } from "./DataType";
 import { Columns, Rows } from "./Table";
-import { ContextEntries } from "./ContextEntry";
+import { ContextEntries, EntryInfo } from "./ContextEntry";
 import { HitPolicy } from "./HitPolicy";
 import { BuiltinAggregation } from "./BuiltinAggregation";
 import { Clause, DecisionTableRule } from "./DecisionTableRule";
+import { FeelFunctionProps, JavaFunctionProps, PmmlFunctionProps } from "./FunctionKind";
 
 export interface ExpressionProps {
   /** Unique identifier used to identify the expression */
@@ -108,3 +109,12 @@ export interface InvocationProps extends ExpressionProps {
   /** Entry expression width */
   entryExpressionWidth?: number;
 }
+
+export type FunctionProps = ExpressionProps & {
+  /** Logic type must be Function */
+  logicType: LogicType.Function;
+  /** List of parameters passed to the function */
+  formalParameters?: EntryInfo[];
+  /** Parameters column width */
+  parametersWidth?: number;
+} & (FeelFunctionProps | JavaFunctionProps | PmmlFunctionProps);

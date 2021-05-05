@@ -19,9 +19,11 @@ import * as React from "react";
 import { ChangeEvent, useCallback, useEffect, useRef, useState } from "react";
 import {
   ContextEntries,
+  ContextEntryRecord,
   DataType,
   DEFAULT_ENTRY_EXPRESSION_MIN_WIDTH,
   DEFAULT_ENTRY_INFO_MIN_WIDTH,
+  EntryInfo,
   generateNextAvailableEntryName,
   getEntryKey,
   getHandlerConfiguration,
@@ -147,7 +149,7 @@ export const InvocationExpression: React.FunctionComponent<InvocationProps> = ({
 
   const onColumnsUpdate = useCallback(
     ([expressionColumn]: [ColumnInstance]) => {
-      onUpdatingNameAndDataType?.(expressionColumn.label, expressionColumn.dataType);
+      onUpdatingNameAndDataType?.(expressionColumn.label as string, expressionColumn.dataType);
       infoWidth.current = _.find(expressionColumn.columns, { accessor: "entryInfo" })?.width as number;
       expressionWidth.current = _.find(expressionColumn.columns, { accessor: "entryExpression" })?.width as number;
       const [updatedExpressionColumn] = columns.current;
@@ -162,7 +164,10 @@ export const InvocationExpression: React.FunctionComponent<InvocationProps> = ({
   const onRowAdding = useCallback(
     () => ({
       entryInfo: {
-        name: generateNextAvailableEntryName(rows as ContextEntries, "p"),
+        name: generateNextAvailableEntryName(
+          _.map(rows, (row: ContextEntryRecord) => row.entryInfo) as EntryInfo[],
+          "p"
+        ),
         dataType: DEFAULT_PARAMETER_DATA_TYPE,
       },
       entryExpression: {},

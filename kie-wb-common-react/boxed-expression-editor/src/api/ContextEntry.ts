@@ -21,13 +21,15 @@ import { DataRecord, Row } from "react-table";
 import { TableHandlerConfiguration, TableOperation } from "./Table";
 import { BoxedExpressionEditorI18n } from "../i18n";
 
+export interface EntryInfo {
+  /** Entry name */
+  name: string;
+  /** Entry data type */
+  dataType: DataType;
+}
+
 export interface ContextEntryRecord {
-  entryInfo: {
-    /** Entry name */
-    name: string;
-    /** Entry data type */
-    dataType: DataType;
-  };
+  entryInfo: EntryInfo;
   /** Entry expression */
   entryExpression: ExpressionProps;
   /** Label used for the popover triggered when editing info section */
@@ -57,20 +59,18 @@ export const getHandlerConfiguration = (
 ];
 
 export const generateNextAvailableEntryName = (
-  contextEntries: ContextEntries,
+  entryInfos: EntryInfo[],
   namePrefix: string,
-  lastIndex: number = contextEntries.length
+  lastIndex: number = entryInfos.length
 ): string => {
-  const candidateName = `${namePrefix}-${lastIndex}`;
-  const entryWithCandidateName = _.find(contextEntries, { entryInfo: { name: candidateName } });
-  return entryWithCandidateName
-    ? generateNextAvailableEntryName(contextEntries, namePrefix, lastIndex + 1)
-    : candidateName;
+  const candidateName = `${namePrefix}-${lastIndex === 0 ? 1 : lastIndex}`;
+  const entryWithCandidateName = _.find(entryInfos, { name: candidateName });
+  return entryWithCandidateName ? generateNextAvailableEntryName(entryInfos, namePrefix, lastIndex + 1) : candidateName;
 };
 
 export const getEntryKey = (row: Row): string => (row.original as ContextEntryRecord).entryInfo.name;
 
 export const resetEntry = (row: DataRecord): DataRecord => ({
-  entryInfo: row.entryInfo,
+  ...row,
   entryExpression: { uid: (row.entryExpression as ExpressionProps).uid },
 });
