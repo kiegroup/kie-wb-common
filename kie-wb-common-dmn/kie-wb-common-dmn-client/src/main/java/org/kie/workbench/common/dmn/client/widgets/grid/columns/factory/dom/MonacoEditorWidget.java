@@ -16,53 +16,68 @@
 
 package org.kie.workbench.common.dmn.client.widgets.grid.columns.factory.dom;
 
-import java.util.Optional;
-
 import com.google.gwt.dom.client.Document;
+import elemental2.dom.Element;
+import jsinterop.base.Js;
 import org.gwtbootstrap3.client.ui.base.TextBoxBase;
+import org.kie.workbench.common.dmn.client.widgets.codecompletion.MonacoPropertiesFactory;
+import org.uberfire.client.views.pfly.monaco.jsinterop.MonacoEditor;
 import org.uberfire.client.views.pfly.monaco.jsinterop.MonacoStandaloneCodeEditor;
 
 public class MonacoEditorWidget extends TextBoxBase {
 
-    private MonacoStandaloneCodeEditor codeEditor;
+    private final MonacoPropertiesFactory monacoPropertiesFactory = new MonacoPropertiesFactory();
+    private final MonacoEditor monacoEditor = MonacoEditor.get();
+    private final MonacoStandaloneCodeEditor codeEditor;
 
     public MonacoEditorWidget() {
         super(Document.get().createDivElement());
+        codeEditor = monacoEditor.create(getMonacoEditorWidgetElement(),
+                                         monacoPropertiesFactory.getConstructionOptions());
     }
 
-    public void setCodeEditor(final MonacoStandaloneCodeEditor codeEditor) {
+    /**
+     * for testing
+     */
+    public Element getMonacoEditorWidgetElement() {
+        return Js.uncheckedCast(getElement());
+    }
+
+    /**
+     * for testing
+     */
+    MonacoEditorWidget(MonacoStandaloneCodeEditor codeEditor) {
+        super(Document.get().createDivElement());
         this.codeEditor = codeEditor;
     }
 
-    public void setValue(final String value) {
-        getCodeEditor().ifPresent(c -> c.setValue(value));
+    public MonacoStandaloneCodeEditor getCodeEditor() {
+        return codeEditor;
     }
 
     @Override
     public String getValue() {
-        return getCodeEditor()
-                .map(editor -> editor.getValue())
-                .orElse("");
+        return codeEditor.getValue() != null ? codeEditor.getValue() : "";
+    }
+
+    public void setValue(final String value) {
+        codeEditor.setValue(value);
     }
 
     @Override
     public void setFocus(final boolean focused) {
-        getCodeEditor().ifPresent(c -> {
-            if (focused) {
-                c.focus();
-            }
-            // IStandaloneCodeEditor(codeEditor) supports focus, but does not support blur.
-            // https://microsoft.github.io/monaco-editor/api/interfaces/monaco.editor.istandalonecodeeditor.html
-        });
-    }
-
-    public Optional<MonacoStandaloneCodeEditor> getCodeEditor() {
-        return Optional.ofNullable(codeEditor);
+        if (focused) {
+            codeEditor.focus();
+        }
     }
 
     @Override
     public void setTabIndex(final int index) {
         // IStandaloneCodeEditor(codeEditor) does not support tab index.
         // https://microsoft.github.io/monaco-editor/api/interfaces/monaco.editor.istandalonecodeeditor.html
+    }
+
+    public void dispose() {
+        codeEditor.dispose();
     }
 }

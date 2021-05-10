@@ -141,6 +141,11 @@ public class AutocompleteTextAreaDOMElementFactoryTest extends BaseSingletonDOME
         }
 
         @Override
+        public MonacoEditorWidget createWidget() {
+            return mock(MonacoEditorWidget.class);
+        }
+
+        @Override
         protected MonacoEditorDOMElement makeMonacoEditorDOMElement(final MonacoEditorWidget widget,
                                                                     final GridLayer gridLayer,
                                                                     final GridWidget gridWidget) {

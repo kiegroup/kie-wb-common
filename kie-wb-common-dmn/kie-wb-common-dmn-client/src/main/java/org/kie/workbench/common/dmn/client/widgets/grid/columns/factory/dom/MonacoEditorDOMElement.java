@@ -27,9 +27,6 @@ import com.google.gwt.event.shared.HasHandlers;
 import com.google.gwt.user.client.TakesValue;
 import com.google.gwt.user.client.ui.Focusable;
 import com.google.gwt.user.client.ui.SimplePanel;
-import elemental2.dom.Element;
-import jsinterop.base.Js;
-import org.kie.workbench.common.dmn.client.widgets.codecompletion.MonacoPropertiesFactory;
 import org.kie.workbench.common.dmn.client.widgets.grid.model.GridCellTuple;
 import org.kie.workbench.common.dmn.client.widgets.grid.model.GridCellValueTuple;
 import org.kie.workbench.common.stunner.core.client.api.SessionManager;
@@ -37,7 +34,6 @@ import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler
 import org.kie.workbench.common.stunner.core.client.command.SessionCommandManager;
 import org.kie.workbench.common.stunner.core.command.Command;
 import org.kie.workbench.common.stunner.core.util.StringUtils;
-import org.uberfire.client.views.pfly.monaco.jsinterop.MonacoEditor;
 import org.uberfire.client.views.pfly.monaco.jsinterop.MonacoStandaloneCodeEditor;
 import org.uberfire.ext.wires.core.grids.client.model.impl.BaseGridCellValue;
 import org.uberfire.ext.wires.core.grids.client.widget.context.GridBodyCellRenderContext;
@@ -99,19 +95,9 @@ public class MonacoEditorDOMElement extends BaseDOMElement<String, MonacoEditorW
         style.setHeight(100,
                         PCT);
 
-        final MonacoPropertiesFactory properties = makeMonacoPropertiesFactory();
-        final MonacoStandaloneCodeEditor codeEditor = getMonacoEditor().create(uncheckedCast(widget.getElement()),
-                                                                               properties.getConstructionOptions());
-
-        codeEditor.onKeyDown(getOnKeyDown(codeEditor));
-        codeEditor.onDidBlurEditorWidget(getWidgetTrigger(getBlurEvent()));
-
-        widget.setCodeEditor(codeEditor);
+        widget.getCodeEditor().onKeyDown(getOnKeyDown(widget.getCodeEditor()));
+        widget.getCodeEditor().onDidBlurEditorWidget(getWidgetTrigger(getBlurEvent()));
         widget.setFocus(true);
-    }
-
-    MonacoEditor getMonacoEditor() {
-        return MonacoEditor.get();
     }
 
     MonacoStandaloneCodeEditor.CallbackFunction getOnKeyDown(final MonacoStandaloneCodeEditor codeEditor) {
@@ -169,8 +155,7 @@ public class MonacoEditorDOMElement extends BaseDOMElement<String, MonacoEditorW
     @Override
     @SuppressWarnings("unchecked")
     public void flush(final String value) {
-
-        widget.getCodeEditor().ifPresent(c -> c.dispose());
+        widget.dispose();
 
         if (Objects.equals(value,
                            originalValue)) {
@@ -209,11 +194,4 @@ public class MonacoEditorDOMElement extends BaseDOMElement<String, MonacoEditorW
         return Document.get().createBlurEvent();
     }
 
-    Element uncheckedCast(final com.google.gwt.user.client.Element element) {
-        return Js.uncheckedCast(element);
-    }
-
-    MonacoPropertiesFactory makeMonacoPropertiesFactory() {
-        return new MonacoPropertiesFactory();
-    }
 }
