@@ -19,8 +19,11 @@
 }
 
 .expression-container .entry-info .entry-definition {
-  cursor: pointer;
   padding: 0.25em;
+}
+
+.expression-container .entry-info .entry-definition.with-popover-menu {
+  cursor: pointer;
 }
 
 .expression-container .entry-info .entry-definition .entry-name {
