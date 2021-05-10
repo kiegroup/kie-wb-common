@@ -34,10 +34,12 @@ export interface ExpressionProps {
   onUpdatingNameAndDataType?: (updatedName: string, updatedDataType: DataType) => void;
   /** Logic type should not be defined at this stage */
   logicType?: LogicType;
-  /** True to have no header for this specific expression component, used in a recursive expression */
+  /** True, to have no header for this specific expression component, used in a recursive expression */
   isHeadless?: boolean;
   /** When a component is headless, it will call this function to pass its most updated expression definition */
   onUpdatingRecursiveExpression?: (expression: ExpressionProps) => void;
+  /** True, to have no clear action rendered for this specific expression */
+  noClearAction?: boolean;
 }
 
 export interface LiteralExpressionProps extends ExpressionProps {
