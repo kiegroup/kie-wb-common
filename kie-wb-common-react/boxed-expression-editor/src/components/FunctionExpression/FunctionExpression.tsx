@@ -18,11 +18,15 @@ import "./FunctionExpression.css";
 import * as React from "react";
 import { PropsWithChildren, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import {
+  ContextProps,
+  DataType,
   DEFAULT_ENTRY_EXPRESSION_MIN_WIDTH,
   ExpressionProps,
   FeelFunctionProps,
   FunctionKind,
   FunctionProps,
+  JavaFunctionProps,
+  LiteralExpressionProps,
   LogicType,
   resetEntry,
   TableHeaderVisibility,
@@ -99,11 +103,47 @@ export const FunctionExpression: React.FunctionComponent<FunctionProps> = (props
     [props.dataType, headerCellElement, name]
   );
 
+  const extractContextEntriesFromJavaProps = useCallback(
+    (javaProps: JavaFunctionProps & { children?: React.ReactNode }) => {
+      return [
+        {
+          entryInfo: { name: i18n.class, dataType: DataType.String },
+          entryExpression: {
+            noClearAction: true,
+            logicType: LogicType.LiteralExpression,
+            content: javaProps.class,
+          } as LiteralExpressionProps,
+        },
+        {
+          entryInfo: { name: i18n.methodSignature, dataType: DataType.String },
+          entryExpression: {
+            noClearAction: true,
+            logicType: LogicType.LiteralExpression,
+            content: javaProps.method,
+          } as LiteralExpressionProps,
+        },
+      ];
+    },
+    [i18n.class, i18n.methodSignature]
+  );
+
   const evaluateRows = useCallback(
     (functionKind: FunctionKind) => {
-      //TODO for first task, only FEEL (default) is available
+      //TODO PMML kind is still missing
       switch (functionKind) {
-        case FunctionKind.Java:
+        case FunctionKind.Java: {
+          const javaProps: PropsWithChildren<JavaFunctionProps> = props as PropsWithChildren<JavaFunctionProps>;
+          return [
+            {
+              entryExpression: {
+                logicType: LogicType.Context,
+                renderResult: false,
+                noHandlerMenu: true,
+                contextEntries: extractContextEntriesFromJavaProps(javaProps),
+              },
+            } as DataRecord,
+          ];
+        }
         case FunctionKind.Pmml:
         case FunctionKind.Feel:
         default: {
@@ -114,7 +154,7 @@ export const FunctionExpression: React.FunctionComponent<FunctionProps> = (props
         }
       }
     },
-    [props]
+    [extractContextEntriesFromJavaProps, props]
   );
 
   const width = useRef<number>(parametersWidth);
@@ -124,9 +164,16 @@ export const FunctionExpression: React.FunctionComponent<FunctionProps> = (props
 
   const extendDefinitionBasedOnFunctionKind = useCallback(
     (definition: FunctionProps, functionKind: FunctionKind) => {
-      //TODO for first task, only FEEL (default) is available
+      //TODO PMML kind is still missing
       switch (functionKind) {
-        case FunctionKind.Java:
+        case FunctionKind.Java: {
+          const contextProps = _.first(rows)?.entryExpression as ContextProps;
+          const className =
+            (_.nth(contextProps.contextEntries, 0)?.entryExpression as LiteralExpressionProps).content || "";
+          const methodName =
+            (_.nth(contextProps.contextEntries, 1)?.entryExpression as LiteralExpressionProps).content || "";
+          return _.extend(definition, { class: className, method: methodName });
+        }
         case FunctionKind.Pmml:
         case FunctionKind.Feel:
         default: {
@@ -161,9 +208,14 @@ export const FunctionExpression: React.FunctionComponent<FunctionProps> = (props
     return props.isHeadless ? TableHeaderVisibility.LastLevel : TableHeaderVisibility.Full;
   }, [props.isHeadless]);
 
-  const onFunctionKindSelect = useCallback((itemId: string) => {
-    setSelectedFunctionKind(itemId as FunctionKind);
-  }, []);
+  const onFunctionKindSelect = useCallback(
+    (itemId: string) => {
+      const kind = itemId as FunctionKind;
+      setSelectedFunctionKind(kind);
+      setRows(evaluateRows(kind));
+    },
+    [evaluateRows]
+  );
 
   const onColumnsUpdate = useCallback(
     ([expressionColumn]: [ColumnInstance]) => {
