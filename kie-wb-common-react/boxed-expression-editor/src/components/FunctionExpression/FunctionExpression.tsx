@@ -170,9 +170,9 @@ export const FunctionExpression: React.FunctionComponent<FunctionProps> = (props
         case FunctionKind.Java: {
           const contextProps = _.first(rows)?.entryExpression as ContextProps;
           const className =
-            (_.nth(contextProps.contextEntries, 0)?.entryExpression as LiteralExpressionProps).content || "";
+            (_.nth(contextProps.contextEntries, 0)?.entryExpression as LiteralExpressionProps)?.content || "";
           const methodName =
-            (_.nth(contextProps.contextEntries, 1)?.entryExpression as LiteralExpressionProps).content || "";
+            (_.nth(contextProps.contextEntries, 1)?.entryExpression as LiteralExpressionProps)?.content || "";
           return _.extend(definition, { class: className, method: methodName });
         }
         case FunctionKind.Pmml:
@@ -213,7 +213,12 @@ export const FunctionExpression: React.FunctionComponent<FunctionProps> = (props
     (itemId: string) => {
       const kind = itemId as FunctionKind;
       setSelectedFunctionKind(kind);
-      setRows(evaluateRows(kind));
+      // Resetting table content, every time function kind gets selected
+      setRows([{ entryExpression: { logicType: LogicType.Undefined } }]);
+      // Need to wait for the next rendering cycle before setting the correct table rows, based on function kind
+      setTimeout(() => {
+        setRows(evaluateRows(kind));
+      }, 0);
     },
     [evaluateRows]
   );
