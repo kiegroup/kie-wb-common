@@ -124,6 +124,12 @@ export const Table: React.FunctionComponent<TableProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [columns]);
 
+  useEffect(() => {
+    tableRows.current = rows;
+    // Watching for external changes of the rows
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [rows]);
+
   const onColumnsUpdateCallback = useCallback(
     (columns: Column[]) => {
       tableColumns.current = columns;
