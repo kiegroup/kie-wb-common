@@ -65,10 +65,14 @@ export interface ContextProps extends ExpressionProps {
   contextEntries?: ContextEntries;
   /** Context result */
   result?: ExpressionProps;
+  /** False, to avoid the rendering of the result section */
+  renderResult?: boolean;
   /** Entry info width */
   entryInfoWidth?: number;
   /** Entry expression width */
   entryExpressionWidth?: number;
+  /** True, to avoid the presence of table menu handler */
+  noHandlerMenu?: boolean;
 }
 
 export interface DecisionTableProps extends ExpressionProps {
