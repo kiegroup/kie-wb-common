@@ -137,6 +137,7 @@ export const FunctionExpression: React.FunctionComponent<FunctionProps> = (props
             {
               entryExpression: {
                 logicType: LogicType.Context,
+                noClearAction: true,
                 renderResult: false,
                 noHandlerMenu: true,
                 contextEntries: extractContextEntriesFromJavaProps(javaProps),
