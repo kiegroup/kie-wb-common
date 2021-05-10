@@ -189,6 +189,11 @@ export const FunctionExpression: React.FunctionComponent<FunctionProps> = (props
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [parameters]);
 
+  const resetRowCustomFunction = useCallback((row) => {
+    setSelectedFunctionKind(FunctionKind.Feel);
+    return resetEntry(row);
+  }, []);
+
   return (
     <div className={`function-expression ${props.uid}`}>
       <Table
@@ -211,7 +216,7 @@ export const FunctionExpression: React.FunctionComponent<FunctionProps> = (props
           />
         }
         defaultCell={{ parameters: ContextEntryExpressionCell }}
-        resetRowCustomFunction={useCallback(resetEntry, [])}
+        resetRowCustomFunction={resetRowCustomFunction}
       />
     </div>
   );

@@ -62,6 +62,30 @@ describe("FunctionExpression tests", () => {
     );
   });
 
+  test("should reset function kind to FEEL, when resetting table row", async () => {
+    const mockedBroadcastDefinition = jest.fn();
+    mockBroadcastDefinition(mockedBroadcastDefinition);
+    const { container, baseElement } = render(
+      usingTestingBoxedExpressionI18nContext(
+        <FunctionExpression logicType={LogicType.Function} functionKind={FunctionKind.Java} formalParameters={[]} />
+      ).wrapper
+    );
+
+    await clearTableRow(container, baseElement);
+
+    expect(mockedBroadcastDefinition).toHaveBeenLastCalledWith({
+      dataType: undefined,
+      expression: {
+        uid: "id1",
+      },
+      formalParameters: [],
+      functionKind: "FEEL",
+      logicType: "Function",
+      name: "p-1",
+      uid: undefined,
+    });
+  });
+
   describe("Formal Parameters", () => {
     beforeEach(() => {
       jest.clearAllTimers();
@@ -219,12 +243,6 @@ describe("FunctionExpression tests", () => {
         logicType: "Function",
         name: "p-1",
         uid: undefined,
-      });
-    }
-
-    function mockBroadcastDefinition(mockedBroadcastDefinition: jest.Mock) {
-      window.beeApi = _.extend(window.beeApi || {}, {
-        broadcastFunctionExpressionDefinition: (definition: FunctionProps) => mockedBroadcastDefinition(definition),
       });
     }
   });
