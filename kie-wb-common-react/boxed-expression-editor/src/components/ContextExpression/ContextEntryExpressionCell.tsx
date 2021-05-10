@@ -38,13 +38,12 @@ export const ContextEntryExpressionCell: React.FunctionComponent<ContextEntryExp
     ...contextEntry.entryExpression,
   } as ExpressionProps);
 
-  const expressionChangedExternally = contextEntry.entryExpression.logicType === undefined;
   useEffect(() => {
     entryExpression.current = contextEntry.entryExpression;
     onRowUpdate(index, { ...contextEntry, entryExpression: entryExpression.current });
-    // Every time, for an expression, its logic type is undefined, it means that corresponding entry has been just added
+    // Every time, for an expression, its logic type changes, it means that corresponding entry has been just updated
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [expressionChangedExternally]);
+  }, [contextEntry.entryExpression.logicType]);
 
   const onUpdatingRecursiveExpression = useCallback((expression: ExpressionProps) => {
     entryExpression.current = expression;

@@ -38,12 +38,11 @@ export const ContextEntryExpression: React.FunctionComponent<ContextEntryExpress
 
   const entryExpression = useRef(expression);
 
-  const expressionChangedExternally = expression.logicType === undefined;
   useEffect(() => {
     entryExpression.current = _.omit(expression, "isHeadless");
-    // Every time, for an expression, its logic type is undefined, it means that corresponding entry has been just added
+    // Every time, for an expression, its logic type changes, it means that corresponding entry has been just updated
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [expressionChangedExternally]);
+  }, [expression.logicType]);
 
   const getLogicTypeSelectorRef = useCallback(() => {
     return expressionContainerRef.current!;
