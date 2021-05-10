@@ -374,6 +374,15 @@ public class ArchetypeServiceImpl implements ArchetypeService {
         }
     }
 
+    @Override
+    public Repository getTemplateRepository(String alias, String spaceName) {
+        if (archetypePreferencesManager.containsArchetype(alias, spaceName)) {
+            return getTemplateRepository(alias);
+        }
+        throw new IllegalArgumentException(
+                String.format("Template repository %s is not available for space %s", alias, spaceName));
+    }
+
     private GAV copyGav(final GAV original) {
         return new GAV(original.getGroupId(),
                        original.getArtifactId(),

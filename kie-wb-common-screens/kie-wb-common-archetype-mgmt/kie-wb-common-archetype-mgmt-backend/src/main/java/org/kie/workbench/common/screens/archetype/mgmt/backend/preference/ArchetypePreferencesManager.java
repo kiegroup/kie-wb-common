@@ -228,4 +228,19 @@ public class ArchetypePreferencesManager {
     boolean containsArchetype(final String archetype) {
         return archetypePreferences.getArchetypeSelectionMap().containsKey(archetype);
     }
+
+    public boolean containsArchetype(final String archetype, final String spaceName) {
+        final Map<String, Boolean> archetypeMap = getArchetypeSelectionMap(spaceName);
+        if(!archetypeMap.containsKey(archetype))
+            throw new IllegalArgumentException(
+                    String.format("Template repository %s is not available", archetype));
+        return archetypeMap.get(archetype);
+    }
+
+    private Map<String, Boolean> getArchetypeSelectionMap(final String identifier) {
+        final PreferenceScopeResolutionStrategyInfo info =
+                workbenchPreferenceScopeResolutionStrategies.getSpaceInfoFor(identifier);
+        archetypePreferences.load(info);
+        return archetypePreferences.getArchetypeSelectionMap();
+    }
 }
