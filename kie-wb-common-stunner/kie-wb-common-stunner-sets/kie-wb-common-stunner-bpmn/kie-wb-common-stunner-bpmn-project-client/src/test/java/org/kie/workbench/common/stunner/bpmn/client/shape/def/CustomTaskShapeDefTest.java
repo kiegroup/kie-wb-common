@@ -48,13 +48,24 @@ import static org.mockito.Mockito.when;
 @RunWith(LienzoMockitoTestRunner.class)
 public class CustomTaskShapeDefTest {
 
-    private static final String WID_ID = "id1";
-    private static final String WID_ICON_DATA = "iconData1";
-    private static final String DEF_ID = BindableAdapterUtils.getDynamicDefinitionId(CustomTask.class,
-                                                                                     WID_ID);
-    private static final WorkItemDefinition DEF = new WorkItemDefinition()
-            .setName(WID_ID)
-            .setIconDefinition(new IconDefinition().setIconData(WID_ICON_DATA));
+    private static final String WID_ID_1 = "id1";
+    private static final String WID_ICON_DATA_1 = "iconData1";
+    private static final String DEF_ID_1 = BindableAdapterUtils.getDynamicDefinitionId(CustomTask.class,
+                                                                                     WID_ID_1);
+
+    private static final String WID_ID_2 = "id2";
+    private static final String WID_ICON_DATA_2 = "serviceNodeIcon";
+    private static final String DEF_ID_2 = BindableAdapterUtils.getDynamicDefinitionId(CustomTask.class,
+                                                                                     WID_ID_2);
+
+    private static final String WID_ID_3 = null;
+    private static final String WID_ICON_DATA_3 = "serviceNodeIcon";
+    private static final String DEF_ID_3 = BindableAdapterUtils.getDynamicDefinitionId(CustomTask.class,
+                                                                                       WID_ID_3);
+
+    private static final WorkItemDefinition DEF_1 = new WorkItemDefinition()
+            .setName(WID_ID_1)
+            .setIconDefinition(new IconDefinition().setIconData(WID_ICON_DATA_1));
 
     private static final double WIDTH = 111d;
     private static final double HEIGHT = 121d;
@@ -90,11 +101,13 @@ public class CustomTaskShapeDefTest {
         this.task = new CustomTask();
         task.getDimensionsSet().getWidth().setValue(WIDTH);
         task.getDimensionsSet().getHeight().setValue(HEIGHT);
-        this.task.setName(WID_ID);
+        this.task.setName(WID_ID_1);
         when(node.getDefinition()).thenReturn(task);
         when(node.getBounds()).thenReturn(BOUNDS);
-        when(registry.items()).thenReturn(Collections.singleton(DEF));
-        when(registry.get(eq(WID_ID))).thenReturn(DEF);
+        when(registry.items()).thenReturn(Collections.singleton(DEF_1));
+        when(registry.get(eq(WID_ID_1))).thenReturn(DEF_1);
+        when(registry.get(eq(WID_ID_2))).thenReturn(null);
+        when(registry.get(eq(WID_ID_3))).thenThrow(new RuntimeException("Just for Testing"));
         when(view.getChildren()).thenReturn(Collections.singletonList(imageSvgPrimitive));
         when(imageSvgPrimitive.getId()).thenReturn(CustomTaskShapeViewHandler.WID_ICON_ID);
         when(imageSvgPrimitive.get()).thenReturn(imagePrimitive);
@@ -118,15 +131,33 @@ public class CustomTaskShapeDefTest {
         when(imageProxy.isLoaded()).thenReturn(true);
         tested.viewHandler().accept(task,
                                     view);
-        verify(imageProxy, times(1)).load(eq(WID_ICON_DATA));
+        verify(imageProxy, times(1)).load(eq(WID_ICON_DATA_1));
     }
 
     @Test
-    public void testGetGlyph() {
-        Glyph expected = mock(Glyph.class);
-        when(iconDataGlyphGenerator.apply(eq(WID_ICON_DATA))).thenReturn(expected);
-        Glyph glyph = tested.getGlyph(CustomTask.class,
-                                      DEF_ID);
-        assertEquals(expected, glyph);
+    public void testGetGlyphCustomTaskWithWID() {
+        Glyph expected1 = mock(Glyph.class);
+
+        when(iconDataGlyphGenerator.apply(eq(WID_ICON_DATA_1))).thenReturn(expected1);
+        Glyph glyph1 = tested.getGlyph(CustomTask.class, DEF_ID_1);
+        assertEquals(expected1, glyph1);
+    }
+
+    @Test
+    public void testGetGlyphCustomTaskNoWID() {
+        Glyph expected2 = mock(Glyph.class);
+
+        when(iconDataGlyphGenerator.apply(eq(WID_ICON_DATA_2))).thenReturn(expected2);
+        Glyph glyph2 = tested.getGlyph(CustomTask.class, DEF_ID_2);
+        assertEquals(expected2, glyph2);
+    }
+
+    @Test
+    public void testGetGlyphCustomTaskNoName() {
+        Glyph expected3 = mock(Glyph.class);
+
+        when(iconDataGlyphGenerator.apply(eq(WID_ICON_DATA_3))).thenReturn(expected3);
+        Glyph glyph3 = tested.getGlyph(CustomTask.class, DEF_ID_3);
+        assertEquals(expected3, glyph3);
     }
 }
