@@ -254,14 +254,14 @@ public abstract class AbstractCanvasInlineTextEditorControlTest<C extends Abstra
     @Test
     public void testBind() {
         control.bind(session);
-        verify(keyboardControl, times(2))
+        verify(keyboardControl, times(1))
                 .addKeyShortcutCallback(any(KeyboardControl.KeyShortcutCallback.class));
     }
 
     @Test
     public void testBindKeyControlHandledKey() {
         control.bind(session);
-        verify(keyboardControl, times(2))
+        verify(keyboardControl, times(1))
                 .addKeyShortcutCallback(keyShortcutCallbackCaptor.capture());
 
         final KeyboardControl.KeyShortcutCallback keyShortcutCallback = keyShortcutCallbackCaptor.getValue();
@@ -273,7 +273,7 @@ public abstract class AbstractCanvasInlineTextEditorControlTest<C extends Abstra
     @Test
     public void testBindKeyControlUnhandledKey() {
         control.bind(session);
-        verify(keyboardControl, times(2))
+        verify(keyboardControl, times(1))
                 .addKeyShortcutCallback(keyShortcutCallbackCaptor.capture());
 
         final KeyboardControl.KeyShortcutCallback keyShortcutCallback = keyShortcutCallbackCaptor.getValue();

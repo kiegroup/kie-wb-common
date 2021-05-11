@@ -32,7 +32,7 @@ import org.kie.workbench.common.stunner.core.client.session.impl.ManagedSession;
 /**
  * Acts as a single implementation of {@link AbstractCanvasShortcutsControlImpl} for use
  * in {@link DMNEditorSession} that delegates everything to the correct {@link Alternative} implementation
- * (for Business Central or Kogito environments). {@link ManagedSession} uses {@link ManagedInstance.select()} that does
+ * (for Business Central environment). {@link ManagedSession} uses {@link ManagedInstance.select()} that does
  * not honour {@link Alternative} annotations. Consequentially attempts to register {@link AbstractCanvasShortcutsControlImpl}
  * directly leads to multiple bean implementation CDI exceptions at runtime (when the lookup is performed).
  */

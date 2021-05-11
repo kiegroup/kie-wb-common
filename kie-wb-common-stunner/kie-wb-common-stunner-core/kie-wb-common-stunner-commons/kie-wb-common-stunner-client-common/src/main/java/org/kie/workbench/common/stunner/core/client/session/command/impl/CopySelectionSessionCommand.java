@@ -30,7 +30,6 @@ import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvas;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.ClipboardControl;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.SelectionControl;
-import org.kie.workbench.common.stunner.core.client.canvas.controls.keyboard.KeyboardControl.KogitoKeyPress;
 import org.kie.workbench.common.stunner.core.client.canvas.event.registration.CanvasElementsClearEvent;
 import org.kie.workbench.common.stunner.core.client.canvas.event.selection.CanvasClearSelectionEvent;
 import org.kie.workbench.common.stunner.core.client.canvas.event.selection.CanvasSelectionEvent;
@@ -83,11 +82,6 @@ public class CopySelectionSessionCommand extends AbstractSelectionAwareSessionCo
     @Override
     public void bind(final EditorSession session) {
         super.bind(session);
-        session.getKeyboardControl().addKeyShortcutCallback(new KogitoKeyPress(new Key[]{CONTROL, C}, "Edit | Copy selection", () -> {
-            if (isEnabled()) {
-                execute();
-            }
-        }));
         session.getKeyboardControl().addKeyShortcutCallback(this::onKeyDownEvent);
         this.clipboardControl = session.getClipboardControl();
     }

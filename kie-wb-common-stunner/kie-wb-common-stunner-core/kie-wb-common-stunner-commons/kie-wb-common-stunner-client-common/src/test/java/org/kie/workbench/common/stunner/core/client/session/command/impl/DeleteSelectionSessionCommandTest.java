@@ -154,6 +154,6 @@ public class DeleteSelectionSessionCommandTest extends BaseSessionCommandKeyboar
 
     @Override
     protected int getExpectedKeyBoardControlRegistrationCalls() {
-        return 3;
+        return 1;
     }
 }

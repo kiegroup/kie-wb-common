@@ -46,7 +46,6 @@ import org.kie.workbench.common.dmn.client.editors.types.listview.common.DataTyp
 import org.kie.workbench.common.dmn.client.editors.types.listview.draganddrop.DNDDataTypesHandler;
 import org.kie.workbench.common.dmn.client.editors.types.listview.draganddrop.DNDListComponent;
 import org.kie.workbench.common.dmn.client.editors.types.search.DataTypeSearchBar;
-import org.kie.workbench.common.widgets.client.kogito.IsKogito;
 import org.uberfire.client.mvp.UberElemental;
 
 import static java.util.Collections.singletonList;
@@ -72,8 +71,6 @@ public class DataTypeList {
 
     private final DataTypeListHighlightHelper highlightHelper;
 
-    private final IsKogito isKogito;
-
     private Consumer<DataTypeListItem> onDataTypeListItemUpdate = (e) -> { /* Nothing. */ };
 
     private List<DataTypeListItem> items = new ArrayList<>();
@@ -92,8 +89,7 @@ public class DataTypeList {
                         final DNDListComponent dndListComponent,
                         final DataTypeStackHash dataTypeStackHash,
                         final DNDDataTypesHandler dndDataTypesHandler,
-                        final DataTypeListHighlightHelper highlightHelper,
-                        final IsKogito isKogito) {
+                        final DataTypeListHighlightHelper highlightHelper) {
         this.view = view;
         this.listItems = listItems;
         this.dataTypeManager = dataTypeManager;
@@ -102,7 +98,6 @@ public class DataTypeList {
         this.dataTypeStackHash = dataTypeStackHash;
         this.dndDataTypesHandler = dndDataTypesHandler;
         this.highlightHelper = highlightHelper;
-        this.isKogito = isKogito;
         this.importedNamesOccurrencesCount = new HashMap<>();
         this.renamedImportedDataTypes = new HashMap<>();
     }
@@ -113,12 +108,7 @@ public class DataTypeList {
         highlightHelper.init(this);
         dndDataTypesHandler.init(this);
         dndListComponent.setOnDropItem(getOnDropDataType());
-
-        if (!isKogito.get()) {
-            view.showImportDataObjectButton();
-        } else {
-            view.hideImportDataObjectButton();
-        }
+        view.showImportDataObjectButton();
     }
 
     BiConsumer<Element, Element> getOnDropDataType() {

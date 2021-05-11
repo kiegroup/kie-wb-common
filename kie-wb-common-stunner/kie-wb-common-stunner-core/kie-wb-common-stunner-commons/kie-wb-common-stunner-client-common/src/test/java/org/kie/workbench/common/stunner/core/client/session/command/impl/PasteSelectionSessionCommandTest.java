@@ -502,6 +502,6 @@ public class PasteSelectionSessionCommandTest extends BaseSessionCommandKeyboard
 
     @Override
     protected int getExpectedKeyBoardControlRegistrationCalls() {
-        return 2;
+        return 1;
     }
 }

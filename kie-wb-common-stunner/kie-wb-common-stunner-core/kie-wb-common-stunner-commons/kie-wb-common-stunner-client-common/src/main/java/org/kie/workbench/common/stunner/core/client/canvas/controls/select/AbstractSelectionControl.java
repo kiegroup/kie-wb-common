@@ -29,7 +29,6 @@ import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler
 import org.kie.workbench.common.stunner.core.client.canvas.controls.CanvasControl;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.CanvasRegistrationControl;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.SelectionControl;
-import org.kie.workbench.common.stunner.core.client.canvas.controls.keyboard.KeyboardControl.KogitoKeyPress;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.keyboard.KeysMatcher;
 import org.kie.workbench.common.stunner.core.client.canvas.event.registration.CanvasShapeRemovedEvent;
 import org.kie.workbench.common.stunner.core.client.canvas.event.selection.CanvasClearSelectionEvent;
@@ -189,7 +188,6 @@ public abstract class AbstractSelectionControl<H extends AbstractCanvasHandler>
     public void bind(final ClientSession session) {
         if (session instanceof EditorSession) {
             ((EditorSession) session).getKeyboardControl().addKeyShortcutCallback(this::onKeyDownEvent);
-            ((EditorSession) session).getKeyboardControl().addKeyShortcutCallback(new KogitoKeyPress(new KeyboardEvent.Key[]{ESC}, "Edit | Unselect", this::clearSelection));
             selectionControl.setReadonly(false);
         }
     }
