@@ -18,7 +18,9 @@ package org.kie.workbench.common.stunner.bpmn.project.backend.service;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
@@ -60,12 +62,15 @@ public class BPMNFindDataTypesProjectService implements DataTypesService {
             final PackageDataModelOracle oracle = dataModelService.getDataModel(path);
             final String[] fullyQualifiedClassNames = DataModelOracleUtilities.getFactTypes(oracle);
 
+            final Set<String> assets = new HashSet<>();
             for (int i = 0; i < fullyQualifiedClassNames.length; i++) {
+                assets.add(fullyQualifiedClassNames[i]);
                 fullyQualifiedClassNames[i] = "Asset-" + fullyQualifiedClassNames[i];
             }
 
             dataTypeNames.addAll(Arrays.asList(fullyQualifiedClassNames));
             if (addedDataTypes != null) {
+                addedDataTypes.removeAll(assets); // Avoid clash from Asset Data Objects and Data Objects within then model
                 dataTypeNames.addAll(addedDataTypes);
             }
             // remove duplicates

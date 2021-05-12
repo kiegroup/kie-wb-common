@@ -112,5 +112,15 @@ public class FindDataTypesProjectServiceTest {
         assertEquals("Asset-org.Antelope", dataTypeNames.get(0));
         assertEquals("Asset-org.Zebra", dataTypeNames.get(1));
         assertEquals("com.addedType", dataTypeNames.get(2));
+
+        //Test for clash
+        addedTypes.clear();
+        addedTypes.add("org.Antelope");
+
+        dataTypeNames = service.getDataTypeNames(path, addedTypes);
+        assertNotNull(dataTypeNames);
+        assertEquals(2, dataTypeNames.size());
+        assertEquals("Asset-org.Antelope", dataTypeNames.get(0));
+        assertEquals("Asset-org.Zebra", dataTypeNames.get(1));
     }
 }
