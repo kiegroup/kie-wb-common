@@ -33,7 +33,7 @@ export interface ContextEntryRecord {
   /** Entry expression */
   entryExpression: ExpressionProps;
   /** Label used for the popover triggered when editing info section */
-  editInfoPopoverLabel: string;
+  editInfoPopoverLabel?: string;
   /** Callback to be invoked on expression resetting */
   onExpressionResetting?: () => void;
 }

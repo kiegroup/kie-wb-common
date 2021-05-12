@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { render } from "@testing-library/react";
+import { fireEvent, render } from "@testing-library/react";
 import {
   activateSelector,
   EDIT_EXPRESSION_DATA_TYPE,
@@ -60,6 +60,30 @@ describe("FunctionExpression tests", () => {
     expect(container.querySelector(".function-expression table thead .parameters-list p")).toContainHTML(
       `${DEFAULT_FIRST_PARAM_NAME}`
     );
+  });
+
+  test("should reset function kind to FEEL, when resetting table row", async () => {
+    const mockedBroadcastDefinition = jest.fn();
+    mockBroadcastDefinition(mockedBroadcastDefinition);
+    const { container, baseElement } = render(
+      usingTestingBoxedExpressionI18nContext(
+        <FunctionExpression logicType={LogicType.Function} functionKind={FunctionKind.Java} formalParameters={[]} />
+      ).wrapper
+    );
+
+    await clearTableRow(container, baseElement);
+
+    expect(mockedBroadcastDefinition).toHaveBeenLastCalledWith({
+      dataType: undefined,
+      expression: {
+        uid: "id1",
+      },
+      formalParameters: [],
+      functionKind: "FEEL",
+      logicType: "Function",
+      name: "p-1",
+      uid: undefined,
+    });
   });
 
   describe("Formal Parameters", () => {
@@ -221,12 +245,6 @@ describe("FunctionExpression tests", () => {
         uid: undefined,
       });
     }
-
-    function mockBroadcastDefinition(mockedBroadcastDefinition: jest.Mock) {
-      window.beeApi = _.extend(window.beeApi || {}, {
-        broadcastFunctionExpressionDefinition: (definition: FunctionProps) => mockedBroadcastDefinition(definition),
-      });
-    }
   });
 
   describe("FEEL Function Kind", () => {
@@ -270,4 +288,91 @@ describe("FunctionExpression tests", () => {
       ).toBeTruthy();
     });
   });
+
+  describe("JAVA Function Kind", () => {
+    test("should show, by default, an entry with a context table, containing two entries: class and method", () => {
+      const { container } = render(
+        usingTestingBoxedExpressionI18nContext(
+          <FunctionExpression logicType={LogicType.Function} functionKind={FunctionKind.Java} formalParameters={[]} />
+        ).wrapper
+      );
+
+      expect(container.querySelector(".function-expression table tbody td.data-cell")).toBeVisible();
+      expect(container.querySelector(".function-expression table tbody td.data-cell .context-expression")).toBeTruthy();
+      expect(
+        container.querySelectorAll(
+          ".function-expression table tbody td.data-cell .context-expression .context-entry-info-cell"
+        )
+      ).toHaveLength(2);
+      expect(
+        container.querySelectorAll(
+          ".function-expression table tbody td.data-cell .context-expression .context-entry-info-cell"
+        )[0]
+      ).toContainHTML("class");
+      expect(
+        container.querySelectorAll(
+          ".function-expression table tbody td.data-cell .context-expression .context-entry-info-cell"
+        )[1]
+      ).toContainHTML("method");
+    });
+
+    test("should show an entry corresponding to the passed class and method values", () => {
+      const classValue = "class value";
+      const methodValue = "method value";
+
+      const { container } = render(
+        usingTestingBoxedExpressionI18nContext(
+          <FunctionExpression
+            logicType={LogicType.Function}
+            functionKind={FunctionKind.Java}
+            formalParameters={[]}
+            class={classValue}
+            method={methodValue}
+          />
+        ).wrapper
+      );
+
+      expect(
+        container.querySelectorAll(
+          ".function-expression table tbody td.data-cell .context-expression .context-entry-expression-cell"
+        )
+      ).toHaveLength(2);
+      expect(
+        container.querySelectorAll(
+          ".function-expression table tbody td.data-cell .context-expression .context-entry-expression-cell"
+        )[0]
+      ).toContainHTML(classValue);
+      expect(
+        container.querySelectorAll(
+          ".function-expression table tbody td.data-cell .context-expression .context-entry-expression-cell"
+        )[1]
+      ).toContainHTML(methodValue);
+    });
+  });
+
+  function mockBroadcastDefinition(mockedBroadcastDefinition: jest.Mock) {
+    window.beeApi = _.extend(window.beeApi || {}, {
+      broadcastFunctionExpressionDefinition: (definition: FunctionProps) => mockedBroadcastDefinition(definition),
+    });
+  }
+
+  async function clearTableRow(container: Element, baseElement: Element) {
+    await act(async () => {
+      fireEvent.contextMenu(
+        container.querySelector(".function-expression table tbody td.counter-cell") as HTMLTableElement
+      );
+      await flushPromises();
+      await jest.runAllTimers();
+    });
+
+    await act(async () => {
+      fireEvent.click(
+        baseElement.querySelector(
+          "[data-ouia-component-id='expression-table-handler-menu-Clear'] button"
+        )! as HTMLButtonElement
+      );
+      await flushPromises();
+      await jest.runAllTimers();
+    });
+  }
 });

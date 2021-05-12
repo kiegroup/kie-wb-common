@@ -21,6 +21,7 @@ export const en: BoxedExpressionEditorI18n = {
   ...en_common,
   addParameter: "Add parameter",
   choose: "Choose...",
+  class: "class",
   clear: "Clear",
   columnOperations: {
     delete: "Delete",
@@ -43,6 +44,7 @@ export const en: BoxedExpressionEditorI18n = {
   invocation: "Invocation",
   list: "List",
   literalExpression: "Literal expression",
+  methodSignature: "method signature",
   name: "Name",
   parameters: "PARAMETERS",
   relation: "Relation",

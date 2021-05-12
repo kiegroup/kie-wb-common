@@ -207,7 +207,7 @@ export const LogicTypeSelector: React.FunctionComponent<LogicTypeSelectorProps> 
     >
       {logicTypeSelected ? renderExpression : i18n.selectExpression}
       {!logicTypeSelected ? buildLogicSelectorMenu() : null}
-      {contextMenuVisibility ? buildContextMenu() : null}
+      {!selectedExpression.noClearAction && contextMenuVisibility ? buildContextMenu() : null}
     </div>
   );
 };

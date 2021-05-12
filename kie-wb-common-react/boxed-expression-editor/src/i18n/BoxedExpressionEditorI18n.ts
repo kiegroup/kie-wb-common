@@ -26,6 +26,7 @@ interface BoxedExpressionEditorDictionary extends ReferenceDictionary<BoxedExpre
     insertLeft: string;
     insertRight: string;
   };
+  class: string;
   clear: string;
   context: string;
   contextEntry: string;
@@ -42,6 +43,7 @@ interface BoxedExpressionEditorDictionary extends ReferenceDictionary<BoxedExpre
   invocation: string;
   list: string;
   literalExpression: string;
+  methodSignature: string;
   name: string;
   parameters: string;
   relation: string;

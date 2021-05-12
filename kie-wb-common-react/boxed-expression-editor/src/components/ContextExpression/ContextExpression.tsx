@@ -51,10 +51,12 @@ export const ContextExpression: React.FunctionComponent<ContextProps> = ({
   onUpdatingNameAndDataType,
   contextEntries,
   result = {} as ExpressionProps,
+  renderResult = true,
   entryInfoWidth = DEFAULT_ENTRY_INFO_MIN_WIDTH,
   entryExpressionWidth = DEFAULT_ENTRY_EXPRESSION_MIN_WIDTH,
   isHeadless = false,
   onUpdatingRecursiveExpression,
+  noHandlerMenu = false,
 }) => {
   const { i18n } = useBoxedExpressionEditorI18n();
 
@@ -165,12 +167,20 @@ export const ContextExpression: React.FunctionComponent<ContextProps> = ({
         onColumnsUpdate={onColumnsUpdate}
         onRowAdding={onRowAdding}
         onRowsUpdate={setRows}
-        handlerConfiguration={getHandlerConfiguration(i18n, i18n.contextEntry)}
+        handlerConfiguration={noHandlerMenu ? undefined : getHandlerConfiguration(i18n, i18n.contextEntry)}
         getRowKey={useCallback(getEntryKey, [])}
         resetRowCustomFunction={useCallback(resetEntry, [])}
       >
-        <div className="context-result">{`<result>`}</div>
-        <ContextEntryExpression expression={resultExpression} onUpdatingRecursiveExpression={setResultExpression} />
+        {renderResult
+          ? [
+              <div key="context-result" className="context-result">{`<result>`}</div>,
+              <ContextEntryExpression
+                key="context-expression"
+                expression={resultExpression}
+                onUpdatingRecursiveExpression={setResultExpression}
+              />,
+            ]
+          : undefined}
       </Table>
     </div>
   );
