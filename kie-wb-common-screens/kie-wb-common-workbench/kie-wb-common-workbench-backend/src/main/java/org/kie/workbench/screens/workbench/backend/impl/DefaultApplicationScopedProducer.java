@@ -36,7 +36,7 @@ import org.kie.workbench.screens.workbench.backend.ApplicationScopedProducer;
 import org.slf4j.LoggerFactory;
 import org.uberfire.backend.server.IOWatchServiceNonDotImpl;
 import org.uberfire.commons.concurrent.Indexing;
-import org.uberfire.commons.concurrent.Unmanaged;
+import org.uberfire.commons.concurrent.FSWatch;
 import org.uberfire.commons.services.cdi.Startup;
 import org.uberfire.commons.services.cdi.StartupType;
 import org.uberfire.ext.metadata.MetadataConfig;
@@ -68,7 +68,8 @@ public class DefaultApplicationScopedProducer implements ApplicationScopedProduc
     private IOWatchServiceNonDotImpl watchService;
     private AuthenticationService authenticationService;
     private DefaultIndexEngineObserver defaultIndexEngineObserver;
-    private ExecutorService executorService;
+    private ExecutorService indexingExecutorService;
+    private ExecutorService fsWatchExecutorService;
     private IndexersFactory indexersFactory;
     private IndexerDispatcherFactory dispatcherFactory;
     private Event<BatchIndexEvent> batchIndexEvent;
@@ -93,7 +94,8 @@ public class DefaultApplicationScopedProducer implements ApplicationScopedProduc
                                             DefaultIndexEngineObserver defaultIndexEngineObserver,
                                             IndexersFactory indexersFactory,
                                             Event<BatchIndexEvent> batchIndexEvent,
-                                            @Indexing ExecutorService executorService,
+                                            @Indexing ExecutorService indexingExecutorService,
+                                            @FSWatch ExecutorService fsWatchExecutorService,
                                             BatchIndexListener batchIndexListener) {
         this();
         this.config = config;
@@ -102,7 +104,8 @@ public class DefaultApplicationScopedProducer implements ApplicationScopedProduc
         this.defaultIndexEngineObserver = defaultIndexEngineObserver;
         this.indexersFactory = indexersFactory;
         this.batchIndexEvent = batchIndexEvent;
-        this.executorService = executorService;
+        this.indexingExecutorService = indexingExecutorService;
+        this.fsWatchExecutorService = fsWatchExecutorService;
         this.batchIndexListener = batchIndexListener;
     }
 
@@ -116,7 +119,8 @@ public class DefaultApplicationScopedProducer implements ApplicationScopedProduc
         this.ioService = new IOServiceIndexedImpl(watchService,
                                                   config.getIndexEngine(),
                                                   defaultIndexEngineObserver,
-                                                  executorService,
+                                                  indexingExecutorService,
+                                                  fsWatchExecutorService,
                                                   indexersFactory,
                                                   dispatcherFactory,
                                                   batchIndexListener,
