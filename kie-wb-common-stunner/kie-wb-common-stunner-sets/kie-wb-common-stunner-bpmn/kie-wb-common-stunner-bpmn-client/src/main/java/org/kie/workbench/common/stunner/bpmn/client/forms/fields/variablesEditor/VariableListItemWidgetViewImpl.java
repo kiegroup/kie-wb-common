@@ -224,15 +224,18 @@ public class VariableListItemWidgetViewImpl implements VariableListItemWidgetVie
         this.parentWidget = parentWidget;
     }
 
-    private String lastCustomValue = "";
+    private String lastCustomValueForTags = "";
+    private String lastCustomValueForDataType = "";
 
     @Override
     public void setTextBoxModelValue(final TextBox textBox,
                                      final String value) {
         if (textBox == customDataType) {
+            parentWidget.addDataType(value, lastCustomValueForDataType);
             setCustomDataType(value);
+            lastCustomValueForDataType = value;
         } else {
-            lastCustomValue = value;
+            lastCustomValueForTags = value;
         }
     }
 
@@ -246,7 +249,7 @@ public class VariableListItemWidgetViewImpl implements VariableListItemWidgetVie
 
     @Override
     public String getModelValue(final ValueListBox<String> listBox) {
-        String value = lastCustomValue;
+        String value = lastCustomValueForTags;
 
         if (listBox == dataType) {
             value = getCustomDataType();
@@ -447,6 +450,7 @@ public class VariableListItemWidgetViewImpl implements VariableListItemWidgetVie
         dataTypeComboBox.setCurrentTextValue("");
         dataTypeComboBox.setListBoxValues(dataTypeListBoxValues);
         dataTypeComboBox.setShowCustomValues(true);
+
         String cdt = getCustomDataType();
         if (cdt != null && !cdt.isEmpty()) {
             dataTypeComboBox.addCustomValueToListBoxValues(cdt,

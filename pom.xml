@@ -6,7 +6,7 @@
   <parent>
     <groupId>org.kie</groupId>
     <artifactId>kie-parent</artifactId>
-    <version>7.53.0-SNAPSHOT</version>
+    <version>7.55.0-SNAPSHOT</version>
   </parent>
 
   <groupId>org.kie.workbench</groupId>
@@ -30,7 +30,6 @@
     <module>kie-wb-common-cli</module>
     <module>kie-wb-common-dev</module>
     <module>kie-wb-common-command-api</module>
-    <module>kie-wb-common-kogito</module>
   </modules>
 
   <properties>

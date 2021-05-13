@@ -145,6 +145,7 @@ public class VariablesEditorFieldRenderer extends FieldRenderer<VariablesEditorF
         dataTypeListBoxValues = new ListBoxValues(VariableListItemWidgetView.CUSTOM_PROMPT,
                                                   "Edit" + " ",
                                                   dataTypesTester());
+
         dataTypeListBoxValues.addValues(dataTypeDisplayNames);
         view.setVariablesDataTypes(dataTypeListBoxValues);
     }
@@ -292,6 +293,11 @@ public class VariablesEditorFieldRenderer extends FieldRenderer<VariablesEditorF
 
     public Button getLastOverlayOpened() {
         return lastOverlayOpened;
+    }
+
+    @Override
+    public void addDataType(String dataType, String oldType) {
+        view.addDataType(dataType, oldType);
     }
 
     public void closeLastOverlay() {

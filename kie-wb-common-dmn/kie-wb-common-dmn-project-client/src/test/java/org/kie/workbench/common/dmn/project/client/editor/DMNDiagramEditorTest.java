@@ -86,6 +86,7 @@ import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -351,10 +352,33 @@ public class DMNDiagramEditorTest extends AbstractProjectDiagramEditorTest {
     }
 
     @Test
+    public void testOnFocusWithClosedEditor() {
+        when(stunnerEditor.isClosed()).thenReturn(true);
+        diagramEditor.onFocus();
+        verify(stunnerEditor, never()).focus();
+        verify(stunnerEditor, never()).lostFocus();
+        verify(diagramEditor, never()).onDiagramLoad();
+        verify(dataTypesPage).onFocus();
+        verify(dataTypesPage).enableShortcuts();
+        verify(dataTypesPage, never()).onLostFocus();
+        verify(dataTypesPage, never()).disableShortcuts();
+    }
+
+    @Test
     public void testOnLostFocus() {
         when(stunnerEditor.isClosed()).thenReturn(false);
         diagramEditor.onLostFocus();
         verify(stunnerEditor).lostFocus();
+        verify(stunnerEditor, never()).focus();
+        verify(dataTypesPage).onLostFocus();
+        verify(dataTypesPage, never()).onFocus();
+    }
+
+    @Test
+    public void testOnLostFocusWithClosedEditor() {
+        when(stunnerEditor.isClosed()).thenReturn(true);
+        diagramEditor.onLostFocus();
+        verify(stunnerEditor, never()).lostFocus();
         verify(stunnerEditor, never()).focus();
         verify(dataTypesPage).onLostFocus();
         verify(dataTypesPage, never()).onFocus();
@@ -419,6 +443,16 @@ public class DMNDiagramEditorTest extends AbstractProjectDiagramEditorTest {
         verify(searchBarComponent).disableSearch();
         verify(sessionCommandManager).execute(eq(canvasHandler),
                                               Mockito.<NavigateToExpressionEditorCommand>any());
+    }
+
+    @Test
+    public void testCloseExistingSessionIfAny() {
+        when(sessionManager.getCurrentSession()).thenReturn(dmnEditorSession);
+        when(dmnEditorSession.getCanvasHandler()).thenReturn(canvasHandler);
+        when(stunnerEditor.isClosed()).thenReturn(false);
+        when(stunnerEditor.getSession()).thenReturn(dmnEditorSession);
+        diagramEditor.open(diagram);
+        verify(dmnEditorSession, times(1)).close();
     }
 
     @Test

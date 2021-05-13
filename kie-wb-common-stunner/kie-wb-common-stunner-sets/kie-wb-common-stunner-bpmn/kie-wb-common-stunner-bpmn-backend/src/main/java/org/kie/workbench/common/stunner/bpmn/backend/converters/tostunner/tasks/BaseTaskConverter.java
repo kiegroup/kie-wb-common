@@ -34,6 +34,7 @@ import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.proper
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties.GenericServiceTaskPropertyReader;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties.PropertyReaderFactory;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties.ScriptTaskPropertyReader;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties.ServiceTaskPropertyReader;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties.TaskPropertyReader;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties.UserTaskPropertyReader;
 import org.kie.workbench.common.stunner.bpmn.definition.BaseUserTask;
@@ -110,46 +111,43 @@ public abstract class BaseTaskConverter<U extends BaseUserTask<S>, S extends Bas
     }
 
     private BpmnNode jbpmServiceTask(org.eclipse.bpmn2.Task task) {
-        return propertyReaderFactory
-                .ofCustom(task)
-                .map(p -> {
-                    final Node<View<CustomTask>, Edge> node = factoryManager.newNode(task.getId(), CustomTask.class);
-                    final CustomTask definition = node.getContent().getDefinition();
-                    definition.setName(p.getServiceTaskName());
-                    definition.getTaskType().setRawType(p.getServiceTaskName());
-                    definition.setDescription(p.getServiceTaskDescription());
-                    definition.setCategory(p.getServiceTaskCategory());
-                    definition.setDefaultHandler(p.getServiceTaskDefaultHandler());
+        final ServiceTaskPropertyReader serviceTaskPropertyReader = propertyReaderFactory.ofCustom(task);
+        final Node<View<CustomTask>, Edge> node = factoryManager.newNode(task.getId(), CustomTask.class);
+        final CustomTask definition = node.getContent().getDefinition();
 
-                    definition.setGeneral(new TaskGeneralSet(
-                            new Name(p.getName()),
-                            new Documentation(p.getDocumentation())
-                    ));
+        definition.setName(serviceTaskPropertyReader.getServiceTaskName());
+        definition.getTaskType().setRawType(serviceTaskPropertyReader.getServiceTaskName());
+        definition.setDescription(serviceTaskPropertyReader.getServiceTaskDescription());
+        definition.setCategory(serviceTaskPropertyReader.getServiceTaskCategory());
+        definition.setDefaultHandler(serviceTaskPropertyReader.getServiceTaskDefaultHandler());
 
-                    definition.setDataIOSet(new DataIOSet(
-                            p.getAssignmentsInfo()
-                    ));
+        definition.setGeneral(new TaskGeneralSet(
+                new Name(serviceTaskPropertyReader.getName()),
+                new Documentation(serviceTaskPropertyReader.getDocumentation())
+        ));
 
-                    definition.setExecutionSet(new CustomTaskExecutionSet(
-                            new TaskName(p.getTaskName()),
-                            new IsAsync(p.isAsync()),
-                            new AdHocAutostart(p.isAdHocAutoStart()),
-                            new OnEntryAction(p.getOnEntryAction()),
-                            new OnExitAction(p.getOnExitAction()),
-                            new SLADueDate(p.getSlaDueDate())
-                    ));
+        definition.setDataIOSet(new DataIOSet(
+                serviceTaskPropertyReader.getAssignmentsInfo()
+        ));
 
-                    definition.setSimulationSet(p.getSimulationSet());
+        definition.setExecutionSet(new CustomTaskExecutionSet(
+                new TaskName(serviceTaskPropertyReader.getTaskName()),
+                new IsAsync(serviceTaskPropertyReader.isAsync()),
+                new AdHocAutostart(serviceTaskPropertyReader.isAdHocAutoStart()),
+                new OnEntryAction(serviceTaskPropertyReader.getOnEntryAction()),
+                new OnExitAction(serviceTaskPropertyReader.getOnExitAction()),
+                new SLADueDate(serviceTaskPropertyReader.getSlaDueDate())
+        ));
 
-                    node.getContent().setBounds(p.getBounds());
+        definition.setSimulationSet(serviceTaskPropertyReader.getSimulationSet());
 
-                    definition.setDimensionsSet(p.getRectangleDimensionsSet());
-                    definition.setBackgroundSet(p.getBackgroundSet());
-                    definition.setFontSet(p.getFontSet());
+        node.getContent().setBounds(serviceTaskPropertyReader.getBounds());
 
-                    return BpmnNode.of(node, p);
-                })
-                .orElseGet(() -> noneTask(task));
+        definition.setDimensionsSet(serviceTaskPropertyReader.getRectangleDimensionsSet());
+        definition.setBackgroundSet(serviceTaskPropertyReader.getBackgroundSet());
+        definition.setFontSet(serviceTaskPropertyReader.getFontSet());
+
+        return BpmnNode.of(node, serviceTaskPropertyReader);
     }
 
     BpmnNode bpmnServiceTask(org.eclipse.bpmn2.ServiceTask task) {
@@ -308,7 +306,6 @@ public abstract class BaseTaskConverter<U extends BaseUserTask<S>, S extends Bas
         //in case serviceTaskName attribute is present handle as a Service Task, default is a None Task
         return Optional.ofNullable(CustomAttribute.serviceTaskName.of(task).get())
                 .filter(StringUtils::nonEmpty)
-                .filter(name -> propertyReaderFactory.ofCustom(task).isPresent())
                 .map(name -> jbpmServiceTask(task))
                 .orElseGet(() -> noneTask(task));
     }

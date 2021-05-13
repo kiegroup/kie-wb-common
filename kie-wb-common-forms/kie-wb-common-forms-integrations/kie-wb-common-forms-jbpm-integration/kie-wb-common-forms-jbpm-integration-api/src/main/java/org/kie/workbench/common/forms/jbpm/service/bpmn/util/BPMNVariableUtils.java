@@ -27,6 +27,7 @@ import org.kie.workbench.common.forms.fields.shared.fieldTypes.basic.lists.input
 import org.kie.workbench.common.forms.fields.shared.fieldTypes.basic.textArea.type.TextAreaFieldType;
 import org.kie.workbench.common.forms.model.ModelProperty;
 import org.kie.workbench.common.forms.model.impl.meta.entries.FieldReadOnlyEntry;
+import org.kie.workbench.common.forms.model.impl.meta.entries.FieldRequiredEntry;
 import org.kie.workbench.common.forms.model.impl.meta.entries.FieldTypeEntry;
 import org.kie.workbench.common.forms.service.backend.util.ModelPropertiesGenerator;
 
@@ -94,10 +95,14 @@ public class BPMNVariableUtils {
     }
 
     public static ModelProperty generateVariableProperty(String name, String type, ClassLoader classLoader) {
-        return generateVariableProperty(name, type, false, classLoader);
+        return generateVariableProperty(name, type, false, false, classLoader);
     }
 
     public static ModelProperty generateVariableProperty(String name, String type, boolean readOnly, ClassLoader classLoader) {
+        return generateVariableProperty(name, type, false, readOnly, classLoader);
+    }
+
+    public static ModelProperty generateVariableProperty(String name, String type, boolean required, boolean readOnly, ClassLoader classLoader) {
 
         ModelProperty property = ModelPropertiesGenerator.createModelProperty(name,
                                                                               BPMNVariableUtils.getRealTypeForInput(type),
@@ -106,6 +111,9 @@ public class BPMNVariableUtils {
         if(property != null) {
             if(readOnly) {
                 property.getMetaData().addEntry(new FieldReadOnlyEntry(readOnly));
+            }
+            if(required) {
+                property.getMetaData().addEntry(new FieldRequiredEntry(required));
             }
 
             if (property.getTypeInfo().getClassName().equals(Object.class.getName())) {

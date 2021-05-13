@@ -16,7 +16,11 @@
 
 package org.kie.workbench.common.stunner.bpmn.project.client.service;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -34,6 +38,12 @@ public class DataTypeNamesProjectService implements DataTypeNamesService {
     private final Promises promises;
     private final Caller<DataTypesService> dataTypesServiceCaller;
 
+    private static Set<String> simpleDataTypes = new HashSet<>(Arrays.asList("Boolean",
+                                                                             "Float",
+                                                                             "Integer",
+                                                                             "Object",
+                                                                             "String"));
+
     @Inject
     public DataTypeNamesProjectService(final Promises promises,
                                        final Caller<DataTypesService> dataTypesServiceCaller) {
@@ -41,11 +51,36 @@ public class DataTypeNamesProjectService implements DataTypeNamesService {
         this.dataTypesServiceCaller = dataTypesServiceCaller;
     }
 
+    protected List<String> addedDataTypes = new ArrayList<>();
+
     @Override
     public Promise<List<String>> call(final Path path) {
+
         return promises.promisify(dataTypesServiceCaller,
-                                  s -> {
-                                      s.getDataTypeNames(path);
+                                  dataTypesService -> {
+
+                                      extractDefaultDataTypes();
+                                      dataTypesService.getDataTypeNames(path, addedDataTypes);
                                   });
+    }
+
+    protected void extractDefaultDataTypes() {
+        addedDataTypes.removeAll(simpleDataTypes);
+    }
+
+    @Override
+    public void add(String value, String oldValue) {
+        if (simpleDataTypes.contains(value)) {
+            return;
+        }
+
+        if (addedDataTypes.contains(oldValue)) {
+            addedDataTypes.remove(oldValue);
+        }
+        addedDataTypes.add(value);
+    }
+
+    public void reset() {
+        addedDataTypes.clear();
     }
 }

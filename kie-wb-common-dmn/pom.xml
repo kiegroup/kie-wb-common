@@ -21,7 +21,7 @@
   <parent>
     <groupId>org.kie.workbench</groupId>
     <artifactId>kie-wb-common</artifactId>
-    <version>7.53.0-SNAPSHOT</version>
+    <version>7.55.0-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
@@ -44,10 +44,7 @@
     <module>kie-wb-common-dmn-project-client</module>
     <module>kie-wb-common-dmn-webapp-common</module>
     <module>kie-wb-common-dmn-webapp-standalone</module>
-    <module>kie-wb-common-dmn-webapp-kogito-common</module>
     <module>kie-wb-common-dmn-webapp-kogito-marshaller</module>
-    <module>kie-wb-common-dmn-webapp-kogito-runtime</module>
-    <module>kie-wb-common-dmn-webapp-kogito-testing</module>
   </modules>
 
   <profiles>

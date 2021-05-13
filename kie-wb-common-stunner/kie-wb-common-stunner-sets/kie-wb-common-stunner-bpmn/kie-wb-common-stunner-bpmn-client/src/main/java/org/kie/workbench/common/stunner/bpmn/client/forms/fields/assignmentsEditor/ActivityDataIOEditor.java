@@ -45,6 +45,8 @@ public class ActivityDataIOEditor implements ActivityDataIOEditorView.Presenter 
     public interface GetDataCallback {
 
         void getData(String assignmentData);
+
+        void addDataType(String dataType, String oldType);
     }
 
     GetDataCallback callback = null;
@@ -170,5 +172,10 @@ public class ActivityDataIOEditor implements ActivityDataIOEditorView.Presenter 
     @Override
     public ListBoxValues.ValueTester processVarTester() {
         return userValue -> null;
+    }
+
+    @Override
+    public void addDataType(String dataType, String oldType) {
+        callback.addDataType(dataType, oldType);
     }
 }

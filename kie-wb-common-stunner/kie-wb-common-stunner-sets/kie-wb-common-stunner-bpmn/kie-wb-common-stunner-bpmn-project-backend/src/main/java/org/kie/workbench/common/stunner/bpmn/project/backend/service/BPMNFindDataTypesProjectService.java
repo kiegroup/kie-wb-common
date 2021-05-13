@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -27,6 +28,7 @@ import org.jboss.errai.bus.server.annotations.Service;
 import org.kie.soup.project.datamodel.oracle.PackageDataModelOracle;
 import org.kie.workbench.common.services.datamodel.backend.server.DataModelOracleUtilities;
 import org.kie.workbench.common.services.datamodel.backend.server.service.DataModelService;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.processes.DataTypeCacheServer;
 import org.kie.workbench.common.stunner.bpmn.project.service.DataTypesService;
 import org.uberfire.backend.vfs.Path;
 
@@ -35,32 +37,45 @@ public class BPMNFindDataTypesProjectService implements DataTypesService {
 
     private DataModelService dataModelService;
 
+    private DataTypeCacheServer dataTypeCacheServer;
+
     //CDI proxy
     protected BPMNFindDataTypesProjectService() {
-        this(null);
+        this(null, null);
     }
 
     @Inject
-    public BPMNFindDataTypesProjectService(final DataModelService dataModelService) {
+    public BPMNFindDataTypesProjectService(final DataModelService dataModelService, final DataTypeCacheServer dataTypeCacheServer) {
         this.dataModelService = dataModelService;
+        this.dataTypeCacheServer = dataTypeCacheServer;
     }
 
-    public List<String> getDataTypeNames(final Path path) {
+    public List<String> getDataTypeNames(final Path path, final List<String> addedDataTypes) {
         if (null == path) {
             return Collections.emptyList();
         }
         final List<String> dataTypeNames = new ArrayList<>();
-
+        dataTypeNames.addAll(dataTypeCacheServer.getCachedDataTypes());
         try {
             final PackageDataModelOracle oracle = dataModelService.getDataModel(path);
             final String[] fullyQualifiedClassNames = DataModelOracleUtilities.getFactTypes(oracle);
 
+            for (int i = 0; i < fullyQualifiedClassNames.length; i++) {
+                fullyQualifiedClassNames[i] = "Asset-" + fullyQualifiedClassNames[i];
+            }
+
             dataTypeNames.addAll(Arrays.asList(fullyQualifiedClassNames));
-            Collections.sort(dataTypeNames);
+            if (addedDataTypes != null) {
+                dataTypeNames.addAll(addedDataTypes);
+            }
+            // remove duplicates
+            final List<String> collect = dataTypeNames.stream().distinct().collect(Collectors.toList());
+            Collections.sort(collect);
+            dataTypeNames.clear();
+            dataTypeNames.addAll(collect);
         } catch (Exception e) {
             throw ExceptionUtilities.handleException(e);
         }
-
         return dataTypeNames;
     }
 }
