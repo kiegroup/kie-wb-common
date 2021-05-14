@@ -19,6 +19,7 @@ package org.kie.workbench.common.screens.library.client.screens.assets;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
 import javax.annotation.PostConstruct;
 import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
@@ -523,14 +524,15 @@ public class PopulatedAssetsScreen {
                           new DefaultErrorCallback());
         }
     }
-    
+
     private void setDefaultPageSize() {
         libraryPreferences.load(loadedLibraryPreferences -> {
-            this.pageSize = Integer.valueOf(loadedLibraryPreferences
-                                                    .getProjectPreferences()
-                                                    .getAssetsPerPage());
+            this.pageSize = loadedLibraryPreferences
+                    .getProjectPreferences()
+                    .getAssetsPerPage();
             update();
-        }, error -> {});
+        }, error -> {
+        });
     }
 
     private boolean isProjectNull() {

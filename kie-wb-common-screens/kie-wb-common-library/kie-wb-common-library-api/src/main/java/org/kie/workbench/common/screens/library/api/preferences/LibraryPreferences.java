@@ -46,9 +46,8 @@ public class LibraryPreferences implements BasePreference<LibraryPreferences> {
         defaultValue.projectPreferences.description = "";
         defaultValue.projectPreferences.branch = "master";
         //GWT complains in SuperDevMode if the static constants are used; so we have to use a literal
-        defaultValue.projectPreferences.assetsPerPage = System.getProperty("org.kie.library.assets_per_page",
-                                                                           "15");
-
+        defaultValue.projectPreferences.assetsPerPage = System.getProperty(LibraryProjectPreferences.ASSETS_PER_PAGE_KEY,
+                                                                           String.valueOf(LibraryProjectPreferences.ASSETS_PER_PAGE_VALUE));
         return defaultValue;
     }
 
