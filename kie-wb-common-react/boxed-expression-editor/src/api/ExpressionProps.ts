@@ -51,6 +51,17 @@ export interface LiteralExpressionProps extends ExpressionProps {
   width?: number;
 }
 
+export interface PMMLLiteralExpressionProps extends ExpressionProps {
+  /** Logic type must be PMMLLiteralExpression */
+  logicType: LogicType.PMMLLiteralExpression;
+  /** Callback for retrieving the options to provide in the dropdown */
+  getOptions: () => string[];
+  /** Dropdown's selected option */
+  selected?: string;
+  /** Label displayed (in italic style) when no options are available */
+  noOptionsLabel: string;
+}
+
 export interface RelationProps extends ExpressionProps {
   /** Logic type must be Relation */
   logicType: LogicType.Relation;

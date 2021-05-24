@@ -28,9 +28,10 @@ import {
   ListProps,
   LiteralExpressionProps,
   LogicType,
+  PMMLLiteralExpressionProps,
   RelationProps,
 } from "../../api";
-import { LiteralExpression } from "../LiteralExpression";
+import { LiteralExpression, PMMLLiteralExpression } from "../LiteralExpression";
 import { RelationExpression } from "../RelationExpression";
 import { ContextExpression } from "../ContextExpression";
 import { useBoxedExpressionEditorI18n } from "../../i18n";
@@ -103,6 +104,8 @@ export const LogicTypeSelector: React.FunctionComponent<LogicTypeSelectorProps> 
     switch (expression.logicType) {
       case LogicType.LiteralExpression:
         return <LiteralExpression {...(expression as LiteralExpressionProps)} />;
+      case LogicType.PMMLLiteralExpression:
+        return <PMMLLiteralExpression {...(expression as PMMLLiteralExpressionProps)} />;
       case LogicType.Relation:
         return <RelationExpression {...(expression as RelationProps)} />;
       case LogicType.Context:
@@ -122,19 +125,22 @@ export const LogicTypeSelector: React.FunctionComponent<LogicTypeSelectorProps> 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [expression.logicType]);
 
-  const getLogicTypesWithoutUndefined = useCallback(
-    () => Object.values(LogicType).filter((logicType) => logicType !== LogicType.Undefined),
+  const getSelectableLogicTypes = useCallback(
+    () =>
+      Object.values(LogicType).filter(
+        (logicType) => !_.includes([LogicType.Undefined, LogicType.PMMLLiteralExpression], logicType)
+      ),
     []
   );
 
   const renderLogicTypeItems = useCallback(
     () =>
-      _.map(getLogicTypesWithoutUndefined(), (key) => (
+      _.map(getSelectableLogicTypes(), (key) => (
         <MenuItem key={key} itemId={key}>
           {key}
         </MenuItem>
       )),
-    [getLogicTypesWithoutUndefined]
+    [getSelectableLogicTypes]
   );
 
   const getArrowPlacement = useCallback(() => getPlacementRef() as HTMLElement, [getPlacementRef]);
