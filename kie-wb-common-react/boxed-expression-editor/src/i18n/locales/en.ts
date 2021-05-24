@@ -34,6 +34,7 @@ export const en: BoxedExpressionEditorI18n = {
   dataType: "Data Type",
   decisionTable: "Decision Table",
   delete: "Delete",
+  document: "document",
   editContextEntry: "Edit Context Entry",
   editExpression: "Edit Expression",
   editParameter: "Edit Parameter",
@@ -45,8 +46,13 @@ export const en: BoxedExpressionEditorI18n = {
   list: "List",
   literalExpression: "Literal expression",
   methodSignature: "method signature",
+  model: "model",
   name: "Name",
   parameters: "PARAMETERS",
+  pmml: {
+    firstSelection: "First select PMML document",
+    secondSelection: "Second select PMML model",
+  },
   relation: "Relation",
   rowOperations: {
     clear: "Clear",

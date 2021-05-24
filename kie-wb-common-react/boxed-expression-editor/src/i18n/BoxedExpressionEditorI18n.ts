@@ -32,6 +32,7 @@ interface BoxedExpressionEditorDictionary extends ReferenceDictionary<BoxedExpre
   contextEntry: string;
   dataType: string;
   decisionTable: string;
+  document: string;
   editContextEntry: string;
   editExpression: string;
   editParameter: string;
@@ -44,8 +45,13 @@ interface BoxedExpressionEditorDictionary extends ReferenceDictionary<BoxedExpre
   list: string;
   literalExpression: string;
   methodSignature: string;
+  model: string;
   name: string;
   parameters: string;
+  pmml: {
+    firstSelection: string;
+    secondSelection: string;
+  };
   relation: string;
   rows: string;
   rowOperations: {

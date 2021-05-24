@@ -28,6 +28,8 @@ import {
   JavaFunctionProps,
   LiteralExpressionProps,
   LogicType,
+  PmmlFunctionProps,
+  PMMLLiteralExpressionProps,
   resetEntry,
   TableHeaderVisibility,
   TableOperation,
@@ -49,7 +51,6 @@ export const FunctionExpression: React.FunctionComponent<FunctionProps> = (props
     props.parametersWidth === undefined ? DEFAULT_ENTRY_EXPRESSION_MIN_WIDTH : props.parametersWidth;
   const formalParameters = props.formalParameters === undefined ? [] : props.formalParameters;
   const functionKind = props.functionKind === undefined ? FunctionKind.Feel : props.functionKind;
-  const name = props.name === undefined ? DEFAULT_FIRST_PARAM_NAME : props.name;
 
   const { i18n } = useBoxedExpressionEditorI18n();
 
@@ -57,11 +58,21 @@ export const FunctionExpression: React.FunctionComponent<FunctionProps> = (props
 
   const [parameters, setParameters] = useState(formalParameters);
 
+  const name = useRef(props.name === undefined ? DEFAULT_FIRST_PARAM_NAME : props.name);
+  const dataType = useRef(props.dataType === undefined ? DataType.Undefined : props.dataType);
+
+  const document = useRef((props as PmmlFunctionProps).document);
+  const model = useRef((props as PmmlFunctionProps).model);
+
+  const editParametersPopoverAppendTo = useCallback(() => {
+    return () => globalContext.boxedExpressionEditorRef.current!;
+  }, [globalContext.boxedExpressionEditorRef]);
+
   const headerCellElement = useMemo(
     () => (
       <PopoverMenu
         title={i18n.editParameters}
-        appendTo={globalContext.boxedExpressionEditorRef?.current ?? undefined}
+        appendTo={editParametersPopoverAppendTo()}
         className="parameters-editor-popover"
         minWidth="400px"
         body={<EditParameters parameters={parameters} setParameters={setParameters} />}
@@ -78,16 +89,16 @@ export const FunctionExpression: React.FunctionComponent<FunctionProps> = (props
         </div>
       </PopoverMenu>
     ),
-    [globalContext.boxedExpressionEditorRef, i18n.editParameters, parameters]
+    [editParametersPopoverAppendTo, i18n.editParameters, parameters]
   );
 
   const evaluateColumns = useCallback(
     () =>
       [
         {
-          label: name,
-          accessor: name,
-          dataType: props.dataType,
+          label: name.current,
+          accessor: name.current,
+          dataType: dataType.current,
           disableHandlerOnHeader: true,
           columns: [
             {
@@ -100,7 +111,7 @@ export const FunctionExpression: React.FunctionComponent<FunctionProps> = (props
           ],
         },
       ] as ColumnInstance[],
-    [props.dataType, headerCellElement, name]
+    [headerCellElement]
   );
 
   const extractContextEntriesFromJavaProps = useCallback(
@@ -127,9 +138,51 @@ export const FunctionExpression: React.FunctionComponent<FunctionProps> = (props
     [i18n.class, i18n.methodSignature]
   );
 
+  const extractContextEntriesFromPmmlProps = useCallback(
+    (pmmlProps: PmmlFunctionProps & { children?: React.ReactNode }) => {
+      return [
+        {
+          entryInfo: { name: i18n.document, dataType: DataType.String },
+          entryExpression: {
+            noClearAction: true,
+            logicType: LogicType.PMMLLiteralExpression,
+            noOptionsLabel: i18n.pmml.firstSelection,
+            getOptions: () => _.map(pmmlProps.pmmlParams, "document"),
+            selected: document.current,
+          } as PMMLLiteralExpressionProps,
+        },
+        {
+          entryInfo: { name: i18n.model, dataType: DataType.String },
+          entryExpression: {
+            noClearAction: true,
+            logicType: LogicType.PMMLLiteralExpression,
+            noOptionsLabel: i18n.pmml.secondSelection,
+            getOptions: () =>
+              _.map(
+                _.find(pmmlProps.pmmlParams, (param) => param.document === document.current)?.modelsFromDocument,
+                "model"
+              ),
+            selected: model.current,
+          } as PMMLLiteralExpressionProps,
+        },
+      ];
+    },
+    [i18n.document, i18n.model, i18n.pmml.firstSelection, i18n.pmml.secondSelection]
+  );
+
+  const extractParametersFromPmmlProps = useCallback(
+    (pmmlProps: PmmlFunctionProps & { children?: React.ReactNode }) => {
+      return (
+        _.find(_.find(pmmlProps.pmmlParams, { document: document.current })?.modelsFromDocument, {
+          model: model.current,
+        })?.parametersFromModel || []
+      );
+    },
+    []
+  );
+
   const evaluateRows = useCallback(
     (functionKind: FunctionKind) => {
-      //TODO PMML kind is still missing
       switch (functionKind) {
         case FunctionKind.Java: {
           const javaProps: PropsWithChildren<JavaFunctionProps> = props as PropsWithChildren<JavaFunctionProps>;
@@ -145,7 +198,20 @@ export const FunctionExpression: React.FunctionComponent<FunctionProps> = (props
             } as DataRecord,
           ];
         }
-        case FunctionKind.Pmml:
+        case FunctionKind.Pmml: {
+          const pmmlProps: PropsWithChildren<PmmlFunctionProps> = props as PropsWithChildren<PmmlFunctionProps>;
+          return [
+            {
+              entryExpression: {
+                logicType: LogicType.Context,
+                noClearAction: true,
+                renderResult: false,
+                noHandlerMenu: true,
+                contextEntries: extractContextEntriesFromPmmlProps(pmmlProps),
+              },
+            } as DataRecord,
+          ];
+        }
         case FunctionKind.Feel:
         default: {
           const feelProps: PropsWithChildren<FeelFunctionProps> = props as PropsWithChildren<FeelFunctionProps>;
@@ -155,7 +221,7 @@ export const FunctionExpression: React.FunctionComponent<FunctionProps> = (props
         }
       }
     },
-    [extractContextEntriesFromJavaProps, props]
+    [extractContextEntriesFromJavaProps, extractContextEntriesFromPmmlProps, props]
   );
 
   const width = useRef<number>(parametersWidth);
@@ -165,7 +231,6 @@ export const FunctionExpression: React.FunctionComponent<FunctionProps> = (props
 
   const extendDefinitionBasedOnFunctionKind = useCallback(
     (definition: FunctionProps, functionKind: FunctionKind) => {
-      //TODO PMML kind is still missing
       switch (functionKind) {
         case FunctionKind.Java: {
           const contextProps = _.first(rows)?.entryExpression as ContextProps;
@@ -175,14 +240,41 @@ export const FunctionExpression: React.FunctionComponent<FunctionProps> = (props
             (_.nth(contextProps.contextEntries, 1)?.entryExpression as LiteralExpressionProps)?.content || "";
           return _.extend(definition, { class: className, method: methodName });
         }
-        case FunctionKind.Pmml:
+        case FunctionKind.Pmml: {
+          const contextProps = _.first(rows)?.entryExpression as ContextProps;
+          const documentValue =
+            (_.nth(contextProps.contextEntries, 0)?.entryExpression as PMMLLiteralExpressionProps)?.selected || "";
+          const modelValue =
+            documentValue === document.current
+              ? _.includes(
+                  (_.nth(contextProps.contextEntries, 1)?.entryExpression as PMMLLiteralExpressionProps)?.getOptions(),
+                  (_.nth(contextProps.contextEntries, 1)?.entryExpression as PMMLLiteralExpressionProps)?.selected
+                )
+                ? (_.nth(contextProps.contextEntries, 1)?.entryExpression as PMMLLiteralExpressionProps)?.selected
+                : ""
+              : "";
+          const documentHasBeenChanged = documentValue !== document.current;
+          const modelHasBeenChanged = modelValue !== model.current;
+          document.current = documentValue;
+          model.current = modelValue;
+          if (documentHasBeenChanged) {
+            setParameters([]);
+          }
+          if (modelHasBeenChanged) {
+            const parametersFromPmmlProps = extractParametersFromPmmlProps(props as PmmlFunctionProps);
+            if (!_.isEmpty(parametersFromPmmlProps)) {
+              setParameters(parametersFromPmmlProps);
+            }
+          }
+          return _.extend(definition, { document: documentValue, model: modelValue });
+        }
         case FunctionKind.Feel:
         default: {
           return _.extend(definition, { expression: _.first(rows)?.entryExpression as ExpressionProps });
         }
       }
     },
-    [rows]
+    [extractParametersFromPmmlProps, props, rows]
   );
 
   const spreadFunctionExpressionDefinition = useCallback(() => {
@@ -225,12 +317,16 @@ export const FunctionExpression: React.FunctionComponent<FunctionProps> = (props
 
   const onColumnsUpdate = useCallback(
     ([expressionColumn]: [ColumnInstance]) => {
-      props.onUpdatingNameAndDataType?.(expressionColumn.label as string, expressionColumn.dataType);
+      const label = expressionColumn.label as string;
+      const typeRef = expressionColumn.dataType;
+      name.current = label;
+      dataType.current = typeRef;
+      props.onUpdatingNameAndDataType?.(label, typeRef);
       width.current = _.find(expressionColumn.columns, { accessor: "parameters" })?.width as number;
       const [updatedExpressionColumn] = columns.current;
-      updatedExpressionColumn.label = expressionColumn.label;
+      updatedExpressionColumn.label = label;
       updatedExpressionColumn.accessor = expressionColumn.accessor;
-      updatedExpressionColumn.dataType = expressionColumn.dataType;
+      updatedExpressionColumn.dataType = typeRef;
       spreadFunctionExpressionDefinition();
     },
     [columns, props, spreadFunctionExpressionDefinition]
