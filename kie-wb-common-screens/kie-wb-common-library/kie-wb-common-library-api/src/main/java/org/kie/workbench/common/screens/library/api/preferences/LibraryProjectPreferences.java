@@ -62,8 +62,8 @@ public class LibraryProjectPreferences implements BasePreference<LibraryProjectP
     }
 
     public int getAssetsPerPage() {
+        String systemProperty = sdmSafeGetPropertyAssetsPerPage();
 
-        String systemProperty = System.getProperty(ASSETS_PER_PAGE_KEY, String.valueOf(ASSETS_PER_PAGE_VALUE));
         int externalAssetsPerPage = 0;
         try {
             if (systemProperty.length() > 0) {
@@ -79,5 +79,14 @@ public class LibraryProjectPreferences implements BasePreference<LibraryProjectP
         } catch (NumberFormatException e) {
             return externalAssetsPerPage;
         }
+    }
+
+    public static String sdmSafeGetPropertyAssetsPerPage() {
+        //SUPER DEV MODE complains when calling System.getProperty using the constants directly.
+        //GWT compilation fails and because of that some of the showcases won't work.
+        //The variable assignment below prevents that.
+        final String key = ASSETS_PER_PAGE_KEY;
+        final String def = String.valueOf(LibraryProjectPreferences.ASSETS_PER_PAGE_VALUE);
+        return System.getProperty(key, def);
     }
 }
