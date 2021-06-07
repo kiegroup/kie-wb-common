@@ -375,7 +375,8 @@ public class ArchetypeServiceImpl implements ArchetypeService {
     }
 
     @Override
-    public Repository getTemplateRepository(String alias, String spaceName) {
+    public Repository getTemplateRepository(final String alias,
+                                            final String spaceName) {
         if (archetypePreferencesManager.containsArchetype(alias, spaceName)) {
             return getTemplateRepository(alias);
         }

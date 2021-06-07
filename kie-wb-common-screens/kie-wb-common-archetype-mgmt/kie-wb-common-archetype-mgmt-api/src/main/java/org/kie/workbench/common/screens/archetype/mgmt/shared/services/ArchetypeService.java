@@ -105,6 +105,13 @@ public interface ArchetypeService extends BaseArchetypeService {
     Repository getTemplateRepository(String alias);
 
     /**
+     * Return the base KIE project repository where the {@link Archetype archetype} is stored.
+     *
+     * @return repository of the archetype
+     */
+    Optional<Repository> getBaseKieTemplateRepository();
+
+    /**
      * Return the {@link Archetype archetype} associated with the base KIE project.
      *
      * @return the base KIE project archetype

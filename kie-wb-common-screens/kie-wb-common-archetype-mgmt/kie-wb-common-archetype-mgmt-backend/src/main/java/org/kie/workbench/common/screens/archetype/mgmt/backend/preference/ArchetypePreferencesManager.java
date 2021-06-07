@@ -229,7 +229,8 @@ public class ArchetypePreferencesManager {
         return archetypePreferences.getArchetypeSelectionMap().containsKey(archetype);
     }
 
-    public boolean containsArchetype(final String archetype, final String spaceName) {
+    public boolean containsArchetype(final String archetype,
+                                     final String spaceName) {
         final Map<String, Boolean> archetypeMap = getArchetypeSelectionMap(spaceName);
         if(!archetypeMap.containsKey(archetype))
             throw new IllegalArgumentException(
