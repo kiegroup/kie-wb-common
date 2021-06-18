@@ -586,14 +586,8 @@ public class DataModelerScreenPresenter
             @Override
             public void execute(final String commitMessage) {
 
-                final DataObject[] modifiedDataObject = new DataObject[1];
-                if (isDirty()) {
-                    /* when DataObject editor or source is changed we
-                     * need to send the DataObject to the server  in order
-                     *  to let the source to be updated prior to save.
-                     */
-                    modifiedDataObject[0] = context.getDataObject();
-                }
+                final DataObject modifiedDataObject = getModifiedDataObject();
+
                 view.showSaving();
 
                 if (newTypeInfo != null) {
@@ -601,7 +595,7 @@ public class DataModelerScreenPresenter
                                         new DataModelerErrorCallback(Constants.INSTANCE.modelEditor_saving_error())).saveSource(
                             getSource(),
                             path,
-                            modifiedDataObject[0],
+                            modifiedDataObject,
                             metadata,
                             commitMessage,
                             newTypeInfo.getPackageName(),
@@ -611,7 +605,7 @@ public class DataModelerScreenPresenter
                                         new DataModelerErrorCallback(Constants.INSTANCE.modelEditor_saving_error())).saveSource(
                             getSource(),
                             path,
-                            modifiedDataObject[0],
+                            modifiedDataObject,
                             metadata,
                             commitMessage);
                 }
@@ -669,6 +663,15 @@ public class DataModelerScreenPresenter
                     versionRecordManager.reloadVersions(currentPath);
             }
         };
+    }
+
+    protected DataObject getModifiedDataObject() {
+        if (isDirty()) {
+            if (context.isEditorChanged()) {
+                return context.getDataObject();
+            }
+        }
+        return null;
     }
 
     @Override
