@@ -271,6 +271,22 @@ public class ArchetypePreferencesManagerTest {
     }
 
     @Test
+    public void spaceContainsArchetypeTrueTest() {
+        final Map<String, Boolean> archetypeSelectionMap = new HashMap<>();
+        archetypeSelectionMap.put("archetype", true);
+        doReturn(archetypeSelectionMap).when(archetypePreferences).getArchetypeSelectionMap();
+        assertTrue(archetypePreferencesManager.containsArchetype("archetype", "myspace"));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void spaceContainsArchetypeFalseTest() {
+        final Map<String, Boolean> archetypeSelectionMap = new HashMap<>();
+        archetypeSelectionMap.put("archetype", true);
+        doReturn(archetypeSelectionMap).when(archetypePreferences).getArchetypeSelectionMap();
+        archetypePreferencesManager.containsArchetype("other", "myspace");
+    }
+
+    @Test
     public void containsArchetypeFalseTest() {
         final Map<String, Boolean> archetypeSelectionMap = new HashMap<>();
         archetypeSelectionMap.put("archetype", true);
