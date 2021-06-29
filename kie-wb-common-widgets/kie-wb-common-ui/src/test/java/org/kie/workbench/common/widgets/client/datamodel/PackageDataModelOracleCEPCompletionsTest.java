@@ -105,7 +105,7 @@ public class PackageDataModelOracleCEPCompletionsTest {
                                       new Callback<String[]>() {
                                           @Override
                                           public void callback(final String[] notAnEventDateFieldOperators) {
-                                              assertEquals(13,
+                                              assertEquals(15,
                                                            notAnEventDateFieldOperators.length);
                                               assertEquals(notAnEventDateFieldOperators[0],
                                                            "==");
@@ -124,14 +124,18 @@ public class PackageDataModelOracleCEPCompletionsTest {
                                               assertEquals(notAnEventDateFieldOperators[7],
                                                            "!= null");
                                               assertEquals(notAnEventDateFieldOperators[8],
-                                                           "in");
+                                                           "memberOf");
                                               assertEquals(notAnEventDateFieldOperators[9],
-                                                           "not in");
+                                                           "not memberOf");
                                               assertEquals(notAnEventDateFieldOperators[10],
-                                                           "after");
+                                                           "in");
                                               assertEquals(notAnEventDateFieldOperators[11],
-                                                           "before");
+                                                           "not in");
                                               assertEquals(notAnEventDateFieldOperators[12],
+                                                           "after");
+                                              assertEquals(notAnEventDateFieldOperators[13],
+                                                           "before");
+                                              assertEquals(notAnEventDateFieldOperators[14],
                                                            "coincides");
                                           }
                                       });
@@ -141,7 +145,7 @@ public class PackageDataModelOracleCEPCompletionsTest {
                                       new Callback<String[]>() {
                                           @Override
                                           public void callback(final String[] anEventThisOperators) {
-                                              assertEquals(17,
+                                              assertEquals(19,
                                                            anEventThisOperators.length);
                                               assertEquals(anEventThisOperators[0],
                                                            "==");
@@ -152,30 +156,34 @@ public class PackageDataModelOracleCEPCompletionsTest {
                                               assertEquals(anEventThisOperators[3],
                                                            "!= null");
                                               assertEquals(anEventThisOperators[4],
-                                                           "after");
+                                                           "memberOf");
                                               assertEquals(anEventThisOperators[5],
-                                                           "before");
+                                                           "not memberOf");
                                               assertEquals(anEventThisOperators[6],
-                                                           "coincides");
+                                                           "after");
                                               assertEquals(anEventThisOperators[7],
-                                                           "during");
+                                                           "before");
                                               assertEquals(anEventThisOperators[8],
-                                                           "finishes");
+                                                           "coincides");
                                               assertEquals(anEventThisOperators[9],
-                                                           "finishedby");
+                                                           "during");
                                               assertEquals(anEventThisOperators[10],
-                                                           "includes");
+                                                           "finishes");
                                               assertEquals(anEventThisOperators[11],
-                                                           "meets");
+                                                           "finishedby");
                                               assertEquals(anEventThisOperators[12],
-                                                           "metby");
+                                                           "includes");
                                               assertEquals(anEventThisOperators[13],
-                                                           "overlaps");
+                                                           "meets");
                                               assertEquals(anEventThisOperators[14],
-                                                           "overlappedby");
+                                                           "metby");
                                               assertEquals(anEventThisOperators[15],
-                                                           "starts");
+                                                           "overlaps");
                                               assertEquals(anEventThisOperators[16],
+                                                           "overlappedby");
+                                              assertEquals(anEventThisOperators[17],
+                                                           "starts");
+                                              assertEquals(anEventThisOperators[18],
                                                            "startedby");
                                           }
                                       });
