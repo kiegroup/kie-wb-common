@@ -22,9 +22,17 @@ package org.kie.workbench.common.screens.library.api.preferences;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.when;
+import static org.powermock.api.mockito.PowerMockito.mockStatic;
+import static org.powermock.api.mockito.PowerMockito.verifyStatic;
 
+@RunWith(PowerMockRunner.class)
+@PrepareForTest({LibraryProjectPreferences.class})
 public class LibraryProjectPreferencesTest {
 
     private LibraryProjectPreferences libraryProjectPreferences;
@@ -60,5 +68,17 @@ public class LibraryProjectPreferencesTest {
         libraryProjectPreferences.assetsPerPage = "not a number";
         int pageSize = libraryProjectPreferences.getAssetsPerPage();
         assertEquals(37, pageSize);
+    }
+
+    @Test
+    public void getAssetsPerPage() {
+        final int expected = LibraryProjectPreferences.ASSETS_PER_PAGE_VALUE;
+        mockStatic(LibraryProjectPreferences.class);
+        when(LibraryProjectPreferences.sdmSafeGetPropertyAssetsPerPage()).thenReturn(String.valueOf(expected));
+
+        final int result = libraryProjectPreferences.getAssetsPerPage();
+        verifyStatic(LibraryProjectPreferences.class);
+        LibraryProjectPreferences.sdmSafeGetPropertyAssetsPerPage();
+        assertEquals(expected, result);
     }
 }
