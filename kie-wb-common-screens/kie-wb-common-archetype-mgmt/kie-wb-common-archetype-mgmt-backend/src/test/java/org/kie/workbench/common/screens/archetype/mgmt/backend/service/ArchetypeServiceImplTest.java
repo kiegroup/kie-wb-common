@@ -387,6 +387,27 @@ public class ArchetypeServiceImplTest {
                    repository);
     }
 
+    @Test
+    public void getTemplateRepositoryInSpaceSuccessTest() {
+        doReturn(true).when(archetypePreferencesManager)
+                .containsArchetype(eq("archetype"),
+                        eq("myspace"));
+        doReturn(mock(Repository.class)).when(service)
+                .getTemplateRepository(eq("archetype"));
+        service.getTemplateRepository("archetype",
+                "myspace");
+        verify(service).getTemplateRepository(eq("archetype"));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void getTemplateRepositoryInSpaceFailureTest() {
+        doReturn(false).when(archetypePreferencesManager)
+                .containsArchetype(eq("archetype"),
+                                    eq("myspace"));
+        service.getTemplateRepository("archetype",
+                            "myspace");
+    }
+
     @Test(expected = IllegalStateException.class)
     public void createArchetypeRepositoryWhenOrgUnitIsNotAvailableTest() {
         mockArchetypesOrgUnitNotAvailable();

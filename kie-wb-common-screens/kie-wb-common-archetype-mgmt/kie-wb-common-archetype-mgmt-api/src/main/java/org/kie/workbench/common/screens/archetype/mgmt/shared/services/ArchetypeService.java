@@ -19,6 +19,7 @@ package org.kie.workbench.common.screens.archetype.mgmt.shared.services;
 import java.util.Optional;
 
 import org.guvnor.common.services.project.model.GAV;
+import org.guvnor.common.services.project.service.BaseArchetypeService;
 import org.guvnor.structure.repositories.Repository;
 import org.jboss.errai.bus.server.annotations.Remote;
 import org.kie.workbench.common.screens.archetype.mgmt.shared.model.Archetype;
@@ -29,7 +30,7 @@ import org.kie.workbench.common.screens.archetype.mgmt.shared.model.PaginatedArc
  * Service that manages the archetypes registered on the system.
  */
 @Remote
-public interface ArchetypeService {
+public interface ArchetypeService extends BaseArchetypeService {
 
     /**
      * Make the given {@link Archetype archetype} available to be used.
