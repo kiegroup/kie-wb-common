@@ -262,10 +262,12 @@ public abstract class BaseLibraryIndexingTest {
                 config = configBuilder.build();
             }
 
-            ExecutorService executorService = Executors.newCachedThreadPool(new DescriptiveThreadFactory());
+            ExecutorService indexingExecutorService = Executors.newCachedThreadPool(new DescriptiveThreadFactory());
+            ExecutorService fsWatchExecutorService = Executors.newCachedThreadPool(new DescriptiveThreadFactory());
 
             ioService = new IOServiceIndexedImpl(config.getIndexEngine(),
-                                                 executorService,
+                                                 indexingExecutorService,
+                                                 fsWatchExecutorService,
                                                  indexersFactory(),
                                                  indexerDispatcherFactory(config.getIndexEngine()));
 
