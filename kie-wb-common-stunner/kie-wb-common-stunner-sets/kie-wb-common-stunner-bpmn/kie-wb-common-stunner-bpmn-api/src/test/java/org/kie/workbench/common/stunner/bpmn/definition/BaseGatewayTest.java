@@ -19,13 +19,24 @@ package org.kie.workbench.common.stunner.bpmn.definition;
 import java.util.Set;
 
 import org.junit.Test;
+import org.kie.workbench.common.stunner.bpmn.definition.property.background.BackgroundSet;
+import org.kie.workbench.common.stunner.bpmn.definition.property.dimensions.CircleDimensionSet;
+import org.kie.workbench.common.stunner.bpmn.definition.property.font.FontSet;
+import org.kie.workbench.common.stunner.bpmn.definition.property.general.BPMNGeneralSet;
+import org.kie.workbench.common.stunner.bpmn.definition.property.variables.AdvancedData;
 import org.kie.workbench.common.stunner.core.backend.definition.adapter.ReflectionAdapterUtils;
 import org.kie.workbench.common.stunner.core.definition.annotation.definition.Labels;
+import org.mockito.Mock;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 public class BaseGatewayTest {
+
+    @Mock
+    private AdvancedData advancedData;
 
     @Test
     public void testBaseGatewayCanBeContainedByALane() throws Exception {
@@ -37,7 +48,41 @@ public class BaseGatewayTest {
         assertTrue(labels.contains("lane_child"));
     }
 
+    @Test
+    public void testGetAdvancedData() {
+        final FakeBaseGateway baseGateway = new FakeBaseGateway(null,
+                                                                null,
+                                                                null,
+                                                                null,
+                                                                advancedData);
+        AdvancedData result = baseGateway.getAdvancedData();
+        assertEquals(advancedData, result);
+    }
+
+    @Test
+    public void testSetAdvancedData() {
+        final FakeBaseGateway baseGateway = new FakeBaseGateway();
+        assertNull(baseGateway.advancedData);
+        baseGateway.setAdvancedData(advancedData);
+        assertEquals(advancedData, baseGateway.advancedData);
+    }
+
     private class FakeBaseGateway extends BaseGateway {
 
+        FakeBaseGateway() {
+            super();
+        }
+
+        FakeBaseGateway(BPMNGeneralSet general,
+                        BackgroundSet backgroundSet,
+                        FontSet fontSet,
+                        CircleDimensionSet dimensionsSet,
+                        AdvancedData advancedData) {
+            super(general,
+                  backgroundSet,
+                  fontSet,
+                  dimensionsSet,
+                  advancedData);
+        }
     }
 }

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.arifacts;
+package org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.artifacts;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

@@ -17,24 +17,34 @@
 package org.kie.workbench.common.stunner.bpmn.definition;
 
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.kie.workbench.common.stunner.bpmn.definition.property.background.BackgroundSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.background.BgColor;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dimensions.Height;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dimensions.RectangleDimensionsSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.font.FontSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.font.FontSize;
+import org.kie.workbench.common.stunner.bpmn.definition.property.variables.AdvancedData;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+@RunWith(MockitoJUnitRunner.class)
 public class BaseArtifactsTest {
+
+    @Mock
+    private AdvancedData advancedData;
 
     private BaseArtifacts tested = new FakeBaseArtifacts(new BackgroundSet(),
                                                          new FontSet(),
-                                                         new RectangleDimensionsSet());
+                                                         new RectangleDimensionsSet(),
+                                                         new AdvancedData());
 
     @Test
     public void getCategory() {
@@ -57,6 +67,16 @@ public class BaseArtifactsTest {
     }
 
     @Test
+    public void testGetAdvancedData() {
+        final FakeBaseArtifacts baseArtifacts = new FakeBaseArtifacts(null,
+                                                                      null,
+                                                                      null,
+                                                                      advancedData);
+        AdvancedData result = baseArtifacts.getAdvancedData();
+        assertEquals(advancedData, result);
+    }
+
+    @Test
     public void setBackgroundSet() {
         BackgroundSet backgroundSet = new BackgroundSet();
         tested.setBackgroundSet(backgroundSet);
@@ -75,6 +95,14 @@ public class BaseArtifactsTest {
         RectangleDimensionsSet dimensionsSet = new RectangleDimensionsSet();
         tested.setDimensionsSet(dimensionsSet);
         assertEquals(dimensionsSet, tested.getDimensionsSet());
+    }
+
+    @Test
+    public void testSetAdvancedData() {
+        final FakeBaseArtifacts baseArtifacts = new FakeBaseArtifacts();
+        assertNull(baseArtifacts.advancedData);
+        baseArtifacts.setAdvancedData(advancedData);
+        assertEquals(advancedData, baseArtifacts.advancedData);
     }
 
     @Test
@@ -106,8 +134,18 @@ public class BaseArtifactsTest {
 
     private static class FakeBaseArtifacts extends BaseArtifacts {
 
-        public FakeBaseArtifacts(BackgroundSet backgroundSet, FontSet fontSet, RectangleDimensionsSet dimensionsSet) {
-            super(backgroundSet, fontSet, dimensionsSet);
+        public FakeBaseArtifacts() {
+            super(null,
+                  null,
+                  null,
+                  null);
+        }
+
+        public FakeBaseArtifacts(BackgroundSet backgroundSet,
+                                 FontSet fontSet,
+                                 RectangleDimensionsSet dimensionsSet,
+                                 AdvancedData advancedData) {
+            super(backgroundSet, fontSet, dimensionsSet, advancedData);
         }
 
         @Override

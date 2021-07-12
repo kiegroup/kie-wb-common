@@ -59,6 +59,7 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.event.signal.Si
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.BPMNGeneralSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.Documentation;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.Name;
+import org.kie.workbench.common.stunner.bpmn.definition.property.variables.AdvancedData;
 import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
@@ -110,6 +111,8 @@ public class EndEventConverter extends AbstractConverter implements NodeConverte
                 new Documentation(p.getDocumentation())
         ));
 
+        definition.setAdvancedData(new AdvancedData(p.getMetaDataAttributes()));
+
         definition.setDataIOSet(new DataIOSet(
                 p.getAssignmentsInfo()
         ));
@@ -140,6 +143,8 @@ public class EndEventConverter extends AbstractConverter implements NodeConverte
                 new Documentation(p.getDocumentation())
         ));
 
+        definition.setAdvancedData(new AdvancedData(p.getMetaDataAttributes()));
+
         definition.setDataIOSet(new DataIOSet(
                 p.getAssignmentsInfo()
         ));
@@ -169,6 +174,7 @@ public class EndEventConverter extends AbstractConverter implements NodeConverte
                 new Name(p.getName()),
                 new Documentation(p.getDocumentation())
         ));
+        definition.setAdvancedData(new AdvancedData(p.getMetaDataAttributes()));
 
         node.getContent().setBounds(p.getBounds());
 
@@ -189,6 +195,7 @@ public class EndEventConverter extends AbstractConverter implements NodeConverte
                 new Name(p.getName()),
                 new Documentation(p.getDocumentation())
         ));
+        definition.setAdvancedData(new AdvancedData(p.getMetaDataAttributes()));
 
         node.getContent().setBounds(p.getBounds());
 
@@ -210,6 +217,7 @@ public class EndEventConverter extends AbstractConverter implements NodeConverte
                 new Name(p.getName()),
                 new Documentation(p.getDocumentation())
         ));
+        definition.setAdvancedData(new AdvancedData(p.getMetaDataAttributes()));
 
         definition.setDataIOSet(new DataIOSet(
                 p.getAssignmentsInfo()
@@ -241,6 +249,7 @@ public class EndEventConverter extends AbstractConverter implements NodeConverte
                 new Name(p.getName()),
                 new Documentation(p.getDocumentation())
         ));
+        definition.setAdvancedData(new AdvancedData(p.getMetaDataAttributes()));
 
         definition.setDataIOSet(new DataIOSet(
                 p.getAssignmentsInfo()
@@ -272,6 +281,7 @@ public class EndEventConverter extends AbstractConverter implements NodeConverte
                 new Name(p.getName()),
                 new Documentation(p.getDocumentation())
         ));
+        definition.setAdvancedData(new AdvancedData(p.getMetaDataAttributes()));
 
         definition.setExecutionSet(new CompensationEventExecutionSet(
                 new ActivityRef(EventDefinitionReader.activityRefOf(eventDefinition))

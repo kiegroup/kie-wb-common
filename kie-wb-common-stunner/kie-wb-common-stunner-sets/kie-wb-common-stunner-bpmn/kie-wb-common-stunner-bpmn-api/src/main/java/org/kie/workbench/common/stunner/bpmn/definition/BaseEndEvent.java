@@ -28,6 +28,7 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.DataIOMo
 import org.kie.workbench.common.stunner.bpmn.definition.property.dimensions.CircleDimensionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.font.FontSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.BPMNGeneralSet;
+import org.kie.workbench.common.stunner.bpmn.definition.property.variables.AdvancedData;
 import org.kie.workbench.common.stunner.core.definition.annotation.Property;
 import org.kie.workbench.common.stunner.core.definition.annotation.definition.Category;
 import org.kie.workbench.common.stunner.core.definition.annotation.definition.Labels;
@@ -40,19 +41,31 @@ public abstract class BaseEndEvent implements BPMNViewDefinition,
 
     @Category
     public static final transient String category = BPMNCategories.END_EVENTS;
+
     @Labels
     protected final Set<String> labels = new HashSet<String>();
+
     @Property
     @FormField
     @Valid
     protected BPMNGeneralSet general;
+
     @Property
     @Valid
     protected BackgroundSet backgroundSet;
+
     @Property
     protected FontSet fontSet;
+
     @Property
     protected CircleDimensionSet dimensionsSet;
+
+    @Property
+    @FormField(
+            afterElement = "simulationSet"
+    )
+    @Valid
+    protected AdvancedData advancedData;
 
     public BaseEndEvent() {
         initLabels();
@@ -61,12 +74,14 @@ public abstract class BaseEndEvent implements BPMNViewDefinition,
     public BaseEndEvent(final BPMNGeneralSet general,
                         final BackgroundSet backgroundSet,
                         final FontSet fontSet,
-                        final CircleDimensionSet dimensionsSet) {
+                        final CircleDimensionSet dimensionsSet,
+                        final AdvancedData advancedData) {
         this();
         this.general = general;
         this.backgroundSet = backgroundSet;
         this.fontSet = fontSet;
         this.dimensionsSet = dimensionsSet;
+        this.advancedData = advancedData;
     }
 
     protected void initLabels() {
@@ -142,6 +157,14 @@ public abstract class BaseEndEvent implements BPMNViewDefinition,
         this.dimensionsSet = dimensionsSet;
     }
 
+    public AdvancedData getAdvancedData() {
+        return advancedData;
+    }
+
+    public void setAdvancedData(AdvancedData advancedData) {
+        this.advancedData = advancedData;
+    }
+
     @Override
     public int hashCode() {
         return HashUtil.combineHashCodes(Objects.hashCode(getClass()),
@@ -149,6 +172,7 @@ public abstract class BaseEndEvent implements BPMNViewDefinition,
                                          Objects.hashCode(backgroundSet),
                                          Objects.hashCode(fontSet),
                                          Objects.hashCode(dimensionsSet),
+                                         Objects.hashCode(advancedData),
                                          Objects.hashCode(labels));
     }
 
@@ -160,6 +184,7 @@ public abstract class BaseEndEvent implements BPMNViewDefinition,
                     Objects.equals(backgroundSet, other.backgroundSet) &&
                     Objects.equals(fontSet, other.fontSet) &&
                     Objects.equals(dimensionsSet, other.dimensionsSet) &&
+                    Objects.equals(advancedData, other.advancedData) &&
                     Objects.equals(labels, other.labels);
         }
         return false;
