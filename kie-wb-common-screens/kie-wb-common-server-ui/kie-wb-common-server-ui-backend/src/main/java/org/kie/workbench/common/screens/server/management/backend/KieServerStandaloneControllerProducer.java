@@ -60,8 +60,8 @@ public class KieServerStandaloneControllerProducer {
     }
 
     protected static void validateProtocol(final String controllerURL){
-        if(controllerURL.startsWith("ws:") == false){
-            throw new RuntimeException("Invalid protocol for connecting with remote standalone controller, only Web Socket connections are supported");
+        if(controllerURL.startsWith("ws:") == false && controllerURL.startsWith("wss:") == false){
+            throw new RuntimeException("Invalid protocol for connecting with remote standalone controller, only Web Socket or Secure Web Socket connections are supported");
         }
     }
 
