@@ -124,16 +124,16 @@ public class ModuleServiceImplNewModuleTest {
     @Test
     public void testNewModuleCreationNonClashingGAV() throws URISyntaxException {
         final Repository repository = mock(Repository.class);
-        final Path masterBranchRoot = mock(Path.class);
-        doReturn(Optional.of(new Branch("master", masterBranchRoot))).when(repository).getDefaultBranch();
+        final Path mainBranchRoot = mock(Path.class);
+        doReturn(Optional.of(new Branch("main", mainBranchRoot))).when(repository).getDefaultBranch();
         final POM pom = new POM();
 
         final KieModule expected = new KieModule();
 
-        when(saver.save(masterBranchRoot,
+        when(saver.save(mainBranchRoot,
                         pom)).thenReturn(expected);
 
-        final Module project = moduleService.newModule(masterBranchRoot,
+        final Module project = moduleService.newModule(mainBranchRoot,
                                                        pom);
 
         assertEquals(expected,
@@ -143,8 +143,8 @@ public class ModuleServiceImplNewModuleTest {
     @Test(expected = GAVAlreadyExistsException.class)
     public void testNewModuleCreationClashingGAV() throws URISyntaxException {
         final Repository repository = mock(Repository.class);
-        final Path masterBranchRoot = mock(Path.class);
-        doReturn(Optional.of(new Branch("master", masterBranchRoot))).when(repository).getDefaultBranch();
+        final Path mainBranchRoot = mock(Path.class);
+        doReturn(Optional.of(new Branch("main", mainBranchRoot))).when(repository).getDefaultBranch();
         final POM pom = new POM();
 
         final KieModule expected = new KieModule();
@@ -154,18 +154,18 @@ public class ModuleServiceImplNewModuleTest {
                                             "url",
                                             MavenRepositorySource.SETTINGS));
         }});
-        when(saver.save(masterBranchRoot,
+        when(saver.save(mainBranchRoot,
                         pom)).thenReturn(expected);
 
-        moduleService.newModule(masterBranchRoot,
+        moduleService.newModule(mainBranchRoot,
                                 pom);
     }
 
     @Test()
     public void testNewModuleCreationClashingGAVForced() throws URISyntaxException {
         final Repository repository = mock(Repository.class);
-        final Path masterBranchRoot = mock(Path.class);
-        doReturn(Optional.of(new Branch("master", masterBranchRoot))).when(repository).getDefaultBranch();
+        final Path mainBranchRoot = mock(Path.class);
+        doReturn(Optional.of(new Branch("main", mainBranchRoot))).when(repository).getDefaultBranch();
         final POM pom = new POM();
 
         final KieModule expected = new KieModule();
@@ -175,11 +175,11 @@ public class ModuleServiceImplNewModuleTest {
                                             "url",
                                             MavenRepositorySource.SETTINGS));
         }});
-        when(saver.save(masterBranchRoot,
+        when(saver.save(mainBranchRoot,
                         pom)).thenReturn(expected);
 
         try {
-            moduleService.newModule(masterBranchRoot,
+            moduleService.newModule(mainBranchRoot,
                                     pom,
                                     DeploymentMode.FORCED);
         } catch (GAVAlreadyExistsException e) {

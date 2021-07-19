@@ -125,7 +125,7 @@ public class BaseViewPresenterUpdateTest {
     private ProjectExplorerContent content = new ProjectExplorerContent(
             new WorkspaceProject(mock(OrganizationalUnit.class),
                                  mock(Repository.class),
-                                 new Branch("master",
+                                 new Branch("main",
                                             mock(Path.class)),
                                  mock(Module.class)),
             new Module(),

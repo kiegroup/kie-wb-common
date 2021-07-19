@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.services.backend.whitelist;
+package org.kie.workbench.common.services.backend.allowlist;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -24,13 +24,13 @@ import org.guvnor.common.services.backend.metadata.MetadataServerSideService;
 import org.guvnor.common.services.backend.util.CommentedOptionFactory;
 import org.guvnor.common.services.shared.file.SupportsUpdate;
 import org.guvnor.common.services.shared.metadata.model.Metadata;
-import org.kie.workbench.common.services.shared.whitelist.WhiteList;
+import org.kie.workbench.common.services.shared.allowlist.AllowList;
 import org.uberfire.backend.server.util.Paths;
 import org.uberfire.backend.vfs.Path;
 import org.uberfire.io.IOService;
 
-public class PackageNameWhiteListSaver
-        implements SupportsUpdate<WhiteList> {
+public class PackageNameAllowListSaver
+        implements SupportsUpdate<AllowList> {
 
     private MetadataServerSideService metadataService;
 
@@ -38,13 +38,13 @@ public class PackageNameWhiteListSaver
 
     private CommentedOptionFactory commentedOptionFactory;
 
-    public PackageNameWhiteListSaver() {
+    public PackageNameAllowListSaver() {
     }
 
     @Inject
-    public PackageNameWhiteListSaver( final @Named( "ioStrategy" ) IOService ioService,
-                                      final MetadataServerSideService metadataService,
-                                      final CommentedOptionFactory commentedOptionFactory ) {
+    public PackageNameAllowListSaver(final @Named( "ioStrategy" ) IOService ioService,
+                                     final MetadataServerSideService metadataService,
+                                     final CommentedOptionFactory commentedOptionFactory ) {
         this.ioService = ioService;
         this.metadataService = metadataService;
         this.commentedOptionFactory = commentedOptionFactory;
@@ -52,7 +52,7 @@ public class PackageNameWhiteListSaver
 
     @Override
     public Path save( final Path path,
-                      final WhiteList content,
+                      final AllowList content,
                       final Metadata metadata,
                       final String comment ) {
 
@@ -72,7 +72,7 @@ public class PackageNameWhiteListSaver
 
     }
 
-    private String toString( final WhiteList content ) {
+    private String toString( final AllowList content ) {
 
         final StringBuilder builder = new StringBuilder();
 

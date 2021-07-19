@@ -33,11 +33,11 @@ import org.guvnor.common.services.project.builder.service.BuildValidationHelper;
 import org.guvnor.common.services.project.model.Module;
 import org.guvnor.common.services.project.model.POM;
 import org.kie.soup.commons.validation.PortablePreconditions;
+import org.kie.workbench.common.services.backend.allowlist.PackageNameAllowListServiceImpl;
 import org.kie.workbench.common.services.backend.builder.JavaSourceFilter;
-import org.kie.workbench.common.services.backend.whitelist.PackageNameWhiteListServiceImpl;
+import org.kie.workbench.common.services.shared.allowlist.PackageNameAllowListService;
 import org.kie.workbench.common.services.shared.project.KieModuleService;
 import org.kie.workbench.common.services.shared.project.ProjectImportsService;
-import org.kie.workbench.common.services.shared.whitelist.PackageNameWhiteListService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.uberfire.io.IOService;
@@ -65,7 +65,7 @@ public class LRUBuilderCache extends LRUCache<Module, Builder> {
     private Instance<BuildValidationHelper> buildValidationHelperBeans;
     private LRUModuleDependenciesClassLoaderCache dependenciesClassLoaderCache;
     private LRUPomModelCache pomModelCache;
-    private PackageNameWhiteListServiceImpl packageNameWhiteListService;
+    private PackageNameAllowListServiceImpl packageNameAllowListService;
     private Instance<Predicate<String>> classFilterBeans;
 
     public LRUBuilderCache() {
@@ -79,7 +79,7 @@ public class LRUBuilderCache extends LRUCache<Module, Builder> {
                            final @Any Instance<BuildValidationHelper> buildValidationHelperBeans,
                            final @Named("LRUModuleDependenciesClassLoaderCache") LRUModuleDependenciesClassLoaderCache dependenciesClassLoaderCache,
                            final @Named("LRUPomModelCache") LRUPomModelCache pomModelCache,
-                           final PackageNameWhiteListService packageNameWhiteListService,
+                           final PackageNameAllowListService packageNameAllowListService,
                            final @JavaSourceFilter Instance<Predicate<String>> classFilterBeans) {
         super(MAX_ENTRIES);
         this.ioService = ioService;
@@ -88,7 +88,7 @@ public class LRUBuilderCache extends LRUCache<Module, Builder> {
         this.buildValidationHelperBeans = buildValidationHelperBeans;
         this.dependenciesClassLoaderCache = dependenciesClassLoaderCache;
         this.pomModelCache = pomModelCache;
-        this.packageNameWhiteListService = (PackageNameWhiteListServiceImpl) packageNameWhiteListService;
+        this.packageNameAllowListService = (PackageNameAllowListServiceImpl) packageNameAllowListService;
         this.classFilterBeans = classFilterBeans;
     }
 
@@ -153,7 +153,7 @@ public class LRUBuilderCache extends LRUCache<Module, Builder> {
                                   buildValidationHelpers,
                                   dependenciesClassLoaderCache,
                                   pomModelCache,
-                                  packageNameWhiteListService,
+                    packageNameAllowListService,
                                   createSingleClassFilterPredicate());
 
             setEntry(module,

@@ -104,13 +104,13 @@ public class DependenciesPresenter extends Section<ProjectScreenModel>  {
     }
 
     private void updateHashCode(final EnhancedDependencies enhancedDependencies) {
-        currentHashCode = enhancedDependencies.asList().hashCode() + model.getWhiteList().hashCode();
+        currentHashCode = enhancedDependencies.asList().hashCode() + model.getAllowList().hashCode();
     }
 
     private List<DependenciesItemPresenter.View> buildDependencyViews(final ProjectScreenModel model,
                                                                       final EnhancedDependencies dependencies) {
         return dependencies.asList().stream()
-                .map(dependency -> presenters.get().setup(dependency, model.getWhiteList(), this).getView())
+                .map(dependency -> presenters.get().setup(dependency, model.getAllowList(), this).getView())
                 .collect(toList());
     }
 
@@ -123,13 +123,13 @@ public class DependenciesPresenter extends Section<ProjectScreenModel>  {
         fireChangeEvent();
     }
 
-    public void addAllToWhiteList(final Set<String> packages) {
-        model.getWhiteList().addAll(packages);
+    public void addAllToAllowList(final Set<String> packages) {
+        model.getAllowList().addAll(packages);
         enhancedDependenciesManager.update();
     }
 
-    public void removeAllFromWhiteList(final Set<String> packages) {
-        model.getWhiteList().removeAll(packages);
+    public void removeAllFromAllowList(final Set<String> packages) {
+        model.getAllowList().removeAll(packages);
         enhancedDependenciesManager.update();
     }
 
