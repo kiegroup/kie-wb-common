@@ -59,7 +59,7 @@ import org.kie.workbench.common.services.shared.kmodule.KModuleService;
 import org.kie.workbench.common.services.shared.project.KieModule;
 import org.kie.workbench.common.services.shared.project.KieModuleService;
 import org.kie.workbench.common.services.shared.project.ProjectImportsService;
-import org.kie.workbench.common.services.shared.whitelist.PackageNameWhiteListService;
+import org.kie.workbench.common.services.shared.allowlist.PackageNameAllowListService;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -102,7 +102,7 @@ public class ProjectScreenServiceImplTest {
     private ModuleRepositoriesService repositoriesService;
 
     @Mock
-    private PackageNameWhiteListService whiteListService;
+    private PackageNameAllowListService allowListService;
 
     @Mock
     private ModuleRepositoryResolver repositoryResolver;
@@ -196,7 +196,7 @@ public class ProjectScreenServiceImplTest {
                                               kModuleService,
                                               importsService,
                                               repositoriesService,
-                                              whiteListService,
+                allowListService,
                                               projectService) {
             @Override
             protected boolean fileExists(final Path path) {
@@ -207,7 +207,7 @@ public class ProjectScreenServiceImplTest {
                                             kModuleService,
                                             importsService,
                                             repositoriesService,
-                                            whiteListService,
+                allowListService,
                                             ioService,
                                             moduleService,
                                             repositoryResolver,
@@ -806,7 +806,7 @@ public class ProjectScreenServiceImplTest {
         final Repository newRepository = mock(Repository.class);
         final Path newRepositoryRoot = PathFactory.newPath("root",
                                                            "file:///root");
-        doReturn(Optional.of(new Branch("master",
+        doReturn(Optional.of(new Branch("main",
                                         newRepositoryRoot))).when(newRepository).getDefaultBranch();
 
         doReturn(newRepository).when(repositoryCopier).copy(ou,
@@ -851,7 +851,7 @@ public class ProjectScreenServiceImplTest {
         final Path newRepositoryRoot = PathFactory.newPath("root",
                                                            "file:///root");
 
-        doReturn(Optional.of(new Branch("master",
+        doReturn(Optional.of(new Branch("main",
                                         newRepositoryRoot))).when(newRepository).getDefaultBranch();
 
         doReturn(newRepository).when(repositoryCopier).copy(ou,

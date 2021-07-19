@@ -69,7 +69,7 @@ public class UFLocalTestJUnitTest {
         final UFLocal local = new UFLocal();
         final GitRepository repository = (GitRepository) local.getRepository("tempx",
                                                                              Collections.emptyMap());
-        final Source source = repository.getSource("master");
+        final Source source = repository.getSource("main");
         assertNotNull(source);
         assertEquals(source.getPath().getFileSystem(),
                      fs);

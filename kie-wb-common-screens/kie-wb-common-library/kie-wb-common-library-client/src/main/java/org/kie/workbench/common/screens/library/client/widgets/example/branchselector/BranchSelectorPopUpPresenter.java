@@ -42,9 +42,9 @@ public class BranchSelectorPopUpPresenter {
 
         void showError(final String errorMessage);
 
-        String getMasterIsRequiredMessage();
+        String getMainIsRequiredMessage();
 
-        String getAtLeastMasterIsRequiredMessage();
+        String getAtLeastMainIsRequiredMessage();
     }
 
     private View view;
@@ -89,12 +89,12 @@ public class BranchSelectorPopUpPresenter {
 
     public void defineBranches() {
         if (branches.isEmpty()) {
-            view.showError(view.getAtLeastMasterIsRequiredMessage());
+            view.showError(view.getAtLeastMainIsRequiredMessage());
             return;
         }
 
         if (!branches.contains("master")) {
-            view.showError(view.getMasterIsRequiredMessage());
+            view.showError(view.getMainIsRequiredMessage());
             return;
         }
 

@@ -46,8 +46,8 @@ import org.kie.workbench.common.services.shared.kmodule.KModuleService;
 import org.kie.workbench.common.services.shared.project.KieModule;
 import org.kie.workbench.common.services.shared.project.KieModuleService;
 import org.kie.workbench.common.services.shared.project.ProjectImportsService;
-import org.kie.workbench.common.services.shared.whitelist.PackageNameWhiteListService;
-import org.kie.workbench.common.services.shared.whitelist.WhiteList;
+import org.kie.workbench.common.services.shared.allowlist.PackageNameAllowListService;
+import org.kie.workbench.common.services.shared.allowlist.AllowList;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.uberfire.backend.vfs.Path;
@@ -80,7 +80,7 @@ public class ProjectScreenModelSaverTest {
     private ModuleRepositoriesService repositoriesService;
 
     @Mock
-    private PackageNameWhiteListService whiteListService;
+    private PackageNameAllowListService allowListService;
 
     @Mock
     private KieModuleService moduleService;
@@ -128,7 +128,7 @@ public class ProjectScreenModelSaverTest {
                                             kModuleService,
                                             importsService,
                                             repositoriesService,
-                                            whiteListService,
+                allowListService,
                                             ioService,
                                             moduleService,
                                             repositoryResolver,
@@ -265,24 +265,24 @@ public class ProjectScreenModelSaverTest {
     }
 
     @Test
-    public void testWhiteListSave() throws Exception {
+    public void testAllowListSave() throws Exception {
         final ProjectScreenModel model = new ProjectScreenModel();
-        final WhiteList whiteList = new WhiteList();
-        model.setWhiteList(whiteList);
-        final Path pathToWhiteList = mock(Path.class);
-        model.setPathToWhiteList(pathToWhiteList);
+        final AllowList allowList = new AllowList();
+        model.setAllowList(allowList);
+        final Path pathToAllowList = mock(Path.class);
+        model.setPathToAllowList(pathToAllowList);
         final Metadata metadata = new Metadata();
-        model.setWhiteListMetaData(metadata);
+        model.setAllowListMetaData(metadata);
 
         saver.save(pathToPom,
                    model,
                    DeploymentMode.FORCED,
-                   "message white list");
+                   "message allow list");
 
-        verify(whiteListService).save(eq(pathToWhiteList),
-                                      eq(whiteList),
+        verify(allowListService).save(eq(pathToAllowList),
+                                      eq(allowList),
                                       eq(metadata),
-                                      eq("message white list"));
+                                      eq("message allow list"));
     }
 
     @Test
@@ -295,7 +295,7 @@ public class ProjectScreenModelSaverTest {
         model.setRepositories(new ModuleRepositories());
 
         final Metadata metadata = new Metadata();
-        model.setWhiteListMetaData(metadata);
+        model.setAllowListMetaData(metadata);
 
         KieModule module = mock(KieModule.class);
 
@@ -322,7 +322,7 @@ public class ProjectScreenModelSaverTest {
         model.setRepositories(new ModuleRepositories());
 
         final Metadata metadata = new Metadata();
-        model.setWhiteListMetaData(metadata);
+        model.setAllowListMetaData(metadata);
 
         KieModule module = mock(KieModule.class);
 
@@ -343,7 +343,7 @@ public class ProjectScreenModelSaverTest {
         verify(kModuleService).save(any(), any(), any(), any());
         verify(importsService).save(any(), any(), any(), any());
         verify(repositoriesService).save(any(), any(), any());
-        verify(whiteListService).save(any(), any(), any(), any());
+        verify(allowListService).save(any(), any(), any(), any());
         verify(ioService).endBatch();
     }
 }

@@ -200,14 +200,14 @@ public class OpenShiftExecutorTest {
             // build properties
             put(GitConfig.ORIGIN, "https://github.com/jboss-openshift/openshift-quickstarts");
             put(GitConfig.REPO_NAME, "openshift-quickstarts");
-            put(GitConfig.BRANCH,  "master");
+            put(GitConfig.BRANCH,  "main");
             put(GitConfig.CREATE_REPO,  "true");
             put(GitConfig.OUT_DIR,  workDir.getAbsolutePath());
             put(MavenProjectConfig.PROJECT_DIR, "decisionserver/hellorules");
             */
             // provider properties
             put(KUBERNETES_MASTER.inputKey(),
-                "https://ce-os-rhel-master.usersys.redhat.com:8443");
+                "https://ce-os-rhel-main.usersys.redhat.com:8443");
             put(KUBERNETES_AUTH_BASIC_USERNAME.inputKey(),
                 "admin");
             put(KUBERNETES_AUTH_BASIC_PASSWORD.inputKey(),

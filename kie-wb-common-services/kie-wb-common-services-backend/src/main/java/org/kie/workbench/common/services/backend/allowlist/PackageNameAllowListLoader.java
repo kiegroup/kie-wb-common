@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.services.backend.whitelist;
+package org.kie.workbench.common.services.backend.allowlist;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -26,7 +26,7 @@ import javax.inject.Named;
 import org.apache.commons.io.IOUtils;
 import org.guvnor.common.services.project.model.POM;
 import org.kie.workbench.common.services.backend.builder.core.NoBuilderFoundException;
-import org.kie.workbench.common.services.shared.whitelist.WhiteList;
+import org.kie.workbench.common.services.shared.allowlist.AllowList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.uberfire.backend.server.util.Paths;
@@ -35,32 +35,32 @@ import org.uberfire.ext.editor.commons.service.support.SupportsRead;
 import org.uberfire.io.IOService;
 import org.uberfire.java.nio.file.Files;
 
-public class PackageNameWhiteListLoader
-        implements SupportsRead<WhiteList> {
+public class PackageNameAllowListLoader
+        implements SupportsRead<AllowList> {
 
-    private static final Logger logger = LoggerFactory.getLogger( PackageNameWhiteListLoader.class );
+    private static final Logger logger = LoggerFactory.getLogger( PackageNameAllowListLoader.class );
 
     private PackageNameSearchProvider packageNameSearchProvider;
     private IOService                 ioService;
 
-    public PackageNameWhiteListLoader() {
+    public PackageNameAllowListLoader() {
     }
 
     @Inject
-    public PackageNameWhiteListLoader( final PackageNameSearchProvider packageNameSearchProvider,
-                                       final @Named( "ioStrategy" ) IOService ioService ) {
+    public PackageNameAllowListLoader(final PackageNameSearchProvider packageNameSearchProvider,
+                                      final @Named( "ioStrategy" ) IOService ioService ) {
         this.packageNameSearchProvider = packageNameSearchProvider;
         this.ioService = ioService;
     }
 
     @Override
-    public WhiteList load( final Path packageNamesWhiteListPath ) {
-        return new WhiteList( parsePackages( loadContent( packageNamesWhiteListPath ) ) );
+    public AllowList load(final Path packageNamesAllowListPath ) {
+        return new AllowList( parsePackages( loadContent( packageNamesAllowListPath ) ) );
     }
 
-    protected String loadContent( final Path packageNamesWhiteListPath ) {
+    protected String loadContent( final Path packageNamesAllowListPath ) {
 
-        final org.uberfire.java.nio.file.Path path = Paths.convert( packageNamesWhiteListPath );
+        final org.uberfire.java.nio.file.Path path = Paths.convert( packageNamesAllowListPath );
 
         if ( Files.exists( path ) ) {
             return ioService.readAllString( path );
@@ -87,16 +87,16 @@ public class PackageNameWhiteListLoader
         }
     }
 
-    public WhiteList load( final POM pom ) {
+    public AllowList load(final POM pom ) {
         try {
 
-            return new WhiteList( packageNameSearchProvider.newTopLevelPackageNamesSearch( pom ).search() );
+            return new AllowList( packageNameSearchProvider.newTopLevelPackageNamesSearch( pom ).search() );
 
         } catch ( NoBuilderFoundException e ) {
 
-            logger.info( "Could not create white list for project: " + pom.getGav().toString() );
+            logger.info( "Could not create allow list for project: " + pom.getGav().toString() );
 
-            return new WhiteList();
+            return new AllowList();
         }
     }
 }

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.services.backend.whitelist;
+package org.kie.workbench.common.services.backend.allowlist;
 
 import java.util.HashMap;
 
@@ -26,7 +26,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.kie.workbench.common.services.shared.whitelist.WhiteList;
+import org.kie.workbench.common.services.shared.allowlist.AllowList;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
@@ -38,7 +38,7 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 @RunWith( MockitoJUnitRunner.class )
-public class PackageNameWhiteListSaverTest {
+public class PackageNameAllowListSaverTest {
 
     @Mock
     private IOService ioService;
@@ -49,7 +49,7 @@ public class PackageNameWhiteListSaverTest {
     @Mock
     private CommentedOptionFactory commentedOptionFactory;
 
-    private PackageNameWhiteListSaver saver;
+    private PackageNameAllowListSaver saver;
     private TestFileSystem testFileSystem;
 
     @Before
@@ -57,7 +57,7 @@ public class PackageNameWhiteListSaverTest {
 
         testFileSystem = new TestFileSystem();
 
-        saver = new PackageNameWhiteListSaver( ioService,
+        saver = new PackageNameAllowListSaver( ioService,
                                                metadataService,
                                                commentedOptionFactory );
     }
@@ -70,10 +70,10 @@ public class PackageNameWhiteListSaverTest {
     @Test
     public void testSave() throws Exception {
 
-        final Path path = testFileSystem.createTempFile( "whitelist" );
-        final WhiteList whiteList = new WhiteList();
-        whiteList.add( "org.drools" );
-        whiteList.add( "org.guvnor" );
+        final Path path = testFileSystem.createTempFile( "allowlist" );
+        final AllowList allowList = new AllowList();
+        allowList.add( "org.drools" );
+        allowList.add( "org.guvnor" );
         final Metadata metadata = new Metadata();
         final String comment = "comment";
 
@@ -83,21 +83,21 @@ public class PackageNameWhiteListSaverTest {
         when( commentedOptionFactory.makeCommentedOption( "comment" ) ).thenReturn( commentedOption );
 
         saver.save( path,
-                    whiteList,
+                    allowList,
                     metadata,
                     comment );
 
-        ArgumentCaptor<String> whiteListTextArgumentCaptor = ArgumentCaptor.forClass( String.class );
+        ArgumentCaptor<String> allowListTextArgumentCaptor = ArgumentCaptor.forClass( String.class );
 
         verify( ioService ).write( any( org.uberfire.java.nio.file.Path.class ),
-                                   whiteListTextArgumentCaptor.capture(),
+                                   allowListTextArgumentCaptor.capture(),
                                    eq( attributes ),
                                    eq( commentedOption ) );
 
-        final String whiteListAsText = whiteListTextArgumentCaptor.getValue();
+        final String allowListAsText = allowListTextArgumentCaptor.getValue();
 
-        assertTrue( whiteListAsText.contains( "org.drools" ) );
-        assertTrue( whiteListAsText.contains( "org.guvnor" ) );
+        assertTrue( allowListAsText.contains( "org.drools" ) );
+        assertTrue( allowListAsText.contains( "org.guvnor" ) );
 
     }
 }

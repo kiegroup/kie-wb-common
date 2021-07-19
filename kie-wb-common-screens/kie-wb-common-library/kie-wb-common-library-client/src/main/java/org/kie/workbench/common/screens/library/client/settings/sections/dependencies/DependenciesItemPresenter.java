@@ -25,7 +25,7 @@ import org.guvnor.common.services.project.model.Dependency;
 import org.kie.workbench.common.screens.projecteditor.client.forms.dependencies.validation.DependencyValidator;
 import org.kie.workbench.common.services.shared.dependencies.EnhancedDependency;
 import org.kie.workbench.common.services.shared.dependencies.TransitiveEnhancedDependency;
-import org.kie.workbench.common.services.shared.whitelist.WhiteList;
+import org.kie.workbench.common.services.shared.allowlist.AllowList;
 import org.uberfire.client.mvp.UberElemental;
 
 public class DependenciesItemPresenter {
@@ -44,7 +44,7 @@ public class DependenciesItemPresenter {
 
         void setVersionHelpBock(final String versionHelpBock);
 
-        void setPackagesWhiteListedState(final WhiteListedPackagesState state);
+        void setPackagesAllowListedState(final AllowListedPackagesState state);
 
         void setTransitiveDependency(final boolean disabled);
     }
@@ -62,7 +62,7 @@ public class DependenciesItemPresenter {
     }
 
     public DependenciesItemPresenter setup(final EnhancedDependency enhancedDependency,
-                                           final WhiteList whiteList,
+                                           final AllowList allowList,
                                            final DependenciesPresenter dependenciesPresenter) {
 
         this.enhancedDependency = enhancedDependency;
@@ -75,7 +75,7 @@ public class DependenciesItemPresenter {
         view.setGroupId(dependency.getGroupId());
         view.setArtifactId(dependency.getArtifactId());
         view.setVersion(dependency.getVersion());
-        view.setPackagesWhiteListedState(WhiteListedPackagesState.from(whiteList, enhancedDependency.getPackages()));
+        view.setPackagesAllowListedState(AllowListedPackagesState.from(allowList, enhancedDependency.getPackages()));
         view.setTransitiveDependency(enhancedDependency instanceof TransitiveEnhancedDependency);
 
         return this;
@@ -99,12 +99,12 @@ public class DependenciesItemPresenter {
         parentPresenter.fireChangeEvent();
     }
 
-    public void addAllPackagesToWhiteList() {
-        parentPresenter.addAllToWhiteList(enhancedDependency.getPackages());
+    public void addAllPackagesToAllowList() {
+        parentPresenter.addAllToAllowList(enhancedDependency.getPackages());
     }
 
-    public void removeAllPackagesFromWhiteList() {
-        parentPresenter.removeAllFromWhiteList(enhancedDependency.getPackages());
+    public void removeAllPackagesFromAllowList() {
+        parentPresenter.removeAllFromAllowList(enhancedDependency.getPackages());
     }
 
     public void remove() {
@@ -115,19 +115,19 @@ public class DependenciesItemPresenter {
         return view;
     }
 
-    public enum WhiteListedPackagesState {
+    public enum AllowListedPackagesState {
         ALL,
         SOME,
         NONE;
 
-        public static WhiteListedPackagesState from(final Set<String> whiteList,
+        public static AllowListedPackagesState from(final Set<String> allowList,
                                                     final Set<String> packages) {
 
-            if (whiteList.containsAll(packages)) {
+            if (allowList.containsAll(packages)) {
                 return ALL;
             }
 
-            if (!Collections.disjoint(whiteList, packages)) {
+            if (!Collections.disjoint(allowList, packages)) {
                 return SOME;
             }
 

@@ -15,19 +15,19 @@
  */
 package org.kie.workbench.common.services.shared.messageconsole;
 
-import org.guvnor.messageconsole.whitelist.MessageConsoleWhiteList;
+import org.guvnor.messageconsole.allowlist.MessageConsoleAllowList;
 import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
 
-public class MessageConsoleWhiteListImplTest {
+public class MessageConsoleAllowListImplTest {
 
-    private MessageConsoleWhiteList list;
+    private MessageConsoleAllowList list;
 
     @Before
     public void setUp() throws Exception {
-        list = new MessageConsoleWhiteListImpl();
+        list = new MessageConsoleAllowListImpl();
     }
 
     @Test

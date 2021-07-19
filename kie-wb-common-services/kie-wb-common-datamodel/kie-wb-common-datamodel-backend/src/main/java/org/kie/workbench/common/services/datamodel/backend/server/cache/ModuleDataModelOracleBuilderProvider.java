@@ -31,8 +31,8 @@ import org.kie.workbench.common.services.backend.builder.service.BuildInfo;
 import org.kie.workbench.common.services.datamodel.backend.server.builder.projects.ModuleDataModelOracleBuilder;
 import org.kie.workbench.common.services.shared.project.KieModule;
 import org.kie.workbench.common.services.shared.project.ProjectImportsService;
-import org.kie.workbench.common.services.shared.whitelist.PackageNameWhiteListService;
-import org.kie.workbench.common.services.shared.whitelist.WhiteList;
+import org.kie.workbench.common.services.shared.allowlist.PackageNameAllowListService;
+import org.kie.workbench.common.services.shared.allowlist.AllowList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.uberfire.backend.server.util.Paths;
@@ -43,16 +43,16 @@ public class ModuleDataModelOracleBuilderProvider {
     private static final Logger log = LoggerFactory.getLogger(ModuleDataModelOracleBuilderProvider.class);
 
     private ProjectImportsService importsService;
-    private PackageNameWhiteListService packageNameWhiteListService;
+    private PackageNameAllowListService packageNameAllowListService;
 
     public ModuleDataModelOracleBuilderProvider() {
         //CDI proxy
     }
 
     @Inject
-    public ModuleDataModelOracleBuilderProvider(final PackageNameWhiteListService packageNameWhiteListService,
+    public ModuleDataModelOracleBuilderProvider(final PackageNameAllowListService packageNameAllowListService,
                                                 final ProjectImportsService importsService) {
-        this.packageNameWhiteListService = packageNameWhiteListService;
+        this.packageNameAllowListService = packageNameAllowListService;
         this.importsService = importsService;
     }
 
@@ -112,10 +112,10 @@ public class ModuleDataModelOracleBuilderProvider {
         }
 
         /**
-         * @return A "white list" of package names that are available for authoring
+         * @return A "allow list" of package names that are available for authoring
          */
-        private WhiteList getFilteredPackageNames() {
-            return packageNameWhiteListService.filterPackageNames(project,
+        private AllowList getFilteredPackageNames() {
+            return packageNameAllowListService.filterPackageNames(project,
                                                                   kieModuleMetaData.getPackages());
         }
 

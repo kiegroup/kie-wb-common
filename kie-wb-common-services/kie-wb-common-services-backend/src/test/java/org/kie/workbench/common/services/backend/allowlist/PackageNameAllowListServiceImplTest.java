@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.services.backend.whitelist;
+package org.kie.workbench.common.services.backend.allowlist;
 
 import java.util.ArrayList;
 import java.util.Set;
@@ -24,10 +24,10 @@ import org.guvnor.common.services.shared.metadata.model.Metadata;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.kie.workbench.common.services.shared.allowlist.PackageNameAllowListService;
 import org.kie.workbench.common.services.shared.project.KieModule;
 import org.kie.workbench.common.services.shared.project.KieModuleService;
-import org.kie.workbench.common.services.shared.whitelist.PackageNameWhiteListService;
-import org.kie.workbench.common.services.shared.whitelist.WhiteList;
+import org.kie.workbench.common.services.shared.allowlist.AllowList;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.uberfire.backend.vfs.Path;
@@ -46,13 +46,13 @@ import static org.mockito.Mockito.*;
  * See See https://en.wikipedia.org/wiki/Newline#Representations
  **/
 @RunWith(MockitoJUnitRunner.Silent.class)
-public class PackageNameWhiteListServiceImplTest {
+public class PackageNameAllowListServiceImplTest {
 
     @Mock
     PackageNameSearchProvider packageNameSearchProvider;
 
     @Mock
-    PackageNameWhiteListSaver saver;
+    PackageNameAllowListSaver saver;
 
     @Before
     public void setUp() throws Exception {
@@ -60,11 +60,11 @@ public class PackageNameWhiteListServiceImplTest {
     }
 
     @Test
-    public void ifWhiteListIsEmptyWhiteListEverything() throws
+    public void ifAllowListIsEmptyAllowListEverything() throws
             Exception {
-        final PackageNameWhiteListService packageNameWhiteListService = makeService("");
+        final PackageNameAllowListService packageNameAllowListService = makeService("");
 
-        WhiteList filterPackageNames = packageNameWhiteListService.filterPackageNames(mock(KieModule.class),
+        AllowList filterPackageNames = packageNameAllowListService.filterPackageNames(mock(KieModule.class),
                                                                                       new ArrayList<String>
                                                                                               () {{
                                                                                           add("a");
@@ -82,8 +82,8 @@ public class PackageNameWhiteListServiceImplTest {
     @Test
     public void testWindowsEncoding() {
 
-        final PackageNameWhiteListService packageNameWhiteListService = makeService("a.**\r\nb\r\n");
-        final Set<String> results = packageNameWhiteListService.filterPackageNames(mock(KieModule.class),
+        final PackageNameAllowListService packageNameAllowListService = makeService("a.**\r\nb\r\n");
+        final Set<String> results = packageNameAllowListService.filterPackageNames(mock(KieModule.class),
                                                                                    new ArrayList<String>() {{
                                                                                        add("a");
                                                                                        add("b");
@@ -101,28 +101,28 @@ public class PackageNameWhiteListServiceImplTest {
 
     @Test
     public void testSave() throws Exception {
-        final PackageNameWhiteListService service = makeService("");
+        final PackageNameAllowListService service = makeService("");
 
         final Path path = mock(Path.class);
-        final WhiteList whiteList = new WhiteList();
+        final AllowList allowList = new AllowList();
         final Metadata metadata = new Metadata();
         final String comment = "comment";
 
         service.save(path,
-                     whiteList,
+                     allowList,
                      metadata,
                      comment);
 
         verify(saver).save(path,
-                           whiteList,
+                           allowList,
                            metadata,
                            comment);
     }
 
     @Test
     public void testUnixEncoding() {
-        final PackageNameWhiteListService packageNameWhiteListService = makeService("a.**\nb\n");
-        final Set<String> results = packageNameWhiteListService.filterPackageNames(mock(KieModule.class),
+        final PackageNameAllowListService packageNameAllowListService = makeService("a.**\nb\n");
+        final Set<String> results = packageNameAllowListService.filterPackageNames(mock(KieModule.class),
                                                                                    new ArrayList<String>() {{
                                                                                        add("a");
                                                                                        add("b");
@@ -148,13 +148,13 @@ public class PackageNameWhiteListServiceImplTest {
         fail("Expected pattern '" + expected + "' was not found in actual.");
     }
 
-    private PackageNameWhiteListService makeService(final String content) {
-        return new PackageNameWhiteListServiceImpl(mock(IOService.class),
+    private PackageNameAllowListService makeService(final String content) {
+        return new PackageNameAllowListServiceImpl(mock(IOService.class),
                                                    mock(KieModuleService.class),
-                                                   new PackageNameWhiteListLoader(packageNameSearchProvider,
+                                                   new PackageNameAllowListLoader(packageNameSearchProvider,
                                                                                   mock(IOService.class)) {
                                                        @Override
-                                                       protected String loadContent(final Path packageNamesWhiteListPath) {
+                                                       protected String loadContent(final Path packageNamesAllowListPath) {
                                                            return content;
                                                        }
                                                    },

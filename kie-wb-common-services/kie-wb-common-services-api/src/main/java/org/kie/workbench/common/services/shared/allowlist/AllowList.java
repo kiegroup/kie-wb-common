@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kie.workbench.common.services.shared.whitelist;
+package org.kie.workbench.common.services.shared.allowlist;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -23,82 +23,82 @@ import java.util.Set;
 import org.jboss.errai.common.client.api.annotations.Portable;
 
 @Portable
-public class WhiteList
+public class AllowList
         implements Set<String> {
 
-    private Set<String> whiteList = new HashSet<String>();
+    private Set<String> allowList = new HashSet<String>();
 
-    public WhiteList() {
+    public AllowList() {
 
     }
 
-    public WhiteList( final Collection<String> packageNames ) {
-        whiteList.addAll( packageNames );
+    public AllowList(final Collection<String> packageNames ) {
+        allowList.addAll( packageNames );
     }
 
     @Override
     public int size() {
-        return whiteList.size();
+        return allowList.size();
     }
 
     @Override
     public boolean isEmpty() {
-        return whiteList.isEmpty();
+        return allowList.isEmpty();
     }
 
     @Override
     public boolean contains( final Object o ) {
-        return whiteList.contains( o );
+        return allowList.contains( o );
     }
 
     @Override
     public Iterator<String> iterator() {
-        return whiteList.iterator();
+        return allowList.iterator();
     }
 
     @Override
     public Object[] toArray() {
-        return whiteList.toArray();
+        return allowList.toArray();
     }
 
     @Override
     public <T> T[] toArray( final T[] ts ) {
-        return whiteList.toArray( ts );
+        return allowList.toArray( ts );
     }
 
     @Override
     public boolean add( final String s ) {
-        return whiteList.add( s );
+        return allowList.add( s );
     }
 
     @Override
     public boolean remove( final Object o ) {
-        return whiteList.remove( o );
+        return allowList.remove( o );
     }
 
     @Override
     public boolean containsAll( final Collection<?> collection ) {
-        return whiteList.containsAll( collection );
+        return allowList.containsAll( collection );
     }
 
     @Override
     public boolean addAll( final Collection<? extends String> collection ) {
-        return whiteList.addAll( collection );
+        return allowList.addAll( collection );
     }
 
     @Override
     public boolean retainAll( final Collection<?> collection ) {
-        return whiteList.retainAll( collection );
+        return allowList.retainAll( collection );
     }
 
     @Override
     public boolean removeAll( final Collection<?> collection ) {
-        return whiteList.removeAll( collection );
+        return allowList.removeAll( collection );
     }
 
     @Override
     public void clear() {
-        whiteList.clear();
+        allowList.clear();
     }
 
     public boolean containsAny( final Collection<String> packages ) {
@@ -112,6 +112,6 @@ public class WhiteList
 
     @Override
     public int hashCode() {
-        return whiteList.hashCode();
+        return allowList.hashCode();
     }
 }

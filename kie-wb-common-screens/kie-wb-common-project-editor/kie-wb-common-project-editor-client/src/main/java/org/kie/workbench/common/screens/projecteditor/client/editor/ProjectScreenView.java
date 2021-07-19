@@ -23,9 +23,8 @@ import org.guvnor.common.services.project.model.POM;
 import org.guvnor.common.services.project.model.ProjectImports;
 import org.guvnor.common.services.shared.metadata.model.Metadata;
 import org.gwtbootstrap3.client.ui.ButtonGroup;
-import org.kie.workbench.common.screens.projecteditor.client.build.BuildExecutor;
 import org.kie.workbench.common.services.shared.kmodule.KModuleModel;
-import org.kie.workbench.common.services.shared.whitelist.WhiteList;
+import org.kie.workbench.common.services.shared.allowlist.AllowList;
 import org.uberfire.ext.widgets.common.client.common.HasBusyIndicator;
 import org.uberfire.mvp.Command;
 
@@ -71,7 +70,7 @@ public interface ProjectScreenView
     void setPOM(POM pom);
 
     void setDependencies(POM pom,
-                         final WhiteList whiteList);
+                         final AllowList allowList);
 
     void setPomMetadata(Metadata pomMetaData);
 
