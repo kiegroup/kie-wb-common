@@ -71,6 +71,7 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.task.RuleLangua
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.Script;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.ScriptTaskExecutionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.TaskName;
+import org.kie.workbench.common.stunner.bpmn.definition.property.variables.AdvancedData;
 import org.kie.workbench.common.stunner.bpmn.workitem.CustomTask;
 import org.kie.workbench.common.stunner.bpmn.workitem.CustomTaskExecutionSet;
 import org.kie.workbench.common.stunner.core.graph.Edge;
@@ -140,6 +141,7 @@ public abstract class BaseTaskConverter<U extends BaseUserTask<S>, S extends Bas
         ));
 
         definition.setSimulationSet(serviceTaskPropertyReader.getSimulationSet());
+        definition.setAdvancedData(new AdvancedData(serviceTaskPropertyReader.getMetaDataAttributes()));
 
         node.getContent().setBounds(serviceTaskPropertyReader.getBounds());
 
@@ -187,6 +189,7 @@ public abstract class BaseTaskConverter<U extends BaseUserTask<S>, S extends Bas
         definition.setBackgroundSet(p.getBackgroundSet());
         definition.setFontSet(p.getFontSet());
         definition.setSimulationSet(p.getSimulationSet());
+        definition.setAdvancedData(new AdvancedData(p.getMetaDataAttributes()));
 
         return BpmnNode.of(node, p);
     }
@@ -238,6 +241,7 @@ public abstract class BaseTaskConverter<U extends BaseUserTask<S>, S extends Bas
         ));
 
         definition.setSimulationSet(p.getSimulationSet());
+        definition.setAdvancedData(new AdvancedData(p.getMetaDataAttributes()));
 
         node.getContent().setBounds(p.getBounds());
 
@@ -272,6 +276,7 @@ public abstract class BaseTaskConverter<U extends BaseUserTask<S>, S extends Bas
         definition.setFontSet(p.getFontSet());
 
         definition.setSimulationSet(p.getSimulationSet());
+        definition.setAdvancedData(new AdvancedData(p.getMetaDataAttributes()));
 
         return BpmnNode.of(node, p);
     }
@@ -290,6 +295,7 @@ public abstract class BaseTaskConverter<U extends BaseUserTask<S>, S extends Bas
         definition.setSimulationSet(
                 p.getSimulationSet()
         );
+        definition.setAdvancedData(new AdvancedData(p.getMetaDataAttributes()));
 
         definition.setExecutionSet(createUserTaskExecutionSet(p));
 
@@ -336,6 +342,7 @@ public abstract class BaseTaskConverter<U extends BaseUserTask<S>, S extends Bas
         definition.setSimulationSet(
                 p.getSimulationSet()
         );
+        definition.setAdvancedData(new AdvancedData(p.getMetaDataAttributes()));
 
         node.getContent().setBounds(p.getBounds());
 

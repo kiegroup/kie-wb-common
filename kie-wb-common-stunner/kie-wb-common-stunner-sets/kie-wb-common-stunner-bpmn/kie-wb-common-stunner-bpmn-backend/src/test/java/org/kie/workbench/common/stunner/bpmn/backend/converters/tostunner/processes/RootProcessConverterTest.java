@@ -37,7 +37,7 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.Diagram
 import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.imports.DefaultImport;
 import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.imports.Imports;
 import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.imports.ImportsValue;
-import org.kie.workbench.common.stunner.bpmn.definition.property.variables.AdvancedData;
+import org.kie.workbench.common.stunner.bpmn.definition.property.variables.RootProcessAdvancedData;
 import org.kie.workbench.common.stunner.core.api.FactoryManager;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.Bounds;
@@ -126,7 +126,7 @@ public class RootProcessConverterTest {
 
     @Test
     public void createAdvancedData() {
-        assertTrue(AdvancedData.class.isInstance(tested.createAdvancedData("id", "testßval")));
+        assertTrue(RootProcessAdvancedData.class.isInstance(tested.createAdvancedData("id", "testßval")));
     }
 
     @Test

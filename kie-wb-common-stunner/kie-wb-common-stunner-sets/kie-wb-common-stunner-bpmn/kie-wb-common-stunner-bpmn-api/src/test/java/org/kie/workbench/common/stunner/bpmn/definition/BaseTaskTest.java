@@ -19,13 +19,26 @@ package org.kie.workbench.common.stunner.bpmn.definition;
 import java.util.Set;
 
 import org.junit.Test;
+import org.kie.workbench.common.stunner.bpmn.definition.property.background.BackgroundSet;
+import org.kie.workbench.common.stunner.bpmn.definition.property.dimensions.RectangleDimensionsSet;
+import org.kie.workbench.common.stunner.bpmn.definition.property.font.FontSet;
+import org.kie.workbench.common.stunner.bpmn.definition.property.general.TaskGeneralSet;
+import org.kie.workbench.common.stunner.bpmn.definition.property.simulation.SimulationSet;
+import org.kie.workbench.common.stunner.bpmn.definition.property.task.TaskType;
+import org.kie.workbench.common.stunner.bpmn.definition.property.variables.AdvancedData;
 import org.kie.workbench.common.stunner.core.backend.definition.adapter.ReflectionAdapterUtils;
 import org.kie.workbench.common.stunner.core.definition.annotation.definition.Labels;
+import org.mockito.Mock;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 public class BaseTaskTest {
+
+    @Mock
+    private AdvancedData advancedData;
 
     @Test
     public void testBaseTaskCanBeContainedByALane() throws Exception {
@@ -37,10 +50,55 @@ public class BaseTaskTest {
         assertTrue(labels.contains("lane_child"));
     }
 
+    @Test
+    public void testGetAdvancedData() {
+        final FakeBaseTask baseTask = new FakeBaseTask(null,
+                                                       null,
+                                                       null,
+                                                       null,
+                                                       null,
+                                                       null,
+                                                       advancedData);
+        AdvancedData result = baseTask.getAdvancedData();
+        assertEquals(advancedData, result);
+    }
+
+    @Test
+    public void testSetAdvancedData() {
+        final FakeBaseTask baseTask = new FakeBaseTask();
+        assertNull(baseTask.advancedData);
+        baseTask.setAdvancedData(advancedData);
+        assertEquals(advancedData, baseTask.advancedData);
+    }
+
     private class FakeBaseTask extends BaseTask {
 
         FakeBaseTask() {
-            super(null, null, null, null, null, null);
+            super(null,
+                  null,
+                  null,
+
+                  null,
+
+                  null,
+                  null,
+                  null);
+        }
+
+        FakeBaseTask(final TaskGeneralSet general,
+                     final BackgroundSet backgroundSet,
+                     final FontSet fontSet,
+                     final RectangleDimensionsSet dimensionsSet,
+                     final SimulationSet simulationSet,
+                     final TaskType taskType,
+                     final AdvancedData advancedData) {
+            super(general,
+                  backgroundSet,
+                  fontSet,
+                  dimensionsSet,
+                  simulationSet,
+                  taskType,
+                  advancedData);
         }
     }
 }

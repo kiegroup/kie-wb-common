@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2021 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,14 +25,17 @@ import org.jboss.errai.common.client.api.annotations.Portable;
 import org.jboss.errai.databinding.client.api.Bindable;
 import org.kie.workbench.common.forms.adf.definitions.annotations.FormDefinition;
 import org.kie.workbench.common.forms.adf.definitions.annotations.FormField;
+import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.GlobalVariables;
 import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.MetaDataAttributes;
 import org.kie.workbench.common.stunner.bpmn.forms.model.MetaDataEditorFieldType;
+import org.kie.workbench.common.stunner.bpmn.forms.model.VariablesEditorFieldType;
 import org.kie.workbench.common.stunner.core.definition.annotation.Property;
+import org.kie.workbench.common.stunner.core.util.HashUtil;
 
 @Portable
 @Bindable
 @FormDefinition(startElement = "metaDataAttributes")
-public class AdvancedData implements BaseAdvancedData {
+public class RootProcessAdvancedData implements BaseRootProcessAdvancedData {
 
     @Property
     @FormField(
@@ -41,16 +44,36 @@ public class AdvancedData implements BaseAdvancedData {
     @Valid
     private MetaDataAttributes metaDataAttributes;
 
-    public AdvancedData() {
-        this(new MetaDataAttributes());
+    @Property
+    @FormField(
+            afterElement = "metaDataAttributes",
+            type = VariablesEditorFieldType.class
+    )
+    @Valid
+    private GlobalVariables globalVariables;
+
+    public RootProcessAdvancedData() {
+        this(new GlobalVariables(), new MetaDataAttributes());
     }
 
-    public AdvancedData(final @MapsTo("metaDataAttributes") MetaDataAttributes metaDataAttributes) {
+    public RootProcessAdvancedData(final @MapsTo("globalVariables") GlobalVariables globalVariables,
+                                   final @MapsTo("metaDataAttributes") MetaDataAttributes metaDataAttributes) {
+        this.globalVariables = globalVariables;
         this.metaDataAttributes = metaDataAttributes;
     }
 
-    public AdvancedData(final String metaDataAttributes) {
+    public RootProcessAdvancedData(final String globalVariables, final String metaDataAttributes) {
+        this.globalVariables = new GlobalVariables(globalVariables);
         this.metaDataAttributes = new MetaDataAttributes(metaDataAttributes);
+    }
+
+    @Override
+    public GlobalVariables getGlobalVariables() {
+        return globalVariables;
+    }
+
+    public void setGlobalVariables(final GlobalVariables globalVariables) {
+        this.globalVariables = globalVariables;
     }
 
     @Override
@@ -64,14 +87,16 @@ public class AdvancedData implements BaseAdvancedData {
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(metaDataAttributes);
+        return HashUtil.combineHashCodes(Objects.hashCode(globalVariables),
+                                         Objects.hashCode(metaDataAttributes));
     }
 
     @Override
     public boolean equals(Object o) {
-        if (o instanceof AdvancedData) {
-            AdvancedData other = (AdvancedData) o;
-            return Objects.equals(metaDataAttributes, other.metaDataAttributes);
+        if (o instanceof RootProcessAdvancedData) {
+            RootProcessAdvancedData other = (RootProcessAdvancedData) o;
+            return Objects.equals(globalVariables, other.globalVariables) &&
+                    Objects.equals(metaDataAttributes, other.metaDataAttributes);
         }
         return false;
     }

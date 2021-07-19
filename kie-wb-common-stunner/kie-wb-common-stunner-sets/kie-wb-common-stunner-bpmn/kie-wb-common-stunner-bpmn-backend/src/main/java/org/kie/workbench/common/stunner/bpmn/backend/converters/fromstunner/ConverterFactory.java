@@ -16,7 +16,7 @@
 package org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner;
 
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.activities.ReusableSubprocessConverter;
-import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.arifacts.ArtifactsConverter;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.artifacts.ArtifactsConverter;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.associations.AssociationConverter;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.events.EndEventConverter;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.events.IntermediateCatchEventConverter;

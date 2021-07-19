@@ -36,6 +36,7 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.gateway.Gateway
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.BPMNGeneralSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.Documentation;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.Name;
+import org.kie.workbench.common.stunner.bpmn.definition.property.variables.AdvancedData;
 import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
@@ -77,6 +78,7 @@ public class GatewayConverter extends AbstractConverter implements NodeConverter
                 new Name(p.getName()),
                 new Documentation(p.getDocumentation())
         ));
+        definition.setAdvancedData(new AdvancedData(p.getMetaDataAttributes()));
 
         definition.setExecutionSet(new GatewayExecutionSet(
                 new DefaultRoute(p.getDefaultRoute())
@@ -105,6 +107,7 @@ public class GatewayConverter extends AbstractConverter implements NodeConverter
         definition.setExecutionSet(new GatewayExecutionSet(
                 new DefaultRoute(p.getDefaultRoute())
         ));
+        definition.setAdvancedData(new AdvancedData(p.getMetaDataAttributes()));
 
         node.getContent().setBounds(p.getBounds());
 
@@ -126,6 +129,7 @@ public class GatewayConverter extends AbstractConverter implements NodeConverter
                 new Name(p.getName()),
                 new Documentation(p.getDocumentation())
         ));
+        definition.setAdvancedData(new AdvancedData(p.getMetaDataAttributes()));
 
         definition.setDimensionsSet(p.getCircleDimensionSet());
         definition.setFontSet(p.getFontSet());
@@ -145,6 +149,7 @@ public class GatewayConverter extends AbstractConverter implements NodeConverter
                 new Name(p.getName()),
                 new Documentation(p.getDocumentation())
         ));
+        definition.setAdvancedData(new AdvancedData(p.getMetaDataAttributes()));
 
         definition.setDimensionsSet(p.getCircleDimensionSet());
         definition.setFontSet(p.getFontSet());

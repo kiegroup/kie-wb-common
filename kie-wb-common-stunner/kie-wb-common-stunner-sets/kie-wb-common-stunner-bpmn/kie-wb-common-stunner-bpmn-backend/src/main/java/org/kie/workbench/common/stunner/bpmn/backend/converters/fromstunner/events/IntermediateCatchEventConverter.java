@@ -77,6 +77,7 @@ public class IntermediateCatchEventConverter {
         BPMNGeneralSet general = definition.getGeneral();
         p.setName(general.getName().getValue());
         p.setDocumentation(general.getDocumentation().getValue());
+        p.setMetaData(definition.getAdvancedData().getMetaDataAttributes());
 
         p.setAssignmentsInfo(definition.getDataIOSet().getAssignmentsinfo());
 
@@ -98,6 +99,7 @@ public class IntermediateCatchEventConverter {
         BPMNGeneralSet general = definition.getGeneral();
         p.setName(general.getName().getValue());
         p.setDocumentation(general.getDocumentation().getValue());
+        p.setMetaData(definition.getAdvancedData().getMetaDataAttributes());
 
         p.setAssignmentsInfo(definition.getDataIOSet().getAssignmentsinfo());
 
@@ -120,6 +122,7 @@ public class IntermediateCatchEventConverter {
         BPMNGeneralSet general = definition.getGeneral();
         p.setName(general.getName().getValue());
         p.setDocumentation(general.getDocumentation().getValue());
+        p.setMetaData(definition.getAdvancedData().getMetaDataAttributes());
 
         p.setAssignmentsInfo(definition.getDataIOSet().getAssignmentsinfo());
 
@@ -139,6 +142,7 @@ public class IntermediateCatchEventConverter {
         BPMNGeneralSet general = definition.getGeneral();
         p.setName(general.getName().getValue());
         p.setDocumentation(general.getDocumentation().getValue());
+        p.setMetaData(definition.getAdvancedData().getMetaDataAttributes());
 
         p.setAssignmentsInfo(definition.getDataIOSet().getAssignmentsinfo());
 
@@ -160,6 +164,7 @@ public class IntermediateCatchEventConverter {
         BPMNGeneralSet general = definition.getGeneral();
         p.setName(general.getName().getValue());
         p.setDocumentation(general.getDocumentation().getValue());
+        p.setMetaData(definition.getAdvancedData().getMetaDataAttributes());
 
         p.setAssignmentsInfo(definition.getDataIOSet().getAssignmentsinfo());
 
@@ -181,6 +186,7 @@ public class IntermediateCatchEventConverter {
         BPMNGeneralSet general = definition.getGeneral();
         p.setName(general.getName().getValue());
         p.setDocumentation(general.getDocumentation().getValue());
+        p.setMetaData(definition.getAdvancedData().getMetaDataAttributes());
 
         p.setAssignmentsInfo(definition.getDataIOSet().getAssignmentsinfo());
 
@@ -202,6 +208,7 @@ public class IntermediateCatchEventConverter {
         BPMNGeneralSet general = definition.getGeneral();
         p.setName(general.getName().getValue());
         p.setDocumentation(general.getDocumentation().getValue());
+        p.setMetaData(definition.getAdvancedData().getMetaDataAttributes());
 
         p.setAssignmentsInfo(definition.getDataIOSet().getAssignmentsinfo());
 
@@ -223,6 +230,7 @@ public class IntermediateCatchEventConverter {
         BPMNGeneralSet general = definition.getGeneral();
         p.setName(general.getName().getValue());
         p.setDocumentation(general.getDocumentation().getValue());
+        p.setMetaData(definition.getAdvancedData().getMetaDataAttributes());
 
         p.setAssignmentsInfo(definition.getDataIOSet().getAssignmentsinfo());
 

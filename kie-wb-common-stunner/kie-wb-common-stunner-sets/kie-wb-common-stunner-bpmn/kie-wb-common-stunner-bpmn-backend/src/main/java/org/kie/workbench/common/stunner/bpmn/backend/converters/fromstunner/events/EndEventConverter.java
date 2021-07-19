@@ -68,6 +68,7 @@ public class EndEventConverter {
         BPMNGeneralSet general = definition.getGeneral();
         p.setName(general.getName().getValue());
         p.setDocumentation(general.getDocumentation().getValue());
+        p.setMetaData(definition.getAdvancedData().getMetaDataAttributes());
 
         p.setAssignmentsInfo(
                 definition.getDataIOSet().getAssignmentsinfo());
@@ -89,6 +90,7 @@ public class EndEventConverter {
         BPMNGeneralSet general = definition.getGeneral();
         p.setName(general.getName().getValue());
         p.setDocumentation(general.getDocumentation().getValue());
+        p.setMetaData(definition.getAdvancedData().getMetaDataAttributes());
 
         p.addTerminate();
 
@@ -106,6 +108,7 @@ public class EndEventConverter {
         BPMNGeneralSet general = definition.getGeneral();
         p.setName(general.getName().getValue());
         p.setDocumentation(general.getDocumentation().getValue());
+        p.setMetaData(definition.getAdvancedData().getMetaDataAttributes());
 
         p.setAssignmentsInfo(
                 definition.getDataIOSet().getAssignmentsinfo());
@@ -127,6 +130,7 @@ public class EndEventConverter {
         BPMNGeneralSet general = definition.getGeneral();
         p.setName(general.getName().getValue());
         p.setDocumentation(general.getDocumentation().getValue());
+        p.setMetaData(definition.getAdvancedData().getMetaDataAttributes());
 
         p.setAssignmentsInfo(
                 definition.getDataIOSet().getAssignmentsinfo());
@@ -150,6 +154,7 @@ public class EndEventConverter {
         BPMNGeneralSet general = definition.getGeneral();
         p.setName(general.getName().getValue());
         p.setDocumentation(general.getDocumentation().getValue());
+        p.setMetaData(definition.getAdvancedData().getMetaDataAttributes());
 
         p.setAbsoluteBounds(n);
         return p;
@@ -165,6 +170,7 @@ public class EndEventConverter {
         BPMNGeneralSet general = definition.getGeneral();
         p.setName(general.getName().getValue());
         p.setDocumentation(general.getDocumentation().getValue());
+        p.setMetaData(definition.getAdvancedData().getMetaDataAttributes());
 
         p.setAssignmentsInfo(
                 definition.getDataIOSet().getAssignmentsinfo());
@@ -186,6 +192,7 @@ public class EndEventConverter {
         BPMNGeneralSet general = definition.getGeneral();
         p.setName(general.getName().getValue());
         p.setDocumentation(general.getDocumentation().getValue());
+        p.setMetaData(definition.getAdvancedData().getMetaDataAttributes());
 
         p.addCompensation();
 

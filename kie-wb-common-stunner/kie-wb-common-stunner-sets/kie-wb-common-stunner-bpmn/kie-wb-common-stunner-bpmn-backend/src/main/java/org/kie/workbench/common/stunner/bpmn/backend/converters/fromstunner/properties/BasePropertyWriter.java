@@ -26,7 +26,9 @@ import org.eclipse.bpmn2.ItemDefinition;
 import org.eclipse.bpmn2.RootElement;
 import org.eclipse.bpmn2.di.BPMNEdge;
 import org.eclipse.bpmn2.di.BPMNShape;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.customproperties.CustomElement;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.Ids;
+import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.MetaDataAttributes;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.Bound;
 import org.kie.workbench.common.stunner.core.graph.content.Bounds;
@@ -93,6 +95,12 @@ public abstract class BasePropertyWriter {
             Documentation documentation = bpmn2.createDocumentation();
             documentation.setText(asCData(value));
             baseElement.getDocumentation().add(documentation);
+        }
+    }
+
+    public void setMetaData(final MetaDataAttributes metaDataAttributes) {
+        if (null != metaDataAttributes.getValue() && !metaDataAttributes.getValue().isEmpty()) {
+            CustomElement.metaDataAttributes.of(baseElement).set(metaDataAttributes.getValue());
         }
     }
 

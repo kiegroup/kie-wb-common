@@ -23,9 +23,11 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.DataIOSe
 import org.kie.workbench.common.stunner.bpmn.definition.property.dimensions.CircleDimensionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.font.FontSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.BPMNGeneralSet;
+import org.kie.workbench.common.stunner.bpmn.definition.property.variables.AdvancedData;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
@@ -40,6 +42,7 @@ public class BaseIntermediateEventTest {
     private FontSet fontSet;
     private CircleDimensionSet dimensionsSet;
     private DataIOSet dataIOSet;
+    private AdvancedData advancedData;
 
     private FakeBaseIntermediateEventTest tested;
 
@@ -50,6 +53,7 @@ public class BaseIntermediateEventTest {
         fontSet = mock(FontSet.class);
         dimensionsSet = mock(CircleDimensionSet.class);
         dataIOSet = mock(DataIOSet.class);
+        advancedData = mock(AdvancedData.class);
         tested = spy(new FakeBaseIntermediateEventTest());
     }
 
@@ -130,6 +134,27 @@ public class BaseIntermediateEventTest {
     }
 
     @Test
+    public void testGetAdvancedData() {
+        final FakeBaseIntermediateEventTest baseIntermediateEvent = new FakeBaseIntermediateEventTest(null,
+                                                                                                      null,
+                                                                                                      null,
+                                                                                                      null,
+                                                                                                      null,
+                                                                                                      advancedData);
+        AdvancedData result = baseIntermediateEvent.getAdvancedData();
+        assertEquals(advancedData, result);
+    }
+
+    @Test
+    public void testSetAdvancedData() {
+        final FakeBaseIntermediateEventTest baseIntermediateEvent =
+                new FakeBaseIntermediateEventTest();
+        assertNull(baseIntermediateEvent.advancedData);
+        baseIntermediateEvent.setAdvancedData(advancedData);
+        assertEquals(advancedData, baseIntermediateEvent.advancedData);
+    }
+
+    @Test
     public void testEquals() {
         tested.general = mock(BPMNGeneralSet.class);
         tested.backgroundSet = mock(BackgroundSet.class);
@@ -161,6 +186,24 @@ public class BaseIntermediateEventTest {
     }
 
     private class FakeBaseIntermediateEventTest extends BaseIntermediateEvent {
+
+        public FakeBaseIntermediateEventTest() {
+            super();
+        }
+
+        public FakeBaseIntermediateEventTest(final BPMNGeneralSet general,
+                                             final BackgroundSet backgroundSet,
+                                             final FontSet fontSet,
+                                             final CircleDimensionSet dimensionsSet,
+                                             final DataIOSet dataIOSet,
+                                             final AdvancedData advancedData) {
+            super(general,
+                  backgroundSet,
+                  fontSet,
+                  dimensionsSet,
+                  dataIOSet,
+                  advancedData);
+        }
 
         @Override
         protected void initLabels() {
