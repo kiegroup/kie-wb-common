@@ -445,7 +445,9 @@ public class AssignmentsEditorWidget extends Composite implements HasValue<Strin
                 }
                 formattedDataTypes.add(dataType + ":" + dataType);
             }
+            formattedDataTypes = formattedDataTypes.stream().distinct().collect(Collectors.toList());
             Collections.sort(formattedDataTypes);
+
             for (String formattedDataType : formattedDataTypes) {
                 sb.append(formattedDataType).append(',');
             }

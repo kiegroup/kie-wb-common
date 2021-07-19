@@ -97,8 +97,9 @@ public class AssignmentsEditorWidgetTest extends AssignmentBaseTest {
     public static final String ASSIGNMENTS_SINGLE_OUTPUT = "[dout]output1->employee";
     public static final String ASSIGNMENTS_MULTIPLE = "[din]employee->input1,[din]input2=ab%7Ccd%7Cef,[din]input3=yes,[din]input4=%22Hello%22+then+%22Goodbye%22,[dout]output1->employee,[dout]output2->reason";
     public static final List<String> DATATYPES = new ArrayList<>(Arrays.asList("myorg.myproject1.Cardboard",
-                                                                                     "yourorg.materials.Paper",
-                                                                                     "org.documents.Articles"));
+                                                                               "yourorg.materials.Paper",
+                                                                               "yourorg.materials.Paper",
+                                                                               "org.documents.Articles"));
     public static final String FORMATTED_DATATYPES = "myorg.myproject1.Cardboard:myorg.myproject1.Cardboard,org.documents.Articles:org.documents.Articles,yourorg.materials.Paper:yourorg.materials.Paper";
 
     public static final String SIMPLE_DATA_TYPES = "Boolean:Boolean,Float:Float,Integer:Integer,Object:Object,String:String";
@@ -497,7 +498,7 @@ public class AssignmentsEditorWidgetTest extends AssignmentBaseTest {
         dataObject.getName().setValue("Data\nObject");
         String doNameFilter = widget.dataObjectToProcessVariableFormat(dataObject);
         assertEquals(doNameFilter, "DataObject:Object");
-     }
+    }
 
     @Test
     public void testAssignmentsForNormalTaskWithInputOutput() {
