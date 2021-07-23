@@ -45,8 +45,8 @@
       <artifactId>kie-wb-common-compiler-core</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.jboss.spec.javax.jms</groupId>
-      <artifactId>jboss-jms-api_2.0_spec</artifactId>
+      <groupId>jakarta.jms</groupId>
+      <artifactId>jakarta.jms-api</artifactId>
     </dependency>
     <!-- Transitive deps -->
     <dependency>
@@ -133,10 +133,6 @@
         <exclusion>
           <groupId>org.apache.activemq</groupId>
           <artifactId>artemis-jms-client</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.jboss.spec.javax.jms</groupId>
-          <artifactId>jboss-jms-api_2.0_spec</artifactId>
         </exclusion>
         <exclusion>
           <groupId>io.netty</groupId>
