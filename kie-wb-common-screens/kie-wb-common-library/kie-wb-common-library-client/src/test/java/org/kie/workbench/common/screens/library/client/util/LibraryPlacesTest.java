@@ -296,7 +296,7 @@ public class LibraryPlacesTest {
         activeOrganizationalUnit = mock(OrganizationalUnit.class);
         activeSpace = mock(Space.class);
         activeRepository = mock(Repository.class);
-        activeBranch = new Branch("master",
+        activeBranch = new Branch("main",
                                   mock(Path.class));
         activeModule = mock(Module.class);
 
@@ -811,7 +811,7 @@ public class LibraryPlacesTest {
         part.setSelectable(false);
 
         final Set<ImportProject> projects = singleton(new ImportProject(PathFactory.newPath("example",
-                                                                                            "default://master@system/repo/example"),
+                                                                                            "default://main@system/repo/example"),
                                                                         "example",
                                                                         "description",
                                                                         "git@git.com",

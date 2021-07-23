@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kie.workbench.common.services.shared.whitelist;
+package org.kie.workbench.common.services.shared.allowlist;
 
 import java.util.Collection;
 
@@ -24,12 +24,12 @@ import org.uberfire.backend.vfs.Path;
 import org.uberfire.ext.editor.commons.service.support.SupportsRead;
 
 @Remote
-public interface PackageNameWhiteListService
-        extends SupportsRead<WhiteList>,
-                SupportsUpdate<WhiteList> {
+public interface PackageNameAllowListService
+        extends SupportsRead<AllowList>,
+                SupportsUpdate<AllowList> {
 
-    WhiteList filterPackageNames(final Module module,
+    AllowList filterPackageNames(final Module module,
                                  final Collection<String> packageNames);
 
-    void createModuleWhiteList(final Path packageNamesWhiteListPath, String initialContent);
+    void createModuleAllowList(final Path packageNamesAllowListPath, String initialContent);
 }

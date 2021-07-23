@@ -170,17 +170,17 @@ public class DefExplorerQueryServiceTest {
 
         doReturn(new WorkspaceProject(o3,
                                       repo_o3_1,
-                                      new Branch("master",
+                                      new Branch("main",
                                                  mock(Path.class)),
                                       module1)).when(projectService).resolveProject(repo_o3_1);
         doReturn(new WorkspaceProject(o3,
                                       repo_o3_2,
-                                      new Branch("master",
+                                      new Branch("main",
                                                  mock(Path.class)),
                                       module2)).when(projectService).resolveProject(repo_o3_2);
         doReturn(new WorkspaceProject(o3,
                                       repo_o3_3,
-                                      new Branch("master",
+                                      new Branch("main",
                                                  mock(Path.class)),
                                       module3)).when(projectService).resolveProject(repo_o3_3);
 
@@ -254,7 +254,7 @@ public class DefExplorerQueryServiceTest {
         DefExplorerQuery query = new DefExplorerQuery();
         query.setOrganizationalUnit(o3);
         query.setRepository(repo_o3_3);
-        query.setBranchName("master");
+        query.setBranchName("main");
 
         DefExplorerQueryResult result = explorerQueryService.executeQuery(query);
         verifyResultForQueryForOrganizationalUnitRepository(result);
@@ -269,7 +269,7 @@ public class DefExplorerQueryServiceTest {
         DefExplorerQuery query = new DefExplorerQuery();
         query.setOrganizationalUnit(o3);
         query.setRepository(repo_o3_1);
-        query.setBranchName("master");
+        query.setBranchName("main");
         query.setModule(module1);
 
         DefExplorerQueryResult result = explorerQueryService.executeQuery(query);
@@ -360,7 +360,7 @@ public class DefExplorerQueryServiceTest {
 
         String identifier;
 
-        Branch masterBranch = new Branch("master",
+        Branch mainBranch = new Branch("main",
                                          mock(Path.class));
 
         public RepositoryMock(String alias,
@@ -412,8 +412,8 @@ public class DefExplorerQueryServiceTest {
 
         @Override
         public Optional<Branch> getBranch(String branch) {
-            if ("master".equals(branch)) {
-                return Optional.of(masterBranch);
+            if ("main".equals(branch)) {
+                return Optional.of(mainBranch);
             } else {
                 return Optional.empty();
             }
@@ -437,13 +437,13 @@ public class DefExplorerQueryServiceTest {
         @Override
         public Collection<Branch> getBranches() {
             final ArrayList<Branch> branches = new ArrayList<>();
-            branches.add(masterBranch);
+            branches.add(mainBranch);
             return branches;
         }
 
         @Override
         public Optional<Branch> getDefaultBranch() {
-            return Optional.of(masterBranch);
+            return Optional.of(mainBranch);
         }
 
         @Override

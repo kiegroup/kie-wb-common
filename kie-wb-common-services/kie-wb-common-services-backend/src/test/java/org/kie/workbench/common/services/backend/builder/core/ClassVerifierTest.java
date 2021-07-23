@@ -27,7 +27,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.scanner.KieModuleMetaData;
-import org.kie.workbench.common.services.shared.whitelist.WhiteList;
+import org.kie.workbench.common.services.shared.allowlist.AllowList;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
@@ -50,11 +50,11 @@ public class ClassVerifierTest {
 	
 	@Test
 	public void testVerifyClass(){
-		WhiteList whiteList = new WhiteList();	
-		whiteList.add("org.kie.workbench.common.services.backend.builder");
+		AllowList allowList = new AllowList();
+		allowList.add("org.kie.workbench.common.services.backend.builder");
 		
 		ClassVerifier classVerifier = new ClassVerifier(kieModuleMetaData, typeSourceResolver);
-		List<BuildMessage> messages  = classVerifier.verify(whiteList);
+		List<BuildMessage> messages  = classVerifier.verify(allowList);
 		
 		assertEquals(messages.size(), 1);
 		assertEquals("Verification of class org.kie.workbench.common.services.backend.builder.SomeClass failed and will not be available for authoring.\n"

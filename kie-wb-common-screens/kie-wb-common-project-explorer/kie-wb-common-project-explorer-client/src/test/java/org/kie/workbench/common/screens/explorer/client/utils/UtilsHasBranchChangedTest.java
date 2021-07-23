@@ -48,10 +48,10 @@ public class UtilsHasBranchChangedTest {
     public static Collection<Object[]> testData() {
         return Arrays.asList( new Object[][]{
                 {true, null, null},
-                {true, null, "master"},
-                {true, "master", null},
-                {true, "master", "dev"},
-                {false, "master", "master"}
+                {true, null, "main"},
+                {true, "main", null},
+                {true, "main", "dev"},
+                {false, "main", "main"}
         } );
     }
 

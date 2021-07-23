@@ -72,7 +72,7 @@ public class MavenCliOutputTest {
     @Test
     public void buildAppAndWaitForMavenOutputTest() throws IOException {
         final Optional<Source> _source = new GitConfigExecutor(new InMemorySourceRegistry()).apply(new GitConfigImpl(tempPath.getAbsolutePath(),
-                                                                                                                     "master",
+                                                                                                                    "master",
                                                                                                                      gitUrl,
                                                                                                                      "drools-workshop",
                                                                                                                      "true"));

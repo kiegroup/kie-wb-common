@@ -20,15 +20,15 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.enterprise.context.ApplicationScoped;
 
-import org.guvnor.messageconsole.whitelist.MessageConsoleWhiteList;
+import org.guvnor.messageconsole.allowlist.MessageConsoleAllowList;
 
 @ApplicationScoped
-public class MessageConsoleWhiteListImpl
-        implements MessageConsoleWhiteList {
+public class MessageConsoleAllowListImpl
+        implements MessageConsoleAllowList {
 
     private List<String> allowedPerspectives = new ArrayList<String>();
 
-    public MessageConsoleWhiteListImpl() {
+    public MessageConsoleAllowListImpl() {
         allowedPerspectives.add( "LibraryPerspective" );
         allowedPerspectives.add( "AuthoringPerspective" );
         allowedPerspectives.add( "AuthoringPerspectiveNoContext" );

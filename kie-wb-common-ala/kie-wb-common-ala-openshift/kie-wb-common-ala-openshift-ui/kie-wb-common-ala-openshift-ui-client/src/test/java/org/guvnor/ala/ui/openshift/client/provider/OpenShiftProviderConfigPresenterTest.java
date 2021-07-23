@@ -32,7 +32,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 
 import static org.guvnor.ala.ui.client.util.UIUtil.EMPTY_STRING;
-import static org.guvnor.ala.ui.openshift.client.provider.OpenShiftProviderConfigPresenter.MASTER_URL;
+import static org.guvnor.ala.ui.openshift.client.provider.OpenShiftProviderConfigPresenter.MAIN_URL;
 import static org.guvnor.ala.ui.openshift.client.provider.OpenShiftProviderConfigPresenter.PASSWORD;
 import static org.guvnor.ala.ui.openshift.client.provider.OpenShiftProviderConfigPresenter.USER;
 import static org.junit.Assert.*;
@@ -43,7 +43,7 @@ public class OpenShiftProviderConfigPresenterTest {
 
     private static final String PROVIDER_NAME_VALUE = "PROVIDER_NAME_VALUE";
 
-    private static final String MASTER_URL_VALUE = "MASTER_URL_VALUE";
+    private static final String MAIN_URL_VALUE = "MAIN_URL_VALUE";
 
     private static final String USER_VALUE = "USER_VALUE";
 
@@ -69,15 +69,15 @@ public class OpenShiftProviderConfigPresenterTest {
     @Test
     public void testBuildProviderConfiguration() {
         when(view.getProviderName()).thenReturn(PROVIDER_NAME_VALUE);
-        when(view.getMasterURL()).thenReturn(MASTER_URL_VALUE);
+        when(view.getMainURL()).thenReturn(MAIN_URL_VALUE);
         when(view.getUsername()).thenReturn(USER_VALUE);
         when(view.getPassword()).thenReturn(PASSWORD_VALUE);
 
         ProviderConfiguration configuration = presenter.buildProviderConfiguration();
         assertEquals(PROVIDER_NAME_VALUE,
                      presenter.getProviderName());
-        assertEquals(MASTER_URL_VALUE,
-                     configuration.getValues().get(MASTER_URL));
+        assertEquals(MAIN_URL_VALUE,
+                     configuration.getValues().get(MAIN_URL));
         assertEquals(USER_VALUE,
                      configuration.getValues().get(USER));
         assertEquals(PASSWORD_VALUE,
@@ -94,8 +94,8 @@ public class OpenShiftProviderConfigPresenterTest {
     @Test
     public void testLoad() {
         Map<String, Object> values = new HashMap<>();
-        values.put(MASTER_URL,
-                   MASTER_URL_VALUE);
+        values.put(MAIN_URL,
+                   MAIN_URL_VALUE);
         values.put(USER,
                    USER_VALUE);
         values.put(PASSWORD,
@@ -117,7 +117,7 @@ public class OpenShiftProviderConfigPresenterTest {
         verify(view,
                times(1)).setProviderName(PROVIDER_NAME_VALUE);
         verify(view,
-               times(1)).setMasterURL(MASTER_URL_VALUE);
+               times(1)).setMainURL(MAIN_URL_VALUE);
         verify(view,
                times(1)).setUsername(USER_VALUE);
         verify(view,
@@ -132,10 +132,10 @@ public class OpenShiftProviderConfigPresenterTest {
     }
 
     @Test
-    public void testGetMasterURL() {
-        when(view.getMasterURL()).thenReturn(MASTER_URL_VALUE);
-        assertEquals(MASTER_URL_VALUE,
-                     presenter.getMasterURL());
+    public void testGetMainURL() {
+        when(view.getMainURL()).thenReturn(MAIN_URL_VALUE);
+        assertEquals(MAIN_URL_VALUE,
+                     presenter.getMainURL());
     }
 
     @Test
@@ -155,7 +155,7 @@ public class OpenShiftProviderConfigPresenterTest {
     @Test
     public void testIsValid() {
         when(view.getProviderName()).thenReturn(EMPTY_STRING);
-        when(view.getMasterURL()).thenReturn(EMPTY_STRING);
+        when(view.getMainURL()).thenReturn(EMPTY_STRING);
         when(view.getUsername()).thenReturn(EMPTY_STRING);
         when(view.getPassword()).thenReturn(EMPTY_STRING);
 
@@ -165,7 +165,7 @@ public class OpenShiftProviderConfigPresenterTest {
 
         presenter.isValid(Assert::assertFalse);
 
-        when(view.getMasterURL()).thenReturn(MASTER_URL_VALUE);
+        when(view.getMainURL()).thenReturn(MAIN_URL_VALUE);
 
         presenter.isValid(Assert::assertFalse);
 
@@ -207,21 +207,21 @@ public class OpenShiftProviderConfigPresenterTest {
     }
 
     @Test
-    public void testOnMasterURLChangeValid() {
-        when(view.getMasterURL()).thenReturn(MASTER_URL_VALUE);
-        presenter.onMasterURLChange();
+    public void testOnMainURLChangeValid() {
+        when(view.getMainURL()).thenReturn(MAIN_URL_VALUE);
+        presenter.onMainURLChange();
         verify(view,
-               times(1)).setMasterURLStatus(FormStatus.VALID);
+               times(1)).setMainURLStatus(FormStatus.VALID);
         verify(changeHandler,
                times(1)).onContentChange();
     }
 
     @Test
-    public void testOnMasterURLChangeInvalid() {
-        when(view.getMasterURL()).thenReturn(EMPTY_STRING);
-        presenter.onMasterURLChange();
+    public void testOnMainURLChangeInvalid() {
+        when(view.getMainURL()).thenReturn(EMPTY_STRING);
+        presenter.onMainURLChange();
         verify(view,
-               times(1)).setMasterURLStatus(FormStatus.ERROR);
+               times(1)).setMainURLStatus(FormStatus.ERROR);
         verify(changeHandler,
                times(1)).onContentChange();
     }

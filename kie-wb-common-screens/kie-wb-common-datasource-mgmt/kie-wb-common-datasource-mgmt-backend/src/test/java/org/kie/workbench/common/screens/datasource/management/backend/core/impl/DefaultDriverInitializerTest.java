@@ -41,7 +41,7 @@ import static org.mockito.Mockito.*;
 @RunWith(MockitoJUnitRunner.class)
 public class DefaultDriverInitializerTest {
 
-    private static final String GLOBAL_URI = "default://master@datasources/";
+    private static final String GLOBAL_URI = "default://main@datasources/";
 
     @Mock
     private IOService ioService;

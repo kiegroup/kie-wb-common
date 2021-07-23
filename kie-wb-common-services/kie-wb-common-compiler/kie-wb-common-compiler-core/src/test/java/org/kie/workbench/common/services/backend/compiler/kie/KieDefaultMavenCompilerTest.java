@@ -240,7 +240,7 @@ public class KieDefaultMavenCompilerTest {
 
     @Test
     public void buildWithJGitDecoratorTest() throws Exception {
-        String MASTER_BRANCH = "master";
+        String MAIN_BRANCH = "master";
 
         //Setup origin in memory
         final URI originRepo = URI.create("git://repo");
@@ -269,7 +269,7 @@ public class KieDefaultMavenCompilerTest {
                         new String(java.nio.file.Files.readAllBytes(new File("src/test/projects/dummy_multimodule_untouched/dummyB/pom.xml").toPath())));
         ioService.endBatch();
 
-        RevCommit lastCommit = origin.getGit().resolveRevCommit(origin.getGit().getRef(MASTER_BRANCH).getObjectId());
+        RevCommit lastCommit = origin.getGit().resolveRevCommit(origin.getGit().getRef(MAIN_BRANCH).getObjectId());
 
         assertThat(lastCommit).isNotNull();
 
@@ -283,14 +283,14 @@ public class KieDefaultMavenCompilerTest {
         TestUtil.saveMavenLogIfCompilationResponseNotSuccessfull(origin.getPath("/"), res, this.getClass(), testName);
         assertThat(res.isSuccessful()).isTrue();
 
-        lastCommit = origin.getGit().resolveRevCommit(origin.getGit().getRef(MASTER_BRANCH).getObjectId());
+        lastCommit = origin.getGit().resolveRevCommit(origin.getGit().getRef(MAIN_BRANCH).getObjectId());
 
         assertThat(lastCommit).isNotNull();
 
         ioService.write(origin.getPath("/dummyA/src/main/java/dummy/DummyA.java"),
                         new String(java.nio.file.Files.readAllBytes(new File("src/test/projects/DummyA.java").toPath())));
 
-        RevCommit commitBefore = origin.getGit().resolveRevCommit(origin.getGit().getRef(MASTER_BRANCH).getObjectId());
+        RevCommit commitBefore = origin.getGit().resolveRevCommit(origin.getGit().getRef(MAIN_BRANCH).getObjectId());
         assertThat(commitBefore).isNotNull();
         assertThat(lastCommit.getId().toString()).isNotEqualTo(commitBefore.getId().toString());
 
@@ -303,7 +303,7 @@ public class KieDefaultMavenCompilerTest {
     @Test
     public void buildWithAllDecoratorsTest() throws Exception {
         String alternateSettingsAbsPath = TestUtilMaven.getSettingsFile();
-        String MASTER_BRANCH = "master";
+        String MAIN_BRANCH = "master";
 
         //Setup origin in memory
         final URI originRepo = URI.create("git://repo");
@@ -330,7 +330,7 @@ public class KieDefaultMavenCompilerTest {
                         new String(java.nio.file.Files.readAllBytes(new File("target/test-classes/kjar-2-single-resources/src/main/resources/META-INF/kmodule.xml").toPath())));
         ioService.endBatch();
 
-        RevCommit lastCommit = origin.getGit().resolveRevCommit(origin.getGit().getRef(MASTER_BRANCH).getObjectId());
+        RevCommit lastCommit = origin.getGit().resolveRevCommit(origin.getGit().getRef(MAIN_BRANCH).getObjectId());
         assertThat(lastCommit).isNotNull();
 
         // clone into a regularfs
@@ -351,14 +351,14 @@ public class KieDefaultMavenCompilerTest {
         TestUtil.saveMavenLogIfCompilationResponseNotSuccessfull(tmpCloned, res, this.getClass(), testName);
         assertThat(res.isSuccessful()).isTrue();
 
-        lastCommit = origin.getGit().resolveRevCommit(origin.getGit().getRef(MASTER_BRANCH).getObjectId());
+        lastCommit = origin.getGit().resolveRevCommit(origin.getGit().getRef(MAIN_BRANCH).getObjectId());
         assertThat(lastCommit).isNotNull();
 
         //change one file and commit on the origin repo
         ioService.write(origin.getPath("/src/main/java/org/kie/maven/plugin/test/Person.java"),
                         new String(java.nio.file.Files.readAllBytes(new File("src/test/projects/Person.java").toPath())));
 
-        RevCommit commitBefore = origin.getGit().resolveRevCommit(origin.getGit().getRef(MASTER_BRANCH).getObjectId());
+        RevCommit commitBefore = origin.getGit().resolveRevCommit(origin.getGit().getRef(MAIN_BRANCH).getObjectId());
         assertThat(commitBefore).isNotNull();
         assertThat(lastCommit.getId().toString()).isNotEqualTo(commitBefore.getId().toString());
 

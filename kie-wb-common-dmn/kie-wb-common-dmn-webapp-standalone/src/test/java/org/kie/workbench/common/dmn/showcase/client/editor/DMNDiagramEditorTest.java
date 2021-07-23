@@ -407,8 +407,8 @@ public class DMNDiagramEditorTest {
         final MetadataImpl metadata = (MetadataImpl) editor.buildMetadata(defSetId, shapeSetId, title);
 
         assertEquals(title, metadata.getTitle());
-        assertEquals("default://master@system/stunner/diagrams", metadata.getRoot().toURI());
-        assertEquals("default://master@system/stunner/diagrams/00001111.dmn", metadata.getPath().toURI());
+        assertEquals("default://main@system/stunner/diagrams", metadata.getRoot().toURI());
+        assertEquals("default://main@system/stunner/diagrams/00001111.dmn", metadata.getPath().toURI());
         assertEquals(shapeSetId, metadata.getShapeSetId());
         assertEquals(defSetId, metadata.getDefinitionSetId());
     }

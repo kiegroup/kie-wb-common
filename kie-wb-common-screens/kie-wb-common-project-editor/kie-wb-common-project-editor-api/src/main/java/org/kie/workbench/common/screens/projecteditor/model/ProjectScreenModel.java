@@ -23,7 +23,7 @@ import org.guvnor.common.services.project.model.ProjectImports;
 import org.guvnor.common.services.shared.metadata.model.Metadata;
 import org.jboss.errai.common.client.api.annotations.Portable;
 import org.kie.workbench.common.services.shared.kmodule.KModuleModel;
-import org.kie.workbench.common.services.shared.whitelist.WhiteList;
+import org.kie.workbench.common.services.shared.allowlist.AllowList;
 import org.uberfire.backend.vfs.Path;
 
 @Portable
@@ -34,17 +34,17 @@ public class ProjectScreenModel {
     private List<GitUrl> gitUrls;
     private ProjectImports projectImports;
     private ModuleRepositories repositories;
-    private WhiteList whiteList;
+    private AllowList allowList;
     private Metadata POMMetaData;
     private Metadata KModuleMetaData;
     private Metadata projectImportsMetaData;
     private Metadata projectTagsMetaData;
-    private Metadata whiteListMetaData;
+    private Metadata allowListMetaData;
     private Path pathToPOM;
     private Path pathToKModule;
     private Path pathToImports;
     private Path pathToRepositories;
-    private Path pathToWhiteList;
+    private Path pathToAllowList;
 
     public POM getPOM() {
         return pom;
@@ -86,12 +86,12 @@ public class ProjectScreenModel {
         this.repositories = repositories;
     }
 
-    public WhiteList getWhiteList() {
-        return whiteList;
+    public AllowList getAllowList() {
+        return allowList;
     }
 
-    public void setWhiteList(final WhiteList whiteList) {
-        this.whiteList = whiteList;
+    public void setAllowList(final AllowList allowList) {
+        this.allowList = allowList;
     }
 
     public Metadata getPOMMetaData() {
@@ -126,12 +126,12 @@ public class ProjectScreenModel {
         this.projectTagsMetaData = projectTagsMetaData;
     }
 
-    public Metadata getWhiteListMetaData() {
-        return whiteListMetaData;
+    public Metadata getAllowListMetaData() {
+        return allowListMetaData;
     }
 
-    public void setWhiteListMetaData(final Metadata whiteListMetaData) {
-        this.whiteListMetaData = whiteListMetaData;
+    public void setAllowListMetaData(final Metadata allowListMetaData) {
+        this.allowListMetaData = allowListMetaData;
     }
 
     public Path getPathToPOM() {
@@ -166,12 +166,12 @@ public class ProjectScreenModel {
         this.pathToRepositories = pathToRepositories;
     }
 
-    public Path getPathToWhiteList() {
-        return pathToWhiteList;
+    public Path getPathToAllowList() {
+        return pathToAllowList;
     }
 
-    public void setPathToWhiteList(final Path pathToWhiteList) {
-        this.pathToWhiteList = pathToWhiteList;
+    public void setPathToAllowList(final Path pathToAllowList) {
+        this.pathToAllowList = pathToAllowList;
     }
 
     @Override
@@ -218,13 +218,13 @@ public class ProjectScreenModel {
         if (projectImportsMetaData != null ? !projectImportsMetaData.equals(that.projectImportsMetaData) : that.projectImportsMetaData != null) {
             return false;
         }
-        if (whiteList != null ? !whiteList.equals(that.whiteList) : that.whiteList != null) {
+        if (allowList != null ? !allowList.equals(that.allowList) : that.allowList != null) {
             return false;
         }
-        if (pathToWhiteList != null ? !pathToWhiteList.equals(that.pathToWhiteList) : that.pathToWhiteList != null) {
+        if (pathToAllowList != null ? !pathToAllowList.equals(that.pathToAllowList) : that.pathToAllowList != null) {
             return false;
         }
-        if (whiteListMetaData != null ? !whiteListMetaData.equals(that.whiteListMetaData) : that.whiteListMetaData != null) {
+        if (allowListMetaData != null ? !allowListMetaData.equals(that.allowListMetaData) : that.allowListMetaData != null) {
             return false;
         }
         if (repositories != null ? !repositories.equals(that.repositories) : that.repositories != null) {
@@ -260,11 +260,11 @@ public class ProjectScreenModel {
         result = ~~result;
         result = 31 * result + (projectTagsMetaData != null ? projectTagsMetaData.hashCode() : 0);
         result = ~~result;
-        result = 31 * result + (whiteList != null ? whiteList.hashCode() : 0);
+        result = 31 * result + (allowList != null ? allowList.hashCode() : 0);
         result = ~~result;
-        result = 31 * result + (pathToWhiteList != null ? pathToWhiteList.hashCode() : 0);
+        result = 31 * result + (pathToAllowList != null ? pathToAllowList.hashCode() : 0);
         result = ~~result;
-        result = 31 * result + (whiteListMetaData != null ? whiteListMetaData.hashCode() : 0);
+        result = 31 * result + (allowListMetaData != null ? allowListMetaData.hashCode() : 0);
         result = ~~result;
         result = 31 * result + (repositories != null ? repositories.hashCode() : 0);
         result = ~~result;

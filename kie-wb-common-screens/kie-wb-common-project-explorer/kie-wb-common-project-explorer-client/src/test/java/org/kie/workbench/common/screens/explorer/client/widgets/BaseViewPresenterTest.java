@@ -140,7 +140,7 @@ public class BaseViewPresenterTest {
 
     private ProjectExplorerContent content = new ProjectExplorerContent(new WorkspaceProject(mock(OrganizationalUnit.class),
                                                                                              mock(Repository.class),
-                                                                                             new Branch("master",
+                                                                                             new Branch("main",
                                                                                                         mock(Path.class)),
                                                                                              mock(Module.class)),
                                                                         new Module(),
@@ -211,7 +211,7 @@ public class BaseViewPresenterTest {
         final WorkspaceProject project = mock(WorkspaceProject.class);
         when(project.getOrganizationalUnit()).thenReturn(ou);
         when(project.getRepository()).thenReturn(repository);
-        when(project.getBranch()).thenReturn(new Branch("master",
+        when(project.getBranch()).thenReturn(new Branch("main",
                                                         mock(Path.class)));
         when(activeContextItems.getActiveProject()).thenReturn(project);
 
@@ -237,7 +237,7 @@ public class BaseViewPresenterTest {
         when(activeContextItems.getActiveProject()).thenReturn(project);
         when(project.getOrganizationalUnit()).thenReturn(ou);
         when(project.getRepository()).thenReturn(repository);
-        when(project.getBranch()).thenReturn(new Branch("master",
+        when(project.getBranch()).thenReturn(new Branch("main",
                                                         mock(Path.class)));
         when(activeContextItems.getActiveModule()).thenReturn(module);
 
@@ -269,7 +269,7 @@ public class BaseViewPresenterTest {
             when(activeContextItems.getActiveProject()).thenReturn(project);
             when(project.getOrganizationalUnit()).thenReturn(ou);
             when(project.getRepository()).thenReturn(repository);
-            when(project.getBranch()).thenReturn(new Branch("master",
+            when(project.getBranch()).thenReturn(new Branch("main",
                                                             mock(Path.class)));
             when(activeContextItems.getActiveModule()).thenReturn(module);
 

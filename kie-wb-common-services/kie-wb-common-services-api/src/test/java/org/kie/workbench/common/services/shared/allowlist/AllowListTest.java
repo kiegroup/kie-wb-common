@@ -14,32 +14,30 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.services.shared.whitelist;
+package org.kie.workbench.common.services.shared.allowlist;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 
-import org.guvnor.common.services.project.model.POM;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
 
-public class WhiteListTest {
+public class AllowListTest {
 
     @Test
     public void testContainsAny() throws Exception {
 
-        final WhiteList whiteList = new WhiteList();
+        final AllowList allowList = new AllowList();
 
-        assertFalse( whiteList.containsAny( getSet() ) );
-        assertFalse( whiteList.containsAny( getSet( "org.test" ) ) );
+        assertFalse( allowList.containsAny( getSet() ) );
+        assertFalse( allowList.containsAny( getSet( "org.test" ) ) );
 
-        whiteList.add( "org.something" );
-        assertFalse( whiteList.containsAny( getSet( "org.test" ) ) );
+        allowList.add( "org.something" );
+        assertFalse( allowList.containsAny( getSet( "org.test" ) ) );
 
-        whiteList.add( "org.test" );
-        assertTrue( whiteList.containsAny( getSet( "org.test" ) ) );
+        allowList.add( "org.test" );
+        assertTrue( allowList.containsAny( getSet( "org.test" ) ) );
     }
 
     private Collection<String> getSet( String... items ) {

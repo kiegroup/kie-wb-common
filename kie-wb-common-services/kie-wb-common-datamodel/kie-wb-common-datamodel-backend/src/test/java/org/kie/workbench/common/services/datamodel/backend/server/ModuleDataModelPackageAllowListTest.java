@@ -25,7 +25,7 @@ import static org.kie.workbench.common.services.datamodel.backend.server.ModuleD
 /**
  * Tests for DataModelService
  */
-public class ModuleDataModelPackageWhiteListTest extends AbstractDataModelWeldTest {
+public class ModuleDataModelPackageAllowListTest extends AbstractDataModelWeldTest {
 
     @Test
     public void testPackageNameWhiteList_EmptyWhiteList() throws Exception {

@@ -37,7 +37,7 @@ public class OpenShiftProviderConfigPresenter
         extends AbstractHasContentChangeHandlers
         implements ProviderConfigurationForm {
 
-    protected static final String MASTER_URL = "kubernetes-master";
+    protected static final String MAIN_URL = "kubernetes-main";
 
     protected static final String USER = "kubernetes-auth-basic-username";
 
@@ -48,7 +48,7 @@ public class OpenShiftProviderConfigPresenter
 
         String getProviderName();
 
-        String getMasterURL();
+        String getMainURL();
 
         String getUsername();
 
@@ -56,7 +56,7 @@ public class OpenShiftProviderConfigPresenter
 
         void setProviderName(String name);
 
-        void setMasterURL(String masterURL);
+        void setMainURL(String mainURL);
 
         void setUsername(String username);
 
@@ -68,7 +68,7 @@ public class OpenShiftProviderConfigPresenter
 
         void setProviderNameStatus(final FormStatus formStatus);
 
-        void setMasterURLStatus(FormStatus error);
+        void setMainURLStatus(FormStatus error);
 
         void setUsernameStatus(FormStatus error);
 
@@ -98,8 +98,8 @@ public class OpenShiftProviderConfigPresenter
     @Override
     public ProviderConfiguration buildProviderConfiguration() {
         final Map<String, Object> values = new HashMap<>();
-        values.put(MASTER_URL,
-                   getMasterURL());
+        values.put(MAIN_URL,
+                   getMainURL());
         values.put(USER,
                    getUsername());
         values.put(PASSWORD,
@@ -117,8 +117,8 @@ public class OpenShiftProviderConfigPresenter
     public void load(final Provider provider) {
         clear();
         view.setProviderName(provider.getKey().getId());
-        view.setMasterURL(getStringValue(provider.getConfiguration().getValues(),
-                                         MASTER_URL));
+        view.setMainURL(getStringValue(provider.getConfiguration().getValues(),
+                                         MAIN_URL));
         view.setUsername(getStringValue(provider.getConfiguration().getValues(),
                                         USER));
         view.setPassword(getStringValue(provider.getConfiguration().getValues(),
@@ -129,8 +129,8 @@ public class OpenShiftProviderConfigPresenter
         return view.getProviderName();
     }
 
-    public String getMasterURL() {
-        return view.getMasterURL();
+    public String getMainURL() {
+        return view.getMainURL();
     }
 
     public String getUsername() {
@@ -143,7 +143,7 @@ public class OpenShiftProviderConfigPresenter
 
     public void isValid(final Callback<Boolean> callback) {
         boolean isValid = !isEmpty(view.getProviderName()) &&
-                !isEmpty(view.getMasterURL()) &&
+                !isEmpty(view.getMainURL()) &&
                 !isEmpty(view.getUsername()) &&
                 !isEmpty(view.getPassword());
         callback.callback(isValid);
@@ -168,11 +168,11 @@ public class OpenShiftProviderConfigPresenter
         onContentChange();
     }
 
-    protected void onMasterURLChange() {
-        if (!isEmpty(view.getMasterURL())) {
-            view.setMasterURLStatus(FormStatus.VALID);
+    protected void onMainURLChange() {
+        if (!isEmpty(view.getMainURL())) {
+            view.setMainURLStatus(FormStatus.VALID);
         } else {
-            view.setMasterURLStatus(FormStatus.ERROR);
+            view.setMainURLStatus(FormStatus.ERROR);
         }
         onContentChange();
     }

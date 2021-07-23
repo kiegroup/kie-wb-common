@@ -30,10 +30,10 @@ import org.guvnor.common.services.project.model.Package;
 import org.guvnor.common.services.project.service.ModuleRepositoriesService;
 import org.guvnor.common.services.project.service.POMService;
 import org.guvnor.common.services.project.utils.ModuleResourcePaths;
+import org.kie.workbench.common.services.shared.allowlist.PackageNameAllowListService;
 import org.kie.workbench.common.services.shared.kmodule.KModuleService;
 import org.kie.workbench.common.services.shared.project.KieModule;
 import org.kie.workbench.common.services.shared.project.ProjectImportsService;
-import org.kie.workbench.common.services.shared.whitelist.PackageNameWhiteListService;
 import org.uberfire.backend.server.util.Paths;
 import org.uberfire.backend.vfs.Path;
 import org.uberfire.io.IOService;
@@ -52,7 +52,7 @@ public class ModuleSaver {
     private KieResourceResolver resourceResolver;
     private ProjectImportsService projectImportsService;
     private ModuleRepositoriesService moduleRepositoriesService;
-    private PackageNameWhiteListService packageNameWhiteListService;
+    private PackageNameAllowListService packageNameAllowListService;
     private CommentedOptionFactory commentedOptionFactory;
     private SafeSessionInfo safeSessionInfo;
 
@@ -68,7 +68,7 @@ public class ModuleSaver {
                        final KieResourceResolver resourceResolver,
                        final ProjectImportsService projectImportsService,
                        final ModuleRepositoriesService moduleRepositoriesService,
-                       final PackageNameWhiteListService packageNameWhiteListService,
+                       final PackageNameAllowListService packageNameAllowListService,
                        final CommentedOptionFactory commentedOptionFactory,
                        final SessionInfo sessionInfo) {
         this.ioService = ioService;
@@ -79,7 +79,7 @@ public class ModuleSaver {
         this.resourceResolver = resourceResolver;
         this.projectImportsService = projectImportsService;
         this.moduleRepositoriesService = moduleRepositoriesService;
-        this.packageNameWhiteListService = packageNameWhiteListService;
+        this.packageNameAllowListService = packageNameAllowListService;
         this.commentedOptionFactory = commentedOptionFactory;
         this.safeSessionInfo = new SafeSessionInfo(sessionInfo);
     }
@@ -152,9 +152,9 @@ public class ModuleSaver {
             //Create Module configuration - project imports
             projectImportsService.saveProjectImports(simpleModuleInstance.getImportsPath());
 
-            //Create Module configuration - project package names White List
-            String packageNamesWhiteListContent = defaultPackageNamesWhiteListEntry();
-            packageNameWhiteListService.createModuleWhiteList(simpleModuleInstance.getPackageNamesWhiteListPath(), packageNamesWhiteListContent);
+            //Create Module configuration - project package names allow List
+            String packageNamesAllowListContent = defaultPackageNamesAllowListEntry();
+            packageNameAllowListService.createModuleAllowList(simpleModuleInstance.getPackageNamesAllowListPath(), packageNamesAllowListContent);
 
             //Create Module configuration - Repositories
             moduleRepositoriesService.create(simpleModuleInstance.getRepositoriesPath());
@@ -201,7 +201,7 @@ public class ModuleSaver {
             return resourceResolver.resolvePackage(Paths.convert(Paths.convert(moduleRoot).resolve(MAIN_RESOURCES_PATH)));
         }
         
-        public String defaultPackageNamesWhiteListEntry() {
+        public String defaultPackageNamesAllowListEntry() {
             return String.join(".", pom.getGav().getGroupId(), "**");
         }
     }

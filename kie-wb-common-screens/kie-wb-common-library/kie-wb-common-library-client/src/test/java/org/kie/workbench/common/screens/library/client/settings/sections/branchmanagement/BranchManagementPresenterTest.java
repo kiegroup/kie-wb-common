@@ -128,7 +128,7 @@ public class BranchManagementPresenterTest {
         permissionsByRole.put("CONTRIBUTOR", new RolePermissions("CONTRIBUTOR", true, false, true, true));
         doReturn(new BranchPermissions("myBranch", permissionsByRole)).when(libraryService).loadBranchPermissions("mySpace", "myProject", "myBranch");
 
-        doReturn(promises.resolve(Arrays.asList(new Branch("master", mock(Path.class)),
+        doReturn(promises.resolve(Arrays.asList(new Branch("main", mock(Path.class)),
                                                 new Branch("myBranch", mock(Path.class))))).when(projectController).getUpdatableBranches(any());
 
         presenter.setup(mock(ProjectScreenModel.class)).then(v -> {

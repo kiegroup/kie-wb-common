@@ -175,7 +175,7 @@ public class ExplorerMenuTest {
     public void testOnArchiveActiveRepo() throws Exception {
         final Path rootRepoPath = mock(Path.class);
         final Repository repository = mock(Repository.class);
-        when(repository.getDefaultBranch()).thenReturn(Optional.of(new Branch("master", rootRepoPath)));
+        when(repository.getDefaultBranch()).thenReturn(Optional.of(new Branch("main", rootRepoPath)));
         final WorkspaceProject project = mock(WorkspaceProject.class);
         when(project.getRepository()).thenReturn(repository);
         when(context.getActiveWorkspaceProject()).thenReturn(Optional.of(project));

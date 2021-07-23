@@ -76,7 +76,7 @@ public class BuildExecutorTest {
         final POM pom = new POM(new GAV(GROUP, ARTIFACT, VERSION));
 
         when(context.getActiveWorkspaceProject()).thenReturn(Optional.of(new WorkspaceProject(mock(OrganizationalUnit.class),
-                repository, new Branch("master", mock(Path.class)), module)));
+                repository, new Branch("main", mock(Path.class)), module)));
 
         when(repository.getAlias()).thenReturn("repository");
 

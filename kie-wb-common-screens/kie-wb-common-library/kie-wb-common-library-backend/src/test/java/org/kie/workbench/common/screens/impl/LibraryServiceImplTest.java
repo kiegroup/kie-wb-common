@@ -319,7 +319,7 @@ public class LibraryServiceImplTest {
     public void newModuleTest() {
         when(preferences.getOrganizationalUnitPreferences().getName()).thenReturn("ou2");
         when(preferences.getOrganizationalUnitPreferences().getAliasInSingular()).thenReturn("team");
-        when(preferences.getProjectPreferences().getBranch()).thenReturn("master");
+        when(preferences.getProjectPreferences().getBranch()).thenReturn("main");
         when(preferences.getProjectPreferences().getVersion()).thenReturn("1.0");
 
         final OrganizationalUnit organizationalUnit = mock(OrganizationalUnit.class);
@@ -537,7 +537,7 @@ public class LibraryServiceImplTest {
         Set<WorkspaceProject> projects = new HashSet<>();
         projects.add(new WorkspaceProject(ou1,
                                           repo1,
-                                          new Branch("master",
+                                          new Branch("main",
                                                      mock(Path.class)),
                                           mock(Module.class)));
         doReturn(projects).when(projectService).getAllWorkspaceProjects();

@@ -41,15 +41,15 @@ public enum Profile {
             Collections.emptyList());
 
     private String profileName;
-    private List<String> menuBlackList;
+    private List<String> menuDenyList;
     
-    private Profile(String name, List<String> menuBlackList) {
+    private Profile(String name, List<String> menuDenyList) {
         this.profileName = name;
-        this.menuBlackList = menuBlackList;
+        this.menuDenyList = menuDenyList;
     }
     
-    public List<String> getMenuBlackList() {
-        return menuBlackList;
+    public List<String> getMenuDenyList() {
+        return menuDenyList;
     }
     
     @Override

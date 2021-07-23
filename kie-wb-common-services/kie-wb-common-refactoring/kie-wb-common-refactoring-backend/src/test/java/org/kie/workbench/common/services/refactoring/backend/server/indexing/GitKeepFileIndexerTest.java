@@ -63,7 +63,7 @@ public class GitKeepFileIndexerTest {
     public void setUp() throws Exception {
         fileSystemProvider = new SimpleFileSystemProvider();
 
-        mainPath = fileSystemProvider.getPath(URI.create("default://master@myRepository/Test"));
+        mainPath = fileSystemProvider.getPath(URI.create("default://main@myRepository/Test"));
     }
 
     @Test
@@ -91,7 +91,7 @@ public class GitKeepFileIndexerTest {
         final KieModule kieModule = mock(KieModule.class);
         doReturn(kieModule).when(moduleService).resolveModule(any(Path.class));
         doReturn("Module Name").when(kieModule).getModuleName();
-        doReturn(getPathMock("default://master@myRepository/Test")).when(kieModule).getRootPath();
+        doReturn(getPathMock("default://main@myRepository/Test")).when(kieModule).getRootPath();
         final Package aPackage = mock(Package.class);
         doReturn("pkgName").when(aPackage).getPackageName();
         doReturn(aPackage).when(moduleService).resolvePackage(any(Path.class));
@@ -101,7 +101,7 @@ public class GitKeepFileIndexerTest {
 
         assertEquals(3, properties.size());
         assertTrue(properties.contains(new KPropertyImpl<>(ModuleRootPathIndexTerm.TERM,
-                                                           "default://master@myRepository/Test")));
+                                                           "default://main@myRepository/Test")));
         assertTrue(properties.contains(new KPropertyImpl<>(ModuleNameIndexTerm.TERM,
                                                            "Module Name")));
         assertTrue(properties.contains(new KPropertyImpl<>(PackageNameIndexTerm.TERM,

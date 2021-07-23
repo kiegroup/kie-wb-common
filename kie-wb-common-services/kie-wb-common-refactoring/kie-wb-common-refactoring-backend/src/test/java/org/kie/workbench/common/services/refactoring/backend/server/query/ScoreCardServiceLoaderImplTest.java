@@ -73,7 +73,7 @@ public class ScoreCardServiceLoaderImplTest {
     @Test
     public void find() {
 
-        final org.uberfire.java.nio.file.Path root = fileSystemProvider.getPath(URI.create("default://master@myRepository/Test"));
+        final org.uberfire.java.nio.file.Path root = fileSystemProvider.getPath(URI.create("default://main@myRepository/Test"));
 
         final Path path = Paths.convert(root);
 
@@ -106,7 +106,7 @@ public class ScoreCardServiceLoaderImplTest {
     @Test
     public void noProject() {
 
-        final org.uberfire.java.nio.file.Path root = fileSystemProvider.getPath(URI.create("default://master@myRepository/Test"));
+        final org.uberfire.java.nio.file.Path root = fileSystemProvider.getPath(URI.create("default://main@myRepository/Test"));
 
         final Path path = Paths.convert(root);
 

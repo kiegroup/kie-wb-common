@@ -81,7 +81,7 @@ public class FileLoaderTest {
         doReturn(rows).when(refactoringQueryService).query(eq(FindAllLibraryAssetsQuery.NAME),
                                                            anySet());
 
-        final org.uberfire.java.nio.file.Path root = fileSystemProvider.getPath(URI.create("default://master@myRepository/ThisDoesNotExists"));
+        final org.uberfire.java.nio.file.Path root = fileSystemProvider.getPath(URI.create("default://main@myRepository/ThisDoesNotExists"));
 
         final List<Path> list = fileLoader.loadPaths(Paths.convert(root), "txt");
 
@@ -98,7 +98,7 @@ public class FileLoaderTest {
         doReturn(rows).when(refactoringQueryService).query(eq(FindAllLibraryAssetsQuery.NAME),
                                                            anySet());
 
-        final org.uberfire.java.nio.file.Path root = fileSystemProvider.getPath(URI.create("default://master@myRepository"));
+        final org.uberfire.java.nio.file.Path root = fileSystemProvider.getPath(URI.create("default://main@myRepository"));
 
         final List<Path> list = fileLoader.loadPaths(Paths.convert(root), "txt");
 
@@ -135,7 +135,7 @@ public class FileLoaderTest {
         doReturn(rows).when(refactoringQueryService).query(eq(FindAllLibraryAssetsQuery.NAME),
                                                            anySet());
 
-        final List<Path> list = fileLoader.loadPaths(Paths.convert(fileSystemProvider.getPath(URI.create("default://master@myRepository"))),
+        final List<Path> list = fileLoader.loadPaths(Paths.convert(fileSystemProvider.getPath(URI.create("default://main@myRepository"))),
                                                      "txt");
 
         assertEquals(2, list.size());

@@ -104,7 +104,7 @@ public class DependenciesItemView implements DependenciesItemPresenter.View,
     private HTMLAnchorElement removeButton;
 
     private final String packageWhiteListRadioGroupName = UUID.uuid();
-    private DependenciesItemPresenter.WhiteListedPackagesState whiteListedPackagesState;
+    private DependenciesItemPresenter.AllowListedPackagesState allowListedPackagesState;
 
     @Override
     public void init(final DependenciesItemPresenter presenter) {
@@ -159,8 +159,8 @@ public class DependenciesItemView implements DependenciesItemPresenter.View,
     }
 
     @Override
-    public void setPackagesWhiteListedState(final DependenciesItemPresenter.WhiteListedPackagesState state) {
-        this.whiteListedPackagesState = state;
+    public void setPackagesAllowListedState(final DependenciesItemPresenter.AllowListedPackagesState state) {
+        this.allowListedPackagesState = state;
 
         packageWhiteListAll.checked = false;
         packageWhiteListNone.checked = false;
@@ -180,19 +180,19 @@ public class DependenciesItemView implements DependenciesItemPresenter.View,
         if (disabled) {
             removeButton.remove();
             elemental2DomUtil.removeAllElementChildren(whiteListedPackagesIndicator);
-            whiteListedPackagesIndicator.textContent = translationService.format(whiteListedPackagesState.name());
+            whiteListedPackagesIndicator.textContent = translationService.format(allowListedPackagesState.name());
             getElement().classList.add("transitive");
         }
     }
 
     @EventHandler("package-white-list-all")
     public void addAllPackagesToWhiteList(final ClickEvent event) {
-        presenter.addAllPackagesToWhiteList();
+        presenter.addAllPackagesToAllowList();
     }
 
     @EventHandler("package-white-list-none")
     public void removeAllPackagesFromWhiteList(final ClickEvent event) {
-        presenter.removeAllPackagesFromWhiteList();
+        presenter.removeAllPackagesFromAllowList();
     }
 
     @EventHandler("remove-button")

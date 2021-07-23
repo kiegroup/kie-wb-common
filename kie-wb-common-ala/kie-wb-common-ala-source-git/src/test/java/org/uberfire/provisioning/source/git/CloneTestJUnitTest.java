@@ -60,7 +60,7 @@ public class CloneTestJUnitTest {
     public void hello() throws Exception {
         final String repoName = "drools-workshop-build";
         final Optional<Source> source = new GitConfigExecutor(new InMemorySourceRegistry()).apply(new GitConfigImpl(tempPath.getAbsolutePath(),
-                                                                                                                    "master",
+                                                                                                                    "main",
                                                                                                                     gitUrl,
                                                                                                                     repoName,
                                                                                                                     "true"));

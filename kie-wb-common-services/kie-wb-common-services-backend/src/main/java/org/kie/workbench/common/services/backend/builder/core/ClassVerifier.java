@@ -22,7 +22,7 @@ import java.util.List;
 import org.guvnor.common.services.project.builder.model.BuildMessage;
 import org.kie.scanner.KieModuleMetaData;
 import org.kie.soup.project.datamodel.oracle.TypeSource;
-import org.kie.workbench.common.services.shared.whitelist.WhiteList;
+import org.kie.workbench.common.services.shared.allowlist.AllowList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,10 +46,10 @@ public class ClassVerifier {
         this.typeSourceResolver = typeSourceResolver;
     }
 
-    public List<BuildMessage> verify(WhiteList whiteList) {
+    public List<BuildMessage> verify(AllowList allowList) {
 
         for (final String packageName : kieModuleMetaData.getPackages()) {
-            if (whiteList.contains(packageName)) {
+            if (allowList.contains(packageName)) {
                 for (final String className : kieModuleMetaData.getClasses(packageName)) {
                     verifyClass(packageName,
                                 className);

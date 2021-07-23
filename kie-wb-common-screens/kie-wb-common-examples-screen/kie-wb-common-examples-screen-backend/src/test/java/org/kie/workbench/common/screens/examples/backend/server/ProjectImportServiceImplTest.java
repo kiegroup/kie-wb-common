@@ -235,7 +235,7 @@ public class ProjectImportServiceImplTest {
         when(moduleService.getAllModules(Mockito.<Branch>any())).thenReturn(new HashSet<Module>() {{
             add(module);
         }});
-        doReturn(Collections.singletonList("master")).when(service).getBranches(Mockito.<org.uberfire.java.nio.file.Path>any(),
+        doReturn(Collections.singletonList("main")).when(service).getBranches(Mockito.<org.uberfire.java.nio.file.Path>any(),
                                                                                 Mockito.<Path>any());
 
         String origin = "https://github.com/guvnorngtestuser1/guvnorng-playground.git";
@@ -250,7 +250,7 @@ public class ProjectImportServiceImplTest {
                                                       Arrays.asList("tag1",
                                                                     "tag2"),
                                                       null,
-                                                      Collections.singletonList("master"),
+                                                      Collections.singletonList("main"),
                                                       true)));
     }
 
@@ -272,7 +272,7 @@ public class ProjectImportServiceImplTest {
         when(moduleService.getAllModules(Mockito.<Branch>any())).thenReturn(new HashSet<Module>() {{
             add(module);
         }});
-        doReturn(Collections.singletonList("master")).when(service).getBranches(Mockito.<org.uberfire.java.nio.file.Path>any(),
+        doReturn(Collections.singletonList("main")).when(service).getBranches(Mockito.<org.uberfire.java.nio.file.Path>any(),
                                                                                 Mockito.<Path>any());
 
         String origin = "https://github.com/guvnorngtestuser1/guvnorng-playground.git";
@@ -287,7 +287,7 @@ public class ProjectImportServiceImplTest {
                                                       Arrays.asList("tag1",
                                                                     "tag2"),
                                                       null,
-                                                      Collections.singletonList("master"),
+                                                      Collections.singletonList("main"),
                                                       true)));
     }
 
@@ -310,7 +310,7 @@ public class ProjectImportServiceImplTest {
         when(moduleService.getAllModules(Mockito.<Branch>any())).thenReturn(new HashSet<Module>() {{
             add(module);
         }});
-        doReturn(Collections.singletonList("master")).when(service).getBranches(Mockito.<org.uberfire.java.nio.file.Path>any(),
+        doReturn(Collections.singletonList("main")).when(service).getBranches(Mockito.<org.uberfire.java.nio.file.Path>any(),
                                                                                 Mockito.<Path>any());
 
         String origin = "https://github.com/guvnorngtestuser1/guvnorng-playground.git";
@@ -325,7 +325,7 @@ public class ProjectImportServiceImplTest {
                                                       Arrays.asList("tag1",
                                                                     "tag2"),
                                                       null,
-                                                      Collections.singletonList("master"),
+                                                      Collections.singletonList("main"),
                                                       true)));
     }
 
@@ -365,10 +365,10 @@ public class ProjectImportServiceImplTest {
 
         when(repository1.getBranch("dev_branch")).thenReturn(Optional.of(new Branch("dev_branch",
                                                                                     repositoryRoot)));
-        final Optional<Branch> master = Optional.of(new Branch("master",
+        final Optional<Branch> main = Optional.of(new Branch("main",
                                                                PathFactory.newPath("testFile",
                                                                                    "file:///")));
-        when(repository1.getDefaultBranch()).thenReturn(master);
+        when(repository1.getDefaultBranch()).thenReturn(main);
 
         when(repositoryRoot.toURI()).thenReturn("default:///");
         when(module1Root.toURI()).thenReturn("default:///module1");
@@ -378,11 +378,11 @@ public class ProjectImportServiceImplTest {
 
         WorkspaceProject project1 = mock(WorkspaceProject.class);
         when(project1.getName()).thenReturn("project1");
-        when(project1.getBranch()).thenReturn(master.get());
+        when(project1.getBranch()).thenReturn(main.get());
 
         WorkspaceProject project2 = mock(WorkspaceProject.class);
         when(project2.getName()).thenReturn("project2");
-        when(project2.getBranch()).thenReturn(master.get());
+        when(project2.getBranch()).thenReturn(main.get());
 
         doReturn(project1).when(service).importProject(eq(organizationalUnit), eq(exProject1));
 
@@ -411,7 +411,7 @@ public class ProjectImportServiceImplTest {
         final String repositoryURL = "file:///some/path/to/fake-repo.git";
         final String username = "fakeUser";
         final String password = "fakePassword";
-        final List<String> branches = Arrays.asList("master");
+        final List<String> branches = Arrays.asList("main");
 
         ImportProject importProject = mock(ImportProject.class, Answers.RETURNS_DEEP_STUBS.get());
         when(importProject.getCredentials().getUsername()).thenReturn(username);
@@ -462,7 +462,7 @@ public class ProjectImportServiceImplTest {
         final String origin = "file:///some/path/to/fake-repo.git";
         final String username = "fakeUser";
         final String password = "fakePassword";
-        final List<String> branches = Arrays.asList("master");
+        final List<String> branches = Arrays.asList("main");
 
         final ImportProject importProject = mock(ImportProject.class);
         final Path rootPath = mock(Path.class);
@@ -501,7 +501,7 @@ public class ProjectImportServiceImplTest {
         final String origin = "file:///some/path/to/fake-repo.git";
         final String username = "fakeUser";
         final String password = null;
-        final List<String> branches = Arrays.asList("master");
+        final List<String> branches = Arrays.asList("main");
 
         final ImportProject importProject = mock(ImportProject.class);
         final Path rootPath = mock(Path.class);
@@ -538,7 +538,7 @@ public class ProjectImportServiceImplTest {
         final String repositoryURL = "file:///some/path/to/fake-repo.git";
         final String username = null;
         final String password = null;
-        final List<String> branches = Arrays.asList("master");
+        final List<String> branches = Arrays.asList("main");
 
         final ArgumentCaptor<RepositoryEnvironmentConfigurations> configCaptor = ArgumentCaptor.forClass(RepositoryEnvironmentConfigurations.class);
 
@@ -606,7 +606,7 @@ public class ProjectImportServiceImplTest {
                                                         new Space("myteam"));
         final WorkspaceProject project = new WorkspaceProject(organizationalUnit,
                                                               repository,
-                                                              new Branch("master",
+                                                              new Branch("main",
                                                                          mock(Path.class)),
                                                               new Module());
         when(projectService.resolveProject(repository)).thenReturn(project);
@@ -657,7 +657,7 @@ public class ProjectImportServiceImplTest {
                                                         new Space("myteam"));
         final WorkspaceProject project = new WorkspaceProject(organizationalUnit,
                                                               repository,
-                                                              new Branch("master",
+                                                              new Branch("main",
                                                                          mock(Path.class)),
                                                               new Module());
         when(projectService.resolveProject(repository)).thenReturn(project);
@@ -689,7 +689,7 @@ public class ProjectImportServiceImplTest {
                                                                                  "org.whatever");
         organizationalUnit.getRepositories();
 
-        final String exampleURI = "default://master@system/repo/example";
+        final String exampleURI = "default://main@system/repo/example";
         final Path exampleRoot = PathFactory.newPath("example",
                                                      exampleURI);
         final JGitFileSystem fs = mock(JGitFileSystem.class);
@@ -697,7 +697,7 @@ public class ProjectImportServiceImplTest {
         when(fs.provider()).thenReturn(provider);
         final org.uberfire.java.nio.file.Path exampleRootNioPath = JGitPathImpl.create(fs,
                                                                                        "/example",
-                                                                                       "master@system/repo",
+                                                                                       "main@system/repo",
                                                                                        true);
         final org.uberfire.java.nio.file.Path repoRoot = exampleRootNioPath.getParent();
         when(fs.getRootDirectories()).thenReturn(() -> Stream.of(repoRoot).iterator());
@@ -724,7 +724,7 @@ public class ProjectImportServiceImplTest {
                                                         new Space("myteam"));
         final WorkspaceProject project = new WorkspaceProject(organizationalUnit,
                                                               repository,
-                                                              new Branch("master",
+                                                              new Branch("main",
                                                                          mock(Path.class)),
                                                               new Module());
         when(projectService.resolveProject(repository)).thenReturn(project);

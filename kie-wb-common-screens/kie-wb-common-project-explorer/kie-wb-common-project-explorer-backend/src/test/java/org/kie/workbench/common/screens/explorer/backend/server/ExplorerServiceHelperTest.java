@@ -362,7 +362,7 @@ public class ExplorerServiceHelperTest {
         }).when(helper).toFolderItem(any(org.uberfire.java.nio.file.Path.class));
 
         Path path = PathFactory.newPath("/",
-                                        "default://master@myproject/");
+                                        "default://main@myproject/");
 
         final List<FolderItem> pathSegments = helper.getPathSegments(path);
 
@@ -380,7 +380,7 @@ public class ExplorerServiceHelperTest {
         }).when(helper).toFolderItem(any(org.uberfire.java.nio.file.Path.class));
 
         Path path = PathFactory.newPath("myproject",
-                                        "default://master@myproject/src/main/java/org/myproject");
+                                        "default://main@myproject/src/main/java/org/myproject");
 
         final List<FolderItem> pathSegments = helper.getPathSegments(path);
 

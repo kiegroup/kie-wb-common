@@ -31,11 +31,11 @@ import org.guvnor.common.services.project.service.ModuleRepositoryResolver;
 import org.guvnor.common.services.project.service.POMService;
 import org.kie.workbench.common.screens.projecteditor.model.ProjectScreenModel;
 import org.kie.workbench.common.services.backend.builder.core.LRUPomModelCache;
+import org.kie.workbench.common.services.shared.allowlist.PackageNameAllowListService;
 import org.kie.workbench.common.services.shared.kmodule.KModuleService;
 import org.kie.workbench.common.services.shared.project.KieModule;
 import org.kie.workbench.common.services.shared.project.KieModuleService;
 import org.kie.workbench.common.services.shared.project.ProjectImportsService;
-import org.kie.workbench.common.services.shared.whitelist.PackageNameWhiteListService;
 import org.uberfire.backend.server.util.Paths;
 import org.uberfire.backend.vfs.Path;
 import org.uberfire.io.IOService;
@@ -46,7 +46,7 @@ public class ProjectScreenModelSaver {
     private KModuleService kModuleService;
     private ProjectImportsService importsService;
     private ModuleRepositoriesService repositoriesService;
-    private PackageNameWhiteListService whiteListService;
+    private PackageNameAllowListService allowListService;
 
     private IOService ioService;
     private KieModuleService moduleService;
@@ -63,7 +63,7 @@ public class ProjectScreenModelSaver {
                                    final KModuleService kModuleService,
                                    final ProjectImportsService importsService,
                                    final ModuleRepositoriesService repositoriesService,
-                                   final PackageNameWhiteListService whiteListService,
+                                   final PackageNameAllowListService allowListService,
                                    final @Named("ioStrategy") IOService ioService,
                                    final KieModuleService moduleService,
                                    final ModuleRepositoryResolver repositoryResolver,
@@ -73,7 +73,7 @@ public class ProjectScreenModelSaver {
         this.kModuleService = kModuleService;
         this.importsService = importsService;
         this.repositoriesService = repositoriesService;
-        this.whiteListService = whiteListService;
+        this.allowListService = allowListService;
 
         this.ioService = ioService;
         this.moduleService = moduleService;
@@ -113,9 +113,9 @@ public class ProjectScreenModelSaver {
             repositoriesService.save(model.getPathToRepositories(),
                                      model.getRepositories(),
                                      comment);
-            whiteListService.save(model.getPathToWhiteList(),
-                                  model.getWhiteList(),
-                                  model.getWhiteListMetaData(),
+            allowListService.save(model.getPathToAllowList(),
+                                  model.getAllowList(),
+                                  model.getAllowListMetaData(),
                                   comment);
         } catch (final Exception e) {
             throw new RuntimeException(e);

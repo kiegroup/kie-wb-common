@@ -89,13 +89,13 @@ public class ProjectExplorerContentResolverDefaultSelectionsTest {
         repository1 = getGitRepository("repo1");
         repository2 = getGitRepository("repo2");
 
-        repository1Module1 = createModule("master",
+        repository1Module1 = createModule("main",
                                           "r1p1");
         repository1Modules = new HashSet<Module>() {{
             add(repository1Module1);
         }};
 
-        repository2Module1 = createModule("master",
+        repository2Module1 = createModule("main",
                                           "r2p1");
         repository2Modules = new HashSet<Module>() {{
             add(repository2Module1);
@@ -123,9 +123,9 @@ public class ProjectExplorerContentResolverDefaultSelectionsTest {
         when(moduleService.getAllModules(repository1.getDefaultBranch().get())).thenReturn(repository1Modules);
         when(moduleService.getAllModules(repository2.getDefaultBranch().get())).thenReturn(repository2Modules);
 
-        doReturn(createPackage("master",
+        doReturn(createPackage("main",
                                repository1Module1.getModuleName())).when(moduleService).resolveDefaultPackage(repository1Module1);
-        doReturn(createPackage("master",
+        doReturn(createPackage("main",
                                repository2Module1.getModuleName())).when(moduleService).resolveDefaultPackage(repository2Module1);
 
         resolver = new ProjectExplorerContentResolver(moduleService,
@@ -137,7 +137,7 @@ public class ProjectExplorerContentResolverDefaultSelectionsTest {
     @Test
     public void testSelectionsModule() throws Exception {
         final ProjectExplorerContent content = resolver.resolve(getContentQuery(repository1,
-                                                                                "master",
+                                                                                "main",
                                                                                 repository1Module1));
 
         assertEquals(repository1,
@@ -231,9 +231,9 @@ public class ProjectExplorerContentResolverDefaultSelectionsTest {
                                                            new Space("scheme"));
         final HashMap<String, Branch> branches = new HashMap<>();
         final Path path = PathFactory.newPath("/",
-                                              "file://master@module/");
-        branches.put("master",
-                     new Branch("master",
+                                              "file://main@module/");
+        branches.put("main",
+                     new Branch("main",
                                 path));
 
         repository.setBranches(branches);

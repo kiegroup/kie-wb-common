@@ -37,13 +37,13 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.screens.projecteditor.model.ProjectScreenModel;
+import org.kie.workbench.common.services.shared.allowlist.PackageNameAllowListService;
 import org.kie.workbench.common.services.shared.kmodule.KModuleModel;
 import org.kie.workbench.common.services.shared.kmodule.KModuleService;
 import org.kie.workbench.common.services.shared.project.KieModule;
 import org.kie.workbench.common.services.shared.project.KieModuleService;
 import org.kie.workbench.common.services.shared.project.ProjectImportsService;
-import org.kie.workbench.common.services.shared.whitelist.PackageNameWhiteListService;
-import org.kie.workbench.common.services.shared.whitelist.WhiteList;
+import org.kie.workbench.common.services.shared.allowlist.AllowList;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.uberfire.backend.vfs.Path;
@@ -73,7 +73,7 @@ public class ProjectScreenModelLoaderTest {
     private Path kmoduleXMLPath;
     private Path importsPath;
     private Path repositoriesPath;
-    private Path packageNamesWhiteListPath;
+    private Path packageNamesAllowListPath;
 
     @Mock
     private POMService pomService;
@@ -91,7 +91,7 @@ public class ProjectScreenModelLoaderTest {
     private ModuleRepositoriesService moduleRepositoriesService;
 
     @Mock
-    private PackageNameWhiteListService whiteListService;
+    private PackageNameAllowListService allowListService;
 
     @Mock
     private WorkspaceProjectService workspaceProjectService;
@@ -122,7 +122,7 @@ public class ProjectScreenModelLoaderTest {
         kmoduleXMLPath = testFileSystem.createTempFile("mymodule/src/main/resources/META-INF/kmodule.xml");
         importsPath = testFileSystem.createTempFile("myModule/project.imports");
         repositoriesPath = testFileSystem.createTempFile("myModule/project.repositories");
-        packageNamesWhiteListPath = testFileSystem.createTempFile("myModule/package-name-white-list");
+        packageNamesAllowListPath = testFileSystem.createTempFile("myModule/package-name-allow-list");
 
         makeKieModule();
         makeWorkspaceProject();
@@ -136,7 +136,7 @@ public class ProjectScreenModelLoaderTest {
                                               kModuleService,
                                               projectImportsService,
                                               moduleRepositoriesService,
-                                              whiteListService,
+                allowListService,
                                               workspaceProjectService);
     }
 
@@ -154,7 +154,7 @@ public class ProjectScreenModelLoaderTest {
                                   kmoduleXMLPath,
                                   importsPath,
                                   repositoriesPath,
-                                  packageNamesWhiteListPath,
+                packageNamesAllowListPath,
                                   pom);
     }
 
@@ -236,37 +236,37 @@ public class ProjectScreenModelLoaderTest {
     }
 
     @Test
-    public void testWhiteList() throws Exception {
-        final WhiteList whiteList = new WhiteList();
-        when(whiteListService.load(packageNamesWhiteListPath)).thenReturn(whiteList);
+    public void testAllowList() throws Exception {
+        final AllowList allowList = new AllowList();
+        when(allowListService.load(packageNamesAllowListPath)).thenReturn(allowList);
         final Metadata metadata = new Metadata();
-        when(metadataService.getMetadata(packageNamesWhiteListPath)).thenReturn(metadata);
+        when(metadataService.getMetadata(packageNamesAllowListPath)).thenReturn(metadata);
 
         ProjectScreenModel model = loader.load(pathToPom);
 
-        assertEquals(packageNamesWhiteListPath,
-                     model.getPathToWhiteList());
-        assertEquals(whiteList,
-                     model.getWhiteList());
+        assertEquals(packageNamesAllowListPath,
+                     model.getPathToAllowList());
+        assertEquals(allowList,
+                     model.getAllowList());
         assertEquals(metadata,
-                     model.getWhiteListMetaData());
+                     model.getAllowListMetaData());
     }
 
     @Test
-    public void testWhiteListNoMetadata() throws Exception {
-        final WhiteList whiteList = new WhiteList();
+    public void testAllowListNoMetadata() throws Exception {
+        final AllowList allowList = new AllowList();
 
-        testFileSystem.deleteFile(packageNamesWhiteListPath);
+        testFileSystem.deleteFile(packageNamesAllowListPath);
 
-        when(whiteListService.load(packageNamesWhiteListPath)).thenReturn(whiteList);
+        when(allowListService.load(packageNamesAllowListPath)).thenReturn(allowList);
 
         ProjectScreenModel model = loader.load(pathToPom);
 
-        assertEquals(packageNamesWhiteListPath,
-                     model.getPathToWhiteList());
-        assertEquals(whiteList,
-                     model.getWhiteList());
-        assertNotNull(model.getWhiteListMetaData());
+        assertEquals(packageNamesAllowListPath,
+                     model.getPathToAllowList());
+        assertEquals(allowList,
+                     model.getAllowList());
+        assertNotNull(model.getAllowListMetaData());
     }
 
     @Test

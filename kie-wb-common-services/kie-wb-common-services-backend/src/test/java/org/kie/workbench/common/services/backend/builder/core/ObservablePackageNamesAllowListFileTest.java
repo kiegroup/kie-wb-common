@@ -28,7 +28,7 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.doReturn;
 
 @RunWith(MockitoJUnitRunner.class)
-public class ObservablePackageNamesWhiteListFileTest {
+public class ObservablePackageNamesAllowListFileTest {
 
     @Mock
     private Path path;

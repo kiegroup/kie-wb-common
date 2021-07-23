@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.services.backend.whitelist;
+package org.kie.workbench.common.services.backend.allowlist;
 
 import java.io.File;
 import javax.enterprise.context.spi.CreationalContext;
@@ -37,7 +37,7 @@ import org.uberfire.java.nio.fs.file.SimpleFileSystemProvider;
 import static org.junit.Assert.*;
 
 @RunWith( MockitoJUnitRunner.class )
-public class PackageNameWhiteListLoaderTest {
+public class PackageNameAllowListLoaderTest {
 
     @Mock
     PackageNameSearchProvider packageNameSearchProvider;
@@ -45,8 +45,8 @@ public class PackageNameWhiteListLoaderTest {
     @Mock
     IOService ioService;
 
-    private PackageNameWhiteListLoader loader;
-    private Path                       pathToWhiteList;
+    private PackageNameAllowListLoader loader;
+    private Path pathToAllowList;
     private TempFiles                  tempFiles;
 
     private Weld weld;
@@ -67,12 +67,12 @@ public class PackageNameWhiteListLoaderTest {
                                                           cc );
 
         tempFiles = new TempFiles();
-        final File tempFile = tempFiles.createTempFile( "white-list" );
+        final File tempFile = tempFiles.createTempFile( "allow-list" );
 
         final org.uberfire.java.nio.file.Path nioPackagePath = fs.getPath( tempFile.toURI() );
-        pathToWhiteList = paths.convert( nioPackagePath );
+        pathToAllowList = paths.convert( nioPackagePath );
 
-        loader = new PackageNameWhiteListLoader( packageNameSearchProvider,
+        loader = new PackageNameAllowListLoader( packageNameSearchProvider,
                                                  ioService );
 
     }
@@ -87,6 +87,6 @@ public class PackageNameWhiteListLoaderTest {
     @Test
     public void testNoFile() throws Exception {
         tempFiles.deleteFiles();
-        assertTrue( loader.load( pathToWhiteList ).isEmpty() );
+        assertTrue( loader.load(pathToAllowList).isEmpty() );
     }
 }

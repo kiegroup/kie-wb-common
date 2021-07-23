@@ -108,7 +108,7 @@ public class SubmitChangeRequestScreenPresenterTest {
 
         promises = new SyncPromises();
 
-        doReturn(promises.resolve(Arrays.asList(new Branch("master", mock(Path.class)),
+        doReturn(promises.resolve(Arrays.asList(new Branch("main", mock(Path.class)),
                                                 new Branch("myBranch", mock(Path.class)))))
                 .when(projectController).getReadableBranches(any());
 

@@ -17,7 +17,7 @@ import org.kie.workbench.common.screens.projecteditor.client.forms.dependencies.
 import org.kie.workbench.common.screens.projecteditor.client.forms.dependencies.EnhancedDependenciesManager;
 import org.kie.workbench.common.screens.projecteditor.model.ProjectScreenModel;
 import org.kie.workbench.common.services.shared.dependencies.EnhancedDependency;
-import org.kie.workbench.common.services.shared.whitelist.WhiteList;
+import org.kie.workbench.common.services.shared.allowlist.AllowList;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.uberfire.client.promise.Promises;
@@ -94,28 +94,28 @@ public class DependenciesPresenterTest {
     }
 
     @Test
-    public void testAddAllToWhiteList() {
+    public void testAddAllToAllowList() {
         dependenciesPresenter.model = mock(ProjectScreenModel.class);
-        doReturn(new WhiteList()).when(dependenciesPresenter.model).getWhiteList();
-        assertEquals(0, dependenciesPresenter.model.getWhiteList().size());
+        doReturn(new AllowList()).when(dependenciesPresenter.model).getAllowList();
+        assertEquals(0, dependenciesPresenter.model.getAllowList().size());
 
-        dependenciesPresenter.addAllToWhiteList(new HashSet<>(Arrays.asList("foo", "bar")));
+        dependenciesPresenter.addAllToAllowList(new HashSet<>(Arrays.asList("foo", "bar")));
 
-        assertEquals(2, dependenciesPresenter.model.getWhiteList().size());
+        assertEquals(2, dependenciesPresenter.model.getAllowList().size());
         verify(enhancedDependenciesManager).update();
     }
 
     @Test
-    public void testRemoveAllFromWhiteList() {
+    public void testRemoveAllFromAllowList() {
         final Set<String> packages = new HashSet<>(Arrays.asList("foo", "bar"));
 
         dependenciesPresenter.model = mock(ProjectScreenModel.class);
-        doReturn(new WhiteList(packages)).when(dependenciesPresenter.model).getWhiteList();
-        assertEquals(2, dependenciesPresenter.model.getWhiteList().size());
+        doReturn(new AllowList(packages)).when(dependenciesPresenter.model).getAllowList();
+        assertEquals(2, dependenciesPresenter.model.getAllowList().size());
 
-        dependenciesPresenter.removeAllFromWhiteList(packages);
+        dependenciesPresenter.removeAllFromAllowList(packages);
 
-        assertEquals(0, dependenciesPresenter.model.getWhiteList().size());
+        assertEquals(0, dependenciesPresenter.model.getAllowList().size());
         verify(enhancedDependenciesManager).update();
     }
 

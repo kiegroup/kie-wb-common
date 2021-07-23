@@ -47,7 +47,7 @@ import org.kie.workbench.common.services.backend.project.ModuleSaver.NewModuleCr
 import org.kie.workbench.common.services.shared.kmodule.KModuleService;
 import org.kie.workbench.common.services.shared.project.KieModule;
 import org.kie.workbench.common.services.shared.project.ProjectImportsService;
-import org.kie.workbench.common.services.shared.whitelist.PackageNameWhiteListService;
+import org.kie.workbench.common.services.shared.allowlist.PackageNameAllowListService;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -94,7 +94,7 @@ public class ModuleSaverTest
     @Mock
     private Event<NewPackageEvent> newPackageEvent;
     @Mock
-    PackageNameWhiteListService packageNameWhiteListService;
+    PackageNameAllowListService packageNameAllowListService;
 
     private ModuleSaver saver;
     private SimpleFileSystemProvider fs;
@@ -134,7 +134,7 @@ public class ModuleSaverTest
                                 resourceResolver,
                                 mock(ProjectImportsService.class),
                                 mock(ModuleRepositoriesService.class),
-                                packageNameWhiteListService,
+                packageNameAllowListService,
                                 mock(CommentedOptionFactory.class),
                                 new SessionInfo() {
                                     @Override
@@ -197,7 +197,7 @@ public class ModuleSaverTest
 
         FileAlreadyExistsException fileExistsException = null;
 
-        when(repository.getDefaultBranch()).thenReturn(Optional.of(new Branch("master", repositoryRootPath)));
+        when(repository.getDefaultBranch()).thenReturn(Optional.of(new Branch("main", repositoryRootPath)));
 
         //name for the module we are trying to re-create over an existing one.
         when(newPOM.getName()).thenReturn("existingModule");
@@ -266,9 +266,9 @@ public class ModuleSaverTest
     }
     
     @Test
-    public void packageNameWhiteListDefaultValueTest() throws IOException {
+    public void packageNameAllowListDefaultValueTest() throws IOException {
         final POM pom = new POM();
-        String defaultPackageNameWhiteListEntry = GROUP_ID + ".**";
+        String defaultPackageNameAllowListEntry = GROUP_ID + ".**";
 
         pom.setName(PROJECT_NAME);
         pom.getGav().setGroupId(GROUP_ID);
@@ -277,14 +277,14 @@ public class ModuleSaverTest
 
         runProjecCreationTest(pom);
         
-        verify(packageNameWhiteListService).createModuleWhiteList(any(), eq(defaultPackageNameWhiteListEntry));
+        verify(packageNameAllowListService).createModuleAllowList(any(), eq(defaultPackageNameAllowListEntry));
         
     }
     
     @Test
     public void newModuleCreatorDefaultPackageTest() throws IOException {
         final POM pom = new POM();
-        String defaultPackageNameWhiteListEntry = GROUP_ID + ".**";
+        String defaultPackageNameAllowListEntry = GROUP_ID + ".**";
 
         pom.setName(PROJECT_NAME);
         pom.getGav().setGroupId(GROUP_ID);
@@ -295,7 +295,7 @@ public class ModuleSaverTest
         
         NewModuleCreator newModuleCreator = saver.createNewModuleCreator(null, pom);
         
-        assertEquals(defaultPackageNameWhiteListEntry, newModuleCreator.defaultPackageNamesWhiteListEntry());
+        assertEquals(defaultPackageNameAllowListEntry, newModuleCreator.defaultPackageNamesAllowListEntry());
         
     }
 
@@ -306,7 +306,7 @@ public class ModuleSaverTest
                                               Long.toString(System.nanoTime()));
         final Path repositoryRootPath = paths.convert(fs.getPath(test.toURI()));
 
-        when(repository.getDefaultBranch()).thenReturn(Optional.of(new Branch("master", repositoryRootPath)));
+        when(repository.getDefaultBranch()).thenReturn(Optional.of(new Branch("main", repositoryRootPath)));
 
         when(pomService.load(Mockito.<Path>any())).thenReturn(pom);
 

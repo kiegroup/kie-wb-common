@@ -90,10 +90,10 @@ import org.kie.workbench.common.services.backend.project.KieModuleServiceImpl;
 import org.kie.workbench.common.services.backend.project.KieResourceResolver;
 import org.kie.workbench.common.services.backend.project.ModuleSaver;
 import org.kie.workbench.common.services.backend.project.ProjectImportsServiceImpl;
-import org.kie.workbench.common.services.backend.whitelist.PackageNameSearchProvider;
-import org.kie.workbench.common.services.backend.whitelist.PackageNameWhiteListLoader;
-import org.kie.workbench.common.services.backend.whitelist.PackageNameWhiteListSaver;
-import org.kie.workbench.common.services.backend.whitelist.PackageNameWhiteListServiceImpl;
+import org.kie.workbench.common.services.backend.allowlist.PackageNameSearchProvider;
+import org.kie.workbench.common.services.backend.allowlist.PackageNameAllowListLoader;
+import org.kie.workbench.common.services.backend.allowlist.PackageNameAllowListSaver;
+import org.kie.workbench.common.services.backend.allowlist.PackageNameAllowListServiceImpl;
 import org.kie.workbench.common.services.datamodel.backend.server.cache.LRUDataModelOracleCache;
 import org.kie.workbench.common.services.datamodel.backend.server.cache.LRUModuleDataModelOracleCache;
 import org.kie.workbench.common.services.datamodel.backend.server.cache.ModuleDataModelOracleBuilderProvider;
@@ -103,7 +103,7 @@ import org.kie.workbench.common.services.refactoring.service.PackageServiceLoade
 import org.kie.workbench.common.services.shared.dependencies.DependencyService;
 import org.kie.workbench.common.services.shared.project.KieModuleService;
 import org.kie.workbench.common.services.shared.project.ProjectImportsService;
-import org.kie.workbench.common.services.shared.whitelist.PackageNameWhiteListService;
+import org.kie.workbench.common.services.shared.allowlist.PackageNameAllowListService;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.uberfire.backend.server.io.ConfigIOServiceProducer;
@@ -255,16 +255,16 @@ public class DataModelServiceConstructorTest {
 
         DependencyService dependencyService = new DependencyServiceImpl();
         PackageNameSearchProvider packageNameSearchProvider = new PackageNameSearchProvider(dependencyService);
-        PackageNameWhiteListLoader loader = new PackageNameWhiteListLoader(packageNameSearchProvider,
+        PackageNameAllowListLoader loader = new PackageNameAllowListLoader(packageNameSearchProvider,
                                                                            ioService);
         MetadataServerSideService serverSideMetdataService = new MetadataServiceImpl(ioService,
                                                                                      configIOService,
                                                                                      commentedOptionFactory,
                                                                                      sessionInfo);
-        PackageNameWhiteListSaver saver = new PackageNameWhiteListSaver(ioService,
+        PackageNameAllowListSaver saver = new PackageNameAllowListSaver(ioService,
                                                                         serverSideMetdataService,
                                                                         commentedOptionFactory);
-        PackageNameWhiteListService packageNameWhiteListService = new PackageNameWhiteListServiceImpl(ioService,
+        PackageNameAllowListService packageNameAllowListService = new PackageNameAllowListServiceImpl(ioService,
                                                                                                       moduleService,
                                                                                                       loader,
                                                                                                       saver);
@@ -277,7 +277,7 @@ public class DataModelServiceConstructorTest {
                                       resourceResolver,
                                       moduleImportsService,
                                       moduleRepositoriesService,
-                                      packageNameWhiteListService,
+                                      packageNameAllowListService,
                                       commentedOptionFactory,
                                       sessionInfo);
         moduleService.setModuleSaver(moduleSaver);
@@ -297,7 +297,7 @@ public class DataModelServiceConstructorTest {
                                                            buildValidationHelperBeans,
                                                            dependenciesClassLoaderCache,
                                                            pomModelCache,
-                                                           packageNameWhiteListService,
+                                                           packageNameAllowListService,
                                                            classFilterBeans
         );
 
@@ -330,7 +330,7 @@ public class DataModelServiceConstructorTest {
         BuildInfoService buildInfoService = new BuildInfoService(buildService,
                                                                  builderCache);
 
-        ModuleDataModelOracleBuilderProvider builderProvider = new ModuleDataModelOracleBuilderProvider(packageNameWhiteListService,
+        ModuleDataModelOracleBuilderProvider builderProvider = new ModuleDataModelOracleBuilderProvider(packageNameAllowListService,
                                                                                                         importsService);
 
         LRUModuleDataModelOracleCache cacheModules = new LRUModuleDataModelOracleCache(builderProvider,

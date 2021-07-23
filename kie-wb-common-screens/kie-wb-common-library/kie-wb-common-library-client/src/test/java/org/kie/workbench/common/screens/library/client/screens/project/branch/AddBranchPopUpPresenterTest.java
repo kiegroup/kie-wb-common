@@ -106,7 +106,7 @@ public class AddBranchPopUpPresenterTest {
                                                               makeBranch("branch2", repository.getAlias()));
         when(repository.getBranches()).thenReturn(repositoryBranches);
         when(project.getRepository()).thenReturn(repository);
-        final Branch branch = makeBranch("master", repository.getAlias());
+        final Branch branch = makeBranch("main", repository.getAlias());
         when(project.getBranch()).thenReturn(branch);
 
         presenter.setup();
@@ -128,7 +128,7 @@ public class AddBranchPopUpPresenterTest {
     @Test
     public void newBranchIsCreated() throws Exception {
         doReturn("new-branch").when(view).getName();
-        doReturn("master").when(view).getBranchFrom();
+        doReturn("main").when(view).getBranchFrom();
 
         presenter.add();
 
@@ -136,7 +136,7 @@ public class AddBranchPopUpPresenterTest {
 
         verify(view).setAddButtonEnabled(false);
         verify(view).showBusyIndicator(Mockito.<String> any());
-        verify(libraryService).addBranch("new-branch", "master",
+        verify(libraryService).addBranch("new-branch", "main",
                                           project);
         verify(view).setAddButtonEnabled(true);
         verify(view).hideBusyIndicator();
@@ -145,7 +145,7 @@ public class AddBranchPopUpPresenterTest {
     @Test
     public void createProjectWithDuplicatedNameTest() {
         doReturn("new-branch").when(view).getName();
-        doReturn("master").when(view).getBranchFrom();
+        doReturn("main").when(view).getBranchFrom();
 
         doThrow(new FileAlreadyExistsException()).when(libraryService).addBranch(any(), any(), any());
 
@@ -162,7 +162,7 @@ public class AddBranchPopUpPresenterTest {
     @Test
     public void createProjectWithEmptyNameFailedTest() {
         doReturn("").when(view).getName();
-        doReturn("master").when(view).getBranchFrom();
+        doReturn("main").when(view).getBranchFrom();
 
         presenter.add();
 

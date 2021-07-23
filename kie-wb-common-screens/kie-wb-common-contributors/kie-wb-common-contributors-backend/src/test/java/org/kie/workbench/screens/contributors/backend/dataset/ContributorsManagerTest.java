@@ -542,7 +542,7 @@ public class ContributorsManagerTest {
 
         return new WorkspaceProject(organizationalUnit,
                                     repository,
-                                    new Branch("master",
+                                    new Branch("main",
                                                PathFactory.newPath("testFile",
                                                                    "file:///" + moduleName)),
                                     module);

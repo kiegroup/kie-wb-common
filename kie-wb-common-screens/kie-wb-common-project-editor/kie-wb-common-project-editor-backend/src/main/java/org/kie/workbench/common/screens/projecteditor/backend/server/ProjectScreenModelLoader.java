@@ -28,7 +28,7 @@ import org.kie.workbench.common.services.shared.kmodule.KModuleService;
 import org.kie.workbench.common.services.shared.project.KieModule;
 import org.kie.workbench.common.services.shared.project.KieModuleService;
 import org.kie.workbench.common.services.shared.project.ProjectImportsService;
-import org.kie.workbench.common.services.shared.whitelist.PackageNameWhiteListService;
+import org.kie.workbench.common.services.shared.allowlist.PackageNameAllowListService;
 import org.uberfire.backend.server.util.Paths;
 import org.uberfire.backend.vfs.Path;
 
@@ -44,7 +44,7 @@ public class ProjectScreenModelLoader {
     private KModuleService kModuleService;
     private ProjectImportsService importsService;
     private ModuleRepositoriesService repositoriesService;
-    private PackageNameWhiteListService whiteListService;
+    private PackageNameAllowListService allowListService;
     private WorkspaceProjectService workspaceProjectService;
 
     public ProjectScreenModelLoader() {
@@ -57,7 +57,7 @@ public class ProjectScreenModelLoader {
                                     final KModuleService kModuleService,
                                     final ProjectImportsService importsService,
                                     final ModuleRepositoriesService repositoriesService,
-                                    final PackageNameWhiteListService whiteListService,
+                                    final PackageNameAllowListService allowListService,
                                     final WorkspaceProjectService workspaceProjectService) {
 
         this.moduleService = moduleService;
@@ -66,7 +66,7 @@ public class ProjectScreenModelLoader {
         this.kModuleService = kModuleService;
         this.importsService = importsService;
         this.repositoriesService = repositoriesService;
-        this.whiteListService = whiteListService;
+        this.allowListService = allowListService;
         this.workspaceProjectService = workspaceProjectService;
     }
 
@@ -95,7 +95,7 @@ public class ProjectScreenModelLoader {
             loadKModule();
             loadGitURLs();
             loadImports();
-            loadWhiteList();
+            loadAllowList();
             loadRepositories();
 
             return model;
@@ -131,10 +131,10 @@ public class ProjectScreenModelLoader {
             model.setPathToRepositories(project.getRepositoriesPath());
         }
 
-        private void loadWhiteList() {
-            model.setWhiteList(whiteListService.load(project.getPackageNamesWhiteListPath()));
-            model.setWhiteListMetaData(getMetadata(project.getPackageNamesWhiteListPath()));
-            model.setPathToWhiteList(project.getPackageNamesWhiteListPath());
+        private void loadAllowList() {
+            model.setAllowList(allowListService.load(project.getPackageNamesAllowListPath()));
+            model.setAllowListMetaData(getMetadata(project.getPackageNamesAllowListPath()));
+            model.setPathToAllowList(project.getPackageNamesAllowListPath());
         }
 
         private Metadata getMetadata(final Path path) {

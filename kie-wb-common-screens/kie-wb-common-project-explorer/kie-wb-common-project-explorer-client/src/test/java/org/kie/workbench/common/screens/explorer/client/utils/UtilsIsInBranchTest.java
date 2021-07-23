@@ -59,15 +59,15 @@ public class UtilsIsInBranchTest {
     }
 
     private static Object[] sameRoots() {
-        final Path branchRootPath = getPathMock("default://master@uf-playground/");
+        final Path branchRootPath = getPathMock("default://main@uf-playground/");
 
-        final Module module = getModuleMock("default://master@uf-playground/module1");
+        final Module module = getModuleMock("default://main@uf-playground/module1");
 
         return new Object[]{true, branchRootPath, module};
     }
 
     private static Object[] differentRoots() {
-        final Path branchRootPath = getPathMock("default://master@uf-playground/");
+        final Path branchRootPath = getPathMock("default://main@uf-playground/");
 
         final Module module = getModuleMock("default://debBranch@uf-playground/module1");
 
