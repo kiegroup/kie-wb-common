@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public class BlackLists {
+public class DenyLists {
 
     /**
      * Not all methods make sense when shown in drop downs. Like toArray, hashCode, equals.
@@ -29,32 +29,32 @@ public class BlackLists {
      * @param methodName
      * @return
      */
-    public static boolean isClassMethodBlackListed(final Class<?> clazz,
-                                                   final String methodName) {
-        if (isInObjectMethodsBlackList(methodName)) {
+    public static boolean isClassMethodInDenyList(final Class<?> clazz,
+                                                  final String methodName) {
+        if (isInObjectMethodsDenyList(methodName)) {
             return true;
         }
 
         if (Collection.class.isAssignableFrom(clazz)) {
-            if (isInCollectionMethodsBlackList(methodName)) {
+            if (isInCollectionMethodsDenyList(methodName)) {
                 return true;
             }
         }
 
         if (Set.class.isAssignableFrom(clazz)) {
-            if (isInSetMethodsBlackList(methodName)) {
+            if (isInSetMethodsDenyList(methodName)) {
                 return true;
             }
         }
 
         if (List.class.isAssignableFrom(clazz)) {
-            if (isInListMethodsBlackList(methodName)) {
+            if (isInListMethodsDenyList(methodName)) {
                 return true;
             }
         }
 
         if (Map.class.isAssignableFrom(clazz)) {
-            if (isInMapMethodsBlackList(methodName)) {
+            if (isInMapMethodsDenyList(methodName)) {
                 return true;
             }
         }
@@ -62,7 +62,7 @@ public class BlackLists {
         return false;
     }
 
-    private static boolean isInObjectMethodsBlackList(final String methodName) {
+    private static boolean isInObjectMethodsDenyList(final String methodName) {
         return "wait".equals(methodName)
                 || "notify".equals(methodName)
                 || "notifyAll".equals(methodName)
@@ -72,7 +72,7 @@ public class BlackLists {
                 || "toString".equals(methodName);
     }
 
-    private static boolean isInCollectionMethodsBlackList(final String methodName) {
+    private static boolean isInCollectionMethodsDenyList(final String methodName) {
         return "addAll".equals(methodName)
                 || "containsAll".equals(methodName)
                 || "iterator".equals(methodName)
@@ -81,17 +81,17 @@ public class BlackLists {
                 || "toArray".equals(methodName);
     }
 
-    private static boolean isInSetMethodsBlackList(final String methodName) {
-        return isInCollectionMethodsBlackList(methodName);
+    private static boolean isInSetMethodsDenyList(final String methodName) {
+        return isInCollectionMethodsDenyList(methodName);
     }
 
-    private static boolean isInListMethodsBlackList(final String methodName) {
-        return isInCollectionMethodsBlackList(methodName)
+    private static boolean isInListMethodsDenyList(final String methodName) {
+        return isInCollectionMethodsDenyList(methodName)
                 || "listIterator".equals(methodName)
                 || "subList".equals(methodName);
     }
 
-    private static boolean isInMapMethodsBlackList(final String methodName) {
+    private static boolean isInMapMethodsDenyList(final String methodName) {
         return "entrySet".equals(methodName)
                 || "keySet".equals(methodName)
                 || "putAll".equals(methodName);
@@ -102,7 +102,7 @@ public class BlackLists {
      * @param type
      * @return
      */
-    public static boolean isTypeBlackListed(final Class<?> type) {
+    public static boolean isTypeInDenyList(final Class<?> type) {
         return type.isArray();
     }
 
@@ -111,7 +111,7 @@ public class BlackLists {
      * @param type
      * @return
      */
-    public static boolean isReturnTypeBlackListed(final Class<?> type) {
+    public static boolean isReturnTypeInDenyList(final Class<?> type) {
         return type.isArray() || type.isPrimitive();
     }
 }

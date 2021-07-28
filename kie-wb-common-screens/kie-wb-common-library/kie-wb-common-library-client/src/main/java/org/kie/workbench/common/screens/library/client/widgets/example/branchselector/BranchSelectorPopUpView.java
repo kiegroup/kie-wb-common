@@ -126,12 +126,12 @@ public class BranchSelectorPopUpView implements BranchSelectorPopUpPresenter.Vie
 
     @Override
     public String getMainIsRequiredMessage() {
-        return ts.format(LibraryConstants.MasterIsRequired);
+        return ts.format(LibraryConstants.MainIsRequired);
     }
 
     @Override
     public String getAtLeastMainIsRequiredMessage() {
-        return ts.format(LibraryConstants.AtLeastMasterIsRequired);
+        return ts.format(LibraryConstants.AtLeastMainIsRequired);
     }
 
     @Override

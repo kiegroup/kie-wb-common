@@ -19,11 +19,11 @@ import org.guvnor.common.services.builder.ResourceChangeObservableFile;
 import org.uberfire.backend.vfs.Path;
 
 /**
- * Changes to package-names-white-list.txt invalidates the DMO cache
+ * Changes to package-names-allow-list.txt invalidates the DMO cache
  */
-public class ObservablePackageNamesWhiteListFile implements ResourceChangeObservableFile {
+public class ObservablePackageNamesAllowListFile implements ResourceChangeObservableFile {
 
-    static final String FILENAME = "package-names-white-list";
+    static final String FILENAME = "package-names-allow-list";
 
     @Override
     public boolean accept(final Path path) {

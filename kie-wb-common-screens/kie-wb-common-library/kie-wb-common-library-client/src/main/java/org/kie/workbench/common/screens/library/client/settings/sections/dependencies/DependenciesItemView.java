@@ -63,16 +63,16 @@ public class DependenciesItemView implements DependenciesItemPresenter.View,
     private TranslationService translationService;
 
     @Inject
-    @DataField("white-listed-packages-indicator")
-    private HTMLDivElement whiteListedPackagesIndicator;
+    @DataField("allowed-packages-indicator")
+    private HTMLDivElement allowedPackagesIndicator;
 
     @Inject
-    @DataField("package-white-list-all")
-    private HTMLInputElement packageWhiteListAll;
+    @DataField("package-allow-list-all")
+    private HTMLInputElement packageAllowListAll;
 
     @Inject
-    @DataField("package-white-list-none")
-    private HTMLInputElement packageWhiteListNone;
+    @DataField("package-allow-list-none")
+    private HTMLInputElement packageAllowListNone;
 
     @Inject
     @DataField("group-id")
@@ -103,14 +103,14 @@ public class DependenciesItemView implements DependenciesItemPresenter.View,
     @DataField("remove-button")
     private HTMLAnchorElement removeButton;
 
-    private final String packageWhiteListRadioGroupName = UUID.uuid();
+    private final String packageAllowListRadioGroupName = UUID.uuid();
     private DependenciesItemPresenter.AllowListedPackagesState allowListedPackagesState;
 
     @Override
     public void init(final DependenciesItemPresenter presenter) {
         this.presenter = presenter;
-        this.packageWhiteListAll.name = packageWhiteListRadioGroupName;
-        this.packageWhiteListNone.name = packageWhiteListRadioGroupName;
+        this.packageAllowListAll.name = packageAllowListRadioGroupName;
+        this.packageAllowListNone.name = packageAllowListRadioGroupName;
     }
 
     @Override
@@ -162,15 +162,15 @@ public class DependenciesItemView implements DependenciesItemPresenter.View,
     public void setPackagesAllowListedState(final DependenciesItemPresenter.AllowListedPackagesState state) {
         this.allowListedPackagesState = state;
 
-        packageWhiteListAll.checked = false;
-        packageWhiteListNone.checked = false;
+        packageAllowListAll.checked = false;
+        packageAllowListNone.checked = false;
 
         switch (state) {
             case ALL:
-                packageWhiteListAll.checked = true;
+                packageAllowListAll.checked = true;
                 break;
             case NONE:
-                packageWhiteListNone.checked = true;
+                packageAllowListNone.checked = true;
                 break;
         }
     }
@@ -179,19 +179,19 @@ public class DependenciesItemView implements DependenciesItemPresenter.View,
     public void setTransitiveDependency(final boolean disabled) {
         if (disabled) {
             removeButton.remove();
-            elemental2DomUtil.removeAllElementChildren(whiteListedPackagesIndicator);
-            whiteListedPackagesIndicator.textContent = translationService.format(allowListedPackagesState.name());
+            elemental2DomUtil.removeAllElementChildren(allowedPackagesIndicator);
+            allowedPackagesIndicator.textContent = translationService.format(allowListedPackagesState.name());
             getElement().classList.add("transitive");
         }
     }
 
-    @EventHandler("package-white-list-all")
-    public void addAllPackagesToWhiteList(final ClickEvent event) {
+    @EventHandler("package-allow-list-all")
+    public void addAllPackagesToAllowList(final ClickEvent event) {
         presenter.addAllPackagesToAllowList();
     }
 
-    @EventHandler("package-white-list-none")
-    public void removeAllPackagesFromWhiteList(final ClickEvent event) {
+    @EventHandler("package-allow-list-none")
+    public void removeAllPackagesFromAllowList(final ClickEvent event) {
         presenter.removeAllPackagesFromAllowList();
     }
 
