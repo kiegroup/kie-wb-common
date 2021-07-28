@@ -28,9 +28,9 @@ import static org.kie.workbench.common.services.datamodel.backend.server.ModuleD
 public class ModuleDataModelPackageAllowListTest extends AbstractDataModelWeldTest {
 
     @Test
-    public void testPackageNameWhiteList_EmptyWhiteList() throws Exception {
+    public void testPackageNameAllowList_EmptyAllowList() throws Exception {
         final ModuleDataModelOracle oracle =
-                initializeModuleDataModelOracle("/DataModelPackageWhiteListTest1");
+                initializeModuleDataModelOracle("/DataModelPackageAllowListTest1");
 
         assertNotNull(oracle);
 
@@ -53,9 +53,9 @@ public class ModuleDataModelPackageAllowListTest extends AbstractDataModelWeldTe
     }
 
     @Test
-    public void testPackageNameWhiteList_IncludeOnePackage() throws Exception {
+    public void testPackageNameAllowList_IncludeOnePackage() throws Exception {
         final ModuleDataModelOracle oracle =
-                initializeModuleDataModelOracle("/DataModelPackageWhiteListTest2");
+                initializeModuleDataModelOracle("/DataModelPackageAllowListTest2");
 
         assertNotNull(oracle);
 
@@ -78,9 +78,9 @@ public class ModuleDataModelPackageAllowListTest extends AbstractDataModelWeldTe
     }
 
     @Test
-    public void testPackageNameWhiteList_IncludeAllPackages() throws Exception {
+    public void testPackageNameAllowList_IncludeAllPackages() throws Exception {
         final ModuleDataModelOracle oracle =
-                initializeModuleDataModelOracle("/DataModelPackageWhiteListTest3");
+                initializeModuleDataModelOracle("/DataModelPackageAllowListTest3");
 
         assertNotNull(oracle);
 
@@ -103,9 +103,9 @@ public class ModuleDataModelPackageAllowListTest extends AbstractDataModelWeldTe
     }
 
     @Test
-    public void testPackageNameWhiteList_NoWhiteList() throws Exception {
+    public void testPackageNameAllowList_NoAllowList() throws Exception {
         final ModuleDataModelOracle oracle =
-                initializeModuleDataModelOracle("/DataModelPackageWhiteListTest4");
+                initializeModuleDataModelOracle("/DataModelPackageAllowListTest4");
 
         assertNotNull(oracle);
 
@@ -128,9 +128,9 @@ public class ModuleDataModelPackageAllowListTest extends AbstractDataModelWeldTe
     }
 
     @Test
-    public void testPackageNameWhiteList_Wildcards() throws Exception {
+    public void testPackageNameAllowList_Wildcards() throws Exception {
         final ModuleDataModelOracle oracle =
-                initializeModuleDataModelOracle("/DataModelPackageWhiteListTest5");
+                initializeModuleDataModelOracle("/DataModelPackageAllowListTest5");
 
         assertNotNull(oracle);
 

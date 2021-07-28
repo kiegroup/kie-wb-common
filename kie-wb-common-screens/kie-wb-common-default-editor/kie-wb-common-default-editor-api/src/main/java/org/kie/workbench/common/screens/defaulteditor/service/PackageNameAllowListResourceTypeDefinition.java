@@ -25,15 +25,15 @@ import org.uberfire.workbench.category.Others;
 import org.uberfire.workbench.type.ResourceTypeDefinition;
 
 @ApplicationScoped
-public class PackageNameWhiteListResourceTypeDefinition implements ResourceTypeDefinition {
+public class PackageNameAllowListResourceTypeDefinition implements ResourceTypeDefinition {
 
     private Category category;
 
-    public PackageNameWhiteListResourceTypeDefinition() {
+    public PackageNameAllowListResourceTypeDefinition() {
     }
 
     @Inject
-    public PackageNameWhiteListResourceTypeDefinition(final Others category) {
+    public PackageNameAllowListResourceTypeDefinition(final Others category) {
         this.category = category;
     }
 
@@ -44,17 +44,17 @@ public class PackageNameWhiteListResourceTypeDefinition implements ResourceTypeD
 
     @Override
     public String getShortName() {
-        return "Package Name White List";
+        return "Package Name Allow List";
     }
 
     @Override
     public String getDescription() {
-        return "Package Name White List";
+        return "Package Name Allow List";
     }
 
     @Override
     public String getPrefix() {
-        return "package-names-white-list";
+        return "package-names-allow-list";
     }
 
     @Override

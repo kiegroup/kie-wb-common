@@ -33,7 +33,7 @@ import org.kie.soup.project.datamodel.oracle.MethodInfo;
 import org.kie.soup.project.datamodel.oracle.ModelField;
 import org.kie.soup.project.datamodel.oracle.TypeSource;
 import org.kie.workbench.common.services.datamodel.backend.server.builder.util.AnnotationUtils;
-import org.kie.workbench.common.services.datamodel.backend.server.builder.util.BlackLists;
+import org.kie.workbench.common.services.datamodel.backend.server.builder.util.DenyLists;
 
 /**
  * Builder for Fact Types originating from a .class
@@ -130,7 +130,7 @@ public class ClassFactBuilder extends BaseFactBuilder {
                              returnType);
 
             //To prevent recursion we keep track of all ClassFactBuilder's created and re-use where applicable
-            if (BlackLists.isReturnTypeBlackListed(returnType)) {
+            if (DenyLists.isReturnTypeInDenyList(returnType)) {
                 continue;
             }
 

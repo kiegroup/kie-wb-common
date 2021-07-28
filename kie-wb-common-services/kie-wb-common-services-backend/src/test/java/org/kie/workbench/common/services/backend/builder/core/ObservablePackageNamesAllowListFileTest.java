@@ -33,11 +33,11 @@ public class ObservablePackageNamesAllowListFileTest {
     @Mock
     private Path path;
 
-    private ObservablePackageNamesWhiteListFile observer;
+    private ObservablePackageNamesAllowListFile observer;
 
     @Before
     public void setup() {
-        this.observer = new ObservablePackageNamesWhiteListFile();
+        this.observer = new ObservablePackageNamesAllowListFile();
     }
 
     @Test
@@ -48,7 +48,7 @@ public class ObservablePackageNamesAllowListFileTest {
 
     @Test
     public void testAcceptWithPNWLFile() {
-        doReturn(ObservablePackageNamesWhiteListFile.FILENAME).when(path).getFileName();
+        doReturn(ObservablePackageNamesAllowListFile.FILENAME).when(path).getFileName();
         assertTrue(observer.accept(path));
     }
 }
