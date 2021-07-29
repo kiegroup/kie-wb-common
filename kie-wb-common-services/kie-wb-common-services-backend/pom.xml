@@ -438,12 +438,6 @@
       <groupId>org.drools</groupId>
       <artifactId>drools-decisiontables</artifactId>
       <scope>test</scope>
-      <exclusions>
-        <exclusion>
-          <groupId>javax.xml.stream</groupId>
-          <artifactId>stax-api</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
 
     <dependency>
