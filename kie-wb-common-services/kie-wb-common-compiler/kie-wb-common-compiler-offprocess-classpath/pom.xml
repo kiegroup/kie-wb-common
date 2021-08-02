@@ -187,10 +187,6 @@
         </exclusion>
         <exclusion>
           <groupId>org.jboss.errai</groupId>
-          <artifactId>errai-javax-enterprise</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.jboss.errai</groupId>
           <artifactId>errai-security-server</artifactId>
         </exclusion>
         <exclusion>
