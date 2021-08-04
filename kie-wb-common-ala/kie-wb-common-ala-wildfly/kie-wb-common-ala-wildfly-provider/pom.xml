@@ -154,42 +154,4 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
-
-  <build>
-    <pluginManagement>
-      <plugins>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-enforcer-plugin</artifactId>
-          <executions>
-            <execution>
-              <id>ban-duplicated-classes</id>
-              <phase>validate</phase>
-              <goals>
-                <goal>enforce</goal>
-              </goals>
-              <configuration>
-                <rules>
-                  <banDuplicateClasses>
-                    <dependencies>
-                      <!-- For some reason the duplicated-classes-rule enforcer rule thinks the
-                           'javax.interceptor-api' is on classpath, even though 'mvn dependency:tree'
-                           does not show anything. This is bug in one the plugins and needs to be investigated. -->
-                      <dependency>
-                        <groupId>javax.interceptor</groupId>
-                        <artifactId>javax.interceptor-api</artifactId>
-                        <ignoreClasses>
-                          <ignoreClass>*</ignoreClass>
-                        </ignoreClasses>
-                      </dependency>
-                    </dependencies>
-                  </banDuplicateClasses>
-                </rules>
-              </configuration>
-            </execution>
-          </executions>
-        </plugin>
-      </plugins>
-    </pluginManagement>
-  </build>
 </project>

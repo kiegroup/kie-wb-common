@@ -90,7 +90,7 @@
             </goals>
             <configuration>
               <rules>
-                <requirePluginVersions>
+                <requirePluginVersions combine.children="append">
                   <!-- Allow kie-takari-plugin to use SNAPSHOT version -->
                   <unCheckedPluginList>org.kie:kie-takari-plugin</unCheckedPluginList>
                 </requirePluginVersions>
