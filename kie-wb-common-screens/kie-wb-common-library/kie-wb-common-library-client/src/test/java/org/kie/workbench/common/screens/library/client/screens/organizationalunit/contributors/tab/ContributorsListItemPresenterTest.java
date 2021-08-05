@@ -22,8 +22,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
 
-import org.guvnor.structure.contributors.Contributor;
-import org.guvnor.structure.contributors.ContributorType;
+import org.uberfire.security.Contributor;
+import org.uberfire.security.ContributorType;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

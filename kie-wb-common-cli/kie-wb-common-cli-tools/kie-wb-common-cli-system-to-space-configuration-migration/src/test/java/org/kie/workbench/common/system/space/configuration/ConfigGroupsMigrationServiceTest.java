@@ -22,7 +22,7 @@ import java.nio.file.Paths;
 import org.assertj.core.api.Assertions;
 import org.guvnor.structure.backend.backcompat.BackwardCompatibleUtil;
 import org.guvnor.structure.backend.config.ConfigurationServiceImpl;
-import org.guvnor.structure.contributors.ContributorType;
+import org.uberfire.security.ContributorType;
 import org.guvnor.structure.organizationalunit.config.RepositoryInfo;
 import org.guvnor.structure.organizationalunit.config.SpaceConfigStorageRegistry;
 import org.guvnor.structure.organizationalunit.config.SpaceInfo;
