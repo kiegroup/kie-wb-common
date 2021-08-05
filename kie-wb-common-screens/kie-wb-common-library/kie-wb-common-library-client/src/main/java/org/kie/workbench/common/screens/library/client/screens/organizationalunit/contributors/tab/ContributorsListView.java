@@ -20,7 +20,7 @@ import javax.inject.Inject;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.KeyUpEvent;
-import org.guvnor.structure.contributors.ContributorType;
+import org.uberfire.security.ContributorType;
 import org.jboss.errai.common.client.dom.Button;
 import org.jboss.errai.common.client.dom.Div;
 import org.jboss.errai.common.client.dom.HTMLElement;

@@ -21,8 +21,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.function.Consumer;
 
-import org.guvnor.structure.contributors.Contributor;
-import org.guvnor.structure.contributors.ContributorType;
+import org.uberfire.security.Contributor;
+import org.uberfire.security.ContributorType;
 import org.jboss.errai.common.client.dom.elemental2.Elemental2DomUtil;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.junit.Before;

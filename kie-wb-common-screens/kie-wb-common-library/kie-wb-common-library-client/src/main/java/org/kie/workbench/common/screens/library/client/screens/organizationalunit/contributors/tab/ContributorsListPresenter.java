@@ -24,8 +24,8 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 
 import elemental2.promise.Promise;
-import org.guvnor.structure.contributors.Contributor;
-import org.guvnor.structure.contributors.ContributorType;
+import org.uberfire.security.Contributor;
+import org.uberfire.security.ContributorType;
 import org.jboss.errai.common.client.dom.HTMLElement;
 import org.jboss.errai.common.client.dom.elemental2.Elemental2DomUtil;
 import org.jboss.errai.ioc.client.api.ManagedInstance;

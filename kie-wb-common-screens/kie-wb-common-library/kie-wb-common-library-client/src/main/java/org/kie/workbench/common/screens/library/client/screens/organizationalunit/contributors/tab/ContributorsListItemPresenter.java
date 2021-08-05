@@ -23,8 +23,8 @@ import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
 import elemental2.promise.Promise;
-import org.guvnor.structure.contributors.Contributor;
-import org.guvnor.structure.contributors.ContributorType;
+import org.uberfire.security.Contributor;
+import org.uberfire.security.ContributorType;
 import org.kie.workbench.common.screens.library.client.util.LibraryPlaces;
 import org.uberfire.client.mvp.UberElemental;
 import org.uberfire.client.promise.Promises;
