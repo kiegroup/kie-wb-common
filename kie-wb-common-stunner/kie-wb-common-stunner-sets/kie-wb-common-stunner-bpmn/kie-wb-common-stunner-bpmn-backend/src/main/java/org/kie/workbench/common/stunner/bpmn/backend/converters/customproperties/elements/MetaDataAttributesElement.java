@@ -29,6 +29,7 @@ import org.eclipse.emf.ecore.impl.EStructuralFeatureImpl;
 import org.eclipse.emf.ecore.util.FeatureMap;
 import org.jboss.drools.DroolsFactory;
 import org.jboss.drools.MetaDataType;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.customproperties.CustomElement;
 
 import static org.jboss.drools.DroolsPackage.Literals.DOCUMENT_ROOT__META_DATA;
 import static org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties.Scripts.asCData;
@@ -73,7 +74,7 @@ public class MetaDataAttributesElement extends ElementDefinition<String> {
 
         String metaDataAttributes = metadataExtensions.stream()
                 .filter(metaDataType -> metaDataType.getName() != null)
-                .filter(metaDataType -> metaDataType.getName().length() > 0)
+                .filter(metaDataType -> isMetaDataAttribute(metaDataType.getName()))
                 .map(metaDataType -> metaDataType.getName()
                         + SEPARATOR
                         + ((null != metaDataType.getMetaValue() && metaDataType.getMetaValue().length() > 0)
@@ -96,5 +97,26 @@ public class MetaDataAttributesElement extends ElementDefinition<String> {
         metaDataType.setMetaValue(properties.length > 1 ? asCData(properties[1]) : null);
 
         return metaDataType;
+    }
+
+    public static boolean isMetaDataAttribute(String metaDataTypeName) {
+        if (metaDataTypeName.length() <= 0) {
+            return false;
+        }
+
+        return !metaDataTypeName.equals(CustomElement.async.name()) &&
+                !metaDataTypeName.equals(CustomElement.autoStart.name()) &&
+                !metaDataTypeName.equals(CustomElement.autoConnectionSource.name()) &&
+                !metaDataTypeName.equals(CustomElement.autoConnectionTarget.name()) &&
+                !metaDataTypeName.equals(CustomElement.customTags.name()) &&
+                !metaDataTypeName.equals(CustomElement.description.name()) &&
+                !metaDataTypeName.equals(CustomElement.scope.name()) &&
+                !metaDataTypeName.equals(CustomElement.name.name()) &&
+                !metaDataTypeName.equals(CustomElement.caseIdPrefix.name()) &&
+                !metaDataTypeName.equals(CustomElement.caseRole.name()) &&
+                !metaDataTypeName.equals(CustomElement.slaDueDate.name()) &&
+                !metaDataTypeName.equals(CustomElement.isCase.name()) &&
+                !metaDataTypeName.equals(CustomElement.customActivationCondition.name()) &&
+                !metaDataTypeName.equals(CustomElement.abortParent.name());
     }
 }

@@ -25,12 +25,14 @@ import org.kie.workbench.common.stunner.bpmn.backend.converters.customproperties
 public class DataObjectPropertyReader extends BasePropertyReader {
 
     private final DataObject element;
+    private final DataObjectReference dataObjectReference;
 
     public DataObjectPropertyReader(DataObjectReference ref, BPMNDiagram diagram,
                                     BPMNShape shape,
                                     double resolutionFactor) {
         super(ref.getDataObjectRef(), diagram, shape, resolutionFactor);
         this.element = ref.getDataObjectRef();
+        this.dataObjectReference = ref;
     }
 
     public String getName() {
@@ -39,5 +41,10 @@ public class DataObjectPropertyReader extends BasePropertyReader {
 
     public String getType() {
         return element.getItemSubjectRef().getStructureRef();
+    }
+
+    @Override
+    public String getMetaDataAttributes() {
+        return CustomElement.metaDataAttributes.of(dataObjectReference).get();
     }
 }

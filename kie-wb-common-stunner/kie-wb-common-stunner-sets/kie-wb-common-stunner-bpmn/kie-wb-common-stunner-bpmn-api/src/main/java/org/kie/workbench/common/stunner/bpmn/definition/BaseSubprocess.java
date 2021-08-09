@@ -28,6 +28,7 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.dimensions.Rect
 import org.kie.workbench.common.stunner.bpmn.definition.property.font.FontSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.BPMNGeneralSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.simulation.SimulationSet;
+import org.kie.workbench.common.stunner.bpmn.definition.property.variables.AdvancedData;
 import org.kie.workbench.common.stunner.core.definition.annotation.Property;
 import org.kie.workbench.common.stunner.core.definition.annotation.definition.Category;
 import org.kie.workbench.common.stunner.core.definition.annotation.definition.Labels;
@@ -58,6 +59,13 @@ public abstract class BaseSubprocess implements BPMNViewDefinition {
     @Property
     protected RectangleDimensionsSet dimensionsSet;
 
+    @Property
+    @FormField(
+            afterElement = "dimensionsSet"
+    )
+    @Valid
+    protected AdvancedData advancedData;
+
     @Labels
     protected final Set<String> labels = new HashSet<>();
 
@@ -69,12 +77,14 @@ public abstract class BaseSubprocess implements BPMNViewDefinition {
                           final @MapsTo("backgroundSet") BackgroundSet backgroundSet,
                           final @MapsTo("fontSet") FontSet fontSet,
                           final @MapsTo("dimensionsSet") RectangleDimensionsSet dimensionsSet,
-                          final @MapsTo("simulationSet") SimulationSet simulationSet) {
+                          final @MapsTo("simulationSet") SimulationSet simulationSet,
+                          final @MapsTo("advancedData") AdvancedData advancedData) {
         this.general = general;
         this.backgroundSet = backgroundSet;
         this.fontSet = fontSet;
         this.dimensionsSet = dimensionsSet;
         this.simulationSet = simulationSet;
+        this.advancedData = advancedData;
         this.initLabels();
     }
 
@@ -136,6 +146,14 @@ public abstract class BaseSubprocess implements BPMNViewDefinition {
         this.dimensionsSet = dimensionsSet;
     }
 
+    public AdvancedData getAdvancedData() {
+        return advancedData;
+    }
+
+    public void setAdvancedData(AdvancedData advancedData) {
+        this.advancedData = advancedData;
+    }
+
     public Set<String> getLabels() {
         return labels;
     }
@@ -148,6 +166,7 @@ public abstract class BaseSubprocess implements BPMNViewDefinition {
                                          Objects.hashCode(fontSet),
                                          Objects.hashCode(simulationSet),
                                          Objects.hashCode(dimensionsSet),
+                                         Objects.hashCode(advancedData),
                                          Objects.hashCode(labels));
     }
 
@@ -155,18 +174,13 @@ public abstract class BaseSubprocess implements BPMNViewDefinition {
     public boolean equals(Object o) {
         if (o instanceof BaseSubprocess) {
             BaseSubprocess other = (BaseSubprocess) o;
-            return Objects.equals(general,
-                                  other.general) &&
-                    Objects.equals(backgroundSet,
-                                   other.backgroundSet) &&
-                    Objects.equals(fontSet,
-                                   other.fontSet) &&
-                    Objects.equals(simulationSet,
-                                   other.simulationSet) &&
-                    Objects.equals(dimensionsSet,
-                                   other.dimensionsSet) &&
-                    Objects.equals(labels,
-                                   other.labels);
+            return Objects.equals(general, other.general) &&
+                    Objects.equals(backgroundSet, other.backgroundSet) &&
+                    Objects.equals(fontSet, other.fontSet) &&
+                    Objects.equals(simulationSet, other.simulationSet) &&
+                    Objects.equals(dimensionsSet, other.dimensionsSet) &&
+                    Objects.equals(dimensionsSet, other.dimensionsSet) &&
+                    Objects.equals(labels, other.labels);
         }
         return false;
     }

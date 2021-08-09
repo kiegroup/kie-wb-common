@@ -36,6 +36,7 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.dimensions.Rect
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.Name;
 import org.kie.workbench.common.stunner.bpmn.definition.property.variables.AdvancedData;
 import org.kie.workbench.common.stunner.bpmn.definition.property.variables.ProcessData;
+import org.kie.workbench.common.stunner.bpmn.definition.property.variables.RootProcessAdvancedData;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
@@ -121,11 +122,11 @@ public class BPMNDiagramTest {
 
     @Test
     public void testSetGlobalVariables() {
-        AdvancedData advancedData = new AdvancedData();
-        assertEquals(advancedData.getGlobalVariables(), new GlobalVariables());
+        RootProcessAdvancedData rootProcessAdvancedData = new RootProcessAdvancedData();
+        assertEquals(rootProcessAdvancedData.getGlobalVariables(), new GlobalVariables());
 
-        advancedData.setGlobalVariables(new GlobalVariables(GLOBAL_VARIABLES));
-        assertEquals(advancedData.getGlobalVariables(), new GlobalVariables(GLOBAL_VARIABLES));
+        rootProcessAdvancedData.setGlobalVariables(new GlobalVariables(GLOBAL_VARIABLES));
+        assertEquals(rootProcessAdvancedData.getGlobalVariables(), new GlobalVariables(GLOBAL_VARIABLES));
     }
 
     @Test
@@ -140,72 +141,85 @@ public class BPMNDiagramTest {
     @Test
     public void testSetAdvancedData() {
         BPMNDiagramImpl BPMNDiagramImpl = createValidBpmnDiagram();
-        BPMNDiagramImpl.setAdvancedData(new AdvancedData(new GlobalVariables(GLOBAL_VARIABLES),
-                                                         new MetaDataAttributes(METADATA)));
-        AdvancedData advancedData = new AdvancedData(new GlobalVariables(GLOBAL_VARIABLES),
-                                                     new MetaDataAttributes(METADATA));
+        BPMNDiagramImpl.setAdvancedData(new RootProcessAdvancedData(new GlobalVariables(GLOBAL_VARIABLES),
+                                                                    new MetaDataAttributes(METADATA)));
+        RootProcessAdvancedData advancedData =
+                new RootProcessAdvancedData(new GlobalVariables(GLOBAL_VARIABLES),
+                                            new MetaDataAttributes(METADATA));
 
-        assertEquals(advancedData, BPMNDiagramImpl.getAdvancedData());
-        assertEquals(advancedData.getGlobalVariables(), BPMNDiagramImpl.getAdvancedData().getGlobalVariables());
-        assertEquals(advancedData.getMetaDataAttributes(), BPMNDiagramImpl.getAdvancedData().getMetaDataAttributes());
+        assertEquals(advancedData,
+                     BPMNDiagramImpl.getAdvancedData());
+        assertEquals(advancedData.getGlobalVariables(),
+                     BPMNDiagramImpl.getAdvancedData().getGlobalVariables());
+        assertEquals(advancedData.getMetaDataAttributes(),
+                     BPMNDiagramImpl.getAdvancedData().getMetaDataAttributes());
     }
 
     @Test
     public void testAdvancedDataConstructors() {
-        AdvancedData advancedData = new AdvancedData(new GlobalVariables(GLOBAL_VARIABLES),
-                                                     new MetaDataAttributes(METADATA));
-        AdvancedData advancedData2 = new AdvancedData(GLOBAL_VARIABLES, METADATA);
+        RootProcessAdvancedData rootProcessAdvancedData =
+                new RootProcessAdvancedData(new GlobalVariables(GLOBAL_VARIABLES),
+                                            new MetaDataAttributes(METADATA));
+        RootProcessAdvancedData rootProcessAdvancedData2 =
+                new RootProcessAdvancedData(GLOBAL_VARIABLES, METADATA);
 
-        assertEquals(advancedData, advancedData2);
+        assertEquals(rootProcessAdvancedData, rootProcessAdvancedData2);
     }
 
     @Test
     public void testNotAdvancedData() {
         ProcessData processData = new ProcessData(GLOBAL_VARIABLES);
-        AdvancedData advancedData = new AdvancedData(new GlobalVariables(GLOBAL_VARIABLES),
-                                                     new MetaDataAttributes(METADATA));
+        RootProcessAdvancedData rootProcessAdvancedData =
+                new RootProcessAdvancedData(new GlobalVariables(GLOBAL_VARIABLES),
+                                            new MetaDataAttributes(METADATA));
 
-        assertNotEquals(advancedData, processData);
+        assertNotEquals(rootProcessAdvancedData, processData);
     }
 
     @Test
     public void testNotEqualsAdvancedData() {
         BPMNDiagramImpl BPMNDiagramImpl = createValidBpmnDiagram();
-        BPMNDiagramImpl.setAdvancedData(new AdvancedData(new GlobalVariables(GLOBAL_VARIABLES),
-                                                         new MetaDataAttributes(METADATA)));
-        AdvancedData advancedData = new AdvancedData(new GlobalVariables(), new MetaDataAttributes());
+        BPMNDiagramImpl.setAdvancedData(new RootProcessAdvancedData(new GlobalVariables(GLOBAL_VARIABLES),
+                                                                    new MetaDataAttributes(METADATA)));
+        RootProcessAdvancedData rootProcessAdvancedData = new RootProcessAdvancedData(new GlobalVariables(), new MetaDataAttributes());
 
-        assertNotEquals(advancedData, BPMNDiagramImpl.getAdvancedData());
+        assertNotEquals(rootProcessAdvancedData, BPMNDiagramImpl.getAdvancedData());
 
-        assertNotEquals(advancedData.getGlobalVariables(), BPMNDiagramImpl.getAdvancedData().getGlobalVariables());
-        assertNotEquals(advancedData.getMetaDataAttributes(), BPMNDiagramImpl.getAdvancedData().getMetaDataAttributes());
+        assertNotEquals(rootProcessAdvancedData.getGlobalVariables(), BPMNDiagramImpl.getAdvancedData().getGlobalVariables());
+        assertNotEquals(rootProcessAdvancedData.getMetaDataAttributes(), BPMNDiagramImpl.getAdvancedData().getMetaDataAttributes());
     }
 
     @Test
     public void testBPMNDiagramEquals() {
         BPMNDiagramImpl BPMNDiagramImpl = createValidBpmnDiagram();
-        BPMNDiagramImpl.setAdvancedData(new AdvancedData(new GlobalVariables(GLOBAL_VARIABLES),
-                                                         new MetaDataAttributes(METADATA)));
+        BPMNDiagramImpl.setAdvancedData(new RootProcessAdvancedData(new GlobalVariables(GLOBAL_VARIABLES),
+                                                                    new MetaDataAttributes(METADATA)));
         BPMNDiagramImpl BPMNDiagramImpl2 = createValidBpmnDiagram();
-        BPMNDiagramImpl2.setAdvancedData(new AdvancedData(new GlobalVariables(GLOBAL_VARIABLES),
-                                                          new MetaDataAttributes(METADATA)));
+        BPMNDiagramImpl2.setAdvancedData(new RootProcessAdvancedData(new GlobalVariables(GLOBAL_VARIABLES),
+                                                                     new MetaDataAttributes(METADATA)));
 
         assertEquals(BPMNDiagramImpl, BPMNDiagramImpl2);
 
-        BPMNDiagramImpl.setAdvancedData(new AdvancedData(new GlobalVariables("id:"),
-                                                         new MetaDataAttributes("securityRoles3ß<![CDATA[employees,clients]]>")));
+        BPMNDiagramImpl.setAdvancedData(
+                new RootProcessAdvancedData(
+                        new GlobalVariables("id:"),
+                        new MetaDataAttributes("securityRoles3ß<![CDATA[employees,clients]]>")));
         assertNotEquals(BPMNDiagramImpl, BPMNDiagramImpl2);
 
-        BPMNDiagramImpl.setAdvancedData(new AdvancedData(new GlobalVariables(GLOBAL_VARIABLES),
-                                                         new MetaDataAttributes("securityRoles3ß<![CDATA[employees,clients]]>")));
+        BPMNDiagramImpl.setAdvancedData(
+                new RootProcessAdvancedData(
+                        new GlobalVariables(GLOBAL_VARIABLES),
+                        new MetaDataAttributes("securityRoles3ß<![CDATA[employees,clients]]>")));
         assertNotEquals(BPMNDiagramImpl, BPMNDiagramImpl2);
 
-        BPMNDiagramImpl.setAdvancedData(new AdvancedData(new GlobalVariables("id:"),
-                                                         new MetaDataAttributes(METADATA)));
+        BPMNDiagramImpl.setAdvancedData(
+                new RootProcessAdvancedData(new GlobalVariables("id:"),
+                                            new MetaDataAttributes(METADATA)));
         assertNotEquals(BPMNDiagramImpl, BPMNDiagramImpl2);
 
-        BPMNDiagramImpl.setAdvancedData(new AdvancedData(new GlobalVariables(GLOBAL_VARIABLES),
-                                                         new MetaDataAttributes(METADATA)));
+        BPMNDiagramImpl.setAdvancedData(
+                new RootProcessAdvancedData(new GlobalVariables(GLOBAL_VARIABLES),
+                                            new MetaDataAttributes(METADATA)));
         assertEquals(BPMNDiagramImpl, BPMNDiagramImpl2);
 
         BPMNDiagramImpl.setDimensionsSet(new RectangleDimensionsSet(10d, 10d));

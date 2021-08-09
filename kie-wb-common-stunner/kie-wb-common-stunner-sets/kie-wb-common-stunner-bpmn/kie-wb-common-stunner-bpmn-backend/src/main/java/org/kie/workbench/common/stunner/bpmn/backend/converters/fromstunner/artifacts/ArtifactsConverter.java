@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.arifacts;
+package org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.artifacts;
 
 import org.kie.workbench.common.stunner.bpmn.backend.converters.NodeMatch;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.properties.DataObjectPropertyWriter;
@@ -58,13 +58,13 @@ public class ArtifactsConverter {
         BPMNGeneralSet general = definition.getGeneral();
         writer.setName(general.getName().getValue());
         writer.setDocumentation(general.getDocumentation().getValue());
+        writer.setMetaData(definition.getAdvancedData().getMetaDataAttributes());
         writer.setAbsoluteBounds(node);
 
         return writer;
     }
 
     private PropertyWriter toDataObjectAnnotation(Node<View<DataObject>, ?> node) {
-
         org.eclipse.bpmn2.DataObjectReference element = bpmn2.createDataObjectReference();
         element.setId(node.getUUID());
 
@@ -73,6 +73,7 @@ public class ArtifactsConverter {
         DataObject definition = node.getContent().getDefinition();
         writer.setName(StringUtils.replaceIllegalCharsAttribute(StringUtils.replaceIllegalCharsForDataObjects(definition.getName().getValue())));
         writer.setType(definition.getType().getValue().getType());
+        writer.setMetaData(definition.getAdvancedData().getMetaDataAttributes());
         writer.setAbsoluteBounds(node);
 
         return writer;

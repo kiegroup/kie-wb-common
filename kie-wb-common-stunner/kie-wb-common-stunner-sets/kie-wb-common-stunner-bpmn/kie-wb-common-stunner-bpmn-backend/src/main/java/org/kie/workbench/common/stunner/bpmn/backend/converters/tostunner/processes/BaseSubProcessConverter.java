@@ -52,6 +52,7 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.task.MultipleIn
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.MultipleInstanceSubprocessTaskExecutionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.OnEntryAction;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.OnExitAction;
+import org.kie.workbench.common.stunner.bpmn.definition.property.variables.AdvancedData;
 import org.kie.workbench.common.stunner.bpmn.definition.property.variables.BaseProcessData;
 import org.kie.workbench.common.stunner.bpmn.definition.property.variables.ProcessData;
 import org.kie.workbench.common.stunner.bpmn.definition.property.variables.ProcessVariables;
@@ -79,7 +80,7 @@ public abstract class BaseSubProcessConverter<A extends BaseAdHocSubprocess<P, S
         if (subProcess instanceof org.eclipse.bpmn2.AdHocSubProcess) {
             subProcessRoot = convertAdHocSubProcess((org.eclipse.bpmn2.AdHocSubProcess) subProcess);
         } else if (subProcess.getLoopCharacteristics() != null) {
-            subProcessRoot = convertMultInstanceSubprocessNode(subProcess);
+            subProcessRoot = convertMultiInstanceSubprocessNode(subProcess);
         } else if (subProcess.isTriggeredByEvent()) {
             subProcessRoot = convertEventSubprocessNode(subProcess);
         } else {
@@ -99,7 +100,7 @@ public abstract class BaseSubProcessConverter<A extends BaseAdHocSubprocess<P, S
         return ResultComposer.compose(subProcessRoot, nodesResult, edgesResult);
     }
 
-    private BpmnNode convertMultInstanceSubprocessNode(SubProcess subProcess) {
+    private BpmnNode convertMultiInstanceSubprocessNode(SubProcess subProcess) {
         Node<View<MultipleInstanceSubprocess>, Edge> node = delegate.factoryManager.newNode(subProcess.getId(),
                                                                                             MultipleInstanceSubprocess.class);
 
@@ -127,6 +128,7 @@ public abstract class BaseSubProcessConverter<A extends BaseAdHocSubprocess<P, S
         definition.setProcessData(new ProcessData(new ProcessVariables(p.getProcessVariables())));
 
         definition.setSimulationSet(p.getSimulationSet());
+        definition.setAdvancedData(new AdvancedData(p.getMetaDataAttributes()));
 
         definition.setDimensionsSet(p.getRectangleDimensionsSet());
         definition.setFontSet(p.getFontSet());
@@ -151,6 +153,7 @@ public abstract class BaseSubProcessConverter<A extends BaseAdHocSubprocess<P, S
         definition.setExecutionSet(createAdHocSubprocessTaskExecutionSet(p));
 
         definition.setSimulationSet(p.getSimulationSet());
+        definition.setAdvancedData(new AdvancedData(p.getMetaDataAttributes()));
 
         node.getContent().setBounds(p.getBounds());
 
@@ -181,6 +184,7 @@ public abstract class BaseSubProcessConverter<A extends BaseAdHocSubprocess<P, S
         definition.setProcessData(new ProcessData(new ProcessVariables(p.getProcessVariables())));
 
         definition.setSimulationSet(p.getSimulationSet());
+        definition.setAdvancedData(new AdvancedData(p.getMetaDataAttributes()));
 
         node.getContent().setBounds(p.getBounds());
 
@@ -208,6 +212,7 @@ public abstract class BaseSubProcessConverter<A extends BaseAdHocSubprocess<P, S
         definition.setProcessData(new ProcessData(new ProcessVariables(p.getProcessVariables())));
 
         definition.setSimulationSet(p.getSimulationSet());
+        definition.setAdvancedData(new AdvancedData(p.getMetaDataAttributes()));
 
         definition.setDimensionsSet(p.getRectangleDimensionsSet());
         definition.setFontSet(p.getFontSet());
