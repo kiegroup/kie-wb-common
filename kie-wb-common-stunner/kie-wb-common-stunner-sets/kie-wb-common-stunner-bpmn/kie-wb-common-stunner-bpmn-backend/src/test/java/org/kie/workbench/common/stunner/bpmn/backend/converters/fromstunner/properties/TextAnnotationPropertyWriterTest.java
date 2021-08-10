@@ -72,7 +72,6 @@ public class TextAnnotationPropertyWriterTest {
     public void setName() {
         tested.setName(NAME);
         verify(element).setText(NAME);
-        verify(element).setName(NAME);
         verify(valueMap).add(entryArgumentCaptor.capture());
         final MetaDataTypeImpl value = (MetaDataTypeImpl) entryArgumentCaptor.getValue().getValue();
         assertEquals(NAME, CustomElement.name.stripCData(value.getMetaValue()));

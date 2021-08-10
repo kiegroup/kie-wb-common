@@ -32,7 +32,6 @@ public class TextAnnotationPropertyWriter extends PropertyWriter {
     public void setName(String value) {
         final String escaped = StringEscapeUtils.escapeXml10(value.trim());
         element.setText(escaped);
-        element.setName(escaped);
         CustomElement.name.of(element).set(value);
     }
 
