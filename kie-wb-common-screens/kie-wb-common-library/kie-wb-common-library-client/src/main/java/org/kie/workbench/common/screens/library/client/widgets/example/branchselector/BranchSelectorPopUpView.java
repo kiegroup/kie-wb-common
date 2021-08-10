@@ -16,8 +16,6 @@
 
 package org.kie.workbench.common.screens.library.client.widgets.example.branchselector;
 
-import java.util.List;
-
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -26,7 +24,6 @@ import elemental2.dom.HTMLElement;
 import org.gwtbootstrap3.client.ui.Button;
 import org.gwtbootstrap3.client.ui.ModalFooter;
 import org.gwtbootstrap3.client.ui.constants.ButtonType;
-import org.jboss.errai.common.client.dom.Div;
 import org.jboss.errai.ui.client.local.api.elemental2.IsElement;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
@@ -126,12 +123,12 @@ public class BranchSelectorPopUpView implements BranchSelectorPopUpPresenter.Vie
 
     @Override
     public String getMainIsRequiredMessage() {
-        return ts.format(LibraryConstants.MainIsRequired);
+        return ts.format(LibraryConstants.DefaultBranchIsRequired);
     }
 
     @Override
     public String getAtLeastMainIsRequiredMessage() {
-        return ts.format(LibraryConstants.AtLeastMainIsRequired);
+        return ts.format(LibraryConstants.AtLeastDefaultBranchIsRequired);
     }
 
     @Override

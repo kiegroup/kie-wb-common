@@ -747,10 +747,10 @@ public class LibraryConstants {
     public static final String Ok = "Ok";
 
     @TranslationKey(defaultValue = "")
-    public static final String MainIsRequired = "MasterIsRequired";
+    public static final String DefaultBranchIsRequired = "DefaultBranchIsRequired";
 
     @TranslationKey(defaultValue = "")
-    public static final String AtLeastMainIsRequired = "AtLeastMasterIsRequired";
+    public static final String AtLeastDefaultBranchIsRequired = "AtLeastDefaultBranchIsRequired";
 
     @TranslationKey(defaultValue = "")
     public static final String BranchSelectorClickToSelectBranches = "BranchSelectorClickToSelectBranches";

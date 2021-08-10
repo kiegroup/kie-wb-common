@@ -100,7 +100,7 @@ public class OpenShiftExecutorTest {
     public void testProviderConfigReuse() throws Exception {
         OpenShiftProviderConfigImpl providerConfig = new OpenShiftProviderConfigImpl().clear();
         providerConfig.setName(getClass().getSimpleName());
-        providerConfig.setKubernetesMain("https://ce-os-rhel-master.usersys.redhat.com:8443");
+        providerConfig.setKubernetesMain("https://ce-os-rhel-main.usersys.redhat.com:8443");
         providerConfig.setKubernetesAuthBasicUsername("admin");
         providerConfig.setKubernetesAuthBasicPassword("admin");
         OpenShiftClient client = new OpenShiftAccessInterfaceImpl().newOpenShiftClient(providerConfig);

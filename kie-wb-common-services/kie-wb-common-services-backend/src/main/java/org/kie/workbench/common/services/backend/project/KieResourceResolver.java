@@ -36,7 +36,7 @@ import org.uberfire.java.nio.file.Files;
 
 import static org.guvnor.common.services.project.utils.ModuleResourcePaths.POM_PATH;
 import static org.kie.workbench.common.services.backend.project.KieModuleResourcePaths.KMODULE_PATH;
-import static org.kie.workbench.common.services.backend.project.KieModuleResourcePaths.PACKAGE_NAME_ALLOW_LIST;
+import static org.kie.workbench.common.services.backend.project.KieModuleResourcePaths.PACKAGE_NAMES_ALLOW_LIST;
 import static org.kie.workbench.common.services.backend.project.KieModuleResourcePaths.PROJECT_IMPORTS_PATH;
 import static org.kie.workbench.common.services.backend.project.KieModuleResourcePaths.PROJECT_REPOSITORIES_PATH;
 
@@ -149,7 +149,7 @@ public class KieResourceResolver
                              Paths.convert(nioModuleRootPath.resolve(KMODULE_PATH)),
                              Paths.convert(nioModuleRootPath.resolve(PROJECT_IMPORTS_PATH)),
                              Paths.convert(nioModuleRootPath.resolve(PROJECT_REPOSITORIES_PATH)),
-                             Paths.convert(nioModuleRootPath.resolve(PACKAGE_NAME_ALLOW_LIST)));
+                             Paths.convert(nioModuleRootPath.resolve(PACKAGE_NAMES_ALLOW_LIST)));
     }
 
     protected boolean hasKModule(final org.uberfire.java.nio.file.Path path) {
