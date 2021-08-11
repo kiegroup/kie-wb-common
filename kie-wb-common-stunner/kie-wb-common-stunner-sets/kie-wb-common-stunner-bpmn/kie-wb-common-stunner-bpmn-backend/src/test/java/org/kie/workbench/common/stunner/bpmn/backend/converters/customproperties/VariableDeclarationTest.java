@@ -85,7 +85,7 @@ public class VariableDeclarationTest {
     }
     
     @Test
-    public void testToStringNoException() {
+    public void testToStringEmptyIdentifier() {
         VariableDeclaration comparable = VariableDeclaration.fromString("" + CONSTRUCTOR_TYPE);
         assertEquals(comparable.toString(), CONSTRUCTOR_TYPE);
     }
