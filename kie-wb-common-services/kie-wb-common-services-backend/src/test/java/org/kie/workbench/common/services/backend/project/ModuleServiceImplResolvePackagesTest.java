@@ -57,7 +57,7 @@ public class ModuleServiceImplResolvePackagesTest extends ModuleTestBase {
         final URL kmodule = this.getClass().getResource("/ModuleBackendTestModule1/src/main/resources/META-INF/kmodule.xml");
         final URL imports = this.getClass().getResource("/ModuleBackendTestModule1/project.imports");
         final URL repositories = this.getClass().getResource("/ModuleBackendTestModule1/project.repositories");
-        final URL packageNameWhiteList = this.getClass().getResource("/ModuleBackendTestModule1/package-names-white-list");
+        final URL packageNameAllowList = this.getClass().getResource("/ModuleBackendTestModule1/package-names-allow-list");
         final POM pom = mock(POM.class);
         when(pom.getName()).thenReturn("ModuleBackendTestModule1");
 
@@ -66,7 +66,7 @@ public class ModuleServiceImplResolvePackagesTest extends ModuleTestBase {
                                             paths.convert(fs.getPath(kmodule.toURI())),
                                             paths.convert(fs.getPath(imports.toURI())),
                                             paths.convert(fs.getPath(repositories.toURI())),
-                                            paths.convert(fs.getPath(packageNameWhiteList.toURI())),
+                                            paths.convert(fs.getPath(packageNameAllowList.toURI())),
                                             pom);
 
         {

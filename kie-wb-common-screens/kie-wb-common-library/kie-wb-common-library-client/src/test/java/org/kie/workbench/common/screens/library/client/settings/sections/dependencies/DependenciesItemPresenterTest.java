@@ -4,7 +4,6 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import elemental2.dom.HTMLInputElement;
 import org.guvnor.common.services.project.model.Dependency;
 import org.junit.Before;
 import org.junit.Test;
@@ -12,7 +11,7 @@ import org.junit.runner.RunWith;
 import org.kie.workbench.common.services.shared.dependencies.EnhancedDependency;
 import org.kie.workbench.common.services.shared.dependencies.NormalEnhancedDependency;
 import org.kie.workbench.common.services.shared.dependencies.TransitiveEnhancedDependency;
-import org.kie.workbench.common.services.shared.whitelist.WhiteList;
+import org.kie.workbench.common.services.shared.allowlist.AllowList;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
@@ -22,7 +21,6 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class DependenciesItemPresenterTest {
@@ -42,14 +40,14 @@ public class DependenciesItemPresenterTest {
 
         dependenciesItemPresenter.setup(
                 new NormalEnhancedDependency(mock(Dependency.class), emptySet()),
-                new WhiteList(),
+                new AllowList(),
                 mock(DependenciesPresenter.class));
 
         verify(view).init(any());
         verify(view).setGroupId(any());
         verify(view).setArtifactId(any());
         verify(view).setVersion(any());
-        verify(view).setPackagesWhiteListedState(any());
+        verify(view).setPackagesAllowListedState(any());
         verify(view).setTransitiveDependency(eq(false));
     }
 
@@ -58,19 +56,19 @@ public class DependenciesItemPresenterTest {
 
         dependenciesItemPresenter.setup(
                 new TransitiveEnhancedDependency(mock(Dependency.class), emptySet()),
-                new WhiteList(),
+                new AllowList(),
                 mock(DependenciesPresenter.class));
 
         verify(view).init(any());
         verify(view).setGroupId(any());
         verify(view).setArtifactId(any());
         verify(view).setVersion(any());
-        verify(view).setPackagesWhiteListedState(any());
+        verify(view).setPackagesAllowListedState(any());
         verify(view).setTransitiveDependency(eq(true));
     }
 
     @Test
-    public void testAddAllPackagesToWhiteList() {
+    public void testAddAllPackagesToAllowList() {
         final DependenciesPresenter parentPresenter = mock(DependenciesPresenter.class);
         final Set<String> packages = new HashSet<>(Arrays.asList("foo", "bar"));
         final EnhancedDependency enhancedDependency = new NormalEnhancedDependency(mock(Dependency.class), packages);
@@ -78,13 +76,13 @@ public class DependenciesItemPresenterTest {
         dependenciesItemPresenter.parentPresenter = parentPresenter;
         dependenciesItemPresenter.enhancedDependency = enhancedDependency;
 
-        dependenciesItemPresenter.addAllPackagesToWhiteList();
+        dependenciesItemPresenter.addAllPackagesToAllowList();
 
-        verify(parentPresenter).addAllToWhiteList(eq(packages));
+        verify(parentPresenter).addAllToAllowList(eq(packages));
     }
 
     @Test
-    public void testRemoveAllPackagesToWhiteList() {
+    public void testRemoveAllPackagesToAllowList() {
         final DependenciesPresenter parentPresenter = mock(DependenciesPresenter.class);
         final Set<String> packages = new HashSet<>(Arrays.asList("foo", "bar"));
         final EnhancedDependency enhancedDependency = new NormalEnhancedDependency(mock(Dependency.class), packages);
@@ -92,9 +90,9 @@ public class DependenciesItemPresenterTest {
         dependenciesItemPresenter.parentPresenter = parentPresenter;
         dependenciesItemPresenter.enhancedDependency = enhancedDependency;
 
-        dependenciesItemPresenter.removeAllPackagesFromWhiteList();
+        dependenciesItemPresenter.removeAllPackagesFromAllowList();
 
-        verify(parentPresenter).removeAllFromWhiteList(eq(packages));
+        verify(parentPresenter).removeAllFromAllowList(eq(packages));
     }
 
     @Test

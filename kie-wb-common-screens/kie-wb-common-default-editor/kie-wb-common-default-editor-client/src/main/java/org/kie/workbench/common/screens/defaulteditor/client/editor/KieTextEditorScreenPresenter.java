@@ -33,7 +33,7 @@ import org.uberfire.mvp.PlaceRequest;
 import org.uberfire.workbench.model.menu.Menus;
 
 @Dependent
-@WorkbenchEditor(identifier = KieTextEditorScreenPresenter.EDITOR_ID, supportedTypes = {TextResourceType.class, XmlResourceType.class, PackageNameWhiteListResourceType.class}, priority = 1)
+@WorkbenchEditor(identifier = KieTextEditorScreenPresenter.EDITOR_ID, supportedTypes = {TextResourceType.class, XmlResourceType.class, PackageNameAllowListResourceType.class}, priority = 1)
 public class KieTextEditorScreenPresenter
         extends KieTextEditorPresenter {
 
@@ -46,7 +46,7 @@ public class KieTextEditorScreenPresenter
     private XmlResourceType typeXML;
 
     @Inject
-    private PackageNameWhiteListResourceType typeWhiteList;
+    private PackageNameAllowListResourceType typeAllowList;
     private AceEditorMode mode;
 
     @Inject
@@ -64,7 +64,7 @@ public class KieTextEditorScreenPresenter
             mode = AceEditorMode.TEXT;
         } else if (typeXML.accept(path)) {
             mode = AceEditorMode.XML;
-        } else if (typeWhiteList.accept(path)) {
+        } else if (typeAllowList.accept(path)) {
             mode = AceEditorMode.TEXT;
         } else {
             mode = AceEditorMode.TEXT;

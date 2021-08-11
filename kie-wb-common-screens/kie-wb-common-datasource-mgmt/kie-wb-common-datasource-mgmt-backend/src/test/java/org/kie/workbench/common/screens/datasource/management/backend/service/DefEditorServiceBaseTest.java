@@ -48,11 +48,11 @@ public abstract class DefEditorServiceBaseTest {
 
     protected static final String IDENTITY = "userId";
 
-    protected static final String GLOBAL_URI = "default://master@datasources/";
+    protected static final String GLOBAL_URI = "default://main@datasources/";
 
-    protected static final String PROJECT_URI = "default://master@TestRepo/module/src/resources/META-INF";
+    protected static final String PROJECT_URI = "default://main@TestRepo/module/src/resources/META-INF";
 
-    protected static final String FILE_URI = "default://master@TestRepo/module/src/resources/META-INF/someFile.txt";
+    protected static final String FILE_URI = "default://main@TestRepo/module/src/resources/META-INF/someFile.txt";
 
     protected static final String COMMENT = "Some comment";
 

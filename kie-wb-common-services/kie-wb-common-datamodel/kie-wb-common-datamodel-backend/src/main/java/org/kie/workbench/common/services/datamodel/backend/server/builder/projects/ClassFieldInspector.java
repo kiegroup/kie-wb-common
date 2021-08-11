@@ -32,7 +32,7 @@ import org.kie.soup.project.datamodel.oracle.Annotation;
 import org.kie.soup.project.datamodel.oracle.FieldAccessorsAndMutators;
 import org.kie.soup.project.datamodel.oracle.ModelField;
 import org.kie.workbench.common.services.datamodel.backend.server.builder.util.AnnotationUtils;
-import org.kie.workbench.common.services.datamodel.backend.server.builder.util.BlackLists;
+import org.kie.workbench.common.services.datamodel.backend.server.builder.util.DenyLists;
 
 /**
  * Find information for all "fields" on a class. A "field" is either a public property or a non-public property for which there is a "getter" and/or a "setter"
@@ -48,11 +48,11 @@ public class ClassFieldInspector {
         final Map<String, Field> inaccessibleFields = new HashMap<>();
 
         for (Field field : fields) {
-            if (BlackLists.isClassMethodBlackListed(clazz,
+            if (DenyLists.isClassMethodInDenyList(clazz,
                                                     field.getName())) {
                 continue;
             }
-            if (BlackLists.isTypeBlackListed(field.getType())) {
+            if (DenyLists.isTypeInDenyList(field.getType())) {
                 continue;
             }
 
@@ -93,11 +93,11 @@ public class ClassFieldInspector {
                 }
 
                 if (methodName != null) {
-                    if (BlackLists.isClassMethodBlackListed(clazz,
+                    if (DenyLists.isClassMethodInDenyList(clazz,
                                                             methodName)) {
                         continue;
                     }
-                    if (BlackLists.isTypeBlackListed(method.getReturnType())) {
+                    if (DenyLists.isTypeInDenyList(method.getReturnType())) {
                         continue;
                     }
 

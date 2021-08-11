@@ -29,7 +29,7 @@ public class KieModule
     private Path kmoduleXMLPath;
     private Path importsPath;
     private Path repositoriesPath;
-    private Path packageNamesWhiteListPath;
+    private Path packageNamesAllowListPath;
 
     public KieModule() {
         //For Errai-marshalling
@@ -40,7 +40,7 @@ public class KieModule
                      final Path kmoduleXMLPath,
                      final Path importsPath,
                      final Path repositoriesPath,
-                     final Path packageNamesWhiteListPath) {
+                     final Path packageNamesAllowListPath) {
 
         super(rootPath,
               pomXMLPath);
@@ -50,8 +50,8 @@ public class KieModule
                                                               importsPath);
         this.repositoriesPath = PortablePreconditions.checkNotNull("repositoriesPath",
                                                                    repositoriesPath);
-        this.packageNamesWhiteListPath = PortablePreconditions.checkNotNull("packageNamesWhiteListPath",
-                                                                            packageNamesWhiteListPath);
+        this.packageNamesAllowListPath = PortablePreconditions.checkNotNull("packageNamesAllowListPath",
+                packageNamesAllowListPath);
     }
 
     public KieModule(final Path rootPath,
@@ -59,14 +59,14 @@ public class KieModule
                      final Path kmoduleXMLPath,
                      final Path importsPath,
                      final Path repositoriesPath,
-                     final Path packageNamesWhiteListPath,
+                     final Path packageNamesAllowListPath,
                      final POM pom) {
         this(rootPath,
              pomXMLPath,
              kmoduleXMLPath,
              importsPath,
              repositoriesPath,
-             packageNamesWhiteListPath);
+                packageNamesAllowListPath);
         this.pom = PortablePreconditions.checkNotNull("pom",
                                                       pom);
     }
@@ -83,8 +83,8 @@ public class KieModule
         return this.repositoriesPath;
     }
 
-    public Path getPackageNamesWhiteListPath() {
-        return this.packageNamesWhiteListPath;
+    public Path getPackageNamesAllowListPath() {
+        return this.packageNamesAllowListPath;
     }
 
     @Override
@@ -113,7 +113,7 @@ public class KieModule
         if (!repositoriesPath.equals(project.repositoriesPath)) {
             return false;
         }
-        if (!packageNamesWhiteListPath.equals(project.packageNamesWhiteListPath)) {
+        if (!packageNamesAllowListPath.equals(project.packageNamesAllowListPath)) {
             return false;
         }
         if (!getPom().equals(project.getPom())) {
@@ -135,7 +135,7 @@ public class KieModule
         result = ~~result;
         result = 31 * result + repositoriesPath.hashCode();
         result = ~~result;
-        result = 31 * result + packageNamesWhiteListPath.hashCode();
+        result = 31 * result + packageNamesAllowListPath.hashCode();
         result = ~~result;
         result = 31 * result + getPom().hashCode();
         result = ~~result;

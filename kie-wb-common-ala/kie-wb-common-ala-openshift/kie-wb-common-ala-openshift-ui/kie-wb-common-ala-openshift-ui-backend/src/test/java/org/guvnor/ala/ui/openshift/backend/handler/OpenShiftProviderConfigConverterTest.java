@@ -28,7 +28,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import static org.guvnor.ala.openshift.config.OpenShiftProperty.KUBERNETES_AUTH_BASIC_PASSWORD;
 import static org.guvnor.ala.openshift.config.OpenShiftProperty.KUBERNETES_AUTH_BASIC_USERNAME;
-import static org.guvnor.ala.openshift.config.OpenShiftProperty.KUBERNETES_MASTER;
+import static org.guvnor.ala.openshift.config.OpenShiftProperty.KUBERNETES_MAIN;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
@@ -37,7 +37,7 @@ public class OpenShiftProviderConfigConverterTest {
 
     private static final String PROVIDER_NAME_VALUE = "PROVIDER_NAME_VALUE";
 
-    private static final String MASTER_URL_VALUE = "MASTER_URL_VALUE";
+    private static final String MAIN_URL_VALUE = "MAIN_URL_VALUE";
 
     private static final String USER_VALUE = "USER_VALUE";
 
@@ -53,8 +53,8 @@ public class OpenShiftProviderConfigConverterTest {
     @Test
     public void testToDomain() {
         Map<String, Object> values = new HashMap<>();
-        values.put(KUBERNETES_MASTER.inputKey(),
-                   MASTER_URL_VALUE);
+        values.put(KUBERNETES_MAIN.inputKey(),
+                MAIN_URL_VALUE);
         values.put(KUBERNETES_AUTH_BASIC_USERNAME.inputKey(),
                    USER_VALUE);
         values.put(KUBERNETES_AUTH_BASIC_PASSWORD.inputKey(),
@@ -68,8 +68,8 @@ public class OpenShiftProviderConfigConverterTest {
 
         assertEquals(PROVIDER_NAME_VALUE,
                      result.getName());
-        assertEquals(MASTER_URL_VALUE,
-                     result.getKubernetesMaster());
+        assertEquals(MAIN_URL_VALUE,
+                     result.getKubernetesMain());
         assertEquals(USER_VALUE,
                      result.getKubernetesAuthBasicUsername());
         assertEquals(PASSWORD_VALUE,
@@ -85,7 +85,7 @@ public class OpenShiftProviderConfigConverterTest {
     public void testToModel() {
         OpenShiftProviderConfig config = mock(OpenShiftProviderConfig.class);
         when(config.getName()).thenReturn(PROVIDER_NAME_VALUE);
-        when(config.getKubernetesMaster()).thenReturn(MASTER_URL_VALUE);
+        when(config.getKubernetesMain()).thenReturn(MAIN_URL_VALUE);
         when(config.getKubernetesAuthBasicUsername()).thenReturn(USER_VALUE);
         when(config.getKubernetesAuthBasicPassword()).thenReturn(PASSWORD_VALUE);
 
@@ -94,8 +94,8 @@ public class OpenShiftProviderConfigConverterTest {
         assertNotNull(result);
         assertEquals(PROVIDER_NAME_VALUE,
                      result.getId());
-        assertEquals(MASTER_URL_VALUE,
-                     result.getValues().get(KUBERNETES_MASTER.inputKey()));
+        assertEquals(MAIN_URL_VALUE,
+                     result.getValues().get(KUBERNETES_MAIN.inputKey()));
         assertEquals(USER_VALUE,
                      result.getValues().get(KUBERNETES_AUTH_BASIC_USERNAME.inputKey()));
         assertEquals(PASSWORD_VALUE,

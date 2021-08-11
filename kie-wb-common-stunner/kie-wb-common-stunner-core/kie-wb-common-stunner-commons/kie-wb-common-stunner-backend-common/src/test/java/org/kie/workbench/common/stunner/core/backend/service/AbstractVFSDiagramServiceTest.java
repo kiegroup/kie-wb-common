@@ -86,7 +86,7 @@ public abstract class AbstractVFSDiagramServiceTest<M extends Metadata, D extend
 
     public static final String RESOURCE_TYPE_PREFIX = "PREFIX";
 
-    public static final String DIR_URI = "default://master@diagrams/diagramsDirectory";
+    public static final String DIR_URI = "default://main@diagrams/diagramsDirectory";
 
     public static final String FILE_NAME = "TestFile";
 

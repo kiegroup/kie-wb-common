@@ -61,11 +61,11 @@ import org.kie.internal.builder.InternalKieBuilder;
 import org.kie.scanner.KieModuleMetaData;
 import org.kie.soup.project.datamodel.imports.Import;
 import org.kie.soup.project.datamodel.imports.Imports;
+import org.kie.workbench.common.services.shared.allowlist.PackageNameAllowListService;
 import org.kie.workbench.common.services.shared.project.KieModule;
 import org.kie.workbench.common.services.shared.project.KieModuleService;
 import org.kie.workbench.common.services.shared.project.ProjectImportsService;
-import org.kie.workbench.common.services.shared.whitelist.PackageNameWhiteListService;
-import org.kie.workbench.common.services.shared.whitelist.WhiteList;
+import org.kie.workbench.common.services.shared.allowlist.AllowList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.uberfire.backend.server.util.Paths;
@@ -113,7 +113,7 @@ public class Builder implements Serializable {
     private KieBuilder kieBuilder;
     private LRUModuleDependenciesClassLoaderCache dependenciesClassLoaderCache;
     private LRUPomModelCache pomModelCache;
-    private PackageNameWhiteListService packageNameWhiteListService;
+    private PackageNameAllowListService packageNameAllowListService;
 
     public Builder(final Module project,
                    final IOService ioService,
@@ -122,7 +122,7 @@ public class Builder implements Serializable {
                    final List<BuildValidationHelper> buildValidationHelpers,
                    final LRUModuleDependenciesClassLoaderCache dependenciesClassLoaderCache,
                    final LRUPomModelCache pomModelCache,
-                   final PackageNameWhiteListService packageNameWhiteListService,
+                   final PackageNameAllowListService packageNameAllowListService,
                    final Predicate<String> classFilter,
                    final KieBuilder kieBuilder,
                    final KieFileSystem kieFileSystem) {
@@ -131,7 +131,7 @@ public class Builder implements Serializable {
         this.moduleService = moduleService;
         this.importsService = importsService;
         this.buildValidationHelpers = buildValidationHelpers;
-        this.packageNameWhiteListService = packageNameWhiteListService;
+        this.packageNameAllowListService = packageNameAllowListService;
         this.classFilter = classFilter;
 
         this.projectGAV = project.getPom().getGav();
@@ -154,7 +154,7 @@ public class Builder implements Serializable {
                    final List<BuildValidationHelper> buildValidationHelpers,
                    final LRUModuleDependenciesClassLoaderCache dependenciesClassLoaderCache,
                    final LRUPomModelCache pomModelCache,
-                   final PackageNameWhiteListService packageNameWhiteListService,
+                   final PackageNameAllowListService packageNameAllowListService,
                    final Predicate<String> classFilter) {
         this(project,
              ioService,
@@ -163,7 +163,7 @@ public class Builder implements Serializable {
              buildValidationHelpers,
              dependenciesClassLoaderCache,
              pomModelCache,
-             packageNameWhiteListService,
+                packageNameAllowListService,
              classFilter,
              null,
              KieServices.Factory.get().newKieFileSystem());
@@ -180,7 +180,7 @@ public class Builder implements Serializable {
                            buildValidationHelpers,
                            dependenciesClassLoaderCache,
                            pomModelCache,
-                           packageNameWhiteListService,
+                packageNameAllowListService,
                            classFilter,
                            kieBuilder,
                            kieFileSystemClone);
@@ -289,11 +289,11 @@ public class Builder implements Serializable {
         // referential inconsistencies. We will at least provide a basic algorithm to ensure that if an external class
         // X references another external class Y, Y is also accessible by the class loader.
         return new ClassVerifier(kieModuleMetaData,
-                                 getTypeSourceResolver(kieModuleMetaData)).verify(getWhiteList(kieModuleMetaData));
+                                 getTypeSourceResolver(kieModuleMetaData)).verify(getAllowList(kieModuleMetaData));
     }
 
-    private WhiteList getWhiteList(final KieModuleMetaData kieModuleMetaData) {
-        return packageNameWhiteListService.filterPackageNames(project,
+    private AllowList getAllowList(final KieModuleMetaData kieModuleMetaData) {
+        return packageNameAllowListService.filterPackageNames(project,
                                                               kieModuleMetaData.getPackages());
     }
 

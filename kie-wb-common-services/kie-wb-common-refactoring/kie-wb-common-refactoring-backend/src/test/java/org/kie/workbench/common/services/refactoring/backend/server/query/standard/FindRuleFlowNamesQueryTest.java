@@ -50,9 +50,9 @@ public class FindRuleFlowNamesQueryTest {
     @Mock
     private IOService ioService;
     private static final String GROUP_NAME = "Group_Name";
-    private static final String FILE_NOT_EXIST_PATH = "default://master@SpaceA/ProjectA/src/main/resources/Rule_not_exist.rdrl";
+    private static final String FILE_NOT_EXIST_PATH = "default://main@SpaceA/ProjectA/src/main/resources/Rule_not_exist.rdrl";
     private static final String FILE_NAME = "Rule_number_two.rdrl";
-    private static final String FILE_PATH = "default://master@SpaceA/ProjectA/src/main/resources/" + FILE_NAME;
+    private static final String FILE_PATH = "default://main@SpaceA/ProjectA/src/main/resources/" + FILE_NAME;
     private static final URI FILE_NOT_EXIST_URI = URI.create(FILE_NOT_EXIST_PATH);
     private static final URI FILE_URI = URI.create(FILE_PATH);
     private static final SimpleFileSystemProvider fileSystemProvider = new SimpleFileSystemProvider();

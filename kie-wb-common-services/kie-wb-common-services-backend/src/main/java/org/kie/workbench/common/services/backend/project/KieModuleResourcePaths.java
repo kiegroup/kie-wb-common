@@ -24,5 +24,5 @@ public interface KieModuleResourcePaths {
 
     String PROJECT_REPOSITORIES_PATH = "project.repositories";
 
-    String PACKAGE_NAME_WHITE_LIST = "package-names-white-list";
+    String PACKAGE_NAMES_ALLOW_LIST = "package-names-allow-list";
 }

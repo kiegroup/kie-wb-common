@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.kie.soup.project.datamodel.oracle.MethodInfo;
-import org.kie.workbench.common.services.datamodel.backend.server.builder.util.BlackLists;
+import org.kie.workbench.common.services.datamodel.backend.server.builder.util.DenyLists;
 
 /**
  * Finds all methods that are not getters or setters from a class.
@@ -44,7 +44,7 @@ public class ClassMethodInspector {
             Method aMethod = methods[i];
             String methodName = aMethod.getName();
 
-            if (isNotGetterOrSetter(aMethod) && !BlackLists.isClassMethodBlackListed(clazz,
+            if (isNotGetterOrSetter(aMethod) && !DenyLists.isClassMethodInDenyList(clazz,
                                                                                      methodName)) {
 
                 Class<?>[] listParam = aMethod.getParameterTypes();

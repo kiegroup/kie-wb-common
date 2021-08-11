@@ -62,7 +62,7 @@ import static java.util.Arrays.asList;
 import static org.guvnor.ala.openshift.config.OpenShiftProperty.APPLICATION_NAME;
 import static org.guvnor.ala.openshift.config.OpenShiftProperty.KUBERNETES_AUTH_BASIC_PASSWORD;
 import static org.guvnor.ala.openshift.config.OpenShiftProperty.KUBERNETES_AUTH_BASIC_USERNAME;
-import static org.guvnor.ala.openshift.config.OpenShiftProperty.KUBERNETES_MASTER;
+import static org.guvnor.ala.openshift.config.OpenShiftProperty.KUBERNETES_MAIN;
 import static org.guvnor.ala.openshift.config.OpenShiftProperty.PROJECT_NAME;
 import static org.guvnor.ala.openshift.config.OpenShiftProperty.PROVIDER_NAME;
 import static org.guvnor.ala.openshift.config.OpenShiftProperty.RESOURCE_SECRETS_URI;
@@ -100,7 +100,7 @@ public class OpenShiftExecutorTest {
     public void testProviderConfigReuse() throws Exception {
         OpenShiftProviderConfigImpl providerConfig = new OpenShiftProviderConfigImpl().clear();
         providerConfig.setName(getClass().getSimpleName());
-        providerConfig.setKubernetesMaster("https://ce-os-rhel-master.usersys.redhat.com:8443");
+        providerConfig.setKubernetesMain("https://ce-os-rhel-main.usersys.redhat.com:8443");
         providerConfig.setKubernetesAuthBasicUsername("admin");
         providerConfig.setKubernetesAuthBasicPassword("admin");
         OpenShiftClient client = new OpenShiftAccessInterfaceImpl().newOpenShiftClient(providerConfig);
@@ -200,14 +200,14 @@ public class OpenShiftExecutorTest {
             // build properties
             put(GitConfig.ORIGIN, "https://github.com/jboss-openshift/openshift-quickstarts");
             put(GitConfig.REPO_NAME, "openshift-quickstarts");
-            put(GitConfig.BRANCH,  "master");
+            put(GitConfig.BRANCH,  "main");
             put(GitConfig.CREATE_REPO,  "true");
             put(GitConfig.OUT_DIR,  workDir.getAbsolutePath());
             put(MavenProjectConfig.PROJECT_DIR, "decisionserver/hellorules");
             */
             // provider properties
-            put(KUBERNETES_MASTER.inputKey(),
-                "https://ce-os-rhel-master.usersys.redhat.com:8443");
+            put(KUBERNETES_MAIN.inputKey(),
+                "https://ce-os-rhel-main.usersys.redhat.com:8443");
             put(KUBERNETES_AUTH_BASIC_USERNAME.inputKey(),
                 "admin");
             put(KUBERNETES_AUTH_BASIC_PASSWORD.inputKey(),

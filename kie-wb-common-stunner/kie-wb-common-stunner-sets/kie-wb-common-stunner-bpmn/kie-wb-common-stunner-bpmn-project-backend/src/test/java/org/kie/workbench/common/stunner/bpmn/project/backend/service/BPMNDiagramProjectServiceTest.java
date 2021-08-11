@@ -40,7 +40,7 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class BPMNDiagramProjectServiceTest {
 
-    public static final String DIR_URI = "default://master@diagrams/root";
+    public static final String DIR_URI = "default://main@diagrams/root";
 
     private static final String FILE_NAME = ".caseproject";
 

@@ -23,7 +23,7 @@
         "kubernetesKeystoreFile": null,
         "kubernetesKeystorePassphrase": null,
         "kubernetesLoggingInterval": null,
-        "kubernetesMaster": null,
+        "kubernetesMain": null,
         "kubernetesNamespace": null,
         "kubernetesOapiVersion": null,
         "kubernetesRequestTimeout": null,

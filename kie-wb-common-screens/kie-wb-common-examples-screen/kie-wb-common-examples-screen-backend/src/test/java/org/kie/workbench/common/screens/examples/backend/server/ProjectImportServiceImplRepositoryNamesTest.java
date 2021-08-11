@@ -197,10 +197,10 @@ public class ProjectImportServiceImplRepositoryNamesTest {
 
         when(repository1.getBranch("dev_branch")).thenReturn(Optional.of(new Branch("dev_branch",
                                                                                     repositoryRoot)));
-        final Optional<Branch> master = Optional.of(new Branch("master",
+        final Optional<Branch> main = Optional.of(new Branch("main",
                                                                PathFactory.newPath("testFile",
                                                                                    "file:///")));
-        when(repository1.getDefaultBranch()).thenReturn(master);
+        when(repository1.getDefaultBranch()).thenReturn(main);
 
         when(repositoryRoot.toURI()).thenReturn("default:///");
         when(module1Root.toURI()).thenReturn("default:///module1");
