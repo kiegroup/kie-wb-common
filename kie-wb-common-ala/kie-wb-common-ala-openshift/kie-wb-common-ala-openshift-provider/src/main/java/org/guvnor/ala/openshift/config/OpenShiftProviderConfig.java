@@ -103,8 +103,8 @@ public interface OpenShiftProviderConfig extends ProviderConfig {
         return OpenShiftProperty.KUBERNETES_LOGGING_INTERVAL.inputExpression();
     }
 
-    default String getKubernetesMaster() {
-        return OpenShiftProperty.KUBERNETES_MASTER.inputExpression();
+    default String getKubernetesMain() {
+        return OpenShiftProperty.KUBERNETES_MAIN.inputExpression();
     }
 
     default String getKubernetesNamespace() {

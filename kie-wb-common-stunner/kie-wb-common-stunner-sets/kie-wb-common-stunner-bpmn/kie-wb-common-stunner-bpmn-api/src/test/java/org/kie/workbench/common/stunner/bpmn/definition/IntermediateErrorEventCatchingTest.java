@@ -25,6 +25,7 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.event.error.Can
 import org.kie.workbench.common.stunner.bpmn.definition.property.font.FontSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.BPMNGeneralSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.SLADueDate;
+import org.kie.workbench.common.stunner.bpmn.definition.property.variables.AdvancedData;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -38,6 +39,7 @@ public class IntermediateErrorEventCatchingTest {
     private FontSet fontSet;
     private CircleDimensionSet dimensionSet;
     private DataIOSet dataIOSet;
+    private AdvancedData advancedData;
     private CancellingErrorEventExecutionSet cancellingErrorEventExecutionSet;
 
     private IntermediateErrorEventCatching tested;
@@ -49,6 +51,7 @@ public class IntermediateErrorEventCatchingTest {
         fontSet = mock(FontSet.class);
         dimensionSet = mock(CircleDimensionSet.class);
         dataIOSet = mock(DataIOSet.class);
+        advancedData = new AdvancedData();
         cancellingErrorEventExecutionSet = mock(CancellingErrorEventExecutionSet.class);
 
         tested = new IntermediateErrorEventCatching(general,
@@ -56,6 +59,7 @@ public class IntermediateErrorEventCatchingTest {
                                                     fontSet,
                                                     dimensionSet,
                                                     dataIOSet,
+                                                    advancedData,
                                                     cancellingErrorEventExecutionSet);
     }
 
@@ -85,6 +89,7 @@ public class IntermediateErrorEventCatchingTest {
                                                    fontSet,
                                                    dimensionSet,
                                                    dataIOSet,
+                                                   advancedData,
                                                    cancellingErrorEventExecutionSet);
         assertEquals(compare.hashCode(), tested.hashCode());
     }
@@ -97,6 +102,7 @@ public class IntermediateErrorEventCatchingTest {
                                                                                      fontSet,
                                                                                      dimensionSet,
                                                                                      dataIOSet,
+                                                                                     advancedData,
                                                                                      null);
         CancellingErrorEventExecutionSet executionSet = new CancellingErrorEventExecutionSet();
         executionSet.setSlaDueDate(new SLADueDate("12/25/1983"));
@@ -106,6 +112,7 @@ public class IntermediateErrorEventCatchingTest {
                                                    fontSet,
                                                    dimensionSet,
                                                    dataIOSet,
+                                                   advancedData,
                                                    executionSet);
         IntermediateErrorEventCatching compare4 =
                 new IntermediateErrorEventCatching(general,
@@ -113,6 +120,7 @@ public class IntermediateErrorEventCatchingTest {
                                                    fontSet,
                                                    dimensionSet,
                                                    dataIOSet,
+                                                   advancedData,
                                                    cancellingErrorEventExecutionSet);
 
         assertFalse(tested.equals(compare1));

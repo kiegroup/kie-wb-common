@@ -54,12 +54,12 @@ public class OpenShiftProviderConfigView
     private TextInput providerName;
 
     @Inject
-    @DataField("master-url-form")
-    private Div masterURLForm;
+    @DataField("main-url-form")
+    private Div mainURLForm;
 
     @Inject
-    @DataField("master-url")
-    private TextInput masterURL;
+    @DataField("main-url")
+    private TextInput mainURL;
 
     @Inject
     @DataField("username-form")
@@ -100,13 +100,13 @@ public class OpenShiftProviderConfigView
     }
 
     @Override
-    public String getMasterURL() {
-        return masterURL.getValue();
+    public String getMainURL() {
+        return mainURL.getValue();
     }
 
     @Override
-    public void setMasterURL(String masterURL) {
-        this.masterURL.setValue(masterURL);
+    public void setMainURL(String mainURL) {
+        this.mainURL.setValue(mainURL);
     }
 
     @Override
@@ -150,10 +150,10 @@ public class OpenShiftProviderConfigView
     }
 
     @Override
-    public void setMasterURLStatus(final FormStatus status) {
+    public void setMainURLStatus(final FormStatus status) {
         checkNotNull("status",
                      status);
-        setFormStatus(masterURLForm,
+        setFormStatus(mainURLForm,
                       status);
     }
 
@@ -177,7 +177,7 @@ public class OpenShiftProviderConfigView
     public void clear() {
         resetFormState();
         this.providerName.setValue(EMPTY_STRING);
-        this.masterURL.setValue(EMPTY_STRING);
+        this.mainURL.setValue(EMPTY_STRING);
         this.username.setValue(EMPTY_STRING);
         this.password.setValue(EMPTY_STRING);
     }
@@ -193,9 +193,9 @@ public class OpenShiftProviderConfigView
         presenter.onProviderNameChange();
     }
 
-    @EventHandler("master-url")
-    private void onMasterURLChange(@ForEvent("change") final Event event) {
-        presenter.onMasterURLChange();
+    @EventHandler("main-url")
+    private void onMainURLChange(@ForEvent("change") final Event event) {
+        presenter.onMainURLChange();
     }
 
     @EventHandler("username")
@@ -211,7 +211,7 @@ public class OpenShiftProviderConfigView
     private void resetFormState() {
         setFormStatus(providerNameForm,
                       FormStatus.VALID);
-        setFormStatus(masterURLForm,
+        setFormStatus(mainURLForm,
                       FormStatus.VALID);
         setFormStatus(usernameForm,
                       FormStatus.VALID);
@@ -221,7 +221,7 @@ public class OpenShiftProviderConfigView
 
     private void enable(boolean enabled) {
         this.providerName.setDisabled(!enabled);
-        this.masterURL.setDisabled(!enabled);
+        this.mainURL.setDisabled(!enabled);
         this.username.setDisabled(!enabled);
         this.password.setDisabled(!enabled);
     }

@@ -20,17 +20,26 @@ import java.util.List;
 import java.util.Set;
 
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.kie.workbench.common.stunner.bpmn.definition.property.variables.AdvancedData;
 import org.kie.workbench.common.stunner.core.backend.definition.adapter.ReflectionAdapterUtils;
 import org.kie.workbench.common.stunner.core.definition.annotation.definition.Labels;
 import org.kie.workbench.common.stunner.core.rule.annotation.CanContain;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 
+@RunWith(MockitoJUnitRunner.class)
 public class LaneTest {
+
+    @Mock
+    private AdvancedData advancedData;
 
     @Test
     public void testLaneCanContain() {
@@ -42,6 +51,25 @@ public class LaneTest {
         final List<String> actualRoles = asList(canContain.roles());
 
         assertEquals(expectedRoles, actualRoles);
+    }
+
+    @Test
+    public void testGetAdvancedData() {
+        final Lane lane = new Lane(null,
+                                   null,
+                                   null,
+                                   null,
+                                   advancedData);
+        AdvancedData result = lane.getAdvancedData();
+        assertEquals(advancedData, result);
+    }
+
+    @Test
+    public void testSetAdvancedData() {
+        final Lane lane = new Lane();
+        assertNotEquals(advancedData, lane.advancedData);
+        lane.setAdvancedData(advancedData);
+        assertEquals(advancedData, lane.advancedData);
     }
 
     @Test

@@ -53,7 +53,7 @@ import static org.mockito.Mockito.*;
 
 public abstract class AbstractDefChangeHandlerTest {
 
-    protected static final String FILE_URI = "default://master@datasources/MockUri.file";
+    protected static final String FILE_URI = "default://main@datasources/MockUri.file";
 
     protected static final String SESSION_ID = "SESSION_ID";
 

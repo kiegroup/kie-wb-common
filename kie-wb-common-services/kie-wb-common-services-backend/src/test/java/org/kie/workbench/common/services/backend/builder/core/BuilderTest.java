@@ -44,13 +44,13 @@ import org.kie.api.runtime.KieContainer;
 import org.kie.api.runtime.KieSession;
 import org.kie.scanner.KieModuleMetaData;
 import org.kie.workbench.common.services.backend.validation.asset.DefaultGenericKieValidator;
-import org.kie.workbench.common.services.backend.whitelist.PackageNameSearchProvider;
-import org.kie.workbench.common.services.backend.whitelist.PackageNameWhiteListLoader;
-import org.kie.workbench.common.services.backend.whitelist.PackageNameWhiteListSaver;
-import org.kie.workbench.common.services.backend.whitelist.PackageNameWhiteListServiceImpl;
+import org.kie.workbench.common.services.backend.allowlist.PackageNameSearchProvider;
+import org.kie.workbench.common.services.backend.allowlist.PackageNameAllowListLoader;
+import org.kie.workbench.common.services.backend.allowlist.PackageNameAllowListSaver;
+import org.kie.workbench.common.services.backend.allowlist.PackageNameAllowListServiceImpl;
 import org.kie.workbench.common.services.shared.project.KieModuleService;
 import org.kie.workbench.common.services.shared.project.ProjectImportsService;
-import org.kie.workbench.common.services.shared.whitelist.PackageNameWhiteListService;
+import org.kie.workbench.common.services.shared.allowlist.PackageNameAllowListService;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.slf4j.Logger;
@@ -130,7 +130,7 @@ public class BuilderTest
                                             new ArrayList<>(),
                                             dependenciesClassLoaderCache,
                                             pomModelCache,
-                                            getPackageNameWhiteListService(),
+                                            getPackageNameAllowListService(),
                                             alwaysTrue);
 
         assertNotNull(builder.getKieContainer());
@@ -151,7 +151,7 @@ public class BuilderTest
                                             new ArrayList<>(),
                                             dependenciesClassLoaderCache,
                                             pomModelCache,
-                                            getPackageNameWhiteListService(),
+                                            getPackageNameAllowListService(),
                                             alwaysTrue);
 
         final BuildResults results = builder.build();
@@ -188,7 +188,7 @@ public class BuilderTest
                                             new ArrayList<>(),
                                             dependenciesClassLoaderCache,
                                             pomModelCache,
-                                            getPackageNameWhiteListService(),
+                                            getPackageNameAllowListService(),
                                             alwaysTrue);
 
         final BuildResults results = builder.build();
@@ -218,7 +218,7 @@ public class BuilderTest
                                             new ArrayList<>(),
                                             dependenciesClassLoaderCache,
                                             pomModelCache,
-                                            getPackageNameWhiteListService(),
+                                            getPackageNameAllowListService(),
                                             alwaysTrue);
 
         final BuildResults results = builder.build();
@@ -276,7 +276,7 @@ public class BuilderTest
                                             new ArrayList<>(),
                                             dependenciesClassLoaderCache,
                                             pomModelCache,
-                                            getPackageNameWhiteListService(),
+                                            getPackageNameAllowListService(),
                                             alwaysTrue);
 
         final BuildResults results = builder.build();
@@ -308,7 +308,7 @@ public class BuilderTest
                                             new ArrayList<>(),
                                             dependenciesClassLoaderCache,
                                             pomModelCache,
-                                            mock(PackageNameWhiteListService.class),
+                                            mock(PackageNameAllowListService.class),
                                             alwaysTrue);
 
         assertNull(builder.getKieContainer());
@@ -340,7 +340,7 @@ public class BuilderTest
                                             new ArrayList<>(),
                                             dependenciesClassLoaderCache,
                                             pomModelCache,
-                                            getPackageNameWhiteListService(),
+                                            getPackageNameAllowListService(),
                                             alwaysTrue);
 
         assertNotNull(builder.getKieContainer());
@@ -381,7 +381,7 @@ public class BuilderTest
                                             new ArrayList<>(),
                                             dependenciesClassLoaderCache,
                                             pomModelCache,
-                                            getPackageNameWhiteListService(),
+                                            getPackageNameAllowListService(),
                                             alwaysTrue);
 
         BuildResults buildResults = builder.build();
@@ -408,7 +408,7 @@ public class BuilderTest
                                             new ArrayList<>(),
                                             dependenciesClassLoaderCache,
                                             pomModelCache,
-                                            getPackageNameWhiteListService(),
+                                            getPackageNameAllowListService(),
                                             alwaysTrue);
 
         final BuildResults buildResults = builder.build();
@@ -435,7 +435,7 @@ public class BuilderTest
                                             new ArrayList<>(),
                                             dependenciesClassLoaderCache,
                                             pomModelCache,
-                                            getPackageNameWhiteListService(),
+                                            getPackageNameAllowListService(),
                                             alwaysTrue);
 
         IncrementalBuildResults buildResults = builder.addResource(Paths.convert(noFilePath));
@@ -445,11 +445,11 @@ public class BuilderTest
                      addedMessages.size());
     }
 
-    private PackageNameWhiteListService getPackageNameWhiteListService() {
-        return new PackageNameWhiteListServiceImpl(ioService,
+    private PackageNameAllowListService getPackageNameAllowListService() {
+        return new PackageNameAllowListServiceImpl(ioService,
                                                    mock(KieModuleService.class),
-                                                   new PackageNameWhiteListLoader(packageNameSearchProvider,
+                                                   new PackageNameAllowListLoader(packageNameSearchProvider,
                                                                                   ioService),
-                                                   mock(PackageNameWhiteListSaver.class));
+                                                   mock(PackageNameAllowListSaver.class));
     }
 }

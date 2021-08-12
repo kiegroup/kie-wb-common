@@ -46,7 +46,7 @@ public class OpenShiftProviderConfigImpl implements OpenShiftProviderConfig, Clo
     private String kubernetesKeystoreFile;
     private String kubernetesKeystorePassphrase;
     private String kubernetesLoggingInterval;
-    private String kubernetesMaster;
+    private String kubernetesMain;
     private String kubernetesNamespace;
     private String kubernetesOapiVersion;
     private String kubernetesRequestTimeout;
@@ -90,7 +90,7 @@ public class OpenShiftProviderConfigImpl implements OpenShiftProviderConfig, Clo
         setKubernetesKeystoreFile(OpenShiftProviderConfig.super.getKubernetesKeystoreFile());
         setKubernetesKeystorePassphrase(OpenShiftProviderConfig.super.getKubernetesKeystorePassphrase());
         setKubernetesLoggingInterval(OpenShiftProviderConfig.super.getKubernetesLoggingInterval());
-        setKubernetesMaster(OpenShiftProviderConfig.super.getKubernetesMaster());
+        setKubernetesMain(OpenShiftProviderConfig.super.getKubernetesMain());
         setKubernetesNamespace(OpenShiftProviderConfig.super.getKubernetesNamespace());
         setKubernetesOapiVersion(OpenShiftProviderConfig.super.getKubernetesOapiVersion());
         setKubernetesRequestTimeout(OpenShiftProviderConfig.super.getKubernetesRequestTimeout());
@@ -136,7 +136,7 @@ public class OpenShiftProviderConfigImpl implements OpenShiftProviderConfig, Clo
             setKubernetesKeystoreFile(origin.getKubernetesKeystoreFile());
             setKubernetesKeystorePassphrase(origin.getKubernetesKeystorePassphrase());
             setKubernetesLoggingInterval(origin.getKubernetesLoggingInterval());
-            setKubernetesMaster(origin.getKubernetesMaster());
+            setKubernetesMain(origin.getKubernetesMain());
             setKubernetesNamespace(origin.getKubernetesNamespace());
             setKubernetesOapiVersion(origin.getKubernetesOapiVersion());
             setKubernetesRequestTimeout(origin.getKubernetesRequestTimeout());
@@ -183,7 +183,7 @@ public class OpenShiftProviderConfigImpl implements OpenShiftProviderConfig, Clo
         setKubernetesKeystoreFile(null);
         setKubernetesKeystorePassphrase(null);
         setKubernetesLoggingInterval(null);
-        setKubernetesMaster(null);
+        setKubernetesMain(null);
         setKubernetesNamespace(null);
         setKubernetesOapiVersion(null);
         setKubernetesRequestTimeout(null);
@@ -391,12 +391,12 @@ public class OpenShiftProviderConfigImpl implements OpenShiftProviderConfig, Clo
     }
 
     @Override
-    public String getKubernetesMaster() {
-        return kubernetesMaster;
+    public String getKubernetesMain() {
+        return kubernetesMain;
     }
 
-    public void setKubernetesMaster(String kubernetesMaster) {
-        this.kubernetesMaster = kubernetesMaster;
+    public void setKubernetesMain(String kubernetesMain) {
+        this.kubernetesMain = kubernetesMain;
     }
 
     @Override
@@ -596,7 +596,7 @@ public class OpenShiftProviderConfigImpl implements OpenShiftProviderConfig, Clo
                 ", kubernetesKeystoreFile=" + kubernetesKeystoreFile +
                 ", kubernetesKeystorePassphrase=" + kubernetesKeystorePassphrase +
                 ", kubernetesLoggingInterval=" + kubernetesLoggingInterval +
-                ", kubernetesMaster=" + kubernetesMaster +
+                ", kubernetesMain=" + kubernetesMain +
                 ", kubernetesNamespace=" + kubernetesNamespace +
                 ", kubernetesOapiVersion=" + kubernetesOapiVersion +
                 ", kubernetesRequestTimeout=" + kubernetesRequestTimeout +
@@ -642,7 +642,7 @@ public class OpenShiftProviderConfigImpl implements OpenShiftProviderConfig, Clo
         result = prime * result + ((kubernetesKeystoreFile == null) ? 0 : kubernetesKeystoreFile.hashCode());
         result = prime * result + ((kubernetesKeystorePassphrase == null) ? 0 : kubernetesKeystorePassphrase.hashCode());
         result = prime * result + ((kubernetesLoggingInterval == null) ? 0 : kubernetesLoggingInterval.hashCode());
-        result = prime * result + ((kubernetesMaster == null) ? 0 : kubernetesMaster.hashCode());
+        result = prime * result + ((kubernetesMain == null) ? 0 : kubernetesMain.hashCode());
         result = prime * result + ((kubernetesNamespace == null) ? 0 : kubernetesNamespace.hashCode());
         result = prime * result + ((kubernetesOapiVersion == null) ? 0 : kubernetesOapiVersion.hashCode());
         result = prime * result + ((kubernetesRequestTimeout == null) ? 0 : kubernetesRequestTimeout.hashCode());
@@ -811,11 +811,11 @@ public class OpenShiftProviderConfigImpl implements OpenShiftProviderConfig, Clo
         } else if (!kubernetesLoggingInterval.equals(other.kubernetesLoggingInterval)) {
             return false;
         }
-        if (kubernetesMaster == null) {
-            if (other.kubernetesMaster != null) {
+        if (kubernetesMain == null) {
+            if (other.kubernetesMain != null) {
                 return false;
             }
-        } else if (!kubernetesMaster.equals(other.kubernetesMaster)) {
+        } else if (!kubernetesMain.equals(other.kubernetesMain)) {
             return false;
         }
         if (kubernetesNamespace == null) {

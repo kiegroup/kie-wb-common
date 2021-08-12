@@ -43,7 +43,7 @@ import org.uberfire.workbench.model.menu.Menus;
 
 /**
  * A Perspective for Rule authors. Note the @WorkbenchPerspective has the same identifier as kie-drools-wb
- * since org.kie.workbench.common.screens.projecteditor.client.messages.ProblemsService "white-lists" a
+ * since org.kie.workbench.common.screens.projecteditor.client.messages.ProblemsService "allow-lists" a
  * set of Perspectives for which to show the Problems Panel
  */
 @ApplicationScoped

@@ -32,9 +32,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.api.builder.KieBuilder;
 import org.kie.api.builder.KieFileSystem;
+import org.kie.workbench.common.services.shared.allowlist.PackageNameAllowListService;
 import org.kie.workbench.common.services.shared.project.KieModuleService;
 import org.kie.workbench.common.services.shared.project.ProjectImportsService;
-import org.kie.workbench.common.services.shared.whitelist.PackageNameWhiteListService;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
@@ -83,7 +83,7 @@ public class BuilderRenameTest {
                               new ArrayList<>(),
                               mock(LRUModuleDependenciesClassLoaderCache.class),
                               mock(LRUPomModelCache.class),
-                              mock(PackageNameWhiteListService.class),
+                              mock(PackageNameAllowListService.class),
                               mock(Predicate.class),
                               mock(KieBuilder.class),
                               kieFileSystem);

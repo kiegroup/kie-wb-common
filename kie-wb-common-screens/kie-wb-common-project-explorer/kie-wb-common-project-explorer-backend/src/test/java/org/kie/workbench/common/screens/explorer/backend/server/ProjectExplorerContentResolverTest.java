@@ -63,11 +63,11 @@ public class ProjectExplorerContentResolverTest {
     protected final SimpleFileSystemProvider fs = new SimpleFileSystemProvider();
     private ProjectExplorerContentResolver resolver;
     private GitRepository repository;
-    private Set<Module> masterModules;
+    private Set<Module> mainModules;
     private Set<Module> devModules;
 
     private HelperWrapper helperWrapper;
-    private Branch masterBranch;
+    private Branch mainBranch;
     private Branch devBranch;
     private Space space;
 
@@ -92,12 +92,12 @@ public class ProjectExplorerContentResolverTest {
 
         final UserExplorerData userExplorerData = new UserExplorerData();
 
-        masterModules = new HashSet<>();
-        masterModules.add(createModule("master",
-                                       masterBranch,
+        mainModules = new HashSet<>();
+        mainModules.add(createModule("main",
+                mainBranch,
                                        "module 1"));
-        masterModules.add(createModule("master",
-                                       masterBranch,
+        mainModules.add(createModule("main",
+                mainBranch,
                                        "module 2"));
 
         devModules = new HashSet<>();
@@ -128,7 +128,7 @@ public class ProjectExplorerContentResolverTest {
                                   Collections.EMPTY_LIST)
         );
 
-        when(moduleService.getAllModules(masterBranch)).thenReturn(masterModules);
+        when(moduleService.getAllModules(mainBranch)).thenReturn(mainModules);
         when(moduleService.getAllModules(devBranch)).thenReturn(devModules);
         when(moduleService.resolveDefaultPackage(Mockito.<Module>any())).thenReturn(new Package());
 
@@ -149,7 +149,7 @@ public class ProjectExplorerContentResolverTest {
     @Test
     public void testResolveWithOUWithRepositoryNullQueryBusinessView() throws Exception {
         final ProjectExplorerContentQuery query = new ProjectExplorerContentQuery(repository,
-                                                                                  masterBranch);
+                mainBranch);
         final ActiveOptions options = new ActiveOptions();
         options.add(Option.TREE_NAVIGATOR);
         options.add(Option.EXCLUDE_HIDDEN_ITEMS);
@@ -161,7 +161,7 @@ public class ProjectExplorerContentResolverTest {
     @Test
     public void testResolveWithOUWithRepositoryNullQueryTechnicalView() throws Exception {
         final ProjectExplorerContentQuery query = new ProjectExplorerContentQuery(repository,
-                                                                                  masterBranch);
+                mainBranch);
         final ActiveOptions options = new ActiveOptions();
         options.add(Option.TREE_NAVIGATOR);
         options.add(Option.EXCLUDE_HIDDEN_ITEMS);
@@ -173,17 +173,17 @@ public class ProjectExplorerContentResolverTest {
     @Test
     public void testChangeProjectOnBusinessView() throws Exception {
 
-        ProjectExplorerContent content = resolver.resolve(getContentQuery(masterBranch,
-                                                                          createModule("master",
-                                                                                       masterBranch,
+        ProjectExplorerContent content = resolver.resolve(getContentQuery(mainBranch,
+                                                                          createModule("main",
+                                                                                  mainBranch,
                                                                                        "module 1"),
                                                                           Option.BUSINESS_CONTENT));
         helperWrapper.reset();
 
-        assertEquals("master",
+        assertEquals("main",
                      content.getProject().getBranch().getName());
         assertNotNull(content.getModule()); // This will be the default module
-        assertEquals("master@module 1",
+        assertEquals("main@module 1",
                      content.getModule().getRootPath().toURI());
 
         content = resolver.resolve(getContentQuery(devBranch,
@@ -214,43 +214,43 @@ public class ProjectExplorerContentResolverTest {
         assertEquals("dev-1.0.0@module 2",
                      content.getModule().getRootPath().toURI());
 
-        content = resolver.resolve(getContentQuery(masterBranch,
-                                                   createModule("master",
-                                                                masterBranch,
+        content = resolver.resolve(getContentQuery(mainBranch,
+                                                   createModule("main",
+                                                           mainBranch,
                                                                 "module 2"),
                                                    Option.BUSINESS_CONTENT));
         helperWrapper.reset();
 
-        assertEquals("master",
+        assertEquals("main",
                      content.getProject().getBranch().getName());
         assertEquals("module 2",
                      content.getModule().getModuleName());
-        assertEquals("master@module 2",
+        assertEquals("main@module 2",
                      content.getModule().getRootPath().toURI());
     }
 
     @Test
     public void testChangeModuleOnTechnicalView() {
 
-        resolver.resolve(getContentQuery(masterBranch,
-                                         createModule("master",
-                                                      masterBranch,
+        resolver.resolve(getContentQuery(mainBranch,
+                                         createModule("main",
+                                                 mainBranch,
                                                       "module 1"),
                                          Option.TECHNICAL_CONTENT));
         helperWrapper.reset();
 
-        Content content = resolver.setupSelectedItems(getContentQuery(masterBranch,
-                                                                      createModule("master",
-                                                                                   masterBranch,
+        Content content = resolver.setupSelectedItems(getContentQuery(mainBranch,
+                                                                      createModule("main",
+                                                                              mainBranch,
                                                                                    "module 2"),
                                                                       Option.TECHNICAL_CONTENT,
                                                                       null,
                                                                       getFileItem()));
         helperWrapper.reset();
 
-        assertEquals("master",
+        assertEquals("main",
                      content.getSelectedProject().getBranch().getName());
-        assertEquals("master@module 2",
+        assertEquals("main@module 2",
                      content.getSelectedModule().getRootPath().toURI());
         assertNull(content.getSelectedItem());
         assertNull(content.getSelectedPackage());
@@ -259,9 +259,9 @@ public class ProjectExplorerContentResolverTest {
     @Test
     public void testChangeModuleOnTechnicalViewWhenThereIsAFolderItemButNoActiveModuleOrganizationalUnitOrRepository() {
 
-        resolver.resolve(getContentQuery(masterBranch,
-                                         createModule("master",
-                                                      masterBranch,
+        resolver.resolve(getContentQuery(mainBranch,
+                                         createModule("main",
+                                                 mainBranch,
                                                       "module 1"),
                                          Option.TECHNICAL_CONTENT));
         helperWrapper.reset();
@@ -282,9 +282,9 @@ public class ProjectExplorerContentResolverTest {
         Content content = resolver.setupSelectedItems(projectExplorerContentQuery);
         helperWrapper.reset();
 
-        assertEquals("master",
+        assertEquals("main",
                      content.getSelectedProject().getBranch().getName());
-        assertEquals("master@module 1",
+        assertEquals("main@module 1",
                      content.getSelectedModule().getRootPath().toURI());
         assertNotNull(content.getSelectedItem());
         assertNull(content.getSelectedPackage());
@@ -292,16 +292,16 @@ public class ProjectExplorerContentResolverTest {
 
     @Test
     public void testChangeFromBusinessToTechnicalView() {
-        resolver.resolve(getContentQuery(masterBranch,
-                                         createModule("master",
-                                                      masterBranch,
+        resolver.resolve(getContentQuery(mainBranch,
+                                         createModule("main",
+                                                 mainBranch,
                                                       "project 1"),
                                          Option.BUSINESS_CONTENT));
         helperWrapper.reset();
 
-        final Content content = resolver.setupSelectedItems(getContentQuery(masterBranch,
-                                                                            createModule("master",
-                                                                                         masterBranch,
+        final Content content = resolver.setupSelectedItems(getContentQuery(mainBranch,
+                                                                            createModule("main",
+                                                                                    mainBranch,
                                                                                          "project 1"),
                                                                             Option.TECHNICAL_CONTENT,
                                                                             null,
@@ -309,9 +309,9 @@ public class ProjectExplorerContentResolverTest {
 
         assertEquals("demo",
                      content.getSelectedProject().getOrganizationalUnit().getName());
-        assertEquals("master",
+        assertEquals("main",
                      content.getSelectedProject().getBranch().getName());
-        assertEquals("file://master@module/",
+        assertEquals("file://main@module/",
                      content.getSelectedProject().getRootPath().toURI());
         assertNull(content.getSelectedItem());
         assertNull(content.getSelectedPackage());
@@ -327,7 +327,7 @@ public class ProjectExplorerContentResolverTest {
         }).when(explorerServiceHelper).toFolderItem(any(org.uberfire.java.nio.file.Path.class));
 
         Path path = PathFactory.newPath("/",
-                                        "default://master@myproject/");
+                                        "default://main@myproject/");
 
         final List<FolderItem> siblings = resolver.getSegmentSiblings(path);
 
@@ -347,12 +347,12 @@ public class ProjectExplorerContentResolverTest {
         }).when(explorerServiceHelper).toFolderItem(any(org.uberfire.java.nio.file.Path.class));
 
         Path path = PathFactory.newPath("src",
-                                        "default://master@myproject/src");
+                                        "default://main@myproject/src");
 
         final List<org.uberfire.java.nio.file.Path> mockedSiblings = new ArrayList<>();
         mockedSiblings.add(Paths.convert(path));
         mockedSiblings.add(Paths.convert(PathFactory.newPath("src",
-                                                             "default://master@myproject/pom.xml")));
+                                                             "default://main@myproject/pom.xml")));
         doReturn(mockedSiblings).when(resolver).getDirectoryIterator(any(org.uberfire.java.nio.file.Path.class));
 
         final List<FolderItem> siblings = resolver.getSegmentSiblings(path);
@@ -449,15 +449,15 @@ public class ProjectExplorerContentResolverTest {
                                                            space);
 
         final HashMap<String, Branch> branches = new HashMap<>();
-        masterBranch = new Branch("master",
+        mainBranch = new Branch("main",
                                   PathFactory.newPath("/",
-                                                      "file://master@module/"));
+                                                      "file://main@module/"));
         devBranch = new Branch("dev-1.0.0",
                                PathFactory.newPath("/",
                                                    "file://dev-1.0.0@module/"));
 
-        branches.put("master",
-                     masterBranch);
+        branches.put("main",
+                mainBranch);
         branches.put("dev-1.0.0",
                      devBranch);
 

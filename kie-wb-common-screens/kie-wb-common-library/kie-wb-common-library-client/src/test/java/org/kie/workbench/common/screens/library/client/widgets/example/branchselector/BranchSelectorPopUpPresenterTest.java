@@ -109,8 +109,8 @@ public class BranchSelectorPopUpPresenterTest {
 
         presenter.defineBranches();
 
-        verify(view).getAtLeastMasterIsRequiredMessage();
-        verify(view, never()).getMasterIsRequiredMessage();
+        verify(view).getAtLeastMainIsRequiredMessage();
+        verify(view, never()).getMainIsRequiredMessage();
         verify(view).showError(any());
         verify(presenter.importProject, never()).setSelectedBranches(presenter.branches);
         verify(view, never()).hide();
@@ -125,8 +125,8 @@ public class BranchSelectorPopUpPresenterTest {
 
         presenter.defineBranches();
 
-        verify(view, never()).getAtLeastMasterIsRequiredMessage();
-        verify(view).getMasterIsRequiredMessage();
+        verify(view, never()).getAtLeastMainIsRequiredMessage();
+        verify(view).getMainIsRequiredMessage();
         verify(view).showError(any());
         verify(presenter.importProject, never()).setSelectedBranches(presenter.branches);
         verify(view, never()).hide();
@@ -141,8 +141,8 @@ public class BranchSelectorPopUpPresenterTest {
 
         presenter.defineBranches();
 
-        verify(view, never()).getAtLeastMasterIsRequiredMessage();
-        verify(view, never()).getMasterIsRequiredMessage();
+        verify(view, never()).getAtLeastMainIsRequiredMessage();
+        verify(view, never()).getMainIsRequiredMessage();
         verify(view, never()).showError(any());
         verify(presenter.importProject).setSelectedBranches(presenter.branches);
         verify(view).hide();

@@ -69,7 +69,7 @@ public class ModuleDataSourceExplorerTest
 
         when(org1.getName()).thenReturn("org1");
         when(repo1.getAlias()).thenReturn("repo1");
-        when(repo1.getDefaultBranch()).thenReturn(Optional.of(new Branch("master",
+        when(repo1.getDefaultBranch()).thenReturn(Optional.of(new Branch("main",
                                                                          mock(Path.class))));
         when(module1.getRootPath()).thenReturn(path);
 

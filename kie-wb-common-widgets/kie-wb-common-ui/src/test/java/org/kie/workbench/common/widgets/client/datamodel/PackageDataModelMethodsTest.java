@@ -202,7 +202,7 @@ public class PackageDataModelMethodsTest {
                                       assertFalse(methodInfos.isEmpty());
                                       for (final MethodInfo methodInfo : methodInfos) {
                                           assertFalse("Method " + methodInfo.getName() + " is not allowed.",
-                                                      checkBlackList(methodInfo.getName()));
+                                                      checkDenyList(methodInfo.getName()));
                                       }
                                   }
                               });
@@ -255,7 +255,7 @@ public class PackageDataModelMethodsTest {
                                       assertFalse(methodInfos.isEmpty());
                                       for (final MethodInfo methodInfo : methodInfos) {
                                           assertFalse("Method " + methodInfo.getName() + " is not allowed.",
-                                                      checkBlackList(methodInfo.getName()));
+                                                      checkDenyList(methodInfo.getName()));
                                       }
                                   }
                               });
@@ -269,7 +269,7 @@ public class PackageDataModelMethodsTest {
                               });
     }
 
-    private boolean checkBlackList(String methodName) {
+    private boolean checkDenyList(String methodName) {
         return ("hashCode".equals(methodName)
                 || "equals".equals(methodName)
                 || "addAll".equals(methodName)

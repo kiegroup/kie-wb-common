@@ -87,10 +87,6 @@ public class ProcessPropertyReader extends BasePropertyReader {
         return CustomElement.globalVariables.of(process).get();
     }
 
-    public String getMetaDataAttributes() {
-        return CustomElement.metaDataAttributes.of(process).get();
-    }
-
     public List<DefaultImport> getDefaultImports() {
         return CustomElement.defaultImports.of(process).get();
     }

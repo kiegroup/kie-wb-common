@@ -83,7 +83,7 @@ public class ProjectImportsServiceImplTest extends WeldModuleTestBase {
                                                        Paths.class,
                                                        cc);
 
-        final URL packageUrl = this.getClass().getResource("/ModuleBackendTestModuleStructureValid/package-names-white-list");
+        final URL packageUrl = this.getClass().getResource("/ModuleBackendTestModuleStructureValid/package-names-allow-list");
         final org.uberfire.java.nio.file.Path nioPackagePath = fs.getPath(packageUrl.toURI());
         final ProjectConfigurationContentHandler contentHandler = new ProjectConfigurationContentHandler();
 
@@ -101,7 +101,7 @@ public class ProjectImportsServiceImplTest extends WeldModuleTestBase {
     }
 
     @Test
-    public void testPackageNameWhiteList() throws URISyntaxException {
+    public void testPackageNameAllowList() throws URISyntaxException {
 
         when(ioService.exists(any(org.uberfire.java.nio.file.Path.class))).thenReturn(false);
 
@@ -126,7 +126,7 @@ public class ProjectImportsServiceImplTest extends WeldModuleTestBase {
     }
 
     @Test(expected = FileAlreadyExistsException.class)
-    public void testPackageNameWhiteListFileExists() throws URISyntaxException {
+    public void testPackageNameAllowListFileExists() throws URISyntaxException {
 
         when(ioService.exists(any(org.uberfire.java.nio.file.Path.class))).thenReturn(true);
 

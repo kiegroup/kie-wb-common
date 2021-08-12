@@ -150,9 +150,9 @@ public class OpenShiftAccessInterfaceImpl implements OpenShiftAccessInterface,
         if (kubernetesLoggingInterval != null) {
             builder = builder.withLoggingInterval(Integer.parseInt(kubernetesLoggingInterval));
         }
-        String kubernetesMaster = trimToNull(config.getKubernetesMaster());
-        if (kubernetesMaster != null) {
-            builder = builder.withMasterUrl(kubernetesMaster);
+        String kubernetesMain = trimToNull(config.getKubernetesMain());
+        if (kubernetesMain != null) {
+            builder = builder.withMasterUrl(kubernetesMain);
         }
         String kubernetesNamespace = trimToNull(config.getKubernetesNamespace());
         if (kubernetesNamespace != null) {
