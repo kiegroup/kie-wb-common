@@ -9,8 +9,6 @@
 
 **Business Central**: [WAR file](https://donwnload.here/something)
 
-**VS Code**: [plugin](https://donwnload.here/something)
-
 <details>
 <summary>
 How to retest this PR or trigger a specific build:
