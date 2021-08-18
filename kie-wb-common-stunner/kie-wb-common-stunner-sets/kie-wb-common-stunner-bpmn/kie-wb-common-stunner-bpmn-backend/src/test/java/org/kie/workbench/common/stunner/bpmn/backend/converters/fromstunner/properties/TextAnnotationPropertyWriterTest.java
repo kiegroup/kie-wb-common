@@ -33,6 +33,8 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -72,6 +74,7 @@ public class TextAnnotationPropertyWriterTest {
     public void setName() {
         tested.setName(NAME);
         verify(element).setText(NAME);
+        verify(element, times(0)).setName(any());
         verify(valueMap).add(entryArgumentCaptor.capture());
         final MetaDataTypeImpl value = (MetaDataTypeImpl) entryArgumentCaptor.getValue().getValue();
         assertEquals(NAME, CustomElement.name.stripCData(value.getMetaValue()));
