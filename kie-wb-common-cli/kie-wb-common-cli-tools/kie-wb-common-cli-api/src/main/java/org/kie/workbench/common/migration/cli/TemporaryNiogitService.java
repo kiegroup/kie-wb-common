@@ -64,7 +64,7 @@ public class TemporaryNiogitService {
         String repositoryURL = actualTarget.toUri().toString();
         RepositoryEnvironmentConfigurations configurations = new RepositoryEnvironmentConfigurations();
         Map<String, Object> configMap = configurations.getConfigurationMap();
-        configMap.put(EnvironmentParameters.AVOID_INDEX, "true");
+        configMap.put(EnvironmentParameters.AVOID_INDEX, Boolean.TRUE);
         configMap.put("origin", repositoryURL);
 
         Repository repo = repoService.createRepository(ou, GitRepository.SCHEME.toString(), TMP_REPO_ALIAS, configurations);
