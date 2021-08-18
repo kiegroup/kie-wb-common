@@ -46,16 +46,35 @@ public abstract class BPMNReusableSubProcessValidator implements DomainValidator
         List<DomainViolation> violations = new ArrayList<>();
         while (it.hasNext()) {
             Element element = it.next();
-            if (element.getContent() instanceof View && ((View) element.getContent()).getDefinition() instanceof ReusableSubprocess) {
-                ReusableSubprocess subprocess = (ReusableSubprocess) ((View) element.getContent()).getDefinition();
-                final AssignmentsInfo assignmentsInfo = subprocess.getDataIOSet().getAssignmentsinfo();
-                if (hasNoAssignmentsDataInput(assignmentsInfo) || hasNoAssignmentsDataOutput(assignmentsInfo)) {
-                    BPMNViolation bpmnViolation = new BPMNViolation(getMessageSubprocessWithoutDataIOAssignments() + " : " + subprocess.getGeneral().getName().getValue(), Violation.Type.WARNING, element.getUUID());
-                    violations.add(bpmnViolation);
-                }
-            }
+            checkElementForViolations(violations, element);
         }
         resultConsumer.accept(violations);
+    }
+
+    protected void checkElementForViolations(List<DomainViolation> violations, Element element) {
+        if (isReusableAndHasNoInputs(element)) {
+            addViolation(violations, element);
+        }
+    }
+
+    protected void addViolation(List<DomainViolation> violations, Element element) {
+        ReusableSubprocess subprocess = (ReusableSubprocess) ((View) element.getContent()).getDefinition();
+        BPMNViolation bpmnViolation = new BPMNViolation(getMessageSubprocessWithoutDataIOAssignments() + " : " + subprocess.getGeneral().getName().getValue(), Violation.Type.WARNING, element.getUUID());
+        violations.add(bpmnViolation);
+    }
+
+    protected boolean isReusableSubProcess(Element element) {
+        return element.getContent() instanceof View && ((View) element.getContent()).getDefinition() instanceof ReusableSubprocess;
+    }
+
+    protected boolean hasNoDataInputs(Element element) {
+        ReusableSubprocess subprocess = (ReusableSubprocess) ((View) element.getContent()).getDefinition();
+        final AssignmentsInfo assignmentsInfo = subprocess.getDataIOSet().getAssignmentsinfo();
+        return hasNoAssignmentsDataInput(assignmentsInfo) || hasNoAssignmentsDataOutput(assignmentsInfo);
+    }
+
+    protected boolean isReusableAndHasNoInputs(Element element) {
+        return isReusableSubProcess(element) && hasNoDataInputs(element);
     }
 
     public abstract String getMessageSubprocessWithoutDataIOAssignments();
