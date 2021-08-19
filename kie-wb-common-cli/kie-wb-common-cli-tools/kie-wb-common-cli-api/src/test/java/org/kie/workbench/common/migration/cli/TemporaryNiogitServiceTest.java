@@ -123,7 +123,7 @@ public class TemporaryNiogitServiceTest {
         verify(repoService).createRepository(any(), any(), any(), configsCaptor.capture());
         RepositoryEnvironmentConfigurations configs = configsCaptor.getValue();
         assertEquals(target.toUri().toString(), assertValue(configs.getOrigin(), String.class));
-        assertEquals("true", configs.getConfigurationMap().get(AVOID_INDEX));
+        assertEquals(true, configs.getConfigurationMap().get(AVOID_INDEX));
     }
 
     private <T> T assertValue(Object origin, Class<T> clazz) {
