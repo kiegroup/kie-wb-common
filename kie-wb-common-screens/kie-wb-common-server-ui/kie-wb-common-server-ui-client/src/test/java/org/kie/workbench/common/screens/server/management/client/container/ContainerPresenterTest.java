@@ -45,7 +45,6 @@ import org.kie.workbench.common.screens.server.management.client.util.State;
 import org.kie.workbench.common.screens.server.management.model.ContainerRuntimeOperation;
 import org.kie.workbench.common.screens.server.management.model.ContainerSpecData;
 import org.kie.workbench.common.screens.server.management.model.ContainerUpdateEvent;
-import org.kie.workbench.common.screens.server.management.service.ContainerService;
 import org.kie.workbench.common.screens.server.management.service.RuntimeManagementService;
 import org.kie.workbench.common.screens.server.management.service.SpecManagementService;
 import org.mockito.ArgumentCaptor;
@@ -60,6 +59,7 @@ import org.uberfire.mocks.EventSourceMock;
 import org.uberfire.mvp.Command;
 import org.uberfire.workbench.events.NotificationEvent;
 
+import static java.util.Collections.emptyList;
 import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -82,8 +82,6 @@ public class ContainerPresenterTest {
     RuntimeManagementService runtimeManagementService;
 
     Caller<SpecManagementService> specManagementServiceCaller;
-
-    Caller<ContainerService> containerServiceCaller;
 
     @Mock
     SpecManagementService specManagementService;
@@ -109,9 +107,6 @@ public class ContainerPresenterTest {
     @Mock
     ContainerProcessConfigPresenter containerProcessConfigPresenter;
 
-    @Mock
-    ContainerService containerService;
-
     ContainerPresenter presenter;
 
     ReleaseId releaseId;
@@ -128,7 +123,6 @@ public class ContainerPresenterTest {
     public void init() {
         runtimeManagementServiceCaller = new CallerMock<RuntimeManagementService>(runtimeManagementService);
         specManagementServiceCaller = new CallerMock<SpecManagementService>(specManagementService);
-        containerServiceCaller = new CallerMock<ContainerService>(containerService) ;
         doNothing().when(serverTemplateSelectedEvent).fire(any(ServerTemplateSelected.class));
         doNothing().when(notification).fire(any(NotificationEvent.class));
         when(containerStatusEmptyPresenter.getView()).thenReturn(containerStatusEmptyPresenterView);
@@ -143,8 +137,7 @@ public class ContainerPresenterTest {
                 runtimeManagementServiceCaller,
                 specManagementServiceCaller,
                 serverTemplateSelectedEvent,
-                notification,
-                containerServiceCaller));
+                notification));
 
         releaseId = new ReleaseId("org.kie",
                                   "container",
@@ -203,14 +196,16 @@ public class ContainerPresenterTest {
 
     @Test
     public void testStartContainer() {
+        when(runtimeManagementService.getContainersByContainerSpec(
+                serverTemplateKey.getId(),
+                containerSpec.getId())).thenReturn(containerSpecData);
+
         presenter.loadContainers(containerSpecData);
 
         presenter.startContainer();
 
-        verify(view).setContainerStartState(State.ENABLED);
-        verify(view).setContainerStopState(State.DISABLED);
-        verify(view).disableRemoveButton();
-        verify(view).enableToggleActivationButton();
+        verify(view, times(2)).setContainerStartState(State.DISABLED);
+        verify(view, times(2)).setContainerStopState(State.ENABLED);
 
         final String errorMessage = "ERROR";
         when(view.getStartContainerErrorMessage()).thenReturn(errorMessage);
@@ -220,16 +215,19 @@ public class ContainerPresenterTest {
                                                         NotificationEvent.NotificationType.ERROR));
 
         verify(view,
-               times(2)).setContainerStartState(State.DISABLED);
+               times(3)).setContainerStartState(State.DISABLED);
         verify(view,
-               times(2)).setContainerStopState(State.ENABLED);
+               times(3)).setContainerStopState(State.ENABLED);
         verify(view,
-               times(2)).enableRemoveButton();
+               times(3)).enableRemoveButton();
     }
 
     @Test
     public void testStopContainer() {
-        when(containerService.isRunningContainer(any())).thenReturn(false);
+        when(runtimeManagementService.getContainersByContainerSpec(
+                serverTemplateKey.getId(),
+                containerSpec.getId())).thenReturn(containerSpecData);
+
         presenter.loadContainers(containerSpecData);
 
         presenter.stopContainer();
@@ -248,16 +246,8 @@ public class ContainerPresenterTest {
         verify(notification).fire(new NotificationEvent(errorMessage,
                                                         NotificationEvent.NotificationType.ERROR));
 
-        verify(view).setContainerStartState(State.ENABLED);
-        verify(view).setContainerStopState(State.DISABLED);
-        verify(view).disableRemoveButton();
-
-        when(containerService.isRunningContainer(any())).thenReturn(true);
-        final String canNotStopMessage = "can not stop";
-        when(view.getCanNotStopContainerMessage()).thenReturn(canNotStopMessage);
-        presenter.stopContainer();
-        verify(notification).fire(new NotificationEvent(canNotStopMessage, NotificationEvent.NotificationType.WARNING));
-        verify(specManagementService, times(2)).stopContainer(any());
+        verify(view, times(3)).setContainerStartState(State.DISABLED);
+        verify(view, times(3)).setContainerStopState(State.ENABLED);
     }
 
     @Test
@@ -274,39 +264,46 @@ public class ContainerPresenterTest {
     
     @Test
     public void testDeactivateContainerFromStartedState() {
+        when(runtimeManagementService.getContainersByContainerSpec(
+                serverTemplateKey.getId(),
+                containerSpec.getId())).thenReturn(containerSpecData);
+
         presenter.loadContainers(containerSpecData);
         
         presenter.startContainer();
         containerSpec.setStatus(KieContainerStatus.STARTED);
        
-        verify(view).enableToggleActivationButton();
+        verify(view, never()).enableToggleActivationButton();
 
         presenter.toggleActivationContainer();
 
-        verify(view,
-                times(2)).enableToggleActivationButton();
-        verify(view).updateToggleActivationButton(eq(true));
+        verify(view).enableToggleActivationButton();
+        verify(view, times(3)).updateToggleActivationButton(eq(false));
     }
     
     @Test
     public void testDeactivateThenActivateContainerFromStartedState() {
+        when(runtimeManagementService.getContainersByContainerSpec(
+                serverTemplateKey.getId(),
+                containerSpec.getId())).thenReturn(containerSpecData);
+        
         presenter.loadContainers(containerSpecData);
         
         presenter.startContainer();
         containerSpec.setStatus(KieContainerStatus.STARTED);
-       
-        verify(view).enableToggleActivationButton();
+
+        verify(view, never()).enableToggleActivationButton();
 
         presenter.toggleActivationContainer();
-        verify(view,
-                times(2)).enableToggleActivationButton();
-        verify(view).updateToggleActivationButton(eq(true));
+
+        verify(view).enableToggleActivationButton();
+        verify(view, times(3)).updateToggleActivationButton(eq(false));
         
         presenter.toggleActivationContainer();
 
         verify(view,
-                times(3)).enableToggleActivationButton();
-        verify(view,times(2)).updateToggleActivationButton(eq(false));
+                times(2)).enableToggleActivationButton();
+        verify(view,times(4)).updateToggleActivationButton(eq(false));
 
 
     }
@@ -591,14 +588,32 @@ public class ContainerPresenterTest {
 
     @Test //Test fix for JBPM-8028
     public void testUpdateStatusForStopped() {
-        presenter.updateStatus(KieContainerStatus.STOPPED);
+        presenter.updateStatus(KieContainerStatus.STOPPED, containers);
 
+        verify(view).enableRemoveButton();
+        verify(view).setContainerStartState(State.DISABLED);
+        verify(view).setContainerStopState(State.ENABLED);
         verify(view).updateToggleActivationButton(false);
+        verify(view).disableToggleActivationButton();
+    }
+
+    @Test //Test fix for JBPM-8028
+    public void testUpdateStatusForStoppedWithActiveContainer() {
+        Container c = new Container();
+        c.setStatus(KieContainerStatus.STARTED);
+        containers.add(c);
+        presenter.updateStatus(KieContainerStatus.STOPPED, containers);
+
+        verify(view).disableRemoveButton();
+        verify(view).setContainerStartState(State.DISABLED);
+        verify(view).setContainerStopState(State.ENABLED);
+        verify(view).updateToggleActivationButton(false);
+        verify(view).disableToggleActivationButton();
     }
 
     @Test //Test fix for JBPM-8028
     public void testUpdateStatusForStarted() {
-        presenter.updateStatus(KieContainerStatus.STARTED);
+        presenter.updateStatus(KieContainerStatus.STARTED, containers);
 
         verify(view).disableRemoveButton();
         verify(view).setContainerStartState(State.ENABLED);
@@ -607,9 +622,31 @@ public class ContainerPresenterTest {
         verify(view).enableToggleActivationButton();
     }
 
+    @Test
+    public void testUpdateStatusForDisposing() {
+        presenter.updateStatus(KieContainerStatus.DISPOSING, containers);
+
+        verify(view).disableRemoveButton();
+        verify(view).setContainerStartState(State.DISABLED);
+        verify(view).setContainerStopState(State.DISABLED);
+        verify(view).updateToggleActivationButton(false);
+        verify(view).disableToggleActivationButton();
+    }
+
+    @Test
+    public void testUpdateStatusForCreating() {
+        presenter.updateStatus(KieContainerStatus.CREATING, containers);
+
+        verify(view).disableRemoveButton();
+        verify(view).setContainerStartState(State.DISABLED);
+        verify(view).setContainerStopState(State.DISABLED);
+        verify(view).updateToggleActivationButton(false);
+        verify(view).disableToggleActivationButton();
+    }
+
     @Test //Test fix for JBPM-8028 DEACTIVATED
     public void testUpdateStatusForFailed() {
-        presenter.updateStatus(KieContainerStatus.FAILED);
+        presenter.updateStatus(KieContainerStatus.FAILED, containers);
 
         verify(view).enableRemoveButton();
         verify(view).setContainerStartState(State.DISABLED);
@@ -619,7 +656,7 @@ public class ContainerPresenterTest {
 
     @Test //Test fix for JBPM-8028 DEACTIVATED
     public void testUpdateStatusForDeactiveated() {
-        presenter.updateStatus(KieContainerStatus.DEACTIVATED);
+        presenter.updateStatus(KieContainerStatus.DEACTIVATED, containers);
 
         verify(view).disableRemoveButton();
         verify(view).setContainerStartState(State.ENABLED);
