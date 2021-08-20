@@ -33,6 +33,9 @@
   <properties>
     <java.module.name>org.kie.wb.common.stunner.bpmn.api</java.module.name>
     <jacoco.line.coveredratio.minimum>0.0</jacoco.line.coveredratio.minimum>
+
+    <!-- GWTTestCases need this Jetty version to work correctly. -->
+    <version.org.eclipse.jetty>9.2.14.v20151106</version.org.eclipse.jetty>
   </properties>
 
   <dependencies>
@@ -43,8 +46,8 @@
     </dependency>
 
     <dependency>
-      <groupId>javax.annotation</groupId>
-      <artifactId>javax.annotation-api</artifactId>
+      <groupId>jakarta.annotation</groupId>
+      <artifactId>jakarta.annotation-api</artifactId>
     </dependency>
 
     <dependency>
@@ -163,12 +166,6 @@
     </dependency>
 
     <dependency>
-      <groupId>org.jboss.spec.javax.annotation</groupId>
-      <artifactId>jboss-annotations-api_1.2_spec</artifactId>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
       <groupId>org.uberfire</groupId>
       <artifactId>uberfire-commons</artifactId>
     </dependency>
@@ -227,8 +224,20 @@
     </dependency>
 
     <dependency>
-      <groupId>org.jboss.spec.javax.xml.bind</groupId>
-      <artifactId>jboss-jaxb-api_2.3_spec</artifactId>
+      <groupId>jakarta.xml.bind</groupId>
+      <artifactId>jakarta.xml.bind-api</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>jakarta.servlet</groupId>
+      <artifactId>jakarta.servlet-api</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.jboss.errai</groupId>
+      <artifactId>errai-javax-enterprise</artifactId>
       <scope>test</scope>
     </dependency>
 

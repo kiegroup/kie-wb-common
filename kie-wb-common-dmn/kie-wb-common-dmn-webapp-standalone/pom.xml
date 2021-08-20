@@ -139,6 +139,11 @@
     </dependency>
     <dependency>
       <groupId>org.jboss.errai</groupId>
+      <artifactId>errai-javax-enterprise</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.errai</groupId>
       <artifactId>errai-validation</artifactId>
       <scope>provided</scope>
     </dependency>
@@ -645,10 +650,6 @@
         <exclusion>
           <groupId>org.apache.activemq</groupId>
           <artifactId>artemis-jms-client</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.jboss.spec.javax.jms</groupId>
-          <artifactId>jboss-jms-api_2.0_spec</artifactId>
         </exclusion>
       </exclusions>
     </dependency>

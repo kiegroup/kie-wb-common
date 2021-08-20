@@ -90,7 +90,7 @@
             </goals>
             <configuration>
               <rules>
-                <requirePluginVersions>
+                <requirePluginVersions combine.children="append">
                   <!-- Allow kie-takari-plugin to use SNAPSHOT version -->
                   <unCheckedPluginList>org.kie:kie-takari-plugin</unCheckedPluginList>
                 </requirePluginVersions>
@@ -132,12 +132,6 @@
     <dependency>
       <groupId>org.uberfire</groupId>
       <artifactId>uberfire-structure-backend</artifactId>
-      <exclusions>
-        <exclusion>
-          <groupId>org.jboss.errai</groupId>
-          <artifactId>errai-javax-enterprise</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.uberfire</groupId>
@@ -266,6 +260,11 @@
       <artifactId>aether-api</artifactId>
     </dependency>
 
+    <dependency>
+      <groupId>jakarta.json</groupId>
+      <artifactId>jakarta.json-api</artifactId>
+    </dependency>
+    
     <dependency>
       <groupId>org.kie.workbench.services</groupId>
       <artifactId>kie-wb-common-services-api</artifactId>
@@ -433,12 +432,6 @@
       <groupId>org.drools</groupId>
       <artifactId>drools-decisiontables</artifactId>
       <scope>test</scope>
-      <exclusions>
-        <exclusion>
-          <groupId>javax.xml.stream</groupId>
-          <artifactId>stax-api</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
 
     <dependency>
@@ -448,8 +441,8 @@
     </dependency>
 
     <dependency>
-      <groupId>org.jboss.spec.javax.servlet</groupId>
-      <artifactId>jboss-servlet-api_3.1_spec</artifactId>
+      <groupId>jakarta.servlet</groupId>
+      <artifactId>jakarta.servlet-api</artifactId>
       <scope>test</scope>
     </dependency>
 
@@ -463,13 +456,6 @@
       <groupId>org.jboss.weld.se</groupId>
       <artifactId>weld-se-core</artifactId>
       <scope>test</scope>
-      <exclusions>
-        <!-- collides with javax.inject:javax.inject:jar:1:compile -->
-        <exclusion>
-          <groupId>jakarta.enterprise</groupId>
-          <artifactId>jakarta.enterprise.cdi-api</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
 
     <dependency>
@@ -482,23 +468,11 @@
       <groupId>org.uberfire</groupId>
       <artifactId>uberfire-testing-utils</artifactId>
       <scope>test</scope>
-      <exclusions>
-        <exclusion>
-          <groupId>org.jboss.errai</groupId>
-          <artifactId>errai-javax-enterprise</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.uberfire</groupId>
       <artifactId>uberfire-structure-client</artifactId>
       <scope>test</scope>
-      <exclusions>
-        <exclusion>
-          <groupId>org.jboss.errai</groupId>
-          <artifactId>errai-javax-enterprise</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
 
     <dependency>
@@ -513,8 +487,8 @@
     </dependency>
 
     <dependency>
-      <groupId>org.jboss.spec.javax.enterprise.concurrent</groupId>
-      <artifactId>jboss-concurrency-api_1.0_spec</artifactId>
+      <groupId>jakarta.enterprise.concurrent</groupId>
+      <artifactId>jakarta.enterprise.concurrent-api</artifactId>
       <scope>test</scope>
     </dependency>
 
@@ -534,6 +508,11 @@
       <groupId>org.powermock</groupId>
       <artifactId>powermock-module-junit4</artifactId>
       <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>jakarta.ws.rs</groupId>
+      <artifactId>jakarta.ws.rs-api</artifactId>
     </dependency>
 
   </dependencies>
