@@ -131,6 +131,8 @@ public class AddProjectPopUpPresenter {
         String getSelectedTemplate();
 
         void enableBasedOnTemplatesCheckbox(boolean isEnabled);
+
+        void enableTemplatesSelect(boolean isEnabled);
     }
 
     private Caller<LibraryService> libraryService;
@@ -263,14 +265,14 @@ public class AddProjectPopUpPresenter {
                 .collect(Collectors.toList());
 
         final boolean templatesAvailable = !templates.isEmpty();
+        final String defaultSelection = preferences.getDefaultSelection();
+        final boolean defaultTemplateIncluded = templates.contains(defaultSelection);
 
         if (templatesAvailable) {
-            final String defaultSelection = preferences.getDefaultSelection();
             final int selectedTemplateIdx = IntStream.range(0, templates.size())
                     .filter(i -> templates.get(i).equals(defaultSelection))
                     .findFirst()
                     .orElse(0);
-
             view.setTemplates(templates, selectedTemplateIdx);
         } else {
             view.setTemplates(Collections.singletonList(
@@ -279,6 +281,7 @@ public class AddProjectPopUpPresenter {
         }
 
         view.enableBasedOnTemplatesCheckbox(templatesAvailable);
+        view.enableTemplatesSelect(templatesAvailable && defaultTemplateIncluded);
 
         view.show();
     }

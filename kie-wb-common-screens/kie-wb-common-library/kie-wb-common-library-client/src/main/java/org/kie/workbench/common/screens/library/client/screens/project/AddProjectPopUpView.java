@@ -304,6 +304,12 @@ public class AddProjectPopUpView implements AddProjectPopUpPresenter.View,
         basedOnTemplateCheckbox.setDisabled(!isEnabled);
     }
 
+    @Override
+    public void enableTemplatesSelect(boolean isEnabled) {
+        basedOnTemplateCheckbox.setChecked(isEnabled);
+        enableBasedOnTemplate(isEnabled);
+    }
+
     private void modalSetup() {
         this.modal = new CommonModalBuilder()
                 .addHeader(ts.format(LibraryConstants.AddProject))
