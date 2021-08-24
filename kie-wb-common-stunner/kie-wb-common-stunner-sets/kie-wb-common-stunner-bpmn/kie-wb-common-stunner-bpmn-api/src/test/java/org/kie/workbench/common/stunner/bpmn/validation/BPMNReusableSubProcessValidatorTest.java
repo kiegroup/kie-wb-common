@@ -97,7 +97,7 @@ public class BPMNReusableSubProcessValidatorTest {
         final boolean reusableSubProcess = tested.isReusableSubProcess(element);
         assertTrue("Must be a reusable Subprocess", reusableSubProcess);
 
-        final boolean hasNoInputs = tested.hasNoDataInputs(element);
+        final boolean hasNoInputs = tested.hasNoDataInputsOutputs(element);
         assertTrue("Validation should be true", hasNoInputs);
 
         List<DomainViolation> violations = new ArrayList<>();
@@ -113,7 +113,7 @@ public class BPMNReusableSubProcessValidatorTest {
         hasNoInputs = false;
         hasNoOutputs = false;
 
-        final boolean hasNoInputs = tested.hasNoDataInputs(element);
+        final boolean hasNoInputs = tested.hasNoDataInputsOutputs(element);
         assertFalse("Validation should be false", hasNoInputs);
 
         List<DomainViolation> violations = new ArrayList<>();

@@ -67,14 +67,14 @@ public abstract class BPMNReusableSubProcessValidator implements DomainValidator
         return element.getContent() instanceof View && ((View) element.getContent()).getDefinition() instanceof ReusableSubprocess;
     }
 
-    protected boolean hasNoDataInputs(Element element) {
+    protected boolean hasNoDataInputsOutputs(Element element) {
         ReusableSubprocess subprocess = (ReusableSubprocess) ((View) element.getContent()).getDefinition();
         final AssignmentsInfo assignmentsInfo = subprocess.getDataIOSet().getAssignmentsinfo();
         return hasNoAssignmentsDataInput(assignmentsInfo) || hasNoAssignmentsDataOutput(assignmentsInfo);
     }
 
     protected boolean isReusableAndHasNoInputs(Element element) {
-        return isReusableSubProcess(element) && hasNoDataInputs(element);
+        return isReusableSubProcess(element) && hasNoDataInputsOutputs(element);
     }
 
     public abstract String getMessageSubprocessWithoutDataIOAssignments();
