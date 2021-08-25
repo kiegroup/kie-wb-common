@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.assertj.core.api.SoftAssertions;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.kie.workbench.common.services.backend.compiler.BaseCompilerTest;
 import org.kie.workbench.common.services.backend.compiler.CompilationRequest;
@@ -40,6 +41,7 @@ public class KieAfterDecoratorTest extends BaseCompilerTest {
     }
 
     @Test
+    @Ignore //https://issues.redhat.com/browse/AF-2892
     public void compileTest() {
 
         CompilationRequest req = new DefaultCompilationRequest(mavenRepoPath,
@@ -58,6 +60,7 @@ public class KieAfterDecoratorTest extends BaseCompilerTest {
     }
 
     @Test
+    @Ignore //https://issues.redhat.com/browse/AF-2892
     public void compileWithOverrideTest() throws Exception {
 
         Map<Path, InputStream> override = new HashMap<>();

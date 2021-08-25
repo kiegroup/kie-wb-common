@@ -19,6 +19,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.kie.workbench.common.services.backend.compiler.BaseCompilerTest;
 import org.kie.workbench.common.services.backend.compiler.TestUtilMaven;
@@ -82,6 +83,7 @@ public class DefaultRemoteExecutorTest extends BaseCompilerTest {
     }
 
     @Test
+    @Ignore //https://issues.redhat.com/browse/AF-2892
     public void buildExistentProject() throws Exception{
         DefaultRemoteExecutor executor = new DefaultRemoteExecutor(executorService);
         CompletableFuture<KieCompilationResponse> futureRes = executor.build(Paths.get(tmpRoot.toAbsolutePath()+"/dummy").toAbsolutePath().toString(),
@@ -94,6 +96,7 @@ public class DefaultRemoteExecutorTest extends BaseCompilerTest {
 
 
     @Test
+    @Ignore //https://issues.redhat.com/browse/AF-2892
     public void buildAndInstallExistentProject() throws Exception{
         DefaultRemoteExecutor executor = new DefaultRemoteExecutor(executorService);
         CompletableFuture<KieCompilationResponse> futureRes = executor.buildAndInstall(Paths.get(tmpRoot.toAbsolutePath()+"/dummy").toAbsolutePath().toString(),
@@ -106,6 +109,7 @@ public class DefaultRemoteExecutorTest extends BaseCompilerTest {
     }
 
     @Test
+    @Ignore //https://issues.redhat.com/browse/AF-2892
     public void buildAndInstallSkipDepsExistentProject() throws Exception{
         DefaultRemoteExecutor executor = new DefaultRemoteExecutor(executorService);
         CompletableFuture<KieCompilationResponse> futureRes = executor.buildAndInstall(Paths.get(tmpRoot.toAbsolutePath()+"/dummy").toAbsolutePath().toString(),
@@ -128,6 +132,7 @@ public class DefaultRemoteExecutorTest extends BaseCompilerTest {
     }
 
     @Test
+    @Ignore //https://issues.redhat.com/browse/AF-2892
     public void buildSpecializedSkipDepsExistentProject() throws Exception{
         DefaultRemoteExecutor executor = new DefaultRemoteExecutor(executorService);
         CompletableFuture<KieCompilationResponse> futureRes = executor.buildSpecialized(Paths.get(tmpRoot.toAbsolutePath()+"/dummy").toAbsolutePath().toString(),

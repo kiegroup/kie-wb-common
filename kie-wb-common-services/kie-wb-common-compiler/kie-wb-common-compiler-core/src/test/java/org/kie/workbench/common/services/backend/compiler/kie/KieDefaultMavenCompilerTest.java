@@ -35,6 +35,7 @@ import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestName;
@@ -301,6 +302,7 @@ public class KieDefaultMavenCompilerTest {
     }
 
     @Test
+    @Ignore //https://issues.redhat.com/browse/AF-2892
     public void buildWithAllDecoratorsTest() throws Exception {
         String alternateSettingsAbsPath = TestUtilMaven.getSettingsFile();
         String MAIN_BRANCH = "master";

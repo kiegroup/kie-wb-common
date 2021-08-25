@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.kie.workbench.common.services.backend.compiler.BaseCompilerTest;
 import org.kie.workbench.common.services.backend.compiler.TestUtilMaven;
@@ -34,7 +35,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class CompilerClassloaderUtilsTest extends BaseCompilerTest {
 
     public CompilerClassloaderUtilsTest() {
-        super("target/test-classes/kjar-2-single-resources", EnumSet.of(KieDecorator.STORE_KIE_OBJECTS , KieDecorator.STORE_BUILD_CLASSPATH, KieDecorator.ENABLE_INCREMENTAL_BUILD));
+        super("target/test-classes/kjar-2-single-resources", EnumSet.of(KieDecorator.STORE_KIE_OBJECTS, KieDecorator.STORE_BUILD_CLASSPATH, KieDecorator.ENABLE_INCREMENTAL_BUILD));
     }
 
     @Test
@@ -150,6 +151,7 @@ public class CompilerClassloaderUtilsTest extends BaseCompilerTest {
     }
 
     @Test
+    @Ignore //https://issues.redhat.com/browse/AF-2892
     public void createClassloaderFromCpFiles() {
         assertThat(res.getDependencies()).hasSize(4);
         Optional<ClassLoader> classLoader = CompilerClassloaderUtils.createClassloaderFromStringDeps(res.getDependencies());
@@ -158,6 +160,7 @@ public class CompilerClassloaderUtilsTest extends BaseCompilerTest {
     }
 
     @Test
+    @Ignore //https://issues.redhat.com/browse/AF-2892
     public void readFileAsURI() {
         assertThat(res.getDependencies()).isNotEmpty();
         List<String> projectDeps = res.getDependencies();

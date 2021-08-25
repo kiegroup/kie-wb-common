@@ -21,14 +21,13 @@ import java.net.URLClassLoader;
 import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 
 import org.drools.compiler.kie.builder.impl.InternalKieModule;
 import org.drools.core.rule.KieModuleMetaInfo;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestName;
@@ -43,7 +42,6 @@ import org.kie.workbench.common.services.backend.compiler.impl.classloader.Compi
 import org.kie.workbench.common.services.backend.compiler.impl.kie.KieCompilationResponse;
 import org.kie.workbench.common.services.backend.compiler.impl.kie.KieMavenCompilerFactory;
 import org.kie.workbench.common.services.backend.compiler.impl.utils.MavenUtils;
-import org.kie.workbench.common.services.backend.compiler.utils.MavenUtilsTest;
 import org.kie.workbench.common.services.backend.constants.ResourcesConstants;
 import org.kie.workbench.common.services.backend.utils.LoadProjectDependencyUtil;
 import org.kie.workbench.common.services.backend.utils.TestUtil;
@@ -161,6 +159,7 @@ public class ClassLoaderProviderTest {
     }
 
     @Test
+    @Ignore //https://issues.redhat.com/browse/AF-2892
     public void getResourcesFromADroolsPRJ() throws Exception {
         /**
          * If the test fail check if the Drools core classes used, KieModuleMetaInfo and TypeMetaInfo implements Serializable
@@ -169,7 +168,7 @@ public class ClassLoaderProviderTest {
         Path tmpRoot = Files.createTempDirectory("repo");
         Path tmp = TestUtil.createAndCopyToDirectory(tmpRoot, "dummy", ResourcesConstants.KJAR_2_SINGLE_RESOURCES);
 
-        final AFCompiler compiler = KieMavenCompilerFactory.getCompiler(EnumSet.of(KieDecorator.STORE_KIE_OBJECTS, KieDecorator.STORE_BUILD_CLASSPATH, KieDecorator.ENABLE_INCREMENTAL_BUILD ));
+        final AFCompiler compiler = KieMavenCompilerFactory.getCompiler(EnumSet.of(KieDecorator.STORE_KIE_OBJECTS, KieDecorator.STORE_BUILD_CLASSPATH, KieDecorator.ENABLE_INCREMENTAL_BUILD));
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(Paths.get(tmp.toUri()));
         CompilationRequest req = new DefaultCompilationRequest(mavenRepoPath,
                                                                info,
@@ -208,6 +207,7 @@ public class ClassLoaderProviderTest {
     }
 
     @Test
+    @Ignore //https://issues.redhat.com/browse/AF-2892
     public void getResourcesFromADroolsPRJWithError() throws Exception {
         /**
          * If the test fail check if the Drools core classes used, KieModuleMetaInfo and TypeMetaInfo implements Serializable
@@ -244,6 +244,7 @@ public class ClassLoaderProviderTest {
     }
 
     @Test
+    @Ignore //https://issues.redhat.com/browse/AF-2892
     public void getResourcesFromADroolsPRJWithErrorWithMavenSkip() throws Exception {
         System.setProperty(MAVEN_MAIN_SKIP, Boolean.TRUE.toString());
         /**

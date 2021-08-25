@@ -10,6 +10,7 @@ import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.kie.workbench.common.services.backend.compiler.CompilationRequest;
 import org.kie.workbench.common.services.backend.compiler.TestUtilMaven;
@@ -68,6 +69,7 @@ public class CompilerOffProcessServiceTest {
     }
 
     @Test
+    @Ignore //https://issues.redhat.com/browse/AF-2892
     public void offProcessServiceCompileAsyncTest() throws Exception {
         CompilerOffprocessService service = new CompilerOffprocessServiceImpl(executor, queueProvider);
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(prjPath);
