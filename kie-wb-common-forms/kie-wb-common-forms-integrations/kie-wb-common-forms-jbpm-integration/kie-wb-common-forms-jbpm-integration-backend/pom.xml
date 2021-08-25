@@ -6,7 +6,7 @@
   <parent>
     <artifactId>kie-wb-common-forms-jbpm-integration</artifactId>
     <groupId>org.kie.workbench.forms</groupId>
-    <version>7.59.0.Final</version>
+    <version>7.59.1-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 

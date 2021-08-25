@@ -22,7 +22,7 @@
   <parent>
     <artifactId>kie-wb-common-examples-screen</artifactId>
     <groupId>org.kie.workbench.screens</groupId>
-    <version>7.59.0.Final</version>
+    <version>7.59.1-SNAPSHOT</version>
   </parent>
 
   <artifactId>kie-wb-common-examples-screen-backend</artifactId>
