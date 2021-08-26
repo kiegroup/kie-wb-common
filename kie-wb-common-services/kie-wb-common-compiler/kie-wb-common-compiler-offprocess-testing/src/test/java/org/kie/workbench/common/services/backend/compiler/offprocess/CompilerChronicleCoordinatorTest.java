@@ -66,7 +66,7 @@ public class CompilerChronicleCoordinatorTest {
     }
 
     @Test
-    @Ignore //https://issues.redhat.com/browse/AF-2892
+    @Ignore("https://issues.redhat.com/browse/AF-2892")
     public void offProcessOneBuildTest() {
         CompilerIPCCoordinator compiler = new CompilerIPCCoordinatorImpl(queueProvider);
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(prjPath);
@@ -88,7 +88,7 @@ public class CompilerChronicleCoordinatorTest {
     }
 
     @Test
-    @Ignore //https://issues.redhat.com/browse/AF-2892
+    @Ignore("https://issues.redhat.com/browse/AF-2892")
     public void offProcessTwoBuildTest() {
         CompilerIPCCoordinator compiler = new CompilerIPCCoordinatorImpl(queueProvider);
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(prjPath);

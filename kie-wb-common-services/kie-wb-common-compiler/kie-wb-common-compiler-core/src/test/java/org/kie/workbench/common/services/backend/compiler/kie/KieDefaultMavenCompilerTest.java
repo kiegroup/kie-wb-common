@@ -302,7 +302,7 @@ public class KieDefaultMavenCompilerTest {
     }
 
     @Test
-    @Ignore //https://issues.redhat.com/browse/AF-2892
+    @Ignore("https://issues.redhat.com/browse/AF-2892")
     public void buildWithAllDecoratorsTest() throws Exception {
         String alternateSettingsAbsPath = TestUtilMaven.getSettingsFile();
         String MAIN_BRANCH = "master";

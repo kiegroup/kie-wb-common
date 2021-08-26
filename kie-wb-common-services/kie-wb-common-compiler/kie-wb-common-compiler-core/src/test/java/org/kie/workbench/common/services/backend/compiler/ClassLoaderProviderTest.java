@@ -207,7 +207,7 @@ public class ClassLoaderProviderTest {
     }
 
     @Test
-    @Ignore //https://issues.redhat.com/browse/AF-2892
+    @Ignore("https://issues.redhat.com/browse/AF-2892")
     public void getResourcesFromADroolsPRJWithError() throws Exception {
         /**
          * If the test fail check if the Drools core classes used, KieModuleMetaInfo and TypeMetaInfo implements Serializable
@@ -244,7 +244,7 @@ public class ClassLoaderProviderTest {
     }
 
     @Test
-    @Ignore //https://issues.redhat.com/browse/AF-2892
+    @Ignore("https://issues.redhat.com/browse/AF-2892")
     public void getResourcesFromADroolsPRJWithErrorWithMavenSkip() throws Exception {
         System.setProperty(MAVEN_MAIN_SKIP, Boolean.TRUE.toString());
         /**

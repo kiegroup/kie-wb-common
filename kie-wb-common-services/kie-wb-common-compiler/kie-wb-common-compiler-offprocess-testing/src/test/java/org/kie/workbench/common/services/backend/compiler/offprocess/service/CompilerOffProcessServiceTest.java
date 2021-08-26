@@ -40,14 +40,14 @@ public class CompilerOffProcessServiceTest {
     private static ExecutorService executor;
 
     @BeforeClass
-    public static void setup() throws Exception{
+    public static void setup() throws Exception {
         executor = Executors.newCachedThreadPool();
         mavenRepo = TestUtilMaven.getMavenRepo();
         System.setProperty("org.uberfire.nio.git.daemon.enabled", "false");
         System.setProperty("org.uberfire.nio.git.ssh.enabled", "false");
         queueProvider = new QueueProvider(queueName);
         logger.info("queue on test setup:{}", queueProvider.getAbsolutePath());
-        prjPath = Paths.get("file://"+System.getProperty("user.dir")+"/target/test-classes/kjar-2-single-resources");
+        prjPath = Paths.get("file://" + System.getProperty("user.dir") + "/target/test-classes/kjar-2-single-resources");
         alternateSettingsAbsPath = TestUtilMaven.getSettingsFile();
     }
 
@@ -69,7 +69,7 @@ public class CompilerOffProcessServiceTest {
     }
 
     @Test
-    @Ignore //https://issues.redhat.com/browse/AF-2892
+    @Ignore("https://issues.redhat.com/browse/AF-2892")
     public void offProcessServiceCompileAsyncTest() throws Exception {
         CompilerOffprocessService service = new CompilerOffprocessServiceImpl(executor, queueProvider);
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(prjPath);
@@ -82,13 +82,13 @@ public class CompilerOffProcessServiceTest {
                                                                },
                                                                Boolean.FALSE, uuid);
 
-        CompletableFuture<KieCompilationResponse> futureRes =  service.compile(req);
+        CompletableFuture<KieCompilationResponse> futureRes = service.compile(req);
         logger.info("offProcessOneBuildAsyncTest build completed");
         KieCompilationResponse res = futureRes.get();
         assertThat(res).isNotNull();
         assertThat(res.isSuccessful()).isTrue();
         assertThat(res.getMavenOutput()).isNotEmpty();
         DefaultKieCompilationResponse kres = (DefaultKieCompilationResponse) res;
-        assertThat(uuid).isEqualToIgnoringCase( kres.getRequestUUID());
+        assertThat(uuid).isEqualToIgnoringCase(kres.getRequestUUID());
     }
 }

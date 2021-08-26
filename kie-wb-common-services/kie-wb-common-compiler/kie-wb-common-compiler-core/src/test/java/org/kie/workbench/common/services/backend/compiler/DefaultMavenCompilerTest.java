@@ -298,7 +298,7 @@ public class DefaultMavenCompilerTest {
     }
 
     @Test
-    @Ignore //https://issues.redhat.com/browse/AF-2892
+    @Ignore("https://issues.redhat.com/browse/AF-2892")
     public void buildWithAllDecoratorsTest() throws Exception {
         final AFCompiler compiler = KieMavenCompilerFactory.getCompiler(EnumSet.of(KieDecorator.ENABLE_LOGGING, KieDecorator.UPDATE_JGIT_BEFORE_BUILD));
 

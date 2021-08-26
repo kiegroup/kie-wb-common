@@ -151,7 +151,7 @@ public class CompilerClassloaderUtilsTest extends BaseCompilerTest {
     }
 
     @Test
-    @Ignore //https://issues.redhat.com/browse/AF-2892
+    @Ignore("https://issues.redhat.com/browse/AF-2892")
     public void createClassloaderFromCpFiles() {
         assertThat(res.getDependencies()).hasSize(4);
         Optional<ClassLoader> classLoader = CompilerClassloaderUtils.createClassloaderFromStringDeps(res.getDependencies());
@@ -160,7 +160,7 @@ public class CompilerClassloaderUtilsTest extends BaseCompilerTest {
     }
 
     @Test
-    @Ignore //https://issues.redhat.com/browse/AF-2892
+    @Ignore("https://issues.redhat.com/browse/AF-2892")
     public void readFileAsURI() {
         assertThat(res.getDependencies()).isNotEmpty();
         List<String> projectDeps = res.getDependencies();

@@ -126,7 +126,7 @@ public class KieDefaultMavenIncrementalCompilerTest {
     }
 
     @Test
-    @Ignore //https://issues.redhat.com/browse/AF-2892
+    @Ignore("https://issues.redhat.com/browse/AF-2892")
     public void testCheckIncrementalWithChanges() throws Exception {
         String alternateSettingsAbsPath = TestUtilMaven.getSettingsFile();
         tmpRoot = Files.createTempDirectory("repo");

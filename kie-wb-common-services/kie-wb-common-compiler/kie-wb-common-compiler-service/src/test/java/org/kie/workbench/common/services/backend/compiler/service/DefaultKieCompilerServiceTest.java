@@ -85,7 +85,7 @@ public class DefaultKieCompilerServiceTest extends BaseCompilerTest {
     }
 
     @Test
-    @Ignore //https://issues.redhat.com/browse/AF-2892
+    @Ignore("https://issues.redhat.com/browse/AF-2892")
     public void buildExistentProject() throws Exception {
         AFCompilerService service = new DefaultKieCompilerService();
         CompletableFuture<KieCompilationResponse> futureRes = service.build(Paths.get(tmpRoot.toAbsolutePath() + "/dummy"),
@@ -96,7 +96,7 @@ public class DefaultKieCompilerServiceTest extends BaseCompilerTest {
     }
 
     @Test
-    @Ignore //https://issues.redhat.com/browse/AF-2892
+    @Ignore("https://issues.redhat.com/browse/AF-2892")
     public void buildAndInstallExistentProject() throws Exception {
         AFCompilerService service = new DefaultKieCompilerService();
         CompletableFuture<KieCompilationResponse> futureRes = service.buildAndInstall(Paths.get(tmpRoot.toAbsolutePath() + "/dummy"),
@@ -109,7 +109,7 @@ public class DefaultKieCompilerServiceTest extends BaseCompilerTest {
     }
 
     @Test
-    @Ignore //https://issues.redhat.com/browse/AF-2892
+    @Ignore("https://issues.redhat.com/browse/AF-2892")
     public void buildAndInstallSkipDepsExistentProject() throws Exception {
         AFCompilerService service = new DefaultKieCompilerService();
         CompletableFuture<KieCompilationResponse> futureRes = service.buildAndInstall(Paths.get(tmpRoot.toAbsolutePath() + "/dummy"),
@@ -132,7 +132,7 @@ public class DefaultKieCompilerServiceTest extends BaseCompilerTest {
     }
 
     @Test
-    @Ignore //https://issues.redhat.com/browse/AF-2892
+    @Ignore("https://issues.redhat.com/browse/AF-2892")
     public void buildSpecializedSkipDepsExistentProject() throws Exception {
         AFCompilerService service = new DefaultKieCompilerService();
         CompletableFuture<KieCompilationResponse> futureRes = service.buildSpecialized(Paths.get(tmpRoot.toAbsolutePath() + "/dummy"),
@@ -173,7 +173,7 @@ public class DefaultKieCompilerServiceTest extends BaseCompilerTest {
     }
 
     @Test
-    @Ignore //https://issues.redhat.com/browse/AF-2892
+    @Ignore("https://issues.redhat.com/browse/AF-2892")
     public void buildWithOverrideExistentProject() throws Exception {
         AFCompilerService service = new DefaultKieCompilerService();
         //change some files
@@ -240,7 +240,7 @@ public class DefaultKieCompilerServiceTest extends BaseCompilerTest {
     }
 
     @Test
-    @Ignore //https://issues.redhat.com/browse/AF-2892
+    @Ignore("https://issues.redhat.com/browse/AF-2892")
     public void buildRemoteExistentProject() throws Exception {
         AFCompilerService service = new DefaultKieCompilerService();
         CompletableFuture<KieCompilationResponse> futureRes = service.build(Paths.get(tmpRoot.toAbsolutePath() + "/dummy").toAbsolutePath().toString(),
@@ -251,7 +251,7 @@ public class DefaultKieCompilerServiceTest extends BaseCompilerTest {
     }
 
     @Test
-    @Ignore //https://issues.redhat.com/browse/AF-2892
+    @Ignore("https://issues.redhat.com/browse/AF-2892")
     public void buildRemoteAndInstallExistentProject() throws Exception {
         AFCompilerService service = new DefaultKieCompilerService();
         CompletableFuture<KieCompilationResponse> futureRes = service.buildAndInstall(Paths.get(tmpRoot.toAbsolutePath() + "/dummy").toAbsolutePath().toString(),
@@ -264,7 +264,7 @@ public class DefaultKieCompilerServiceTest extends BaseCompilerTest {
     }
 
     @Test
-    @Ignore //https://issues.redhat.com/browse/AF-2892
+    @Ignore("https://issues.redhat.com/browse/AF-2892")
     public void buildRemoteAndInstallSkipDepsExistentProject() throws Exception {
         AFCompilerService service = new DefaultKieCompilerService();
         CompletableFuture<KieCompilationResponse> futureRes = service.buildAndInstall(Paths.get(tmpRoot.toAbsolutePath() + "/dummy").toAbsolutePath().toString(),
@@ -287,7 +287,7 @@ public class DefaultKieCompilerServiceTest extends BaseCompilerTest {
     }
 
     @Test
-    @Ignore //https://issues.redhat.com/browse/AF-2892
+    @Ignore("https://issues.redhat.com/browse/AF-2892")
     public void buildRemoteSpecializedSkipDepsExistentProject() throws Exception {
         AFCompilerService service = new DefaultKieCompilerService();
         CompletableFuture<KieCompilationResponse> futureRes = service.buildSpecialized(Paths.get(tmpRoot.toAbsolutePath() + "/dummy").toAbsolutePath().toString(),

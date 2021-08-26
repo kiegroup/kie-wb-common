@@ -89,7 +89,7 @@ public class DefaultLocalExecutorTest extends BaseCompilerTest {
     }
 
     @Test
-    @Ignore //https://issues.redhat.com/browse/AF-2892
+    @Ignore("https://issues.redhat.com/browse/AF-2892")
     public void buildExistentProject() throws Exception {
         DefaultLocalExecutor executor = new DefaultLocalExecutor(executorService);
         CompletableFuture<KieCompilationResponse> futureRes = executor.build(Paths.get(tmpRoot.toAbsolutePath() + "/dummy"),
@@ -99,7 +99,7 @@ public class DefaultLocalExecutorTest extends BaseCompilerTest {
     }
 
     @Test
-    @Ignore //https://issues.redhat.com/browse/AF-2892
+    @Ignore("https://issues.redhat.com/browse/AF-2892")
     public void buildAndInstallExistentProject() throws Exception {
         DefaultLocalExecutor executor = new DefaultLocalExecutor(executorService);
         CompletableFuture<KieCompilationResponse> futureRes = executor.buildAndInstall(Paths.get(tmpRoot.toAbsolutePath() + "/dummy"),
@@ -111,7 +111,7 @@ public class DefaultLocalExecutorTest extends BaseCompilerTest {
     }
 
     @Test
-    @Ignore //https://issues.redhat.com/browse/AF-2892
+    @Ignore("https://issues.redhat.com/browse/AF-2892")
     public void buildAndInstallSkipDepsExistentProject() throws Exception {
         DefaultLocalExecutor executor = new DefaultLocalExecutor(executorService);
         CompletableFuture<KieCompilationResponse> futureRes = executor.buildAndInstall(Paths.get(tmpRoot.toAbsolutePath() + "/dummy"),
@@ -135,7 +135,7 @@ public class DefaultLocalExecutorTest extends BaseCompilerTest {
     }
 
     @Test
-    @Ignore //https://issues.redhat.com/browse/AF-2892
+    @Ignore("https://issues.redhat.com/browse/AF-2892")
     public void buildSpecializedSkipDepsExistentProject() throws Exception {
         DefaultLocalExecutor executor = new DefaultLocalExecutor(executorService);
         CompletableFuture<KieCompilationResponse> futureRes = executor.buildSpecialized(Paths.get(tmpRoot.toAbsolutePath() + "/dummy"),
@@ -179,7 +179,7 @@ public class DefaultLocalExecutorTest extends BaseCompilerTest {
     }
 
     @Test
-    @Ignore //https://issues.redhat.com/browse/AF-2892
+    @Ignore("https://issues.redhat.com/browse/AF-2892")
     public void buildWithOverrideExistentProject() throws Exception {
 
         //change some files

@@ -78,7 +78,8 @@ public class KieMetadataTest {
         tmpRoot = Files.createTempDirectory("repo");
     }
 
-    @Ignore //https://issues.redhat.com/browse/AF-2741,https://issues.redhat.com/browse/AF-2892
+    @Ignore("https://issues.redhat.com/browse/AF-2741\n" +
+            "https://issues.redhat.com/browse/AF-2892")
     @Test //AF-1459 it tooks 30% of the time of the time spent by all module's test (108), alone it took 30 sec
     public void compileAndLoadKieJarMetadataAllResourcesPackagedJar() throws Exception {
         /**
@@ -127,7 +128,7 @@ public class KieMetadataTest {
     }
 
     @Test
-    @Ignore //https://issues.redhat.com/browse/AF-2892
+    @Ignore("https://issues.redhat.com/browse/AF-2892")
     public void compileAndloadKieJarSingleMetadata() {
         /**
          * If the test fail check if the Drools core classes used, KieModuleMetaInfo and TypeMetaInfo implements Serializable
@@ -170,7 +171,7 @@ public class KieMetadataTest {
     }
 
     @Test
-    @Ignore //https://issues.redhat.com/browse/AF-2892
+    @Ignore("https://issues.redhat.com/browse/AF-2892")
     public void compileAndloadKieJarSingleMetadataWithPackagedJar() throws Exception {
         /**
          * If the test fail check if the Drools core classes used, KieModuleMetaInfo and TypeMetaInfo implements Serializable
