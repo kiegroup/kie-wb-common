@@ -698,6 +698,8 @@ public class AddProjectPopUpPresenterTest {
         presenter.finishLoadTemplates(preferences);
 
         verify(view).setTemplates(templates, 1);
+        verify(view).enableBasedOnTemplatesCheckbox(true);
+        verify(view).enableTemplatesSelect(true);
     }
 
     @Test
@@ -717,6 +719,8 @@ public class AddProjectPopUpPresenterTest {
         presenter.finishLoadTemplates(preferences);
 
         verify(view).setTemplates(templates, 1);
+        verify(view).enableBasedOnTemplatesCheckbox(true);
+        verify(view).enableTemplatesSelect(true);
     }
 
     @Test
@@ -736,6 +740,8 @@ public class AddProjectPopUpPresenterTest {
         presenter.finishLoadTemplates(preferences);
 
         verify(view).setTemplates(templates, 0);
+        verify(view).enableBasedOnTemplatesCheckbox(true);
+        verify(view).enableTemplatesSelect(false);
     }
 
     @Test
@@ -748,6 +754,8 @@ public class AddProjectPopUpPresenterTest {
         verify(view).setTemplates(Collections.singletonList(
                 translationService.getTranslation(LibraryConstants.NoTemplatesAvailable)),
                                   0);
+        verify(view).enableBasedOnTemplatesCheckbox(false);
+        verify(view).enableTemplatesSelect(false);
     }
 
     @Test
@@ -765,5 +773,7 @@ public class AddProjectPopUpPresenterTest {
         verify(view).setTemplates(Collections.singletonList(
                 translationService.getTranslation(LibraryConstants.NoTemplatesAvailable)),
                                   0);
+        verify(view).enableBasedOnTemplatesCheckbox(false);
+        verify(view).enableTemplatesSelect(false);
     }
 }
