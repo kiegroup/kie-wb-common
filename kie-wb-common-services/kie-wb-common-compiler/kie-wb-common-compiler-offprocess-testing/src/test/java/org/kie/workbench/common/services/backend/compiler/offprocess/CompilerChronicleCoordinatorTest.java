@@ -20,6 +20,7 @@ import java.util.UUID;
 import net.openhft.chronicle.core.io.IOTools;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.kie.workbench.common.services.backend.compiler.CompilationRequest;
 import org.kie.workbench.common.services.backend.compiler.CompilationResponse;
@@ -47,13 +48,13 @@ public class CompilerChronicleCoordinatorTest {
     private static QueueProvider queueProvider;
 
     @BeforeClass
-    public static void setup() throws Exception{
+    public static void setup() throws Exception {
         queueProvider = new QueueProvider(queueName);
         logger.info("queue on test setup:{}", queueProvider.getAbsolutePath());
         mavenRepo = TestUtilMaven.getMavenRepo();
         System.setProperty("org.uberfire.nio.git.daemon.enabled", "false");
         System.setProperty("org.uberfire.nio.git.ssh.enabled", "false");
-        prjPath = Paths.get("file://"+System.getProperty("user.dir")+"/target/test-classes/kjar-2-single-resources");
+        prjPath = Paths.get("file://" + System.getProperty("user.dir") + "/target/test-classes/kjar-2-single-resources");
         alternateSettingsAbsPath = TestUtilMaven.getSettingsFile();
     }
 
@@ -65,6 +66,7 @@ public class CompilerChronicleCoordinatorTest {
     }
 
     @Test
+    @Ignore("https://issues.redhat.com/browse/AF-2892")
     public void offProcessOneBuildTest() {
         CompilerIPCCoordinator compiler = new CompilerIPCCoordinatorImpl(queueProvider);
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(prjPath);
@@ -82,10 +84,11 @@ public class CompilerChronicleCoordinatorTest {
         assertThat(res.isSuccessful()).isTrue();
         assertThat(res.getMavenOutput()).isNotEmpty();
         DefaultKieCompilationResponse kres = (DefaultKieCompilationResponse) res;
-        assertThat(uuid).isEqualToIgnoringCase( kres.getRequestUUID());
+        assertThat(uuid).isEqualToIgnoringCase(kres.getRequestUUID());
     }
 
     @Test
+    @Ignore("https://issues.redhat.com/browse/AF-2892")
     public void offProcessTwoBuildTest() {
         CompilerIPCCoordinator compiler = new CompilerIPCCoordinatorImpl(queueProvider);
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(prjPath);
@@ -105,7 +108,7 @@ public class CompilerChronicleCoordinatorTest {
         assertThat(res.isSuccessful()).isTrue();
         assertThat(res.getMavenOutput()).isNotEmpty();
         DefaultKieCompilationResponse kres = (DefaultKieCompilationResponse) res;
-        assertThat(uuid).isEqualToIgnoringCase( kres.getRequestUUID());
+        assertThat(uuid).isEqualToIgnoringCase(kres.getRequestUUID());
 
         // Second Build
         String secondUuid = UUID.randomUUID().toString();
