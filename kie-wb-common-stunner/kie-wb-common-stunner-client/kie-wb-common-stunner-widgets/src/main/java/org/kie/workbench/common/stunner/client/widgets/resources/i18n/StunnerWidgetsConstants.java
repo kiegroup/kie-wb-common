@@ -80,6 +80,9 @@ public interface StunnerWidgetsConstants {
     @TranslationKey(defaultValue = "Data Object Exists with Same Name and Different Type - Will be Changed to (Object)")
     String MarshallingResponsePopup_DataObjectsSameNameDifferentType = "MarshallingMessage.dataObjectsSameNameDifferentType";
 
+    @TranslationKey(defaultValue = "Reusable Subprocess with no Assignments Data Input/Data Output")
+    String MarshallingResponsePopup_ReusableSubprocessWithoutDataIO = "MarshallingMessage.reusableSubprocessWithoutDataIO";
+
     @TranslationKey(defaultValue = "Data Object-Name")
     String MarshallingResponsePopup_dataObjectWithName = "MarshallingMessage.dataObjectWithName";
 
