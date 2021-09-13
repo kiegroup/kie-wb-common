@@ -23,7 +23,7 @@ import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import elemental2.dom.HTMLElement;
 import elemental2.dom.HTMLInputElement;
-import org.guvnor.structure.contributors.ContributorType;
+import org.uberfire.security.ContributorType;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
