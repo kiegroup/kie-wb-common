@@ -18,7 +18,7 @@ package org.kie.workbench.common.screens.library.client.screens.organizationalun
 
 import javax.inject.Inject;
 
-import org.guvnor.structure.contributors.ContributorType;
+import org.uberfire.security.ContributorType;
 
 public class ContributorsSecurityUtils {
 
