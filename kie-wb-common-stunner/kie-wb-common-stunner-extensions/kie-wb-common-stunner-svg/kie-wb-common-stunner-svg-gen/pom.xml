@@ -36,7 +36,6 @@
   </properties>
 
   <dependencies>
-
     <!-- Stunner. -->
 
     <dependency>
@@ -95,8 +94,8 @@
     </dependency>
 
     <dependency>
-      <groupId>org.w3c.css</groupId>
-      <artifactId>sac</artifactId>
+      <groupId>org.w3c</groupId>
+      <artifactId>dom</artifactId>
     </dependency>
 
     <!-- Testing scope. -->
