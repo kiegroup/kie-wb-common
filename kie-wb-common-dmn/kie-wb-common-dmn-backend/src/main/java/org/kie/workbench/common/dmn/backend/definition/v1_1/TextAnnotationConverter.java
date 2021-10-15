@@ -21,13 +21,12 @@ import java.util.function.Consumer;
 
 import org.kie.workbench.common.dmn.api.definition.HasComponentWidths;
 import org.kie.workbench.common.dmn.api.definition.model.TextAnnotation;
-import org.kie.workbench.common.dmn.api.property.background.BackgroundSet;
 import org.kie.workbench.common.dmn.api.property.dimensions.GeneralRectangleDimensionsSet;
 import org.kie.workbench.common.dmn.api.property.dmn.Description;
 import org.kie.workbench.common.dmn.api.property.dmn.Id;
 import org.kie.workbench.common.dmn.api.property.dmn.Text;
 import org.kie.workbench.common.dmn.api.property.dmn.TextFormat;
-import org.kie.workbench.common.dmn.api.property.font.FontSet;
+import org.kie.workbench.common.dmn.api.property.styling.StylingSet;
 import org.kie.workbench.common.dmn.backend.definition.v1_1.dd.ComponentWidths;
 import org.kie.workbench.common.stunner.core.api.FactoryManager;
 import org.kie.workbench.common.stunner.core.graph.Node;
@@ -59,8 +58,7 @@ public class TextAnnotationConverter implements NodeConverter<org.kie.dmn.model.
                                                                  description,
                                                                  text,
                                                                  textFormat,
-                                                                 new BackgroundSet(),
-                                                                 new FontSet(),
+                                                                 new StylingSet(),
                                                                  new GeneralRectangleDimensionsSet());
         node.getContent().setDefinition(textAnnotation);
         return node;

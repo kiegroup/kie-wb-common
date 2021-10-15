@@ -22,12 +22,11 @@ import java.util.function.Consumer;
 import org.kie.workbench.common.dmn.api.definition.HasComponentWidths;
 import org.kie.workbench.common.dmn.api.definition.model.InformationItemPrimary;
 import org.kie.workbench.common.dmn.api.definition.model.InputData;
-import org.kie.workbench.common.dmn.api.property.background.BackgroundSet;
 import org.kie.workbench.common.dmn.api.property.dimensions.GeneralRectangleDimensionsSet;
 import org.kie.workbench.common.dmn.api.property.dmn.Description;
 import org.kie.workbench.common.dmn.api.property.dmn.Id;
 import org.kie.workbench.common.dmn.api.property.dmn.Name;
-import org.kie.workbench.common.dmn.api.property.font.FontSet;
+import org.kie.workbench.common.dmn.api.property.styling.StylingSet;
 import org.kie.workbench.common.dmn.backend.definition.v1_1.dd.ComponentWidths;
 import org.kie.workbench.common.stunner.core.api.FactoryManager;
 import org.kie.workbench.common.stunner.core.graph.Node;
@@ -59,8 +58,7 @@ public class InputDataConverter implements NodeConverter<org.kie.dmn.model.api.I
                                                   description,
                                                   name,
                                                   informationItem,
-                                                  new BackgroundSet(),
-                                                  new FontSet(),
+                                                  new StylingSet(),
                                                   new GeneralRectangleDimensionsSet());
         node.getContent().setDefinition(inputData);
 

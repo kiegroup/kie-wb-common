@@ -623,7 +623,7 @@ public class DMNMarshallerStandaloneTest {
         Node<?, ?> node = graph.getNode("_A9D510E0-1942-4945-A945-0213EC6AAEC5");
         assertNodeContentDefinitionIs(node, InputData.class);
         InputData definition = ((View<InputData>) node.getContent()).getDefinition();
-        assertEquals(Double.valueOf(21), definition.getFontSet().getFontSize().getValue());
+        assertEquals(Double.valueOf(21), definition.getStylingSet().getFontSize().getValue());
     }
 
     @Test
@@ -637,7 +637,7 @@ public class DMNMarshallerStandaloneTest {
         Node<?, ?> node = graph.getNode("_38b74e2e-32f8-42c5-ab51-8a3e927637e0");
         assertNodeContentDefinitionIs(node, InputData.class);
         InputData definition = ((View<InputData>) node.getContent()).getDefinition();
-        assertEquals(Double.valueOf(21), definition.getFontSet().getFontSize().getValue());
+        assertEquals(Double.valueOf(21), definition.getStylingSet().getFontSize().getValue());
     }
 
     @SuppressWarnings("unchecked")
