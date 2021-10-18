@@ -827,6 +827,12 @@
       </exclusions>
     </dependency>
 
+    <dependency>
+      <groupId>org.wildfly.client</groupId>
+      <artifactId>wildfly-client-config</artifactId>
+      <scope>provided</scope>
+    </dependency>
+
   </dependencies>
 
   <build>
