@@ -32,12 +32,11 @@ import org.kie.workbench.common.dmn.api.definition.model.FunctionDefinition;
 import org.kie.workbench.common.dmn.api.definition.model.InformationItemPrimary;
 import org.kie.workbench.common.dmn.api.definition.model.KnowledgeRequirement;
 import org.kie.workbench.common.dmn.api.definition.model.KnowledgeSource;
-import org.kie.workbench.common.dmn.api.property.background.BackgroundSet;
 import org.kie.workbench.common.dmn.api.property.dimensions.GeneralRectangleDimensionsSet;
 import org.kie.workbench.common.dmn.api.property.dmn.Description;
 import org.kie.workbench.common.dmn.api.property.dmn.Id;
 import org.kie.workbench.common.dmn.api.property.dmn.Name;
-import org.kie.workbench.common.dmn.api.property.font.FontSet;
+import org.kie.workbench.common.dmn.api.property.styling.StylingSet;
 import org.kie.workbench.common.dmn.backend.definition.v1_1.dd.ComponentWidths;
 import org.kie.workbench.common.stunner.core.api.FactoryManager;
 import org.kie.workbench.common.stunner.core.graph.Edge;
@@ -75,8 +74,7 @@ public class BusinessKnowledgeModelConverter implements NodeConverter<org.kie.dm
                                                                       name,
                                                                       informationItem,
                                                                       functionDefinition,
-                                                                      new BackgroundSet(),
-                                                                      new FontSet(),
+                                                                      new StylingSet(),
                                                                       new GeneralRectangleDimensionsSet());
         node.getContent().setDefinition(bkm);
 

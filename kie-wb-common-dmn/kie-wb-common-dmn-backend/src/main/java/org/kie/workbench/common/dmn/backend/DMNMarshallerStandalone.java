@@ -71,16 +71,15 @@ import org.kie.workbench.common.dmn.api.definition.model.KnowledgeSource;
 import org.kie.workbench.common.dmn.api.definition.model.NamedElement;
 import org.kie.workbench.common.dmn.api.definition.model.TextAnnotation;
 import org.kie.workbench.common.dmn.api.editors.included.PMMLDocumentMetadata;
-import org.kie.workbench.common.dmn.api.property.background.BackgroundSet;
-import org.kie.workbench.common.dmn.api.property.background.BgColour;
-import org.kie.workbench.common.dmn.api.property.background.BorderColour;
 import org.kie.workbench.common.dmn.api.property.dimensions.Height;
 import org.kie.workbench.common.dmn.api.property.dimensions.RectangleDimensionsSet;
 import org.kie.workbench.common.dmn.api.property.dimensions.Width;
 import org.kie.workbench.common.dmn.api.property.dmn.DecisionServiceDividerLineY;
 import org.kie.workbench.common.dmn.api.property.dmn.Description;
 import org.kie.workbench.common.dmn.api.property.dmn.Id;
-import org.kie.workbench.common.dmn.api.property.font.FontSet;
+import org.kie.workbench.common.dmn.api.property.styling.BgColour;
+import org.kie.workbench.common.dmn.api.property.styling.BorderColour;
+import org.kie.workbench.common.dmn.api.property.styling.StylingSet;
 import org.kie.workbench.common.dmn.backend.common.DMNMarshallerImportsHelperStandalone;
 import org.kie.workbench.common.dmn.backend.definition.v1_1.AssociationConverter;
 import org.kie.workbench.common.dmn.backend.definition.v1_1.BusinessKnowledgeModelConverter;
@@ -934,8 +933,7 @@ public class DMNMarshallerStandalone implements DiagramMarshaller<Graph, Metadat
                             ulBound,
                             d.getDimensionsSet(),
                             lrBound,
-                            d.getBackgroundSet(),
-                            d::setFontSet);
+                            d.getStylingSet());
         } else if (content.getDefinition() instanceof InputData) {
             final InputData d = (InputData) content.getDefinition();
             internalAugment(drgShapeStream,
@@ -943,8 +941,7 @@ public class DMNMarshallerStandalone implements DiagramMarshaller<Graph, Metadat
                             ulBound,
                             d.getDimensionsSet(),
                             lrBound,
-                            d.getBackgroundSet(),
-                            d::setFontSet);
+                            d.getStylingSet());
         } else if (content.getDefinition() instanceof BusinessKnowledgeModel) {
             final BusinessKnowledgeModel d = (BusinessKnowledgeModel) content.getDefinition();
             internalAugment(drgShapeStream,
@@ -952,8 +949,7 @@ public class DMNMarshallerStandalone implements DiagramMarshaller<Graph, Metadat
                             ulBound,
                             d.getDimensionsSet(),
                             lrBound,
-                            d.getBackgroundSet(),
-                            d::setFontSet);
+                            d.getStylingSet());
         } else if (content.getDefinition() instanceof KnowledgeSource) {
             final KnowledgeSource d = (KnowledgeSource) content.getDefinition();
             internalAugment(drgShapeStream,
@@ -961,8 +957,7 @@ public class DMNMarshallerStandalone implements DiagramMarshaller<Graph, Metadat
                             ulBound,
                             d.getDimensionsSet(),
                             lrBound,
-                            d.getBackgroundSet(),
-                            d::setFontSet);
+                            d.getStylingSet());
         } else if (content.getDefinition() instanceof TextAnnotation) {
             final TextAnnotation d = (TextAnnotation) content.getDefinition();
             internalAugment(drgShapeStream,
@@ -970,8 +965,7 @@ public class DMNMarshallerStandalone implements DiagramMarshaller<Graph, Metadat
                             ulBound,
                             d.getDimensionsSet(),
                             lrBound,
-                            d.getBackgroundSet(),
-                            d::setFontSet);
+                            d.getStylingSet());
         } else if (content.getDefinition() instanceof DecisionService) {
             final DecisionService d = (DecisionService) content.getDefinition();
             internalAugment(drgShapeStream,
@@ -979,8 +973,7 @@ public class DMNMarshallerStandalone implements DiagramMarshaller<Graph, Metadat
                             ulBound,
                             d.getDimensionsSet(),
                             lrBound,
-                            d.getBackgroundSet(),
-                            d::setFontSet,
+                            d.getStylingSet(),
                             dividerLineY -> d.setDividerLineY(new DecisionServiceDividerLineY(dividerLineY - ulBound.getY())));
         }
     }
@@ -991,15 +984,13 @@ public class DMNMarshallerStandalone implements DiagramMarshaller<Graph, Metadat
                                  final Bound ulBound,
                                  final RectangleDimensionsSet dimensionsSet,
                                  final Bound lrBound,
-                                 final BackgroundSet bgset,
-                                 final Consumer<FontSet> fontSetSetter) {
+                                 final StylingSet stylingSet) {
         internalAugment(drgShapeStream,
                         id,
                         ulBound,
                         dimensionsSet,
                         lrBound,
-                        bgset,
-                        fontSetSetter,
+                        stylingSet,
                         line -> {/*NOP*/});
     }
 
@@ -1009,8 +1000,7 @@ public class DMNMarshallerStandalone implements DiagramMarshaller<Graph, Metadat
                                  final Bound ulBound,
                                  final RectangleDimensionsSet dimensionsSet,
                                  final Bound lrBound,
-                                 final BackgroundSet bgset,
-                                 final Consumer<FontSet> fontSetSetter,
+                                 final StylingSet stylingSet,
                                  final DoubleConsumer decisionServiceDividerLineYSetter) {
         final Optional<DMNShape> drgShapeOpt = drgShapeStream.filter(shape -> shape.getDmnElementRef().getLocalPart().endsWith(id.getValue())).findFirst();
         if (!drgShapeOpt.isPresent()) {
@@ -1032,14 +1022,14 @@ public class DMNMarshallerStandalone implements DiagramMarshaller<Graph, Metadat
         final DMNStyle dmnStyleOfDrgShape = drgShape.getStyle() instanceof DMNStyle ? (DMNStyle) drgShape.getStyle() : null;
         if (dmnStyleOfDrgShape != null) {
             if (null != dmnStyleOfDrgShape.getFillColor()) {
-                bgset.setBgColour(new BgColour(ColorUtils.wbFromDMN(dmnStyleOfDrgShape.getFillColor())));
+                stylingSet.setBgColour(new BgColour(ColorUtils.wbFromDMN(dmnStyleOfDrgShape.getFillColor())));
             }
             if (null != dmnStyleOfDrgShape.getStrokeColor()) {
-                bgset.setBorderColour(new BorderColour(ColorUtils.wbFromDMN(dmnStyleOfDrgShape.getStrokeColor())));
+                stylingSet.setBorderColour(new BorderColour(ColorUtils.wbFromDMN(dmnStyleOfDrgShape.getStrokeColor())));
             }
         }
 
-        final FontSet fontSet = new FontSet();
+        final StylingSet fontSet = new StylingSet();
         if (dmnStyleOfDrgShape != null) {
             mergeFontSet(fontSet, FontSetPropertyConverter.wbFromDMN(dmnStyleOfDrgShape));
         }
@@ -1049,15 +1039,15 @@ public class DMNMarshallerStandalone implements DiagramMarshaller<Graph, Metadat
         if (drgShape.getDMNLabel() != null && drgShape.getDMNLabel().getStyle() instanceof DMNStyle) {
             mergeFontSet(fontSet, FontSetPropertyConverter.wbFromDMN((DMNStyle) drgShape.getDMNLabel().getStyle()));
         }
-        fontSetSetter.accept(fontSet);
+        mergeFontSet(stylingSet, fontSet);
 
         if (drgShape.getDMNDecisionServiceDividerLine() != null) {
             decisionServiceDividerLineYSetter.accept(drgShape.getDMNDecisionServiceDividerLine().getWaypoint().get(0).getY());
         }
     }
 
-    private static void mergeFontSet(final FontSet fontSet,
-                                     final FontSet additional) {
+    private static void mergeFontSet(final StylingSet fontSet,
+                                     final StylingSet additional) {
         if (additional.getFontFamily() != null) {
             fontSet.setFontFamily(additional.getFontFamily());
         }
@@ -1085,33 +1075,33 @@ public class DMNMarshallerStandalone implements DiagramMarshaller<Graph, Metadat
         if (v.getDefinition() instanceof Decision) {
             final Decision d = (Decision) v.getDefinition();
             applyBounds(d.getDimensionsSet(), bounds);
-            applyBackgroundStyles(d.getBackgroundSet(), result);
-            applyFontStyle(d.getFontSet(), result);
+            applyBackgroundStyles(d.getStylingSet(), result);
+            applyFontStyle(d.getStylingSet(), result);
         } else if (v.getDefinition() instanceof InputData) {
             final InputData d = (InputData) v.getDefinition();
             applyBounds(d.getDimensionsSet(), bounds);
-            applyBackgroundStyles(d.getBackgroundSet(), result);
-            applyFontStyle(d.getFontSet(), result);
+            applyBackgroundStyles(d.getStylingSet(), result);
+            applyFontStyle(d.getStylingSet(), result);
         } else if (v.getDefinition() instanceof BusinessKnowledgeModel) {
             final BusinessKnowledgeModel d = (BusinessKnowledgeModel) v.getDefinition();
             applyBounds(d.getDimensionsSet(), bounds);
-            applyBackgroundStyles(d.getBackgroundSet(), result);
-            applyFontStyle(d.getFontSet(), result);
+            applyBackgroundStyles(d.getStylingSet(), result);
+            applyFontStyle(d.getStylingSet(), result);
         } else if (v.getDefinition() instanceof KnowledgeSource) {
             final KnowledgeSource d = (KnowledgeSource) v.getDefinition();
             applyBounds(d.getDimensionsSet(), bounds);
-            applyBackgroundStyles(d.getBackgroundSet(), result);
-            applyFontStyle(d.getFontSet(), result);
+            applyBackgroundStyles(d.getStylingSet(), result);
+            applyFontStyle(d.getStylingSet(), result);
         } else if (v.getDefinition() instanceof TextAnnotation) {
             final TextAnnotation d = (TextAnnotation) v.getDefinition();
             applyBounds(d.getDimensionsSet(), bounds);
-            applyBackgroundStyles(d.getBackgroundSet(), result);
-            applyFontStyle(d.getFontSet(), result);
+            applyBackgroundStyles(d.getStylingSet(), result);
+            applyFontStyle(d.getStylingSet(), result);
         } else if (v.getDefinition() instanceof DecisionService) {
             final DecisionService d = (DecisionService) v.getDefinition();
             applyBounds(d.getDimensionsSet(), bounds);
-            applyBackgroundStyles(d.getBackgroundSet(), result);
-            applyFontStyle(d.getFontSet(), result);
+            applyBackgroundStyles(d.getStylingSet(), result);
+            applyFontStyle(d.getStylingSet(), result);
             final DMNDecisionServiceDividerLine dl = new org.kie.dmn.model.v1_2.dmndi.DMNDecisionServiceDividerLine();
             final org.kie.dmn.model.api.dmndi.Point leftPoint = new org.kie.dmn.model.v1_2.dmndi.Point();
             leftPoint.setX(v.getBounds().getUpperLeft().getX());
@@ -1174,7 +1164,7 @@ public class DMNMarshallerStandalone implements DiagramMarshaller<Graph, Metadat
                 .orElse("");
     }
 
-    private static void applyFontStyle(final FontSet fontSet,
+    private static void applyFontStyle(final StylingSet fontSet,
                                        final DMNShape result) {
         if (!(result.getStyle() instanceof DMNStyle)) {
             return;
@@ -1199,7 +1189,7 @@ public class DMNMarshallerStandalone implements DiagramMarshaller<Graph, Metadat
         }
     }
 
-    private static void applyBackgroundStyles(final BackgroundSet bgset,
+    private static void applyBackgroundStyles(final StylingSet bgset,
                                               final DMNShape result) {
         if (!(result.getStyle() instanceof DMNStyle)) {
             return;

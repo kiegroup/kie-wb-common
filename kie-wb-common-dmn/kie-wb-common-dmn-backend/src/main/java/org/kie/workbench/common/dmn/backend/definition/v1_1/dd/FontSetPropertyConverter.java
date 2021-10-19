@@ -17,12 +17,12 @@
 package org.kie.workbench.common.dmn.backend.definition.v1_1.dd;
 
 import org.kie.dmn.model.api.dmndi.DMNStyle;
-import org.kie.workbench.common.dmn.api.property.font.FontSet;
+import org.kie.workbench.common.dmn.api.property.styling.StylingSet;
 
 public class FontSetPropertyConverter {
 
-    public static FontSet wbFromDMN(final DMNStyle dmn) {
-        final FontSet result = new FontSet();
+    public static StylingSet wbFromDMN(final DMNStyle dmn) {
+        final StylingSet result = new StylingSet();
         if (null != dmn.getFontFamily()) {
             result.getFontFamily().setValue(dmn.getFontFamily());
         }
@@ -35,7 +35,7 @@ public class FontSetPropertyConverter {
         return result;
     }
 
-    public static DMNStyle dmnFromWB(final FontSet wb) {
+    public static DMNStyle dmnFromWB(final StylingSet wb) {
         final DMNStyle result = new org.kie.dmn.model.v1_2.dmndi.DMNStyle();
         if (null != wb.getFontFamily().getValue()) {
             result.setFontFamily(wb.getFontFamily().getValue());
