@@ -19,8 +19,10 @@ package org.kie.workbench.common.forms.jbpm.server.service.formGeneration.impl;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.kie.workbench.common.forms.adf.definitions.settings.ColSpan;
@@ -61,6 +63,8 @@ public abstract class AbstractBPMNFormGeneratorService<SOURCE> implements BPMNFo
     protected ModelReaderService<SOURCE> modelReaderService;
     protected FieldManager fieldManager;
 
+    private Set<String> checkCircularSet = new HashSet<>();
+
     static {
         bannedModelTypes.add(Object.class.getName());
     }
@@ -92,7 +96,6 @@ public abstract class AbstractBPMNFormGeneratorService<SOURCE> implements BPMNFo
         }
 
         context.setRootForm(rootForm);
-
         return new FormGenerationResult(context.getRootForm(),
                                         new ArrayList<>(context.getContextForms().values()));
     }
@@ -219,11 +222,26 @@ public abstract class AbstractBPMNFormGeneratorService<SOURCE> implements BPMNFo
                 .findAny();
     }
 
+    private boolean hasCyclicReference(final FieldDefinition field, final GenerationContext<SOURCE> context) {
+        String modelType = field.getStandaloneClassName();
+        if (bannedModelTypes.contains(modelType)) {
+            throw new IllegalArgumentException("Cannot extract fields for '" + modelType + "'");
+        }
+        if (checkCircularSet.contains(modelType)) {
+            return true;
+        } else {
+            checkCircularSet.add(modelType);
+        }
+        return false;
+    }
+
     protected boolean processFieldDefinition(final FieldDefinition field, final GenerationContext<SOURCE> context) {
         if (field instanceof EntityRelationField) {
             try {
                 if (field instanceof HasNestedForm) {
-
+                    if (hasCyclicReference(field, context)) {
+                        return false;
+                    }
                     HasNestedForm nestedFormField = (HasNestedForm) field;
 
                     FormDefinition nestedForm = findFormDefinitionForModelType(field.getStandaloneClassName(), context);
@@ -262,6 +280,8 @@ public abstract class AbstractBPMNFormGeneratorService<SOURCE> implements BPMNFo
             } catch (Exception ex) {
                 log("Something wrong happened processing FieldDefinition \'" + field.getName() + "\"", ex);
                 return false;
+            } finally {
+                checkCircularSet.clear();
             }
         }
         return true;
