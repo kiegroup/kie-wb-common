@@ -34,6 +34,7 @@ import org.kie.workbench.common.forms.jbpm.server.service.formGeneration.FormGen
 import org.kie.workbench.common.forms.jbpm.server.service.formGeneration.model.Client;
 import org.kie.workbench.common.forms.jbpm.server.service.formGeneration.model.Expense;
 import org.kie.workbench.common.forms.jbpm.server.service.formGeneration.model.Line;
+import org.kie.workbench.common.forms.jbpm.server.service.formGeneration.model.Person;
 import org.kie.workbench.common.forms.model.FieldDefinition;
 import org.kie.workbench.common.forms.model.FormDefinition;
 import org.kie.workbench.common.forms.model.ModelProperty;
@@ -140,6 +141,25 @@ public abstract class AbstractBPMNFormGeneratorServiceTest<SERVICE extends Abstr
                       result,
                       variableList);
 
+        return result;
+    }
+
+    protected FormGenerationResult launchNestedFormWithCyclicReference() {
+        List<ModelProperty> variableList = new ArrayList<>();
+        variableList.add(new ModelPropertyImpl("person",
+                                                new TypeInfoImpl(TypeKind.OBJECT,
+                                                        Person.class.getName(),
+                                                        false)));
+        BusinessProcessFormModel model = new BusinessProcessFormModel(PROCESS_ID,
+                                                                        PROCESS_ID,
+                                                                        variableList);
+        FormGenerationResult result = service.generateForms(model, source);
+
+        assertNotNull(result);
+        assertNotNull(result.getRootForm());
+        checkRootForm(model,
+                result,
+                variableList);
         return result;
     }
 
