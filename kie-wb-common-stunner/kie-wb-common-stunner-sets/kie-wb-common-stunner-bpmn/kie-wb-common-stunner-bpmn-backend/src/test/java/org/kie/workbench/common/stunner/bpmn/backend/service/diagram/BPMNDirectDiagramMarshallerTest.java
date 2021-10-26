@@ -3153,6 +3153,7 @@ public class BPMNDirectDiagramMarshallerTest {
         assertTrue(result.contains("<![CDATA[admin,kiemgmt]]>"));
         result = result.replace(NEW_LINE,
                                 " ");
+        result = result.replace("\n", " ");
         assertTrue(result.matches("(.*)<bpmn2:resourceAssignmentExpression(.*)>user</bpmn2:formalExpression>(.*)"));
         assertTrue(result.matches("(.*)<bpmn2:resourceAssignmentExpression(.*)>user1</bpmn2:formalExpression>(.*)"));
     }
@@ -3225,17 +3226,17 @@ public class BPMNDirectDiagramMarshallerTest {
         assertTrue(result.contains("name=\"Java Script Task\" scriptFormat=\"http://www.java.com/java\""));
 
         assertTrue(result.contains("<bpmn2:script><![CDATA[var str = FirstName + LastName;]]></bpmn2:script>"));
-        assertTrue(result.contains("<bpmn2:script><![CDATA[if (name.toString().equals(\"Jay\")) {" + NEW_LINE +
-                                           NEW_LINE +
-                                           "      System.out.println(\"Hello\\n\" + name.toString() + \"\\n\");" + NEW_LINE +
-                                           NEW_LINE +
-                                           "} else {" + NEW_LINE +
-                                           NEW_LINE +
-                                           NEW_LINE +
-                                           "  System.out.println(\"Hi\\n\" + name.toString() + \"\\n\");" + NEW_LINE +
-                                           NEW_LINE +
-                                           NEW_LINE +
-                                           "}" + NEW_LINE +
+        assertTrue(result.contains("<bpmn2:script><![CDATA[if (name.toString().equals(\"Jay\")) {" + "\n" +
+                                           "\n" +
+                                           "      System.out.println(\"Hello\\n\" + name.toString() + \"\\n\");" + "\n" +
+                                           "\n" +
+                                           "} else {" + "\n" +
+                                           "\n" +
+                                           "\n" +
+                                           "  System.out.println(\"Hi\\n\" + name.toString() + \"\\n\");" + "\n" +
+                                           "\n" +
+                                           "\n" +
+                                           "}" + "\n" +
                                            "]]></bpmn2:script>"));
 
         String flatResult = result.replace(NEW_LINE,
@@ -3257,8 +3258,8 @@ public class BPMNDirectDiagramMarshallerTest {
                       6,
                       5);
         assertTrue(result.contains("language=\"http://www.javascript.com/javascript\"><![CDATA[age >= 10;]]></bpmn2:conditionExpression>"));
-        assertTrue(result.contains("language=\"http://www.java.com/java\"><![CDATA[age" + NEW_LINE +
-                                           "<" + NEW_LINE +
+        assertTrue(result.contains("language=\"http://www.java.com/java\"><![CDATA[age" + "\n" +
+                                           "<" + "\n" +
                                            "10;]]></bpmn2:conditionExpression>"));
     }
 
