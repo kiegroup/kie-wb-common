@@ -96,6 +96,7 @@ public abstract class AbstractBPMNFormGeneratorService<SOURCE> implements BPMNFo
         }
 
         context.setRootForm(rootForm);
+        checkCircularSet.clear();
         return new FormGenerationResult(context.getRootForm(),
                                         new ArrayList<>(context.getContextForms().values()));
     }
@@ -222,16 +223,14 @@ public abstract class AbstractBPMNFormGeneratorService<SOURCE> implements BPMNFo
                 .findAny();
     }
 
-    private boolean hasCyclicReference(final FieldDefinition field, final GenerationContext<SOURCE> context) {
-        String modelType = field.getStandaloneClassName();
+    private boolean hasCyclicReference(final String modelType) {
         if (bannedModelTypes.contains(modelType)) {
             throw new IllegalArgumentException("Cannot extract fields for '" + modelType + "'");
         }
         if (checkCircularSet.contains(modelType)) {
             return true;
-        } else {
-            checkCircularSet.add(modelType);
         }
+        checkCircularSet.add(modelType);
         return false;
     }
 
@@ -239,7 +238,7 @@ public abstract class AbstractBPMNFormGeneratorService<SOURCE> implements BPMNFo
         if (field instanceof EntityRelationField) {
             try {
                 if (field instanceof HasNestedForm) {
-                    if (hasCyclicReference(field, context)) {
+                    if (hasCyclicReference(field.getStandaloneClassName())) {
                         return false;
                     }
                     HasNestedForm nestedFormField = (HasNestedForm) field;
@@ -280,8 +279,6 @@ public abstract class AbstractBPMNFormGeneratorService<SOURCE> implements BPMNFo
             } catch (Exception ex) {
                 log("Something wrong happened processing FieldDefinition \'" + field.getName() + "\"", ex);
                 return false;
-            } finally {
-                checkCircularSet.clear();
             }
         }
         return true;
