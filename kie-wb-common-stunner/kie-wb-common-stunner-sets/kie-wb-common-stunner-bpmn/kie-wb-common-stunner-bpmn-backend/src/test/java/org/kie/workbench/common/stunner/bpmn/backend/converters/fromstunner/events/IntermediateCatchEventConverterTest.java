@@ -23,7 +23,6 @@ import java.util.List;
 import org.eclipse.bpmn2.BoundaryEvent;
 import org.eclipse.bpmn2.CatchEvent;
 import org.eclipse.bpmn2.Event;
-import org.eclipse.bpmn2.FlowElement;
 import org.eclipse.bpmn2.IntermediateCatchEvent;
 import org.junit.Before;
 import org.junit.Test;
@@ -78,6 +77,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.Factories.bpmn2;
@@ -94,6 +94,7 @@ public class IntermediateCatchEventConverterTest {
     private static final String NAME = "CATCHING EVENT NAME";
     private static final String DOCUMENTATION = "CATCHING EVENT DOCUMENTATION";
     private static final String ASSIGNMENTS_INFO = "Years of Service:Integer||Data Test:Boolean||[din]Years of Service=35,[dout]Data Test->BooleanTest";
+    private static final String SHAPE_NULL = "shape_null";
     private static final boolean CANCEL_ACTIVITY = false;
 
     private BoundaryEventPropertyWriter boundaryEventPropertyWriter;
@@ -122,15 +123,13 @@ public class IntermediateCatchEventConverterTest {
     @Before
     public void setUp() {
         Event boundaryEvent = bpmn2.createBoundaryEvent();
-        boundaryEvent.setId("boundaryEventID");
-        boundaryEventPropertyWriter = spy(new BoundaryEventPropertyWriter((BoundaryEvent) boundaryEvent,
+        boundaryEventPropertyWriter = spy(new BoundaryEventPropertyWriter((BoundaryEvent) spy(boundaryEvent),
                                                                           new FlatVariableScope(),
                                                                           new HashSet<>()));
-        when(boundaryEventPropertyWriter.getFlowElement()).thenReturn(spy(FlowElement.class));
+//        when(boundaryEventPropertyWriter.getFlowElement()).thenReturn(spy(FlowElement.class));
 
         Event catchEvent = bpmn2.createIntermediateCatchEvent();
-        catchEvent.setId("catchEventID");
-        catchEventPropertyWriter = spy(new CatchEventPropertyWriter((CatchEvent) catchEvent,
+        catchEventPropertyWriter = spy(new CatchEventPropertyWriter((CatchEvent) spy(catchEvent),
                                                                     new FlatVariableScope(),
                                                                     new HashSet<>()));
 
@@ -311,11 +310,13 @@ public class IntermediateCatchEventConverterTest {
 
     private void verifyCommonProperties(Node node) {
         verify(boundaryEventPropertyWriter).getFlowElement();
-        verify(boundaryEventPropertyWriter).setAbsoluteBounds(node);
         verify(boundaryEventPropertyWriter.getFlowElement()).setId(UUID);
         verify(boundaryEventPropertyWriter).setName(NAME);
         verify(boundaryEventPropertyWriter).setDocumentation(DOCUMENTATION);
         verify(boundaryEventPropertyWriter).setAssignmentsInfo(assignmentsInfo);
+        verify(boundaryEventPropertyWriter).setAbsoluteBounds(node);
+
+        assertNotEquals(SHAPE_NULL, boundaryEventPropertyWriter.getShape().getId());
     }
 
     private Node createIntermediateErrorEventCatchingNode() {
