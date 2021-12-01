@@ -34,7 +34,7 @@ public class DateMultipleSelectorFieldValueMarshaller extends AbstractDateMultip
     }
 
     @Override
-    public Supplier<FieldValueMarshaller<List<?>, List<Date>, DateMultipleSelectorFieldDefinition>> newInstanceSupplier() {
+    public Supplier<FieldValueMarshaller<List, List<Date>, DateMultipleSelectorFieldDefinition>> newInstanceSupplier() {
         return DateMultipleSelectorFieldValueMarshaller::new;
     }
 }
