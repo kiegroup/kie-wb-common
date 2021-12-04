@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.function.Predicate;
 
 import org.guvnor.common.services.project.model.GAV;
@@ -30,8 +31,9 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.kie.api.builder.KieBuilder;
 import org.kie.api.builder.KieFileSystem;
+import org.kie.api.builder.Message;
+import org.kie.internal.builder.InternalKieBuilder;
 import org.kie.workbench.common.services.shared.allowlist.PackageNameAllowListService;
 import org.kie.workbench.common.services.shared.project.KieModuleService;
 import org.kie.workbench.common.services.shared.project.ProjectImportsService;
@@ -41,25 +43,35 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.uberfire.backend.vfs.Path;
 import org.uberfire.io.IOService;
+import org.uberfire.workbench.events.ResourceAdded;
 import org.uberfire.workbench.events.ResourceChange;
 import org.uberfire.workbench.events.ResourceRenamed;
 import org.uberfire.workbench.events.ResourceUpdated;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 @RunWith(MockitoJUnitRunner.class)
-public class BuilderRenameTest {
+public class BuilderBatchResourceChangesTest {
 
     @Mock
     private KieFileSystem kieFileSystem;
 
+    @Mock
+    private InternalKieBuilder kieBuilder;
+
     @Captor
     private ArgumentCaptor<String> pathCaptor;
+
+    @Captor
+    private ArgumentCaptor<Object> arrayCaptor;
 
     private Module module;
 
@@ -85,7 +97,7 @@ public class BuilderRenameTest {
                               mock(LRUPomModelCache.class),
                               mock(PackageNameAllowListService.class),
                               mock(Predicate.class),
-                              mock(KieBuilder.class),
+                              kieBuilder,
                               kieFileSystem);
     }
 
@@ -119,5 +131,23 @@ public class BuilderRenameTest {
         final String pathToBeDeleted = pathCaptor.getValue();
         assertTrue(pathToBeDeleted.contains("hello"));
         assertFalse(pathToBeDeleted.contains("helloAgain"));
+    }
+
+    @Test
+    public void testAddAndUpdate() throws IOException {
+
+        final Path path = testFileSystem.createTempFile("project/hello.txt");
+
+        final HashMap<Path, Collection<ResourceChange>> changes = new HashMap<>();
+
+        final ArrayList<ResourceChange> resourceChanges = new ArrayList<>();
+        resourceChanges.add(new ResourceAdded("message"));
+        resourceChanges.add(new ResourceUpdated("message"));
+        changes.put(path, resourceChanges);
+
+        builder.applyBatchResourceChanges(changes);
+
+        verify(kieBuilder, times(1)).createFileSet(eq(Message.Level.WARNING), (String[]) arrayCaptor.capture());
+        assertEquals(1, arrayCaptor.getAllValues().size());
     }
 }
