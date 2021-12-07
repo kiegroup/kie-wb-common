@@ -217,7 +217,7 @@ public class BPMNFormModelGeneratorImpl implements BPMNFormModelGenerator {
                                 if (!StringUtils.isEmpty(taskName)) {
                                     // Parsing taskName... it comes in a <![CDATA[]]>
                                     taskName = Parser.xmlParser().parseInput(taskName,
-                                                                             "").toString();
+                                                                             "").text();
                                     formVariables.setTaskName(taskName);
                                 }
                             }
