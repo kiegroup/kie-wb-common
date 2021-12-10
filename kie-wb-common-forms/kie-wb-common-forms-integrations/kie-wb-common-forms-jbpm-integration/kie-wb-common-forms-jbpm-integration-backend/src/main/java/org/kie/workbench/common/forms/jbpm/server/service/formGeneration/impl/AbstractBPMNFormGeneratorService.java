@@ -63,7 +63,7 @@ public abstract class AbstractBPMNFormGeneratorService<SOURCE> implements BPMNFo
     protected ModelReaderService<SOURCE> modelReaderService;
     protected FieldManager fieldManager;
 
-    private Set<String> checkCircularSet = new HashSet<>();
+    protected Set<String> checkCircularSet = new HashSet<>();
 
     static {
         bannedModelTypes.add(Object.class.getName());
@@ -96,7 +96,6 @@ public abstract class AbstractBPMNFormGeneratorService<SOURCE> implements BPMNFo
         }
 
         context.setRootForm(rootForm);
-        checkCircularSet.clear();
         return new FormGenerationResult(context.getRootForm(),
                                         new ArrayList<>(context.getContextForms().values()));
     }
@@ -223,7 +222,7 @@ public abstract class AbstractBPMNFormGeneratorService<SOURCE> implements BPMNFo
                 .findAny();
     }
 
-    private boolean hasCyclicReference(final String modelType) {
+    protected boolean hasCyclicReference(final String modelType) {
         if (bannedModelTypes.contains(modelType)) {
             throw new IllegalArgumentException("Cannot extract fields for '" + modelType + "'");
         }
@@ -252,6 +251,8 @@ public abstract class AbstractBPMNFormGeneratorService<SOURCE> implements BPMNFo
                     }
 
                     nestedFormField.setNestedForm(nestedForm.getId());
+
+                    checkCircularSet.clear();
                 } else if (field instanceof IsCRUDDefinition) {
                     IsCRUDDefinition crudField = (IsCRUDDefinition) field;
 
