@@ -69,8 +69,8 @@ public class IntermediateCatchEventConverter {
 
     protected PropertyWriter errorEvent(Node<View<IntermediateErrorEventCatching>, ?> n) {
         CatchEventPropertyWriter p = createCatchEventPropertyWriter(n);
-        p.setAbsoluteBounds(n);
         p.getFlowElement().setId(n.getUUID());
+        p.setAbsoluteBounds(n);
 
         IntermediateErrorEventCatching definition = n.getContent().getDefinition();
 
@@ -91,8 +91,8 @@ public class IntermediateCatchEventConverter {
 
     protected PropertyWriter signalEvent(Node<View<IntermediateSignalEventCatching>, ?> n) {
         CatchEventPropertyWriter p = createCatchEventPropertyWriter(n);
-        p.setAbsoluteBounds(n);
         p.getFlowElement().setId(n.getUUID());
+        p.setAbsoluteBounds(n);
 
         IntermediateSignalEventCatching definition = n.getContent().getDefinition();
 
@@ -108,14 +108,13 @@ public class IntermediateCatchEventConverter {
         p.addSlaDueDate(executionSet.getSlaDueDate());
         p.addSignal(definition.getExecutionSet().getSignalRef());
 
-
         return p;
     }
 
     protected PropertyWriter linkEvent(Node<View<IntermediateLinkEventCatching>, ?> n) {
         CatchEventPropertyWriter p = createCatchEventPropertyWriter(n);
-        p.setAbsoluteBounds(n);
         p.getFlowElement().setId(n.getUUID());
+        p.setAbsoluteBounds(n);
 
         IntermediateLinkEventCatching definition = n.getContent().getDefinition();
 
@@ -134,8 +133,8 @@ public class IntermediateCatchEventConverter {
 
     protected PropertyWriter timerEvent(Node<View<IntermediateTimerEvent>, ?> n) {
         CatchEventPropertyWriter p = createCatchEventPropertyWriter(n);
-        p.setAbsoluteBounds(n);
         p.getFlowElement().setId(n.getUUID());
+        p.setAbsoluteBounds(n);
 
         IntermediateTimerEvent definition = n.getContent().getDefinition();
 
@@ -156,8 +155,8 @@ public class IntermediateCatchEventConverter {
 
     protected PropertyWriter messageEvent(Node<View<IntermediateMessageEventCatching>, ?> n) {
         CatchEventPropertyWriter p = createCatchEventPropertyWriter(n);
-        p.setAbsoluteBounds(n);
         p.getFlowElement().setId(n.getUUID());
+        p.setAbsoluteBounds(n);
 
         IntermediateMessageEventCatching definition = n.getContent().getDefinition();
 
@@ -178,8 +177,8 @@ public class IntermediateCatchEventConverter {
 
     protected PropertyWriter conditionalEvent(Node<View<IntermediateConditionalEvent>, ?> n) {
         CatchEventPropertyWriter p = createCatchEventPropertyWriter(n);
-        p.setAbsoluteBounds(n);
         p.getFlowElement().setId(n.getUUID());
+        p.setAbsoluteBounds(n);
 
         IntermediateConditionalEvent definition = n.getContent().getDefinition();
 
@@ -200,8 +199,8 @@ public class IntermediateCatchEventConverter {
 
     protected PropertyWriter escalationEvent(Node<View<IntermediateEscalationEvent>, ?> n) {
         CatchEventPropertyWriter p = createCatchEventPropertyWriter(n);
-        p.setAbsoluteBounds(n);
         p.getFlowElement().setId(n.getUUID());
+        p.setAbsoluteBounds(n);
 
         IntermediateEscalationEvent definition = n.getContent().getDefinition();
 
@@ -222,8 +221,8 @@ public class IntermediateCatchEventConverter {
 
     protected PropertyWriter compensationEvent(Node<View<IntermediateCompensationEvent>, ?> n) {
         CatchEventPropertyWriter p = createCatchEventPropertyWriter(n);
-        p.setAbsoluteBounds(n);
         p.getFlowElement().setId(n.getUUID());
+        p.setAbsoluteBounds(n);
 
         IntermediateCompensationEvent definition = n.getContent().getDefinition();
 
