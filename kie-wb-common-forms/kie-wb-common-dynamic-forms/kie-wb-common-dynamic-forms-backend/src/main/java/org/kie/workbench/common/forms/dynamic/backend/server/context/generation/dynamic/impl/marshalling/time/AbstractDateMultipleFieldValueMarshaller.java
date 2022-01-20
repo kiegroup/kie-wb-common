@@ -25,7 +25,7 @@ import org.kie.workbench.common.forms.dynamic.backend.server.context.generation.
 import org.kie.workbench.common.forms.fields.shared.fieldTypes.basic.datePicker.definition.DatePickerFieldDefinition;
 import org.kie.workbench.common.forms.model.FieldDefinition;
 
-public abstract class AbstractDateMultipleFieldValueMarshaller<F extends FieldDefinition> extends AbstractFieldValueMarshaller<List<?>, List<Date>, F> {
+public abstract class AbstractDateMultipleFieldValueMarshaller<F extends FieldDefinition> extends AbstractFieldValueMarshaller<List, List<Date>, F> {
 
     @Override
     public List<Date> toFlatValue() {
@@ -38,13 +38,13 @@ public abstract class AbstractDateMultipleFieldValueMarshaller<F extends FieldDe
             return (List<Date>) originalValue;
         }
 
-        return originalValue.stream()
+        return (List<Date>) originalValue.stream()
                 .map(rawValue -> getMarshaller(rawValue).toFlatValue())
                 .collect(Collectors.toList());
     }
 
     @Override
-    public List<?> toRawValue(List<Date> dates) {
+    public List toRawValue(List<Date> dates) {
         if (dates == null) {
             return new ArrayList<>();
         }

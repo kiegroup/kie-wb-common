@@ -34,7 +34,7 @@ public class DateMultipleInputFieldValueMarshaller extends AbstractDateMultipleF
     }
 
     @Override
-    public Supplier<FieldValueMarshaller<List<?>, List<Date>, DateMultipleInputFieldDefinition>> newInstanceSupplier() {
+    public Supplier<FieldValueMarshaller<List, List<Date>, DateMultipleInputFieldDefinition>> newInstanceSupplier() {
         return DateMultipleInputFieldValueMarshaller::new;
     }
 }
