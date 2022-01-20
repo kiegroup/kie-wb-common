@@ -434,7 +434,7 @@ public class Builder implements Serializable {
         checkAFullBuildHasBeenPerformed();
 
         //Add all changes to KieFileSystem before executing the build
-        final List<String> changedFilesKieBuilderPaths = new ArrayList<String>();
+        final Set<String> changedFilesKieBuilderPaths = new HashSet<>();
         final List<ValidationMessage> nonKieResourceValidatorAddedMessages = new ArrayList<ValidationMessage>();
         final List<ValidationMessage> nonKieResourceValidatorRemovedMessages = new ArrayList<ValidationMessage>();
         final IncrementalBuildResults results = new IncrementalBuildResults(projectGAV);
@@ -485,9 +485,9 @@ public class Builder implements Serializable {
         return results;
     }
 
-    private String[] toArray(List<String> stringList) {
-        final String[] stringArray = new String[stringList.size()];
-        stringList.toArray(stringArray);
+    private String[] toArray(Set<String> stringSet) {
+        final String[] stringArray = new String[stringSet.size()];
+        stringSet.toArray(stringArray);
         return stringArray;
     }
 
