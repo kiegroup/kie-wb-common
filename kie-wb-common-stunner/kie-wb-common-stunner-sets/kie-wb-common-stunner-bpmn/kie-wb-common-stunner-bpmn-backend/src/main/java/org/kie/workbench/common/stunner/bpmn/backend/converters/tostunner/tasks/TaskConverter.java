@@ -21,7 +21,6 @@ import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.proper
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties.UserTaskPropertyReader;
 import org.kie.workbench.common.stunner.bpmn.definition.UserTask;
 import org.kie.workbench.common.stunner.bpmn.definition.property.assignee.Groupid;
-import org.kie.workbench.common.stunner.bpmn.definition.property.connectors.Priority;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.SLADueDate;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.AdHocAutostart;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.Content;
@@ -40,11 +39,13 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.task.OnExitActi
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.Skippable;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.Subject;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.TaskName;
+import org.kie.workbench.common.stunner.bpmn.definition.property.task.TaskPriority;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.UserTaskExecutionSet;
 import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
 import org.kie.workbench.common.stunner.core.marshaller.MarshallingRequest.Mode;
+import org.kie.workbench.common.stunner.core.util.StringUtils;
 
 public class TaskConverter extends BaseTaskConverter<UserTask, UserTaskExecutionSet> {
 
@@ -68,7 +69,7 @@ public class TaskConverter extends BaseTaskConverter<UserTask, UserTaskExecution
                                         p.getReassignments(),
                                         new IsAsync(p.isAsync()),
                                         new Skippable(p.isSkippable()),
-                                        new Priority(p.getPriority()),
+                                        new TaskPriority(StringUtils.revertIllegalCharsAttribute(p.getPriority())),
                                         new Subject(p.getSubject()),
                                         new Description(p.getDescription()),
                                         new CreatedBy(p.getCreatedBy()),
