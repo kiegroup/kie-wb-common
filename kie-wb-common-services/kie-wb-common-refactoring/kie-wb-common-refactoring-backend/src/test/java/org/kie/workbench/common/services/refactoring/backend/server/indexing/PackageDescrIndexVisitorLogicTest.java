@@ -32,6 +32,7 @@ import org.drools.compiler.compiler.ReturnValueDescr;
 import org.drools.compiler.lang.descr.BaseDescr;
 import org.drools.compiler.lang.descr.CompositePackageDescr;
 import org.drools.compiler.lang.descr.ConnectiveDescr;
+import org.drools.compiler.lang.descr.GroupByDescr;
 import org.drools.compiler.lang.descr.OperatorDescr;
 import org.drools.compiler.lang.descr.PatternSourceDescr;
 import org.drools.compiler.lang.descr.ProcessDescr;
@@ -79,6 +80,8 @@ public class PackageDescrIndexVisitorLogicTest {
 
         descrClasses.remove(PatternSourceDescr.class); // "abstract" class, even though it isn't
         descrClasses.remove(RestrictionDescr.class); // "abstract" class, even though it isn't
+
+        descrClasses.remove(GroupByDescr.class); // not used in v7
 
         String accDescrClassName = "org.drools.compiler.lang.descr.AccessorDescr";
         try {
