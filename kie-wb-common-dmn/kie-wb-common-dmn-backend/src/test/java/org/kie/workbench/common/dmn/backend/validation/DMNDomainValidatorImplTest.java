@@ -335,7 +335,7 @@ public class DMNDomainValidatorImplTest {
         when(project.getMainModule()).thenReturn(mainModule);
         when(buildHelper.build(mainModule)).thenReturn(result);
         when(result.getBuilder()).thenReturn(builder);
-        when(builder.getKieModule()).thenReturn(kieModule);
+        when(builder.getKieModuleIgnoringErrors()).thenReturn(kieModule);
         when(kieModule.getModuleClassLoader()).thenReturn(expectedClassLoader);
 
         final ClassLoader actual = domainValidator.getClassLoader(diagram);

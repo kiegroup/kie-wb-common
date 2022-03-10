@@ -157,7 +157,7 @@ public class DMNDomainValidatorImpl implements DMNDomainValidator {
         final WorkspaceProject project = workspaceProjectService.resolveProject(path);
         final Module module = project.getMainModule();
         final BuildHelper.BuildResult result = buildHelper.build(module);
-        final ClassLoader classLoader = ((InternalKieModule) result.getBuilder().getKieModule()).getModuleClassLoader();
+        final ClassLoader classLoader = ((InternalKieModule) result.getBuilder().getKieModuleIgnoringErrors()).getModuleClassLoader();
         return classLoader;
     }
 
