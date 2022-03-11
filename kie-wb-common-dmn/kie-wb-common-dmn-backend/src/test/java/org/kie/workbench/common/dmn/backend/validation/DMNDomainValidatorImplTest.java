@@ -33,6 +33,10 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 import org.apache.commons.io.IOUtils;
+import org.drools.compiler.kie.builder.impl.InternalKieModule;
+import org.guvnor.common.services.project.model.Module;
+import org.guvnor.common.services.project.model.WorkspaceProject;
+import org.guvnor.common.services.project.service.WorkspaceProjectService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -49,6 +53,8 @@ import org.kie.workbench.common.dmn.api.graph.DMNDiagramUtils;
 import org.kie.workbench.common.dmn.backend.DMNMarshallerStandalone;
 import org.kie.workbench.common.dmn.backend.common.DMNIOHelper;
 import org.kie.workbench.common.dmn.backend.common.DMNMarshallerImportsHelperStandalone;
+import org.kie.workbench.common.services.backend.builder.core.BuildHelper;
+import org.kie.workbench.common.services.backend.builder.core.Builder;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.kie.workbench.common.stunner.core.diagram.Metadata;
 import org.kie.workbench.common.stunner.core.validation.DomainViolation;
@@ -109,6 +115,12 @@ public class DMNDomainValidatorImplTest {
     @Mock
     private DMNValidator.ValidatorBuilder.ValidatorImportReaderResolver resolver;
 
+    @Mock
+    private WorkspaceProjectService workspaceProjectService;
+
+    @Mock
+    private BuildHelper buildHelper;
+
     @Captor
     private ArgumentCaptor<Collection<DomainViolation>> domainViolationsArgumentCaptor;
 
@@ -129,10 +141,9 @@ public class DMNDomainValidatorImplTest {
         this.domainValidator = spy(new DMNDomainValidatorImpl(dmnMarshaller,
                                                               dmnDiagramUtils,
                                                               importsHelper,
-                                                              dmnIOHelper));
-
-        doReturn(dmnValidator).when(domainValidator).getDMNValidator();
-        domainValidator.setupValidator();
+                                                              dmnIOHelper,
+                                                              workspaceProjectService,
+                                                              buildHelper));
 
         when(dmnMarshaller.marshall(diagram)).thenReturn(DMN_XML);
         when(dmnDiagramUtils.getDefinitions(diagram)).thenReturn(definitions);
@@ -193,12 +204,16 @@ public class DMNDomainValidatorImplTest {
 
     @Test
     @SuppressWarnings("unchecked")
-    public void testBasicValidation() throws IOException {
+    public void testBasicValidation() {
         final StringReader stringReader = mock(StringReader.class);
 
         doReturn(resolver).when(domainValidator).getValidatorImportReaderResolver(metadata);
 
         doReturn(stringReader).when(domainValidator).getStringReader(Mockito.any());
+
+        doReturn(null).when(domainValidator).getClassLoader(diagram);
+
+        doReturn(dmnValidator).when(domainValidator).getDmnValidator(any());
 
         domainValidator.validate(diagram,
                                  resultConsumer);
@@ -218,13 +233,17 @@ public class DMNDomainValidatorImplTest {
 
     @Test
     @SuppressWarnings("unchecked")
-    public void testImportedModelValidation() throws IOException {
+    public void testImportedModelValidation() {
         final StringReader stringReader1 = mock(StringReader.class);
         final StringReader stringReader2 = mock(StringReader.class);
+
+        doReturn(dmnValidator).when(domainValidator).getDmnValidator(any());
 
         doReturn(resolver).when(domainValidator).getValidatorImportReaderResolver(metadata);
 
         doReturn(stringReader1, stringReader2).when(domainValidator).getStringReader(Mockito.any());
+
+        doReturn(null).when(domainValidator).getClassLoader(diagram);
 
         definitions.getImport().add(new Import());
 
@@ -260,6 +279,10 @@ public class DMNDomainValidatorImplTest {
 
         doReturn(resolver).when(domainValidator).getValidatorImportReaderResolver(metadata);
 
+        doReturn(null).when(domainValidator).getClassLoader(diagram);
+
+        doReturn(dmnValidator).when(domainValidator).getDmnValidator(any());
+
         //Default UUID
         validationMessages.add(makeDMNMessage(DMNMessage.Severity.ERROR, "error", null));
         //Explicit UUID
@@ -292,6 +315,32 @@ public class DMNDomainValidatorImplTest {
         assertThat(domainViolation2.getViolationType()).isEqualTo(Violation.Type.INFO);
         assertThat(domainViolation2.getMessage()).contains("info");
         assertThat(domainViolation2.getUUID()).isEqualTo(dmnElementUUID);
+    }
+
+    @Test
+    public void testGetClassloader() {
+
+        final Diagram diagram = mock(Diagram.class);
+        final Path path = mock(Path.class);
+        final WorkspaceProject project = mock(WorkspaceProject.class);
+        final Module mainModule = mock(Module.class);
+        final BuildHelper.BuildResult result = mock(BuildHelper.BuildResult.class);
+        final Builder builder = mock(Builder.class);
+        final InternalKieModule kieModule = mock(InternalKieModule.class);
+        final ClassLoader expectedClassLoader = mock(ClassLoader.class);
+
+        when(diagram.getMetadata()).thenReturn(metadata);
+        when(metadata.getPath()).thenReturn(path);
+        when(workspaceProjectService.resolveProject(path)).thenReturn(project);
+        when(project.getMainModule()).thenReturn(mainModule);
+        when(buildHelper.build(mainModule)).thenReturn(result);
+        when(result.getBuilder()).thenReturn(builder);
+        when(builder.getKieModuleIgnoringErrors()).thenReturn(kieModule);
+        when(kieModule.getModuleClassLoader()).thenReturn(expectedClassLoader);
+
+        final ClassLoader actual = domainValidator.getClassLoader(diagram);
+
+        assertEquals(expectedClassLoader, actual);
     }
 
     private DMNMessage makeDMNMessage(final DMNMessage.Severity severity,

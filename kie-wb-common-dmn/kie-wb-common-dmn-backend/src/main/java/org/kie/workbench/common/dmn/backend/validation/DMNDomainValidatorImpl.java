@@ -22,16 +22,20 @@ import java.io.StringReader;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
-import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
+import org.drools.compiler.kie.builder.impl.InternalKieModule;
+import org.guvnor.common.services.project.model.Module;
+import org.guvnor.common.services.project.model.WorkspaceProject;
+import org.guvnor.common.services.project.service.WorkspaceProjectService;
 import org.jboss.errai.bus.server.annotations.Service;
 import org.kie.api.builder.Message;
 import org.kie.dmn.api.core.DMNMessage;
@@ -47,6 +51,7 @@ import org.kie.workbench.common.dmn.backend.DMNMarshallerStandalone;
 import org.kie.workbench.common.dmn.backend.common.DMNIOHelper;
 import org.kie.workbench.common.dmn.backend.common.DMNMarshallerImportsHelperStandalone;
 import org.kie.workbench.common.dmn.backend.definition.v1_1.ImportConverter;
+import org.kie.workbench.common.services.backend.builder.core.BuildHelper;
 import org.kie.workbench.common.stunner.core.definition.adapter.binding.BindableAdapterUtils;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.kie.workbench.common.stunner.core.diagram.Metadata;
@@ -62,31 +67,26 @@ public class DMNDomainValidatorImpl implements DMNDomainValidator {
 
     static final String DEFAULT_UUID = "uuid";
 
-    private DMNValidator dmnValidator;
-
     private DMNMarshallerStandalone dmnMarshaller;
     private DMNDiagramUtils dmnDiagramUtils;
     private DMNMarshallerImportsHelperStandalone importsHelper;
     private final DMNIOHelper dmnIOHelper;
+    private final WorkspaceProjectService workspaceProjectService;
+    private final BuildHelper buildHelper;
 
     @Inject
     public DMNDomainValidatorImpl(final DMNMarshallerStandalone dmnMarshaller,
                                   final DMNDiagramUtils dmnDiagramUtils,
                                   final DMNMarshallerImportsHelperStandalone importsHelper,
-                                  final DMNIOHelper dmnIOHelper) {
+                                  final DMNIOHelper dmnIOHelper,
+                                  final WorkspaceProjectService workspaceProjectService,
+                                  final BuildHelper buildHelper) {
         this.dmnMarshaller = dmnMarshaller;
         this.dmnDiagramUtils = dmnDiagramUtils;
         this.importsHelper = importsHelper;
         this.dmnIOHelper = dmnIOHelper;
-    }
-
-    @PostConstruct
-    public void setupValidator() {
-        this.dmnValidator = getDMNValidator();
-    }
-
-    DMNValidator getDMNValidator() {
-        return DMNValidatorFactory.newValidator();
+        this.workspaceProjectService = workspaceProjectService;
+        this.buildHelper = buildHelper;
     }
 
     @Override
@@ -124,6 +124,11 @@ public class DMNDomainValidatorImpl implements DMNDomainValidator {
             importedDiagramsXML.values().forEach(importedDiagramXML -> dmnXMLReaders.add(getStringReader(importedDiagramXML)));
 
             final Reader[] aDMNXMLReaders = new Reader[]{};
+
+            final ClassLoader classLoader = getClassLoader(diagram);
+
+            final DMNValidator dmnValidator = getDmnValidator(classLoader);
+
             final List<DMNMessage> messages = dmnValidator
                     .validateUsing(DMNValidator.Validation.VALIDATE_MODEL,
                                    DMNValidator.Validation.VALIDATE_COMPILATION,
@@ -141,6 +146,19 @@ public class DMNDomainValidatorImpl implements DMNDomainValidator {
                 }
             });
         }
+    }
+
+    DMNValidator getDmnValidator(final ClassLoader classLoader) {
+        return DMNValidatorFactory.newValidator(classLoader, Collections.emptyList());
+    }
+
+    ClassLoader getClassLoader(final Diagram diagram) {
+        final Path path = diagram.getMetadata().getPath();
+        final WorkspaceProject project = workspaceProjectService.resolveProject(path);
+        final Module module = project.getMainModule();
+        final BuildHelper.BuildResult result = buildHelper.build(module);
+        final ClassLoader classLoader = ((InternalKieModule) result.getBuilder().getKieModuleIgnoringErrors()).getModuleClassLoader();
+        return classLoader;
     }
 
     DMNValidator.ValidatorBuilder.ValidatorImportReaderResolver getValidatorImportReaderResolver(final Metadata metadata) {
