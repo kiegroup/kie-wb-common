@@ -20,6 +20,8 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -64,6 +66,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
@@ -173,7 +176,8 @@ public class DMNMarshallerImportsHelperStandaloneImplTest {
     }
 
     @Test
-    public void testGetImportXML() throws java.io.IOException {
+    public void testGetImportXML() {
+
         final String xml1 = "<some xml/>";
         final String xml2 = "<some other xml/>";
 
@@ -561,6 +565,165 @@ public class DMNMarshallerImportsHelperStandaloneImplTest {
         assertThatThrownBy(() -> helper.getDMNModelPath(metadata, modelNamespace, modelName))
                 .isInstanceOf(IllegalStateException.class)
                 .hasMessageContaining("A path for the DMN model with namespace [0000-1111-2222-3333] could not be found.");
+    }
+
+    @Test
+    public void testAddImportsXML_ModelsInImportChain() {
+
+        // Model C imports Model B imports Model A
+        // So we need all the XMLs from all the imports targets (Model A and Model B)
+        final String modelA = "<modelA xml/>";
+        final String modelB_ThatImports_ModelA = "<modelB xml/>";
+        final String modelC_ThatImports_ModelB = "<modelC xml/>";
+
+        // Random Model that it is not part of the chain
+        final String randomModel = "<randomModel xml/>";
+
+        final Import importToA = mock(Import.class);
+        final Import importToB = mock(Import.class);
+
+        final Map<Import, String> importsXml = new HashMap<>();
+        final List<String> othersXml = asList(modelA,
+                                              modelB_ThatImports_ModelA,
+                                              randomModel,
+                                              modelC_ThatImports_ModelB);
+
+        // We don't want the static Collections.emptyList() because of the doReturns().when()
+        final List<Import> importsInModelA = new ArrayList<>();
+        final List<Import> importsInModelB = Collections.singletonList(importToA);
+        final List<Import> importsInModelC = Collections.singletonList(importToB);
+        final List<Import> importsInRandom = new ArrayList<>();
+
+        final StringReader readerModelA = mock(StringReader.class);
+        final StringReader readerModelB = mock(StringReader.class);
+        final StringReader readerModelC = mock(StringReader.class);
+        final StringReader readerRandomModel = mock(StringReader.class);
+
+        doReturn(readerModelA).when(helper).toStringReader(modelA);
+        doReturn(readerModelB).when(helper).toStringReader(modelB_ThatImports_ModelA);
+        doReturn(readerModelC).when(helper).toStringReader(modelC_ThatImports_ModelB);
+        doReturn(readerRandomModel).when(helper).toStringReader(randomModel);
+
+        final Definitions definitionModelA = mock(Definitions.class);
+        final Definitions definitionModelB = mock(Definitions.class);
+        final Definitions definitionModelC = mock(Definitions.class);
+        final Definitions definitionRandomModel = mock(Definitions.class);
+
+        when(definitionModelA.getImport()).thenReturn(importsInModelA);
+        when(definitionModelB.getImport()).thenReturn(importsInModelB);
+        when(definitionModelC.getImport()).thenReturn(importsInModelC);
+        when(definitionRandomModel.getImport()).thenReturn(importsInRandom);
+
+        doReturn(Optional.of(importToA)).when(helper).findImportByDefinitions(definitionModelA, importsInModelB);
+        doReturn(Optional.empty()).when(helper).findImportByDefinitions(definitionModelB, importsInModelB);
+        doReturn(Optional.empty()).when(helper).findImportByDefinitions(definitionModelC, importsInModelB);
+        doReturn(Optional.empty()).when(helper).findImportByDefinitions(definitionRandomModel, importsInModelB);
+
+        doReturn(Optional.empty()).when(helper).findImportByDefinitions(definitionModelA, importsInModelC);
+        doReturn(Optional.of(importToB)).when(helper).findImportByDefinitions(definitionModelB, importsInModelC);
+        doReturn(Optional.empty()).when(helper).findImportByDefinitions(definitionModelC, importsInModelC);
+        doReturn(Optional.empty()).when(helper).findImportByDefinitions(definitionRandomModel, importsInModelC);
+
+        doReturn(Optional.empty()).when(helper).findImportByDefinitions(any(), eq(importsInModelA));
+        doReturn(Optional.empty()).when(helper).findImportByDefinitions(any(), eq(importsInRandom));
+
+        when(marshaller.unmarshal(readerModelA)).thenReturn(definitionModelA);
+        when(marshaller.unmarshal(readerModelB)).thenReturn(definitionModelB);
+        when(marshaller.unmarshal(readerModelC)).thenReturn(definitionModelC);
+        when(marshaller.unmarshal(readerRandomModel)).thenReturn(definitionRandomModel);
+
+        helper.addImportsXML(importsXml, othersXml, importsInModelC);
+
+        assertFalse(importsXml.isEmpty());
+        assertTrue(importsXml.containsKey(importToA));
+        assertTrue(importsXml.containsKey(importToB));
+        assertEquals(modelA, importsXml.get(importToA));
+        assertEquals(modelB_ThatImports_ModelA, importsXml.get(importToB));
+    }
+
+    @Test
+    public void testAddImportsXML_OneModelMultipleImports() {
+
+        // Model C imports Model B AND Model A
+        // So we need all the XMLs from all the imports targets (Model A and Model B)
+        final String modelA = "<modelA xml/>";
+        final String modelB = "<modelB xml/>";
+        final String modelC_ThatImports_ModelB_and_ModelA = "<modelC xml/>";
+
+        // Random Model that it is not part of the chain
+        final String randomModel = "<randomModel xml/>";
+
+        final Import importToA = mock(Import.class);
+        final Import importToB = mock(Import.class);
+
+        final Map<Import, String> importsXml = new HashMap<>();
+        final List<String> othersXml = asList(modelA,
+                                              modelB,
+                                              randomModel,
+                                              modelC_ThatImports_ModelB_and_ModelA);
+
+        // We don't want the static Collections.emptyList() because of the doReturns().when()
+        final List<Import> importsInModelA = new ArrayList<>();
+        final List<Import> importsInModelB = new ArrayList<>();
+        ;
+        final List<Import> importsInModelC = Arrays.asList(importToB, importToA);
+        final List<Import> importsInRandom = new ArrayList<>();
+
+        final StringReader readerModelA = mock(StringReader.class);
+        final StringReader readerModelB = mock(StringReader.class);
+        final StringReader readerModelC = mock(StringReader.class);
+        final StringReader readerRandomModel = mock(StringReader.class);
+
+        doReturn(readerModelA).when(helper).toStringReader(modelA);
+        doReturn(readerModelB).when(helper).toStringReader(modelB);
+        doReturn(readerModelC).when(helper).toStringReader(modelC_ThatImports_ModelB_and_ModelA);
+        doReturn(readerRandomModel).when(helper).toStringReader(randomModel);
+
+        final Definitions definitionModelA = mock(Definitions.class);
+        final Definitions definitionModelB = mock(Definitions.class);
+        final Definitions definitionModelC = mock(Definitions.class);
+        final Definitions definitionRandomModel = mock(Definitions.class);
+
+        when(definitionModelA.getImport()).thenReturn(importsInModelA);
+        when(definitionModelB.getImport()).thenReturn(importsInModelB);
+        when(definitionModelC.getImport()).thenReturn(importsInModelC);
+        when(definitionRandomModel.getImport()).thenReturn(importsInRandom);
+
+        doReturn(Optional.of(importToA)).when(helper).findImportByDefinitions(definitionModelA, importsInModelC);
+        doReturn(Optional.of(importToB)).when(helper).findImportByDefinitions(definitionModelB, importsInModelC);
+        doReturn(Optional.empty()).when(helper).findImportByDefinitions(definitionModelC, importsInModelC);
+        doReturn(Optional.empty()).when(helper).findImportByDefinitions(definitionRandomModel, importsInModelC);
+
+        doReturn(Optional.empty()).when(helper).findImportByDefinitions(any(), eq(importsInModelA));
+        doReturn(Optional.empty()).when(helper).findImportByDefinitions(any(), eq(importsInRandom));
+        doReturn(Optional.empty()).when(helper).findImportByDefinitions(any(), eq(importsInModelB));
+
+        when(marshaller.unmarshal(readerModelA)).thenReturn(definitionModelA);
+        when(marshaller.unmarshal(readerModelB)).thenReturn(definitionModelB);
+        when(marshaller.unmarshal(readerModelC)).thenReturn(definitionModelC);
+        when(marshaller.unmarshal(readerRandomModel)).thenReturn(definitionRandomModel);
+
+        helper.addImportsXML(importsXml, othersXml, importsInModelC);
+
+        assertFalse(importsXml.isEmpty());
+        assertTrue(importsXml.containsKey(importToA));
+        assertTrue(importsXml.containsKey(importToB));
+        assertEquals(modelA, importsXml.get(importToA));
+        assertEquals(modelB, importsXml.get(importToB));
+    }
+
+    @Test
+    public void testGetDMNDiagramPaths() {
+
+        final List<Path> expectedPaths = Collections.emptyList();
+        final WorkspaceProject workspaceProject = mock(WorkspaceProject.class);
+        final Metadata metadata = mock(Metadata.class);
+        doReturn(workspaceProject).when(helper).getProject(metadata);
+        when(pathsHelper.getDMNModelsPaths(workspaceProject)).thenReturn(expectedPaths);
+
+        final List<Path> actualPaths = helper.getDMNDiagramPaths(metadata);
+
+        assertEquals(expectedPaths, actualPaths);
     }
 
     private Path makePath(final String uri) {
