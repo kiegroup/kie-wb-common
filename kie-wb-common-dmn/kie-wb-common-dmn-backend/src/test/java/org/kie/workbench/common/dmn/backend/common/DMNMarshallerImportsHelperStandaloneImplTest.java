@@ -583,10 +583,6 @@ public class DMNMarshallerImportsHelperStandaloneImplTest {
         final Import importToB = mock(Import.class);
 
         final Map<Import, String> importsXml = new HashMap<>();
-        final List<String> othersXml = asList(modelA,
-                                              modelB_ThatImports_ModelA,
-                                              randomModel,
-                                              modelC_ThatImports_ModelB);
 
         // We don't want the static Collections.emptyList() because of the doReturns().when()
         final List<Import> importsInModelA = new ArrayList<>();
@@ -599,15 +595,15 @@ public class DMNMarshallerImportsHelperStandaloneImplTest {
         final StringReader readerModelC = mock(StringReader.class);
         final StringReader readerRandomModel = mock(StringReader.class);
 
-        doReturn(readerModelA).when(helper).toStringReader(modelA);
-        doReturn(readerModelB).when(helper).toStringReader(modelB_ThatImports_ModelA);
-        doReturn(readerModelC).when(helper).toStringReader(modelC_ThatImports_ModelB);
-        doReturn(readerRandomModel).when(helper).toStringReader(randomModel);
-
         final Definitions definitionModelA = mock(Definitions.class);
         final Definitions definitionModelB = mock(Definitions.class);
         final Definitions definitionModelC = mock(Definitions.class);
         final Definitions definitionRandomModel = mock(Definitions.class);
+
+        doReturn(readerModelA).when(helper).toStringReader(modelA);
+        doReturn(readerModelB).when(helper).toStringReader(modelB_ThatImports_ModelA);
+        doReturn(readerModelC).when(helper).toStringReader(modelC_ThatImports_ModelB);
+        doReturn(readerRandomModel).when(helper).toStringReader(randomModel);
 
         when(definitionModelA.getImport()).thenReturn(importsInModelA);
         when(definitionModelB.getImport()).thenReturn(importsInModelB);
@@ -632,7 +628,13 @@ public class DMNMarshallerImportsHelperStandaloneImplTest {
         when(marshaller.unmarshal(readerModelC)).thenReturn(definitionModelC);
         when(marshaller.unmarshal(readerRandomModel)).thenReturn(definitionRandomModel);
 
-        helper.addImportsXML(importsXml, othersXml, importsInModelC);
+        final HashMap<Definitions, String> definitionsXml = new HashMap<>();
+        definitionsXml.put(definitionModelA, modelA);
+        definitionsXml.put(definitionModelB, modelB_ThatImports_ModelA);
+        definitionsXml.put(definitionModelC, modelC_ThatImports_ModelB);
+        definitionsXml.put(definitionRandomModel, randomModel);
+
+        helper.addImportsXML(importsXml, definitionsXml, importsInModelC);
 
         assertFalse(importsXml.isEmpty());
         assertTrue(importsXml.containsKey(importToA));
@@ -657,15 +659,10 @@ public class DMNMarshallerImportsHelperStandaloneImplTest {
         final Import importToB = mock(Import.class);
 
         final Map<Import, String> importsXml = new HashMap<>();
-        final List<String> othersXml = asList(modelA,
-                                              modelB,
-                                              randomModel,
-                                              modelC_ThatImports_ModelB_and_ModelA);
 
         // We don't want the static Collections.emptyList() because of the doReturns().when()
         final List<Import> importsInModelA = new ArrayList<>();
         final List<Import> importsInModelB = new ArrayList<>();
-        ;
         final List<Import> importsInModelC = Arrays.asList(importToB, importToA);
         final List<Import> importsInRandom = new ArrayList<>();
 
@@ -674,15 +671,15 @@ public class DMNMarshallerImportsHelperStandaloneImplTest {
         final StringReader readerModelC = mock(StringReader.class);
         final StringReader readerRandomModel = mock(StringReader.class);
 
-        doReturn(readerModelA).when(helper).toStringReader(modelA);
-        doReturn(readerModelB).when(helper).toStringReader(modelB);
-        doReturn(readerModelC).when(helper).toStringReader(modelC_ThatImports_ModelB_and_ModelA);
-        doReturn(readerRandomModel).when(helper).toStringReader(randomModel);
-
         final Definitions definitionModelA = mock(Definitions.class);
         final Definitions definitionModelB = mock(Definitions.class);
         final Definitions definitionModelC = mock(Definitions.class);
         final Definitions definitionRandomModel = mock(Definitions.class);
+
+        doReturn(readerModelA).when(helper).toStringReader(modelA);
+        doReturn(readerModelB).when(helper).toStringReader(modelB);
+        doReturn(readerModelC).when(helper).toStringReader(modelC_ThatImports_ModelB_and_ModelA);
+        doReturn(readerRandomModel).when(helper).toStringReader(randomModel);
 
         when(definitionModelA.getImport()).thenReturn(importsInModelA);
         when(definitionModelB.getImport()).thenReturn(importsInModelB);
@@ -703,7 +700,13 @@ public class DMNMarshallerImportsHelperStandaloneImplTest {
         when(marshaller.unmarshal(readerModelC)).thenReturn(definitionModelC);
         when(marshaller.unmarshal(readerRandomModel)).thenReturn(definitionRandomModel);
 
-        helper.addImportsXML(importsXml, othersXml, importsInModelC);
+        final HashMap<Definitions, String> definitionsXml = new HashMap<>();
+        definitionsXml.put(definitionModelA, modelA);
+        definitionsXml.put(definitionModelB, modelB);
+        definitionsXml.put(definitionModelC, modelC_ThatImports_ModelB_and_ModelA);
+        definitionsXml.put(definitionRandomModel, randomModel);
+
+        helper.addImportsXML(importsXml, definitionsXml, importsInModelC);
 
         assertFalse(importsXml.isEmpty());
         assertTrue(importsXml.containsKey(importToA));

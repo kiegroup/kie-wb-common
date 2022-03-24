@@ -27,6 +27,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -132,7 +133,15 @@ public class DMNMarshallerImportsHelperStandaloneImpl implements DMNMarshallerIm
 
         if (!imports.isEmpty()) {
             final List<String> othersXml = getOtherDMNDiagramsXML(metadata);
-            addImportsXML(importXML, othersXml, imports);
+            final HashMap<Definitions, String> definitions = new HashMap<>();
+            for (final String xml : othersXml) {
+                try (final StringReader sr = toStringReader(xml)) {
+                    final Definitions dmnModelDefinition = marshaller.unmarshal(sr);
+                    definitions.put(dmnModelDefinition, xml);
+                }
+            }
+
+            addImportsXML(importXML, definitions, imports);
         }
 
         return importXML;
@@ -350,33 +359,33 @@ public class DMNMarshallerImportsHelperStandaloneImpl implements DMNMarshallerIm
     }
 
     void addImportsXML(final Map<Import, String> importsXml,
-                       final List<String> othersXml,
+                       final Map<Definitions, String> definitionsXml,
                        final List<Import> imports) {
 
         if (imports.isEmpty()) {
             return;
         }
 
-        for (final String xml : othersXml) {
-            try (final StringReader sr = toStringReader(xml)) {
-                final Definitions dmnModelDefinition = marshaller.unmarshal(sr);
+        definitionsXml.forEach((definition, xml) -> {
+            findImportByDefinitions(definition, imports).ifPresent(anImport -> {
+                if (!importsXml.containsKey(anImport)) {
+                    importsXml.put(anImport, xml);
 
-                findImportByDefinitions(dmnModelDefinition, imports).ifPresent(anImport -> {
-                    if (!importsXml.containsKey(anImport)) {
-                        importsXml.put(anImport, xml);
-
-                        addImportsXML(importsXml,
-                                      getXmlExcludingThis(othersXml, xml),
-                                      dmnModelDefinition.getImport());
-                    }
-                });
-            }
-        }
+                    addImportsXML(importsXml,
+                                  getXmlExcludingThis(definitionsXml, xml),
+                                  definition.getImport());
+                }
+            });
+        });
     }
 
-    private List<String> getXmlExcludingThis(final List<String> xmlList,
-                                             final String xml) {
-        return xmlList.stream().filter(o -> !Objects.equals(o, xml)).collect(Collectors.toList());
+    private Map<Definitions, String> getXmlExcludingThis(final Map<Definitions, String> definitionsXml,
+                                                         final String xml) {
+
+        final Stream<Map.Entry<Definitions, String>> filtered = definitionsXml.entrySet()
+                .stream()
+                .filter(o -> !Objects.equals(o.getValue(), xml));
+        return filtered.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
     List<Path> getDMNDiagramPaths(final Metadata metadata) {
