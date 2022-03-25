@@ -226,6 +226,17 @@ public class DMNMarshallerImportsHelperStandaloneImplTest {
     }
 
     @Test
+    public void testGetImportXML_WhenThereIsNoImports() {
+
+        final Metadata metadata = mock(Metadata.class);
+        final List<Import> imports = Collections.emptyList();
+
+        final Map<Import, String> importXML = helper.getImportXML(metadata, imports);
+
+        assertTrue(importXML.isEmpty());
+    }
+
+    @Test
     public void testGetImportedDRGElements() {
 
         final Map<Import, Definitions> importDefinitions = new HashMap<>();
@@ -727,6 +738,29 @@ public class DMNMarshallerImportsHelperStandaloneImplTest {
         final List<Path> actualPaths = helper.getDMNDiagramPaths(metadata);
 
         assertEquals(expectedPaths, actualPaths);
+    }
+
+    @Test
+    public void testGetXmlExcludingThis() {
+
+        final Definitions def1 = mock(Definitions.class);
+        final Definitions def2 = mock(Definitions.class);
+        final Definitions def3 = mock(Definitions.class);
+        final String xml1 = "xml1";
+        final String xml2 = "xml2";
+        final String xml3 = "xml3";
+        final Map<Definitions, String> definitionsXml = new HashMap<>();
+
+        definitionsXml.put(def1, xml1);
+        definitionsXml.put(def2, xml2);
+        definitionsXml.put(def3, xml3);
+
+        final Map<Definitions, String> result = helper.getXmlExcludingThis(definitionsXml, xml3);
+
+        assertEquals(2, result.size());
+        assertTrue(result.containsKey(def1));
+        assertTrue(result.containsKey(def2));
+        assertFalse(result.containsKey(def3));
     }
 
     private Path makePath(final String uri) {

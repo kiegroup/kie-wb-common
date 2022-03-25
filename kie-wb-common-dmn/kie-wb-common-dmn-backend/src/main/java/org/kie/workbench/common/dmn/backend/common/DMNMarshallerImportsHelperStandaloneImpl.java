@@ -379,8 +379,8 @@ public class DMNMarshallerImportsHelperStandaloneImpl implements DMNMarshallerIm
         });
     }
 
-    private Map<Definitions, String> getXmlExcludingThis(final Map<Definitions, String> definitionsXml,
-                                                         final String xml) {
+    Map<Definitions, String> getXmlExcludingThis(final Map<Definitions, String> definitionsXml,
+                                                 final String xml) {
 
         final Stream<Map.Entry<Definitions, String>> filtered = definitionsXml.entrySet()
                 .stream()
