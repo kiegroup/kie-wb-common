@@ -27,6 +27,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -99,11 +100,9 @@ public class DMNMarshallerImportsHelperStandaloneImpl implements DMNMarshallerIm
 
         final Map<Import, Definitions> importDefinitions = new HashMap<>();
 
-        if (imports.size() > 0) {
+        if (!imports.isEmpty()) {
             for (final Definitions definitions : getOtherDMNDiagramsDefinitions(metadata)) {
-                findImportByDefinitions(definitions, imports).ifPresent(anImport -> {
-                    importDefinitions.put(anImport, definitions);
-                });
+                findImportByDefinitions(definitions, imports).ifPresent(anImport -> importDefinitions.put(anImport, definitions));
             }
         }
 
@@ -115,7 +114,7 @@ public class DMNMarshallerImportsHelperStandaloneImpl implements DMNMarshallerIm
                                                               final List<Import> imports) {
         final Map<Import, PMMLDocumentMetadata> pmmlDocuments = new HashMap<>();
 
-        if (imports.size() > 0) {
+        if (!imports.isEmpty()) {
             for (final Path pmmlDocumentPath : getPMMLDocumentPaths(metadata)) {
                 findImportByPMMLDocument(metadata.getPath(), pmmlDocumentPath, imports).ifPresent(anImport -> {
                     pmmlDocuments.put(anImport, pmmlDocumentFactory.getDocumentByPath(pmmlDocumentPath));
@@ -132,15 +131,17 @@ public class DMNMarshallerImportsHelperStandaloneImpl implements DMNMarshallerIm
 
         final Map<Import, String> importXML = new HashMap<>();
 
-        if (imports.size() > 0) {
-            for (final String xml : getOtherDMNDiagramsXML(metadata)) {
+        if (!imports.isEmpty()) {
+            final List<String> othersXml = getOtherDMNDiagramsXML(metadata);
+            final HashMap<Definitions, String> definitions = new HashMap<>();
+            for (final String xml : othersXml) {
                 try (final StringReader sr = toStringReader(xml)) {
-                    final Definitions definitions = marshaller.unmarshal(sr);
-                    findImportByDefinitions(definitions, imports).ifPresent(anImport -> {
-                        importXML.put(anImport, xml);
-                    });
+                    final Definitions dmnModelDefinition = marshaller.unmarshal(sr);
+                    definitions.put(dmnModelDefinition, xml);
                 }
             }
+
+            addImportsXML(importXML, definitions, imports);
         }
 
         return importXML;
@@ -151,9 +152,7 @@ public class DMNMarshallerImportsHelperStandaloneImpl implements DMNMarshallerIm
                                 final String modelNamespace,
                                 final String modelName) {
 
-        final WorkspaceProject workspaceProject = getProject(metadata);
-
-        for (final Path dmnModelPath : pathsHelper.getDMNModelsPaths(workspaceProject)) {
+        for (final Path dmnModelPath : getDMNDiagramPaths(metadata)) {
 
             final Optional<Definitions> definitions = getDefinitionsByPath(dmnModelPath);
 
@@ -291,8 +290,8 @@ public class DMNMarshallerImportsHelperStandaloneImpl implements DMNMarshallerIm
         }
     }
 
-    private Optional<Import> findImportByDefinitions(final Definitions definitions,
-                                                     final List<Import> imports) {
+    Optional<Import> findImportByDefinitions(final Definitions definitions,
+                                             final List<Import> imports) {
         return imports
                 .stream()
                 .filter(anImport -> Objects.equals(anImport.getNamespace(), definitions.getNamespace()))
@@ -309,7 +308,7 @@ public class DMNMarshallerImportsHelperStandaloneImpl implements DMNMarshallerIm
     }
 
     List<Definitions> getOtherDMNDiagramsDefinitions(final Metadata metadata) {
-        final List<Path> diagramPaths = pathsHelper.getDMNModelsPaths(getProject(metadata));
+        final List<Path> diagramPaths = getDMNDiagramPaths(metadata);
         return diagramPaths
                 .stream()
                 .filter(path -> !Objects.equals(metadata.getPath(), path))
@@ -347,7 +346,8 @@ public class DMNMarshallerImportsHelperStandaloneImpl implements DMNMarshallerIm
     }
 
     private List<String> getOtherDMNDiagramsXML(final Metadata metadata) {
-        final List<Path> diagramPaths = pathsHelper.getDMNModelsPaths(getProject(metadata));
+
+        final List<Path> diagramPaths = getDMNDiagramPaths(metadata);
         return diagramPaths
                 .stream()
                 .filter(path -> !Objects.equals(metadata.getPath(), path))
@@ -356,6 +356,40 @@ public class DMNMarshallerImportsHelperStandaloneImpl implements DMNMarshallerIm
                 .map(dmnIOHelper::isAsString)
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
+    }
+
+    void addImportsXML(final Map<Import, String> importsXml,
+                       final Map<Definitions, String> definitionsXml,
+                       final List<Import> imports) {
+
+        if (imports.isEmpty()) {
+            return;
+        }
+
+        definitionsXml.forEach((definition, xml) -> {
+            findImportByDefinitions(definition, imports).ifPresent(anImport -> {
+                if (!importsXml.containsKey(anImport)) {
+                    importsXml.put(anImport, xml);
+
+                    addImportsXML(importsXml,
+                                  getXmlExcludingThis(definitionsXml, xml),
+                                  definition.getImport());
+                }
+            });
+        });
+    }
+
+    Map<Definitions, String> getXmlExcludingThis(final Map<Definitions, String> definitionsXml,
+                                                 final String xml) {
+
+        final Stream<Map.Entry<Definitions, String>> filtered = definitionsXml.entrySet()
+                .stream()
+                .filter(o -> !Objects.equals(o.getValue(), xml));
+        return filtered.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+    }
+
+    List<Path> getDMNDiagramPaths(final Metadata metadata) {
+        return pathsHelper.getDMNModelsPaths(getProject(metadata));
     }
 
     @Override
@@ -367,7 +401,7 @@ public class DMNMarshallerImportsHelperStandaloneImpl implements DMNMarshallerIm
         }
     }
 
-    private WorkspaceProject getProject(final Metadata metadata) {
+    WorkspaceProject getProject(final Metadata metadata) {
         try {
             return projectService.resolveProject(metadata.getPath());
         } catch (final Exception e) {
