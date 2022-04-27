@@ -16,6 +16,7 @@
  */
 package org.kie.workbench.common.screens.library.client.screens.project;
 
+import java.util.ArrayList;
 import java.util.Date;
 
 import org.dashbuilder.dataset.DataSet;
@@ -27,27 +28,34 @@ import org.dashbuilder.displayer.client.Displayer;
 import org.dashbuilder.displayer.client.DisplayerCoordinator;
 import org.dashbuilder.displayer.client.DisplayerListener;
 import org.guvnor.common.services.project.model.WorkspaceProject;
+import org.guvnor.structure.repositories.Branch;
 import org.guvnor.structure.repositories.Repository;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.screens.contributors.model.ContributorsDataSets;
+import org.kie.workbench.common.screens.contributors.service.ContributorsService;
 import org.kie.workbench.common.screens.library.client.events.WorkbenchProjectMetricsEvent;
 import org.kie.workbench.common.screens.library.client.util.ProjectMetricsFactory;
 import org.mockito.Answers;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.uberfire.backend.vfs.Path;
+import org.uberfire.mocks.CallerMock;
 
 import static org.dashbuilder.dataset.Assertions.assertDataSetValues;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.kie.workbench.common.screens.contributors.model.ContributorsDataSetColumns.COLUMN_AUTHOR;
+import static org.kie.workbench.common.screens.contributors.model.ContributorsDataSetColumns.COLUMN_BRANCH;
 import static org.kie.workbench.common.screens.contributors.model.ContributorsDataSetColumns.COLUMN_DATE;
 import static org.kie.workbench.common.screens.contributors.model.ContributorsDataSetColumns.COLUMN_MSG;
 import static org.kie.workbench.common.screens.contributors.model.ContributorsDataSetColumns.COLUMN_ORG;
 import static org.kie.workbench.common.screens.contributors.model.ContributorsDataSetColumns.COLUMN_PROJECT;
 import static org.kie.workbench.common.screens.contributors.model.ContributorsDataSetColumns.COLUMN_REPO;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -57,17 +65,17 @@ public class ProjectMetricsScreenTest extends AbstractDisplayerTest {
     public static class ContributorsData extends RawDataSet {
 
         public static final ContributorsData INSTANCE = new ContributorsData(
-                new String[]{COLUMN_ORG, COLUMN_REPO, COLUMN_PROJECT, COLUMN_AUTHOR, COLUMN_DATE, COLUMN_MSG},
-                new Class[]{String.class, String.class, String.class, String.class, Date.class, String.class},
+                new String[]{COLUMN_ORG, COLUMN_REPO, COLUMN_BRANCH, COLUMN_PROJECT, COLUMN_AUTHOR, COLUMN_DATE, COLUMN_MSG},
+                new Class[]{String.class, String.class, String.class, String.class, String.class, Date.class, String.class},
                 new String[][]{
-                        {"org1", "repo", "project1", "user1", "01/01/19 12:00", "Commit 1"},
-                        {"org1", "repo", "project1", "user1", "03/02/19 12:00", "Commit 2"},
-                        {"org1", "repo", "project1", "user2", "04/03/19 12:00", "Commit 3"},
-                        {"org1", "repo", "project1", "user2", "06/04/19 12:00", "Commit 4"},
-                        {"org2", "repo", "project2", "user3", "07/05/19 12:00", "Commit 5"},
-                        {"org2", "repo", "project2", "user3", "09/06/19 12:00", "Commit 6"},
-                        {"org2", "repo", "project2", "user4", "11/07/19 12:00", "Commit 7"},
-                        {"org2", "repo", "project2", "user4", "02/08/20 12:00", "Commit 8"},
+                        {"org1", "repo", "main", "project1", "user1", "01/01/19 12:00", "Commit 1"},
+                        {"org1", "repo", "main", "project1", "user1", "03/02/19 12:00", "Commit 2"},
+                        {"org1", "repo", "main", "project1", "user2", "04/03/19 12:00", "Commit 3"},
+                        {"org1", "repo", "main", "project1", "user2", "06/04/19 12:00", "Commit 4"},
+                        {"org2", "repo", "main", "project2", "user3", "07/05/19 12:00", "Commit 5"},
+                        {"org2", "repo", "main", "project2", "user3", "09/06/19 12:00", "Commit 6"},
+                        {"org2", "repo", "main", "project2", "user4", "11/07/19 12:00", "Commit 7"},
+                        {"org2", "repo", "main", "project2", "user4", "02/08/20 12:00", "Commit 8"},
                         {"emptyOrg", null, null, null, null, null, null}});
 
         public ContributorsData(String[] columnIds,
@@ -94,13 +102,20 @@ public class ProjectMetricsScreenTest extends AbstractDisplayerTest {
     DataSet contributorsDataSet;
     DisplayerCoordinator displayerCoordinator;
 
+    @Mock
+    ContributorsService contributorsService;
+
     @Before
     public void init() throws Exception {
         super.init();
 
         when(project.getRepository()).thenReturn(repository);
         when(repository.getAlias()).thenReturn("repo");
+        ArrayList<Branch> branches = new ArrayList<>();
+        branches.add(new Branch("main", mock(Path.class)));
+        doReturn(branches).when(repository).getBranches();
         when(project.getName()).thenReturn("project1");
+        doReturn(new Branch("main", mock(Path.class))).when(project).getBranch();
         when(project.getOrganizationalUnit().getName()).thenReturn("org1");
 
         contributorsDataSet = ContributorsData.INSTANCE.toDataSet();
@@ -116,7 +131,8 @@ public class ProjectMetricsScreenTest extends AbstractDisplayerTest {
         presenter = new ProjectMetricsScreen(view,
                                              i18n,
                                              metricsFactory,
-                                             displayerCoordinator);
+                                             displayerCoordinator,
+                                             new CallerMock<>(contributorsService));
         presenter.onStartup(new WorkbenchProjectMetricsEvent(project));
     }
 

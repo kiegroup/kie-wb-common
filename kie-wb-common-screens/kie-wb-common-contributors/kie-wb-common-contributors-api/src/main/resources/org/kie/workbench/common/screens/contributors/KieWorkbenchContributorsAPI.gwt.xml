@@ -20,5 +20,6 @@
 <module>
 
   <source path="model"/>
+  <source path="service"/>
 
 </module>
