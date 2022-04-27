@@ -42,6 +42,7 @@ import static org.dashbuilder.dataset.sort.SortOrder.ASCENDING;
 import static org.dashbuilder.dataset.sort.SortOrder.DESCENDING;
 import static org.dashbuilder.displayer.Position.RIGHT;
 import static org.kie.workbench.common.screens.contributors.model.ContributorsDataSetColumns.COLUMN_AUTHOR;
+import static org.kie.workbench.common.screens.contributors.model.ContributorsDataSetColumns.COLUMN_BRANCH;
 import static org.kie.workbench.common.screens.contributors.model.ContributorsDataSetColumns.COLUMN_DATE;
 import static org.kie.workbench.common.screens.contributors.model.ContributorsDataSetColumns.COLUMN_MSG;
 import static org.kie.workbench.common.screens.contributors.model.ContributorsDataSetColumns.COLUMN_ORG;
@@ -121,6 +122,8 @@ public class ProjectMetricsFactory {
                             repoAlias),
                    equalsTo(COLUMN_PROJECT,
                             projectName),
+                   equalsTo(COLUMN_BRANCH,
+                            project.getBranch().getName()),
                    equalsTo(COLUMN_ORG,
                             space));
     }

@@ -24,6 +24,7 @@ import org.dashbuilder.dataset.filter.CoreFunctionFilter;
 import org.dashbuilder.dataset.filter.LogicalExprFilter;
 import org.dashbuilder.displayer.client.DisplayerLocator;
 import org.guvnor.common.services.project.model.WorkspaceProject;
+import org.guvnor.structure.repositories.Branch;
 import org.hamcrest.CoreMatchers;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.junit.Before;
@@ -32,9 +33,12 @@ import org.junit.runner.RunWith;
 import org.mockito.Answers;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.uberfire.backend.vfs.Path;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ProjectMetricsFactoryTest {
@@ -61,6 +65,7 @@ public class ProjectMetricsFactoryTest {
         when(workspaceProject.getName()).thenReturn("project1");
         when(workspaceProject.getOrganizationalUnit().getName()).thenReturn("mySpace");
         when(workspaceProject.getRepository().getAlias()).thenReturn("alias");
+        doReturn(new Branch("main", mock(Path.class))).when(workspaceProject).getBranch();
 
         LogicalExprFilter filter = (LogicalExprFilter) this.projectMetricsFactory.createProjectFilter(workspaceProject);
         List<String> filters = filter.getLogicalTerms()
@@ -72,11 +77,12 @@ public class ProjectMetricsFactoryTest {
                 .collect(Collectors.toList());
 
         assertThat(filters.size(),
-                   CoreMatchers.is(3));
+                   CoreMatchers.is(4));
 
         assertThat(filters,
                    CoreMatchers.hasItems("project=project1",
                                          "organization=mySpace",
+                                         "branch=main",
                                          "repository=alias"));
     }
 }
