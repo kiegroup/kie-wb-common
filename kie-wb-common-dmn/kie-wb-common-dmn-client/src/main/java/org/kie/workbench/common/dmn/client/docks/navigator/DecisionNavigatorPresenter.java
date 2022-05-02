@@ -67,6 +67,8 @@ public class DecisionNavigatorPresenter {
 
     private DMNDiagramsSession dmnDiagramsSession;
 
+    private boolean isRefreshComponentsViewSuspended;
+
     double latestDeferred = 0;
 
     @Inject
@@ -111,7 +113,9 @@ public class DecisionNavigatorPresenter {
     }
 
     public void onRefreshDecisionComponents(final @Observes RefreshDecisionComponents events) {
-        refreshComponentsView();
+        if (!isRefreshComponentsViewSuspended) {
+            refreshComponentsView();
+        }
     }
 
     public DecisionNavigatorTreePresenter getTreePresenter() {
@@ -146,7 +150,7 @@ public class DecisionNavigatorPresenter {
         treePresenter.setupItems(getItems());
     }
 
-    void refreshComponentsView() {
+    public void refreshComponentsView() {
         decisionComponents.refresh();
     }
 
@@ -175,6 +179,10 @@ public class DecisionNavigatorPresenter {
     double setTimeout(final SetTimeoutCallbackFn callbackFn,
                       final int delay) {
         return DomGlobal.setTimeout(callbackFn, delay);
+    }
+
+    public void setIsRefreshComponentsViewSuspended(final boolean isRefreshComponentsViewSuspended) {
+        this.isRefreshComponentsViewSuspended = isRefreshComponentsViewSuspended;
     }
 
     void clearTimeout(final double latestDeferred) {
