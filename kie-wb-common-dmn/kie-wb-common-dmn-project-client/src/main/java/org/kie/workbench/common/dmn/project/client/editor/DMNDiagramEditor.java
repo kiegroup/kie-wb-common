@@ -35,6 +35,7 @@ import org.jboss.errai.common.client.ui.ElementWrapperWidget;
 import org.kie.workbench.common.dmn.api.qualifiers.DMNEditor;
 import org.kie.workbench.common.dmn.client.commands.general.NavigateToExpressionEditorCommand;
 import org.kie.workbench.common.dmn.client.docks.navigator.DecisionNavigatorDock;
+import org.kie.workbench.common.dmn.client.docks.navigator.DecisionNavigatorPresenter;
 import org.kie.workbench.common.dmn.client.docks.navigator.common.LazyCanvasFocusUtils;
 import org.kie.workbench.common.dmn.client.docks.navigator.drds.DMNDiagramTuple;
 import org.kie.workbench.common.dmn.client.docks.navigator.drds.DMNDiagramsSession;
@@ -120,6 +121,7 @@ public class DMNDiagramEditor extends AbstractProjectDiagramEditor<DMNDiagramRes
     private final DRDNameChanger drdNameChanger;
     private final LazyCanvasFocusUtils lazyCanvasFocusUtils;
     private final DMNDiagramsSession diagramsSession;
+    private final DecisionNavigatorPresenter decisionNavigatorPresenter;
 
     @Inject
     public DMNDiagramEditor(final View view,
@@ -146,7 +148,8 @@ public class DMNDiagramEditor extends AbstractProjectDiagramEditor<DMNDiagramRes
                             final MonacoFEELInitializer feelInitializer,
                             final DRDNameChanger drdNameChanger,
                             final LazyCanvasFocusUtils lazyCanvasFocusUtils,
-                            final DMNDiagramsSession diagramsSession) {
+                            final DMNDiagramsSession diagramsSession,
+                            final DecisionNavigatorPresenter decisionNavigatorPresenter) {
         super(view,
               onDiagramFocusEvent,
               onDiagramLostFocusEvent,
@@ -172,6 +175,7 @@ public class DMNDiagramEditor extends AbstractProjectDiagramEditor<DMNDiagramRes
         this.drdNameChanger = drdNameChanger;
         this.lazyCanvasFocusUtils = lazyCanvasFocusUtils;
         this.diagramsSession = diagramsSession;
+        this.decisionNavigatorPresenter = decisionNavigatorPresenter;
     }
 
     @Override
@@ -323,7 +327,7 @@ public class DMNDiagramEditor extends AbstractProjectDiagramEditor<DMNDiagramRes
         this.layoutHelper.applyLayout(diagram, openDiagramLayoutExecutor);
 
         feelInitializer.initializeFEELEditor();
-
+        decisionNavigatorPresenter.setIsRefreshComponentsViewSuspended(true);
         super.open(diagram, new SessionPresenter.SessionPresenterCallback() {
             @Override
             public void onSuccess() {
@@ -332,10 +336,13 @@ public class DMNDiagramEditor extends AbstractProjectDiagramEditor<DMNDiagramRes
                 if (null != currentSession) {
                     currentSession.close();
                 }
+                decisionNavigatorPresenter.setIsRefreshComponentsViewSuspended(false);
+                decisionNavigatorPresenter.refreshComponentsView();
             }
 
             @Override
             public void onError(ClientRuntimeError error) {
+                decisionNavigatorPresenter.setIsRefreshComponentsViewSuspended(false);
                 callback.onError(error);
             }
         });
