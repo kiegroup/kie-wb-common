@@ -5,7 +5,7 @@
   <parent>
     <groupId>org.kie.workbench.screens</groupId>
     <artifactId>kie-wb-common-library</artifactId>
-    <version>7.67.1-SNAPSHOT</version>
+    <version>7.67.2-SNAPSHOT</version>
   </parent>
 
   <artifactId>kie-wb-common-library-api</artifactId>
