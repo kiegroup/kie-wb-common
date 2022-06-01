@@ -35,13 +35,9 @@ import static org.assertj.core.api.Assertions.*;
 
 public class PomEditorTest {
 
-    private static final String CURRICULUM_COURSE_PRJ = "/target/test-classes/curriculumcourse/";
-    private static final String DINNER_PARTY_PRJ = "/target/test-classes/dinnerparty/";
-    private static final String EMPLOYEE_ROSTERING_PRJ = "/target/test-classes/employee-rostering/";
-    private static final String EVALUATION_PRJ = "/target/test-classes/employee-rostering/";
+    private static final String EVALUATION_PRJ = "/target/test-classes/evaluation/";
     private static final String ITORDERS_PRJ = "/target/test-classes/itorders/";
     private static final String MORTGAGES_PRJ = "/target/test-classes/mortgages/";
-    private static final String OPTACLOUD_PRJ = "/target/test-classes/optacloud/";
     private final Logger logger = LoggerFactory.getLogger(PomEditorTest.class);
     private PomEditor editor;
     private String currentDir;
@@ -87,21 +83,6 @@ public class PomEditorTest {
     }
 
     @Test
-    public void updateCurriculumCourse() {
-        testDefault(CURRICULUM_COURSE_PRJ);
-    }
-
-    @Test
-    public void updateDinnerParty() {
-        testDefault(DINNER_PARTY_PRJ);
-    }
-
-    @Test
-    public void updateEmployeeRostering() {
-        testDefault(EMPLOYEE_ROSTERING_PRJ);
-    }
-
-    @Test
     public void updateEvaluation() {
         testDefault(EVALUATION_PRJ);
     }
@@ -114,11 +95,6 @@ public class PomEditorTest {
     @Test
     public void updateMortgages() {
         testDefault(MORTGAGES_PRJ);
-    }
-
-    @Test
-    public void updateOptacloud() {
-        testDefault(OPTACLOUD_PRJ);
     }
 
     @Test
