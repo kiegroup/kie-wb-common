@@ -29,8 +29,6 @@ import org.kie.workbench.common.screens.datamodeller.client.context.DataModelerW
 import org.kie.workbench.common.screens.datamodeller.client.context.DataModelerWorkbenchContextChangeEvent;
 import org.kie.workbench.common.screens.datamodeller.client.context.DataModelerWorkbenchFocusEvent;
 import org.kie.workbench.common.screens.datamodeller.client.resources.i18n.Constants;
-import org.kie.workbench.common.screens.datamodeller.client.resources.images.ImagesResources;
-import org.kie.workbench.common.screens.datamodeller.security.DataModelerFeatures;
 import org.kie.workbench.common.widgets.client.docks.AbstractWorkbenchDocksHandler;
 import org.uberfire.client.workbench.docks.UberfireDock;
 import org.uberfire.client.workbench.docks.UberfireDockPosition;
@@ -91,16 +89,6 @@ public class DataModellerDocksHandler extends AbstractWorkbenchDocksHandler {
                                         "COG",
                                         new DefaultPlaceRequest("AdvancedDomainScreen"),
                                         perspectiveIdentifier).withSize(450).withLabel(constants.DocksAdvancedTitle()));
-
-            if (authorizationManager.authorize(DataModelerFeatures.PLANNER_AVAILABLE,
-                                               sessionInfo.getIdentity())) {
-                result.add(new UberfireDock(UberfireDockPosition.EAST,
-                                            ImagesResources.INSTANCE.optaPlannerDisabledIcon(),
-                                            ImagesResources.INSTANCE.optaPlannerEnabledIcon(),
-                                            new DefaultPlaceRequest("PlannerDomainScreen"),
-                                            perspectiveIdentifier)
-                                   .withSize(450).withLabel(constants.DocksOptaPlannerTitle()));
-            }
         }
         return result;
     }

@@ -33,10 +33,4 @@ public interface ImagesResources
     @Source("information.gif")
     ImageResource BrowseObject();
 
-    @Source("optaPlannerDisabledIcon.png")
-    ImageResource optaPlannerDisabledIcon();
-
-    @Source("optaPlannerEnabledIcon.png")
-    ImageResource optaPlannerEnabledIcon();
-
 }
