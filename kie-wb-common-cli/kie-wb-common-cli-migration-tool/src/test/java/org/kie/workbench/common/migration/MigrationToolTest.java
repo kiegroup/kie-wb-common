@@ -144,7 +144,7 @@ public class MigrationToolTest {
         final Model model = reader.read(new FileInputStream(pom));
 
         assertThat(model.getVersion()).isEqualTo("1.2.3");
-        assertThat(model.getDependencies()).hasSize(6);
+        assertThat(model.getDependencies()).hasSize(4);
         assertThat(model.getBuild().getPlugins()).hasSize(1);
         assertThat(model.getPackaging()).isEqualTo("kjar");
     }
