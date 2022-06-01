@@ -91,13 +91,9 @@ public interface DefaultWorkbenchConstants
 
     String DataModelerEditSources();
 
-    String ResourcePlanner();
-
     String WorkbenchRootNodeHelp();
 
     String DataModelerEditSourcesHelp();
-
-    String ResourcePlannerHelp();
 
     String Admin();
 

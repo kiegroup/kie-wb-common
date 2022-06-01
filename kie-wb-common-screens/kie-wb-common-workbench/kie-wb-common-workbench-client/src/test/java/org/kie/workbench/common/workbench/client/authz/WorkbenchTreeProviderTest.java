@@ -33,7 +33,6 @@ import static org.kie.workbench.common.workbench.client.authz.WorkbenchFeatures.
 import static org.kie.workbench.common.workbench.client.authz.WorkbenchFeatures.EDIT_PROFILE_PREFERENCES;
 import static org.kie.workbench.common.workbench.client.authz.WorkbenchFeatures.EDIT_SOURCES;
 import static org.kie.workbench.common.workbench.client.authz.WorkbenchFeatures.GUIDED_DECISION_TABLE_EDIT_COLUMNS;
-import static org.kie.workbench.common.workbench.client.authz.WorkbenchFeatures.PLANNER_AVAILABLE;
 import static org.kie.workbench.common.workbench.client.authz.WorkbenchFeatures.SHOW_CHANGEREQUEST_TAB;
 import static org.kie.workbench.common.workbench.client.authz.WorkbenchFeatures.SHOW_METRICS_TAB;
 import static org.kie.workbench.common.workbench.client.authz.WorkbenchFeatures.SHOW_PROJECT_TOOLBAR;
@@ -47,7 +46,6 @@ public class WorkbenchTreeProviderTest {
 
     private static final String[] FEATURES_NAMES = {
             EDIT_SOURCES,
-            PLANNER_AVAILABLE,
             JAR_DOWNLOAD,
             EDIT_GLOBAL_PREFERENCES,
             GUIDED_DECISION_TABLE_EDIT_COLUMNS,
