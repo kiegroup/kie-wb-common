@@ -22,7 +22,7 @@ import java.util.List;
 
 public enum Profile {
     
-    PLANNER_AND_RULES("Planner and Rules",
+    PLANNER_AND_RULES("Rules",
             Arrays.asList(
                 "wb_entry_pages",
                 "wb_entry_process_definitions",
