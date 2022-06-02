@@ -45,8 +45,6 @@ public interface DefaultWorkbenchConstants
 
     String DroolsAdministration();
 
-    String PlannerAdministration();
-
     String Plugins();
 
     String Apps();

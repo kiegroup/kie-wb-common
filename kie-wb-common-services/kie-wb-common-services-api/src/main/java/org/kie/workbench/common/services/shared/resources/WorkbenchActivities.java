@@ -28,7 +28,6 @@ import static org.kie.workbench.common.services.shared.resources.PerspectiveIds.
 import static org.kie.workbench.common.services.shared.resources.PerspectiveIds.HOME;
 import static org.kie.workbench.common.services.shared.resources.PerspectiveIds.JOBS;
 import static org.kie.workbench.common.services.shared.resources.PerspectiveIds.LIBRARY;
-import static org.kie.workbench.common.services.shared.resources.PerspectiveIds.PLANNER_ADMIN;
 import static org.kie.workbench.common.services.shared.resources.PerspectiveIds.PLUGIN_AUTHORING;
 import static org.kie.workbench.common.services.shared.resources.PerspectiveIds.PROCESS_DASHBOARD;
 import static org.kie.workbench.common.services.shared.resources.PerspectiveIds.PROCESS_DEFINITIONS;
@@ -52,7 +51,7 @@ public class WorkbenchActivities implements AppFormerActivities {
 
     @Override
     public List<String> getAllPerpectivesIds() {
-        return Arrays.asList(HOME, SECURITY_MANAGEMENT, GUVNOR_M2REPO, ADMINISTRATION, LIBRARY, DROOLS_ADMIN, PLANNER_ADMIN, PROCESS_DEFINITIONS, PROCESS_INSTANCES, PLUGIN_AUTHORING, APPS, DATASET_AUTHORING, PROVISIONING, SERVER_MANAGEMENT, JOBS, EXECUTION_ERRORS, TASKS, TASKS_ADMIN, PROCESS_DASHBOARD, TASK_DASHBOARD, CONTENT_MANAGEMENT, DATASOURCE_MANAGEMENT, ADMIN, EXPERIMENTAL_FEATURES, SSH_KEYS_EDITOR, SERVICE_TASK_ADMIN, DATA_TRANSFER, ARCHETYPE_MANAGEMENT);
+        return Arrays.asList(HOME, SECURITY_MANAGEMENT, GUVNOR_M2REPO, ADMINISTRATION, LIBRARY, DROOLS_ADMIN, PROCESS_DEFINITIONS, PROCESS_INSTANCES, PLUGIN_AUTHORING, APPS, DATASET_AUTHORING, PROVISIONING, SERVER_MANAGEMENT, JOBS, EXECUTION_ERRORS, TASKS, TASKS_ADMIN, PROCESS_DASHBOARD, TASK_DASHBOARD, CONTENT_MANAGEMENT, DATASOURCE_MANAGEMENT, ADMIN, EXPERIMENTAL_FEATURES, SSH_KEYS_EDITOR, SERVICE_TASK_ADMIN, DATA_TRANSFER, ARCHETYPE_MANAGEMENT);
     }
 }
 

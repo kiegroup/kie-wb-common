@@ -24,7 +24,6 @@ public interface PerspectiveIds {
     String ADMINISTRATION = "AdministrationPerspective";
     String LIBRARY = "LibraryPerspective";
     String DROOLS_ADMIN = "DroolsAdminPerspective";
-    String PLANNER_ADMIN = "PlannerAdminPerspective";
     String PROCESS_DEFINITIONS = "ProcessDefinitions";
     String PROCESS_INSTANCES = "ProcessInstances";
     String PLUGIN_AUTHORING = "PlugInAuthoringPerspective";
