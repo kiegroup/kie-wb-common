@@ -68,10 +68,6 @@ public class NewTemplateView extends Composite
     @DataField("new-process-capability-checkbox")
     CheckBox processEnabled;
 
-    @Inject
-    @DataField("new-planning-capability-checkbox")
-    CheckBox planningEnabled;
-
     private final ArrayList<ContentChangeHandler> changeHandlers = new ArrayList<ContentChangeHandler>();
 
     @Inject
@@ -85,7 +81,6 @@ public class NewTemplateView extends Composite
         this.presenter = presenter;
         ruleEnabled.setText( getRuleCheckBoxText() );
         processEnabled.setText( getProcessCheckBoxText() );
-        planningEnabled.setText( getPlanningCheckBoxText() );
 
         templateName.addChangeHandler( new ChangeHandler() {
             @Override
@@ -108,15 +103,6 @@ public class NewTemplateView extends Composite
         processEnabled.addClickHandler( new ClickHandler() {
             @Override
             public void onClick( final ClickEvent event ) {
-                fireChangeHandlers();
-            }
-        } );
-        planningEnabled.addClickHandler( new ClickHandler() {
-            @Override
-            public void onClick( final ClickEvent event ) {
-                if ( planningEnabled.getValue() ) {
-                    ruleEnabled.setValue( true );
-                }
                 fireChangeHandlers();
             }
         } );
@@ -144,7 +130,6 @@ public class NewTemplateView extends Composite
         templateName.setText( "" );
         ruleEnabled.setValue( false );
         processEnabled.setValue( false );
-        planningEnabled.setValue( false );
         noErrors();
     }
 
@@ -171,11 +156,6 @@ public class NewTemplateView extends Composite
     @Override
     public boolean isProcessCapabilityChecked() {
         return processEnabled.getValue();
-    }
-
-    @Override
-    public boolean isPlanningCapabilityChecked() {
-        return planningEnabled.getValue();
     }
 
     @Override
@@ -238,10 +218,6 @@ public class NewTemplateView extends Composite
 
     private String getProcessCheckBoxText() {
         return translationService.format( Constants.NewTemplateView_ProcessCheckBoxText );
-    }
-
-    private String getPlanningCheckBoxText() {
-        return translationService.format( Constants.NewTemplateView_PlanningCheckBoxText );
     }
 
     private String getTitleText() {

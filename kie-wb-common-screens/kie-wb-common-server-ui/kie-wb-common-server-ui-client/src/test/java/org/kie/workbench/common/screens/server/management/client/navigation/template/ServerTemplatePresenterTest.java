@@ -272,7 +272,6 @@ public class ServerTemplatePresenterTest {
         verify( view ).setTemplate( serverTemplate.getId(), serverTemplate.getName() );
         verify( view ).setProcessCapability( false );
         verify( view ).setRulesCapability( false );
-        verify( view ).setPlanningCapability( false );
 
         verify( view ).addContainer(
                 eq( containerSpec.getServerTemplateKey().getId() ),
@@ -311,7 +310,6 @@ public class ServerTemplatePresenterTest {
         verify( view ).setTemplate( serverTemplate.getId(), serverTemplate.getName() );
         verify( view ).setProcessCapability( true );
         verify( view ).setRulesCapability( true );
-        verify( view ).setPlanningCapability( true );
     }
 
 }

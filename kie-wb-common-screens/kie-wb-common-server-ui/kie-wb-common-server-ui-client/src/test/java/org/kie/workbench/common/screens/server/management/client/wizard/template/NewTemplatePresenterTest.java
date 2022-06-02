@@ -84,16 +84,20 @@ public class NewTemplatePresenterTest {
 
     @Test
     public void testIsCapabilityValid() {
-        when( view.isPlanningCapabilityChecked() ).thenReturn( true, false, true, false );
-        when( view.isRuleCapabilityChecked() ).thenReturn( true, false, false );
-        when( view.isProcessCapabilityChecked() ).thenReturn( true, true, false );
-
+        when( view.isRuleCapabilityChecked() ).thenReturn( true );
+        when( view.isProcessCapabilityChecked() ).thenReturn( true );
         assertTrue( presenter.isCapabilityValid() );
 
+        when( view.isRuleCapabilityChecked() ).thenReturn( true );
+        when( view.isProcessCapabilityChecked() ).thenReturn( false );
         assertTrue( presenter.isCapabilityValid() );
 
+        when( view.isRuleCapabilityChecked() ).thenReturn( false );
+        when( view.isProcessCapabilityChecked() ).thenReturn( true );
         assertTrue( presenter.isCapabilityValid() );
 
+        when( view.isRuleCapabilityChecked() ).thenReturn( false );
+        when( view.isProcessCapabilityChecked() ).thenReturn( false );
         assertFalse( presenter.isCapabilityValid() );
     }
 
@@ -102,7 +106,6 @@ public class NewTemplatePresenterTest {
         when( view.getTemplateName() ).thenReturn( "templateName", "", "templateName" );
         when( view.isRuleCapabilityChecked() ).thenReturn( true, false );
         when( view.isProcessCapabilityChecked() ).thenReturn( true, false );
-        when( view.isPlanningCapabilityChecked() ).thenReturn( false );
 
         assertTrue( presenter.isValid() );
 
@@ -193,14 +196,6 @@ public class NewTemplatePresenterTest {
 
         assertTrue( presenter.isProcessCapabilityChecked() );
         assertFalse( presenter.isProcessCapabilityChecked() );
-    }
-
-    @Test
-    public void testIsPlanningCapabilityChecked() {
-        when( view.isPlanningCapabilityChecked() ).thenReturn( true ).thenReturn( false );
-
-        assertTrue( presenter.isPlanningCapabilityChecked() );
-        assertFalse( presenter.isPlanningCapabilityChecked() );
     }
 
     @Test

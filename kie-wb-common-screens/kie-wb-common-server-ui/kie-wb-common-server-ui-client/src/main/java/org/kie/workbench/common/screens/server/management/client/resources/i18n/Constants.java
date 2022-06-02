@@ -90,9 +90,6 @@ public class Constants {
     public static final String ServerTemplateView_ProcessCheckBoxText = "ServerTemplateView.ProcessCheckBoxText";
 
     @TranslationKey(defaultValue = "")
-    public static final String ServerTemplateView_PlanningCheckBoxText = "ServerTemplateView.PlanningCheckBoxText";
-
-    @TranslationKey(defaultValue = "")
     public static final String ServerTemplateView_TemplateRemovePopupText = "ServerTemplateView.TemplateRemovePopupText";
 
     @TranslationKey(defaultValue = "")
@@ -148,9 +145,6 @@ public class Constants {
 
     @TranslationKey(defaultValue = "")
     public static final String NewTemplateView_ProcessCheckBoxText = "NewTemplateView.ProcessCheckBoxText";
-
-    @TranslationKey(defaultValue = "")
-    public static final String NewTemplateView_PlanningCheckBoxText = "NewTemplateView.PlanningCheckBoxText";
 
     @TranslationKey(defaultValue = "")
     public static final String NewTemplateView_TitleText = "NewTemplateView.TitleText";
