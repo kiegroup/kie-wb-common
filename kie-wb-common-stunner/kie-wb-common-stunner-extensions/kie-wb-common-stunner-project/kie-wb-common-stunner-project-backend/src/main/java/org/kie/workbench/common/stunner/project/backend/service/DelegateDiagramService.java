@@ -25,6 +25,7 @@ import org.kie.workbench.common.stunner.core.diagram.DiagramImpl;
 import org.kie.workbench.common.stunner.core.diagram.Metadata;
 import org.kie.workbench.common.stunner.core.graph.Graph;
 import org.kie.workbench.common.stunner.core.service.DiagramService;
+import org.kie.workbench.common.stunner.core.util.XMLDisplayerData;
 import org.kie.workbench.common.stunner.project.diagram.ProjectDiagram;
 import org.kie.workbench.common.stunner.project.diagram.ProjectMetadata;
 import org.kie.workbench.common.stunner.project.diagram.impl.ProjectDiagramImpl;
@@ -87,6 +88,11 @@ public class DelegateDiagramService implements DiagramService {
     @Override
     public String getRawContent(final Diagram<Graph, Metadata> diagram) {
         return projectDiagramService.getRawContent(convert(diagram));
+    }
+
+    @Override
+    public XMLDisplayerData getXMLFileContent(final Path path) {
+       return projectDiagramService.getXMLFileContent(path);
     }
 
     @Override

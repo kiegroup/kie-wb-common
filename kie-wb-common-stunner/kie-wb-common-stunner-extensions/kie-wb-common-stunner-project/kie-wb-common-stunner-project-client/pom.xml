@@ -279,6 +279,11 @@
       <type>test-jar</type>
     </dependency>
 
+    <dependency>
+      <groupId>org.kie.workbench.stunner</groupId>
+      <artifactId>kie-wb-common-stunner-jbpm-designer-integration-shared</artifactId>
+    </dependency>
+
   </dependencies>
 
 </project>

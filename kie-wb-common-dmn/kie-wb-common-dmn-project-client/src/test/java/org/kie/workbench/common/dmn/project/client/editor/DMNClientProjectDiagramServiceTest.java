@@ -24,6 +24,7 @@ import org.kie.workbench.common.dmn.api.DMNContentResource;
 import org.kie.workbench.common.dmn.api.DMNContentService;
 import org.kie.workbench.common.dmn.api.DMNDefinitionSet;
 import org.kie.workbench.common.dmn.client.marshaller.DMNMarshallerService;
+import org.kie.workbench.common.stunner.bpmn.integration.client.IntegrationHandler;
 import org.kie.workbench.common.stunner.core.client.api.SessionManager;
 import org.kie.workbench.common.stunner.core.client.api.ShapeManager;
 import org.kie.workbench.common.stunner.core.client.service.ServiceCallback;
@@ -97,6 +98,9 @@ public class DMNClientProjectDiagramServiceTest {
     @Mock
     private ServiceCallback<String> stringCallback;
 
+    @Mock
+    private IntegrationHandler integrationHandler;
+
     @Captor
     private ArgumentCaptor<ProjectDiagramImpl> projectDiagramArgumentCaptor;
 
@@ -113,7 +117,8 @@ public class DMNClientProjectDiagramServiceTest {
                                                          diagramLookupServiceCaller,
                                                          saveEvent,
                                                          dmnContentServiceCaller,
-                                                         dmnMarshallerService));
+                                                         dmnMarshallerService,
+                                                         integrationHandler));
     }
 
     @Test

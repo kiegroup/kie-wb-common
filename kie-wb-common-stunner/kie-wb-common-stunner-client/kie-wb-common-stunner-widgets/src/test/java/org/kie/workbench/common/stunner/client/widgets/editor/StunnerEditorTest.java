@@ -154,6 +154,16 @@ public class StunnerEditorTest {
     }
 
     @Test
+    public void testDisplayXML() {
+        tested.setReadOnly(false);
+        openSuccess();
+        String xmlString = "XML String";
+        when(xmlEditorView.getContent()).thenReturn(xmlString);
+        tested.displayXML(xmlString);
+        verify(view, times(1)).setWidget(xmlEditorView.asWidget());
+    }
+
+    @Test
     public void testDirtyState() {
         openSuccess();
         assertFalse(tested.isDirty());
