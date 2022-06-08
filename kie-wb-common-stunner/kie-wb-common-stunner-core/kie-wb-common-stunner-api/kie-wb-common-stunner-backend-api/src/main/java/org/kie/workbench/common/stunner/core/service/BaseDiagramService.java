@@ -19,6 +19,7 @@ package org.kie.workbench.common.stunner.core.service;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.kie.workbench.common.stunner.core.diagram.Metadata;
 import org.kie.workbench.common.stunner.core.graph.Graph;
+import org.kie.workbench.common.stunner.core.util.XMLDisplayerData;
 import org.uberfire.backend.vfs.Path;
 
 /**
@@ -78,4 +79,12 @@ public interface BaseDiagramService<M extends Metadata, D extends Diagram<Graph,
      * @return Returns the raw content representation for the current diagram.
      */
     String getRawContent(final D diagram);
+
+    /**
+     * Gets the XML and Metadatacontents of a file
+     * @param path of the file
+     * @return XML file contents and Metadata Pair
+     */
+
+    XMLDisplayerData getXMLFileContent(final Path path);
 }

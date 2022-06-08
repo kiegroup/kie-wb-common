@@ -38,6 +38,7 @@ import org.kie.workbench.common.stunner.core.api.DefinitionManager;
 import org.kie.workbench.common.stunner.core.api.FactoryManager;
 import org.kie.workbench.common.stunner.core.definition.service.DefinitionSetService;
 import org.kie.workbench.common.stunner.core.registry.BackendRegistryFactory;
+import org.kie.workbench.common.stunner.core.util.XMLDisplayerData;
 import org.kie.workbench.common.stunner.project.diagram.ProjectDiagram;
 import org.kie.workbench.common.stunner.project.diagram.ProjectMetadata;
 import org.kie.workbench.common.stunner.project.service.ProjectDiagramService;
@@ -205,6 +206,11 @@ public class ProjectDiagramServiceImpl extends KieService<ProjectDiagram>
     @Override
     public String getRawContent(final ProjectDiagram diagram) {
         return controller.getRawContent(diagram);
+    }
+
+    @Override
+    public XMLDisplayerData getXMLFileContent(final Path path) {
+        return controller.getXMLFileContent(path);
     }
 
     protected ProjectDiagramServiceController buildController(final DefinitionManager definitionManager,

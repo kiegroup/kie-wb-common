@@ -22,6 +22,7 @@ import javax.inject.Inject;
 import org.guvnor.common.services.project.categories.Process;
 import org.kie.workbench.common.stunner.bpmn.BPMNDefinitionSet;
 import org.kie.workbench.common.stunner.core.definition.AbstractDefinitionSetResourceType;
+import org.uberfire.backend.vfs.Path;
 import org.uberfire.workbench.annotations.VisibleAsset;
 import org.uberfire.workbench.category.Category;
 
@@ -31,6 +32,8 @@ import org.uberfire.workbench.category.Category;
 public class BPMNDefinitionSetResourceType extends AbstractDefinitionSetResourceType {
 
     public static final String BPMN_EXTENSION = "bpmn";
+    public static final String BPMN2_EXTENSION = "bpmn2";
+
     private static final String NAME = "Business Process";
     private static final String DESCRIPTION = "Business Process";
 
@@ -73,6 +76,21 @@ public class BPMNDefinitionSetResourceType extends AbstractDefinitionSetResource
     @Override
     public Class<?> getDefinitionSetType() {
         return BPMNDefinitionSet.class;
+    }
+
+    @Override
+    public boolean accept(final Path path) {
+        return super.accept(path) || path.getFileName().endsWith("." + getSecondSuffix());
+    }
+
+    @Override
+    public boolean hasSecondSuffix() {
+        return true;
+    }
+
+    @Override
+    public String getSecondSuffix() {
+        return BPMN2_EXTENSION;
     }
 }
 

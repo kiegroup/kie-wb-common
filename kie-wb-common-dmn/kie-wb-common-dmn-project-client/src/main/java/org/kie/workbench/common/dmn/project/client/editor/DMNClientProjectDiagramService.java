@@ -28,6 +28,7 @@ import org.kie.workbench.common.dmn.api.DMNContentService;
 import org.kie.workbench.common.dmn.api.DMNDefinitionSet;
 import org.kie.workbench.common.dmn.api.qualifiers.DMNEditor;
 import org.kie.workbench.common.dmn.client.marshaller.DMNMarshallerService;
+import org.kie.workbench.common.stunner.bpmn.integration.client.IntegrationHandler;
 import org.kie.workbench.common.stunner.core.client.api.SessionManager;
 import org.kie.workbench.common.stunner.core.client.api.ShapeManager;
 import org.kie.workbench.common.stunner.core.client.service.ClientRuntimeError;
@@ -59,13 +60,15 @@ public class DMNClientProjectDiagramService extends ClientProjectDiagramService 
                                           final Caller<DiagramLookupService> diagramLookupServiceCaller,
                                           final Event<SessionDiagramSavedEvent> saveEvent,
                                           final Caller<DMNContentService> dmnContentServiceCaller,
-                                          final DMNMarshallerService dmnMarshallerService) {
+                                          final DMNMarshallerService dmnMarshallerService,
+                                          final IntegrationHandler integrationHandler) {
 
         super(shapeManager,
               sessionManager,
               diagramServiceCaller,
               diagramLookupServiceCaller,
-              saveEvent);
+              saveEvent,
+              integrationHandler);
 
         this.dmnContentServiceCaller = dmnContentServiceCaller;
         this.dmnMarshallerService = dmnMarshallerService;

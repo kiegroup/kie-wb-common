@@ -170,18 +170,29 @@ public class StunnerEditor {
         return contentHash != getCurrentContentHash();
     }
 
+    public void displayXML(String xml) {
+        displayXMLFlat(xml);
+    }
+
+    protected void displayXMLFlat(String xml) {
+        close();
+        if (xmlEditorViews == null) {
+            return;
+        }
+        xmlEditorView = xmlEditorViews.get();
+        xmlEditorView.setReadOnly(isReadOnly());
+        xmlEditorView.setContent(xml, AceEditorMode.XML);
+        resetContentHash();
+        view.setWidget(xmlEditorView.asWidget());
+        Scheduler.get().scheduleDeferred(xmlEditorView::onResize);
+    }
+
     public void handleError(final ClientRuntimeError error) {
         final Throwable e = error.getThrowable();
         if (e instanceof DiagramParsingException) {
             final DiagramParsingException dpe = (DiagramParsingException) e;
-            close();
             parsingExceptionProcessor.accept(dpe);
-            xmlEditorView = xmlEditorViews.get();
-            xmlEditorView.setReadOnly(isReadOnly());
-            xmlEditorView.setContent(dpe.getXml(), AceEditorMode.XML);
-            resetContentHash();
-            view.setWidget(xmlEditorView.asWidget());
-            Scheduler.get().scheduleDeferred(xmlEditorView::onResize);
+            displayXMLFlat(dpe.getXml());
         } else {
             String message = null;
             if (e instanceof DefinitionNotFoundException) {

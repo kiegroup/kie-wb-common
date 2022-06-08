@@ -20,7 +20,6 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import org.uberfire.client.views.pfly.widgets.Button;
-import org.uberfire.client.views.pfly.widgets.ConfirmPopup;
 import org.uberfire.client.views.pfly.widgets.InlineNotification;
 import org.uberfire.ext.widgets.common.client.common.popups.YesNoCancelPopup;
 import org.uberfire.mvp.Command;
@@ -28,14 +27,14 @@ import org.uberfire.mvp.Command;
 @ApplicationScoped
 public class PopupUtil {
 
-    private final ConfirmPopup confirmPopup;
+    private final ConfirmPopupWithEvents confirmPopup;
 
     public PopupUtil() {
         this(null);
     }
 
     @Inject
-    public PopupUtil(final ConfirmPopup confirmPopup) {
+    public PopupUtil(final ConfirmPopupWithEvents confirmPopup) {
         this.confirmPopup = confirmPopup;
     }
 
@@ -47,6 +46,18 @@ public class PopupUtil {
                           okButtonText,
                           confirmMessage,
                           okCommand);
+    }
+
+    public void showConfirmPopup(final String title,
+                                 final String okButtonText,
+                                 final String confirmMessage,
+                                 final Command okCommand,
+                                 final Command cancelCommand) {
+        confirmPopup.show(title,
+                          okButtonText,
+                          confirmMessage,
+                          okCommand,
+                          cancelCommand);
     }
 
     public void showConfirmPopup(final String title,
@@ -63,6 +74,24 @@ public class PopupUtil {
                           okButtonType,
                           confirmMessage,
                           okCommand);
+    }
+
+    public void showConfirmPopup(final String title,
+                                 final String inlineNotificationMessage,
+                                 final InlineNotification.InlineNotificationType inlineNotificationType,
+                                 final String okButtonText,
+                                 final Button.ButtonStyleType okButtonType,
+                                 final String confirmMessage,
+                                 final Command okCommand,
+                                 final Command cancelCommand) {
+        confirmPopup.show(title,
+                          inlineNotificationMessage,
+                          inlineNotificationType,
+                          okButtonText,
+                          okButtonType,
+                          confirmMessage,
+                          okCommand,
+                          cancelCommand);
     }
 
     public void showYesNoCancelPopup(final String title,

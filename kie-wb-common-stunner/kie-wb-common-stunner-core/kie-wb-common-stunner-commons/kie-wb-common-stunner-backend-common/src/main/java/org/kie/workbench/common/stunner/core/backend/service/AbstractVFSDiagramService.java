@@ -30,6 +30,7 @@ import javax.enterprise.inject.Instance;
 import org.jboss.errai.security.shared.api.identity.User;
 import org.kie.workbench.common.stunner.core.api.DefinitionManager;
 import org.kie.workbench.common.stunner.core.api.FactoryManager;
+import org.kie.workbench.common.stunner.core.definition.AbstractDefinitionSetResourceType;
 import org.kie.workbench.common.stunner.core.definition.adapter.DefinitionAdapter;
 import org.kie.workbench.common.stunner.core.definition.adapter.binding.BindableAdapterUtils;
 import org.kie.workbench.common.stunner.core.definition.property.PropertyMetaTypes;
@@ -47,6 +48,7 @@ import org.kie.workbench.common.stunner.core.marshaller.MarshallingResponse;
 import org.kie.workbench.common.stunner.core.registry.BackendRegistryFactory;
 import org.kie.workbench.common.stunner.core.registry.diagram.DiagramRegistry;
 import org.kie.workbench.common.stunner.core.service.BaseDiagramService;
+import org.kie.workbench.common.stunner.core.util.XMLDisplayerData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.uberfire.backend.vfs.Path;
@@ -140,6 +142,28 @@ public abstract class AbstractVFSDiagramService<M extends Metadata, D extends Di
         }
     }
 
+    @Override
+    public XMLDisplayerData getXMLFileContent(final Path path) {
+        final String s = getIoService().readAllString(convertToNioPath(path));
+        XMLDisplayerData xmlDisplayerData = null;
+
+        if (accepts(path)) {
+            DefinitionSetService services = getServiceByPath(path);
+            if (null != services) {
+                final String defSetId = getDefinitionSetId(services);
+                final String name = parseFileName(path,
+                                                  services);
+
+                final M metadata = (M) buildMetadataInstance(path,
+                                                             defSetId,
+                                                             name);
+                metadata.setPath(path);
+                xmlDisplayerData = new XMLDisplayerData(s, metadata);
+            }
+        }
+        return xmlDisplayerData;
+    }
+
     protected abstract Class<? extends Metadata> getMetadataType();
 
     private String buildFileName(final String baseFileName,
@@ -161,6 +185,7 @@ public abstract class AbstractVFSDiagramService<M extends Metadata, D extends Di
                 final String defSetId = getDefinitionSetId(services);
                 final String name = parseFileName(file,
                                                   services);
+
                 final M metadata = (M) buildMetadataInstance(file,
                                                              defSetId,
                                                              name);
@@ -181,7 +206,6 @@ public abstract class AbstractVFSDiagramService<M extends Metadata, D extends Di
                     final DiagramFactory<M, ?> factory =
                             factoryManager.registry().getDiagramFactory(graph.getContent().getDefinition(),
                                                                         getMetadataType());
-
                     return (D) factory.build(name, metadata, graph);
                 } catch (Exception e) {
                     LOG.error("Cannot unmarshall diagram for diagram's path [" + file + "]", e);
@@ -193,12 +217,29 @@ public abstract class AbstractVFSDiagramService<M extends Metadata, D extends Di
         throw new UnsupportedOperationException("Diagram format not supported [" + file + "]");
     }
 
-    private String parseFileName(final org.uberfire.backend.vfs.Path file,
+    protected String parseFileName(final org.uberfire.backend.vfs.Path file,
                                  final DefinitionSetService services) {
         final String n = file.getFileName();
-        final String ext = services.getResourceType().getSuffix();
+        String ext = services.getResourceType().getSuffix();
+
+        boolean isValid = false;
+
         if (!n.endsWith(ext)) {
-            throw new RuntimeException("File [" + n + "] should have the suffix [" + ext + "]");
+            if (services.getResourceType() instanceof AbstractDefinitionSetResourceType) {
+                AbstractDefinitionSetResourceType abstractDefinitionSetResourceType = (AbstractDefinitionSetResourceType) services.getResourceType();
+                if (abstractDefinitionSetResourceType.hasSecondSuffix()) {
+                    if (n.endsWith(abstractDefinitionSetResourceType.getSecondSuffix())) {
+                        isValid = true;
+                        ext = abstractDefinitionSetResourceType.getSecondSuffix();
+                    }
+                }
+            }
+
+            if (!isValid) {
+                LOG.error("File [" + n + "] should have the suffix [" + ext + "]");
+            }
+        } else {
+            System.out.println("Something");
         }
         return n.substring(0,
                            n.length() - ext.length() - 1);
