@@ -46,7 +46,7 @@ public interface DMNImageResources extends ClientBundleWithLookup {
     // Logos
     String DROOLS_LOGO = "images/logos/drools-logo.svg";
 
-    String SUPPORTED_BY_RED_HAT_LOGO = "images/logos/supported-by-red-hat-logo.svg";
+    String SUPPORTED_BY_RED_HAT_LOGO = "images/logos/supported-by-ibm-logo.svg";
 
     DMNImageResources INSTANCE = GWT.create(DMNImageResources.class);
 
