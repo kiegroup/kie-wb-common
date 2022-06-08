@@ -47,6 +47,7 @@ import org.uberfire.mvp.PlaceRequest;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
@@ -257,5 +258,17 @@ public class BPMNDiagramEditorTest extends AbstractProjectDiagramEditorTest {
         assertTrue(diagramEditor.isSaveAllowedAfterValidationFailed(Violation.Type.INFO));
         assertTrue(diagramEditor.isSaveAllowedAfterValidationFailed(Violation.Type.WARNING));
         assertFalse(diagramEditor.isSaveAllowedAfterValidationFailed(Violation.Type.ERROR));
+    }
+
+    @Test
+    public void testSecondExtensionTrue() {
+        assertTrue(diagramEditor.shouldCheckForExtension());
+    }
+
+    @Test
+    public void testSecondExtensionString() {
+        assertEquals("bpmn2", diagramEditor.extensionToCheck("file.bpmn2"));
+        assertNotEquals("bpmn", diagramEditor.extensionToCheck("file.bpmn2"));
+        assertEquals(null, diagramEditor.extensionToCheck("file.bpmn"));
     }
 }

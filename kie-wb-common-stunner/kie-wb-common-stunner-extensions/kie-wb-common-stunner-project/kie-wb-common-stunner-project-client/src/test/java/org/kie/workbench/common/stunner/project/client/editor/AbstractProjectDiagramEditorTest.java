@@ -55,6 +55,7 @@ import org.kie.workbench.common.stunner.core.documentation.DocumentationView;
 import org.kie.workbench.common.stunner.core.graph.Graph;
 import org.kie.workbench.common.stunner.core.graph.content.definition.DefinitionSet;
 import org.kie.workbench.common.stunner.core.rule.RuleViolation;
+import org.kie.workbench.common.stunner.core.util.XMLDisplayerData;
 import org.kie.workbench.common.stunner.core.validation.DiagramElementViolation;
 import org.kie.workbench.common.stunner.core.validation.Violation;
 import org.kie.workbench.common.stunner.project.client.editor.event.OnDiagramFocusEvent;
@@ -341,6 +342,29 @@ public class AbstractProjectDiagramEditorTest {
     }
 
     @Test
+    public void testDisplayXML() {
+        XMLDisplayerData xmlData = mock(XMLDisplayerData.class);
+        ProjectMetadata metadata = mock(ProjectMetadata.class);
+        Overview overview = mock(Overview.class);
+        when(metadata.getOverview()).thenReturn(overview);
+        when(metadata.getTitle()).thenReturn("Some Tittle");
+        when(xmlData.getMetadata()).thenReturn(metadata);
+        when(xmlData.getXml()).thenReturn("XMLContent");
+        tested.displayXML(xmlData);
+        verify(stunnerEditor, times(1)).displayXML("XMLContent");
+    }
+
+    @Test
+    public void testDisplayXMLNotProjectMetadata() {
+        XMLDisplayerData xmlData = mock(XMLDisplayerData.class);
+        org.kie.workbench.common.stunner.core.diagram.Metadata metadata = mock(org.kie.workbench.common.stunner.core.diagram.Metadata.class);
+        when(xmlData.getMetadata()).thenReturn(metadata);
+        when(xmlData.getXml()).thenReturn("XMLContent");
+        tested.displayXML(xmlData);
+        verify(stunnerEditor, times(1)).displayXML("XMLContent");
+    }
+
+    @Test
     @SuppressWarnings("unchecked")
     public void testOpen() {
         tested.open(diagram);
@@ -560,4 +584,6 @@ public class AbstractProjectDiagramEditorTest {
         tested.onSuccess().execute(mock(Path.class));
         verify(tested, never()).getContentSupplier();
     }
+
+
 }
