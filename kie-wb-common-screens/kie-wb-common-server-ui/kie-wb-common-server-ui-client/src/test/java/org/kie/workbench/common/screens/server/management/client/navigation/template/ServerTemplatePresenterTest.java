@@ -300,7 +300,6 @@ public class ServerTemplatePresenterTest {
     public void testSetupCapabilities() {
         final ServerTemplate serverTemplate = new ServerTemplate( "ServerTemplateKeyId", "ServerTemplateKeyName" );
         serverTemplate.getCapabilities().add( Capability.PROCESS.toString() );
-        serverTemplate.getCapabilities().add( Capability.PLANNING.toString() );
         serverTemplate.getCapabilities().add( Capability.RULE.toString() );
 
         presenter.setup( serverTemplate, null );
