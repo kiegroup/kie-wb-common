@@ -92,6 +92,12 @@
       <groupId>org.kie.workbench.stunner</groupId>
       <artifactId>kie-wb-common-stunner-svg-gen</artifactId>
       <scope>provided</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>org.w3c</groupId>
+          <artifactId>dom</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <dependency>
