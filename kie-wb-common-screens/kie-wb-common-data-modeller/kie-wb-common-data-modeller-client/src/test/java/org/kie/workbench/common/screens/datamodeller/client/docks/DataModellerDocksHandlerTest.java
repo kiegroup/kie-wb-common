@@ -72,33 +72,16 @@ public class DataModellerDocksHandlerTest {
     }
 
     @Test
-    public void testSetDataModelerFocusEventWithPlanner() {
-        testSetDataModelerFocusEvent(true,
-                                     true);
+    public void testSetDataModelerFocusEvent() {
+        testSetDataModelerFocusEvent(true);
     }
 
     @Test
-    public void testSetDataModelerFocusEventWithoutPlanner() {
-        testSetDataModelerFocusEvent(false,
-                                     true);
+    public void testLoseDataModelerFocusEvent() {
+        testSetDataModelerFocusEvent(false);
     }
 
-    @Test
-    public void testLoseDataModelerFocusEventWithPlanner() {
-        testSetDataModelerFocusEvent(true,
-                                     false);
-    }
-
-    @Test
-    public void testLoseDataModelerFocusEventWithoutPlanner() {
-        testSetDataModelerFocusEvent(false,
-                                     false);
-    }
-
-    protected void testSetDataModelerFocusEvent(final boolean withPlanner,
-                                                final boolean setFocus) {
-        when(authorizationManager.authorize(anyString(),
-                                            any())).thenReturn(withPlanner);
+    protected void testSetDataModelerFocusEvent(final boolean setFocus) {
 
         DataModelerWorkbenchFocusEvent event = new DataModelerWorkbenchFocusEvent();
 
@@ -109,10 +92,6 @@ public class DataModellerDocksHandlerTest {
         handler.onDataModelerWorkbenchFocusEvent(event);
 
         int maxDox = MIN_DOCKS;
-
-        if (withPlanner) {
-            maxDox++;
-        }
 
         assertEquals(maxDox,
                      handler.provideDocks(AUTHORING_PERSPECTIVE).size());
@@ -127,7 +106,7 @@ public class DataModellerDocksHandlerTest {
 
     @Test
     public void testChangeDataModelerContextSameContextSourceMode() {
-        testSetDataModelerFocusEventWithPlanner();
+        testSetDataModelerFocusEvent();
 
         originalContext.setEditionMode(DataModelerContext.EditionMode.SOURCE_MODE);
 
@@ -162,7 +141,7 @@ public class DataModellerDocksHandlerTest {
     protected void testChangeDataModelerEvent(boolean shouldRefresh,
                                               boolean shouldDisable,
                                               DataModelerContext eventContext) {
-        testSetDataModelerFocusEventWithPlanner();
+        testSetDataModelerFocusEvent();
 
         when(dataModelerWorkbenchContext.getActiveContext()).thenReturn(eventContext);
 

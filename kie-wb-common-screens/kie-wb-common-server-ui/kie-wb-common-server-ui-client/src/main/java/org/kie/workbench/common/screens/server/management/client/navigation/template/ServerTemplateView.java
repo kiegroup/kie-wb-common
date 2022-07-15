@@ -62,10 +62,6 @@ public class ServerTemplateView extends Composite
     CheckBox processEnabled;
 
     @Inject
-    @DataField("planning-capability-checkbox")
-    CheckBox planningEnabled;
-
-    @Inject
     @DataField("add-new-container")
     Anchor addNewContainer;
 
@@ -104,8 +100,6 @@ public class ServerTemplateView extends Composite
         ruleEnabled.setEnabled(false);
         processEnabled.setText(getProcessCheckBoxText());
         processEnabled.setEnabled(false);
-        planningEnabled.setText(getPlanningCheckBoxText());
-        planningEnabled.setEnabled(false);
     }
 
     @Override
@@ -119,7 +113,6 @@ public class ServerTemplateView extends Composite
         serverTemplate.setInnerText("");
         processEnabled.setValue(false);
         ruleEnabled.setValue(false);
-        planningEnabled.setValue(false);
     }
 
     @Override
@@ -219,11 +212,6 @@ public class ServerTemplateView extends Composite
     }
 
     @Override
-    public void setPlanningCapability(final boolean value) {
-        planningEnabled.setValue(value);
-    }
-
-    @Override
     public void confirmRemove(final Command command) {
         final YesNoCancelPopup result = YesNoCancelPopup.newYesNoCancelPopup(getTemplateRemovePopupTitle(),
                                                                              getTemplateRemovePopupText(),
@@ -269,10 +257,6 @@ public class ServerTemplateView extends Composite
 
     private String getProcessCheckBoxText() {
         return translationService.format(Constants.ServerTemplateView_ProcessCheckBoxText);
-    }
-
-    private String getPlanningCheckBoxText() {
-        return translationService.format(Constants.ServerTemplateView_PlanningCheckBoxText);
     }
 
     private String getTemplateRemovePopupText() {

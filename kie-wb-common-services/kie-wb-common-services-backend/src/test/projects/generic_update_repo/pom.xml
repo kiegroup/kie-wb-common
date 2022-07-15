@@ -37,16 +37,6 @@
       <artifactId>kie-api</artifactId>
       <scope>provided</scope>
     </dependency>
-    <dependency>
-      <groupId>org.optaplanner</groupId>
-      <artifactId>optaplanner-core</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.optaplanner</groupId>
-      <artifactId>optaplanner-persistence-jaxb</artifactId>
-      <scope>provided</scope>
-    </dependency>
   </dependencies>
   <repositories>
     <repository>
