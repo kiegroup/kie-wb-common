@@ -77,8 +77,6 @@ public class ServerTemplatePresenter {
 
         void setProcessCapability( boolean value );
 
-        void setPlanningCapability( final boolean value );
-
         void confirmRemove( Command command );
 
         String getCopyTemplateErrorMessage();
@@ -144,8 +142,6 @@ public class ServerTemplatePresenter {
         view.setProcessCapability( serverTemplate.getCapabilities().contains( Capability.PROCESS.toString() ) );
 
         view.setRulesCapability( serverTemplate.getCapabilities().contains( Capability.RULE.toString() ) );
-
-        view.setPlanningCapability( serverTemplate.getCapabilities().contains( Capability.PLANNING.toString() ) );
 
         if ( firstContainerSpec != null ) {
             addContainer( firstContainerSpec );

@@ -180,9 +180,6 @@ public class NewServerTemplateWizard extends AbstractMultiPageWizard {
         if ( newTemplatePresenter.isRuleCapabilityChecked() ) {
             capabilities.add( Capability.RULE.toString() );
         }
-        if ( newTemplatePresenter.isPlanningCapabilityChecked() ) {
-            capabilities.add( Capability.PLANNING.toString() );
-        }
 
         if ( !newContainerFormPresenter.isEmpty() ) {
             containersSpec.add( newContainerFormPresenter.buildContainerSpec( newTemplatePresenter.getTemplateName(), capabilityContainerConfig ) );

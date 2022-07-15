@@ -35,7 +35,6 @@ import static org.guvnor.m2repo.security.MavenRepositoryPagedJarTableFeatures.JA
 import static org.kie.workbench.common.workbench.client.authz.WorkbenchFeatures.EDIT_GLOBAL_PREFERENCES;
 import static org.kie.workbench.common.workbench.client.authz.WorkbenchFeatures.EDIT_SOURCES;
 import static org.kie.workbench.common.workbench.client.authz.WorkbenchFeatures.GUIDED_DECISION_TABLE_EDIT_COLUMNS;
-import static org.kie.workbench.common.workbench.client.authz.WorkbenchFeatures.PLANNER_AVAILABLE;
 import static org.kie.workbench.common.workbench.client.authz.WorkbenchFeatures.EDIT_PROFILE_PREFERENCES;
 import static org.kie.workbench.common.workbench.client.authz.WorkbenchFeatures.ACCESS_DATA_TRANSFER;
 import static org.kie.workbench.common.workbench.client.authz.WorkbenchFeatures.SHOW_CHANGEREQUEST_TAB;
@@ -98,9 +97,6 @@ public class WorkbenchTreeProvider implements PermissionTreeProvider {
         permissions.add(createPermissionLeafNode(EDIT_SOURCES,
                                                  i18n.DataModelerEditSources(),
                                                  i18n.DataModelerEditSourcesHelp()));
-        permissions.add(createPermissionLeafNode(PLANNER_AVAILABLE,
-                                                 i18n.ResourcePlanner(),
-                                                 i18n.ResourcePlannerHelp()));
         permissions.add(createPermissionLeafNode(JAR_DOWNLOAD,
                                                  i18n.MavenRepositoryPagedJarTableDownloadJar(),
                                                  i18n.MavenRepositoryPagedJarTableDownloadJarHelp()));

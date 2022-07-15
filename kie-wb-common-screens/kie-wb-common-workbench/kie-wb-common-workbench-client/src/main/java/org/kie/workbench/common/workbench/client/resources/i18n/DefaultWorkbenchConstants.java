@@ -45,8 +45,6 @@ public interface DefaultWorkbenchConstants
 
     String DroolsAdministration();
 
-    String PlannerAdministration();
-
     String Plugins();
 
     String Apps();
@@ -91,13 +89,9 @@ public interface DefaultWorkbenchConstants
 
     String DataModelerEditSources();
 
-    String ResourcePlanner();
-
     String WorkbenchRootNodeHelp();
 
     String DataModelerEditSourcesHelp();
-
-    String ResourcePlannerHelp();
 
     String Admin();
 

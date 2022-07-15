@@ -35,13 +35,9 @@ import static org.assertj.core.api.Assertions.*;
 
 public class PomEditorTest {
 
-    private static final String CURRICULUM_COURSE_PRJ = "/target/test-classes/curriculumcourse/";
-    private static final String DINNER_PARTY_PRJ = "/target/test-classes/dinnerparty/";
-    private static final String EMPLOYEE_ROSTERING_PRJ = "/target/test-classes/employee-rostering/";
-    private static final String EVALUATION_PRJ = "/target/test-classes/employee-rostering/";
+    private static final String EVALUATION_PRJ = "/target/test-classes/evaluation/";
     private static final String ITORDERS_PRJ = "/target/test-classes/itorders/";
     private static final String MORTGAGES_PRJ = "/target/test-classes/mortgages/";
-    private static final String OPTACLOUD_PRJ = "/target/test-classes/optacloud/";
     private final Logger logger = LoggerFactory.getLogger(PomEditorTest.class);
     private PomEditor editor;
     private String currentDir;
@@ -87,21 +83,6 @@ public class PomEditorTest {
     }
 
     @Test
-    public void updateCurriculumCourse() {
-        testDefault(CURRICULUM_COURSE_PRJ);
-    }
-
-    @Test
-    public void updateDinnerParty() {
-        testDefault(DINNER_PARTY_PRJ);
-    }
-
-    @Test
-    public void updateEmployeeRostering() {
-        testDefault(EMPLOYEE_ROSTERING_PRJ);
-    }
-
-    @Test
     public void updateEvaluation() {
         testDefault(EVALUATION_PRJ);
     }
@@ -117,11 +98,6 @@ public class PomEditorTest {
     }
 
     @Test
-    public void updateOptacloud() {
-        testDefault(OPTACLOUD_PRJ);
-    }
-
-    @Test
     public void updateGenericPom() {
         String prj = "/target/test-classes/generic/";
         Path jsonPath = Paths.get("file:" + currentDir + prj + "/pom-migration.json");
@@ -133,7 +109,7 @@ public class PomEditorTest {
             Model original = editor.getModel(path);
             assertThat(original.getPackaging()).isEqualToIgnoringCase("jar");
             assertThat(original.getBuild().getPlugins()).hasSize(1);
-            assertThat(original.getDependencies()).hasSize(3);
+            assertThat(original.getDependencies()).hasSize(1);
             assertThat(original.getRepositories()).hasSize(0);
             assertThat(original.getPluginRepositories()).hasSize(0);
 
@@ -141,7 +117,7 @@ public class PomEditorTest {
             assertThat(modelUpdated).isNotNull();
             assertThat(modelUpdated.getPackaging()).isEqualToIgnoringCase("kjar");
             assertThat(modelUpdated.getBuild().getPlugins()).hasSize(1);
-            assertThat(modelUpdated.getDependencies()).hasSize(6);
+            assertThat(modelUpdated.getDependencies()).hasSize(4);
             assertThat(modelUpdated.getRepositories()).hasSize(2);
             assertThat(modelUpdated.getPluginRepositories()).hasSize(2);
         } catch (Exception e) {
@@ -162,7 +138,7 @@ public class PomEditorTest {
             Model original = editor.getModel(path);
             assertThat(original.getPackaging()).isEqualToIgnoringCase("jar");
             assertThat(original.getBuild().getPlugins()).hasSize(1);
-            assertThat(original.getDependencies()).hasSize(3);
+            assertThat(original.getDependencies()).hasSize(1);
             assertThat(original.getRepositories()).hasSize(2);
             assertThat(original.getPluginRepositories()).hasSize(1);
             List<org.apache.maven.model.Repository> repos = original.getRepositories();
@@ -179,7 +155,7 @@ public class PomEditorTest {
             assertThat(modelUpdated).isNotNull();
             assertThat(modelUpdated.getPackaging()).isEqualToIgnoringCase("kjar");
             assertThat(modelUpdated.getBuild().getPlugins()).hasSize(1);
-            assertThat(modelUpdated.getDependencies()).hasSize(6);
+            assertThat(modelUpdated.getDependencies()).hasSize(4);
             assertThat(modelUpdated.getRepositories()).hasSize(3);
             assertThat(modelUpdated.getPluginRepositories()).hasSize(3);
 
@@ -209,7 +185,7 @@ public class PomEditorTest {
             Model original = editor.getModel(path);
             assertThat(original.getPackaging()).isEqualToIgnoringCase("jar");
             assertThat(original.getBuild().getPlugins()).hasSize(1);
-            assertThat(original.getDependencies()).hasSize(3);
+            assertThat(original.getDependencies()).hasSize(1);
             assertThat(original.getRepositories()).hasSize(2);
             assertThat(original.getPluginRepositories()).hasSize(1);
 
@@ -217,7 +193,7 @@ public class PomEditorTest {
             assertThat(modelUpdated).isNotNull();
             assertThat(modelUpdated.getPackaging()).isEqualToIgnoringCase("kjar");
             assertThat(modelUpdated.getBuild().getPlugins()).hasSize(1);
-            assertThat(modelUpdated.getDependencies()).hasSize(6);
+            assertThat(modelUpdated.getDependencies()).hasSize(4);
             assertThat(modelUpdated.getRepositories()).hasSize(0);
             assertThat(modelUpdated.getPluginRepositories()).hasSize(0);
         } catch (Exception e) {
@@ -235,7 +211,7 @@ public class PomEditorTest {
         try {
             Model original = editor.getModel(path);
             assertThat(original.getBuild().getPlugins()).hasSize(1);
-            assertThat(original.getDependencies()).hasSize(3);
+            assertThat(original.getDependencies()).hasSize(1);
             assertThat(original.getRepositories()).hasSize(0);
             assertThat(original.getPluginRepositories()).hasSize(0);
 
@@ -269,7 +245,7 @@ public class PomEditorTest {
             assertThat(modelUpdated).isNotNull();
             assertThat(modelUpdated.getPackaging()).isEqualToIgnoringCase("kjar");
             assertThat(modelUpdated.getBuild().getPlugins()).hasSize(1);
-            assertThat(modelUpdated.getDependencies()).hasSize(7);
+            assertThat(modelUpdated.getDependencies()).hasSize(5);
             assertThat(modelUpdated.getRepositories()).hasSize(2);
             assertThat(modelUpdated.getPluginRepositories()).hasSize(2);
             for(Dependency dep: modelUpdated.getDependencies()){

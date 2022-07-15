@@ -60,8 +60,6 @@ public class NewTemplatePresenter implements WizardPage {
 
         boolean isProcessCapabilityChecked();
 
-        boolean isPlanningCapabilityChecked();
-
         void errorOnTemplateName();
 
         void errorOnTemplateName(String s);
@@ -177,10 +175,6 @@ public class NewTemplatePresenter implements WizardPage {
     }
 
     public boolean isCapabilityValid() {
-        if (view.isPlanningCapabilityChecked() && view.isRuleCapabilityChecked()) {
-            return true;
-        }
-
         if (view.isProcessCapabilityChecked() || view.isRuleCapabilityChecked()) {
             return true;
         }
@@ -198,10 +192,6 @@ public class NewTemplatePresenter implements WizardPage {
 
     public boolean isProcessCapabilityChecked() {
         return view.isProcessCapabilityChecked();
-    }
-
-    public boolean isPlanningCapabilityChecked() {
-        return view.isPlanningCapabilityChecked();
     }
 
     public View getView() {

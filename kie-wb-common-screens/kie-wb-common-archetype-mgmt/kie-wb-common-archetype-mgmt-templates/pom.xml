@@ -59,13 +59,6 @@
         <scope>import</scope>
       </dependency>
       <dependency>
-        <groupId>org.optaplanner</groupId>
-        <artifactId>optaplanner-bom</artifactId>
-        <type>pom</type>
-        <version>${project.version}</version>
-        <scope>import</scope>
-      </dependency>
-      <dependency>
         <groupId>org.kie.soup</groupId>
         <artifactId>kie-soup-bom</artifactId>
         <version>${project.version}</version>
