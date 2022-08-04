@@ -581,8 +581,8 @@ public class OpenShiftProviderConfigImpl implements OpenShiftProviderConfig, Clo
                 ", httpProxy=" + httpProxy +
                 ", httpsProxy=" + httpsProxy +
                 ", kubernetesApiVersion=" + kubernetesApiVersion +
-                ", kubernetesAuthBasicPassword=" + kubernetesAuthBasicPassword +
-                ", kubernetesAuthBasicUsername=" + kubernetesAuthBasicUsername +
+                ", kubernetesAuthBasicPassword=***" +
+                ", kubernetesAuthBasicUsername=***" +
                 ", kubernetesAuthToken=" + kubernetesAuthToken +
                 ", kubernetesCertsCaData=" + kubernetesCertsCaData +
                 ", kubernetesCertsCaFile=" + kubernetesCertsCaFile +
