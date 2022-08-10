@@ -27,6 +27,10 @@ public interface IntegrationHandler {
 
     void migrateFromJBPMDesignerToStunner(Path path, PlaceRequest place, boolean isDirty, ParameterizedCommand<Consumer<Boolean>> saveCommand, Command migrationFinishedCommand, Command cancelCommand, Command errorCommand);
 
+    default void migrateFromJBPMDesignerToStunner(Path path, PlaceRequest place, boolean isDirty, ParameterizedCommand<Consumer<Boolean>> saveCommand) {
+        migrateFromJBPMDesignerToStunner(path, place, isDirty, saveCommand, null, null, null);
+    }
+
     void migrateFromStunnerToJBPMDesigner(Path path, PlaceRequest place, boolean isDirty, ParameterizedCommand<Consumer<Boolean>> saveCommand);
 
 }
