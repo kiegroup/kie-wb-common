@@ -126,10 +126,6 @@
           <groupId>ant</groupId>
           <artifactId>ant</artifactId>
         </exclusion>
-        <exclusion>
-          <groupId>xml-apis</groupId>
-          <artifactId>xml-apis</artifactId>
-        </exclusion>
       </exclusions>
     </dependency>
     <dependency>
@@ -482,12 +478,6 @@
     <dependency>
       <groupId>org.uberfire</groupId>
       <artifactId>uberfire-backend-server</artifactId>
-      <exclusions>
-        <exclusion>
-          <groupId>xml-apis</groupId>
-          <artifactId>xml-apis</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.uberfire</groupId>
@@ -777,12 +767,6 @@
       <groupId>com.google.gwt.gwtmockito</groupId>
       <artifactId>gwtmockito</artifactId>
       <scope>test</scope>
-      <exclusions>
-        <exclusion>
-          <groupId>xml-apis</groupId>
-          <artifactId>xml-apis</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.uberfire</groupId>
