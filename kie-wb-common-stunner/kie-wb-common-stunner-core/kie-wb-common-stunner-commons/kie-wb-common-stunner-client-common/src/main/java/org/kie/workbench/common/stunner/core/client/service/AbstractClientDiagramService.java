@@ -31,7 +31,10 @@ import org.kie.workbench.common.stunner.core.lookup.diagram.DiagramLookupRequest
 import org.kie.workbench.common.stunner.core.lookup.diagram.DiagramRepresentation;
 import org.kie.workbench.common.stunner.core.service.BaseDiagramService;
 import org.kie.workbench.common.stunner.core.service.DiagramLookupService;
+import org.kie.workbench.common.stunner.core.util.XMLDisplayerData;
 import org.uberfire.backend.vfs.Path;
+import org.uberfire.mvp.Command;
+import org.uberfire.mvp.impl.PathPlaceRequest;
 
 public abstract class AbstractClientDiagramService<M extends Metadata, D extends Diagram<Graph, M>, S extends BaseDiagramService<M, D>> implements ClientDiagramService<M, D, S> {
 
@@ -105,18 +108,52 @@ public abstract class AbstractClientDiagramService<M extends Metadata, D extends
                                   }).saveOrUpdate(diagram);
     }
 
+    public void displayXML(XMLDisplayerData xmlDisplayerData) {
+    }
+
+    protected void closeEditor() {
+    }
+
+    protected void hideLoadingViews(){
+    }
+
     @Override
     @SuppressWarnings("unchecked")
     public void getByPath(final Path path,
                           final ServiceCallback<D> callback) {
-        diagramServiceCaller.call(diagram -> {
-                                      updateClientMetadata((D) diagram);
-                                      callback.onSuccess((D) diagram);
-                                  },
-                                  (message, throwable) -> {
-                                      callback.onError(new ClientRuntimeError(throwable));
-                                      return false;
-                                  }).getDiagramByPath(path);
+
+        if (shouldMigrate(path)) {
+            hideLoadingViews();
+            diagramServiceCaller.call(displayer -> {
+                                          if (displayer != null) {
+                                              XMLDisplayerData xmlDisplayerData = (XMLDisplayerData) displayer;
+                                              Command cancelCommand = () -> displayXML(xmlDisplayerData);
+                                              Command migrationFinishedCommand = () -> closeEditor();
+                                              Command errorCommand = () -> displayXML(xmlDisplayerData);
+                                              migrate(path, new PathPlaceRequest(path), migrationFinishedCommand, cancelCommand, errorCommand);
+                                          }
+                                      },
+                                      (message, throwable) -> {
+                                          callback.onError(new ClientRuntimeError(throwable));
+                                          return false;
+                                      }).getXMLFileContent(path);
+        } else {
+            diagramServiceCaller.call(diagram -> {
+                                          updateClientMetadata((D) diagram);
+                                          callback.onSuccess((D) diagram);
+                                      },
+                                      (message, throwable) -> {
+                                          callback.onError(new ClientRuntimeError(throwable));
+                                          return false;
+                                      }).getDiagramByPath(path);
+        }
+    }
+
+    public boolean shouldMigrate(Path path) {
+        return (path.getFileName().endsWith(".bpmn2"));
+    }
+
+    public void migrate(Path path, PathPlaceRequest placeRequest, Command migrationFinishedCommand, Command cancelCommand, Command errorCommand) {
     }
 
     @Override
@@ -141,6 +178,17 @@ public abstract class AbstractClientDiagramService<M extends Metadata, D extends
                                       return false;
                                   }
         ).getRawContent(diagram);
+    }
+
+    public void getXMLFileContent(Path path, ServiceCallback<String> callback) {
+        diagramServiceCaller.call(rawContent -> {
+                                      callback.onSuccess((String) rawContent);
+                                  },
+                                  (message, throwable) -> {
+                                      callback.onError(new ClientRuntimeError(throwable));
+                                      return false;
+                                  }
+        ).getXMLFileContent(path);
     }
 
     protected void updateClientMetadata(final D diagram) {

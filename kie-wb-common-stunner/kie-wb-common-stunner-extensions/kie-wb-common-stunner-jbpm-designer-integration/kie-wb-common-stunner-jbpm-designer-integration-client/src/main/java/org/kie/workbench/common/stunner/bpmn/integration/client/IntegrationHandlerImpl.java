@@ -92,8 +92,8 @@ public class IntegrationHandlerImpl implements IntegrationHandler {
     }
 
     @Override
-    public void migrateFromJBPMDesignerToStunner(Path path, PlaceRequest place, boolean isDirty, ParameterizedCommand<Consumer<Boolean>> saveCommand) {
-        checkIfDirtyAndMigrate(isDirty, saveCommand, () -> fromJBPMDesignerToStunner(path, place));
+    public void migrateFromJBPMDesignerToStunner(Path path, PlaceRequest place, boolean isDirty, ParameterizedCommand<Consumer<Boolean>> saveCommand, Command migrationFinishedCommand, Command cancelCommand, Command errorCommand) {
+        checkIfDirtyAndMigrate(isDirty, saveCommand, () -> fromJBPMDesignerToStunner(path, place, migrationFinishedCommand, cancelCommand, errorCommand));
     }
 
     @Override
@@ -117,59 +117,96 @@ public class IntegrationHandlerImpl implements IntegrationHandler {
     }
 
     private void confirmAndMigrate(String inlineNotificationMessage, InlineNotification.InlineNotificationType inlineNotificationType, String confirmMessage, Command okCommand) {
+        confirmAndMigrate(inlineNotificationMessage, inlineNotificationType, confirmMessage, okCommand, null);
+    }
+
+    private void confirmAndMigrate(String inlineNotificationMessage, InlineNotification.InlineNotificationType inlineNotificationType, String confirmMessage, Command okCommand, Command cancelCommand) {
         popupUtil.showConfirmPopup(translationService.getValue(IntegrationClientConstants.MigrateActionTitle),
                                    inlineNotificationMessage,
                                    inlineNotificationType,
                                    translationService.getValue(IntegrationClientConstants.MigrateAction),
                                    org.uberfire.client.views.pfly.widgets.Button.ButtonStyleType.PRIMARY,
                                    confirmMessage,
-                                   okCommand);
+                                   okCommand,
+                                   cancelCommand);
     }
 
-    private void fromJBPMDesignerToStunner(Path path, PlaceRequest place) {
-        final RemoteCallback<MarshallingResponse<ProjectDiagram>> successCallback = (result) -> onGetDiagramByPathSuccess(result, path, place);
-        final ErrorCallback<Message> errorCallback = (message, throwable) -> onUnexpectedError(throwable);
-        final Command okCommand = () -> integrationService.call(successCallback, errorCallback).getDiagramByPath(path, MarshallingRequest.Mode.AUTO);
-        confirmAndMigrate(null, null, translationService.getValue(IntegrationClientConstants.MigrateToStunnerConfirmAction), okCommand);
+    private void fromJBPMDesignerToStunner(Path path, PlaceRequest place, Command migrationFinishedCommand, Command cancelCommand, Command errorCommand) {
+        final RemoteCallback<MarshallingResponse<ProjectDiagram>> successCallback = (result) -> onGetDiagramByPathSuccess(result, path, place, migrationFinishedCommand, errorCommand);
+        final ErrorCallback<Message> errorCallback = (message, throwable) -> {
+            if (errorCommand != null) {
+                errorCommand.execute();
+            }
+            return onUnexpectedError(throwable);
+        };
+
+        final Command onOkCommand = () -> {
+            integrationService.call(successCallback, errorCallback).getDiagramByPath(path, MarshallingRequest.Mode.AUTO);
+        };
+
+        final Command onCancelCommand = () -> {
+            if (cancelCommand != null) {
+                cancelCommand.execute();
+            }
+        };
+
+        confirmAndMigrate(null, null, translationService.getValue(IntegrationClientConstants.MigrateToStunnerConfirmAction), onOkCommand, onCancelCommand);
     }
 
-    private void onGetDiagramByPathSuccess(MarshallingResponse<ProjectDiagram> response, Path path, PlaceRequest place) {
+    private void onGetDiagramByPathSuccess(MarshallingResponse<ProjectDiagram> response, Path path, PlaceRequest place, Command migrationFinished, Command onErrorCommand) {
         if (response.isSuccess()) {
             final ProjectDiagram diagram = response.getResult();
             if (diagram == null) {
                 errorPopup.showMessage(translationService.getValue(IntegrationClientConstants.MigrateToStunnerNoDiagramHasBeenReturned));
             } else {
-                final Command doMigrate = () -> fromJBPMDesignerToStunner(diagram, path, place);
+                final Command doMigrate = () -> fromJBPMDesignerToStunner(diagram, path, place, migrationFinished, onErrorCommand);
                 if (!response.getMessages().isEmpty()) {
                     showResultSuccessful(response.getMessages(), doMigrate);
+                    if (onErrorCommand != null) {
+                        onErrorCommand.execute();
+                    }
                 } else {
                     doMigrate.execute();
                 }
             }
         } else {
             showResultWithErrors(response.getMessages());
+            if (onErrorCommand != null) {
+                onErrorCommand.execute();
+            }
         }
     }
 
-    private void fromJBPMDesignerToStunner(ProjectDiagram projectDiagram, Path path, PlaceRequest place) {
+    private void fromJBPMDesignerToStunner(ProjectDiagram projectDiagram, Path path, PlaceRequest place, Command migrationFinishedCommand, Command onErrorCommand) {
         Pair<String, String> targetNameAndExtension = calculateTargetNameAndExtension(path);
         String commitMessage = translationService.getValue(IntegrationClientConstants.MigrateToStunnerCommitMessage, path.getFileName());
         migrate(MigrateRequest.newFromJBPMDesignerToStunner(path, targetNameAndExtension.getK1(), targetNameAndExtension.getK2(), commitMessage, projectDiagram),
-                place);
+                place, migrationFinishedCommand, onErrorCommand);
     }
 
-    private void migrate(MigrateRequest request, PlaceRequest place) {
-        final RemoteCallback<MigrateResult> successCallback = (result) -> migrateFinished(result, place);
-        final ErrorCallback<Message> errorCallback = (message, throwable) -> onUnexpectedError(throwable);
+    private void migrate(MigrateRequest request, PlaceRequest place, Command migrationFinishedCommand, Command onErrorCommand) {
+        final RemoteCallback<MigrateResult> successCallback = (result) -> migrateFinished(result, place, migrationFinishedCommand, onErrorCommand);
+        final ErrorCallback<Message> errorCallback = (message, throwable) -> {
+            if (onErrorCommand != null) {
+                onErrorCommand.execute();
+            }
+            return onUnexpectedError(throwable);
+        };
         integrationService.call(successCallback, errorCallback).migrateDiagram(request);
     }
 
-    private void migrateFinished(MigrateResult result, PlaceRequest place) {
+    private void migrateFinished(MigrateResult result, PlaceRequest place, Command migrationFinishedCommand, Command errorCommand) {
         if (result.hasError()) {
+            if (errorCommand != null) {
+                errorCommand.execute();
+            }
             errorPopup.showMessage(getErrorMessage(result));
         } else {
             notification.fire(new NotificationEvent(translationService.getValue(IntegrationClientConstants.MigrateDiagramSuccessfullyMigratedMessage), NotificationEvent.NotificationType.SUCCESS));
             placeManager.forceClosePlace(place);
+            if (migrationFinishedCommand != null) {
+                migrationFinishedCommand.execute();
+            }
             placeManager.goTo(createTargetPlace(result.getPath()));
         }
     }
@@ -185,7 +222,7 @@ public class IntegrationHandlerImpl implements IntegrationHandler {
         Pair<String, String> targetNameAndExtension = calculateTargetNameAndExtension(path);
         String commitMessage = translationService.getValue(IntegrationClientConstants.MigrateToJBPMDesignerCommitMessage, path.getFileName());
         migrate(MigrateRequest.newFromStunnerToJBPMDesigner(path, targetNameAndExtension.getK1(), targetNameAndExtension.getK2(), commitMessage),
-                place);
+                place, null, null);
     }
 
     private void showResultSuccessful(List<MarshallingMessage> messages, Command okCommand) {

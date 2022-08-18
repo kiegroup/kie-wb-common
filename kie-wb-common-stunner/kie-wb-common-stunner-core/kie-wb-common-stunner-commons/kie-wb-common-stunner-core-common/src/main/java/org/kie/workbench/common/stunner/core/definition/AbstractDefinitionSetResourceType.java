@@ -34,4 +34,12 @@ public abstract class AbstractDefinitionSetResourceType implements DefinitionSet
     public String getSimpleWildcardPattern() {
         return "*." + getSuffix();
     }
+
+    public boolean hasSecondSuffix() {
+        return false;
+    }
+
+    public String getSecondSuffix() {
+        return null;
+    }
 }

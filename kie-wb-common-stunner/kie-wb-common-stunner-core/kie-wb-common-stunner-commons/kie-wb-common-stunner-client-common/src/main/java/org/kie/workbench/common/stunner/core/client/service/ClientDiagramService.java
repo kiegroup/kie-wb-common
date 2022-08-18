@@ -51,4 +51,6 @@ public interface ClientDiagramService<M extends Metadata, D extends Diagram<Grap
 
     void getRawContent(D diagram,
                        ServiceCallback<String> callback);
+
+    void getXMLFileContent(Path path, ServiceCallback<String> callback);
 }
