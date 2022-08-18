@@ -19,12 +19,17 @@ package org.kie.workbench.common.stunner.bpmn.integration.client;
 import java.util.function.Consumer;
 
 import org.uberfire.backend.vfs.Path;
+import org.uberfire.mvp.Command;
 import org.uberfire.mvp.ParameterizedCommand;
 import org.uberfire.mvp.PlaceRequest;
 
 public interface IntegrationHandler {
 
-    void migrateFromJBPMDesignerToStunner(Path path, PlaceRequest place, boolean isDirty, ParameterizedCommand<Consumer<Boolean>> saveCommand);
+    void migrateFromJBPMDesignerToStunner(Path path, PlaceRequest place, boolean isDirty, ParameterizedCommand<Consumer<Boolean>> saveCommand, Command migrationFinishedCommand, Command cancelCommand, Command errorCommand);
+
+    default void migrateFromJBPMDesignerToStunner(Path path, PlaceRequest place, boolean isDirty, ParameterizedCommand<Consumer<Boolean>> saveCommand) {
+        migrateFromJBPMDesignerToStunner(path, place, isDirty, saveCommand, null, null, null);
+    }
 
     void migrateFromStunnerToJBPMDesigner(Path path, PlaceRequest place, boolean isDirty, ParameterizedCommand<Consumer<Boolean>> saveCommand);
 

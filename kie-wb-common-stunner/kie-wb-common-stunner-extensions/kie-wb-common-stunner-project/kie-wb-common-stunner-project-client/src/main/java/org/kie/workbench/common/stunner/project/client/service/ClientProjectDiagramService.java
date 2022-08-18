@@ -17,6 +17,7 @@
 package org.kie.workbench.common.stunner.project.client.service;
 
 import java.util.Optional;
+import java.util.function.Consumer;
 
 import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Event;
@@ -27,6 +28,7 @@ import org.guvnor.common.services.project.model.Package;
 import org.guvnor.common.services.shared.metadata.model.Metadata;
 import org.jboss.errai.common.client.api.Caller;
 import org.jboss.errai.common.client.api.RemoteCallback;
+import org.kie.workbench.common.stunner.bpmn.integration.client.IntegrationHandler;
 import org.kie.workbench.common.stunner.core.client.api.SessionManager;
 import org.kie.workbench.common.stunner.core.client.api.ShapeManager;
 import org.kie.workbench.common.stunner.core.client.i18n.ClientTranslationService;
@@ -35,11 +37,16 @@ import org.kie.workbench.common.stunner.core.client.service.ClientRuntimeError;
 import org.kie.workbench.common.stunner.core.client.service.ServiceCallback;
 import org.kie.workbench.common.stunner.core.client.session.event.SessionDiagramSavedEvent;
 import org.kie.workbench.common.stunner.core.service.DiagramLookupService;
+import org.kie.workbench.common.stunner.core.util.XMLDisplayerData;
+import org.kie.workbench.common.stunner.project.client.editor.AbstractProjectDiagramEditor;
 import org.kie.workbench.common.stunner.project.client.resources.i18n.StunnerProjectClientMessages;
 import org.kie.workbench.common.stunner.project.diagram.ProjectDiagram;
 import org.kie.workbench.common.stunner.project.diagram.ProjectMetadata;
 import org.kie.workbench.common.stunner.project.service.ProjectDiagramService;
 import org.uberfire.backend.vfs.Path;
+import org.uberfire.mvp.Command;
+import org.uberfire.mvp.ParameterizedCommand;
+import org.uberfire.mvp.impl.PathPlaceRequest;
 
 /**
  * A wrapper util class for handling different diagram services for the current Guvnor Project from client side.
@@ -51,8 +58,13 @@ public class ClientProjectDiagramService extends ClientDiagramServiceImpl<Projec
     @Inject
     private ClientTranslationService translationService;
 
+    private IntegrationHandler integrationHandler;
+
+    private AbstractProjectDiagramEditor projectEditor;
+
     protected ClientProjectDiagramService() {
         this(null,
+             null,
              null,
              null,
              null,
@@ -64,12 +76,37 @@ public class ClientProjectDiagramService extends ClientDiagramServiceImpl<Projec
                                        final SessionManager sessionManager,
                                        final Caller<ProjectDiagramService> diagramServiceCaller,
                                        final Caller<DiagramLookupService> diagramLookupServiceCaller,
-                                       final Event<SessionDiagramSavedEvent> saveEvent) {
+                                       final Event<SessionDiagramSavedEvent> saveEvent,
+                                       IntegrationHandler integrationHandler) {
         super(shapeManager,
               sessionManager,
               diagramServiceCaller,
               diagramLookupServiceCaller,
               saveEvent);
+        this.integrationHandler = integrationHandler;
+    }
+
+    public void setProjectEditor(AbstractProjectDiagramEditor projectEditor) {
+        this.projectEditor = projectEditor;
+    }
+
+    public void displayXML(XMLDisplayerData xmlDisplayerData) {
+        if (projectEditor != null) {
+            projectEditor.displayXML(xmlDisplayerData);
+        }
+    }
+
+    protected void hideLoadingViews() {
+        if (projectEditor != null) {
+            projectEditor.hideLoadingViews();
+        }
+    }
+
+    @Override
+    protected void closeEditor() {
+        if (projectEditor != null) {
+            projectEditor.closeEditorView();
+        }
     }
 
     public void create(final Path path,
@@ -91,6 +128,12 @@ public class ClientProjectDiagramService extends ClientDiagramServiceImpl<Projec
                                             projectType);
     }
 
+    @Override
+    public void migrate(Path path, PathPlaceRequest placeRequest, Command migrationFinishedCommand, Command cancelCommand, Command errorCommand) {
+        ParameterizedCommand<Consumer<Boolean>> saveSuccessfulCommand = parameter -> parameter.accept(true);
+        integrationHandler.migrateFromJBPMDesignerToStunner(path, placeRequest, false, saveSuccessfulCommand, migrationFinishedCommand, cancelCommand, errorCommand);
+    }
+
     public void saveOrUpdate(final Path path,
                              final ProjectDiagram diagram,
                              final Metadata metadata,
@@ -108,6 +151,7 @@ public class ClientProjectDiagramService extends ClientDiagramServiceImpl<Projec
                                           diagram,
                                           metadata,
                                           comment);
+
     }
 
     public void saveAsXml(final Path path,

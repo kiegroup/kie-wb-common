@@ -60,6 +60,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -143,6 +144,9 @@ public class IntegrationHandlerImplTest {
     private ArgumentCaptor<Command> startMigrationCommandCaptor;
 
     @Captor
+    private ArgumentCaptor<Command> migrationCanceledCommandCaptor;
+
+    @Captor
     private ArgumentCaptor<Command> marshalingResponseCaptor;
 
     private IntegrationHandlerImpl handler;
@@ -199,6 +203,11 @@ public class IntegrationHandlerImplTest {
     }
 
     @Test
+    public void testMigrateFromJBPMDesignerToStunnerNotDirtyWithMessagesSuccessfulNullCommands() {
+        testMigrateFromJBPMDesignerToStunnerSuccessfulNullCommands(false, Arrays.asList(mock(MarshallingMessage.class), mock(MarshallingMessage.class)));
+    }
+
+    @Test
     public void testMigrateFromJBPMDesignerToStunnerNotDirtyWithoutMessagesSuccessful() {
         testMigrateFromJBPMDesignerToStunnerSuccessful(false, new ArrayList<>());
     }
@@ -211,6 +220,16 @@ public class IntegrationHandlerImplTest {
     @Test
     public void testMigrateFromJBPMDesignerToStunnerNotDirtyWithMarshallingWithErrors() {
         testMigrateFromJBPMDesignerToStunnerMarshallingWithErrors(false);
+    }
+
+    @Test
+    public void testMigrateFromJBPMDesignerToStunnerDirtyWithMarshallingWithErrorsNullCommands() {
+        testMigrateFromJBPMDesignerToStunnerMarshallingWithErrorsNullCommands(true);
+    }
+
+    @Test
+    public void testMigrateFromJBPMDesignerToStunnerNotDirtyWithMarshallingWithErrorsNullCommands() {
+        testMigrateFromJBPMDesignerToStunnerMarshallingWithErrorsNullCommands(false);
     }
 
     @Test
@@ -234,9 +253,32 @@ public class IntegrationHandlerImplTest {
     }
 
     @Test
+    public void testMigrateFromJBPMDesignerToStunnerNotDirtyWithoutMessagesUnSuccessfulNullCommands() {
+        testMigrateFromJBPMDesignerToStunnerWithServiceErrorNullCommands(false, new ArrayList<>());
+    }
+
+    @Test
     public void testMigrateFromJBPMDesignerToStunnerWithUnexpectedError() {
         prepareServiceCallerError(integrationService, integrationServiceCaller, new Throwable(ERROR));
-        handler.migrateFromJBPMDesignerToStunner(jbpmPath, place, false, saveSuccessfulCommand);
+        Command migrationFinishedCommand = mock(Command.class);
+        Command cancelCommand = mock(Command.class);
+        Command errorCommand = mock(Command.class);
+        handler.migrateFromJBPMDesignerToStunner(jbpmPath, place, false, saveSuccessfulCommand, migrationFinishedCommand, cancelCommand, errorCommand);
+        verifyUserWasAskedForStartingToStunnerMigrationAndRespond(true);
+        String expectedMessage = MigrateActionUnexpectedErrorMessage + "\n" + ERROR;
+        verify(errorPopup).showMessage(expectedMessage);
+        verify(errorCommand, times(1)).execute();
+        verify(migrationFinishedCommand, times(0)).execute();
+        verify(cancelCommand, times(0)).execute();
+    }
+
+    @Test
+    public void testMigrateFromJBPMDesignerToStunnerWithUnexpectedErrorNullCommands() {
+        prepareServiceCallerError(integrationService, integrationServiceCaller, new Throwable(ERROR));
+        Command migrationFinishedCommand = null;
+        Command cancelCommand = null;
+        Command errorCommand = null;
+        handler.migrateFromJBPMDesignerToStunner(jbpmPath, place, false, saveSuccessfulCommand, migrationFinishedCommand, cancelCommand, errorCommand);
         verifyUserWasAskedForStartingToStunnerMigrationAndRespond(true);
         String expectedMessage = MigrateActionUnexpectedErrorMessage + "\n" + ERROR;
         verify(errorPopup).showMessage(expectedMessage);
@@ -251,66 +293,15 @@ public class IntegrationHandlerImplTest {
                 .result(null)
                 .build();
         when(integrationService.getDiagramByPath(jbpmPath, MarshallingRequest.Mode.AUTO)).thenReturn(marshallingResponse);
-        handler.migrateFromJBPMDesignerToStunner(jbpmPath, place, false, saveSuccessfulCommand);
+        Command migrationFinishedCommand = () -> {
+        };
+        Command cancelCommand = () -> {
+        };
+        Command errorCommand = () -> {
+        };
+        handler.migrateFromJBPMDesignerToStunner(jbpmPath, place, false, saveSuccessfulCommand, migrationFinishedCommand, cancelCommand, errorCommand);
         verifyUserWasAskedForStartingToStunnerMigrationAndRespond(true);
         verify(errorPopup).showMessage(MigrateToStunnerNoDiagramHasBeenReturned);
-    }
-
-    @Test
-    public void testMigrateFromStunnerToJBPMDesignerDirtySuccessful() {
-        testMigrateFromStunnerToJBPMDesignerSuccessful(true);
-    }
-
-    @Test
-    public void testMigrateFromStunnerToJBPMDesignerNoDirtySuccessful() {
-        testMigrateFromStunnerWithServiceError(false);
-    }
-
-    @Test
-    public void testMigrateFromStunnerToJBPMDesignerDirtyUnSuccessful() {
-        testMigrateFromStunnerWithServiceError(true);
-    }
-
-    @Test
-    public void testMigrateFromStunnerToJBPMDesignerNoDirtyUnSuccessful() {
-        testMigrateFromStunnerToJBPMDesignerSuccessful(false);
-    }
-
-    @Test
-    public void testMigrateFromStunnerToJBPMDesignerWithUnexpectedError() {
-        prepareServiceCallerError(integrationService, integrationServiceCaller, new Throwable(ERROR));
-        handler.migrateFromStunnerToJBPMDesigner(stunnerPath, place, false, saveSuccessfulCommand);
-        verifyUserWasAskedForStartingToJBPMMigrationAndRespond(true);
-        String expectedMessage = MigrateActionUnexpectedErrorMessage + "\n" + ERROR;
-        verify(errorPopup).showMessage(expectedMessage);
-    }
-
-    private void testMigrateFromStunnerToJBPMDesignerSuccessful(boolean isDirty) {
-        MigrateRequest expectedRequest = MigrateRequest.newFromStunnerToJBPMDesigner(stunnerPath, STUNNER_NAME, BPMN2_EXTENSION, ToJBPMCommitMessage);
-        Path resultPath = mock(Path.class);
-        MigrateResult result = new MigrateResult(resultPath, null, null, null);
-        when(integrationService.migrateDiagram(expectedRequest)).thenReturn(result);
-
-        handler.migrateFromStunnerToJBPMDesigner(stunnerPath, place, isDirty, saveSuccessfulCommand);
-        verifySavePopupWasShownAndRespond(isDirty, true);
-        verifyUserWasAskedForStartingToJBPMMigrationAndRespond(true);
-        verifyMigrationFinished();
-    }
-
-    private void testMigrateFromStunnerWithServiceError(boolean isDirty) {
-        MigrateRequest expectedRequest = MigrateRequest.newFromStunnerToJBPMDesigner(stunnerPath, STUNNER_NAME, BPMN2_EXTENSION, ToJBPMCommitMessage);
-        Path resultPath = mock(Path.class);
-        String messageKey = "messageKey";
-        List<?> messageArguments = new ArrayList<>();
-        MigrateResult result = new MigrateResult(resultPath, IntegrationService.ServiceError.JBPM_DESIGNER_PROCESS_ALREADY_EXIST, messageKey, messageArguments);
-        when(integrationService.migrateDiagram(expectedRequest)).thenReturn(result);
-
-        handler.migrateFromStunnerToJBPMDesigner(stunnerPath, place, isDirty, saveSuccessfulCommand);
-
-        verifySavePopupWasShownAndRespond(isDirty, true);
-        verifyUserWasAskedForStartingToJBPMMigrationAndRespond(true);
-        when(translationService.getValue(messageKey, messageArguments.toArray())).thenReturn(ERROR);
-        errorPopup.showMessage(ERROR);
     }
 
     private void testMigrateFromJBPMDesignerToStunnerSuccessful(boolean isDirty, List<MarshallingMessage> messages) {
@@ -320,7 +311,39 @@ public class IntegrationHandlerImplTest {
         MigrateResult result = new MigrateResult(resultPath, null, null, null);
         when(integrationService.migrateDiagram(expectedRequest)).thenReturn(result);
 
-        handler.migrateFromJBPMDesignerToStunner(jbpmPath, place, isDirty, saveSuccessfulCommand);
+        Command migrationFinishedCommand = mock(Command.class);
+        Command cancelCommand = mock(Command.class);
+        Command errorCommand = mock(Command.class);
+        handler.migrateFromJBPMDesignerToStunner(jbpmPath, place, isDirty, saveSuccessfulCommand, migrationFinishedCommand, cancelCommand, errorCommand);
+
+        //ask user for saving and say yes.
+        verifySavePopupWasShownAndRespond(isDirty, true);
+        //ask user for starting the migration and say yes
+        verifyUserWasAskedForStartingToStunnerMigrationAndRespond(true);
+        //show the marshaling messages and ask user for proceeding with the migration
+        if (!messages.isEmpty()) {
+            verifyMarshallingResponseWasShownAndRespond(messages, true);
+            verify(errorCommand, times(1)).execute();
+        } else {
+            verifyMarshallingResponseWasNeverShown();
+            verify(errorCommand, times(0)).execute();
+        }
+        verifyMigrationFinished();
+        verify(migrationFinishedCommand, times(1)).execute();
+        verify(cancelCommand, times(0)).execute();
+    }
+
+    private void testMigrateFromJBPMDesignerToStunnerSuccessfulNullCommands(boolean isDirty, List<MarshallingMessage> messages) {
+        prepareMigrateFromJBPMDesignerToStunner(MarshallingResponse.State.SUCCESS, messages);
+        MigrateRequest expectedRequest = MigrateRequest.newFromJBPMDesignerToStunner(jbpmPath, JBPM_NAME, BPMN_EXTENSION, ToStunnerCommitMessage, projectDiagram);
+        Path resultPath = mock(Path.class);
+        MigrateResult result = new MigrateResult(resultPath, null, null, null);
+        when(integrationService.migrateDiagram(expectedRequest)).thenReturn(result);
+
+        Command migrationFinishedCommand = null;
+        Command cancelCommand = null;
+        Command errorCommand = null;
+        handler.migrateFromJBPMDesignerToStunner(jbpmPath, place, isDirty, saveSuccessfulCommand, migrationFinishedCommand, cancelCommand, errorCommand);
 
         //ask user for saving and say yes.
         verifySavePopupWasShownAndRespond(isDirty, true);
@@ -344,7 +367,46 @@ public class IntegrationHandlerImplTest {
         MigrateResult result = new MigrateResult(resultPath, IntegrationService.ServiceError.STUNNER_PROCESS_ALREADY_EXIST, messageKey, messageArguments);
         when(integrationService.migrateDiagram(expectedRequest)).thenReturn(result);
 
-        handler.migrateFromJBPMDesignerToStunner(jbpmPath, place, isDirty, saveSuccessfulCommand);
+        Command migrationFinishedCommand = mock(Command.class);
+        Command cancelCommand = mock(Command.class);
+        Command errorCommand = mock(Command.class);
+
+        handler.migrateFromJBPMDesignerToStunner(jbpmPath, place, isDirty, saveSuccessfulCommand, migrationFinishedCommand, cancelCommand, errorCommand);
+
+        //ask user for saving and say yes.
+        verifySavePopupWasShownAndRespond(isDirty, true);
+        //ask user for starting the migration and say yes
+        verifyUserWasAskedForStartingToStunnerMigrationAndRespond(true);
+        //show the marshaling messages and ask user for proceeding with the migration
+        int errorTimes = 1;
+        if (!messages.isEmpty()) {
+            verifyMarshallingResponseWasShownAndRespond(messages, true);
+            errorTimes = 2;
+        } else {
+            verifyMarshallingResponseWasNeverShown();
+        }
+
+        when(translationService.getValue(messageKey, messageArguments.toArray())).thenReturn(ERROR);
+        errorPopup.showMessage(ERROR);
+        verify(errorCommand, times(errorTimes)).execute();
+        verify(migrationFinishedCommand, times(0)).execute();
+        verify(cancelCommand, times(0)).execute();
+    }
+
+    private void testMigrateFromJBPMDesignerToStunnerWithServiceErrorNullCommands(boolean isDirty, List<MarshallingMessage> messages) {
+        prepareMigrateFromJBPMDesignerToStunner(MarshallingResponse.State.SUCCESS, messages);
+        MigrateRequest expectedRequest = MigrateRequest.newFromJBPMDesignerToStunner(jbpmPath, JBPM_NAME, BPMN_EXTENSION, ToStunnerCommitMessage, projectDiagram);
+        Path resultPath = mock(Path.class);
+        String messageKey = "messageKey";
+        List<?> messageArguments = new ArrayList<>();
+        MigrateResult result = new MigrateResult(resultPath, IntegrationService.ServiceError.STUNNER_PROCESS_ALREADY_EXIST, messageKey, messageArguments);
+        when(integrationService.migrateDiagram(expectedRequest)).thenReturn(result);
+
+        Command migrationFinishedCommand = null;
+        Command cancelCommand = null;
+        Command errorCommand = null;
+
+        handler.migrateFromJBPMDesignerToStunner(jbpmPath, place, isDirty, saveSuccessfulCommand, migrationFinishedCommand, cancelCommand, errorCommand);
 
         //ask user for saving and say yes.
         verifySavePopupWasShownAndRespond(isDirty, true);
@@ -369,7 +431,33 @@ public class IntegrationHandlerImplTest {
         MigrateResult result = new MigrateResult(null, IntegrationService.ServiceError.JBPM_DESIGNER_PROCESS_ALREADY_EXIST, "messageKey", new ArrayList<>());
         when(integrationService.migrateDiagram(expectedRequest)).thenReturn(result);
 
-        handler.migrateFromJBPMDesignerToStunner(jbpmPath, place, isDirty, saveSuccessfulCommand);
+        Command migrationFinishedCommand = mock(Command.class);
+        Command cancelCommand = mock(Command.class);
+        Command errorCommand = mock(Command.class);
+
+        handler.migrateFromJBPMDesignerToStunner(jbpmPath, place, isDirty, saveSuccessfulCommand, migrationFinishedCommand, cancelCommand, errorCommand);
+
+        //ask user for saving and say yes.
+        verifySavePopupWasShownAndRespond(isDirty, true);
+        //ask user for starting the migration and say yes
+        verifyUserWasAskedForStartingToStunnerMigrationAndRespond(true);
+
+        verifyMarshallingResponseWithErrorsWereShown(messages);
+    }
+
+    private void testMigrateFromJBPMDesignerToStunnerMarshallingWithErrorsNullCommands(boolean isDirty) {
+        List<MarshallingMessage> messages = Arrays.asList(mock(MarshallingMessage.class), mock(MarshallingMessage.class));
+        prepareMigrateFromJBPMDesignerToStunner(MarshallingResponse.State.ERROR, messages);
+        MigrateRequest expectedRequest = MigrateRequest.newFromJBPMDesignerToStunner(jbpmPath, JBPM_NAME, BPMN_EXTENSION, ToStunnerCommitMessage, projectDiagram);
+
+        MigrateResult result = new MigrateResult(null, IntegrationService.ServiceError.JBPM_DESIGNER_PROCESS_ALREADY_EXIST, "messageKey", new ArrayList<>());
+        when(integrationService.migrateDiagram(expectedRequest)).thenReturn(result);
+
+        Command migrationFinishedCommand = null;
+        Command cancelCommand = null;
+        Command errorCommand = null;
+
+        handler.migrateFromJBPMDesignerToStunner(jbpmPath, place, isDirty, saveSuccessfulCommand, migrationFinishedCommand, cancelCommand, errorCommand);
 
         //ask user for saving and say yes.
         verifySavePopupWasShownAndRespond(isDirty, true);
@@ -416,7 +504,8 @@ public class IntegrationHandlerImplTest {
                                            eq(null),
                                            eq(MigrateAction),
                                            eq(org.uberfire.client.views.pfly.widgets.Button.ButtonStyleType.PRIMARY),
-                                           eq(MigrateToStunnerConfirmAction), startMigrationCommandCaptor.capture());
+                                           eq(MigrateToStunnerConfirmAction), startMigrationCommandCaptor.capture(),
+                                           migrationCanceledCommandCaptor.capture());
         if (sayYes) {
             startMigrationCommandCaptor.getValue().execute();
         }

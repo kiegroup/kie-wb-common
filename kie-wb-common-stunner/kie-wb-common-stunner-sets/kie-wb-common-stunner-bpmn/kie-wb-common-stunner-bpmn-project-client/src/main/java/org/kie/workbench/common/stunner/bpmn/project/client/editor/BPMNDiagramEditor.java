@@ -29,6 +29,7 @@ import org.jboss.errai.common.client.api.Caller;
 import org.kie.workbench.common.stunner.bpmn.client.forms.DataTypeNamesService;
 import org.kie.workbench.common.stunner.bpmn.project.client.type.BPMNDiagramResourceType;
 import org.kie.workbench.common.stunner.bpmn.qualifiers.BPMN;
+import org.kie.workbench.common.stunner.bpmn.resource.BPMNDefinitionSetResourceType;
 import org.kie.workbench.common.stunner.client.widgets.editor.StunnerEditor;
 import org.kie.workbench.common.stunner.client.widgets.screens.DiagramEditorExplorerScreen;
 import org.kie.workbench.common.stunner.core.client.annotation.DiagramEditor;
@@ -152,6 +153,11 @@ public class BPMNDiagramEditor extends AbstractProjectDiagramEditor<BPMNDiagramR
         performDockOperation(DiagramEditorExplorerScreen.SCREEN_ID, uberfireDocks::open);
     }
 
+    protected void closeDocks() {
+        performDockOperation(DiagramEditorPropertiesScreen.SCREEN_ID, uberfireDocks::close);
+        performDockOperation(DiagramEditorExplorerScreen.SCREEN_ID, uberfireDocks::close);
+    }
+
     public void onScreenMaximizedEvent(@Observes ScreenMaximizedEvent event) {
         isPropertiesOpenedBeforeMaximize = false;
         isExplorerOpenedBeforeMaximize = false;
@@ -230,5 +236,16 @@ public class BPMNDiagramEditor extends AbstractProjectDiagramEditor<BPMNDiagramR
         if (isMigrating) {
             isMigrating = false;
         }
+    }
+
+    protected boolean shouldCheckForExtension() {
+        return true;
+    }
+
+    protected String extensionToCheck(String fileName) {
+        if (fileName.endsWith(BPMNDefinitionSetResourceType.BPMN2_EXTENSION)) {
+            return BPMNDefinitionSetResourceType.BPMN2_EXTENSION;
+        }
+        return null;
     }
 }

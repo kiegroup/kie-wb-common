@@ -23,7 +23,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.uberfire.client.views.pfly.widgets.Button;
-import org.uberfire.client.views.pfly.widgets.ConfirmPopup;
 import org.uberfire.client.views.pfly.widgets.InlineNotification;
 import org.uberfire.ext.widgets.common.client.common.popups.YesNoCancelPopup;
 import org.uberfire.mvp.Command;
@@ -48,7 +47,7 @@ public class PopupUtilTest {
     private PopupUtil popupUtil;
 
     @Mock
-    private ConfirmPopup confirmPopup;
+    private ConfirmPopupWithEvents confirmPopup;
 
     @GwtMock
     private YesNoCancelPopup yesNoCancelPopup;
