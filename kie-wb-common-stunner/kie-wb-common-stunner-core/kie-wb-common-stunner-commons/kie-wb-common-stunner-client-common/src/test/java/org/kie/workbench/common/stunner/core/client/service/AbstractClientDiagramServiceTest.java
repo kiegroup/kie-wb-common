@@ -173,7 +173,7 @@ public abstract class AbstractClientDiagramServiceTest<M extends Metadata, D ext
     @SuppressWarnings("unchecked")
     public void testGetByPath() {
         final ServiceCallback<D> callback = mock(ServiceCallback.class);
-
+        when(path.getFileName()).thenReturn("file");
         tested.getByPath(path,
                          callback);
 
@@ -183,6 +183,24 @@ public abstract class AbstractClientDiagramServiceTest<M extends Metadata, D ext
                times(1)).onSuccess(eq(diagram));
         verify(callback,
                times(0)).onError(Mockito.<ClientRuntimeError>any());
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void testGetByPathBpmn2File() {
+        final ServiceCallback<D> callback = mock(ServiceCallback.class);
+        when(path.getFileName()).thenReturn("sampleFile.bpmn2");
+        tested.getByPath(path,
+                         callback);
+
+        verify(diagramService,
+               times(0)).getDiagramByPath(eq(path));
+        verify(callback,
+               times(0)).onSuccess(eq(diagram));
+        verify(callback,
+               times(0)).onError(Mockito.<ClientRuntimeError>any());
+
+        verify(diagramService, times(1)).getXMLFileContent(eq(path));
     }
 
     @Test
@@ -212,7 +230,7 @@ public abstract class AbstractClientDiagramServiceTest<M extends Metadata, D ext
         when(shapeManager.getDefaultShapeSet(Mockito.<String>any())).thenReturn(shapeSet);
         when(metadata.getShapeSetId()).thenReturn(null);
         when(diagramService.getDiagramByPath(eq(path))).thenReturn(diagram);
-
+        when(path.getFileName()).thenReturn("file");
         tested.add(diagram,
                    callback);
         tested.saveOrUpdate(diagram,

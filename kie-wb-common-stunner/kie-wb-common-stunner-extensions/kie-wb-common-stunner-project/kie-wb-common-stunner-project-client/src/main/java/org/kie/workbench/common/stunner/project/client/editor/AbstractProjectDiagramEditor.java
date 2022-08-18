@@ -48,6 +48,7 @@ import org.kie.workbench.common.stunner.core.client.session.event.OnSessionError
 import org.kie.workbench.common.stunner.core.documentation.DocumentationPage;
 import org.kie.workbench.common.stunner.core.documentation.DocumentationView;
 import org.kie.workbench.common.stunner.core.rule.RuleViolation;
+import org.kie.workbench.common.stunner.core.util.XMLDisplayerData;
 import org.kie.workbench.common.stunner.core.validation.DiagramElementViolation;
 import org.kie.workbench.common.stunner.core.validation.Violation;
 import org.kie.workbench.common.stunner.core.validation.impl.ValidationUtils;
@@ -150,27 +151,61 @@ public abstract class AbstractProjectDiagramEditor<R extends ClientResourceType>
         initializeStunnerEditor();
     }
 
+    protected boolean shouldCheckForExtension() {
+        return false;
+    }
+
+    protected String extensionToCheck(String fileName) {
+        return null;
+    }
+
+    public void setMetadata(ProjectMetadata metadata) {
+        if (shouldCheckForExtension()) {
+            updateTitle(metadata.getTitle(), extensionToCheck(metadata.getPath().getFileName()));
+        } else {
+            updateTitle(metadata.getTitle());
+        }
+
+        resetEditorPagesOnLoadError(metadata.getOverview());
+        menuSessionItems.setEnabled(false);
+    }
+
+    protected void closeDocks() {
+
+    }
+
+    public void displayXML(XMLDisplayerData xmlDisplayerData) {
+        if (xmlDisplayerData.getMetadata() instanceof ProjectMetadata) {
+            setMetadata((ProjectMetadata) xmlDisplayerData.getMetadata());
+            closeDocks();
+        }
+        stunnerEditor.displayXML(xmlDisplayerData.getXml());
+    }
+
+    public void closeEditorView() {
+        placeManager.forceClosePlace(new PathPlaceRequest(versionRecordManager.getCurrentPath(),
+                                                          getEditorIdentifier()));
+    }
+
     void initializeStunnerEditor() {
         stunnerEditor.setOnResetContentHashProcessor(h -> this.originalHash = h);
         stunnerEditor.setParsingExceptionProcessor(e -> {
             ProjectMetadata pm = (ProjectMetadata) e.getMetadata();
-            updateTitle(pm.getTitle());
-            resetEditorPagesOnLoadError(pm.getOverview());
-            menuSessionItems.setEnabled(false);
+            setMetadata(pm);
             notification.fire(new NotificationEvent(translationService.getValue(StunnerWidgetsConstants.DiagramParsingError,
                                                                                 Objects.toString(e.getMessage(), "")),
                                                     NotificationEvent.NotificationType.ERROR));
         });
         stunnerEditor.setExceptionProcessor(e -> {
             //close editor in case of error when opening the editor
-            placeManager.forceClosePlace(new PathPlaceRequest(versionRecordManager.getCurrentPath(),
-                                                              getEditorIdentifier()));
+            closeEditorView();
         });
     }
 
     @Override
     protected void loadContent() {
         destroySession();
+        projectDiagramServices.setProjectEditor(this);
         projectDiagramServices.getByPath(versionRecordManager.getCurrentPath(),
                                          new ServiceCallback<ProjectDiagram>() {
                                              @Override
@@ -442,7 +477,7 @@ public abstract class AbstractProjectDiagramEditor<R extends ClientResourceType>
         getView().showSaving();
     }
 
-    protected void hideLoadingViews() {
+    public void hideLoadingViews() {
         getView().hideBusyIndicator();
     }
 
@@ -467,14 +502,18 @@ public abstract class AbstractProjectDiagramEditor<R extends ClientResourceType>
     protected void updateTitle(final String title) {
         // Change editor's title.
         this.title = formatTitle(title);
-        changeTitleNotification.fire(new ChangeTitleWidgetEvent(this.place,
-                                                                this.title));
+        changeTitleNotification.fire(new ChangeTitleWidgetEvent(this.place, this.title));
+    }
+
+    protected void updateTitle(final String title, final String extension) {
+        // Change editor's title.
+        this.title = formatTitleWithExtension(title, extension);
+        changeTitleNotification.fire(new ChangeTitleWidgetEvent(this.place, this.title));
     }
 
     /**
      * Format the Diagram title to be displayed on the Editor.
      * This method can be override to customization and the default implementation just return the title from the diagram metadata.
-     *
      * @param title diagram metadata title
      * @return formatted title
      */
@@ -482,11 +521,33 @@ public abstract class AbstractProjectDiagramEditor<R extends ClientResourceType>
         if (Objects.isNull(resourceType)) {
             return title;
         }
+
+    return TITLE_FORMAT_TEMPLATE
+            .replace("#title",
+                     title)
+            .replace("#suffix",
+                     resourceType.getSuffix())
+            .replace("#type",
+                     resourceType.getShortName());
+    }
+
+    /**
+     * Format the Diagram title to be displayed on the Editor.
+     * This method can be override to customization and the default implementation just return the title from the diagram metadata.
+     * @param title diagram metadata title
+     * @param extension extension to check for
+     * @return formatted title
+     */
+    protected String formatTitleWithExtension(final String title, final String extension) {
+        if (Objects.isNull(resourceType)) {
+            return title;
+        }
+
         return TITLE_FORMAT_TEMPLATE
                 .replace("#title",
                          title)
                 .replace("#suffix",
-                         resourceType.getSuffix())
+                         extension)
                 .replace("#type",
                          resourceType.getShortName());
     }

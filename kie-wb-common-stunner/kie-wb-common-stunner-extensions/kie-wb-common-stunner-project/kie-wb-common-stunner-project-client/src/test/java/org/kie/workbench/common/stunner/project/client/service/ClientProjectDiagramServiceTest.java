@@ -25,6 +25,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
+import org.kie.workbench.common.stunner.bpmn.integration.client.IntegrationHandler;
 import org.kie.workbench.common.stunner.core.client.service.AbstractClientDiagramServiceTest;
 import org.kie.workbench.common.stunner.core.client.service.ClientRuntimeError;
 import org.kie.workbench.common.stunner.core.client.service.ServiceCallback;
@@ -33,11 +34,15 @@ import org.kie.workbench.common.stunner.project.diagram.ProjectDiagram;
 import org.kie.workbench.common.stunner.project.diagram.ProjectMetadata;
 import org.kie.workbench.common.stunner.project.diagram.impl.ProjectDiagramImpl;
 import org.kie.workbench.common.stunner.project.service.ProjectDiagramService;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.uberfire.backend.vfs.Path;
 import org.uberfire.java.nio.file.FileAlreadyExistsException;
 import org.uberfire.mocks.CallerMock;
+import org.uberfire.mvp.Command;
+import org.uberfire.mvp.ParameterizedCommand;
+import org.uberfire.mvp.impl.PathPlaceRequest;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -49,6 +54,9 @@ import static org.mockito.Mockito.verify;
 
 @RunWith(MockitoJUnitRunner.Silent.class)
 public class ClientProjectDiagramServiceTest extends AbstractClientDiagramServiceTest<ProjectMetadata, ProjectDiagram, ProjectDiagramService, ClientProjectDiagramService> {
+
+    @Mock
+    private IntegrationHandler integrationHandler;
 
     @Override
     protected ProjectMetadata makeTestMetadata() {
@@ -72,7 +80,8 @@ public class ClientProjectDiagramServiceTest extends AbstractClientDiagramServic
                                                sessionManager,
                                                diagramServiceCaller,
                                                diagramLookupServiceCaller,
-                                               sessionDiagramSavedEvent);
+                                               sessionDiagramSavedEvent,
+                                               integrationHandler);
     }
 
     @Test
@@ -104,6 +113,30 @@ public class ClientProjectDiagramServiceTest extends AbstractClientDiagramServic
                times(1)).onSuccess(Mockito.<Path>any());
         verify(callback,
                times(0)).onError(any(ClientRuntimeError.class));
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void testMigrate() {
+        final Command migrationFinishedCommand = mock(Command.class);
+        final Command cancelCommand = mock(Command.class);
+        final Command errorCommand = mock(Command.class);
+
+        final PathPlaceRequest placeRequest = mock(PathPlaceRequest.class);
+        tested.migrate(path,
+                       placeRequest,
+                       migrationFinishedCommand,
+                       cancelCommand,
+                       errorCommand);
+
+        verify(integrationHandler,
+               times(1)).migrateFromJBPMDesignerToStunner(eq(path),
+                                                          eq(placeRequest),
+                                                          eq(false),
+                                                          any(ParameterizedCommand.class),
+                                                          eq(migrationFinishedCommand),
+                                                          eq(cancelCommand),
+                                                          eq(errorCommand));
     }
 
     @Test

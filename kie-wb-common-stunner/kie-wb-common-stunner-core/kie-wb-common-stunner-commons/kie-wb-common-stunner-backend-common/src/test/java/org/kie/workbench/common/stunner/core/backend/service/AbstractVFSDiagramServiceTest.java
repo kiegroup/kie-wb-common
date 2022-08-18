@@ -28,6 +28,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.stunner.core.api.DefinitionManager;
 import org.kie.workbench.common.stunner.core.api.FactoryManager;
+import org.kie.workbench.common.stunner.core.definition.AbstractDefinitionSetResourceType;
 import org.kie.workbench.common.stunner.core.definition.DefinitionSetResourceType;
 import org.kie.workbench.common.stunner.core.definition.adapter.AdapterManager;
 import org.kie.workbench.common.stunner.core.definition.adapter.DefinitionAdapter;
@@ -49,6 +50,7 @@ import org.kie.workbench.common.stunner.core.marshaller.MarshallingResponse;
 import org.kie.workbench.common.stunner.core.registry.BackendRegistryFactory;
 import org.kie.workbench.common.stunner.core.registry.factory.FactoryRegistry;
 import org.kie.workbench.common.stunner.core.util.UUID;
+import org.kie.workbench.common.stunner.core.util.XMLDisplayerData;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -226,6 +228,44 @@ public abstract class AbstractVFSDiagramServiceTest<M extends Metadata, D extend
     public abstract M mockMetadata();
 
     @Test
+    public void testGetXMLFileContents() {
+        final String processDefinition = "Process Definition";
+        final Path path = mockGetDiagramByPathObjects();
+        when(ioService.readAllString(Paths.convert(path))).thenReturn(processDefinition);
+
+        final XMLDisplayerData xmlFileContent = diagramService.getXMLFileContent(path);
+        assertEquals(xmlFileContent.getXml(), processDefinition);
+        assertEquals(xmlFileContent.getMetadata().getTitle(), FILE_NAME);
+        assertNotNull(xmlFileContent.getMetadata().getRoot());
+        assertNotNull(xmlFileContent.getMetadata().getPath());
+    }
+
+    @Test
+    public void testGetXMLFileContentsDoesNotAccept() {
+        final String processDefinition = "Process Definition";
+        final Path path = mockGetDiagramByPathObjectsDoesNotAccept();
+        when(ioService.readAllString(Paths.convert(path))).thenReturn(processDefinition);
+
+        final XMLDisplayerData xmlFileContent = diagramService.getXMLFileContent(path);
+        assertEquals(xmlFileContent, null);
+    }
+
+    @Test
+    public void testParseNameDoesNotAccept() {
+        final String processDefinition = "Process Definition";
+        final Path path = mockGetDiagramByPathObjectsDoesNotAccept();
+        final AbstractDefinitionSetResourceType resourceType = mock(AbstractDefinitionSetResourceType.class);
+        when(resourceType.hasSecondSuffix()).thenReturn(true);
+        when(resourceType.getSuffix()).thenReturn("bpmn2");
+        when(resourceType.getSecondSuffix()).thenReturn("RESOURCE_TYPE_SUFFIX");
+        when(ioService.readAllString(Paths.convert(path))).thenReturn(processDefinition);
+        final DefinitionSetService service = mock(DefinitionSetService.class);
+        when(service.getResourceType()).thenReturn(resourceType);
+        final String parseFileName = diagramService.parseFileName(path, service);
+        assertEquals( "TestFile", parseFileName);
+    }
+
+    @Test
     public void testCreate() throws IOException {
         Path path = mock(Path.class);
         when(path.toURI()).thenReturn(DIR_URI);
@@ -296,6 +336,20 @@ public abstract class AbstractVFSDiagramServiceTest<M extends Metadata, D extend
         final org.uberfire.java.nio.file.Path expectedNioPath = Paths.convert(path);
         final byte[] content = DIAGRAM_MARSHALLED.getBytes();
         when(resourceType.accept(path)).thenReturn(true);
+        when(ioService.readAllBytes(expectedNioPath)).thenReturn(content);
+
+        return path;
+    }
+
+    protected Path mockGetDiagramByPathObjectsDoesNotAccept() {
+        final Path path = mock(Path.class);
+        final String fileName = FILE_NAME + "." + "RESOURCE_TYPE_SUFFIX";
+        when(path.toURI()).thenReturn(FILE_URI);
+        when(path.getFileName()).thenReturn(fileName);
+
+        final org.uberfire.java.nio.file.Path expectedNioPath = Paths.convert(path);
+        final byte[] content = DIAGRAM_MARSHALLED.getBytes();
+        when(resourceType.accept(path)).thenReturn(false);
         when(ioService.readAllBytes(expectedNioPath)).thenReturn(content);
 
         return path;
