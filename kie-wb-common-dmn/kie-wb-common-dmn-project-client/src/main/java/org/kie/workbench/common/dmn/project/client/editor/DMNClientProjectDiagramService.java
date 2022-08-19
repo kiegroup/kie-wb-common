@@ -28,7 +28,7 @@ import org.kie.workbench.common.dmn.api.DMNContentService;
 import org.kie.workbench.common.dmn.api.DMNDefinitionSet;
 import org.kie.workbench.common.dmn.api.qualifiers.DMNEditor;
 import org.kie.workbench.common.dmn.client.marshaller.DMNMarshallerService;
-import org.kie.workbench.common.stunner.bpmn.integration.client.IntegrationHandler;
+import org.kie.workbench.common.stunner.bpmn.integration.client.IntegrationHandlerImpl;
 import org.kie.workbench.common.stunner.core.client.api.SessionManager;
 import org.kie.workbench.common.stunner.core.client.api.ShapeManager;
 import org.kie.workbench.common.stunner.core.client.service.ClientRuntimeError;
@@ -53,6 +53,17 @@ public class DMNClientProjectDiagramService extends ClientProjectDiagramService 
 
     private final DMNMarshallerService dmnMarshallerService;
 
+    public DMNClientProjectDiagramService() {
+        this(null,
+             null,
+             null,
+             null,
+             null,
+             null,
+             null,
+             null);
+    }
+
     @Inject
     public DMNClientProjectDiagramService(final ShapeManager shapeManager,
                                           final SessionManager sessionManager,
@@ -61,7 +72,7 @@ public class DMNClientProjectDiagramService extends ClientProjectDiagramService 
                                           final Event<SessionDiagramSavedEvent> saveEvent,
                                           final Caller<DMNContentService> dmnContentServiceCaller,
                                           final DMNMarshallerService dmnMarshallerService,
-                                          final IntegrationHandler integrationHandler) {
+                                          final IntegrationHandlerImpl integrationHandler) {
 
         super(shapeManager,
               sessionManager,
