@@ -31,6 +31,7 @@ import org.junit.runner.RunWith;
 import org.kie.workbench.common.dmn.api.qualifiers.DMNEditor;
 import org.kie.workbench.common.dmn.client.commands.general.NavigateToExpressionEditorCommand;
 import org.kie.workbench.common.dmn.client.docks.navigator.DecisionNavigatorDock;
+import org.kie.workbench.common.dmn.client.docks.navigator.DecisionNavigatorPresenter;
 import org.kie.workbench.common.dmn.client.docks.navigator.common.LazyCanvasFocusUtils;
 import org.kie.workbench.common.dmn.client.docks.navigator.drds.DMNDiagramsSession;
 import org.kie.workbench.common.dmn.client.editors.drd.DRDNameChanger;
@@ -187,6 +188,9 @@ public class DMNDiagramEditorTest extends AbstractProjectDiagramEditorTest {
     @Mock
     private SessionDiagramPresenter presenter;
 
+    @Mock
+    private DecisionNavigatorPresenter decisionNavigatorPresenter;
+
     private DMNDiagramEditor diagramEditor;
 
     @Before
@@ -238,7 +242,8 @@ public class DMNDiagramEditorTest extends AbstractProjectDiagramEditorTest {
                                                  feelInitializer,
                                                  drdNameChanger,
                                                  lazyCanvasFocusUtils,
-                                                 dmnDiagramsSession) {
+                                                 dmnDiagramsSession,
+                                                 decisionNavigatorPresenter) {
             {
                 docks = DMNDiagramEditorTest.this.docks;
                 fileMenuBuilder = DMNDiagramEditorTest.this.fileMenuBuilder;
