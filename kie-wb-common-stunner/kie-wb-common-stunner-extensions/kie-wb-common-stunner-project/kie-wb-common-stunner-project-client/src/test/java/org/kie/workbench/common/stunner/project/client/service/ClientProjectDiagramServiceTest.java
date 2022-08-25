@@ -25,7 +25,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
-import org.kie.workbench.common.stunner.bpmn.integration.client.IntegrationHandler;
+import org.kie.workbench.common.stunner.bpmn.integration.client.IntegrationHandlerImpl;
 import org.kie.workbench.common.stunner.core.client.service.AbstractClientDiagramServiceTest;
 import org.kie.workbench.common.stunner.core.client.service.ClientRuntimeError;
 import org.kie.workbench.common.stunner.core.client.service.ServiceCallback;
@@ -56,7 +56,7 @@ import static org.mockito.Mockito.verify;
 public class ClientProjectDiagramServiceTest extends AbstractClientDiagramServiceTest<ProjectMetadata, ProjectDiagram, ProjectDiagramService, ClientProjectDiagramService> {
 
     @Mock
-    private IntegrationHandler integrationHandler;
+    private IntegrationHandlerImpl integrationHandler;
 
     @Override
     protected ProjectMetadata makeTestMetadata() {
