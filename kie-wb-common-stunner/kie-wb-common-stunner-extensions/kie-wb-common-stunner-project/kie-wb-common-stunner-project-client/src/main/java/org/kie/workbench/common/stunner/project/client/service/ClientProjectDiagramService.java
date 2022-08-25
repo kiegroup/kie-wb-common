@@ -28,7 +28,7 @@ import org.guvnor.common.services.project.model.Package;
 import org.guvnor.common.services.shared.metadata.model.Metadata;
 import org.jboss.errai.common.client.api.Caller;
 import org.jboss.errai.common.client.api.RemoteCallback;
-import org.kie.workbench.common.stunner.bpmn.integration.client.IntegrationHandler;
+import org.kie.workbench.common.stunner.bpmn.integration.client.IntegrationHandlerImpl;
 import org.kie.workbench.common.stunner.core.client.api.SessionManager;
 import org.kie.workbench.common.stunner.core.client.api.ShapeManager;
 import org.kie.workbench.common.stunner.core.client.i18n.ClientTranslationService;
@@ -58,11 +58,11 @@ public class ClientProjectDiagramService extends ClientDiagramServiceImpl<Projec
     @Inject
     private ClientTranslationService translationService;
 
-    private IntegrationHandler integrationHandler;
+    private IntegrationHandlerImpl integrationHandler;
 
     private AbstractProjectDiagramEditor projectEditor;
 
-    protected ClientProjectDiagramService() {
+    public ClientProjectDiagramService() {
         this(null,
              null,
              null,
@@ -77,7 +77,7 @@ public class ClientProjectDiagramService extends ClientDiagramServiceImpl<Projec
                                        final Caller<ProjectDiagramService> diagramServiceCaller,
                                        final Caller<DiagramLookupService> diagramLookupServiceCaller,
                                        final Event<SessionDiagramSavedEvent> saveEvent,
-                                       IntegrationHandler integrationHandler) {
+                                       final IntegrationHandlerImpl integrationHandler) {
         super(shapeManager,
               sessionManager,
               diagramServiceCaller,
