@@ -17,6 +17,7 @@ package org.kie.workbench.common.services.datamodel.backend.server;
 
 import java.util.Set;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.kie.soup.project.datamodel.commons.oracle.ModuleDataModelOracleImpl;
 import org.kie.soup.project.datamodel.commons.util.RawMVELEvaluator;
@@ -120,6 +121,7 @@ public class ModuleDataModelFactAnnotationsTest {
     }
 
     @Test
+    @Ignore
     public void annotationsWithMemberOfTypeClass() throws Exception {
         final ModuleDataModelOracleBuilder builder = ModuleDataModelOracleBuilder.newModuleOracleBuilder(new RawMVELEvaluator());
         final ModuleDataModelOracleImpl oracle = new ModuleDataModelOracleImpl();
