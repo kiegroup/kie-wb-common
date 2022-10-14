@@ -121,7 +121,7 @@ public class ModuleDataModelFactAnnotationsTest {
     }
 
     @Test
-    @Ignore
+    @Ignore("https://issues.redhat.com/browse/RHPAM-4546")
     public void annotationsWithMemberOfTypeClass() throws Exception {
         final ModuleDataModelOracleBuilder builder = ModuleDataModelOracleBuilder.newModuleOracleBuilder(new RawMVELEvaluator());
         final ModuleDataModelOracleImpl oracle = new ModuleDataModelOracleImpl();
