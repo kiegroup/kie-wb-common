@@ -149,7 +149,6 @@ public class MavenRestClientTest {
                         "org.uberfire:uberfire-nio2-fs:?",
                         "org.uberfire:uberfire-servlet-security:?",
                         "org.uberfire:uberfire-testing-utils:?",
-                        "org.uberfire:uberfire-metadata-backend-elasticsearch:?",
                         "org.uberfire:uberfire-metadata-backend-lucene:?",
                         "org.uberfire:uberfire-io:?",
                         "org.uberfire:uberfire-ssh-api:?",
