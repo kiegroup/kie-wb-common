@@ -22,8 +22,8 @@ import java.util.stream.Stream;
 
 import javax.enterprise.event.Event;
 
-import org.hibernate.validator.util.annotationfactory.AnnotationDescriptor;
-import org.hibernate.validator.util.annotationfactory.AnnotationFactory;
+import org.hibernate.validator.internal.util.annotationfactory.AnnotationDescriptor;
+import org.hibernate.validator.internal.util.annotationfactory.AnnotationFactory;
 
 import org.jboss.errai.ioc.client.container.SyncBeanDef;
 import org.junit.Before;
