@@ -21,7 +21,10 @@ import javax.inject.Inject;
 import org.dashbuilder.displayer.client.Displayer;
 import org.dashbuilder.displayer.client.DisplayerCoordinator;
 import org.guvnor.common.services.project.model.WorkspaceProject;
+import org.jboss.errai.common.client.api.Caller;
+import org.jboss.errai.common.client.api.RemoteCallback;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
+import org.kie.workbench.common.screens.contributors.service.ContributorsService;
 import org.kie.workbench.common.screens.library.api.ProjectAssetListUpdated;
 import org.kie.workbench.common.screens.library.api.Routed;
 import org.kie.workbench.common.screens.library.client.events.WorkbenchProjectMetricsEvent;
@@ -71,15 +74,19 @@ public class ProjectMetricsScreen {
     Displayer dateSelectorDisplayer;
     Displayer allCommitsDisplayer;
 
+    Caller<ContributorsService> contributorsService;
+
     @Inject
     public ProjectMetricsScreen(View view,
                                 TranslationService translationService,
                                 ProjectMetricsFactory metricsFactory,
-                                DisplayerCoordinator displayerCoordinator) {
+                                DisplayerCoordinator displayerCoordinator,
+                                Caller<ContributorsService> contributorsService) {
         this.view = view;
         this.translationService = translationService;
         this.metricsFactory = metricsFactory;
         this.displayerCoordinator = displayerCoordinator;
+        this.contributorsService = contributorsService;
     }
 
     @WorkbenchPartView
@@ -92,9 +99,12 @@ public class ProjectMetricsScreen {
     }
 
     public void onStartup(final WorkspaceProject workspaceProject) {
-        this.view.init(this);
-        this.workspaceProject = workspaceProject;
-        this.buildMetrics(workspaceProject);
+
+        contributorsService.call((RemoteCallback<Void>) unused -> {
+            this.view.init(this);
+            this.workspaceProject = workspaceProject;
+            this.buildMetrics(workspaceProject);
+        }).updateContributors(workspaceProject);
     }
 
     private void buildMetrics(final WorkspaceProject projectInfo) {

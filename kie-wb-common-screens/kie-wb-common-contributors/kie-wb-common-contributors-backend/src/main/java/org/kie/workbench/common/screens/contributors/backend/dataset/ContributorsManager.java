@@ -18,10 +18,15 @@ package org.kie.workbench.common.screens.contributors.backend.dataset;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Properties;
+import java.util.Set;
+
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Event;
@@ -39,12 +44,11 @@ import org.dashbuilder.dataset.def.DataSetDefRegistry;
 import org.dashbuilder.dataset.events.DataSetStaleEvent;
 import org.guvnor.common.services.project.model.WorkspaceProject;
 import org.guvnor.common.services.project.service.WorkspaceProjectService;
-import org.guvnor.structure.organizationalunit.NewOrganizationalUnitEvent;
 import org.guvnor.structure.organizationalunit.OrganizationalUnit;
 import org.guvnor.structure.organizationalunit.OrganizationalUnitService;
 import org.guvnor.structure.organizationalunit.RemoveOrganizationalUnitEvent;
-import org.guvnor.structure.organizationalunit.RepoAddedToOrganizationalUnitEvent;
 import org.guvnor.structure.organizationalunit.RepoRemovedFromOrganizationalUnitEvent;
+import org.guvnor.structure.repositories.Branch;
 import org.uberfire.backend.server.util.Paths;
 import org.uberfire.commons.services.cdi.Startup;
 import org.uberfire.ext.editor.commons.backend.version.VersionRecordService;
@@ -59,6 +63,7 @@ import org.uberfire.workbench.events.ResourceUpdatedEvent;
 
 import static org.kie.soup.commons.validation.PortablePreconditions.checkNotNull;
 import static org.kie.workbench.common.screens.contributors.model.ContributorsDataSetColumns.COLUMN_AUTHOR;
+import static org.kie.workbench.common.screens.contributors.model.ContributorsDataSetColumns.COLUMN_BRANCH;
 import static org.kie.workbench.common.screens.contributors.model.ContributorsDataSetColumns.COLUMN_DATE;
 import static org.kie.workbench.common.screens.contributors.model.ContributorsDataSetColumns.COLUMN_MSG;
 import static org.kie.workbench.common.screens.contributors.model.ContributorsDataSetColumns.COLUMN_ORG;
@@ -103,11 +108,15 @@ public class ContributorsManager implements DataSetGenerator {
             .generatorClass(ContributorsManager.class.getName())
             .label(COLUMN_ORG)
             .label(COLUMN_REPO)
+            .label(COLUMN_BRANCH)
             .label(COLUMN_PROJECT)
             .label(COLUMN_AUTHOR)
             .text(COLUMN_MSG)
             .date(COLUMN_DATE)
             .buildDef();
+
+    private DataSet dataSet;
+    private Set<Branch> addedBranches = new HashSet<>();
 
     @PostConstruct
     protected void init() {
@@ -126,84 +135,122 @@ public class ContributorsManager implements DataSetGenerator {
 
     @Override
     public DataSet buildDataSet(Map<String, String> params) {
-        final DataSetBuilder dsBuilder = DataSetFactory.newDataSetBuilder();
-        for (final DataColumnDef columnDef : dataSetdef.getColumns()) {
-            dsBuilder.column(columnDef.getId(),
-                             columnDef.getColumnType());
-        }
-
-        final Collection<OrganizationalUnit> orgUnitList = organizationalUnitService.getOrganizationalUnits();
-        for (final OrganizationalUnit orgUnit : orgUnitList) {
-            final String org = orgUnit.getName();
-            final Collection<WorkspaceProject> projects = projectService.getAllWorkspaceProjects(orgUnit);
-
-            if (projects.isEmpty()) {
-                dsBuilder.row(org,//org
-                              null,//repo
-                              null,//project
-                              null,//author
-                              null,//message
-                              null);//date
-
-            } else {
-
-                for (final WorkspaceProject project : projects) {
-                    final String repoAlias = project.getRepository().getAlias();
-                    final String projectName = project.getName();
-                    org.uberfire.backend.vfs.Path rootPath = project.getRootPath();
-                    final Path projectRoot = Paths.convert(rootPath);
-                    final List<VersionRecord> recordList = recordService.loadVersionRecords(projectRoot);
-
-                    if (recordList.isEmpty()) {
-                        dsBuilder.row(org, //org
-                                      repoAlias,//repo
-                                      null,//project
-                                      null,//author
-                                      "Empty project", //mesage
-                                      null);//date
-                    } else {
-                        for (VersionRecord record : recordList) {
-                            String alias = record.author();
-                            String author = authorMappings.getProperty(alias);
-                            author = author == null ? alias : author;
-                            String msg = record.comment();
-                            Date date = record.date();
-                            dsBuilder.row(org,
-                                          repoAlias,
-                                          projectName,
-                                          author,
-                                          msg,
-                                          date);
-                        }
-                    }
-                }
+        if (dataSet == null) {
+            final DataSetBuilder dsBuilder = DataSetFactory.newDataSetBuilder();
+            for (final DataColumnDef columnDef : dataSetdef.getColumns()) {
+                dsBuilder.column(columnDef.getId(),
+                                 columnDef.getColumnType());
             }
+            dataSet = dsBuilder.buildDataSet();
+            dataSet.setUUID(GIT_CONTRIB);
         }
-
-        DataSet dataSet = dsBuilder.buildDataSet();
-        dataSet.setUUID(GIT_CONTRIB);
         return dataSet;
     }
 
-    protected void invalidateDataSet() {
+    private void addProject(final WorkspaceProject workspaceProject) {
+
+        final Collection<OrganizationalUnit> orgUnitList = organizationalUnitService.getOrganizationalUnits(workspaceProject.getRepository());
+        for (final OrganizationalUnit orgUnit : orgUnitList) {
+            addProject(Optional.of(workspaceProject), orgUnit);
+        }
+    }
+
+    private void addProject(final Optional<WorkspaceProject> workspaceProject,
+                            final OrganizationalUnit orgUnit) {
+        final Collection<WorkspaceProject> projects = projectService.getAllWorkspaceProjects(orgUnit);
+
+        if (projects.isEmpty()) {
+            getDataSet().addValues(orgUnit.getName(),//org
+                                   null,//repo
+                                   null,//branch
+                                   null,//project
+                                   null,//author
+                                   null,//message
+                                   null);//date
+        } else {
+
+            for (final WorkspaceProject project : projects) {
+                final Collection<Branch> branches = project.getRepository().getBranches();
+                if (!workspaceProject.isPresent()) {
+                    for (final Branch branch : branches) {
+                        addBranch(orgUnit.getName(),
+                                  project.getRepository().getAlias(),
+                                  project.getName(),
+                                  branch);
+                    }
+                } else if (branches.contains(workspaceProject.get().getBranch())) {
+                    addBranch(orgUnit.getName(),
+                              project.getRepository().getAlias(),
+                              project.getName(),
+                              workspaceProject.get().getBranch());
+                }
+            }
+        }
+    }
+
+    private void addBranch(final String org,
+                           final String repoAlias,
+                           final String projectName,
+                           final Branch branch) {
+        if (!addedBranches.contains(branch)) {
+
+            addedBranches.add(branch);
+
+            org.uberfire.backend.vfs.Path rootPath = branch.getPath();
+            final Path projectRoot = Paths.convert(rootPath);
+            final List<VersionRecord> recordList = recordService.loadVersionRecords(projectRoot);
+
+            if (recordList.isEmpty()) {
+                getDataSet().addValues(org, //org
+                                       repoAlias,//repo
+                                       branch.getName(),//branch
+                                       null,//project
+                                       null,//author
+                                       "Empty project", //mesage
+                                       null);//date
+            } else {
+                for (VersionRecord record : recordList) {
+                    String alias = record.author();
+                    String author = authorMappings.getProperty(alias);
+                    author = author == null ? alias : author;
+                    String msg = record.comment();
+                    Date date = record.date();
+                    getDataSet().addValues(org,
+                                           repoAlias,
+                                           branch.getName(),
+                                           projectName,
+                                           author,
+                                           msg,
+                                           date);
+                }
+            }
+        }
         dataSetStaleEvent.fire(new DataSetStaleEvent(dataSetdef));
     }
 
-    // Keep synced the contributions data set with the changes made into the org>repos>commits hierarchy
+    private DataSet getDataSet() {
+        return buildDataSet(Collections.emptyMap());
+    }
 
-    public void onRepoAddedToOrgUnit(@Observes final RepoAddedToOrganizationalUnitEvent event) {
-        checkNotNull("event",
-                     event);
-        invalidateDataSet();
+    protected void invalidateDataSet() {
+
+        addedBranches.clear();
+
+        dataSet = null;
+        buildDataSet(Collections.emptyMap());
+
+        dataSetStaleEvent.fire(new DataSetStaleEvent(dataSetdef));
+    }
+
+    public void onUpdate(final WorkspaceProject workspaceProject) {
+        addProject(workspaceProject);
+    }
+
+    public void onUpdate(final OrganizationalUnit organizationalUnit) {
+        addProject(Optional.empty(), organizationalUnit);
     }
 
     public void onRepoRemovedFromOrgUnit(@Observes final RepoRemovedFromOrganizationalUnitEvent event) {
-        checkNotNull("event",
-                     event);
-        invalidateDataSet();
-    }
-
-    public void onOrganizationUnitAdded(@Observes final NewOrganizationalUnitEvent event) {
         checkNotNull("event",
                      event);
         invalidateDataSet();
