@@ -22,6 +22,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
 import javax.enterprise.event.Event;
 
 import org.dashbuilder.dataset.ColumnType;
@@ -35,8 +36,10 @@ import org.guvnor.common.services.project.model.WorkspaceProject;
 import org.guvnor.common.services.project.service.WorkspaceProjectService;
 import org.guvnor.structure.organizationalunit.OrganizationalUnit;
 import org.guvnor.structure.organizationalunit.OrganizationalUnitService;
+import org.guvnor.structure.organizationalunit.impl.OrganizationalUnitImpl;
 import org.guvnor.structure.repositories.Branch;
 import org.guvnor.structure.repositories.Repository;
+import org.guvnor.structure.repositories.impl.git.GitRepository;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -51,6 +54,7 @@ import org.uberfire.java.nio.base.version.VersionRecord;
 
 import static org.junit.Assert.*;
 import static org.kie.workbench.common.screens.contributors.model.ContributorsDataSetColumns.COLUMN_AUTHOR;
+import static org.kie.workbench.common.screens.contributors.model.ContributorsDataSetColumns.COLUMN_BRANCH;
 import static org.kie.workbench.common.screens.contributors.model.ContributorsDataSetColumns.COLUMN_DATE;
 import static org.kie.workbench.common.screens.contributors.model.ContributorsDataSetColumns.COLUMN_MSG;
 import static org.kie.workbench.common.screens.contributors.model.ContributorsDataSetColumns.COLUMN_ORG;
@@ -78,6 +82,7 @@ public class ContributorsManagerTest {
 
     @InjectMocks
     ContributorsManager contributorsManager;
+    private Set<WorkspaceProject> projects;
 
     @Before
     public void setUp() throws Exception {
@@ -497,21 +502,22 @@ public class ContributorsManagerTest {
 
         System.out.println("SUM = " + (repositoryHistory1.size() + repositoryHistory2.size()));
 
-        final Repository repo1 = makeRepository("testRepo1");
-        final Repository repo2 = makeRepository("testRepo2");
+        final Repository repo1 = makeRepository("testRepo1", "project1");
+        final Repository repo2 = makeRepository("testRepo2", "project2");
 
         final OrganizationalUnit org1 = makeOrganizationalUnit("test1",
                                                                Arrays.asList(repo1, repo2));
 
-        when(organizationalUnitService.getOrganizationalUnits()).thenReturn(Arrays.asList(org1));
-
-        final Set<WorkspaceProject> projects = new HashSet<>();
+        projects = new HashSet<>();
         projects.add(makeProject(repo1,
                                  org1,
                                  "project1"));
         projects.add(makeProject(repo2,
                                  org1,
                                  "project2"));
+
+        when(organizationalUnitService.getOrganizationalUnits(eq(repo1))).thenReturn(Arrays.asList(org1));
+        when(organizationalUnitService.getOrganizationalUnits(eq(repo2))).thenReturn(Arrays.asList(org1));
 
         when(projectService.getAllWorkspaceProjects(eq(org1))).thenReturn(projects);
 
@@ -520,9 +526,15 @@ public class ContributorsManagerTest {
                 .thenReturn(repositoryHistory2);
     }
 
-    private Repository makeRepository(final String repositoryAlias) {
+    private Repository makeRepository(final String repositoryAlias,
+                                      final String moduleName) {
         final Repository repository = mock(Repository.class);
         when(repository.getAlias()).thenReturn(repositoryAlias);
+        ArrayList<Branch> branches = new ArrayList<>();
+        branches.add(new Branch("main",
+                                PathFactory.newPath("testFile",
+                                                    "file:///" + moduleName)));
+        doReturn(branches).when(repository).getBranches();
         return repository;
     }
 
@@ -551,9 +563,12 @@ public class ContributorsManagerTest {
     @Test
     public void testBuildDataSet() throws Exception {
         DataSet dataSet = contributorsManager.buildDataSet(null);
+        for (WorkspaceProject project : projects) {
+            contributorsManager.onUpdate(project);
+        }
         assertEquals(68,
                      dataSet.getRowCount());
-        assertEquals(6,
+        assertEquals(7,
                      dataSet.getColumns().size());
 
         DataColumn column = dataSet.getColumns().get(0);
@@ -571,22 +586,99 @@ public class ContributorsManagerTest {
         column = dataSet.getColumns().get(2);
         assertEquals(ColumnType.LABEL,
                      column.getColumnType());
-        assertEquals(COLUMN_PROJECT,
+        assertEquals(COLUMN_BRANCH,
                      column.getId());
 
         column = dataSet.getColumns().get(3);
         assertEquals(ColumnType.LABEL,
                      column.getColumnType());
-        assertEquals(COLUMN_AUTHOR,
+        assertEquals(COLUMN_PROJECT,
                      column.getId());
 
         column = dataSet.getColumns().get(4);
+        assertEquals(ColumnType.LABEL,
+                     column.getColumnType());
+        assertEquals(COLUMN_AUTHOR,
+                     column.getId());
+
+        column = dataSet.getColumns().get(5);
         assertEquals(ColumnType.TEXT,
                      column.getColumnType());
         assertEquals(COLUMN_MSG,
                      column.getId());
 
+        column = dataSet.getColumns().get(6);
+        assertEquals(ColumnType.DATE,
+                     column.getColumnType());
+        assertEquals(COLUMN_DATE,
+                     column.getId());
+
+        DataSetMetadata metadata = dataSet.getMetadata();
+        assertNotNull(metadata);
+    }
+
+    @Test
+    public void testBuildDataSetEmptyProject() throws Exception {
+        DataSet dataSet = contributorsManager.buildDataSet(null);
+        GitRepository repository = new GitRepository();
+        OrganizationalUnitImpl organizationalUnit = new OrganizationalUnitImpl();
+        Branch branch = new Branch();
+        repository.addBranch(branch);
+        WorkspaceProject workspaceProject = new WorkspaceProject(organizationalUnit,
+                                                                 repository,
+                                                                 branch,
+                                                                 null);
+        ArrayList<OrganizationalUnit> organizationalUnits = new ArrayList<>();
+        organizationalUnits.add(organizationalUnit);
+        doReturn(organizationalUnits).when(organizationalUnitService).getOrganizationalUnits(repository);
+
+        ArrayList<WorkspaceProject> projects = new ArrayList<>();
+        projects.add(workspaceProject);
+        doReturn(projects).when(projectService).getAllWorkspaceProjects(organizationalUnit);
+
+        contributorsManager.onUpdate(organizationalUnit);
+        assertEquals(36,
+                     dataSet.getRowCount());
+        assertEquals(7,
+                     dataSet.getColumns().size());
+
+        DataColumn column = dataSet.getColumns().get(0);
+        assertEquals(ColumnType.LABEL,
+                     column.getColumnType());
+        assertEquals(COLUMN_ORG,
+                     column.getId());
+
+        column = dataSet.getColumns().get(1);
+        assertEquals(ColumnType.LABEL,
+                     column.getColumnType());
+        assertEquals(COLUMN_REPO,
+                     column.getId());
+
+        column = dataSet.getColumns().get(2);
+        assertEquals(ColumnType.LABEL,
+                     column.getColumnType());
+        assertEquals(COLUMN_BRANCH,
+                     column.getId());
+
+        column = dataSet.getColumns().get(3);
+        assertEquals(ColumnType.LABEL,
+                     column.getColumnType());
+        assertEquals(COLUMN_PROJECT,
+                     column.getId());
+
+        column = dataSet.getColumns().get(4);
+        assertEquals(ColumnType.LABEL,
+                     column.getColumnType());
+        assertEquals(COLUMN_AUTHOR,
+                     column.getId());
+
         column = dataSet.getColumns().get(5);
+        assertEquals(ColumnType.TEXT,
+                     column.getColumnType());
+        assertEquals(COLUMN_MSG,
+                     column.getId());
+
+        column = dataSet.getColumns().get(6);
         assertEquals(ColumnType.DATE,
                      column.getColumnType());
         assertEquals(COLUMN_DATE,
