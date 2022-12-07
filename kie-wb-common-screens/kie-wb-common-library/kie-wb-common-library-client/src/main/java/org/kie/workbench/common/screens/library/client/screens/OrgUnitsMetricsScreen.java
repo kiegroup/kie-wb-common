@@ -23,7 +23,10 @@ import org.dashbuilder.displayer.client.Displayer;
 import org.dashbuilder.displayer.client.DisplayerCoordinator;
 import org.guvnor.common.services.project.client.context.WorkspaceProjectContext;
 import org.guvnor.structure.organizationalunit.OrganizationalUnit;
+import org.jboss.errai.common.client.api.Caller;
+import org.jboss.errai.common.client.api.RemoteCallback;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
+import org.kie.workbench.common.screens.contributors.service.ContributorsService;
 import org.kie.workbench.common.screens.library.api.ProjectAssetListUpdated;
 import org.kie.workbench.common.screens.library.api.Routed;
 import org.kie.workbench.common.screens.library.client.util.LibraryPlaces;
@@ -90,14 +93,23 @@ public class OrgUnitsMetricsScreen {
         this.displayerCoordinator = displayerCoordinator;
         this.projectContext = projectContext;
         this.libraryPlaces = libraryPlaces;
+
     }
 
+    @Inject
+    Caller<ContributorsService> contributorsService;
+
     @PostConstruct
+    public void onStartup() {
+
+        contributorsService.call((RemoteCallback<Void>) unused -> init()).updateContributors(libraryPlaces.getActiveSpace());
+    }
+
     public void init() {
         this.view.init(this);
 
         this.organizationalUnit = projectContext.getActiveOrganizationalUnit()
-                                                .orElseThrow(() -> new IllegalStateException("Cannot initialize OrgUnitsMetricsScreen without an active organizational unit."));
+                .orElseThrow(() -> new IllegalStateException("Cannot initialize OrgUnitsMetricsScreen without an active organizational unit."));
 
         this.commitsOverTimeDisplayer = metricsFactory.lookupCommitsOverTimeDisplayer(organizationalUnit);
         this.commitsPerAuthorDisplayer = metricsFactory.lookupCommitsPerAuthorDisplayer(organizationalUnit);
