@@ -30,9 +30,6 @@ import org.kie.workbench.common.services.refactoring.model.index.terms.Reference
 import org.kie.workbench.common.services.refactoring.model.index.terms.SharedPartIndexTerm;
 import org.kie.workbench.common.services.refactoring.service.PartType;
 import org.kie.workbench.common.services.refactoring.service.ResourceType;
-import org.uberfire.ext.metadata.analyzer.ElasticSearchAnalyzer;
-import org.uberfire.ext.metadata.analyzer.ElasticSearchAnalyzerWrapper;
-import org.uberfire.ext.metadata.backend.lucene.analyzer.FilenameAnalyzer;
 
 /**
  * This analyzer is based on the {@link PerFieldAnalyzerWrapper} class, which
@@ -41,7 +38,7 @@ import org.uberfire.ext.metadata.backend.lucene.analyzer.FilenameAnalyzer;
  * <p>A {@link ImpactAnalysisAnalyzerWrapper} can be used like any other analyzer, for both indexing
  * and query parsing.
  */
-public final class ImpactAnalysisAnalyzerWrapper extends DelegatingAnalyzerWrapper implements ElasticSearchAnalyzerWrapper {
+public final class ImpactAnalysisAnalyzerWrapper extends DelegatingAnalyzerWrapper {
 
     private final LowerCaseOnlyAnalyzer lowerCaseOnlyAnalyzer = new LowerCaseOnlyAnalyzer();
 
@@ -141,18 +138,6 @@ public final class ImpactAnalysisAnalyzerWrapper extends DelegatingAnalyzerWrapp
         }
 
         return (analyzer != null) ? analyzer : defaultAnalyzer;
-    }
-
-    @Override
-    public String getFieldAnalyzer(String fieldName) {
-        Analyzer analyzer = this.getWrappedAnalyzer(fieldName);
-        Class<?> analyzerClass = analyzer.getClass();
-        if (analyzerClass.equals(LowerCaseOnlyAnalyzer.class) ||
-                analyzerClass.equals(FilenameAnalyzer.class)) {
-            return ElasticSearchAnalyzer.FILENAME.toString();
-        } else {
-            return ElasticSearchAnalyzer.STANDARD.toString();
-        }
     }
 
     @Override
