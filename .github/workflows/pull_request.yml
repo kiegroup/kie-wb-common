@@ -36,7 +36,7 @@ jobs:
           maven-version: ${{ matrix.maven-version }}
           cache-key-prefix: ${{ runner.os }}-${{ matrix.java-version }}-maven${{ matrix.maven-version }}
       - name: Build Chain
-        uses: kiegroup/droolsjbpm-build-bootstrap/.ci/actions/build-chain@main
+        uses: ginxo/droolsjbpm-build-bootstrap/.ci/actions/build-chain@Ginxo-patch-25
         with:
           annotations-prefix: ${{ runner.os }}-${{ matrix.java-version }}/${{ matrix.maven-version }}
           github-token: "${{ secrets.GITHUB_TOKEN }}"
