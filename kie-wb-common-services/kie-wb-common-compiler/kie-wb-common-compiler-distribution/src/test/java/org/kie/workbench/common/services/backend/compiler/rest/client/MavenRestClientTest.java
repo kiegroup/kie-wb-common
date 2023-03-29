@@ -104,7 +104,7 @@ public class MavenRestClientTest {
     }
 
     @Deployment
-    public static Archive getDeployment() throws Exception {
+    public static Archive<?> getDeployment() throws Exception {
         setup();
         setRunIntoMavenCLI();
         final WebArchive war = ShrinkWrap.create(WebArchive.class, "compiler.war");
@@ -128,6 +128,7 @@ public class MavenRestClientTest {
         for (final File file : metaInfFilesFiles) {
             war.addAsManifestResource(file);
         }
+        war.addAsWebInfResource(new File("target/test-classes/jboss-deployment-structure.xml"));
         
         final File[] files = Maven.configureResolver().
                 fromFile(mavenSettingsPath).
