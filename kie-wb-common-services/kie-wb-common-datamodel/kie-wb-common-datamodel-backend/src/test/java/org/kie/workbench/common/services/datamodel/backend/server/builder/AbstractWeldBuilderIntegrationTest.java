@@ -11,75 +11,65 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
-*/
+ */
 
 package org.kie.workbench.common.services.datamodel.backend.server.builder;
 
-import java.util.List;
-import javax.enterprise.inject.spi.BeanManager;
-import javax.inject.Inject;
-
 import org.guvnor.common.services.project.builder.service.BuildService;
-import org.guvnor.structure.server.config.ConfigGroup;
-import org.guvnor.structure.server.config.ConfigType;
-import org.guvnor.structure.server.config.ConfigurationFactory;
-import org.guvnor.structure.server.config.ConfigurationService;
-import org.guvnor.test.WeldJUnitRunner;
+import org.jboss.weld.environment.se.Weld;
+import org.jboss.weld.environment.se.WeldContainer;
+import org.junit.After;
 import org.junit.Before;
-import org.junit.runner.RunWith;
 import org.kie.workbench.common.services.backend.builder.core.LRUBuilderCache;
 import org.kie.workbench.common.services.datamodel.backend.server.cache.LRUModuleDataModelOracleCache;
 import org.kie.workbench.common.services.shared.project.KieModuleService;
 import org.uberfire.backend.server.util.Paths;
 import org.uberfire.java.nio.fs.file.SimpleFileSystemProvider;
+import org.uberfire.java.nio.fs.jgit.JGitFileSystemProviderConfiguration;
 
-@RunWith(WeldJUnitRunner.class)
 public abstract class AbstractWeldBuilderIntegrationTest {
-
-    protected static final String GLOBAL_SETTINGS = "settings";
 
     protected final SimpleFileSystemProvider fs = new SimpleFileSystemProvider();
 
-    @Inject
-    protected BeanManager beanManager;
-    @Inject
-    protected Paths paths;
-    @Inject
-    protected ConfigurationService configurationService;
-    @Inject
-    protected ConfigurationFactory configurationFactory;
-    @Inject
-    protected BuildService buildService;
-    @Inject
-    protected KieModuleService moduleService;
-    @Inject
-    protected LRUBuilderCache builderCache;
-    @Inject
-    protected LRUModuleDataModelOracleCache moduleDMOCache;
+    private WeldContainer weldContainer;
 
     @Before
     public void setUp() throws Exception {
-        //Define mandatory properties
-        List<ConfigGroup> globalConfigGroups = configurationService.getConfiguration(ConfigType.GLOBAL);
-        boolean globalSettingsDefined = false;
-        for (ConfigGroup globalConfigGroup : globalConfigGroups) {
-            if (GLOBAL_SETTINGS.equals(globalConfigGroup.getName())) {
-                globalSettingsDefined = true;
-                break;
-            }
-        }
-        if (!globalSettingsDefined) {
-            configurationService.addConfiguration(getGlobalConfiguration());
+        // disable git and ssh daemons as they are not needed for the tests
+        System.setProperty(JGitFileSystemProviderConfiguration.GIT_DAEMON_ENABLED, "false");
+        System.setProperty(JGitFileSystemProviderConfiguration.GIT_SSH_ENABLED, "false");
+        System.setProperty("org.uberfire.sys.repo.monitor.disabled", "true");
+
+        weldContainer = new Weld().initialize();
+        //Ensure URLs use the default:// scheme
+        fs.forceAsDefault();
+    }
+
+    @After
+    public void tearDown() {
+        // Avoid NPE in case weld.initialize() failed
+        if (weldContainer != null) {
+            weldContainer.shutdown();
         }
     }
 
-    private ConfigGroup getGlobalConfiguration() {
-        //Global Configurations used by many of Drools Workbench editors
-        final ConfigGroup group = configurationFactory.newConfigGroup(ConfigType.GLOBAL,
-                                                                      GLOBAL_SETTINGS,
-                                                                      "");
-        group.addConfigItem(configurationFactory.newConfigItem("build.enable-incremental",
-                                                               "true"));
-        return group;
+    public Paths getPaths() {
+        return weldContainer.instance().select(Paths.class).get();
+    }
+
+    public KieModuleService getModuleService() {
+        return weldContainer.instance().select(KieModuleService.class).get();
+    }
+
+    public BuildService getBuildService() {
+        return weldContainer.instance().select(BuildService.class).get();
+    }
+
+    public LRUModuleDataModelOracleCache getLRUModuleDataModelOracleCache() {
+        return weldContainer.instance().select(LRUModuleDataModelOracleCache.class).get();
+    }
+
+    public LRUBuilderCache getLRUBuilderCache() {
+        return weldContainer.instance().select(LRUBuilderCache.class).get();
     }
 }
