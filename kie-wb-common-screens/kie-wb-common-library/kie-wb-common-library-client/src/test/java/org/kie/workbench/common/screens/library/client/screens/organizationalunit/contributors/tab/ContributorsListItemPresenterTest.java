@@ -189,6 +189,25 @@ public class ContributorsListItemPresenterTest {
     }
 
     @Test
+    public void saveContributorWithXSSContentName() {
+        doReturn("<img/src/onerror=alert('XSS')>").when(view).getName();
+        doReturn(ContributorType.OWNER).when(view).getRole();
+
+        final ContributorsListPresenter parentPresenter = mock(ContributorsListPresenter.class);
+        doReturn(Arrays.asList("admin")).when(parentPresenter).getValidUsernames();
+
+        doReturn(false).when(contributorsListService).requireValidUsername();
+        doReturn(promises.resolve(true)).when(contributorsListService).canEditContributors(any(), any());
+
+        presenter.setup(persistedContributor,
+                        parentPresenter,
+                        contributorsListService);
+        presenter.save();
+
+        verify(contributorsListService, never()).saveContributors(any(), any(), any());
+    }
+
+    @Test
     public void saveNonUserWhenValidUserNotRequiredContributorTest() {
         doReturn("notUser").when(view).getName();
         doReturn(ContributorType.OWNER).when(view).getRole();
