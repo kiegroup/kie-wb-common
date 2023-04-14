@@ -27,6 +27,7 @@ import javax.inject.Inject;
 
 import elemental2.promise.Promise;
 import org.guvnor.structure.client.security.OrganizationalUnitController;
+import org.kie.workbench.common.screens.library.client.resources.i18n.LibraryConstants;
 import org.uberfire.security.Contributor;
 import org.uberfire.security.ContributorType;
 import org.guvnor.structure.contributors.SpaceContributorsUpdatedEvent;
@@ -137,7 +138,7 @@ public class SpaceContributorsListServiceImpl implements ContributorsListService
 
     @Override
     public String getInvalidNameMessageConstant() {
-        return "";
+        return LibraryConstants.SpaceInvalidContributorName;
     }
 
     public void onSpaceContributorsUpdatedEvent(@Observes final SpaceContributorsUpdatedEvent spaceContributorsUpdatedEvent) {

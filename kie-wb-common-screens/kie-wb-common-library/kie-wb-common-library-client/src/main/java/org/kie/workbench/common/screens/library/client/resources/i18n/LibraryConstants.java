@@ -693,6 +693,9 @@ public class LibraryConstants {
     public static final String EmptyName = "EmptyName";
 
     @TranslationKey(defaultValue = "")
+    public static final String SpaceInvalidContributorName = "SpaceInvalidContributorName";
+
+    @TranslationKey(defaultValue = "")
     public static final String ProjectInvalidContributorName = "ProjectInvalidContributorName";
 
     @TranslationKey(defaultValue = "")
