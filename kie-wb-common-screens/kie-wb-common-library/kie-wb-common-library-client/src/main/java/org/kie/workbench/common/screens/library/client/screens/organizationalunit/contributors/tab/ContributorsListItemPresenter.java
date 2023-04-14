@@ -22,6 +22,7 @@ import java.util.stream.Collectors;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
+import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import elemental2.promise.Promise;
 import org.uberfire.security.Contributor;
 import org.uberfire.security.ContributorType;
@@ -167,6 +168,14 @@ public class ContributorsListItemPresenter {
             final boolean emptyName = contributor.getUsername() == null || contributor.getUsername().isEmpty();
             if (emptyName) {
                 notificationEvent.fire(new NotificationEvent(view.getEmptyNameMessage(),
+                                                             NotificationEvent.NotificationType.ERROR));
+                return promises.resolve(false);
+            }
+
+            final String safeValue = new SafeHtmlBuilder().appendEscaped(contributor.getUsername())
+                    .toSafeHtml().asString();
+            if (!contributor.getUsername().equals(safeValue)) {
+                notificationEvent.fire(new NotificationEvent(view.getTranslation(contributorsListService.getInvalidNameMessageConstant()),
                                                              NotificationEvent.NotificationType.ERROR));
                 return promises.resolve(false);
             }
