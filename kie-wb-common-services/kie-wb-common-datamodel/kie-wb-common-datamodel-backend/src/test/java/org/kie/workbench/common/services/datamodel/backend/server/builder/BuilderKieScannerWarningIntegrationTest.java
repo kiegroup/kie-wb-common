@@ -33,11 +33,11 @@ public class BuilderKieScannerWarningIntegrationTest extends AbstractWeldBuilder
     public void testBuilderKieScannerWarning() throws URISyntaxException {
         final URL resourceUrl = this.getClass().getResource("/BuilderKieScannerRepo/src/main/resources/update.drl");
         final org.uberfire.java.nio.file.Path nioResourcePath = fs.getPath(resourceUrl.toURI());
-        final Path resourcePath = paths.convert(nioResourcePath);
+        final Path resourcePath = getPaths().convert(nioResourcePath);
 
         //Build and look for warnings..
-        final KieModule module = moduleService.resolveModule(resourcePath);
-        final BuildResults buildResults = buildService.build(module);
+        final KieModule module = getModuleService().resolveModule(resourcePath);
+        final BuildResults buildResults = getBuildService().build(module);
         assertNotNull(buildResults);
         assertEquals(0,
                      buildResults.getErrorMessages().size());
