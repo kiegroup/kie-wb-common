@@ -43,17 +43,17 @@ public class BuilderConcurrencyIntegrationTest extends AbstractWeldBuilderIntegr
     public void testBuilderConcurrency() throws URISyntaxException {
         final URL pomUrl = this.getClass().getResource("/BuilderConcurrencyRepo/pom.xml");
         final org.uberfire.java.nio.file.Path nioPomPath = fs.getPath(pomUrl.toURI());
-        final Path pomPath = paths.convert(nioPomPath);
+        final Path pomPath = getPaths().convert(nioPomPath);
 
         final URL resourceUrl = this.getClass().getResource("/BuilderConcurrencyRepo/src/main/resources/update.drl");
         final org.uberfire.java.nio.file.Path nioResourcePath = fs.getPath(resourceUrl.toURI());
-        final Path resourcePath = paths.convert(nioResourcePath);
+        final Path resourcePath = getPaths().convert(nioResourcePath);
 
         final SessionInfo sessionInfo = mock(SessionInfo.class);
 
         //Force full build before attempting incremental changes
-        final KieModule project = moduleService.resolveModule(resourcePath);
-        final BuildResults buildResults = buildService.build(project);
+        final KieModule project = getModuleService().resolveModule(resourcePath);
+        final BuildResults buildResults = getBuildService().build(project);
         assertNotNull(buildResults);
         assertEquals(0,
                      buildResults.getErrorMessages().size());
@@ -72,7 +72,7 @@ public class BuilderConcurrencyIntegrationTest extends AbstractWeldBuilderIntegr
                         public void run() {
                             try {
                                 logger.debug("Thread " + Thread.currentThread().getName() + " has started: BuildService.build( project )");
-                                buildService.build(project);
+                                getBuildService().build(project);
                                 logger.debug("Thread " + Thread.currentThread().getName() + " has completed.");
                             } catch (Throwable e) {
                                 result.setFailed(true);
@@ -88,7 +88,7 @@ public class BuilderConcurrencyIntegrationTest extends AbstractWeldBuilderIntegr
                         public void run() {
                             try {
                                 logger.debug("Thread " + Thread.currentThread().getName() + " has started: LRUModuleDataModelOracleCache.invalidateModuleCache(...)");
-                                moduleDMOCache.invalidateModuleCache(new InvalidateDMOModuleCacheEvent(sessionInfo,
+                                getLRUModuleDataModelOracleCache().invalidateModuleCache(new InvalidateDMOModuleCacheEvent(sessionInfo,
                                                                                                        project,
                                                                                                        pomPath));
                                 logger.debug("Thread " + Thread.currentThread().getName() + " has completed.");
@@ -106,7 +106,7 @@ public class BuilderConcurrencyIntegrationTest extends AbstractWeldBuilderIntegr
                         public void run() {
                             try {
                                 logger.debug("Thread " + Thread.currentThread().getName() + " has started: LRUBuilderCache.assertBuilder( project ).getKieModuleIgnoringErrors();");
-                                builderCache.assertBuilder(project).getKieModuleIgnoringErrors();
+                                getLRUBuilderCache().assertBuilder(project).getKieModuleIgnoringErrors();
                                 logger.debug("Thread " + Thread.currentThread().getName() + " has completed.");
                             } catch (Throwable e) {
                                 result.setFailed(true);
