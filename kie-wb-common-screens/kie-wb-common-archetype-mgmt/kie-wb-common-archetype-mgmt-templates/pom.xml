@@ -62,7 +62,7 @@
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-bom</artifactId>
         <type>pom</type>
-        <version>${project.version}</version>
+        <version>${version.org.optaplanner}</version>
         <scope>import</scope>
       </dependency>
       <dependency>

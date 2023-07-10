@@ -31,13 +31,13 @@
   <dependency>
     <groupId>org.optaplanner</groupId>
     <artifactId>optaplanner-core</artifactId>
-    <version>${version.org.kie}</version>
+    <version>${version.org.optaplanner}</version>
     <scope>provided</scope>
   </dependency>
   <dependency>
     <groupId>org.optaplanner</groupId>
     <artifactId>optaplanner-persistence-jaxb</artifactId>
-    <version>${version.org.kie}</version>
+    <version>${version.org.optaplanner}</version>
     <scope>provided</scope>
   </dependency>
   <dependency>
