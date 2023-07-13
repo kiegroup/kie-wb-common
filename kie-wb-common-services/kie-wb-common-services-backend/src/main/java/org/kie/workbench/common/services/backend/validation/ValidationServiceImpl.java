@@ -39,6 +39,8 @@ import org.kie.workbench.common.services.shared.validation.ValidationService;
 import org.uberfire.backend.vfs.Path;
 import org.uberfire.ext.editor.commons.backend.validation.ValidationUtils;
 
+import static org.guvnor.structure.backend.InputEscapeUtils.escapeHtmlInput;
+
 /**
  * Implementation of validation Service for file names
  */
@@ -107,7 +109,7 @@ public class ValidationServiceImpl
     @Override
     public boolean isBranchNameValid(final String branchName) {
         final Matcher branchNameMatcher = branchNameValidator.matcher(branchName);
-        return branchNameMatcher.matches();
+        return branchNameMatcher.matches() && branchName.equals(escapeHtmlInput(branchName));
     }
 
     @Override

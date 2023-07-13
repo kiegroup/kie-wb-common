@@ -138,7 +138,7 @@ public class ValidationServiceImplTest {
         assertTrue(validationService.isBranchNameValid("test!"));
         assertTrue(validationService.isBranchNameValid("test-"));
         assertTrue(validationService.isBranchNameValid("test_"));
-        assertTrue(validationService.isBranchNameValid("test&"));
+        assertFalse(validationService.isBranchNameValid("test&"));
         assertTrue(validationService.isBranchNameValid("test%"));
 
         assertFalse(validationService.isBranchNameValid("@test"));
@@ -223,5 +223,6 @@ public class ValidationServiceImplTest {
         assertTrue(validationService.isBranchNameValid("te-st"));
         assertTrue(validationService.isBranchNameValid("test-"));
 
+        assertFalse(validationService.isBranchNameValid("<img/src/onerror=alert(document.cookie)>"));
     }
 }
