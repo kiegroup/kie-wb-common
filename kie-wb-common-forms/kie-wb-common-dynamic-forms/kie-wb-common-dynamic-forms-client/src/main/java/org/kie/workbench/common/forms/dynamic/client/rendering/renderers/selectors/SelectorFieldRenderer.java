@@ -66,7 +66,9 @@ public abstract class SelectorFieldRenderer<FIELD extends SelectorFieldBaseDefin
                 backendSelectorDataProviderService.call(new RemoteCallback<SelectorData>() {
                     @Override
                     public void callback(SelectorData data) {
-                        refreshSelectorOptions(data);
+                        if (data.getValues() != null) {
+                            refreshSelectorOptions(data);
+                        }
                     }
                 }).getDataFromProvider(renderingContext,
                                        field.getDataProvider());
