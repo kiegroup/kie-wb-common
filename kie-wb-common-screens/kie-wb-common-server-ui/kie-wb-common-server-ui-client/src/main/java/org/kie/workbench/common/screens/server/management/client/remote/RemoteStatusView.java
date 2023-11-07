@@ -43,7 +43,14 @@ public class RemoteStatusView extends Composite
     }
 
     @Override
+    public void removeCard(IsWidget widget) {
+        cardContainer.remove(checkNotNull("widget",
+                                       widget));
+    }
+
+    @Override
     public void clear() {
         cardContainer.clear();
     }
+
 }

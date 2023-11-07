@@ -17,16 +17,21 @@
 package org.kie.workbench.common.screens.server.management.client.remote;
 
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
+import com.google.gwt.user.client.ui.IsWidget;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.kie.server.controller.api.model.runtime.Container;
 import org.kie.workbench.common.screens.server.management.client.remote.card.ContainerCardPresenter;
 
-import com.google.gwt.user.client.ui.IsWidget;
+import static java.util.stream.Collectors.toSet;
 
 @Dependent
 public class RemoteStatusPresenter {
@@ -35,12 +40,15 @@ public class RemoteStatusPresenter {
 
         void addCard( final IsWidget content );
 
+        void removeCard (final IsWidget content);
+
         void clear();
     }
 
     private final View view;
     private final ManagedInstance<ContainerCardPresenter> presenterProvider;
-
+    private final Map<String, ContainerCardPresenter> cards = new HashMap<>();
+    
     @Inject
     public RemoteStatusPresenter( final View view,
                                   final ManagedInstance<ContainerCardPresenter> presenterProvider ) {
@@ -57,12 +65,26 @@ public class RemoteStatusPresenter {
     }
 
     public void setup( final Collection<Container> containers ) {
-        view.clear();
         for ( final Container container : containers ) {
-            final ContainerCardPresenter newCard = presenterProvider.get();
+            ContainerCardPresenter newCard = null;
+            if(!cards.containsKey(key(container))) {
+                newCard = presenterProvider.get();
+                cards.put(key(container), newCard);
+                view.addCard( newCard.getView().asWidget() );
+            } else {
+                newCard = cards.get(key(container));
+            }
             newCard.setup( container );
-            view.addCard( newCard.getView().asWidget() );
         }
+        Set<String> containerSpecIds = containers.stream().map(this::key).collect(toSet());
+        Set<String> deletedKeys = new HashSet<>(cards.keySet()).stream().filter(key -> !containerSpecIds.contains(key)).collect(toSet());
+        for(String key : deletedKeys) {
+            view.removeCard(cards.remove(key).getView().asWidget());
+        }
+    }
+    
+    private String key(Container container) {
+        return container.getServerInstanceId() + "-" + container.getContainerSpecId();
     }
 
 }

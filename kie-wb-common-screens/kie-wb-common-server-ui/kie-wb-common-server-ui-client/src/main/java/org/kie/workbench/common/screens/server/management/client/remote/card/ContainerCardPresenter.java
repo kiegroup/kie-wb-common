@@ -38,6 +38,7 @@ public class ContainerCardPresenter {
     private final ManagedInstance<Object> presenterProvider;
     private final org.kie.workbench.common.screens.server.management.client.container.status.card.ContainerCardPresenter.View view;
     private final Event<ContainerSpecSelected> containerSpecSelectedEvent;
+    private CardPresenter card = null;
 
     @Inject
     public ContainerCardPresenter( final ManagedInstance<Object> presenterProvider,
@@ -63,7 +64,10 @@ public class ContainerCardPresenter {
                                           containerSpecSelectedEvent.fire( new ContainerSpecSelected( buildContainerSpecKey( container ) ) );
                                       }
                                   } );
-
+        if(card != null) {
+            view.removeCard(card.getView());
+        }
+        
         final InfoTitlePresenter infoTitlePresenter = presenterProvider.select( InfoTitlePresenter.class ).get();
         infoTitlePresenter.setup( container.getResolvedReleasedId() );
 
@@ -73,7 +77,7 @@ public class ContainerCardPresenter {
         final FooterPresenter footerPresenter = presenterProvider.select( FooterPresenter.class ).get();
         footerPresenter.setup( container.getUrl(), container.getResolvedReleasedId().getVersion() );
 
-        CardPresenter card = presenterProvider.select( CardPresenter.class ).get();
+        card = presenterProvider.select( CardPresenter.class ).get();
         card.addTitle( linkTitlePresenter );
         card.addTitle( infoTitlePresenter );
         card.addBody( bodyPresenter );

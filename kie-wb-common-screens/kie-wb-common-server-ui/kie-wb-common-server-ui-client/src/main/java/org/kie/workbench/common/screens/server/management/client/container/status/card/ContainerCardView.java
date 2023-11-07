@@ -44,6 +44,12 @@ public class ContainerCardView extends Composite
     }
 
     @Override
+    public void removeCard(final CardPresenter.View cardView) {
+        container.remove(checkNotNull("cardView",
+                                   cardView).asWidget());
+    }
+
+    @Override
     public void delete() {
         removeFromParent();
     }

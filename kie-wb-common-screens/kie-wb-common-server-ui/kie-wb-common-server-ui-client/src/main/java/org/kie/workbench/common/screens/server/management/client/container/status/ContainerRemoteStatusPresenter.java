@@ -16,25 +16,30 @@
 
 package org.kie.workbench.common.screens.server.management.client.container.status;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
+import com.google.gwt.user.client.ui.IsWidget;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.kie.server.api.model.KieContainerStatus;
 import org.kie.server.controller.api.model.events.ServerInstanceDeleted;
+import org.kie.server.controller.api.model.events.ServerInstanceDisconnected;
 import org.kie.server.controller.api.model.events.ServerInstanceUpdated;
 import org.kie.server.controller.api.model.runtime.Container;
-import org.kie.server.controller.api.model.spec.ContainerSpec;
+import org.kie.server.controller.api.model.spec.ContainerSpecKey;
 import org.kie.workbench.common.screens.server.management.client.container.status.card.ContainerCardPresenter;
 import org.slf4j.Logger;
 
-import com.google.gwt.user.client.ui.IsWidget;
+import static java.util.Collections.emptyList;
 
 @Dependent
 public class ContainerRemoteStatusPresenter {
@@ -43,16 +48,20 @@ public class ContainerRemoteStatusPresenter {
 
         void addCard( final IsWidget content );
 
+        void removeCard(final IsWidget content);
+
         void clear();
+
+
     }
 
     private final Logger logger;
     private final View view;
     private final ManagedInstance<ContainerCardPresenter> cardPresenterProvider;
 
-    private final Map<String, Map<String, ContainerCardPresenter>> index = new HashMap<String, Map<String, ContainerCardPresenter>>();
+    private final Map<String, ContainerCardPresenter> index = new HashMap<String, ContainerCardPresenter>();
 
-    private ContainerSpec containerSpec;
+    private ContainerSpecKey containerSpec;
 
     @Inject
     public ContainerRemoteStatusPresenter( final Logger logger,
@@ -65,6 +74,7 @@ public class ContainerRemoteStatusPresenter {
 
     @PostConstruct
     public void init() {
+        this.view.clear();
     }
 
     public View getView() {
@@ -72,89 +82,111 @@ public class ContainerRemoteStatusPresenter {
     }
 
     public void onServerInstanceUpdated( @Observes final ServerInstanceUpdated serverInstanceUpdated ) {
-        if ( serverInstanceUpdated != null &&
-                serverInstanceUpdated.getServerInstance() != null ) {
-            final String updatedServerInstanceKey = serverInstanceUpdated.getServerInstance().getServerInstanceId();
-            if ( index.containsKey( updatedServerInstanceKey )) {
-                final Map<String, ContainerCardPresenter> oldIndex = new HashMap<String, ContainerCardPresenter>( index.remove( updatedServerInstanceKey ) );
-                final Map<String, ContainerCardPresenter> newIndexIndex = new HashMap<String, ContainerCardPresenter>( serverInstanceUpdated.getServerInstance().getContainers().size() );
-                index.put( updatedServerInstanceKey, newIndexIndex );
-                for ( final Container container : serverInstanceUpdated.getServerInstance().getContainers() ) {
-                    ContainerCardPresenter presenter = oldIndex.remove( container.getContainerSpecId() );
-                    if ( !container.getStatus().equals( KieContainerStatus.STOPPED ) ) {
-                        if ( presenter != null ) {
-                            presenter.updateContent(serverInstanceUpdated.getServerInstance(),
-                                                    container );
-                        } else {
-                            presenter = buildContainer( container, false );
-                        }
-                        newIndexIndex.put( container.getContainerName(), presenter );
-                    }
-                }
-                for ( final ContainerCardPresenter presenter : oldIndex.values() ) {
-                    presenter.delete();
-                }
-            } else {
-                for ( final Container container : serverInstanceUpdated.getServerInstance().getContainers() ) {
-                    if ( containerSpec != null &&
-                            container.getServerTemplateId().equals( containerSpec.getServerTemplateKey().getId() ) &&
-                            container.getContainerSpecId().equals( containerSpec.getId() ) ) {
-                        buildAndIndexContainer( container );
-                    }
-                }
-            }
+        if ( serverInstanceUpdated != null && serverInstanceUpdated.getServerInstance() != null ) {
+            updateView(serverInstanceUpdated.getServerInstance().getContainers());
         } else {
-            logger.warn( "Illegal event argument." );
+            logger.warn( "Illegal event argument ServerInstanceUpdated {}",  serverInstanceUpdated);
         }
     }
 
-    public void onDelete( @Observes final ServerInstanceDeleted serverInstanceDeleted ) {
+    public void onServerInstanceDisconnect( @Observes final ServerInstanceDisconnected serverInstanceDisconnected ) {
+        if ( serverInstanceDisconnected != null &&
+                serverInstanceDisconnected.getServerInstanceId() != null ) {
+            updateServerInstanceView(serverInstanceDisconnected.getServerInstanceId(), emptyList());
+        } else {
+            logger.warn( "Illegal event argument ServerInstanceDisconnected {}",  serverInstanceDisconnected);
+        }
+    }
+
+    public void onServerInstanceDelete( @Observes final ServerInstanceDeleted serverInstanceDeleted ) {
         if ( serverInstanceDeleted != null &&
                 serverInstanceDeleted.getServerInstanceId() != null ) {
-            final String deletedServerInstanceId = serverInstanceDeleted.getServerInstanceId();
-            if ( index.containsKey( deletedServerInstanceId ) ) {
-                final Map<String, ContainerCardPresenter> oldIndex = index.remove( deletedServerInstanceId );
-                if ( oldIndex != null ) {
-                    for ( final ContainerCardPresenter presenter : oldIndex.values() ) {
-                        presenter.delete();
-                    }
+            updateServerInstanceView(serverInstanceDeleted.getServerInstanceId(), emptyList());
+        } else {
+            logger.warn( "Illegal event argument ServerInstanceDeleted {}", serverInstanceDeleted);
+        }
+    }
+
+    public void setup( final ContainerSpecKey containerSpec,
+                       final Collection<Container> containers ) {
+        // change view we reset the view
+        if(containerSpec == null || !containerSpec.equals(this.containerSpec)) {
+            logger.debug("Clear ContainerRemoteStatusPresenter {} to {} ", this.containerSpec, containerSpec);
+            index.clear();
+            view.clear();
+        }
+        this.containerSpec = containerSpec;
+
+        if(containerSpec == null) {
+            return;
+        }
+
+        updateView(containers);
+
+    }
+
+    private void updateView(final Collection<Container> containers) {
+        Set<String> serverInstanceIds = containers.stream().map(c -> c.getServerInstanceId()).collect(Collectors.toSet());
+        for(String serverInstanceId : serverInstanceIds) {
+            Collection<Container> containersByServerInstanceId = new ArrayList<>();
+            for(Container container : containers) {
+                if(container.getServerInstanceId().equals(serverInstanceId)) {
+                    containersByServerInstanceId.add(container);
                 }
             }
-        } else {
-            logger.warn( "Illegal event argument." );
+            updateServerInstanceView(serverInstanceId, containersByServerInstanceId);
         }
     }
 
-    public void setup( final ContainerSpec containerSpec,
-                       final Collection<Container> containers ) {
-        this.containerSpec = containerSpec;
-        this.view.clear();
-        for ( Container container : containers ) {
-            if ( !container.getStatus().equals( KieContainerStatus.STOPPED ) ) {
-                buildAndIndexContainer( container );
+    
+    private boolean isContainerSpecCompliant(ContainerSpecKey containerSpec, Container container) {
+        return containerSpec != null && 
+                container.getServerTemplateId().equals( containerSpec.getServerTemplateKey().getId() ) &&
+                container.getContainerSpecId().equals( containerSpec.getId() );
+    }
+
+
+    private void updateServerInstanceView(String serverInstanceId, Collection<Container> containers) {
+        // ensure all compliant containers are shown
+        boolean containerFound = false;
+        for(Container container : containers) {
+            if(isContainerSpecCompliant(this.containerSpec, container) && !KieContainerStatus.STOPPED.equals(container.getStatus()) ) {
+                containerFound = true;
+                if(hasIndexEntry(container)) {
+                    logger.debug("Update entry serverInstanceId {} and container {}", serverInstanceId, container);
+                    updateIndexEntry(container);
+                } else {
+                    logger.debug("Add entry serverInstanceId {} and container {}", serverInstanceId, container);
+                    addIndexEntry(container);
+                }
             }
         }
+
+        if(!containerFound && index.containsKey( serverInstanceId ))  {
+            logger.debug("Remove entry serverInstanceId {}", serverInstanceId);
+            view.removeCard(index.remove( serverInstanceId ).getView().asWidget());
+        }
     }
 
-    private void buildAndIndexContainer( final Container container ) {
-        index( container, buildContainer( container, true ) );
+    private boolean hasIndexEntry(Container container) {
+        return index.containsKey(container.getServerInstanceId());
     }
 
-    private ContainerCardPresenter buildContainer( final Container container, boolean addCard ) {
+    private ContainerCardPresenter addIndexEntry(final Container container) {
+        ContainerCardPresenter presenter = buildContainer(container);
+        view.addCard(presenter.getView().asWidget());
+        return index.put( container.getServerInstanceId(), presenter);
+    }
+
+    private ContainerCardPresenter updateIndexEntry(final Container container) {
+        index.get(container.getServerInstanceId()).updateContent(container.getServerInstanceKey(), container );
+        return index.get(container.getServerInstanceId());
+    }
+
+    private ContainerCardPresenter buildContainer( final Container container) {
         final ContainerCardPresenter cardPresenter = cardPresenterProvider.get();
         cardPresenter.setup( container.getServerInstanceKey(), container );
-        if(addCard) {
-            view.addCard( cardPresenter.getView().asWidget() );
-        }
         return cardPresenter;
-    }
-
-    private void index( final Container container,
-                        final ContainerCardPresenter cardPresenter ) {
-        if ( !index.containsKey( container.getServerInstanceKey().getServerInstanceId() ) ) {
-            index.put( container.getServerInstanceKey().getServerInstanceId(), new HashMap<String, ContainerCardPresenter>() );
-        }
-        index.get( container.getServerInstanceKey().getServerInstanceId() ).put( container.getContainerSpecId(), cardPresenter );
     }
 
 }

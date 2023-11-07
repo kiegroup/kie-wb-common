@@ -40,6 +40,8 @@ public class ContainerCardPresenter {
         void setCard( CardPresenter.View card );
 
         void delete();
+
+        void removeCard(CardPresenter.View card);
     }
 
     private final View view;

@@ -24,6 +24,7 @@ import org.jboss.errai.common.client.api.Caller;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.kie.server.api.model.KieContainerStatus;
 import org.kie.server.api.model.Message;
 import org.kie.server.controller.api.model.events.ServerInstanceUpdated;
 import org.kie.server.controller.api.model.runtime.Container;
@@ -44,6 +45,7 @@ import org.uberfire.mocks.EventSourceMock;
 import org.uberfire.workbench.events.NotificationEvent;
 
 import static org.junit.Assert.*;
+import static org.mockito.Matchers.anyCollectionOf;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -128,6 +130,7 @@ public class RemotePresenterTest {
     public void testSelectAndRefresh() {
         final ServerInstanceKey serverInstanceKey = new ServerInstanceKey( "templateId", "serverName", "serverInstanceId", "url" );
         final Container container = new Container( "containerSpecId", "containerName", serverInstanceKey, Collections.<Message>emptyList(), null, null );
+        container.setStatus(KieContainerStatus.STARTED);
         final List<Container> containers = Collections.singletonList( container );
         when( runtimeManagementService.getContainersByServerInstance(
                 serverInstanceKey.getServerTemplateId(),
@@ -137,7 +140,7 @@ public class RemotePresenterTest {
 
         presenter.onSelect( new ServerInstanceSelected( serverInstanceKey ) );
 
-        verify( view ).clear();
+
         verify( view ).setServerName( serverInstanceKey.getServerName() );
         verify( view ).setServerURL( serverInstanceKey.getUrl() );
         verify( remoteStatusPresenter ).setup( containers );
@@ -155,7 +158,7 @@ public class RemotePresenterTest {
 
         presenter.onSelect( new ServerInstanceSelected( serverInstanceKey ) );
 
-        verify( view ).clear();
+        verify( remoteStatusPresenter, times( 1 ) ).setup(anyCollectionOf(Container.class));
         verify( view ).setServerName( serverInstanceKey.getServerName() );
         verify( view ).setServerURL( serverInstanceKey.getUrl() );
         verify( view ).setEmptyView( remoteEmptyPresenter.getView() );
@@ -168,10 +171,10 @@ public class RemotePresenterTest {
 
         presenter.onInstanceUpdate( new ServerInstanceUpdated( serverInstance ) );
 
-        verify( view, times( 2 ) ).clear();
+        verify( remoteStatusPresenter, times( 2 ) ).setup(anyCollectionOf(Container.class));
         verify( view, times( 2 ) ).setServerName( serverInstance.getServerName() );
         verify( view, times( 2 ) ).setServerURL( serverInstance.getUrl() );
-        verify( view, times( 2 ) ).setEmptyView( remoteEmptyPresenter.getView() );
+        verify( view, times( 1 ) ).setEmptyView( remoteEmptyPresenter.getView() );
     }
 
     @Test
@@ -182,7 +185,6 @@ public class RemotePresenterTest {
         final ServerInstance serverInstance2 = new ServerInstance( "templateId2", "serverName2", "serverInstanceId2", "url", "1.0", Collections.<Message>emptyList(), Collections.<Container>emptyList() );
         presenter.onInstanceUpdate( new ServerInstanceUpdated( serverInstance2 ) );
 
-        verify( view ).clear();
         verify( view ).setServerName( serverInstance.getServerName() );
         verify( view ).setServerURL( serverInstance.getUrl() );
         verify( view ).setEmptyView( remoteEmptyPresenter.getView() );
