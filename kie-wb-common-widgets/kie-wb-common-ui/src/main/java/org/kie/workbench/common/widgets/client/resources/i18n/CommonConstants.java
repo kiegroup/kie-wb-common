@@ -260,6 +260,8 @@ public interface CommonConstants
 
     String English();
 
+    String Italian();
+
     String ResetPerspectivesTooltip();
 
     String PromptResetPerspectives();
