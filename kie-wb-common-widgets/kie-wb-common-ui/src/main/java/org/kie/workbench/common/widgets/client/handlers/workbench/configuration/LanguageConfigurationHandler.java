@@ -48,6 +48,8 @@ public class LanguageConfigurationHandler extends WorkbenchConfigurationHandler 
                         constants.French());
         languageMap.put("ja",
                         constants.Japanese());
+        languageMap.put("it",
+                        constants.Italian());
 
     }
 
