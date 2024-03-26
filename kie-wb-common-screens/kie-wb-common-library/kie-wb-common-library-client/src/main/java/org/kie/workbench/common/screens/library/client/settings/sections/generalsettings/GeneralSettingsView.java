@@ -280,6 +280,11 @@ public class GeneralSettingsView implements GeneralSettingsPresenter.View {
     }
 
     @Override
+    public String getDescriptionTooLongMessage() {
+        return translationService.format(LibraryConstants.DescriptionTooLong);
+    }
+
+    @Override
     public String getTitle() {
         return title.textContent;
     }
