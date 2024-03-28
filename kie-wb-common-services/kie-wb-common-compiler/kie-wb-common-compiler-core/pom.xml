@@ -260,8 +260,8 @@
           <artifactId>kie-soup-maven-integration</artifactId>
         </exclusion>
         <exclusion>
-          <groupId>org.eclipse.aether</groupId>
-          <artifactId>aether-util</artifactId>
+          <groupId>org.apache.maven.resolver</groupId>
+          <artifactId>maven-resolver-util</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -395,8 +395,8 @@
       <artifactId>maven-core</artifactId>
       <exclusions>
         <exclusion>
-          <groupId>org.eclipse.aether</groupId>
-          <artifactId>aether-util</artifactId>
+          <groupId>org.apache.maven.resolver</groupId>
+          <artifactId>maven-resolver-util</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -457,7 +457,7 @@
     </dependency>
 
     <dependency>
-      <groupId>org.sonatype.plexus</groupId>
+      <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-sec-dispatcher</artifactId>
     </dependency>
 
@@ -494,13 +494,13 @@
     </dependency>
 
     <dependency>
-      <groupId>org.eclipse.aether</groupId>
-      <artifactId>aether-api</artifactId>
+      <groupId>org.apache.maven.resolver</groupId>
+      <artifactId>maven-resolver-api</artifactId>
     </dependency>
 
     <dependency>
-      <groupId>org.eclipse.aether</groupId>
-      <artifactId>aether-impl</artifactId>
+      <groupId>org.apache.maven.resolver</groupId>
+      <artifactId>maven-resolver-impl</artifactId>
       <scope>runtime</scope>
     </dependency>
 

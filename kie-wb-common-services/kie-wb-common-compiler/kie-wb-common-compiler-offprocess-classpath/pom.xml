@@ -87,8 +87,8 @@
     </dependency>
 
     <dependency>
-      <groupId>org.eclipse.aether</groupId>
-      <artifactId>aether-api</artifactId>
+      <groupId>org.apache.maven.resolver</groupId>
+      <artifactId>maven-resolver-api</artifactId>
     </dependency>
 
     <dependency>
@@ -471,7 +471,7 @@
     </dependency>
 
     <dependency>
-      <groupId>org.sonatype.plexus</groupId>
+      <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-sec-dispatcher</artifactId>
     </dependency>
 

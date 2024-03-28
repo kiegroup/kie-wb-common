@@ -127,6 +127,14 @@
           <groupId>io.netty</groupId>
           <artifactId>netty-transport-native-epoll</artifactId>
         </exclusion>
+        <exclusion>
+          <groupId>org.sonatype.plexus</groupId>
+          <artifactId>plexus-cipher</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.sonatype.plexus</groupId>
+          <artifactId>plexus-sec-dispatcher</artifactId>
+        </exclusion>
       </exclusions>
     </dependency>
     <dependency>

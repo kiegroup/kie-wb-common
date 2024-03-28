@@ -20,7 +20,8 @@ package org.kie.workbench.common.services.backend.compiler.configuration;
  */
 public class MavenConfig {
 
-    public static final String DEPS_IN_MEMORY_BUILD_CLASSPATH = "org.kie.workbench.services:kie-wb-common-compiler-maven-plugins:build-classpath";
+    public static final String DEPS_IN_MEMORY_BUILD_CLASSPATH = "org.kie.workbench.services:kie-wb-common-compiler-maven-plugins:"
+            + new ConfigurationUtil().loadKieVersionProperties().getProperty("KIE_VERSION") + ":build-classpath";
 
     public static final String MAVEN_DEP_PLUGING_LOCAL_REPOSITORY = "-Dmdep.localRepoProperty=";
 

@@ -16,6 +16,7 @@
 
   <properties>
     <java.module.name>org.kie.wb.common.services.backend.compiler.maven.plugins</java.module.name>
+    <version.org.apache.maven.plugins.dependency>3.6.1</version.org.apache.maven.plugins.dependency>
   </properties>
 
   <build>
@@ -133,6 +134,10 @@
         <exclusion>
           <groupId>org.apache.maven.reporting</groupId>
           <artifactId>maven-reporting-impl</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>javax.inject</groupId>
+          <artifactId>javax.inject</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
