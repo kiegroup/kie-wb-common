@@ -1227,7 +1227,7 @@ public class ReusableAFMavenCli {
         final String threadConfiguration = commandLine.hasOption(CLIManager.THREADS)
                 ? commandLine.getOptionValue(CLIManager.THREADS)
                 : request.getSystemProperties().getProperty(
-                MavenCli.THREADS_DEPRECATED); // TODO: Remove this setting. Note that the int-tests use it
+                "maven.threads.experimental"); // TODO: Remove this setting. Note that the int-tests use it
 
         if (threadConfiguration != null) {
             //
@@ -1259,7 +1259,7 @@ public class ReusableAFMavenCli {
     }
 
     protected TransferListener getConsoleTransferListener() {
-        return new ConsoleMavenTransferListener(output);
+        return new ConsoleMavenTransferListener(output, true);
     }
 
     //
