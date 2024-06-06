@@ -793,4 +793,7 @@ public class LibraryConstants {
 
     @TranslationKey(defaultValue = "")
     public static final String InvalidProjectPath = "InvalidProjectPath";
+
+    @TranslationKey(defaultValue = "")
+    public static String DescriptionTooLong = "DescriptionTooLong";
 }

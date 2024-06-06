@@ -224,6 +224,25 @@ public class AddProjectPopUpPresenterTest {
     }
 
     @Test
+    public void newProjectIsCreatedDescriptionIsTooLong() throws Exception {
+        final OrganizationalUnit organizationalUnit = mock(OrganizationalUnit.class);
+        when(projectContext.getActiveOrganizationalUnit()).thenReturn(Optional.of(organizationalUnit));
+
+        doReturn("test").when(view).getName();
+        doReturn(get3001CharString()).when(view).getDescription();
+
+        presenter.add();
+
+
+        verify(libraryService, never()).createProject(
+                any(),
+                any(),
+                any(),
+                Mockito.<String> any()
+        );
+    }
+
+    @Test
     public void newWorkbenchProjectWithAdvancedSettingsIsCreated() throws Exception {
         final OrganizationalUnit organizationalUnit = mock(OrganizationalUnit.class);
         when(projectContext.getActiveOrganizationalUnit()).thenReturn(Optional.of(organizationalUnit));
@@ -259,7 +278,29 @@ public class AddProjectPopUpPresenterTest {
         assertEquals("org.kie", pom.getBuild().getPlugins().get(0).getGroupId());
         assertEquals("kie-maven-plugin", pom.getBuild().getPlugins().get(0).getArtifactId());
     }
-    
+
+    @Test
+    public void newWorkbenchProjectWithAdvancedSettingsTooLongDescription() throws Exception {
+        final OrganizationalUnit organizationalUnit = mock(OrganizationalUnit.class);
+        when(projectContext.getActiveOrganizationalUnit()).thenReturn(Optional.of(organizationalUnit));
+
+        doReturn("test").when(view).getName();
+        doReturn(get3001CharString()).when(view).getDescription();
+        doReturn("groupId").when(view).getGroupId();
+        doReturn("artifactId").when(view).getArtifactId();
+        doReturn("version").when(view).getVersion();
+        doReturn(true).when(view).isAdvancedOptionsSelected();
+
+        presenter.add();
+
+        verify(libraryService, never()).createProject(
+                any(),
+                any(),
+                any(),
+                Mockito.<String> any());
+
+    }
+
     @Test
     public void newWorkbenchProjectWithQuickSettingsIsCreated() throws Exception {
         final OrganizationalUnit organizationalUnit = mock(OrganizationalUnit.class);
@@ -775,5 +816,13 @@ public class AddProjectPopUpPresenterTest {
                                   0);
         verify(view).enableBasedOnTemplatesCheckbox(false);
         verify(view).enableTemplatesSelect(false);
+    }
+
+    private static String get3001CharString() {
+        StringBuilder builder = new StringBuilder();
+        for (int i = 0; i < 3001; i++) {
+            builder.append("x");
+        }
+        return builder.toString();
     }
 }

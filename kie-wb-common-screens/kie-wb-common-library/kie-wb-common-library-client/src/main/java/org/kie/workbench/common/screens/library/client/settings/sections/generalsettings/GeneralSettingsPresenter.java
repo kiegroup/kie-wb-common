@@ -40,6 +40,8 @@ import org.uberfire.client.promise.Promises;
 
 public class GeneralSettingsPresenter extends Section<ProjectScreenModel> {
 
+    private static final int DESCRIPTION_MAX_LENGTH = 3000;
+
     public interface View extends SectionView<GeneralSettingsPresenter> {
 
         String getName();
@@ -93,6 +95,8 @@ public class GeneralSettingsPresenter extends Section<ProjectScreenModel> {
         String getInvalidVersionMessage();
 
         String getDuplicatedProjectNameMessage();
+
+        String getDescriptionTooLongMessage();
     }
 
 
@@ -179,7 +183,10 @@ public class GeneralSettingsPresenter extends Section<ProjectScreenModel> {
 
                 validateStringIsNotEmpty(pom.getGav().getVersion(), view.getEmptyVersionMessage())
                         .then(o -> executeValidation(s -> s.validateGAVVersion(pom.getGav().getVersion()), view.getInvalidVersionMessage()))
-                        .catch_(this::showErrorAndReject)
+                        .catch_(this::showErrorAndReject),
+
+
+                validateDescriptionLength().catch_(this::showErrorAndReject)
         );
     }
 
@@ -199,6 +206,16 @@ public class GeneralSettingsPresenter extends Section<ProjectScreenModel> {
         return promises.create((resolve, reject) -> {
             if (string == null || string.isEmpty()) {
                 reject.onInvoke(errorMessage);
+            } else {
+                resolve.onInvoke(true);
+            }
+        });
+    }
+
+    private Promise<Object> validateDescriptionLength() {
+        return promises.create((resolve, reject) -> {
+            if(pom.getDescription() != null && pom.getDescription().length() > DESCRIPTION_MAX_LENGTH){
+               reject.onInvoke(view.getDescriptionTooLongMessage());
             } else {
                 resolve.onInvoke(true);
             }
