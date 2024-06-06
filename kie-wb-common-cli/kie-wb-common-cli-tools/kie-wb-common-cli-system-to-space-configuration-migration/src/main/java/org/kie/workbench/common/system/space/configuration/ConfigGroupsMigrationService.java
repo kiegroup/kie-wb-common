@@ -16,7 +16,10 @@
 
 package org.kie.workbench.common.system.space.configuration;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.Collection;
+import java.util.List;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -51,6 +54,8 @@ public class ConfigGroupsMigrationService {
 
     public void moveDataToSpaceConfigRepo() {
         Collection<ConfigGroup> groups = configurationService.getConfiguration(ConfigType.SPACE);
+        encodeGroupNames(groups);
+
         if (groups != null) {
             for (ConfigGroup groupConfig : groups) {
                 saveSpaceInfo(configGroupToSpaceInfoConverter.toSpaceInfo(groupConfig));
@@ -64,5 +69,24 @@ public class ConfigGroupsMigrationService {
 
     void saveSpaceInfo(SpaceInfo spaceInfo) {
         spaceConfigStorageRegistry.get(spaceInfo.getName()).saveSpaceInfo(spaceInfo);
+    }
+
+    /**
+     * Group names with whitespace in them will fail to construct a valid URI, therefore
+     * failing the migration.
+     * URL encode all group names to handle whitespace.
+     */
+    private void encodeGroupNames(Collection<ConfigGroup> groups) {
+        configurationService.startBatch();
+        groups.forEach(group -> group.setName(encodeGroupName(group.getName())));
+        configurationService.endBatch();
+    }
+
+    private String encodeGroupName(String name) {
+        try {
+            return URLEncoder.encode(name, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException("Unable to encode group name.");
+        }
     }
 }
