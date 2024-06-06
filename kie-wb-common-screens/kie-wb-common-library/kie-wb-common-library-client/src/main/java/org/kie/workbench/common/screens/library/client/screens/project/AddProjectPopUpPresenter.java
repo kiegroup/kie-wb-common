@@ -70,6 +70,8 @@ import org.uberfire.workbench.events.NotificationEvent;
 
 public class AddProjectPopUpPresenter {
 
+    private final static int DESCRIPTION_MAX_LENGTH = 3000;
+
     public interface View extends UberElement<AddProjectPopUpPresenter>,
                                   HasBusyIndicator {
 
@@ -133,6 +135,8 @@ public class AddProjectPopUpPresenter {
         void enableBasedOnTemplatesCheckbox(boolean isEnabled);
 
         void enableTemplatesSelect(boolean isEnabled);
+
+        String getDescriptionTooLongMessage();
     }
 
     private Caller<LibraryService> libraryService;
@@ -300,6 +304,7 @@ public class AddProjectPopUpPresenter {
                        groupId,
                        artifactId,
                        version,
+                       description,
                        () -> {
                            Map<Class<? extends Throwable>, CommandWithThrowableDrivenErrorCallback.CommandWithThrowable> errors = new HashMap<Class<? extends Throwable>, CommandWithThrowableDrivenErrorCallback.CommandWithThrowable>() {{
                                put(GAVAlreadyExistsException.class, exception -> handleGAVAlreadyExistsException((GAVAlreadyExistsException) exception));
@@ -358,6 +363,7 @@ public class AddProjectPopUpPresenter {
                                 final String groupId,
                                 final String artifactId,
                                 final String version,
+                                final String description,
                                 final Command successCallback) {
         final Command validateVersion = () -> validateVersion(version,
                                                               successCallback);
@@ -365,8 +371,15 @@ public class AddProjectPopUpPresenter {
                                                                     validateVersion);
         final Command validateGroupId = () -> validateGroupId(groupId,
                                                               validateArtifactId);
-        validateName(name,
-                     view.isAdvancedOptionsSelected() ? validateGroupId : successCallback);
+
+
+        if (!isDescriptionValid(description)) {
+            endProjectCreation();
+            view.showError(view.getDescriptionTooLongMessage());
+        } else {
+            validateName(name,
+                    view.isAdvancedOptionsSelected() ? validateGroupId : successCallback);
+        }
     }
 
     private void validateName(final String name,
@@ -387,6 +400,10 @@ public class AddProjectPopUpPresenter {
                 view.showError(view.getInvalidNameMessage());
             }
         }).isProjectNameValid(name);
+    }
+
+    private boolean isDescriptionValid(final String description) {
+        return description == null || description.length() <= DESCRIPTION_MAX_LENGTH;
     }
 
     private void validateGroupId(final String groupId,

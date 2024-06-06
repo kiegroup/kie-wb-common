@@ -36,7 +36,8 @@ public class LibraryProjectPreferences implements BasePreference<LibraryProjectP
     String version;
 
     @Property(bundleKey = "LibraryProjectPreferences.Description",
-            helpBundleKey = "LibraryProjectPreferences.Description.Help")
+            helpBundleKey = "LibraryProjectPreferences.Description.Help",
+            validators = {DescriptionLengthValidator.class})
     String description;
 
     @Property(bundleKey = "LibraryProjectPreferences.Branch",
