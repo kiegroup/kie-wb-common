@@ -125,9 +125,7 @@ public class DMNDomainValidatorImpl implements DMNDomainValidator {
 
             final Reader[] aDMNXMLReaders = new Reader[]{};
 
-            final ClassLoader classLoader = getClassLoader(diagram);
-
-            final DMNValidator dmnValidator = getDmnValidator(classLoader);
+            final DMNValidator dmnValidator = getDmnValidator(diagram);
 
             final List<DMNMessage> messages = dmnValidator
                     .validateUsing(DMNValidator.Validation.VALIDATE_MODEL,
@@ -148,8 +146,12 @@ public class DMNDomainValidatorImpl implements DMNDomainValidator {
         }
     }
 
-    DMNValidator getDmnValidator(final ClassLoader classLoader) {
-        return DMNValidatorFactory.newValidator(classLoader, Collections.emptyList());
+    DMNValidator getDmnValidator(Diagram diagram) {
+        final ClassLoader classLoader = getClassLoader(diagram);
+
+        return classLoader != null ?
+                DMNValidatorFactory.newValidator(classLoader, Collections.emptyList()) :
+                DMNValidatorFactory.newValidator();
     }
 
     ClassLoader getClassLoader(final Diagram diagram) {
@@ -157,8 +159,10 @@ public class DMNDomainValidatorImpl implements DMNDomainValidator {
         final WorkspaceProject project = workspaceProjectService.resolveProject(path);
         final Module module = project.getMainModule();
         final BuildHelper.BuildResult result = buildHelper.build(module);
-        final ClassLoader classLoader = ((InternalKieModule) result.getBuilder().getKieModuleIgnoringErrors()).getModuleClassLoader();
-        return classLoader;
+        if (result.getBuilder() != null) {
+            return ((InternalKieModule) result.getBuilder().getKieModuleIgnoringErrors()).getModuleClassLoader();
+        }
+        return null;
     }
 
     DMNValidator.ValidatorBuilder.ValidatorImportReaderResolver getValidatorImportReaderResolver(final Metadata metadata) {
