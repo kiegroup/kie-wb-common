@@ -296,6 +296,69 @@ public class GeneralSettingsPresenterTest {
     }
 
     @Test
+    public void testValidateDescriptionDescriptionOk() {
+
+        generalSettingsPresenter.pom = new POM("",
+                null,
+                "",
+                new GAV());
+
+        doReturn("DescriptionTooLong").when(view).getDescriptionTooLongMessage();
+        StringBuilder builder = new StringBuilder();
+        for (int i = 0; i < 3000; i++) {
+            builder.append("x");
+        }
+        generalSettingsPresenter.setDescription(builder.toString());
+
+        generalSettingsPresenter.validate().then(i -> {
+            Assert.fail("Promise should've not been resolved!");
+            return promises.resolve();
+        });
+
+        verify(generalSettingsPresenter, never()).showErrorAndReject(eq("DescriptionTooLong"));
+    }
+    @Test
+    public void testValidateDescriptionDescriptionNull() {
+
+        generalSettingsPresenter.pom = new POM("",
+                null,
+                "",
+                new GAV());
+
+        doReturn("DescriptionTooLong").when(view).getDescriptionTooLongMessage();
+
+        generalSettingsPresenter.validate().then(i -> {
+            Assert.fail("Promise should've not been resolved!");
+            return promises.resolve();
+        });
+
+        verify(generalSettingsPresenter, never()).showErrorAndReject(eq("DescriptionTooLong"));
+    }
+
+    @Test
+    public void testValidateDescriptionDescriptionTooLong() {
+
+        generalSettingsPresenter.pom = new POM("",
+                null,
+                "",
+                new GAV());
+
+        doReturn("DescriptionTooLong").when(view).getDescriptionTooLongMessage();
+        StringBuilder builder = new StringBuilder();
+        for (int i = 0; i < 3001; i++) {
+            builder.append("x");
+        }
+        generalSettingsPresenter.setDescription(builder.toString());
+
+        generalSettingsPresenter.validate().then(i -> {
+            Assert.fail("Promise should've not been resolved!");
+            return promises.resolve();
+        });
+
+        verify(generalSettingsPresenter).showErrorAndReject(eq("DescriptionTooLong"));
+    }
+
+    @Test
     public void testShowErrorAndRejectWithException() {
         final RuntimeException testException = new RuntimeException("Test message");
         doNothing().when(view).showError(any());

@@ -310,6 +310,11 @@ public class AddProjectPopUpView implements AddProjectPopUpPresenter.View,
         enableBasedOnTemplate(isEnabled);
     }
 
+    @Override
+    public String getDescriptionTooLongMessage() {
+        return ts.format(LibraryConstants.DescriptionTooLong);
+    }
+
     private void modalSetup() {
         this.modal = new CommonModalBuilder()
                 .addHeader(ts.format(LibraryConstants.AddProject))
