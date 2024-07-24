@@ -17,10 +17,10 @@
 package org.kie.workbench.common.screens.server.management.client.widget;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import com.google.gwt.dev.util.collect.HashSet;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
@@ -41,9 +41,9 @@ import static org.mockito.Mockito.*;
 @WithClassesToStub({ Anchor.class })
 public class CustomGroupItemTest {
 
-    public Set<String> styles = new HashSet<String>();
-    public List<String> text = new ArrayList<String>();
-    public List<IconType> icon = new ArrayList<IconType>();
+    public Set<String> styles = new HashSet<>();
+    public List<String> text = new ArrayList<>();
+    public List<IconType> icon = new ArrayList<>();
     public ClickHandler clickHandler = null;
     final Command command = mock( Command.class );
 

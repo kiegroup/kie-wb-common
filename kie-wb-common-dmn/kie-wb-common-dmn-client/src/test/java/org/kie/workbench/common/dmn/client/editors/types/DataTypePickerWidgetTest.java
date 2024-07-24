@@ -20,8 +20,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+import com.google.common.collect.Ordering;
 import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.thirdparty.guava.common.collect.Ordering;
 import com.google.gwtmockito.GwtMock;
 import com.google.gwtmockito.GwtMockitoTestRunner;
 import org.gwtbootstrap3.extras.select.client.ui.OptGroup;

@@ -170,13 +170,15 @@ public class StringUtils {
      */
     public static Set<String> getSetDataTypes(String value) {
         Set<String> types = new HashSet<>();
-        if (value == null) {
+        if (value == null || value.isEmpty()) {
             return types;
         }
         final String[] split = value.split(",");
-        for (String string : split) {
-            String type = string.substring(string.indexOf(':') + 1, string.lastIndexOf(':'));
-            types.add(type);
+        for (String dataType : split) {
+            if (dataType.chars().filter(ch -> ch == ':').count() == 2) {
+                String type = dataType.substring(dataType.indexOf(':') + 1, dataType.lastIndexOf(':'));
+                types.add(type);
+            }
         }
 
         return types;

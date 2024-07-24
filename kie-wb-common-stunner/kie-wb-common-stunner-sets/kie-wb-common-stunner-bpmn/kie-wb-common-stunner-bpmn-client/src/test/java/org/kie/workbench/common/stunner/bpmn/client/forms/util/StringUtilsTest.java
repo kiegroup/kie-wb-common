@@ -217,6 +217,12 @@ public class StringUtilsTest {
         assertTrue("Data Type not the same", setDataTypes.contains("com.var"));
 
         setDataTypes = StringUtils.getSetDataTypes(null);
-        assertTrue("Data Types must be empty", setDataTypes.size() == 0);
+        assertTrue("Data Types must be empty", setDataTypes.isEmpty());
+
+        setDataTypes = StringUtils.getSetDataTypes("");
+        assertTrue("Data Types must be empty", setDataTypes.isEmpty());
+
+        setDataTypes = StringUtils.getSetDataTypes("var:com.var");
+        assertTrue("Invalid Data Types must be empty", setDataTypes.isEmpty());
     }
 }

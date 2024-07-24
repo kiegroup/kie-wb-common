@@ -30,9 +30,9 @@ import org.uberfire.mvp.Command;
 import org.uberfire.workbench.model.menu.MenuItem;
 import org.uberfire.workbench.model.menu.impl.BaseMenuCustom;
 
-import static com.ibm.icu.impl.Assert.fail;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -111,7 +111,7 @@ public class ProjectEditorMenuSessionItemsTest {
         try {
             editorMenuSessionItems.setItemEnabled(ClientSessionCommand.class, true);
         } catch (Exception e) {
-            fail(e);
+            fail(e.getMessage());
         }
     }
 
@@ -147,7 +147,7 @@ public class ProjectEditorMenuSessionItemsTest {
         try {
             assertFalse(editorMenuSessionItems.isItemEnabled(ClearSessionCommand.class));
         } catch (Exception e) {
-            fail(e);
+            fail(e.getMessage());
         }
     }
 }
