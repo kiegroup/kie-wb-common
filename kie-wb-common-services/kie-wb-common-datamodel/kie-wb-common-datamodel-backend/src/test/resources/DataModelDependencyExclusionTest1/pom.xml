@@ -20,7 +20,7 @@
 
     <!-- Provided scoped dependencies should not be in DMO -->
     <dependency>
-      <groupId>com.google.gwt</groupId>
+      <groupId>org.gwtproject</groupId>
       <artifactId>gwt-user</artifactId>
       <version>2.7.0</version>
       <scope>provided</scope>
