@@ -69,12 +69,9 @@ public class GenerationEngine {
             // Init velocity engine
             Properties properties = new Properties();
 
-            properties.setProperty("resource.loader", "class");
-            properties.setProperty("class.resource.loader.description", "Velocity Classpath Resource Loader");
-            properties.setProperty("class.resource.loader.class", "org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader");
-
-            //TODO REVIEW THIS
-            properties.setProperty( RuntimeConstants.RUNTIME_LOG_LOGSYSTEM_CLASS, "org.apache.velocity.runtime.log.JdkLogChute");
+            properties.setProperty("resource.loaders", "class");
+            properties.setProperty("resource.loader.class.description", "Velocity Classpath Resource Loader");
+            properties.setProperty("resource.loader.class.class", "org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader");
 
             // init velocity engine
             velocityEngine.init(properties);

@@ -87,7 +87,7 @@
     <!-- code adf dependencies -->
     <dependency>
       <groupId>org.apache.velocity</groupId>
-      <artifactId>velocity</artifactId>
+      <artifactId>velocity-engine-core</artifactId>
     </dependency>
 
     <!-- java parser dependencies -->
