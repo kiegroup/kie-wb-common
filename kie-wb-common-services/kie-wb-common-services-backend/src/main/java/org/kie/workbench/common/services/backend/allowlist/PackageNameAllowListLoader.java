@@ -16,8 +16,8 @@
 
 package org.kie.workbench.common.services.backend.allowlist;
 
-import java.io.IOException;
 import java.io.StringReader;
+import java.io.UncheckedIOException;
 import java.util.Collections;
 import java.util.List;
 import javax.inject.Inject;
@@ -80,7 +80,7 @@ public class PackageNameAllowListLoader
         } else {
             try {
                 return IOUtils.readLines( new StringReader( content ) );
-            } catch ( IOException ioe ) {
+            } catch ( UncheckedIOException ioe ) {
                 logger.warn( "Unable to parse package names from '" + content + "'. Falling back to empty list." );
                 return Collections.emptyList();
             }
