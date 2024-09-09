@@ -16,9 +16,9 @@
 
 package org.kie.workbench.common.workbench.client.entrypoint;
 
+import java.util.HashMap;
 import java.util.Map;
 
-import com.google.gwt.dev.util.collect.HashMap;
 import com.google.gwtmockito.GwtMockitoTestRunner;
 import org.guvnor.common.services.shared.config.AppConfigService;
 import org.jboss.errai.bus.client.api.messaging.Message;

@@ -33,9 +33,6 @@
   <properties>
     <java.module.name>org.kie.wb.common.stunner.bpmn.api</java.module.name>
     <jacoco.line.coveredratio.minimum>0.0</jacoco.line.coveredratio.minimum>
-
-    <!-- GWTTestCases need this Jetty version to work correctly. -->
-    <version.org.eclipse.jetty>9.2.14.v20151106</version.org.eclipse.jetty>
   </properties>
 
   <dependencies>
@@ -96,7 +93,7 @@
     <!-- GWT. -->
 
     <dependency>
-      <groupId>com.google.gwt</groupId>
+      <groupId>org.gwtproject</groupId>
       <artifactId>gwt-user</artifactId>
       <scope>provided</scope>
     </dependency>
@@ -242,7 +239,7 @@
     </dependency>
 
     <dependency>
-      <groupId>com.google.gwt</groupId>
+      <groupId>org.gwtproject</groupId>
       <artifactId>gwt-dev</artifactId>
       <scope>test</scope>
       <exclusions>
