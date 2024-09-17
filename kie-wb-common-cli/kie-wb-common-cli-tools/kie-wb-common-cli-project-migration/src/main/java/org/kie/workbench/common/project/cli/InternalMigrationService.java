@@ -16,6 +16,8 @@
 package org.kie.workbench.common.project.cli;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collection;
@@ -82,6 +84,8 @@ public class InternalMigrationService {
     public void migrateAllProjects(Path niogitDir) {
         List<ConfigGroup> orgUnitConfigs = configService.getConfiguration(ConfigType.ORGANIZATIONAL_UNIT);
         List<ConfigGroup> repoConfigs = configService.getConfiguration(ConfigType.REPOSITORY);
+        encodeGroupNames(orgUnitConfigs, repoConfigs);
+
         Map<String, String> orgUnitByRepo = getOrgUnitsByRepo(orgUnitConfigs);
 
         if (repoConfigs.isEmpty()) {
@@ -227,5 +231,25 @@ public class InternalMigrationService {
                                                                                 group.getName())));
                 });
         return orgUnitByRepo;
+    }
+
+    /**
+     * Group names with whitespace in them will fail to construct a valid URI, therefore
+     * failing the migration.
+     * URL encode all group names to handle whitespace.
+     */
+    private void encodeGroupNames(Collection<ConfigGroup> orgUnitConfigs, Collection<ConfigGroup> repoConfigs) {
+        configService.startBatch();
+        orgUnitConfigs.forEach(group -> group.setName(encodeGroupName(group.getName())));
+        repoConfigs.forEach(group -> group.setName(encodeGroupName(group.getName())));
+        configService.endBatch();
+    }
+
+    private String encodeGroupName(String name) {
+        try {
+            return URLEncoder.encode(name, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException("Unable to encode group name.");
+        }
     }
 }
