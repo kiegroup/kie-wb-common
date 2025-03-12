@@ -374,15 +374,10 @@ public class AddProjectPopUpPresenter {
                                                                     validateVersion);
         final Command validateGroupId = () -> validateGroupId(groupId,
                                                               validateArtifactId);
+        final Command validateName = () -> validateName(name,
+                view.isAdvancedOptionsSelected() ? validateGroupId : successCallback);
 
-
-        if (!isDescriptionValid(description)) {
-            endProjectCreation();
-            view.showError(view.getDescriptionTooLongMessage());
-        } else {
-            validateName(name,
-                    view.isAdvancedOptionsSelected() ? validateGroupId : successCallback);
-        }
+        validateDescription(description, validateName);
     }
 
     private void validateName(final String name,
@@ -393,7 +388,7 @@ public class AddProjectPopUpPresenter {
             return;
         }
 
-        if (name.length() <= NAME_MAX_LENGTH) {
+        if (name.length() > NAME_MAX_LENGTH) {
             endProjectCreation();
             view.showError(view.getNameTooLongMessage());
             return;
@@ -411,8 +406,15 @@ public class AddProjectPopUpPresenter {
         }).isProjectNameValid(name);
     }
 
-    private boolean isDescriptionValid(final String description) {
-        return description == null || description.length() <= DESCRIPTION_MAX_LENGTH;
+    private void validateDescription(final String description, final Command successCallback) {
+        if(description == null || description.length() > DESCRIPTION_MAX_LENGTH) {
+            endProjectCreation();
+            view.showError(view.getDescriptionTooLongMessage());
+        } else {
+            if (successCallback != null) {
+                successCallback.execute();
+            }
+        }
     }
 
     private void validateGroupId(final String groupId,

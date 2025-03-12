@@ -174,7 +174,6 @@ public class GeneralSettingsPresenter extends Section<ProjectScreenModel> {
                                                                                        pom.getName(),
                                                                                        libraryPlaces.getActiveWorkspace()),
                                                      view.getDuplicatedProjectNameMessage()))
-                        .then(o -> validateNameLength())
                         .catch_(this::showErrorAndReject),
 
                 validateStringIsNotEmpty(pom.getGav().getGroupId(), view.getEmptyGroupIdMessage())
@@ -189,7 +188,7 @@ public class GeneralSettingsPresenter extends Section<ProjectScreenModel> {
                         .then(o -> executeValidation(s -> s.validateGAVVersion(pom.getGav().getVersion()), view.getInvalidVersionMessage()))
                         .catch_(this::showErrorAndReject),
 
-
+                validateNameLength().catch_(this::showErrorAndReject),
                 validateDescriptionLength().catch_(this::showErrorAndReject)
         );
     }
