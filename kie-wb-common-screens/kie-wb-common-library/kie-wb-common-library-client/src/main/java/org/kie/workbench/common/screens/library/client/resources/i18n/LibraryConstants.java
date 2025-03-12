@@ -796,4 +796,7 @@ public class LibraryConstants {
 
     @TranslationKey(defaultValue = "")
     public static String DescriptionTooLong = "DescriptionTooLong";
+
+    @TranslationKey(defaultValue = "")
+    public static String NameTooLong = "NameTooLong";
 }

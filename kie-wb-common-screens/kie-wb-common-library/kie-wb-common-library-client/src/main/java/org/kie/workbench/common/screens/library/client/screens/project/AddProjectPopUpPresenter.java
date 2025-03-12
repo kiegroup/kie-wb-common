@@ -71,6 +71,7 @@ import org.uberfire.workbench.events.NotificationEvent;
 public class AddProjectPopUpPresenter {
 
     private final static int DESCRIPTION_MAX_LENGTH = 3000;
+    private final static int NAME_MAX_LENGTH = 256;
 
     public interface View extends UberElement<AddProjectPopUpPresenter>,
                                   HasBusyIndicator {
@@ -137,6 +138,8 @@ public class AddProjectPopUpPresenter {
         void enableTemplatesSelect(boolean isEnabled);
 
         String getDescriptionTooLongMessage();
+
+        String getNameTooLongMessage();
     }
 
     private Caller<LibraryService> libraryService;
@@ -387,6 +390,12 @@ public class AddProjectPopUpPresenter {
         if (name == null || name.trim().isEmpty()) {
             endProjectCreation();
             view.showError(view.getEmptyNameMessage());
+            return;
+        }
+
+        if (name.length() <= NAME_MAX_LENGTH) {
+            endProjectCreation();
+            view.showError(view.getNameTooLongMessage());
             return;
         }
 

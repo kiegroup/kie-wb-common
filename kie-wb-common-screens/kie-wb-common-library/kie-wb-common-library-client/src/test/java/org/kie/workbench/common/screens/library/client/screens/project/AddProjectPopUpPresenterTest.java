@@ -175,6 +175,7 @@ public class AddProjectPopUpPresenterTest {
 
         doReturn("emptyNameMessage").when(view).getEmptyNameMessage();
         doReturn("invalidNameMessage").when(view).getInvalidNameMessage();
+        doReturn("nameTooLongMessage").when(view).getNameTooLongMessage();
         doReturn("duplicatedProjectMessage").when(view).getDuplicatedProjectMessage();
 
         libraryInfo = new LibraryInfo(new ArrayList<>());
@@ -229,7 +230,7 @@ public class AddProjectPopUpPresenterTest {
         when(projectContext.getActiveOrganizationalUnit()).thenReturn(Optional.of(organizationalUnit));
 
         doReturn("test").when(view).getName();
-        doReturn(get3001CharString()).when(view).getDescription();
+        doReturn(getCharString(3001)).when(view).getDescription();
 
         presenter.add();
 
@@ -285,7 +286,7 @@ public class AddProjectPopUpPresenterTest {
         when(projectContext.getActiveOrganizationalUnit()).thenReturn(Optional.of(organizationalUnit));
 
         doReturn("test").when(view).getName();
-        doReturn(get3001CharString()).when(view).getDescription();
+        doReturn(getCharString(3001)).when(view).getDescription();
         doReturn("groupId").when(view).getGroupId();
         doReturn("artifactId").when(view).getArtifactId();
         doReturn("version").when(view).getVersion();
@@ -437,6 +438,30 @@ public class AddProjectPopUpPresenterTest {
         verify(view).showError(Mockito.<String> any());
         verify(libraryPlaces,
                never()).goToProject(any(WorkspaceProject.class));
+        verify(view).setAddButtonEnabled(true);
+    }
+
+    @Test
+    public void createProjectWithNameTooLongTest() {
+        doReturn(getCharString(257)).when(view).getName();
+        doReturn("description").when(view).getDescription();
+        doReturn("groupId").when(view).getGroupId();
+        doReturn("artifactId").when(view).getArtifactId();
+        doReturn("version").when(view).getVersion();
+        doReturn(true).when(view).isAdvancedOptionsSelected();
+
+        presenter.add();
+
+        verify(view).setAddButtonEnabled(false);
+        verify(view).showBusyIndicator(Mockito.<String> any());
+        verify(newProjectEvent,
+                never()).fire(any(NewProjectEvent.class));
+        verify(view).hideBusyIndicator();
+        verify(view,
+                never()).hide();
+        verify(view).showError(Mockito.<String> any());
+        verify(libraryPlaces,
+                never()).goToProject(any(WorkspaceProject.class));
         verify(view).setAddButtonEnabled(true);
     }
 
@@ -818,9 +843,9 @@ public class AddProjectPopUpPresenterTest {
         verify(view).enableTemplatesSelect(false);
     }
 
-    private static String get3001CharString() {
+    private static String getCharString(int length) {
         StringBuilder builder = new StringBuilder();
-        for (int i = 0; i < 3001; i++) {
+        for (int i = 0; i < length; i++) {
             builder.append("x");
         }
         return builder.toString();
