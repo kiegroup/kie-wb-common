@@ -68,7 +68,7 @@ export class NewSpacePopup extends React.Component<Props, State> {
       });
 
     const nameTooLong = Promise.resolve().then(() => {
-      if (!newSpace.name || newSpace.name.length <= 256) {
+      if (newSpace.name.length > 256) {
         this.addErrorMessage(AppFormer.translate("NameTooLong", []));
         return Promise.reject();
       } else {
@@ -77,7 +77,7 @@ export class NewSpacePopup extends React.Component<Props, State> {
     });
 
     const descriptionTooLong = Promise.resolve().then(() => {
-      if (!newSpace.description || newSpace.description.length <= 3000) {
+      if (newSpace.description.length > 3000) {
         this.addErrorMessage(AppFormer.translate("DescriptionTooLong", []));
         return Promise.reject();
       } else {

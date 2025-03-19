@@ -189,6 +189,7 @@ public class GeneralSettingsPresenter extends Section<ProjectScreenModel> {
                         .catch_(this::showErrorAndReject),
 
                 validateNameLength().catch_(this::showErrorAndReject),
+
                 validateDescriptionLength().catch_(this::showErrorAndReject)
         );
     }
