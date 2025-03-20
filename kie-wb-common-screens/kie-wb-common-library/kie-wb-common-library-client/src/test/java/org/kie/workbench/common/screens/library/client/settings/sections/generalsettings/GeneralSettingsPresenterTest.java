@@ -296,6 +296,29 @@ public class GeneralSettingsPresenterTest {
     }
 
     @Test
+    public void testValidateNameTooLong() {
+
+        generalSettingsPresenter.pom = new POM("test",
+                null,
+                "",
+                new GAV());
+
+        doReturn("NameTooLong").when(view).getNameTooLongMessage();
+        StringBuilder builder = new StringBuilder();
+        for (int i = 0; i < 257; i++) {
+            builder.append("x");
+        }
+        generalSettingsPresenter.setName(builder.toString());
+        generalSettingsPresenter.validate().then(i -> {
+            Assert.fail("Promise should've not been resolved!");
+            return promises.resolve();
+        });
+
+        verify(generalSettingsPresenter).showErrorAndReject(eq("NameTooLong"));
+    }
+
+
+    @Test
     public void testValidateDescriptionDescriptionOk() {
 
         generalSettingsPresenter.pom = new POM("",
@@ -336,7 +359,7 @@ public class GeneralSettingsPresenterTest {
     }
 
     @Test
-    public void testValidateDescriptionDescriptionTooLong() {
+    public void testValidateDescriptionTooLong() {
 
         generalSettingsPresenter.pom = new POM("",
                 null,
@@ -357,7 +380,6 @@ public class GeneralSettingsPresenterTest {
 
         verify(generalSettingsPresenter).showErrorAndReject(eq("DescriptionTooLong"));
     }
-
     @Test
     public void testShowErrorAndRejectWithException() {
         final RuntimeException testException = new RuntimeException("Test message");

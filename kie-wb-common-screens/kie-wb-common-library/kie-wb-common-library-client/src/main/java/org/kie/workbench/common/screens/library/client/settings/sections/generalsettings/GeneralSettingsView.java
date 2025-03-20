@@ -234,6 +234,11 @@ public class GeneralSettingsView implements GeneralSettingsPresenter.View {
     }
 
     @Override
+    public String getNameTooLongMessage() {
+        return translationService.format(LibraryConstants.NameTooLong);
+    }
+
+    @Override
     public String getInvalidNameMessage() {
         return translationService.format(LibraryConstants.InvalidProjectName);
     }

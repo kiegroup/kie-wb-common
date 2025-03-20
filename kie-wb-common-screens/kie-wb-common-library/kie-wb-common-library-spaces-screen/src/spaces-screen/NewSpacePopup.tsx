@@ -67,6 +67,24 @@ export class NewSpacePopup extends React.Component<Props, State> {
         }
       });
 
+    const nameTooLong = Promise.resolve().then(() => {
+      if (newSpace.name.length > 256) {
+        this.addErrorMessage(AppFormer.translate("NameTooLong", []));
+        return Promise.reject();
+      } else {
+        return Promise.resolve();
+      }
+    });
+
+    const descriptionTooLong = Promise.resolve().then(() => {
+      if (newSpace.description.length > 3000) {
+        this.addErrorMessage(AppFormer.translate("DescriptionTooLong", []));
+        return Promise.reject();
+      } else {
+        return Promise.resolve();
+      }
+    });
+
     const validGroupId = Promise.resolve(true)
       .then(() => Service.fetchIsValidGroupIdName(newSpace.groupId))
       .then(isValidGroupId => {
@@ -80,7 +98,7 @@ export class NewSpacePopup extends React.Component<Props, State> {
 
     this.setState({ errorMessages: [] }, () =>
       Promise.resolve()
-        .then(() => Promise.all([emptyName, duplicatedName, validGroupId]))
+        .then(() => Promise.all([emptyName, duplicatedName, nameTooLong, descriptionTooLong, validGroupId]))
         .then(() => Service.createSpace(newSpace))
         .then(i => {
           AppFormer.fireEvent(

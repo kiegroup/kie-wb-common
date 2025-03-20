@@ -238,6 +238,11 @@ public class AddProjectPopUpView implements AddProjectPopUpPresenter.View,
     }
 
     @Override
+    public String getNameTooLongMessage() {
+        return ts.format(LibraryConstants.NameTooLong);
+    }
+
+    @Override
     public String getEmptyGroupIdMessage() {
         return ts.format(LibraryConstants.EmptyFieldValidation,
                          ts.getTranslation(LibraryConstants.GroupId));

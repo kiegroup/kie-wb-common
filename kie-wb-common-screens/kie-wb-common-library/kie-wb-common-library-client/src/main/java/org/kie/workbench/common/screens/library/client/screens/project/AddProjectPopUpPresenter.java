@@ -71,6 +71,7 @@ import org.uberfire.workbench.events.NotificationEvent;
 public class AddProjectPopUpPresenter {
 
     private final static int DESCRIPTION_MAX_LENGTH = 3000;
+    private final static int NAME_MAX_LENGTH = 256;
 
     public interface View extends UberElement<AddProjectPopUpPresenter>,
                                   HasBusyIndicator {
@@ -137,6 +138,8 @@ public class AddProjectPopUpPresenter {
         void enableTemplatesSelect(boolean isEnabled);
 
         String getDescriptionTooLongMessage();
+
+        String getNameTooLongMessage();
     }
 
     private Caller<LibraryService> libraryService;
@@ -371,15 +374,10 @@ public class AddProjectPopUpPresenter {
                                                                     validateVersion);
         final Command validateGroupId = () -> validateGroupId(groupId,
                                                               validateArtifactId);
+        final Command validateName = () -> validateName(name,
+                view.isAdvancedOptionsSelected() ? validateGroupId : successCallback);
 
-
-        if (!isDescriptionValid(description)) {
-            endProjectCreation();
-            view.showError(view.getDescriptionTooLongMessage());
-        } else {
-            validateName(name,
-                    view.isAdvancedOptionsSelected() ? validateGroupId : successCallback);
-        }
+        validateDescription(description, validateName);
     }
 
     private void validateName(final String name,
@@ -387,6 +385,12 @@ public class AddProjectPopUpPresenter {
         if (name == null || name.trim().isEmpty()) {
             endProjectCreation();
             view.showError(view.getEmptyNameMessage());
+            return;
+        }
+
+        if (name.length() > NAME_MAX_LENGTH) {
+            endProjectCreation();
+            view.showError(view.getNameTooLongMessage());
             return;
         }
 
@@ -402,8 +406,15 @@ public class AddProjectPopUpPresenter {
         }).isProjectNameValid(name);
     }
 
-    private boolean isDescriptionValid(final String description) {
-        return description == null || description.length() <= DESCRIPTION_MAX_LENGTH;
+    private void validateDescription(final String description, final Command successCallback) {
+        if(description == null || description.length() > DESCRIPTION_MAX_LENGTH) {
+            endProjectCreation();
+            view.showError(view.getDescriptionTooLongMessage());
+        } else {
+            if (successCallback != null) {
+                successCallback.execute();
+            }
+        }
     }
 
     private void validateGroupId(final String groupId,
