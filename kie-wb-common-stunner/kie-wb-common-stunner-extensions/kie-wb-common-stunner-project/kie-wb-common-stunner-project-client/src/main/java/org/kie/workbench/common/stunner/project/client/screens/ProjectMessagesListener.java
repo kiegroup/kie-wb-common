@@ -104,7 +104,9 @@ public class ProjectMessagesListener {
         PublishMessagesEvent messages = new PublishMessagesEvent();
         messages.setShowSystemConsole(false);
         messages.setMessagesToPublish(messagesList);
-        messages.setRootPath(workspaceProjectContext.getActiveModule().get().getRootPath().toURI());
+        if (getRootPath(workspaceProjectContext) != null) {
+            messages.setRootPath(getRootPath(workspaceProjectContext));
+        }
         publishMessagesEvent.fire(messages);
     }
 
@@ -112,11 +114,29 @@ public class ProjectMessagesListener {
         return MESSAGE_TYPE + path.toURI();
     }
 
+    /*
+     * This Method returns null if the editor is opened in standalone mode
+     * [host]?standalone&path=[path]#StandaloneEditorPerspective
+     */
+    private String getRootPath(final WorkspaceProjectContext workspaceProjectContext) {
+        if (workspaceProjectContext != null &&
+            workspaceProjectContext.getActiveModule() != null &&
+            workspaceProjectContext.getActiveModule().isPresent() &&
+            workspaceProjectContext.getActiveModule().get() != null && 
+            workspaceProjectContext.getActiveModule().get().getRootPath() != null && 
+            workspaceProjectContext.getActiveModule().get().getRootPath().toURI() != null) {
+            return workspaceProjectContext.getActiveModule().get().getRootPath().toURI();
+        } 
+        return null;
+    }
+
     protected void clearMessages(AbstractNotification notification) {
         final UnpublishMessagesEvent unpublishMessagesEvent = new UnpublishMessagesEvent();
         unpublishMessagesEvent.setMessageType(getMessageType(getDiagramPath()));
         unpublishMessagesEvent.setShowSystemConsole(false);
-        unpublishMessagesEvent.setRootPath(workspaceProjectContext.getActiveModule().get().getRootPath().toURI());
+        if (getRootPath(workspaceProjectContext) != null) {
+            unpublishMessagesEvent.setRootPath(getRootPath(workspaceProjectContext));
+        }
         this.unpublishMessagesEvent.fire(unpublishMessagesEvent);
     }
 }
