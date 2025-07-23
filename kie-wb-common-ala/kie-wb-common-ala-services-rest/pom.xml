@@ -119,6 +119,16 @@
     <dependency>
       <groupId>org.uberfire</groupId>
       <artifactId>uberfire-nio2-model</artifactId>
+      <exclusions>
+        <exclusion>
+          <groupId>org.apache.deltaspike.core</groupId>
+          <artifactId>deltaspike-core-api</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.deltaspike.core</groupId>
+          <artifactId>deltaspike-core-impl</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.apache.httpcomponents</groupId>
