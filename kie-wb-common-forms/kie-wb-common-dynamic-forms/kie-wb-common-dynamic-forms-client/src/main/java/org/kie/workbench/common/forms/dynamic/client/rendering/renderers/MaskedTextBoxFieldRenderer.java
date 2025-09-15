@@ -28,19 +28,19 @@ import org.kie.workbench.common.forms.dynamic.client.rendering.FieldRenderer;
 import org.kie.workbench.common.forms.dynamic.client.rendering.formGroups.FormGroup;
 import org.kie.workbench.common.forms.dynamic.client.rendering.formGroups.impl.def.DefaultFormGroup;
 import org.kie.workbench.common.forms.dynamic.service.shared.RenderMode;
-import org.kie.workbench.common.forms.fields.shared.fieldTypes.basic.maskedInputText.definition.AbstractMaskedInputTextFieldDefinition;
-import org.kie.workbench.common.forms.fields.shared.fieldTypes.basic.maskedInputText.type.MaskedInputTextFieldType;
+import org.kie.workbench.common.forms.fields.shared.fieldTypes.basic.maskedTextBox.definition.AbstractMaskedTextBoxFieldDefinition;
+import org.kie.workbench.common.forms.fields.shared.fieldTypes.basic.maskedTextBox.type.MaskedTextBoxFieldType;
 
 @Dependent
-@Renderer(type = MaskedInputTextFieldType.class)
-public class MaskedInputTextFieldRenderer extends FieldRenderer<AbstractMaskedInputTextFieldDefinition, DefaultFormGroup> implements RequiresValueConverter {
+@Renderer(type = MaskedTextBoxFieldType.class)
+public class MaskedTextBoxFieldRenderer extends FieldRenderer<AbstractMaskedTextBoxFieldDefinition, DefaultFormGroup> implements RequiresValueConverter {
 
     @Inject
     protected TextBox textBox;
 
     @Override
     public String getName() {
-        return "MaskedInputText";
+        return "MaskedTextBox";
     }
 
     @Override
@@ -86,7 +86,7 @@ public class MaskedInputTextFieldRenderer extends FieldRenderer<AbstractMaskedIn
     private void addMaskingBehavior() {
         // Attach data attributes consumed by masked-input.js and add identifying class
         textBox.addStyleName("masked-input-text-field");
-        textBox.getElement().setAttribute("data-field-type", "MaskedInputText");
+        textBox.getElement().setAttribute("data-field-type", "MaskedTextBox");
 
         if (field.getMaskingCharacter() != null && !field.getMaskingCharacter().isEmpty()) {
             textBox.getElement().setAttribute("data-masking-character", field.getMaskingCharacter());

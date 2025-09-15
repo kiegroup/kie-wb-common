@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.forms.fields.shared.fieldTypes.basic.maskedInputText.definition;
+package org.kie.workbench.common.forms.fields.shared.fieldTypes.basic.maskedTextBox.definition;
 
 import org.junit.Test;
-import org.kie.workbench.common.forms.fields.shared.fieldTypes.basic.maskedInputText.type.MaskedInputTextFieldType;
+import org.kie.workbench.common.forms.fields.shared.fieldTypes.basic.maskedTextBox.type.MaskedTextBoxFieldType;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -25,17 +25,17 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-public class MaskedInputTextFieldDefinitionTest {
+public class MaskedTextBoxFieldDefinitionTest {
 
     @Test
     public void testFieldCreation() {
-        MaskedInputTextFieldDefinition field = new MaskedInputTextFieldDefinition();
+        MaskedTextBoxFieldDefinition field = new MaskedTextBoxFieldDefinition();
         
         assertNotNull("Field should not be null", field);
         assertNotNull("Field type should not be null", field.getFieldType());
-        assertTrue("Field type should be MaskedInputTextFieldType", 
-                  field.getFieldType() instanceof MaskedInputTextFieldType);
-        assertEquals("Field type name should match", "MaskedInputText", 
+        assertTrue("Field type should be MaskedTextBoxFieldType", 
+                  field.getFieldType() instanceof MaskedTextBoxFieldType);
+        assertEquals("Field type name should match", "MaskedTextBox", 
                     field.getFieldType().getTypeName());
         assertEquals("Standalone class name should be String", String.class.getName(), 
                     field.getStandaloneClassName());
@@ -43,7 +43,7 @@ public class MaskedInputTextFieldDefinitionTest {
 
     @Test
     public void testDefaultValues() {
-        MaskedInputTextFieldDefinition field = new MaskedInputTextFieldDefinition();
+        MaskedTextBoxFieldDefinition field = new MaskedTextBoxFieldDefinition();
         
         assertEquals("Default maxLength should be 100", Integer.valueOf(100), field.getMaxLength());
         assertEquals("Default placeholder should be empty", "", field.getPlaceHolder());
@@ -57,7 +57,7 @@ public class MaskedInputTextFieldDefinitionTest {
 
     @Test
     public void testPropertySettersAndGetters() {
-        MaskedInputTextFieldDefinition field = new MaskedInputTextFieldDefinition();
+        MaskedTextBoxFieldDefinition field = new MaskedTextBoxFieldDefinition();
         
         // Test maxLength
         field.setMaxLength(50);
@@ -94,7 +94,7 @@ public class MaskedInputTextFieldDefinitionTest {
 
     @Test
     public void testValidationMethods() {
-        MaskedInputTextFieldDefinition field = new MaskedInputTextFieldDefinition();
+        MaskedTextBoxFieldDefinition field = new MaskedTextBoxFieldDefinition();
         
         // Test valid configuration
         field.setMinLength(5);
@@ -117,7 +117,7 @@ public class MaskedInputTextFieldDefinitionTest {
 
     @Test
     public void testCopyFrom() {
-        MaskedInputTextFieldDefinition source = new MaskedInputTextFieldDefinition();
+        MaskedTextBoxFieldDefinition source = new MaskedTextBoxFieldDefinition();
         source.setMaxLength(30);
         source.setPlaceHolder("Source placeholder");
         source.setMinLength(3);
@@ -127,7 +127,7 @@ public class MaskedInputTextFieldDefinitionTest {
         source.setMaskingFromEndLength(1);
         source.setIsMaskedInDB(true);
         
-        MaskedInputTextFieldDefinition target = new MaskedInputTextFieldDefinition();
+        MaskedTextBoxFieldDefinition target = new MaskedTextBoxFieldDefinition();
         target.doCopyFrom(source);
         
         assertEquals("MaxLength should be copied", source.getMaxLength(), target.getMaxLength());
@@ -142,17 +142,23 @@ public class MaskedInputTextFieldDefinitionTest {
 
     @Test
     public void testEqualsAndHashCode() {
-        MaskedInputTextFieldDefinition field1 = new MaskedInputTextFieldDefinition();
+        MaskedTextBoxFieldDefinition field1 = new MaskedTextBoxFieldDefinition();
+        field1.setId("testField1");
+        field1.setName("testName");
         field1.setMaxLength(25);
         field1.setMinLength(5);
         field1.setMaskingCharacter("*");
         
-        MaskedInputTextFieldDefinition field2 = new MaskedInputTextFieldDefinition();
+        MaskedTextBoxFieldDefinition field2 = new MaskedTextBoxFieldDefinition();
+        field2.setId("testField1"); 
+        field2.setName("testName");
         field2.setMaxLength(25);
         field2.setMinLength(5);
         field2.setMaskingCharacter("*");
         
-        MaskedInputTextFieldDefinition field3 = new MaskedInputTextFieldDefinition();
+        MaskedTextBoxFieldDefinition field3 = new MaskedTextBoxFieldDefinition();
+        field3.setId("testField3");
+        field3.setName("testName3");
         field3.setMaxLength(30);
         field3.setMinLength(5);
         field3.setMaskingCharacter("*");

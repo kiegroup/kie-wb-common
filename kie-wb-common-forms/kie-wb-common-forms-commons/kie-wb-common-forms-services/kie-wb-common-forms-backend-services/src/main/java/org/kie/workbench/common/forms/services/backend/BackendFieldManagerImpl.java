@@ -22,6 +22,7 @@ import javax.inject.Inject;
 
 import org.kie.workbench.common.forms.fields.shared.AbstractFieldManager;
 import org.kie.workbench.common.forms.fields.shared.FieldProvider;
+import org.kie.workbench.common.forms.fields.shared.fieldTypes.basic.maskedTextBox.provider.MaskedTextBoxFieldProvider;
 import org.kie.workbench.common.forms.model.FieldDefinition;
 import org.kie.workbench.common.forms.service.shared.meta.processing.MetaDataEntryManager;
 
@@ -35,5 +36,9 @@ public class BackendFieldManagerImpl extends AbstractFieldManager {
         for (FieldProvider provider : providers) {
             registerFieldProvider(provider);
         }
+        
+        // Manually register MaskedTextBoxFieldProvider to ensure it's available
+        MaskedTextBoxFieldProvider maskedTextBoxProvider = new MaskedTextBoxFieldProvider();
+        registerFieldProvider(maskedTextBoxProvider);
     }
 }

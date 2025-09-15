@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.forms.fields.shared.fieldTypes.basic.maskedInputText.definition;
+package org.kie.workbench.common.forms.fields.shared.fieldTypes.basic.maskedTextBox.definition;
 
 import javax.validation.constraints.AssertTrue;
 import javax.validation.constraints.Min;
@@ -24,13 +24,13 @@ import javax.validation.constraints.Size;
 import org.kie.workbench.common.forms.adf.definitions.annotations.FieldParam;
 import org.kie.workbench.common.forms.adf.definitions.annotations.FormField;
 import org.kie.workbench.common.forms.fields.shared.AbstractFieldDefinition;
-import org.kie.workbench.common.forms.fields.shared.fieldTypes.basic.maskedInputText.type.MaskedInputTextFieldType;
+import org.kie.workbench.common.forms.fields.shared.fieldTypes.basic.maskedTextBox.type.MaskedTextBoxFieldType;
 import org.kie.workbench.common.forms.model.FieldDefinition;
 import org.kie.workbench.common.forms.model.HasPlaceHolder;
 
-public abstract class AbstractMaskedInputTextFieldDefinition extends AbstractFieldDefinition implements HasPlaceHolder {
+public abstract class AbstractMaskedTextBoxFieldDefinition extends AbstractFieldDefinition implements HasPlaceHolder {
 
-    public static MaskedInputTextFieldType FIELD_TYPE = new MaskedInputTextFieldType();
+    public static MaskedTextBoxFieldType FIELD_TYPE = new MaskedTextBoxFieldType();
 
     @FormField(
             labelKey = "placeHolder",
@@ -82,12 +82,12 @@ public abstract class AbstractMaskedInputTextFieldDefinition extends AbstractFie
     )
     protected Boolean isMaskedInDB;
 
-    public AbstractMaskedInputTextFieldDefinition(String className) {
+    public AbstractMaskedTextBoxFieldDefinition(String className) {
         super(className);
     }
 
     @Override
-    public MaskedInputTextFieldType getFieldType() {
+    public MaskedTextBoxFieldType getFieldType() {
         return FIELD_TYPE;
     }
 
@@ -154,8 +154,8 @@ public abstract class AbstractMaskedInputTextFieldDefinition extends AbstractFie
         if (other instanceof HasPlaceHolder) {
             setPlaceHolder(((HasPlaceHolder) other).getPlaceHolder());
         }
-        if (other instanceof AbstractMaskedInputTextFieldDefinition) {
-            AbstractMaskedInputTextFieldDefinition otherField = (AbstractMaskedInputTextFieldDefinition) other;
+        if (other instanceof AbstractMaskedTextBoxFieldDefinition) {
+            AbstractMaskedTextBoxFieldDefinition otherField = (AbstractMaskedTextBoxFieldDefinition) other;
             setMinLength(otherField.getMinLength());
             setMaskingCharacter(otherField.getMaskingCharacter());
             setMaskingStartIndex(otherField.getMaskingStartIndex());
@@ -188,7 +188,7 @@ public abstract class AbstractMaskedInputTextFieldDefinition extends AbstractFie
             return false;
         }
 
-        AbstractMaskedInputTextFieldDefinition that = (AbstractMaskedInputTextFieldDefinition) o;
+        AbstractMaskedTextBoxFieldDefinition that = (AbstractMaskedTextBoxFieldDefinition) o;
 
         if (placeHolder != null ? !placeHolder.equals(that.placeHolder) : that.placeHolder != null) {
             return false;

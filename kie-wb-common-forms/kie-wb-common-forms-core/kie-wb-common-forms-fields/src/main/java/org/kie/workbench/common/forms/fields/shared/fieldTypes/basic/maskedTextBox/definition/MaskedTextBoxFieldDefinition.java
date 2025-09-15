@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.forms.fields.shared.fieldTypes.basic.maskedInputText.definition;
+package org.kie.workbench.common.forms.fields.shared.fieldTypes.basic.maskedTextBox.definition;
 
 import javax.validation.constraints.AssertTrue;
 import javax.validation.constraints.Min;
@@ -33,7 +33,7 @@ import org.kie.workbench.common.forms.model.FieldDefinition;
         i18n = @I18nSettings(keyPreffix = "FieldProperties"),
         startElement = "label"
 )
-public class MaskedInputTextFieldDefinition extends AbstractMaskedInputTextFieldDefinition implements HasMaxLength {
+public class MaskedTextBoxFieldDefinition extends AbstractMaskedTextBoxFieldDefinition implements HasMaxLength {
 
     @FormField(
             labelKey = "maxLength",
@@ -42,7 +42,7 @@ public class MaskedInputTextFieldDefinition extends AbstractMaskedInputTextField
     @Min(1)
     protected Integer maxLength = 100;
 
-    public MaskedInputTextFieldDefinition() {
+    public MaskedTextBoxFieldDefinition() {
         super(String.class.getName());
     }
 
@@ -96,7 +96,7 @@ public class MaskedInputTextFieldDefinition extends AbstractMaskedInputTextField
             return false;
         }
 
-        MaskedInputTextFieldDefinition that = (MaskedInputTextFieldDefinition) o;
+        MaskedTextBoxFieldDefinition that = (MaskedTextBoxFieldDefinition) o;
 
         return maxLength != null ? maxLength.equals(that.maxLength) : that.maxLength == null;
     }
@@ -105,7 +105,7 @@ public class MaskedInputTextFieldDefinition extends AbstractMaskedInputTextField
     public int hashCode() {
         int result = super.hashCode();
         result = 31 * result + (maxLength != null ? maxLength.hashCode() : 0);
-        result = ~~result;
         return result;
     }
+    
 }

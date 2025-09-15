@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.forms.fields.shared.fieldTypes.basic.maskedInputText.type;
+package org.kie.workbench.common.forms.fields.shared.fieldTypes.basic.maskedTextBox.type;
 
 import org.jboss.errai.common.client.api.annotations.Portable;
 import org.kie.workbench.common.forms.model.FieldType;
 
 @Portable
-public class MaskedInputTextFieldType implements FieldType {
+public class MaskedTextBoxFieldType implements FieldType {
 
     public static final String NAME = "MaskedTextBox";
 

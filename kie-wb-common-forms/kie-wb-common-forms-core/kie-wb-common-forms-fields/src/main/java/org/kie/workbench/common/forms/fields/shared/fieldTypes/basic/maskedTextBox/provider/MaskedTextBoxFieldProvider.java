@@ -14,27 +14,27 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.forms.fields.shared.fieldTypes.basic.maskedInputText.provider;
+package org.kie.workbench.common.forms.fields.shared.fieldTypes.basic.maskedTextBox.provider;
 
 import javax.enterprise.context.Dependent;
 
 import org.kie.workbench.common.forms.fields.shared.fieldTypes.basic.BasicTypeFieldProvider;
-import org.kie.workbench.common.forms.fields.shared.fieldTypes.basic.maskedInputText.definition.AbstractMaskedInputTextFieldDefinition;
-import org.kie.workbench.common.forms.fields.shared.fieldTypes.basic.maskedInputText.definition.MaskedInputTextFieldDefinition;
-import org.kie.workbench.common.forms.fields.shared.fieldTypes.basic.maskedInputText.type.MaskedInputTextFieldType;
+import org.kie.workbench.common.forms.fields.shared.fieldTypes.basic.maskedTextBox.definition.AbstractMaskedTextBoxFieldDefinition;
+import org.kie.workbench.common.forms.fields.shared.fieldTypes.basic.maskedTextBox.definition.MaskedTextBoxFieldDefinition;
+import org.kie.workbench.common.forms.fields.shared.fieldTypes.basic.maskedTextBox.type.MaskedTextBoxFieldType;
 import org.kie.workbench.common.forms.model.TypeInfo;
 
 @Dependent
-public class MaskedInputTextFieldProvider extends BasicTypeFieldProvider<AbstractMaskedInputTextFieldDefinition> {
+public class MaskedTextBoxFieldProvider extends BasicTypeFieldProvider<MaskedTextBoxFieldDefinition> {
 
     @Override
-    public Class<MaskedInputTextFieldType> getFieldType() {
-        return MaskedInputTextFieldType.class;
+    public Class<MaskedTextBoxFieldType> getFieldType() {
+        return MaskedTextBoxFieldType.class;
     }
 
     @Override
     public String getFieldTypeName() {
-        return AbstractMaskedInputTextFieldDefinition.FIELD_TYPE.getTypeName();
+        return AbstractMaskedTextBoxFieldDefinition.FIELD_TYPE.getTypeName();
     }
 
     @Override
@@ -44,16 +44,16 @@ public class MaskedInputTextFieldProvider extends BasicTypeFieldProvider<Abstrac
 
     @Override
     public int getPriority() {
-        return 0;
+        return 5;
     }
 
     @Override
-    public AbstractMaskedInputTextFieldDefinition getDefaultField() {
-        return new MaskedInputTextFieldDefinition();
+    public MaskedTextBoxFieldDefinition getDefaultField() {
+        return new MaskedTextBoxFieldDefinition();
     }
 
     @Override
-    public AbstractMaskedInputTextFieldDefinition createFieldByType(TypeInfo typeInfo) {
+    public MaskedTextBoxFieldDefinition createFieldByType(TypeInfo typeInfo) {
         return getDefaultField();
     }
 }
