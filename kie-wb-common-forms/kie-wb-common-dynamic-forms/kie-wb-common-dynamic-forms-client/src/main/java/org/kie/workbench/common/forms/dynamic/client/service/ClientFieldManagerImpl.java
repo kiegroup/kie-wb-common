@@ -25,6 +25,7 @@ import org.jboss.errai.ioc.client.container.IOC;
 import org.jboss.errai.ioc.client.container.SyncBeanDef;
 import org.kie.workbench.common.forms.fields.shared.AbstractFieldManager;
 import org.kie.workbench.common.forms.fields.shared.FieldProvider;
+import org.kie.workbench.common.forms.fields.shared.fieldTypes.basic.maskedTextBox.provider.MaskedTextBoxFieldProvider;
 import org.kie.workbench.common.forms.service.shared.meta.processing.MetaDataEntryManager;
 
 @ApplicationScoped
@@ -42,5 +43,9 @@ public class ClientFieldManagerImpl extends AbstractFieldManager {
         for (SyncBeanDef<FieldProvider> provider : providers) {
             registerFieldProvider(provider.newInstance());
         }
+
+        // Manually register MaskedTextBoxFieldProvider
+        MaskedTextBoxFieldProvider maskedInputProvider = new MaskedTextBoxFieldProvider();
+        registerFieldProvider(maskedInputProvider);
     }
 }

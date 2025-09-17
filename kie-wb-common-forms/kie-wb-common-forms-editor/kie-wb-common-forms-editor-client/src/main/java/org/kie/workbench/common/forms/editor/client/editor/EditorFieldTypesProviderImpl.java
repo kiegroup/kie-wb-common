@@ -29,6 +29,7 @@ import org.kie.workbench.common.forms.fields.shared.fieldTypes.basic.decimalBox.
 import org.kie.workbench.common.forms.fields.shared.fieldTypes.basic.integerBox.type.IntegerBoxFieldType;
 import org.kie.workbench.common.forms.fields.shared.fieldTypes.basic.lists.input.MultipleInputFieldType;
 import org.kie.workbench.common.forms.fields.shared.fieldTypes.basic.lists.selector.MultipleSelectorFieldType;
+import org.kie.workbench.common.forms.fields.shared.fieldTypes.basic.maskedTextBox.type.MaskedTextBoxFieldType;
 import org.kie.workbench.common.forms.fields.shared.fieldTypes.basic.selectors.listBox.type.ListBoxFieldType;
 import org.kie.workbench.common.forms.fields.shared.fieldTypes.basic.selectors.radioGroup.type.RadioGroupFieldType;
 import org.kie.workbench.common.forms.fields.shared.fieldTypes.basic.slider.type.SliderFieldType;
@@ -47,6 +48,7 @@ public class EditorFieldTypesProviderImpl implements EditorFieldTypesProvider {
     @PostConstruct
     public void init() {
         paletteFieldTypes.add(new TextBoxFieldType());
+        paletteFieldTypes.add(new MaskedTextBoxFieldType());
         paletteFieldTypes.add(new TextAreaFieldType());
         paletteFieldTypes.add(new IntegerBoxFieldType());
         paletteFieldTypes.add(new DecimalBoxFieldType());
