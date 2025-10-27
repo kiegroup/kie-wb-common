@@ -24,7 +24,14 @@
       <groupId>com.google.elemental2</groupId>
       <artifactId>elemental2-dom</artifactId>
     </dependency>
-    
+
+    <dependency>
+      <groupId>jakarta.servlet</groupId>
+      <artifactId>jakarta.servlet-api</artifactId>
+      <scope>provided</scope>
+    </dependency>
+
+
     <!-- dependencies added because of new illegal transitive dependency check -->
     <dependency>
       <groupId>org.gwtbootstrap3</groupId>
