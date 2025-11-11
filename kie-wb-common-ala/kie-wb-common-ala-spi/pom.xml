@@ -47,7 +47,7 @@
       <artifactId>kie-soup-commons</artifactId>
     </dependency>
     <dependency>
-      <groupId>commons-configuration</groupId>
+      <groupId>org.apache.commons</groupId>
       <artifactId>commons-configuration</artifactId>
     </dependency>
     <dependency>
