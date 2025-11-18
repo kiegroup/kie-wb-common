@@ -44,7 +44,7 @@ public class LogbackConfig extends ContextAwareBase implements Configurator {
     }
 
     @Override
-    public void configure(LoggerContext loggerContext) {
+    public ExecutionStatus configure(LoggerContext loggerContext) {
         setContext(loggerContext);
         addInfo("Configure logging programmatically with with org.kie.workbench.common.services.backend.logback.configuration.LogbackConfig");
 
@@ -72,6 +72,7 @@ public class LogbackConfig extends ContextAwareBase implements Configurator {
         compilerLog.setLevel(Level.INFO);
 
         StatusPrinter.print(loggerContext);
+        return ExecutionStatus.INVOKE_NEXT_IF_ANY;
     }
 
     private UUIDThreadNameDiscriminator getDiscriminator() {
