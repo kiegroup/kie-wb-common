@@ -16,8 +16,26 @@
 
 import { configure } from "enzyme";
 import Adapter from "enzyme-adapter-react-16";
-import * as AppFormer from "appformer-js";
 
 configure({ adapter: new Adapter() });
 
-AppFormer.translate = jest.fn((k) => k);
+// Mock JavaEnum base class
+class MockJavaEnum {
+  constructor(name) {
+    this.name = name;
+  }
+}
+
+// Mock the appformer-js module
+jest.mock("appformer-js", () => ({
+  translate: jest.fn((key) => key),
+  JavaEnum: MockJavaEnum
+}));
+
+// Create a mock AppFormer instance for any code that uses the global
+const mockAppFormer = {
+  translate: jest.fn((key) => key)
+};
+
+// Replace the singleton
+window.AppFormerInstance = mockAppFormer;
