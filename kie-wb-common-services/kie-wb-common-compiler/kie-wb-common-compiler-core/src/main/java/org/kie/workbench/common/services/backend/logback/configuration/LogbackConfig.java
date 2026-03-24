@@ -21,6 +21,7 @@ import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.encoder.PatternLayoutEncoder;
 import ch.qos.logback.classic.sift.SiftingAppender;
 import ch.qos.logback.classic.spi.Configurator;
+import ch.qos.logback.classic.spi.Configurator.ExecutionStatus;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.Appender;
 import ch.qos.logback.core.ConsoleAppender;
@@ -44,7 +45,7 @@ public class LogbackConfig extends ContextAwareBase implements Configurator {
     }
 
     @Override
-    public void configure(LoggerContext loggerContext) {
+    public ExecutionStatus configure(LoggerContext loggerContext) {
         setContext(loggerContext);
         addInfo("Configure logging programmatically with with org.kie.workbench.common.services.backend.logback.configuration.LogbackConfig");
 
@@ -72,6 +73,8 @@ public class LogbackConfig extends ContextAwareBase implements Configurator {
         compilerLog.setLevel(Level.INFO);
 
         StatusPrinter.print(loggerContext);
+
+        return ExecutionStatus.DO_NOT_INVOKE_NEXT_IF_ANY;
     }
 
     private UUIDThreadNameDiscriminator getDiscriminator() {
@@ -90,7 +93,7 @@ public class LogbackConfig extends ContextAwareBase implements Configurator {
 
     private SiftingAppender setSiftingAppender(LoggerContext loggerContext, Discriminator discriminator) {
         KieSiftingAppender appender = new KieSiftingAppender();
-        appender.setName(MavenConfig.COMPILATION_ID);
+        appender.setName("KieSift");
         appender.setDiscriminator(discriminator);
         appender.setAppenderFactory(new AppenderFactory<ILoggingEvent>() {
 
