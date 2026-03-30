@@ -135,6 +135,15 @@
           <groupId>org.sonatype.plexus</groupId>
           <artifactId>plexus-sec-dispatcher</artifactId>
         </exclusion>
+        <!-- Exclude old Bouncy Castle versions to prevent duplicate classes -->
+        <exclusion>
+          <groupId>org.bouncycastle</groupId>
+          <artifactId>bcprov-jdk15on</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.bouncycastle</groupId>
+          <artifactId>bcpkix-jdk15on</artifactId>
+        </exclusion>
       </exclusions>
     </dependency>
     <dependency>

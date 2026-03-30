@@ -80,6 +80,15 @@
         <!-- These dependencies are bundled in the shaded jar and thus need to be excluded to avoid duplicated classes.
              The shaded jar should be replaced by the standard one, but the issue is that docker-client depends
              on jersey and our modules on resteasy which is causing conflicts. -->
+        <!-- Exclude old Bouncycastle versions to avoid conflicts with newer versions from artemis-core-client -->
+        <exclusion>
+          <groupId>org.bouncycastle</groupId>
+          <artifactId>bcpkix-jdk15on</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.bouncycastle</groupId>
+          <artifactId>bcprov-jdk15on</artifactId>
+        </exclusion>
         <exclusion>
           <groupId>org.glassfish.jersey.connectors</groupId>
           <artifactId>jersey-apache-connector</artifactId>
