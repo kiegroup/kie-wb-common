@@ -58,6 +58,13 @@
 
   <dependencyManagement>
     <dependencies>
+      <!-- Override plexus-utils version to 3.6.1 -->
+      <dependency>
+        <groupId>org.codehaus.plexus</groupId>
+        <artifactId>plexus-utils</artifactId>
+        <version>3.6.1</version>
+      </dependency>
+
       <dependency>
         <groupId>org.jboss.errai</groupId>
         <artifactId>wildfly-dist</artifactId>
